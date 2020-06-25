@@ -1,0 +1,24 @@
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class CustomerAddress extends Model
+{
+    protected $table    =   'nexopos_' . 'customers_addresses';
+
+    /**
+     * define the relationship
+     * @return Model\RelationShip
+     */
+    public function groups()
+    {
+        return $this->belongsTo( Customer::class, 'customer_id' );
+    }
+
+    public function scopefrom( $query, $id, $type )
+    {
+        return $query->where( 'customer_id', $id )
+            ->where( 'type', $type );
+    }
+}
