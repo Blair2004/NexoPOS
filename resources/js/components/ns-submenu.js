@@ -1,4 +1,4 @@
-window.Vue.component( 'sub-menu-element', {
+window.Vue.component( 'ns-submenu', {
     data: () => {
         return {
         }
@@ -14,6 +14,5 @@ window.Vue.component( 'sub-menu-element', {
     </div>
     `,
     mounted() {
-        console.log( this );
     }
 })

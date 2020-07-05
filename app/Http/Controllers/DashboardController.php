@@ -30,5 +30,12 @@ class DashboardController extends Controller
             'menus' =>  $this->menus
         ]);
     }
+
+    protected function view( $path, $data = [])
+    {
+        return view( $path, array_merge([
+            'menus'     =>   $this->menus
+        ], $data ));
+    }
 }
 

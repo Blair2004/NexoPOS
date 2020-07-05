@@ -6,6 +6,7 @@ window.charjs           =   require( 'chart.js' );
 window.Vue              =   require( 'vue' );
 
 require( './components/index' );
+
 const { EventEmitter }  =   require( './libraries/index' );
 
 window.MenuEvent        =   new EventEmitter;

@@ -3,6 +3,12 @@ require('./bootstrap');
 new window.Vue({
     el: '#dashboard-aside',
     mounded() {
-        alert( 'nothing' );
+    }
+});
+
+new window.Vue({
+    el: '#dashboard-content',
+    mounted() {
+        console.log( 'mounted' );
     }
 })

@@ -1,5 +1,5 @@
 
-window.Vue.component( 'menu-element', {
+window.Vue.component( 'ns-menu', {
     data: () => {
         return {
             clicked: false,

@@ -17,13 +17,13 @@
                     </div>
                     <ul>
                         @foreach( $menus->getMenus() as $identifier => $menu )
-                        <menu-element identifier="{{ $identifier }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
+                        <ns-menu identifier="{{ $identifier }}" label="{{ @$menu[ 'label' ] }}" icon="{{ @$menu[ 'icon' ] }}" href="{{ @$menu[ 'href' ] }}" notification="{{ isset( $menu[ 'notification' ] ) ? $menu[ 'notification' ] : 0 }}" id="menu-{{ $identifier }}">
                         @if ( isset( $menu[ 'childrens' ] ) )
                             @foreach( $menu[ 'childrens' ] as $identifier => $menu )
-                            <sub-menu-element href="{{ $menu[ 'href' ] }}" id="submenu-{{ $identifier }}">{{ $menu[ 'label' ] }}</sub-menu-element>
+                            <ns-submenu href="{{ $menu[ 'href' ] }}" id="submenu-{{ $identifier }}">{{ $menu[ 'label' ] }}</ns-submenu>
                             @endforeach        
                         @endif
-                        </menu-element>
+                        </ns-menu>
                         @endforeach
                     </ul>
                 </div>
@@ -36,5 +36,6 @@
         </div>
     </div>
     @include( '../common/footer' )
+    @include( '../common/dashboard-footer' )
 </body>
 </html>

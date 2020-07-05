@@ -7,26 +7,41 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use Illuminate\Http\Request;
 use App\Models\Order;
-use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Support\Facades\View;
 use App\Models\Customer;
-use App\Models\CustomerGroup;
 
+use Illuminate\Http\Request;
+use App\Models\CustomerGroup;
 use App\Models\CustomerAddress;
 use App\Services\CustomerService;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+
+use App\Http\Controllers\DashboardController;
 use Tendoo\Core\Exceptions\NotFoundException;
 use Tendoo\Core\Exceptions\NotAllowedException;
 
-class CustomersController extends Controller
+class CustomersController extends DashboardController
 {
     public function __construct(
         CustomerService $customerService
     )
     {
+        parent::__construct();
         $this->customerService      =   $customerService;
+    }
+
+    /**
+     * Shows the list of available customers under a CRUD
+     * list
+     * @param void
+     * @return backend vue
+     */
+    public function listCustomers()
+    {
+        return $this->view( 'pages.dashboard.customers' );
     }
 
     /**

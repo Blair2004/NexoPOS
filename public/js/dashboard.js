@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -81277,17 +81277,6 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./resources/js/app.js":
-/*!*****************************!*\
-  !*** ./resources/js/app.js ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
-
-/***/ }),
-
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -81487,6 +81476,28 @@ window.Vue.component('ns-submenu', {
 
 /***/ }),
 
+/***/ "./resources/js/dashboard.js":
+/*!***********************************!*\
+  !*** ./resources/js/dashboard.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+new window.Vue({
+  el: '#dashboard-aside',
+  mounded: function mounded() {}
+});
+new window.Vue({
+  el: '#dashboard-content',
+  mounted: function mounted() {
+    console.log('mounted');
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/libraries/event-emitter.js":
 /*!*************************************************!*\
   !*** ./resources/js/libraries/event-emitter.js ***!
@@ -81545,14 +81556,26 @@ module.exports.EventEmitter = __webpack_require__(/*! ./event-emitter */ "./reso
 
 /***/ }),
 
-/***/ 2:
-/*!***********************************!*\
-  !*** multi ./resources/js/app.js ***!
-  \***********************************/
+/***/ "./resources/sass/app.scss":
+/*!*********************************!*\
+  !*** ./resources/sass/app.scss ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ 0:
+/*!*******************************************************************!*\
+  !*** multi ./resources/js/dashboard.js ./resources/sass/app.scss ***!
+  \*******************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! D:\public_html\NexoPOS-v4\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! D:\public_html\NexoPOS-v4\resources\js\dashboard.js */"./resources/js/dashboard.js");
+module.exports = __webpack_require__(/*! D:\public_html\NexoPOS-v4\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -27,4 +27,4 @@ Route::prefix( 'do-setup' )->group( function() {
 });
 
 Route::get( '/dashboard', 'DashboardController@home' );
-Route::get( '/dashboard/customers', 'Dashboard/CustomersController@home' );
+Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
