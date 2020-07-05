@@ -28,8 +28,17 @@
                 </div>
             </div>
             <ns-crud id="crud-table-body">
+                <h1>Hello</h1>
             </ns-crud>
         </div>
     </div>
 </div>
+@endsection
+
+@section( 'layout.dashboard.footer' )
+<script>
+    new Vue({
+        el: '#crud-table',
+    });
+</script>
 @endsection

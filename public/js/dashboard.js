@@ -81371,10 +81371,20 @@ window.Vue.component('ns-checkbox', {
   data: function data() {
     return {};
   },
-  props: ['href', 'label'],
-  template: "\n    <div>\n        <div class=\"w-8 h-8 border-gray-400 border bg-gray-200\">\n            <i class=\"las la-check\"></i>\n        </div>\n    </div>\n    ",
+  props: ['checked'],
+  template: "\n    <div class=\"justify-center items-center flex\">\n        <div @click=\"toggleChecked()\" :class=\"checked ? 'border-2 border-blue-400 text-blue-400 bg-blue-200' : ''\" class=\"w-6 h-6 border-gray-400 border bg-gray-200 flex items-center justify-center cursor-pointer\">\n            <i v-if=\"checked === 'checked'\" class=\"las la-check\"></i>\n        </div>\n    </div>\n    ",
   mounted: function mounted() {
     console.log('checkbox');
+  },
+  methods: {
+    toggleChecked: function toggleChecked() {
+      console.log(this.checked); // if ( this.checked === 'checked' ) {
+      //     this.checked    =   undefined;
+      // } else {
+      //     this.checked    =   'checked';
+      // }
+      // this.$emit( 'changed', this.checked );
+    }
   }
 });
 
@@ -81387,11 +81397,11 @@ window.Vue.component('ns-checkbox', {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-Vue.component('ns-crud', {
+window.Vue.component('ns-crud', {
   data: function data() {
     return {};
   },
-  tempate: "\n    <table class=\"table w-full\">\n        <thead>\n            <tr class=\"text-gray-700 border-b border-gray-200\">\n                <th class=\"text-center px-2 border-gray-200 w-16 py-2\">ID</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Product</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Name</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Price</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Quantity</th>\n                <th class=\"text-left px-2 border-gray-200 py-2 w-16\"></th>\n            </tr>\n        </thead>\n        <tbody>\n            <tr class=\"border-gray-200 border\">\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">\n                    <ns-checkbox></ns-checkbox>\n                </td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-21</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-31</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-41</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-51</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">\n                    <button class=\"outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent\"><i class=\"las la-ellipsis-h\"></i> {{ __( 'Options' ) }}</button>\n                </td>\n            </tr>\n        </tbody>\n    </table>\n    ",
+  template: "\n    <table class=\"table w-full\">\n        <thead>\n            <tr class=\"text-gray-700 border-b border-gray-200\">\n                <th class=\"text-center px-2 border-gray-200 w-16 py-2\">ID</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Product</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Name</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Price</th>\n                <th class=\"text-left px-2 border-gray-200 py-2\">Quantity</th>\n                <th class=\"text-left px-2 border-gray-200 py-2 w-16\"></th>\n            </tr>\n        </thead>\n        <tbody>\n            <tr class=\"border-gray-200 border\">\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">\n                    <ns-checkbox></ns-checkbox>\n                </td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-21</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-31</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-41</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">Product-51</td>\n                <td class=\"text-gray-700 font-sans border-gray-200 p-2\">\n                    <button class=\"outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent\"><i class=\"las la-ellipsis-h\"></i> Options</button>\n                </td>\n            </tr>\n        </tbody>\n    </table>\n    ",
   methods: {},
   mounted: function mounted() {
     console.log('mounted');
@@ -81574,8 +81584,8 @@ module.exports.EventEmitter = __webpack_require__(/*! ./event-emitter */ "./reso
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\public_html\NexoPOS-v4\resources\js\dashboard.js */"./resources/js/dashboard.js");
-module.exports = __webpack_require__(/*! D:\public_html\NexoPOS-v4\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /var/www/html/NexoPOS-v4/resources/js/dashboard.js */"./resources/js/dashboard.js");
+module.exports = __webpack_require__(/*! /var/www/html/NexoPOS-v4/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

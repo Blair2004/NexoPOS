@@ -37,5 +37,6 @@
     </div>
     @include( '../common/footer' )
     @include( '../common/dashboard-footer' )
+    @yield( 'layout.dashboard.footer' )
 </body>
 </html>
