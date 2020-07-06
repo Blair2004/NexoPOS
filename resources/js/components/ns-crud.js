@@ -19,7 +19,7 @@ window.Vue.component( 'ns-crud', {
         <tbody>
             <tr class="border-gray-200 border">
                 <td class="text-gray-700 font-sans border-gray-200 p-2">
-                    <ns-checkbox></ns-checkbox>
+                    <ns-checkbox checked="checked"></ns-checkbox>
                 </td>
                 <td class="text-gray-700 font-sans border-gray-200 p-2">Product-21</td>
                 <td class="text-gray-700 font-sans border-gray-200 p-2">Product-31</td>
