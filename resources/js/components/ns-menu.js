@@ -1,5 +1,6 @@
+const { Vue, nsEvent }       =   require( './../bootstrap' );
 
-window.Vue.component( 'ns-menu', {
+const nsMenu    =   Vue.component( 'ns-menu', {
     data: () => {
         return {
             clicked: false,
@@ -27,7 +28,7 @@ window.Vue.component( 'ns-menu', {
          * and check if the event is not emitted from
          * the current component. If yes, then skip
          */
-        MenuEvent.subject().subscribe( event => {
+        nsEvent.subject().subscribe( event => {
             if ( event.value !== this.identifier ) {
                 this.clicked    =   false;
             }
@@ -37,7 +38,7 @@ window.Vue.component( 'ns-menu', {
         toggleEmit() {
             this.toggle().then( clicked => {
                 if ( clicked ) {
-                    MenuEvent.emit({ 
+                    nsEvent.emit({ 
                         identifier: 'side-menu.open',
                         value: this.identifier
                     });
@@ -53,4 +54,6 @@ window.Vue.component( 'ns-menu', {
             })
         }
     }
-})
+});
+
+module.exports   =   nsMenu;

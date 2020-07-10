@@ -1,14 +1,15 @@
-require('./bootstrap');
+const { Vue }       =   require( './bootstrap' );
+const components    =   require( './components/components' );
 
-new window.Vue({
+new Vue({
     el: '#dashboard-aside',
     mounded() {
     }
 });
 
-new window.Vue({
+new Vue({
     el: '#dashboard-content',
     mounted() {
         console.log( 'mounted' );
     }
-})
+});

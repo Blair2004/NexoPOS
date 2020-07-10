@@ -1,5 +1,6 @@
 const mix = require('laravel-mix');
 const tailwindcss = require('tailwindcss');
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -11,10 +12,12 @@ const tailwindcss = require('tailwindcss');
  |
  */
 
+mix.disableNotifications();
+mix.sourceMaps();
 mix
-    .js('resources/js/dashboard.js', 'public/js')
-    .js('resources/js/setup.js', 'public/js')
     .js('resources/js/app.js', 'public/js')
+    .js('resources/js/setup.js', 'public/js')
+    .extract([ 'vue', 'lodash', 'chart.js', 'axios', 'moment' ])
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,

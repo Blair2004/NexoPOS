@@ -1,11 +1,9 @@
 <?php
 namespace App\Http\Controllers\Dashboard;
 
-use Tendoo\Core\Http\Controllers\Dashboard\CrudController as TendooCrudController;
-use Tendoo\Core\Http\Requests\CrudPostRequest;
-use Tendoo\Core\Http\Requests\CrudPutRequest;
+use App\Http\Controller\CrudController as BaseCrudController;
 
-class CrudController extends TendooCrudController
+class CrudController extends BaseCrudController
 {
     public function list( $namespace )
     {

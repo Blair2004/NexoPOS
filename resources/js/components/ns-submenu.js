@@ -1,4 +1,6 @@
-window.Vue.component( 'ns-submenu', {
+const { Vue }   =   require( './../bootstrap' );
+
+const nsSubmenu     =   Vue.component( 'ns-submenu', {
     data: () => {
         return {
         }
@@ -15,4 +17,6 @@ window.Vue.component( 'ns-submenu', {
     `,
     mounted() {
     }
-})
+});
+
+module.exports    =   nsSubmenu;

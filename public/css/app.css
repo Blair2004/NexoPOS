@@ -7815,6 +7815,26 @@ video {
   opacity: 1 !important;
 }
 
+.active\:opacity-0:active{
+  opacity: 0 !important;
+}
+
+.active\:opacity-25:active{
+  opacity: 0.25 !important;
+}
+
+.active\:opacity-50:active{
+  opacity: 0.5 !important;
+}
+
+.active\:opacity-75:active{
+  opacity: 0.75 !important;
+}
+
+.active\:opacity-100:active{
+  opacity: 1 !important;
+}
+
 .outline-none{
   outline: 0 !important;
 }
@@ -31120,6 +31140,26 @@ html, body {
     opacity: 1 !important;
   }
 
+  .sm\:active\:opacity-0:active{
+    opacity: 0 !important;
+  }
+
+  .sm\:active\:opacity-25:active{
+    opacity: 0.25 !important;
+  }
+
+  .sm\:active\:opacity-50:active{
+    opacity: 0.5 !important;
+  }
+
+  .sm\:active\:opacity-75:active{
+    opacity: 0.75 !important;
+  }
+
+  .sm\:active\:opacity-100:active{
+    opacity: 1 !important;
+  }
+
   .sm\:outline-none{
     outline: 0 !important;
   }
@@ -48522,6 +48562,26 @@ html, body {
   }
 
   .md\:hover\:opacity-100:hover{
+    opacity: 1 !important;
+  }
+
+  .md\:active\:opacity-0:active{
+    opacity: 0 !important;
+  }
+
+  .md\:active\:opacity-25:active{
+    opacity: 0.25 !important;
+  }
+
+  .md\:active\:opacity-50:active{
+    opacity: 0.5 !important;
+  }
+
+  .md\:active\:opacity-75:active{
+    opacity: 0.75 !important;
+  }
+
+  .md\:active\:opacity-100:active{
     opacity: 1 !important;
   }
 
@@ -65930,6 +65990,26 @@ html, body {
     opacity: 1 !important;
   }
 
+  .lg\:active\:opacity-0:active{
+    opacity: 0 !important;
+  }
+
+  .lg\:active\:opacity-25:active{
+    opacity: 0.25 !important;
+  }
+
+  .lg\:active\:opacity-50:active{
+    opacity: 0.5 !important;
+  }
+
+  .lg\:active\:opacity-75:active{
+    opacity: 0.75 !important;
+  }
+
+  .lg\:active\:opacity-100:active{
+    opacity: 1 !important;
+  }
+
   .lg\:outline-none{
     outline: 0 !important;
   }
@@ -83332,6 +83412,26 @@ html, body {
   }
 
   .xl\:hover\:opacity-100:hover{
+    opacity: 1 !important;
+  }
+
+  .xl\:active\:opacity-0:active{
+    opacity: 0 !important;
+  }
+
+  .xl\:active\:opacity-25:active{
+    opacity: 0.25 !important;
+  }
+
+  .xl\:active\:opacity-50:active{
+    opacity: 0.5 !important;
+  }
+
+  .xl\:active\:opacity-75:active{
+    opacity: 0.75 !important;
+  }
+
+  .xl\:active\:opacity-100:active{
     opacity: 1 !important;
   }
 
