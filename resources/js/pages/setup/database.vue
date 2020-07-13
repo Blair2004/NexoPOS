@@ -35,7 +35,6 @@ export default {
                 label: 'Hostname',
                 description: 'Provide the database hostname',
                 name: 'hostname',
-                value: 'Hello',
                 validation: 'required',
             }, {
                 label: 'Username',

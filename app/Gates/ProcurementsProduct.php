@@ -3,7 +3,7 @@ namespace App\Gates;
 
 use Illuminate\Support\Facades\Auth;
 
-class ProcurementProduct
+class ProcurementsProduct
 {
     public function create()
     {

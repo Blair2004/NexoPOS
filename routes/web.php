@@ -17,14 +17,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get( '/sign-in', 'AuthController@signIn' );
-Route::get( '/sign-up', 'AuthController@signUp' );
-Route::get( '/password-lost', 'AuthController@passwordLost' );
-Route::get( '/new-password', 'AuthController@newPassword' );
-
-Route::prefix( 'do-setup' )->group( function() {
-    Route::get( '', 'SetupController@welcome' );
+Route::middleware([ 'ns.installed' ])->group( function() {
+    Route::get( '/sign-in', 'AuthController@signIn' );
+    Route::get( '/sign-up', 'AuthController@signUp' );
+    Route::get( '/password-lost', 'AuthController@passwordLost' );
+    Route::get( '/new-password', 'AuthController@newPassword' );
+    Route::get( '/dashboard', 'DashboardController@home' );
+    Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
 });
 
-Route::get( '/dashboard', 'DashboardController@home' );
-Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
+Route::middleware([ 'ns.not-installed' ])->group( function() {
+    Route::prefix( '/do-setup/' )->group( function() {
+        Route::get( '', 'SetupController@welcome' )->name( 'setup' );
+    });
+});

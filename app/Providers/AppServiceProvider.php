@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Services\CoreService;
 use App\Services\CrudService;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,8 +15,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        include_once( base_path() . '/app/Services/HelperFunctions.php' );
+        
         $this->app->singleton( CrudService::class, function() {
             return new CrudService;
+        });
+
+        $this->app->singleton( CoreService::class, function() {
+            return new CoreService;
         });
     }
 

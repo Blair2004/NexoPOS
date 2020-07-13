@@ -12,6 +12,7 @@
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
+        "jackiedo/dotenv-editor": "^1.1",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "tormjens/eventy": "^0.6.0"

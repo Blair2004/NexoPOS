@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Listeners;
 
 use App\OrderAfterCreatedEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
