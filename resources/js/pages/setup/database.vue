@@ -15,6 +15,7 @@
 
 <script>
 import FormValidation from './../../libraries/form-validation';
+import { nsHttpClient } from "./../../bootstrap";
 
 export default {
     data: () => ({
@@ -24,9 +25,18 @@ export default {
     methods: {
         validate() {
             if ( this.form.validateForm( this.fields ) ) {
-               return console.log( 'form valid' )
+               this.form.disableFields( this.fields );
+               this.checkDatabase( this.form.getValue( this.fields ) )
+                    .subsribe( result => {
+                        console.log( result );
+                    }, error => {
+                        console.log( error );
+                    })
             }
             console.log( 'not valid' );
+        },
+        checkDatabase( fields ) {
+            return nsHttpClient.post( `/api/database/check`, fields );
         }
     },
     mounted() {

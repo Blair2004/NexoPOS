@@ -14,8 +14,17 @@ export default class FormValidation {
         return fields.map( field => {
             field.type      =   field.type || 'text',
             field.errors    =   field.errors || [];
+            field.disabled  =   field.disabled || false;
             return field;
         })
+    }
+
+    enableFields( fields ) {
+        return fields.map( field => field.disabled = false );
+    }
+
+    disableFields( fields ) {
+        return fields.map( field => field.disabled = true );
     }
 
     getValue( fields ) {

@@ -24,7 +24,7 @@ const nsInput      =   Vue.component( 'ns-input', {
                 {{ leading }}
                 </span>
             </div>
-            <input v-model="field.value" @blur="$emit( 'blur', this )" @change="$emit( 'change', this )" :id="field.name" :type="type || 'text'" :class="leading ? 'pl-8' : 'px-4'" class="form-input bg-transparent block w-full pr-12 sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
+            <input :readonly="field.disabled" v-model="field.value" @blur="$emit( 'blur', this )" @change="$emit( 'change', this )" :id="field.name" :type="type || 'text'" :class="leading ? 'pl-8' : 'px-4'" class="form-input bg-transparent block w-full pr-12 sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
         </div>
         <p v-if="field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">
