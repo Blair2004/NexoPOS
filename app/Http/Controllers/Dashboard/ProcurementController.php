@@ -13,12 +13,13 @@ use App\Services\Validation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Fields\ProcurementFields;
+use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
 use App\Http\Requests\ProcurementRequest;
 use Tendoo\Core\Exceptions\AccessDeniedException;
 
 
-class ProcurementController extends Controller
+class ProcurementController extends DashboardController
 {
     protected $crud;
 

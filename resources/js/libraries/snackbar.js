@@ -1,61 +1,104 @@
-var createSnackbar = (function () {
-    // Any snackbar that is already shown
-    var previous = null;
+import { sample } from "lodash";
+import * as rx from 'rx';
 
-    /*
-    <div class="paper-snackbar">
-    <button class="action">Dismiss</button>
-    This is a longer message that won't fit on one line. It is, inevitably, quite a boring thing. Hopefully it is still useful.
-    </div>
-    */
-
-    return function (message, actionText, action) {
-        if (previous) {
-            previous.dismiss();
+export class SnackBar {
+    // window.snackbarQueue will be used to stack the snackbars
+    constructor() {
+        if ( window.snackbarQueue === undefined ) {
+            window.snackbarQueue    =   [];
+            this.queue              =   window.snackbarQueue;
         }
-        var snackbar = document.createElement("div");
-        snackbar.className = "paper-snackbar";
-        snackbar.dismiss = function () {
-            this.style.opacity = 0;
-        };
-        var text = document.createTextNode(message);
-        snackbar.appendChild(text);
-        if (actionText) {
-            if (!action) {
-                action = snackbar.dismiss.bind(snackbar);
+    }
+
+    show( message, label, options = { duration: 3000, type : 'info' }) {
+        return rx.Observable.create( observer => {
+            const { buttonNode, textNode, snackWrapper, sampleSnack }        =   this.__createSnack({ message, label, type : options.type });
+
+            buttonNode.addEventListener( 'click', ( event ) => {
+                observer.onNext( buttonNode );
+                observer.onCompleted();
+                sampleSnack.remove();
+            });
+
+            this.__startTimer( options.duration, sampleSnack );
+        });
+    }
+
+    error( message, label, options = { duration: 3000, type : 'error' }) {
+        return this.show( message, label, {...options, ...{ type : 'error' } } );
+    }
+
+    success( message, label, options = { duration: 3000, type : 'success' }) {
+        return this.show( message, label, {...options, ...{ type : 'success' } } );
+    }
+
+    /**
+     * 
+     * @param {number} duration 
+     * @param {HTMLDivElement} wrapper 
+     */
+    __startTimer( duration, wrapper ) {
+        let timeout;
+        const __startTimeOut    =   () => {
+            if ( duration > 0 && duration !== false ) {
+                timeout    =   setTimeout( () => {
+                    wrapper.remove();
+                }, duration );
             }
-            var actionButton = document.createElement("button");
-            actionButton.className = "action";
-            actionButton.innerHTML = actionText;
-            actionButton.addEventListener("click", action);
-            snackbar.appendChild(actionButton);
+        };
+
+        wrapper.addEventListener( 'mouseenter', () => {
+            clearTimeout( timeout );
+        });
+
+        wrapper.addEventListener( 'mouseleave', () => {
+            __startTimeOut();
+        });
+
+        __startTimeOut();
+    }
+
+    __createSnack({ message, label, type = 'info' }) {
+        const snackWrapper          =   document.getElementById( 'snack-wrapper' ) || document.createElement( 'div' );
+        const sampleSnack           =   document.createElement( 'div' );
+        const textNode              =   document.createElement( 'p' );
+        const buttonsWrapper        =   document.createElement( 'div' );
+        const buttonNode            =   document.createElement( 'button' );
+        
+        let buttonThemeClass        =   '';
+        let snackThemeClass         =   '';
+
+        switch( type ) {
+            case 'info': 
+                buttonThemeClass    =   'text-white hover:bg-blue-400 bg-blue-500';
+                snackThemeClass     =   'bg-gray-900 text-white';
+            break;
+            case 'error': 
+                buttonThemeClass    =   'text-red-700 hover:bg-white bg-white';
+                snackThemeClass     =   'bg-red-500 text-white';
+            break;
+            case 'success': 
+                buttonThemeClass    =   'text-green-700 hover:bg-white bg-white';
+                snackThemeClass     =   'bg-green-500 text-white';
+            break;
         }
-        setTimeout(
-            function () {
-                if (previous === this) {
-                    previous.dismiss();
-                }
-            }.bind(snackbar),
-            5000
-        );
+        
+        textNode.textContent        =   message;
+        buttonNode.textContent      =   label;
+        buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded-lg font-bold ${buttonThemeClass}` );
 
-        snackbar.addEventListener(
-            "transitionend",
-            function (event, elapsed) {
-                if (event.propertyName === "opacity" && this.style.opacity == 0) {
-                    this.parentElement.removeChild(this);
-                    if (previous === this) {
-                        previous = null;
-                    }
-                }
-            }.bind(snackbar)
-        );
+        buttonsWrapper.appendChild( buttonNode );
 
-        previous = snackbar;
-        document.body.appendChild(snackbar);
-        // In order for the animations to trigger, I have to force the original style to be computed, and then change it.
-        getComputedStyle(snackbar).bottom;
-        snackbar.style.bottom = "0px";
-        snackbar.style.opacity = 1;
-    };
-})();
+        sampleSnack.appendChild( textNode );
+        sampleSnack.appendChild( buttonsWrapper );
+        sampleSnack.setAttribute( 'class', `rounded-lg py-2 px-3 w-3/4 my-2 shadow-lg flex justify-between items-center ${snackThemeClass}` );
+
+        snackWrapper.setAttribute( 'id', 'snack-wrapper' );
+        snackWrapper.setAttribute( 'class', 'absolute bottom-0 w-full flex justify-between items-center py-4 flex-col')
+        snackWrapper.appendChild( sampleSnack );
+
+        document.body.appendChild( snackWrapper );
+
+        return { snackWrapper, sampleSnack, buttonsWrapper, buttonNode, textNode };
+    }
+}

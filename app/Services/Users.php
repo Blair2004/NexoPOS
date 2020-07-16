@@ -1,19 +1,19 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
-use Tendoo\Core\Models\Role;
-use Tendoo\Core\Models\User;
-use Tendoo\Core\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\Permission;
 
-use Tendoo\Core\Services\UserOptions;
-use Tendoo\Core\Services\DateService;
+use App\Services\UserOptions;
+use App\Services\DateService;
 
-use Tendoo\Core\Facades\Hook;
+use App\Facades\Hook;
 
-use Tendoo\Core\Mail\ActivateAccountMail;
+use App\Mail\ActivateAccountMail;
 
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\AccessDeniedException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\AccessDeniedException;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;

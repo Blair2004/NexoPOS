@@ -6,6 +6,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ use App\Services\ProductService;
 use Exception;
 use Tendoo\Core\Exceptions\NotFoundException;
 
-class ProductController extends Controller
+class ProductController extends DashboardController
 {
     /** @var ProductService */
     protected $productService;

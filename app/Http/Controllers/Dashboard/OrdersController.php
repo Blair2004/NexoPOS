@@ -6,13 +6,15 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use App\Services\OrdersService;
 
 // use Tendoo\Core\Services\Page;
 
-class OrdersController extends Controller
+class OrdersController extends DashboardController
 {
     /** @var OrdersService */
     private $ordersService;

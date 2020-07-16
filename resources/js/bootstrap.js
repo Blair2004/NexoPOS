@@ -1,29 +1,24 @@
-const lodash        =   require( 'lodash' );
-const chart         =   require( 'chart.js' );
-const Vue           =   require( 'vue' );
-const axios         =   require( 'axios' );
-const VueRouter     =   require( 'vue-router' ).default;
+import * as Lodash from "lodash";
+import * as Vue from "vue";
+import * as Axios from "axios";
+import * as ChartJS from "chart.js";
+import VueRouter from "vue-router";
+import { EventEmitter, HttpClient, SnackBar } from "./libraries/libraries";
 
 Vue.use( VueRouter );
 
-window._                =   lodash;
-window.charjs           =   chart;
+window._                =   Lodash;
+window.CharJS           =   ChartJS;
 window.Vue              =   Vue;
-window.axios            =   axios;
+window.Axios            =   Axios;
 window.VueRouter        =   VueRouter;
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-const { EventEmitter, HttpClient }  =   require( './libraries/libraries' );
+window.SnackBar         =   SnackBar;
+window.Axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
-nsHttpClient.defineClient( axios );
+const nsSnackBar        =   new SnackBar;
 
-module.exports._                =   _;
-module.exports.Vue              =   Vue;
-module.exports.VueRouter        =   VueRouter;
-module.exports.axios            =   axios;
-module.exports.chartjs          =   chart;
-module.exports.nsEvent          =   nsEvent;
-module.exports.EventEmitter     =   EventEmitter;
-module.exports.nsHttpClient     =   nsHttpClient;
+nsHttpClient.defineClient( Axios );
+
+export { Vue, VueRouter, Axios, ChartJS, EventEmitter, SnackBar, nsHttpClient, nsSnackBar, nsEvent };

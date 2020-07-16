@@ -1,16 +1,16 @@
 <?php
-Route::get( 'units/{id?}', 'UnitsController@get' );
-Route::get( 'units/{id}/group', 'UnitsController@getUnitParentGroup' );
-Route::get( 'units-groups/{id?}', 'UnitsController@getGroups' );
+Route::get( 'units/{id?}', 'Dashboard\UnitsController@get' );
+Route::get( 'units/{id}/group', 'Dashboard\UnitsController@getUnitParentGroup' );
+Route::get( 'units-groups/{id?}', 'Dashboard\UnitsController@getGroups' );
 
-Route::post( 'units', 'UnitsController@postUnit' );
-Route::post( 'units-groups', 'UnitsController@postGroup' );
+Route::post( 'units', 'Dashboard\UnitsController@postUnit' );
+Route::post( 'units-groups', 'Dashboard\UnitsController@postGroup' );
 
-Route::delete( 'units/{id}', 'UnitsController@deleteUnit' );
-Route::delete( 'units-groups/{id}', 'UnitsController@deleteUnitGroup' );
+Route::delete( 'units/{id}', 'Dashboard\UnitsController@deleteUnit' );
+Route::delete( 'units-groups/{id}', 'Dashboard\UnitsController@deleteUnitGroup' );
 
 
-Route::put( 'units-groups/{id}', 'UnitsController@putGroup' );
-Route::put( 'units/{id}', 'UnitsController@putUnit' );
+Route::put( 'units-groups/{id}', 'Dashboard\UnitsController@putGroup' );
+Route::put( 'units/{id}', 'Dashboard\UnitsController@putUnit' );
 
-Route::get( 'units-groups/{id}/units', 'UnitsController@getGroupUnits' );
+Route::get( 'units-groups/{id}/units', 'Dashboard\UnitsController@getGroupUnits' );

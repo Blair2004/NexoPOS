@@ -1,17 +1,17 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
-use Tendoo\Core\Services\Helper;
+use App\Services\Helper;
 use XmlParser;
 use PhpParser\Error;
 use PhpParser\NodeDumper;
 use PhpParser\ParserFactory;
-use Tendoo\Core\Exceptions\CoreException;
+use App\Exceptions\CoreException;
 
 class Modules 
 {
@@ -25,7 +25,7 @@ class Modules
             /**
              * We can only enable a module if the database is installed.
              */
-            $this->options          =   app()->make( 'Tendoo\Core\Services\Options' );
+            $this->options          =   app()->make( 'App\Services\Options' );
         }
 
         $this->xmlParser    =   app()->make( 'XmlParser' );

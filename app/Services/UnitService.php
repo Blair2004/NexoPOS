@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\UnitGroup;
 use App\Services\CurrencyService;
-use Tendoo\Core\Exceptions\NotFoundException;
+use App\Exceptions\NotFoundException;
 
 class UnitService 
 {

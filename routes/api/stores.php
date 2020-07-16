@@ -1,5 +1,5 @@
 <?php
-Route::get( 'stores/{id?}', 'StoresController@list' );
-Route::post( 'stores', 'StoresController@create' );
-Route::put( 'stores/{id}', 'StoresController@edit' );
-Route::delete( 'stores/{id}', 'StoresController@delete' );
+Route::get( 'stores/{id?}', 'Dashboard\StoresController@list' );
+Route::post( 'stores', 'Dashboard\StoresController@create' );
+Route::put( 'stores/{id}', 'Dashboard\StoresController@edit' );
+Route::delete( 'stores/{id}', 'Dashboard\StoresController@delete' );

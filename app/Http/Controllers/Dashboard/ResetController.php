@@ -1,10 +1,11 @@
 <?php
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\DB;
 
 
-class ResetController extends Controller
+class ResetController extends DashboardController
 {
     public function truncateAllTables()
     {

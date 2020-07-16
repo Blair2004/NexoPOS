@@ -2,11 +2,11 @@
 namespace App\Services;
 
 use App\Models\Order;
-use Tendoo\Core\Services\Options;
+use App\Services\Options;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Tendoo\Core\Services\DateService;
+use App\Services\DateService;
 use App\Models\OrderAddress;
 use App\Models\OrderPayment;
 use App\Models\OrderProduct;
@@ -16,9 +16,9 @@ use App\Services\MapperService;
 use App\Services\ProductService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
-use Tendoo\Core\Exceptions\NotFoundException;
+use App\Exceptions\NotFoundException;
 use App\Models\ProductUnitQuantity;
-use Tendoo\Core\Exceptions\NotAllowedException;
+use App\Exceptions\NotAllowedException;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 

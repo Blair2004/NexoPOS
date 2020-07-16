@@ -15,13 +15,12 @@ use Modules\NexoPOS\Fields\UnitsGroupsFields;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware([ 'tendoo.cors', 'tendoo.auth' ])->group( function() {
-    Route::prefix( 'api/nexopos/v4' )->group( function() {
+Route::prefix( 'nexopos/v4' )->group( function() {
+    Route::middleware([ 'tendoo.cors', 'tendoo.auth' ])->group( function() {
         foreach([ '', '/store/{id}/' ] as $prefix ) {
             Route::prefix( $prefix )->group( function() {
                 include_once( dirname( __FILE__ ) . '/api/categories.php' );    
@@ -41,6 +40,12 @@ Route::middleware([ 'tendoo.cors', 'tendoo.auth' ])->group( function() {
             });
         }
         include_once( dirname( __FILE__ ) . '/api/stores.php' );
+    });
+
+    Route::prefix( 'setup' )->group( function() {
+        Route::post( 'database', 'SetupController@checkDatabase' );
+        Route::get( 'database', 'SetupController@checkDbConfigDefined' );
+        Route::post( 'configuration', 'SetupController@saveConfiguration' );
     });
 });
 

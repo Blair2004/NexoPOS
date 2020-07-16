@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ExpenseCategory;
-use Tendoo\Core\Exceptions\NotFoundException;
+use App\Exceptions\NotFoundException;
 
 class ExpenseService 
 {

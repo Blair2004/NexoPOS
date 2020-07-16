@@ -6,11 +6,13 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 
 // use Tendoo\Core\Services\Page;
 
-class ExpensesCategoriesController extends Controller
+class ExpensesCategoriesController extends DashboardController
 {
     /**
      * Index Controller Page
@@ -19,7 +21,6 @@ class ExpensesCategoriesController extends Controller
     **/
     public function index()
     {
-        Page::setTitle( __( 'Unammed Page' ) );
         return View::make( 'NexoPOS::index' );
     }
 }

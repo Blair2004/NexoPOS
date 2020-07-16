@@ -24,8 +24,8 @@ class CurrencyService
 
         extract( $config );
 
-        $this->decimal_precision    =   $decimal_precision ?: self::$_decimal_precision;
-        $this->currency             =   $currency ?: self::$_currency;
+        $this->decimal_precision    =   $decimal_precision ?? self::$_decimal_precision;
+        $this->currency             =   $currency ?? self::$_currency;
     }
 
     private static function __defineAmount( $amount )

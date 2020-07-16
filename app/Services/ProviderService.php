@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Provider;
-use Tendoo\Core\Exceptions\NotFoundException;
+use App\Exceptions\NotFoundException;
 
 class ProviderService
 {

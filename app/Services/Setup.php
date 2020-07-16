@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
-use App\Mail\SetupComplete;
+use App\Mails\SetupComplete;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
@@ -27,13 +27,13 @@ class Setup
             'driver'         =>      'mysql',
             'host'           =>      $request->input( 'hostname' ),
             'port'           =>      env('DB_PORT', '3306'),
-            'database'       =>      $request->input( 'db_name' ),
+            'database'       =>      $request->input( 'database_name' ),
             'username'       =>      $request->input( 'username' ),
             'password'       =>      $request->input( 'password' ),
             'unix_socket'    =>      env('DB_SOCKET', ''),
             'charset'        =>      'utf8',
             'collation'      =>      'utf8_unicode_ci',
-            'prefix'         =>      $request->input( 'db_prefix' ),
+            'prefix'         =>      $request->input( 'database_prefix' ),
             'strict'         =>      true,
             'engine'         =>      null,
         ]]);
@@ -59,7 +59,7 @@ class Setup
                 break;
                 case 1049   :   
                     $message =  [
-                         'name'             => 'db_name',
+                         'name'             => 'database_name',
                          'message'          =>  __( 'Unable to select the database.' ),
                          'status'           =>  'failed'
                     ];
@@ -80,15 +80,15 @@ class Setup
                 break;
             }
 
-            return $message;
+            return response()->json( $message, 403 );
         }
 
         DotEnvEditor::setKey( 'MAIL_MAILER', 'log' );
         DotEnvEditor::setKey( 'DB_HOST', $request->input( 'hostname' ) );
-        DotEnvEditor::setKey( 'DB_DATABASE', $request->input( 'db_name' ) );
+        DotEnvEditor::setKey( 'DB_DATABASE', $request->input( 'database_name' ) );
         DotEnvEditor::setKey( 'DB_USERNAME', $request->input( 'username' ) );
         DotEnvEditor::setKey( 'DB_PASSWORD', $request->input( 'password' ) );
-        DotEnvEditor::setKey( 'DB_PREFIX', $request->input( 'db_prefix' ) );
+        DotEnvEditor::setKey( 'DB_PREFIX', $request->input( 'database_prefix' ) );
         DotEnvEditor::setKey( 'DB_PORT', 3306 );
         DotEnvEditor::setKey( 'DB_CONNECTION', 'mysql' );
         DotEnvEditor::setKey( 'APP_URL', url()->to( '/' ) );
@@ -116,13 +116,13 @@ class Setup
          * Let's create the tables. The DB is supposed to be set
          */
         Artisan::call( 'config:cache' );
-        Artisan::call( 'migrate:fresh' );
+        Artisan::call( 'migrate:fresh --path=/database/migrations/v1_0' );
         
         /**
          * We assume so far the application is installed
          * then we can launch option service
          */
-        $this->options  =   app()->make( 'App\Services\Options' );
+        $this->options  =   app()->make( Options::class );
         
         /**
          * Add permissions
@@ -135,16 +135,14 @@ class Setup
         $this->createRoles();
         
         $this->options->set( 'app_name', $request->input( 'app_name' ) );
-        $this->options->set( 'allow_registration', 'true' );
-        $this->options->set( 'db_version', config( 'tendoo.db_version' ) );
-        $this->options->set( 'register_as', 1 ); // register as user;
-        $this->options->set( 'assets_version', config( 'tendoo.assets_version' ) );
+        $this->options->set( 'allow_registration', false );
+        $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
         
         $user               =   new User;
         $user->id           =   rand(1,99);
-        $user->username     =   $request->input( 'username' );
+        $user->username     =   $request->input( 'admin_username' );
         $user->password     =   bcrypt( $request->input( 'password' ) );
-        $user->email        =   $request->input( 'email' );
+        $user->email        =   $request->input( 'admin_email' );
         $user->active       =   true; // first user active by default;
         $user->save();
         
@@ -157,9 +155,9 @@ class Setup
          * Send Welcome email 
          * We're polit right here :)
          */
-        Mail::to( $user->email )->queue( 
-            new SetupComplete()
-        );
+        // Mail::to( $user->email )->queue( 
+        //     new MailSetupComplete()
+        // );
 
         /**
          * Login auth since we would like to create some basic options
@@ -169,7 +167,7 @@ class Setup
         /**
          * define option for the admin
          */
-        $this->userOptions  =   app()->make( 'App\Services\UserOptions' );
+        $this->userOptions  =   app()->make( UserOptions::class );
         $this->userOptions->set( 'theme_class', 'dark-theme' ); 
 
         Auth::logout();
@@ -247,6 +245,60 @@ class Setup
         $this->permission->save();
     }
 
+    public function testDBConnexion()
+    {
+        try {
+            $DB     =   DB::connection( 'mysql' )->getPdo();
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'Database connexion was successful' )
+            ];
+
+        } catch (\Exception $e) {
+
+            switch( $e->getCode() ) {
+                case 2002   :   
+                    $message =  [
+                        'name'              =>   'hostname',
+                        'message'           =>  __( 'Unable to reach the host' ),
+                        'status'            =>  'failed'
+                    ]; 
+                break;
+                case 1045   :   
+                    $message =  [
+                        'name'              =>   'username',
+                        'message'           =>  __( 'Unable to connect to the database using the credentials provided.' ),
+                        'status'            =>  'failed'
+                    ];
+                break;
+                case 1049   :   
+                    $message =  [
+                         'name'             => 'database_name',
+                         'message'          =>  __( 'Unable to select the database.' ),
+                         'status'           =>  'failed'
+                    ];
+                break;
+                case 1044   :   
+                    $message =  [
+                        'name'        => 'username',
+                        'message'      =>  __( 'Access denied for this user.' ),
+                        'status'       =>  'failed'
+                    ];
+                break;
+                default     :   
+                    $message =  [
+                         'name'        => 'hostname',
+                         'message'      =>  sprintf( __( 'Unexpected error occured. :%s' ), $e->getCode() ),
+                         'status'       =>  'failed'
+                    ]; 
+                break;
+            }
+
+            return response()->json( $message, 403 );
+        }
+    }
+
     /**
      * Create Roles
      * @param void
@@ -278,7 +330,6 @@ class Setup
         Role::AddPermissions( 'admin', [ 
             'crud.users', 
             'crud.profile', 
-            'crud.applications',
             'manage.options', 
             'manage.modules',
         ]);

@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ApplicationConfigRequest;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use Tendoo\Core\Exceptions\CoreException;
 
 use App\Models\ProductCategory;
+use App\Services\Setup;
 
 class SetupController extends Controller
 {
@@ -23,6 +25,24 @@ class SetupController extends Controller
         return view( 'pages.setup.welcome', [
             'title'     =>      __( 'NexoPOS 4 &mdash; Setup Wizard' )
         ]);
+    }
+
+    public function checkDatabase( Request $request )
+    {
+        $setup      =   new Setup;
+        return $setup->saveDatabaseSettings( $request );
+    }
+
+    public function checkDbConfigDefined( Request $request )
+    {
+        $setup      =   new Setup;
+        return $setup->testDBConnexion();
+    }
+
+    public function saveConfiguration( ApplicationConfigRequest $request )
+    {
+        $setup      =   new Setup;
+        return $setup->runMigration( $request );
     }
 }
 

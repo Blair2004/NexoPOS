@@ -1,6 +1,6 @@
-const rx    =   require( 'rx' );
+import * as rx from 'rx';
 
-class EventEmitter {
+export class EventEmitter {
     constructor() {
         this._subject    =   new rx.Subject;        
     }
@@ -13,5 +13,3 @@ class EventEmitter {
         this._subject.onNext({ identifier, value });
     }
 }
-
-module.exports  =   EventEmitter;

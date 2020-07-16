@@ -12,6 +12,15 @@ const nsInput      =   Vue.component( 'ns-input', {
                 return true;
             }
             return false;
+        },
+        disabledClass() {
+            return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-transparent';
+        },
+        inputClass() {
+            return this.disabledClass + ' ' + this.leadClass
+        },
+        leadClass() {
+            return this.leading ? 'pl-8' : 'px-4';
         }
     },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
@@ -24,7 +33,13 @@ const nsInput      =   Vue.component( 'ns-input', {
                 {{ leading }}
                 </span>
             </div>
-            <input :readonly="field.disabled" v-model="field.value" @blur="$emit( 'blur', this )" @change="$emit( 'change', this )" :id="field.name" :type="type || 'text'" :class="leading ? 'pl-8' : 'px-4'" class="form-input bg-transparent block w-full pr-12 sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
+            <input 
+                :disabled="field.disabled" 
+                v-model="field.value" 
+                @blur="$emit( 'blur', this )" 
+                @change="$emit( 'change', this )" 
+                :id="field.name" :type="type || field.type || 'text'" 
+                :class="inputClass" class="form-input block w-full pr-12 sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
         </div>
         <p v-if="field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">

@@ -6,11 +6,13 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 
 // use Tendoo\Core\Services\Page;
 
-class RewardsSystemController extends Controller
+class RewardsSystemController extends DashboardController
 {
     /**
      * Index Controller Page

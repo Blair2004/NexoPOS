@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-use Tendoo\Core\Models\Role;
-use Tendoo\Core\Models\Permission;
-use Tendoo\Core\Models\User;
-use Tendoo\Core\Services\Options;
+use App\Models\Role;
+use App\Models\Permission;
+use App\Models\User;
+use App\Services\Options;
 
 class CreateRoles extends Migration
 {
@@ -73,6 +73,5 @@ class CreateRoles extends Migration
         if ( $role instanceof Role ) {
             $role->delete();
         }
-
     }
 }

@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ use App\Models\CustomerGroup;
 use App\Models\Customer;
 use Exception;
 
-class CustomersGroupsController extends Controller
+class CustomersGroupsController extends DashboardController
 {
     /**
      * get a list or a single customer
@@ -45,9 +46,7 @@ class CustomersGroupsController extends Controller
         $group   =   CustomerGroup::find( $id );
         if ( $group instanceof CustomerGroup ) {
             if ( $group->customers->count() > 0 ) {
-                throw new NotAllowedException([
-                    'message'   =>  __( 'Unable to delete a group to which customers are still assigned.' )
-                ]);
+                throw new Exception( __( 'Unable to delete a group to which customers are still assigned.' ) );
             }
 
             /**
@@ -62,9 +61,7 @@ class CustomersGroupsController extends Controller
             ];
         }
 
-        throw new NotFoundException([
-            'message'   =>  __( 'Unable to find the requested group.' )
-        ]);
+        throw new Exception( __( 'Unable to find the requested group.' ) );
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
-use Tendoo\Core\Models\Option;
-use Tendoo\Core\Services\OptionWrapper;
+use App\Models\Option;
+use App\Services\OptionWrapper;
 use Illuminate\Support\Facades\Log;
 
 class Options 
@@ -44,7 +44,10 @@ class Options
     public function build()
     {
         $this->options          =   [];
-        $this->rawOptions       =   $this->option()->get();
+
+        if ( Helper::installed() ) {
+            $this->rawOptions       =   $this->option()->get();
+        }
     }
 
     /**

@@ -15,7 +15,8 @@
 
 <script>
 import FormValidation from './../../libraries/form-validation';
-import { nsHttpClient } from "./../../bootstrap";
+import { nsHttpClient, nsSnackBar } from "./../../bootstrap";
+import { nsRouter } from './../../setup';
 
 export default {
     data: () => ({
@@ -25,18 +26,24 @@ export default {
     methods: {
         validate() {
             if ( this.form.validateForm( this.fields ) ) {
-               this.form.disableFields( this.fields );
-               this.checkDatabase( this.form.getValue( this.fields ) )
-                    .subsribe( result => {
-                        console.log( result );
-                    }, error => {
-                        console.log( error );
-                    })
+                this.form.disableFields( this.fields );
+                const operation  =   this.checkDatabase( this.form.getValue( this.fields ) );
+                operation.subscribe( 
+                    result => {
+                        this.form.enableFields( this.fields );
+                        nsRouter.push( '/configuration' );
+                        nsSnackBar.success( result.data.message, 'OKAY', { duration: 5000 }).subscribe();
+                    }, 
+                    error => {
+                        this.form.enableFields( this.fields );
+                        nsSnackBar.error( error.response.data.message, 'OKAY' ).subscribe();
+                    }
+                );
             }
             console.log( 'not valid' );
         },
         checkDatabase( fields ) {
-            return nsHttpClient.post( `/api/database/check`, fields );
+            return nsHttpClient.post( `/api/nexopos/v4/setup/database`, fields );
         }
     },
     mounted() {
@@ -45,21 +52,31 @@ export default {
                 label: 'Hostname',
                 description: 'Provide the database hostname',
                 name: 'hostname',
+                value : 'localhost',
                 validation: 'required',
             }, {
                 label: 'Username',
                 description: 'Username required to connect to the database.',
                 name: 'username',
+                value : 'root',
                 validation: 'required',
             }, {
                 label: 'Password',
                 description: 'The username password required to connect.',
                 name: 'password',
+                value : 'Afromaster_2004',
                 validation: 'required',
             }, {
                 label: 'Database Name',
                 description: 'Provide the database name.',
                 name: 'database_name',
+                value : 'nexopos_v4',
+                validation: 'required',
+            }, {
+                label: 'Database Name',
+                description: 'Provide the database name.',
+                name: 'database_prefix',
+                value : 'ns_',
                 validation: 'required',
             }
         ]);

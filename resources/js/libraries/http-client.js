@@ -1,6 +1,6 @@
-const rx            =   require( 'rx' );
+import * as rx from "rx";
 
-class HttpClient {
+export class HttpClient {
     constructor() {
         this._subject    =   new rx.Subject; 
     }
@@ -47,8 +47,3 @@ class HttpClient {
         this._subject.onNext({ identifier, value });
     }
 }
-
-const client    =   new HttpClient;
-client.post( 'https://google.cm', { foo: 'bar' });
-
-module.exports  =   HttpClient;

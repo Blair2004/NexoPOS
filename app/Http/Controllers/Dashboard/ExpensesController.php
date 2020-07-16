@@ -6,11 +6,13 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use App\Services\ExpenseService;
 
 
-class ExpensesController extends Controller
+class ExpensesController extends DashboardController
 {
     public function __construct( ExpenseService $expense )
     {

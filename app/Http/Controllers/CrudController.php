@@ -13,7 +13,6 @@ class CrudController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
         $this->middleware( function( $request, $next ) {
             return $next( $request );
         });

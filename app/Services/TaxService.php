@@ -4,8 +4,8 @@ namespace App\Services;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\NotAllowedException;
 
 use App\Models\Product;
 use App\Models\ProductTax;

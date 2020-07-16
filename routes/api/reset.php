@@ -1,2 +1,2 @@
 <?php
-Route::get( 'reset', 'ResetController@truncateAllTables' );
+Route::get( 'reset', 'Dashboard\ResetController@truncateAllTables' );

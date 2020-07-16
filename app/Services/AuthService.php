@@ -1,34 +1,34 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Tendoo\Core\Models\Role;
-use Tendoo\Core\Models\User;
-use Tendoo\Core\Facades\Curl;
-use Tendoo\Core\Facades\Hook;
-use Tendoo\Core\Models\Oauth;
-use Tendoo\Core\Services\Users;
-use Tendoo\Core\Services\Options;
+use App\Models\Role;
+use App\Models\User;
+use App\Facades\Curl;
+use App\Facades\Hook;
+use App\Models\Oauth;
+use App\Services\Users;
+use App\Services\Options;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Tendoo\Core\Mail\PasswordReset;
-use Tendoo\Core\Models\Application;
+use App\Mail\PasswordReset;
+use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
-use Tendoo\Core\Mail\PasswordUpdated;
-use Tendoo\Core\Services\DateService;
-use Tendoo\Core\Services\UserOptions;
+use App\Mail\PasswordUpdated;
+use App\Services\DateService;
+use App\Services\UserOptions;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Schema;
-use Tendoo\Core\Exceptions\CoreException;
-use Tendoo\Core\Mail\UserRegistrationMail;
-use Tendoo\Core\Exceptions\AccessDeniedException;
-use Tendoo\Core\Exceptions\SessionExpiredException;
-use Tendoo\Core\Exceptions\WrongCredentialException;
+use App\Exceptions\CoreException;
+use App\Mail\UserRegistrationMail;
+use App\Exceptions\AccessDeniedException;
+use App\Exceptions\SessionExpiredException;
+use App\Exceptions\WrongCredentialException;
 
 class AuthService 
 {

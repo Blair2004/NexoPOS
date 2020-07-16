@@ -1,10 +1,10 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
 use Carbon\Carbon;
-use Tendoo\Core\Services\DateService;
-use Tendoo\Core\Models\Media;
-use Tendoo\Core\Exceptions\NotFoundException;
+use App\Services\DateService;
+use App\Models\Media;
+use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

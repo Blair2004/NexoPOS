@@ -31,3 +31,7 @@ Route::middleware([ 'ns.not-installed' ])->group( function() {
         Route::get( '', 'SetupController@welcome' )->name( 'setup' );
     });
 });
+
+Route::get( '/routes', function() {
+    return ( array ) app( 'router' )->getRoutes();
+});

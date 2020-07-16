@@ -5,8 +5,8 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\NotAllowedException;
 
 class CustomerService
 {

@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\View;
 use App\Services\Validation;
 use Illuminate\Support\Facades\Validator;
 use App\Fields\ProviderFields;
+use App\Http\Controllers\DashboardController;
 use App\Services\ProviderService;
 use Illuminate\Validation\ValidationException;
 
 
-class ProviderController extends Controller
+class ProviderController extends DashboardController
 {
     public function __construct( 
         ProviderService $providerService,

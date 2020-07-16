@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,7 @@ use App\Http\Requests\UnitRequest;
 use App\Services\UnitService;
 
 
-class UnitsController extends Controller
+class UnitsController extends DashboardController
 {
     private $unitService;
 

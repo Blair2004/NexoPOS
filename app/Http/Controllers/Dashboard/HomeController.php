@@ -6,12 +6,14 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
+
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Services\ExpenseService;
 
 
-class HomeController extends Controller
+class HomeController extends DashboardController
 {
     public function index()
     {

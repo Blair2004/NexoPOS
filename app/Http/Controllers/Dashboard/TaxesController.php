@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ use Tendoo\Core\Exceptions\NotAllowedException;
 use App\Models\Tax;
 use App\Services\TaxService;
 
-class TaxesController extends Controller
+class TaxesController extends DashboardController
 {
     private $taxService;
 

@@ -1,7 +1,7 @@
 <?php
-namespace Tendoo\Core\Services;
+namespace App\Services;
 
-use Tendoo\Core\Models\BannedIP;
+use App\Models\BannedIP;
 
 class IPBanner 
 {

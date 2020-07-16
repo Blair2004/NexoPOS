@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -15,18 +16,16 @@ use Illuminate\Http\Request;
 use Tendoo\Core\Exceptions\CoreException;
 
 use App\Models\ProductCategory;
+use Exception;
 
-class CategoryController extends Controller
+class CategoryController extends DashboardController
 {
     public function get( $id = null )
     {
         if ( ! empty( $id ) ) {
             $category   =   ProductCategory::find( $id );
             if( ! $category instanceof ProductCategory ) {
-                throw new CoreException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the category using the provided identifier' )
-                ]);
+                throw new Exception( __( 'Unable to find the category using the provided identifier' ) );
             }
             return $category;
         }

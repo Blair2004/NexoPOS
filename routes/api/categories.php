@@ -1,8 +1,8 @@
 <?php
-Route::get( 'categories/{id?}', 'CategoryController@get' )->where([ 'id' => '[0-9]+' ]);
-Route::get( 'categories/{id?}/products', 'CategoryController@getCategoriesProducts' )->where([ 'id' => '[0-9]+' ]);
-Route::get( 'categories/{id?}/variations', 'CategoryController@getCategoriesVariations' )->where([ 'id' => '[0-9]+' ]);
-Route::get( 'categories/schema', 'CategoryController@schema' );
-Route::post( 'categories', 'CategoryController@post' );
-Route::put( 'categories/{id}', 'CategoryController@put' );
-Route::delete( 'categories/{id}', 'CategoryController@delete' );
+Route::get( 'categories/{id?}', 'Dashboard\CategoryController@get' )->where([ 'id' => '[0-9]+' ]);
+Route::get( 'categories/{id?}/products', 'Dashboard\CategoryController@getCategoriesProducts' )->where([ 'id' => '[0-9]+' ]);
+Route::get( 'categories/{id?}/variations', 'Dashboard\CategoryController@getCategoriesVariations' )->where([ 'id' => '[0-9]+' ]);
+Route::get( 'categories/schema', 'Dashboard\CategoryController@schema' );
+Route::post( 'categories', 'Dashboard\CategoryController@post' );
+Route::put( 'categories/{id}', 'Dashboard\CategoryController@put' );
+Route::delete( 'categories/{id}', 'Dashboard\CategoryController@delete' );

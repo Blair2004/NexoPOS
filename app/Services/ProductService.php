@@ -16,8 +16,8 @@ use App\Services\TaxService;
 use App\Services\UnitService;
 use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\NotAllowedException;
 
 class ProductService
 {

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
-use Tendoo\Core\Facades\Hook;
+use App\Facades\Hook;
 
 class CrudService 
 {
