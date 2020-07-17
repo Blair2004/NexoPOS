@@ -16,6 +16,9 @@ The following installation steps require additionnal skills on using CLI (Comman
 
 As NexoPOS doesn't have a frontend already, you'll end on the default Laravel page. Access `/do-setup/` to launch the installer.
 
+## Contribution Guidelines
+Do you plan to contribute ? That's awesome. We're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If youjust have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
+
 ## Menu API
 The menu API is exposed by the MenuService. This class registers and displays menus on the dashboard.
 Every menu should have as a key prefixed with a unique identifier. Similar keys are just merged. This could
