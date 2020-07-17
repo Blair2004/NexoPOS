@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Tendoo\Core\Exceptions\CoreException;
 
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -52,10 +53,11 @@ class AuthController extends Controller
             return redirect( route( 'dashboard.index' ) );
         }
 
-        return redirect( route( 'login' ) )->withErrors([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Wrong username or password.' )
-        ]);
+        $validator      =   Validator::make( $request->all(), []);
+        $validator->errors()->add( 'username', __( 'Unable to find record having that username.' ) );
+        $validator->errors()->add( 'password', __( 'Unable to find record having that password.' ) );
+
+        return redirect( route( 'login' ) )->withErrors( $validator );
     }
 }
 

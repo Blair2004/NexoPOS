@@ -53,14 +53,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                     <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                 </th>
                 <th v-for="column of columns" class="text-left px-2 border-gray-200 py-2">{{ column.label }}</th>
-                <th class="text-left px-2 border-gray-200 py-2">Name</th>
-                <th class="text-left px-2 border-gray-200 py-2">Price</th>
-                <th class="text-left px-2 border-gray-200 py-2">Quantity</th>
                 <th class="text-left px-2 border-gray-200 py-2 w-16"></th>
             </tr>
         </thead>
         <tbody>
-            <ns-table-row v-for="row of rows" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
+            <ns-table-row v-for="row of rows" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
         </tbody>
     </table>
     `,

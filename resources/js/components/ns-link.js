@@ -6,10 +6,11 @@ const nsButton      =   Vue.component( 'ns-link', {
             _save: 0
         }
     },
-    props: [ 'type', 'to' ],
+    props: [ 'type', 'to', 'href' ],
     template: `
     <div class="flex">
-        <router-link :to="to" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
+        <router-link v-if="to" :to="to" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
+        <a v-if="href" :href="href" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
     </div>
     `,
     mounted() {

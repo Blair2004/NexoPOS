@@ -36,7 +36,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
                 include_once( dirname( __FILE__ ) . '/api/transfer.php' );
                 include_once( dirname( __FILE__ ) . '/api/taxes.php' );
                 include_once( dirname( __FILE__ ) . '/api/units.php' );
-                include_once( dirname( __FILE__ ) . '/api/crud/procurements.php' );
+                include_once( dirname( __FILE__ ) . '/api/crud.php' );
             });
         }
         include_once( dirname( __FILE__ ) . '/api/stores.php' );

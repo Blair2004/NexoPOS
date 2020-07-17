@@ -203,12 +203,11 @@ class CrudGeneratorCommand extends Command
      */
     public function generateCrud()
     {
-        $this->crudDetails[ 'module' ]     =   $this->module;
-        Storage::disk( 'cb-root' )->put( 
-            base_path() . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
+        Storage::disk( 'ns' )->put( 
+            'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
             view( 'generate.crud', $this->crudDetails )
         );
 
-        return $this->info( sprintf( __( 'The CRUD resource has been published for %s' ), $this->module[ 'name' ] ) );
+        return $this->info( __( 'The CRUD resource has been published' ) );
     }
 }

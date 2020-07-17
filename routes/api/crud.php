@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::get( 'crud/{namespace}', 'CrudController@crudList' );
 Route::get( 'crud/{namespace}/columns', 'CrudController@getColumns' );
 Route::get( 'crud/{namespace}/fields', 'CrudController@fields' );

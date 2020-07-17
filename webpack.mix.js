@@ -16,6 +16,7 @@ mix.disableNotifications();
 mix.sourceMaps();
 mix
     .js('resources/js/app.js', 'public/js')
+    .js('resources/js/auth.js', 'public/js')
     .js('resources/js/setup.js', 'public/js')
     .extract([ 'vue', 'lodash', 'chart.js', 'axios', 'moment' ])
     .sass('resources/sass/app.scss', 'public/css')
