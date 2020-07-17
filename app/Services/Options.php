@@ -23,6 +23,7 @@ class Options
      */
     public function __construct()
     {
+        
         $this->build();
     }
 
@@ -67,7 +68,7 @@ class Options
          * it will save the new value and update
          * the option object.
          */
-        $this->rawOptions->map( function( $option, $index ) use ( $value, $key, $expiration, &$storedOption ) {
+        collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration, &$storedOption ) {
             if ( $key === $option->key ) {
                 $this->hasFound         =   true;
 
@@ -166,7 +167,7 @@ class Options
 
         $this->value    =   $default !== null ? $default : null;
 
-        $this->rawOptions->map( function( $option ) use ( $key, $default ) {
+        collect( $this->rawOptions )->map( function( $option ) use ( $key, $default ) {
             if ( $option->key === $key ) {
                 if ( 
                     ! empty( $option->value ) &&
@@ -192,7 +193,7 @@ class Options
     public function delete( $key ) 
     {
         $this->removableIndex           =   null;
-        $this->rawOptions->map( function( $option, $index ) use ( $key ) {
+        collect( $this->rawOptions )->map( function( $option, $index ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
                 $this->removableIndex     =   $index;
@@ -200,7 +201,7 @@ class Options
         });  
 
         if ( ! empty( $this->removableIndex ) ) {
-            $this->rawOptions->offsetUnset( $this->removableIndex );
+            collect( $this->rawOptions )->offsetUnset( $this->removableIndex );
         }
     }
 }

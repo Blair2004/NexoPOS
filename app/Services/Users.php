@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Exception;
 
 class Users
 {
@@ -131,10 +132,7 @@ class Users
         $date               =   app()->make( DateService::class );
 
         if ( ! $user instanceof User ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'The activation process has failed.' )
-            ]);
+            throw new Exception( __( 'The activation process has failed.' ) );
         }
 
         $userOptions        =   new UserOptions( $user->id );
@@ -142,13 +140,13 @@ class Users
         $expiration         =   $userOptions->get( 'activation-expiration' );
 
         if ( $activationCode !== $code ) {
-            throw new AccessDeniedException(
+            throw new Exception(
                 __( 'Unable to activate the account. The activation token is wrong.' )
             );
         }
 
         if ( $date->greaterThan( Carbon::parse( $expiration ) ) ) {
-            throw new AccessDeniedException(
+            throw new Exception(
                 __( 'Unable to activate the account. The activation token has expired.' )
             );
         }

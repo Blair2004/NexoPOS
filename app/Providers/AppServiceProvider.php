@@ -2,11 +2,18 @@
 
 namespace App\Providers;
 
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use App\Services\AuthService;
 use App\Services\CoreService;
 use App\Services\CrudService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
+use App\Services\DateService;
 use App\Services\ExpenseService;
+use App\Services\MediaService;
+use App\Services\Options;
 use App\Services\OrdersService;
 use App\Services\ProcurementService;
 use App\Services\ProductCategoryService;
@@ -14,7 +21,10 @@ use App\Services\ProductService;
 use App\Services\ProviderService;
 use App\Services\TaxService;
 use App\Services\UnitService;
+use App\Services\UserOptions;
+use App\Services\Users;
 use App\Services\Validation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +37,44 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         include_once( base_path() . '/app/Services/HelperFunctions.php' );
+
+        // save Singleton for options
+        $this->app->singleton( Options::class, function(){
+            return new Options();
+        });
+
+        // save Singleton for options
+        $this->app->singleton( DateService::class, function(){
+            $options    =   app()->make( Options::class );
+            $timeZone   =   $options->get( 'app_timezone', 'Europe/London' );
+            return new DateService( 'now', $timeZone );
+        });
+
+        // save Singleton for options
+        $this->app->singleton( AuthService::class, function(){
+            return new AuthService();
+        });
+        
+        // save Singleton for options
+        $this->app->singleton( UserOptions::class, function(){
+            return new UserOptions( Auth::id() );
+        });
+
+        // save Singleton for options
+        $this->app->singleton( Users::class, function(){
+            return new Users( 
+                Auth::user()->role,
+                Auth::user(),
+                new Permission()
+            );
+        });
+
+        // provide media manager
+        $this->app->singleton( MediaService::class, function() {
+            return new MediaService([
+                'extensions'    =>  [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ]
+            ]);
+        });
         
         $this->app->singleton( CrudService::class, function() {
             return new CrudService;
