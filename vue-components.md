@@ -14,6 +14,7 @@ This component should be used within a Vue app or component. The purpose is to c
 ## `<ns-menu/>`
 ## `<ns-submenu/>`
 ## `<ns-table-row/>`
+## `<ns-select/>`
 ## `<ns-crud/>`
 ## `<ns-button/>`
 ## `<ns-spinner/>`
