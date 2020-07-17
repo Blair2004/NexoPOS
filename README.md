@@ -1,4 +1,21 @@
 # NexoPOS 4
+
+## Installation
+Before showing the step to install the application there is prior consideration to have in mind. The current root folder of the application, having the folders "app", "bootstrap", "config"... shouldn't be at the root of your server. If you're using Linux, you should configure apache to use the folder "public" (where the index.php is located) as the RootDocument of the installation. For Windows users, with [laragon](https://laragon.org/), you can also point what is the root directory. This technique prevents a lot of exploits. 
+
+The following installation steps require additionnal skills on using CLI (Command Line Interface), but when we'll release NexoPOS builds, that will be a full installation with all the dependencies. We might also create an installer with a very simplified user interface.
+
+- Make sure to have PHP 7.4 & Apache Configured with required extensions : php-xml, php-mbstring, php-msqli... These are often already provided by virtual server like Laragon, XAMP, WAMP, MAMP.
+- [Installing Composer](https://getcomposer.org/download/).
+- Install Git (that will be helfpul if you want to contribue or just to download).
+- Run the following CLI command on the directory where NexoPOS should be installed : `sudo git clone https://github.com/blair2004/NexoPOS-v4.git`
+- Run on the CLI `cd NexoPOS-v4`, if that's the directory name created by the previous step.
+- Run on the CLI `composer install`, to install Laravel and all dependencies.
+- (Optional) Run on the CLI `npm i` to install JavaScript dependencies if you plan to contribute.
+- (Optional) Run `php artisan serve` if you don't have your virtual server pointing to your installation. This will run a php server for development purpose only.
+
+As NexoPOS doesn't have a frontend already, you'll end on the default Laravel page. Access `/do-setup/` to launch the installer.
+
 ## Menu API
 The menu API is exposed by the MenuService. This class registers and displays menus on the dashboard.
 Every menu should have as a key prefixed with a unique identifier. Similar keys are just merged. This could
