@@ -5,5 +5,15 @@ Vue.js has been selected to be used as the frontend framework as it's easier to 
 
 This will list currenlty available components and how they can be used.
 
-## ns-input `<ns-input/>`
+## `<ns-input/>`
 This component should be used within a Vue app or component. The purpose is to create a ready to use input field with defined classes and style.
+
+## `<ns-button/>`
+## `<ns-link/>`
+## `<ns-checkbox/>`
+## `<ns-menu/>`
+## `<ns-submenu/>`
+## `<ns-table-row/>`
+## `<ns-crud/>`
+## `<ns-button/>`
+## `<ns-spinner/>`
