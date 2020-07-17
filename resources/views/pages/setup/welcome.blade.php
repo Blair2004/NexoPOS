@@ -12,3 +12,8 @@
     </div>    
 </div>
 @endsection
+
+@section( 'layout.base.footer' )
+    @parent
+    <script src="{{ asset( 'js/setup.js' ) }}"></script>
+@endsection

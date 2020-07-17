@@ -11,7 +11,6 @@
     @yield( 'layout.base.body' )
     @section( 'layout.base.footer' )
         @include( '../common/footer' )
-        <script src="{{ asset( 'js/setup.js' ) }}"></script>
     @show
 </body>
 </html>

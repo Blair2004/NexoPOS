@@ -18,12 +18,18 @@ Route::get('/', function () {
 });
 
 Route::middleware([ 'ns.installed' ])->group( function() {
-    Route::get( '/sign-in', 'AuthController@signIn' );
+
+    Route::get( '/sign-in', 'AuthController@signIn' )->name( 'login' );
     Route::get( '/sign-up', 'AuthController@signUp' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
     Route::get( '/new-password', 'AuthController@newPassword' );
-    Route::get( '/dashboard', 'DashboardController@home' );
-    Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
+
+    Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
+
+    Route::middleware([ 'auth' ])->group( function() {
+        Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
+        Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
+    });
 });
 
 Route::middleware([ 'ns.not-installed' ])->group( function() {

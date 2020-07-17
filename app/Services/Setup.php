@@ -175,7 +175,7 @@ class Setup
         /**
          * Set version to close setup
          */
-        DotenvEditor::setKey( 'CB_VERSION', config( 'tendoo.version' ) );
+        DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::save();
 
         /**

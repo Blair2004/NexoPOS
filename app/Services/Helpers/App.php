@@ -13,7 +13,7 @@ trait App {
     static function installed()
     {
         $env    =   DotenvEditor::getKeys();
-        return @$env[ 'CB_VERSION' ][ 'value' ] !== null;
+        return @$env[ 'NS_VERSION' ][ 'value' ] !== null;
     }
 
     /**

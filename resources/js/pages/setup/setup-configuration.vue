@@ -1,7 +1,7 @@
 <template>
     <div>
-        <ns-spinner size="12" border="4" animation="fast" v-if="! fields"></ns-spinner>
-        <div class="bg-white rounded shadow my-2" v-if="fields">
+        <ns-spinner size="12" border="4" animation="fast" v-if="fields.length === 0"></ns-spinner>
+        <div class="bg-white rounded shadow my-2" v-if="fields.length > 0">
             <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
                 <ns-input v-for="( field, key ) of fields" v-bind:key="key" :field="field" 
                     @change="form.validateField( field )">
@@ -43,7 +43,22 @@ export default {
             this.processing     =   true;
             return nsHttpClient.post( `/api/nexopos/v4/setup/configuration`, this.form.getValue( this.fields ) )
                 .subscribe( result => {
-
+                    document.location   =   '/sign-in';
+                }, error => {
+                    this.processing     =   false;
+                    this.form.enableFields( this.fields );
+                    this.fields.forEach( field => {
+                        let currentError;
+                        if ( currentError = error.response.data.errors[ field.name ] ) {
+                            field.errors    =   [];
+                            field.errors.push({
+                                'identifier'    :   'invalid',
+                                'message'       :   currentError[0]   
+                            });
+                        }
+                    })
+                    nsSnackBar.error( error.response.data.message, 'OK' )
+                        .subscribe();
                 });
         }
     },

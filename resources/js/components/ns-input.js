@@ -45,6 +45,7 @@ const nsInput      =   Vue.component( 'ns-input', {
         <p v-for="error of field.errors" class="text-xs text-red-400">
             <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
             <slot v-if="error.identifier === 'email'" :name="error.identifier">This field must contain a valid email address.</slot>
+            <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
         </p>
     </div>
     `,
