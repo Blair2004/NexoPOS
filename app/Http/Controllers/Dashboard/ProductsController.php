@@ -17,9 +17,8 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\ProductService;
 use Exception;
-use Tendoo\Core\Exceptions\NotFoundException;
 
-class ProductController extends DashboardController
+class ProductsController extends DashboardController
 {
     /** @var ProductService */
     protected $productService;

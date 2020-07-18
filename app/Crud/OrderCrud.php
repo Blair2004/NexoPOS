@@ -4,31 +4,31 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\Crud;
 use App\Models\User;
-use App\Models\Customer;
+use App\Models\Order;
 use Hook;
 
-class CustomerCrud extends Crud
+class OrderCrud extends Crud
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_customers';
+    protected $table      =   'nexopos_orders';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.customers.index';
+    protected $mainRoute      =   'ns.orders.index';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.customers';
+    protected $namespace  =   'ns.orders';
 
     /**
      * Model Used
      */
-    protected $model      =   \App\Models\Customer::class;
+    protected $model      =   \App\Models\Order::class;
 
     /**
      * Adding relation
@@ -72,15 +72,15 @@ class CustomerCrud extends Crud
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Customers List' ),
-            'list_description'      =>  __( 'Display all customers.' ),
-            'no_entry'              =>  __( 'No customers has been registered' ),
-            'create_new'            =>  __( 'Add a new customer' ),
-            'create_title'          =>  __( 'Create a new customer' ),
-            'create_description'    =>  __( 'Register a new customer and save it.' ),
-            'edit_title'            =>  __( 'Edit customer' ),
-            'edit_description'      =>  __( 'Modify  Customer.' ),
-            'back_to_list'          =>  __( 'Return to Customers' ),
+            'list_title'            =>  __( 'Orders List' ),
+            'list_description'      =>  __( 'Display all orders.' ),
+            'no_entry'              =>  __( 'No orders has been registered' ),
+            'create_new'            =>  __( 'Add a new order' ),
+            'create_title'          =>  __( 'Create a new order' ),
+            'create_description'    =>  __( 'Register a new order and save it.' ),
+            'edit_title'            =>  __( 'Edit order' ),
+            'edit_description'      =>  __( 'Modify  Order.' ),
+            'back_to_list'          =>  __( 'Return to Orders' ),
         ];
     }
 
@@ -120,7 +120,7 @@ class CustomerCrud extends Crud
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, \App\Models\Customer $entry )
+    public function filterPutInputs( $inputs, \App\Models\Order $entry )
     {
         return $inputs;
     }
@@ -182,7 +182,7 @@ class CustomerCrud extends Crud
      * @return  void
      */
     public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == 'ns.customers' ) {
+        if ( $namespace == 'ns.orders' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -201,32 +201,41 @@ class CustomerCrud extends Crud
      */
     public function getColumns() {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' )
+            'customer_id'  =>  [
+                'label'  =>  __( 'Customer' )
             ],
-            'surname'  =>  [
-                'label'  =>  __( 'Surname' )
+            'code'  =>  [
+                'label'  =>  __( 'Code' )
             ],
-            'group_id'  =>  [
-                'label'  =>  __( 'Group' )
+            'discount'  =>  [
+                'label'  =>  __( 'Discount' )
             ],
-            'email'  =>  [
-                'label'  =>  __( 'Email' )
+            'discount_rate'  =>  [
+                'label'  =>  __( 'Discount Rate' )
             ],
-            'gender'  =>  [
-                'label'  =>  __( 'Gender' )
+            'shipping_rate'  =>  [
+                'label'  =>  __( 'Ship. Rate' )
             ],
-            'phone'  =>  [
-                'label'  =>  __( 'Phone' )
+            'gross_total'  =>  [
+                'label'  =>  __( 'Gross Total' )
             ],
-            'pobox'  =>  [
-                'label'  =>  __( 'Pobox' )
+            'total'  =>  [
+                'label'  =>  __( 'Total' )
+            ],
+            'net_total'  =>  [
+                'label'  =>  __( 'Net Total' )
             ],
             'author'  =>  [
                 'label'  =>  __( 'Author' )
             ],
+            'delivery_status'  =>  [
+                'label'  =>  __( 'Delivered On' )
+            ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' )
+            ],
+            'type'  =>  [
+                'label'  =>  __( 'Type' )
             ],
         ];
     }
@@ -242,13 +251,13 @@ class CustomerCrud extends Crud
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/ns.customers/edit/#'
+                'url'           =>      '/dashboard/crud/ns.orders/edit/#'
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/ns.customers' . '/#',
+                'url'       =>  'tendoo/crud/ns.orders' . '/#',
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )
@@ -287,7 +296,7 @@ class CustomerCrud extends Crud
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof App\Models\Customer ) {
+                if ( $entity instanceof App\Models\Order ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -306,9 +315,9 @@ class CustomerCrud extends Crud
     public function getLinks()
     {
         return  [
-            'list'  =>  'ns.customers.index',
-            'create'    =>  'ns.customers.index/create',
-            'edit'      =>  'ns.customers.index/edit/#'
+            'list'  =>  'ns.orders.index',
+            'create'    =>  'ns.orders.index/create',
+            'edit'      =>  'ns.orders.index/edit/#'
         ];
     }
 

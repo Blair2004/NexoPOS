@@ -25,4 +25,9 @@ trait App {
     {
         return View::make( 'tendoo::interfaces.' . $path, $data );
     }
+
+    static function pageTitle( $string )
+    {
+        return sprintf( __( '%s &mdash; NexoPOS 4' ), $string );
+    }
 }

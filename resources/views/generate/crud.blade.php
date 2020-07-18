@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\Crud;
 use App\Models\User;
+use Hook;
 use {{ trim( $model_name ) }};
 
 class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud

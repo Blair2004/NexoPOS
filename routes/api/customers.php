@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::delete( 'customers/{id}', 'Dashboard\CustomersController@delete' );
 Route::delete( 'customers/using-email/{email}', 'Dashboard\CustomersController@deleteUsingEmail' );
 Route::get( 'customers/{customer?}', 'Dashboard\CustomersController@get' )->where([ 'customer' => '[0-9]+' ]);

@@ -9,9 +9,10 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     }, 
     mounted() {
+        console.log( this );
         this.loadColumns();
     },
-    props: [ 'url' ],
+    props: [ 'url', 'create-link' ],
     methods: {
         handleShowOptions( e ) {
             this.rows.forEach( row => {
@@ -42,8 +43,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
     <div id="crud-table" class="w-full shadow rounded-lg bg-white">
         <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
-                <div class="px-2 flex">
-                    <a class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
+                <div class="px-2 flex items-center justify-center">
+                    <a :href="createLink || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 bg-gray-200 flex">
@@ -72,17 +73,17 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 <table class="table w-full">
                     <thead>
                         <tr class="text-gray-700 border-b border-gray-200">
-                            <th class="text-center px-2 border-gray-200 w-16 py-2">
+                            <th class="text-center px-2 border-gray-200 bg-gray-100 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th v-for="column of columns" class="text-left px-2 border-gray-200 py-2">{{ column.label }}</th>
-                            <th class="text-left px-2 border-gray-200 py-2 w-16"></th>
+                            <th v-for="column of columns" class="w-40 border bg-gray-100 text-left px-2 border-gray-200 py-2">{{ column.label }}</th>
+                            <th class="text-left px-2 py-2 w-16 border border-gray-200 bg-gray-100"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <ns-table-row v-for="row of rows" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
                         <tr>
-                            <td :colspan="Object.values( columns ).length" class="text-center text-gray-600 py-3">There is nothing to display...</td>
+                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">There is nothing to display...</td>
                         </tr>
                     </tbody>
                 </table>

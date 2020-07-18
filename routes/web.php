@@ -28,7 +28,18 @@ Route::middleware([ 'ns.installed' ])->group( function() {
 
     Route::middleware([ 'auth' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
+        Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
+        Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersController@listCustomersGroups' );
+        Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
+        Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
+        Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
+        Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
+        Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
+        Route::get( '/dashboard/products/units', 'Dashboard\UnitsController@listUnits' );
+        Route::get( '/dashboard/products/units/groups', 'Dashboard\UnitsController@listUnitsGroups' );
+        Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
+        Route::get( '/dashboard/profile', 'Dashboard\UsersController@showProfile' );
     });
 });
 

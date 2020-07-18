@@ -40,7 +40,9 @@ class CustomersController extends DashboardController
      */
     public function listCustomers()
     {
-        return $this->view( 'pages.dashboard.customers' );
+        return $this->view( 'pages.dashboard.customers', [
+            'title'     =>  __( 'Customers' )
+        ]);
     }
 
     /**

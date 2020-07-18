@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::get( 'orders/{id?}', 'Dashboard\OrdersController@listOrders' )->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/products', 'Dashboard\OrdersController@getOrderProducts' )->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/payments', 'Dashboard\OrdersController@getOrderPayments' )->where( 'id', '[0-9]+');

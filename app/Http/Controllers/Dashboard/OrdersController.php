@@ -52,7 +52,9 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        return $this->ordersService->getOrders();
+        return $this->view( 'pages.dashboard.orders', [
+            'title' =>  __( 'Orders' )
+        ]);
     }
 
     /**
