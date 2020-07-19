@@ -1,73 +1,62 @@
-@inject( 'Schema', 'Illuminate\Support\Facades\Schema' )
-@inject( 'Str', 'Illuminate\Support\Str' )
-<{{ '?php' }}
+<?php
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\Crud;
 use App\Models\User;
 use Hook;
-use Exception;
-use {{ trim( $model_name ) }};
+use App\Models\CustomerGroup;
 
-class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
+class CustomerGroupCrud extends Crud
 {
     /**
      * define the base table
      */
-    protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
+    protected $table      =   'nexopos_customers_groups';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $mainRoute      =   'ns.customers-group.index';
 
     /**
      * Define namespace
-     * @param string
+     * @param  string
      */
-    protected $namespace  =   '{{ strtolower( trim( $namespace ) ) }}';
+    protected $namespace  =   'ns.customers-group';
 
     /**
      * Model Used
      */
-    protected $model      =   \{{ trim( $model_name ) }}::class;
+    protected $model      =   \App\Models\CustomerGroup::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
-        @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
-        @endforeach
-        @endif
+        [ 'nexopos_users', 'nexopos_customers_groups.user_id', '=', 'nexopos_users.id' ],
     ];
 
     /**
      * Define where statement
-     * @var array
+     * @var  array
     **/
     protected $listWhere    =   [];
 
     /**
      * Define where in statement
-     * @var array
+     * @var  array
      */
     protected $whereIn      =   [];
 
     /**
      * Fields which will be filled during post/put
      */
-    @php
-    $fields         =   explode( ',', $fillable );
-    foreach( $fields as &$field ) {
-        $field      =   trim( $field );
-    }
-    @endphp
-    public $fillable    =   {!! json_encode( $fillable ) !!};
+        public $fillable    =   "";
 
     /**
      * Define Constructor
-     * @param 
+     * @param  
      */
     public function __construct()
     {
@@ -79,26 +68,26 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
     /**
      * Return the label used for the crud 
      * instance
-     * @return array
+     * @return  array
     **/
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  __( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  __( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  __( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  __( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  __( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  __( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            'list_title'            =>  __( 'CustomerGroups List' ),
+            'list_description'      =>  __( 'Display all customergroups.' ),
+            'no_entry'              =>  __( 'No customergroups has been registered' ),
+            'create_new'            =>  __( 'Add a new customergroup' ),
+            'create_title'          =>  __( 'Create a new customergroup' ),
+            'create_description'    =>  __( 'Register a new customergroup and save it.' ),
+            'edit_title'            =>  __( 'Edit customergroup' ),
+            'edit_description'      =>  __( 'Modify  Customergroup.' ),
+            'back_to_list'          =>  __( 'Return to CustomerGroups' ),
         ];
     }
 
     /**
      * Check whether a feature is enabled
-     * @return boolean
+     * @return  boolean
     **/
     public function isEnabled( $feature )
     {
@@ -107,25 +96,32 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * Fields
-     * @param object/null
-     * @return array of field
+     * @param  object/null
+     * @return  array of field
      */
     public function getForm( $entry = null ) 
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
+                'name'          =>  'name',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
-                        @foreach( $Schema::getColumnListing( $table_name ) as $column )[
-                            'type'  =>  'text',
-                            'name'  =>  '{{ $column }}',
-                            'label' =>  __( '{{ ucwords( $column ) }}' )
-                        ], @endforeach
+                        [
+                            'type'          =>  'select',
+                            'name'          =>  'reward_system_id',
+                            'label'         =>  __( 'Reward System' ),
+                            'description'   =>  __( 'Select which Reward system applies to the group' )
+                        ], [
+                            'type'          =>  'textarea',
+                            'name'          =>  'description',
+                            'description'   =>  __( 'A brief description about what this group is about' ),
+                            'label'         =>  __( 'Description' )
+                        ], 
                     ]
                 ]
             ]
@@ -134,8 +130,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * Filter POST input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -144,18 +140,18 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * Filter PUT input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
-    public function filterPutInputs( $inputs, \{{ trim( $model_name ) }} $entry )
+    public function filterPutInputs( $inputs, \App\Models\CustomerGroup $entry )
     {
         return $inputs;
     }
 
     /**
      * After Crud POST
-     * @param object entry
-     * @return void
+     * @param  object entry
+     * @return  void
      */
     public function afterPost( $inputs )
     {
@@ -165,8 +161,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
     
     /**
      * get
-     * @param string
-     * @return mixed
+     * @param  string
+     * @return  mixed
      */
     public function get( $param )
     {
@@ -177,8 +173,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * After Crud PUT
-     * @param object entry
-     * @return void
+     * @param  object entry
+     * @return  void
      */
     public function afterPut( $inputs )
     {
@@ -187,8 +183,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
     
     /**
      * Protect an access to a specific crud UI
-     * @param array { namespace, id, type }
-     * @return array | throw Exception
+     * @param  array { namespace, id, type }
+     * @return  array | throw AccessDeniedException
     **/
     public function canAccess( $fields )
     {
@@ -201,15 +197,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
             ];
         }
 
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        throw new AccessDeniedException( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**
      * Before Delete
-     * @return void
+     * @return  void
      */
     public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
+        if ( $namespace == 'ns.customers-group' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -224,16 +220,35 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * Define Columns
-     * @return array of columns configuration
+     * @return  array of columns configuration
      */
     public function getColumns() {
         return [
-            @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' )
+            'id'  =>  [
+                'label'  =>  __( 'Id' )
             ],
-            @endforeach
-        ];
+            'name'  =>  [
+                'label'  =>  __( 'Name' )
+            ],
+            'description'  =>  [
+                'label'  =>  __( 'Description' )
+            ],
+            'reward_system_id'  =>  [
+                'label'  =>  __( 'Reward_system_id' )
+            ],
+            'author'  =>  [
+                'label'  =>  __( 'Author' )
+            ],
+            'uuid'  =>  [
+                'label'  =>  __( 'Uuid' )
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created_at' )
+            ],
+            'updated_at'  =>  [
+                'label'  =>  __( 'Updated_at' )
+            ],
+                    ];
     }
 
     /**
@@ -247,13 +262,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/{{ strtolower( trim( $namespace ) ) }}/edit/#'
+                'url'           =>      '/dashboard/crud/ns.customers-group/edit/#'
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/{{ strtolower( trim( $namespace ) ) }}' . '/#',
+                'url'       =>  'tendoo/crud/ns.customers-group' . '/#',
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )
@@ -267,8 +282,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
     
     /**
      * Bulk Delete Action
-     * @param  object Request with object
-     * @return  false/array
+     * @param    object Request with object
+     * @return    false/array
      */
     public function bulkDelete( Request $request ) 
     {
@@ -292,7 +307,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof {{ trim( $model_name ) }} ) {
+                if ( $entity instanceof App\Models\CustomerGroup ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -306,20 +321,20 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * get Links
-     * @return array of links
+     * @return  array of links
      */
     public function getLinks()
     {
         return  [
-            'list'  =>  '{{ strtolower( trim( $route_name ) ) }}',
-            'create'    =>  '{{ strtolower( trim( $route_name ) ) }}/create',
-            'edit'      =>  '{{ strtolower( trim( $route_name ) ) }}/edit/#'
+            'list'  =>  'ns.customers-group.index',
+            'create'    =>  'ns.customers-group.index/create',
+            'edit'      =>  'ns.customers-group.index/edit/#'
         ];
     }
 
     /**
      * Get Bulk actions
-     * @return array of actions
+     * @return  array of actions
     **/
     public function getBulkActions()
     {
@@ -328,7 +343,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
 
     /**
      * get exports
-     * @return array of export formats
+     * @return  array of export formats
     **/
     public function getExports()
     {

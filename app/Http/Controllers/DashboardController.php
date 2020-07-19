@@ -18,22 +18,24 @@ use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {
+    protected $menuService;
+
     public function __construct()
     {
-        $this->menus    =   new MenuService;
+        $this->menuService    =   new MenuService;
     }
     
     public function home()
     {
         return view( 'pages.dashboard.home', [
-            'menus' =>  $this->menus
+            'menus' =>  $this->menuService
         ]);
     }
 
     protected function view( $path, $data = [])
     {
         return view( $path, array_merge([
-            'menus'     =>   $this->menus
+            'menus'     =>   $this->menuService
         ], $data ));
     }
 }

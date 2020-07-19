@@ -5,7 +5,20 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         return {
             columns: [],
             globallyChecked: false,
-            result: []
+            result: {
+                current_page: null,
+                data: [],
+                first_page_url: null,
+                from: null,
+                last_page: null, 
+                last_page_url: null,
+                next_page_url: null,
+                path: null,
+                per_page: null,
+                prev_page_url: null,
+                to: null,
+                total: null,
+            }
         }
     }, 
     mounted() {
@@ -81,7 +94,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-if="result.data && result.data.length > 0">
+                        <template v-if="result.data !== undefined && result.data.length > 0">
                             <ns-table-row v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">

@@ -24,7 +24,9 @@ Vue.component( 'ns-table-row', {
     template: `
     <tr class="border-gray-200 border text-sm">
         <td class="text-gray-700 font-sans border-gray-200 p-2">
-            <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"></ns-checkbox>
+            <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked">
+                <span>Hello</span>
+            </ns-checkbox>
         </td>
         <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2">{{ this.row[ identifier ] }}</td>
         <td class="text-gray-700 font-sans border-gray-200 p-2 flex flex-col items-end justify-center">

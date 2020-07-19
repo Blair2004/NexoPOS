@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Crud\CustomerCrud;
+use App\Crud\CustomerGroupCrud;
 use App\Crud\OrderCrud;
 use Illuminate\Support\ServiceProvider;
 use Hook;
@@ -28,8 +29,9 @@ class CrudServiceProvider extends ServiceProvider
     {
         Hook::addFilter( 'ns.crud-resource', function( $namespace ) {
             switch( $namespace ) {
-                case 'ns.customers': return CustomerCrud::class;
                 case 'ns.orders': return OrderCrud::class;
+                case 'ns.customers': return CustomerCrud::class;
+                case 'ns.customers-groups': return CustomerGroupCrud::class;
             }
             return $namespace;
         });

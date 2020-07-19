@@ -64,8 +64,7 @@ export default {
                 label: 'Password',
                 description: 'The username password required to connect.',
                 name: 'password',
-                value : 'Afromaster_2004',
-                validation: 'required',
+                value : '',
             }, {
                 label: 'Database Name',
                 description: 'Provide the database name.',

@@ -4,26 +4,38 @@ const nsInput      =   Vue.component( 'ns-select', {
         return {
         }
     },
-    props: [ 'name', 'placeholder' ],
+    props: [ 'name', 'placeholder', 'field' ],
+    computed: {
+        hasError() {
+            if ( this.field.errors !== undefined && this.field.errors.length > 0 ) {
+                return true;
+            }
+            return false;
+        },
+        disabledClass() {
+            return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-transparent';
+        },
+        inputClass() {
+            return this.disabledClass + ' ' + this.leadClass
+        },
+        leadClass() {
+            return this.leading ? 'pl-8' : 'px-4';
+        }
+    },
     template: `
     <div class="flex flex-col">
-        <label for="price" class="block text-sm leading-5 font-medium text-gray-700">Price</label>
-        <div class="mt-1 relative rounded-md shadow-sm">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm sm:leading-5">
-                $
-                </span>
-            </div>
-            <select id="price" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5" placeholder="0.00" />
+        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'border-red-400' : 'border-gray-200'" class="mt-1 relative rounded-md shadow-sm mb-2">
+            <select :class="inputClass" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10"/>
+                <option :value="option.value" v-for="option of field.options">{{ option.label }}</option>
             </select>
-            <div class="absolute inset-y-0 right-0 flex items-center">
-                <select aria-label="Currency" class="form-select h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm sm:leading-5">
-                <option>USD</option>
-                <option>CAD</option>
-                <option>EUR</option>
-                </select>
-            </div>
         </div>
+        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
+        <p v-for="error of field.errors" class="text-xs text-red-400">
+            <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
+            <slot v-if="error.identifier === 'email'" :name="error.identifier">This field must contain a valid email address.</slot>
+            <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
+        </p>
     </div>
     `,
 });

@@ -11,7 +11,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'create-link' ],
+    props: [ 'src', 'create-link', 'field-class', 'return-link' ],
     computed: {
         activeTabFields() {
             for( identifier in this.form.tabs ) {
@@ -73,7 +73,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <button class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</button>
+                        <a *v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
                 <div class="flex border-2 border-blue-500 rounded overflow-hidden">
@@ -87,12 +87,8 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 </div>
                 <div v-for="tab of form.tabs" class="border border-gray-400 p-4 bg-white">
                     <div class="-mx-4 flex flex-wrap">
-                        <div class="px-4 w-full md:w-1/2 lg:w-1/3" v-for="field of activeTabFields">
-                            <div class="input-field flex flex-col">
-                                <label for="" class="font-bold text-gray-700 mb-2">{{ field.label }}</label>
-                                <input type="text" v-model="field.value" class="h-10 border px-2 border-gray-400 bg-gray-100">
-                                <p class="text-xs py-2 text-gray-600">{{ field.description || '' }}</p>
-                            </div>
+                        <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
+                            <ns-field :field="field"/>
                         </div>
                     </div>
                 </div>

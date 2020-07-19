@@ -18,7 +18,6 @@ Route::get('/', function () {
 });
 
 Route::middleware([ 'ns.installed' ])->group( function() {
-
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'login' );
     Route::get( '/sign-up', 'AuthController@signUp' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
@@ -31,7 +30,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
         Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
-        Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersController@listCustomersGroups' );
+        Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersGroupsController@listCustomersGroups' );
+        Route::get( '/dashboard/customers/groups/create', 'Dashboard\CustomersGroupsController@createCustomerGroup' );
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
         Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );

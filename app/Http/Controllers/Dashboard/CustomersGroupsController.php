@@ -22,6 +22,25 @@ use Exception;
 
 class CustomersGroupsController extends DashboardController
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function listCustomersGroups()
+    {
+        return $this->view( 'pages.dashboard.customers-groups.list', [
+            'title'     =>  __( 'Customers Groups' )
+        ]);
+    }
+
+    public function createCustomerGroup()
+    {
+        return $this->view( 'pages.dashboard.customers-groups.create', [
+            'title'     =>  __( 'Customers Groups' )
+        ]);
+    }
+
     /**
      * get a list or a single customer
      * group using a provided id

@@ -9,7 +9,7 @@ const nsSubmenu     =   Vue.component( 'ns-submenu', {
     template: `
     <div>
         <li>
-            <a :href="href" class="py-2 border-l-8 border-blue-800 px-3 block bg-gray-800 text-gray-100">
+            <a :href="href" class="py-2 border-l-8 border-blue-800 px-3 block bg-gray-800 text-gray-100 hover:bg-gray-700">
                 <slot></slot>
             </a>
         </li>

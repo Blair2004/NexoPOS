@@ -8,6 +8,7 @@ class MenuService
     public function __construct()
     {
         $this->buildMenus();
+        $this->toggleActive();
     }
 
     public function buildMenus()
@@ -315,8 +316,35 @@ class MenuService
         ];
     }
 
+    /**
+     * returns the list of available menus
+     * @return Array of menus
+     */
     public function getMenus()
     {
         return $this->menus;
+    }
+
+    /**
+     * Will make sure active menu
+     * is toggled
+     * @return void
+     */
+    public function toggleActive()
+    {
+        foreach( $this->menus as $identifier => &$menu ) {
+            if ( isset( $menu[ 'href' ] ) && $menu[ 'href' ] === url()->current() ) {
+                $menu[ 'toggled' ]  =   true;
+            }
+
+            if ( isset( $menu[ 'childrens' ] ) ) {
+                foreach( $menu[ 'childrens' ] as $subidentifier => &$submenu ) {
+                    if ( $submenu[ 'href' ] === url()->current() ) {
+                        $menu[ 'toggled' ]      =   true;
+                        $submenu[ 'active' ]    =   true;
+                    }
+                }
+            }
+        }
     }
 }

@@ -55,6 +55,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+        'ns.not-installed' =>  \App\Http\Middleware\NotInstalledStateMiddleware::class,
+        'ns.installed' =>  \App\Http\Middleware\InstalledStateMiddleware::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
@@ -65,7 +67,5 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'ns.not-installed' =>  \App\Http\Middleware\NotInstalledStateMiddleware::class,
-        'ns.installed' =>  \App\Http\Middleware\InstalledStateMiddleware::class,
     ];
 }
