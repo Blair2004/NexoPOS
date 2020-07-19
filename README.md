@@ -11,6 +11,7 @@ The following installation steps require additionnal skills on using CLI (Comman
 - Run the following CLI command on the directory where NexoPOS should be installed : `sudo git clone https://github.com/blair2004/NexoPOS-v4.git`
 - Run on the CLI `cd NexoPOS-v4`, if that's the directory name created by the previous step.
 - Run on the CLI `composer install`, to install Laravel and all dependencies.
+- (Optional) if the project comes without a .env file, you need to create one. You can use the .env.example that should be available at the root. Then run `php artisan key:generate`
 - (Optional) Run on the CLI `npm i` to install JavaScript dependencies if you plan to contribute.
 - (Optional) Run `php artisan serve` if you don't have your virtual server pointing to your installation. This will run a php server for development purpose only.
 
