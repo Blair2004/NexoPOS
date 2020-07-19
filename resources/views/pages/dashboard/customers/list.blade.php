@@ -9,7 +9,7 @@
             <p class="text-gray-600">{{ __( 'List of registered customers' ) }}</p>
         </div>
         <ns-crud 
-            url="{{ url( 'api/nexopos/v4/crud/ns.customers' ) }}" 
+            src="{{ url( 'api/nexopos/v4/crud/ns.customers' ) }}" 
             create-link="{{ url( 'dashboard/customers/create' ) }}"
             id="crud-table-body">
         </ns-crud>

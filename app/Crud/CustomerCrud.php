@@ -98,10 +98,42 @@ class CustomerCrud extends Crud
      * @param  object/null
      * @return  array of field
      */
-    public function getFields( $entry = null ) 
+    public function getForm( $entry = null ) 
     {
         return [
-            // your field here
+            'main'  =>  [
+                'label' =>  __( 'Customer Name' ),
+                'name'  =>  'name',
+                'description'   =>  __( 'Provide a unique name for the customer.' )
+            ], 
+            'tabs'  =>  [
+                'general'   =>  [
+                    'label'     =>  __( 'General' ),
+                    'fields'    =>  [
+                        [
+                            'type'          =>  'select',
+                            'label'         =>  __( 'Group' ),
+                            'validation'    =>  'required',
+                            'description'   =>  __( 'Assign the customer to a group' )
+                        ], [
+                            'type'          =>  'text',
+                            'label'         =>  __( 'Surname' ),
+                            'validation'    =>  'required',
+                            'description'   =>  __( 'Provide the customer surname' )
+                        ], [
+                            'type'          =>  'email',
+                            'label'         =>  __( 'Email' ),
+                            'validation'    =>  'required|email',
+                            'description'   =>  __( 'Provide the customer email' )
+                        ], [
+                            'type'          =>  'text',
+                            'label'         =>  __( 'Phone Number' ),
+                            'validation'    =>  'required',
+                            'description'   =>  __( 'Provide the customer phone number' )
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 

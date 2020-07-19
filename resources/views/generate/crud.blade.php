@@ -109,10 +109,24 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
      * @param object/null
      * @return array of field
      */
-    public function getFields( $entry = null ) 
+    public function getForm( $entry = null ) 
     {
         return [
-            // your field here
+            'main' =>  [
+                'label'         =>  __( 'Name' ),
+                'description'   =>  __( 'Provide a name to the resource.' )
+            ],
+            'tabs'  =>  [
+                'general'   =>  [
+                    'label'     =>  __( 'General' ),
+                    'fields'    =>  [
+                        @foreach( $Schema::getColumnListing( $table_name ) as $column )[
+                            'type'  =>  'text',
+                            'label' =>  ucwords( $column )
+                        ], @endforeach
+                    ]
+                ]
+            ]
         ];
     }
 

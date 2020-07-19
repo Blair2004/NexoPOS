@@ -32,6 +32,13 @@ class CustomersController extends DashboardController
         $this->customerService      =   $customerService;
     }
 
+    public function createCustomer()
+    {
+        return $this->view( 'pages.dashboard.customers.create', [
+            'title'     =>  __( 'Customers' )
+        ]);
+    }
+
     /**
      * Shows the list of available customers under a CRUD
      * list
@@ -40,7 +47,7 @@ class CustomersController extends DashboardController
      */
     public function listCustomers()
     {
-        return $this->view( 'pages.dashboard.customers', [
+        return $this->view( 'pages.dashboard.customers.list', [
             'title'     =>  __( 'Customers' )
         ]);
     }

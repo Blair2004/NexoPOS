@@ -8,3 +8,4 @@ module.exports.nsCheckbox       =   require( './ns-checkbox' );
 module.exports.nsCrud           =   require( './ns-crud' );
 module.exports.nsTableRow       =   require( './ns-table-row' );
 module.exports.nsSpinner        =   require( './ns-spinner' );
+module.exports.nsCrudForm       =   require( './ns-crud-form' );

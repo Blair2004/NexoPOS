@@ -5,17 +5,17 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         return {
             columns: [],
             globallyChecked: false,
-            rows: []
+            result: []
         }
     }, 
     mounted() {
         console.log( this );
         this.loadColumns();
     },
-    props: [ 'url', 'create-link' ],
+    props: [ 'src', 'create-link' ],
     methods: {
         handleShowOptions( e ) {
-            this.rows.forEach( row => {
+            this.result.data.forEach( row => {
                 if ( row.$id !== e.$id ) {
                     row.$toggled    =   false;
                 }
@@ -23,19 +23,19 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
-            this.rows.forEach( r => r.$checked = event );
+            this.result.data.forEach( r => r.$checked = event );
         },
         loadColumns() {
-            const request   =   nsHttpClient.get( `${this.url}/columns` );
+            const request   =   nsHttpClient.get( `${this.src}/columns` );
             request.subscribe( f => {
                 this.columns    =   f.data;
                 this.refresh();
             });
         },
         refresh() {
-            const request   =   nsHttpClient.get( `${this.url}` );
+            const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( f => {
-                this.rows    =   f.data;
+                this.result    =   f.data;
             });
         }
     },
@@ -81,8 +81,10 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                         </tr>
                     </thead>
                     <tbody>
-                        <ns-table-row v-for="row of rows" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
-                        <tr>
+                        <template v-if="result.data && result.data.length > 0">
+                            <ns-table-row v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
+                        </template>
+                        <tr v-if="! result || result.data.length === 0">
                             <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">There is nothing to display...</td>
                         </tr>
                     </tbody>

@@ -30,6 +30,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
         Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
+        Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
         Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersController@listCustomersGroups' );
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
