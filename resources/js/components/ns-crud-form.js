@@ -1,14 +1,17 @@
-const { Vue, EventEmitter, nsHttpClient }   =   require( '../bootstrap' );
+const { Vue, EventEmitter, nsHttpClient, nsSnackBar }   =   require( '../bootstrap' );
+const FormValidation                        =   require( "./../libraries/form-validation" ).default;
 
 const nsCrud    =   Vue.component( 'ns-crud-form', {
     data: () => {
         return {
             form: {},
             globallyChecked: false,
+            formValidation: new FormValidation,
             rows: []
         }
     }, 
     mounted() {
+        console.log( this );
         this.loadForm();
     },
     props: [ 'src', 'create-link', 'field-class', 'return-link' ],
@@ -36,6 +39,22 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 }
             });
         },
+        submit() {
+            this.formValidation.validateField( this.form.main );
+            const tabsInvalidity    =   [];
+            for( key in this.form.tabs ) {
+                tabsInvalidity.push(
+                    this.formValidation.validateForm( this.form.tabs[ key ].fields )
+                );
+            }
+
+            if ( this.form.main.errors.length > 0 || tabsInvalidity.length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'invalid-form' ] ? this.$slots[ 'invalid-form' ][0].text : 'No error provided for invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
+            }
+
+
+        },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
             this.rows.forEach( r => r.$checked = event );
@@ -49,6 +68,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         },
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
+            form.main           =   this.formValidation.createForm([ form.main ])[0];
             let index           =   0;
 
             for( key in form.tabs ) {
@@ -56,7 +76,9 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                     form.tabs[ key ].active  =   true;
                 }
 
-                form.tabs[ key ].active = form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active
+                form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
+                form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
+
                 index++;
             }
 
@@ -73,13 +95,21 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a *v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
-                <div class="flex border-2 border-blue-500 rounded overflow-hidden">
-                    <input v-model="form.main.value" type="text" class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button class="px-4 h-10 bg-blue-500 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                <div :class="form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
+                    <input v-model="form.main.value" 
+                        @blur="formValidation.checkField( form.main )" 
+                        @change="formValidation.checkField( form.main )" 
+                        type="text" 
+                        class="flex-auto text-gray-700 outline-none h-10 px-2">
+                    <button :class="form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
                 </div>
+                <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">
+                    <span><slot name="error-required">{{ error.identifier }}</slot></span>
+                </p>
             </div>
             <div id="tabs-container" class="my-5">
                 <div class="header flex" style="margin-bottom: -1px;">
@@ -88,7 +118,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 <div v-for="tab of form.tabs" class="border border-gray-400 p-4 bg-white">
                     <div class="-mx-4 flex flex-wrap">
                         <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
-                            <ns-field :field="field"/>
+                            <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
                         </div>
                     </div>
                 </div>

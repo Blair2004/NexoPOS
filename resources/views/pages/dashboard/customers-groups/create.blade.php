@@ -10,9 +10,12 @@
         </div>
         <ns-crud-form 
             return-link="{{ url( '/dashboard/customers/groups' ) }}"
+            submit-link="{{ url( '/api/nexopos/v4/crud/ns.customers-groups' ) }}"
             src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config' ) }}">
             <template v-slot:title>Group Name</template>
             <template v-slot:save>Save Group</template>
+            <template v-slot:error-required>The following field is required</template>
+            <template v-slot:invalid-form>The form is not valid. Please check it and try again</template>
         </ns-crud-form>
     </div>
 </div>

@@ -38,6 +38,7 @@ export default class FormValidation {
 
     checkField( field ) {
         if ( field.validation !== undefined ) {
+            field.errors    =   [];
             const rules     =   this.detectValidationRules( field.validation );
             rules.forEach( rule => {
                 this.fieldPassCheck( field, rule );
@@ -58,10 +59,6 @@ export default class FormValidation {
     }
 
     fieldPassCheck( field, rule ) {
-        if ( field.errors === undefined ) {
-            field.errors    =   [];
-        }
-
         if ( rule.identifier === 'required' ) {
             if ( field.value === undefined || field.value.length === 0 ) {
                 // because we would like to stop the validation here

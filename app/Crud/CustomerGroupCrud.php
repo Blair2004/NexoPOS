@@ -105,7 +105,8 @@ class CustomerGroupCrud extends Crud
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
+                'validation'    =>  'required'
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -115,6 +116,7 @@ class CustomerGroupCrud extends Crud
                             'type'          =>  'select',
                             'name'          =>  'reward_system_id',
                             'label'         =>  __( 'Reward System' ),
+                            'validation'    =>  'required',
                             'description'   =>  __( 'Select which Reward system applies to the group' )
                         ], [
                             'type'          =>  'textarea',
