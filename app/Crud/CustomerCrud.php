@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Services\Crud;
 use App\Models\User;
 use App\Models\Customer;
+use Hook;
 
 class CustomerCrud extends Crud
 {

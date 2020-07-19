@@ -15,6 +15,7 @@
         "jackiedo/dotenv-editor": "^1.1",
         "laravel/framework": "^7.0",
         "laravel/sanctum": "^2.4",
+        "laravel/telescope": "^3.5",
         "laravel/tinker": "^2.0",
         "tormjens/eventy": "^0.6.0"
     },

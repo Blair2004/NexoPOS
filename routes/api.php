@@ -20,27 +20,25 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix( 'nexopos/v4' )->group( function() {
-    Route::middleware([ 'tendoo.cors', 'tendoo.auth' ])->group( function() {
-        foreach([ '', '/store/{id}/' ] as $prefix ) {
-            Route::prefix( $prefix )->group( function() {
-                include_once( dirname( __FILE__ ) . '/api/categories.php' );    
-                include_once( dirname( __FILE__ ) . '/api/customers.php' );
-                include_once( dirname( __FILE__ ) . '/api/expenses.php' );
-                include_once( dirname( __FILE__ ) . '/api/orders.php' );
-                include_once( dirname( __FILE__ ) . '/api/procurements.php' );
-                include_once( dirname( __FILE__ ) . '/api/products.php' );
-                include_once( dirname( __FILE__ ) . '/api/providers.php' );
-                include_once( dirname( __FILE__ ) . '/api/registers.php' );
-                include_once( dirname( __FILE__ ) . '/api/reset.php' );
-                include_once( dirname( __FILE__ ) . '/api/rewards.php' );
-                include_once( dirname( __FILE__ ) . '/api/transfer.php' );
-                include_once( dirname( __FILE__ ) . '/api/taxes.php' );
-                include_once( dirname( __FILE__ ) . '/api/units.php' );
-                include_once( dirname( __FILE__ ) . '/api/crud.php' );
-            });
-        }
-        include_once( dirname( __FILE__ ) . '/api/stores.php' );
-    });
+    foreach([ '', '/store/{id}/' ] as $prefix ) {
+        Route::prefix( $prefix )->group( function() {
+            include_once( dirname( __FILE__ ) . '/api/categories.php' );    
+            include_once( dirname( __FILE__ ) . '/api/customers.php' );
+            include_once( dirname( __FILE__ ) . '/api/expenses.php' );
+            include_once( dirname( __FILE__ ) . '/api/orders.php' );
+            include_once( dirname( __FILE__ ) . '/api/procurements.php' );
+            include_once( dirname( __FILE__ ) . '/api/products.php' );
+            include_once( dirname( __FILE__ ) . '/api/providers.php' );
+            include_once( dirname( __FILE__ ) . '/api/registers.php' );
+            include_once( dirname( __FILE__ ) . '/api/reset.php' );
+            include_once( dirname( __FILE__ ) . '/api/rewards.php' );
+            include_once( dirname( __FILE__ ) . '/api/transfer.php' );
+            include_once( dirname( __FILE__ ) . '/api/taxes.php' );
+            include_once( dirname( __FILE__ ) . '/api/units.php' );
+            include_once( dirname( __FILE__ ) . '/api/crud.php' );
+        });
+    }
+    include_once( dirname( __FILE__ ) . '/api/stores.php' );
 
     Route::prefix( 'setup' )->group( function() {
         Route::post( 'database', 'SetupController@checkDatabase' );

@@ -6,13 +6,13 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UserOptions;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
 
-    protected $table  =   'nexopos_users';
-
+    protected $table    =   'nexopos_users';
     protected $casts    =   [
         'active'    =>  'boolean'
     ];

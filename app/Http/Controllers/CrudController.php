@@ -29,7 +29,7 @@ class CrudController extends Controller
         /**
          * Catch event before deleting user
          */
-        $crudClass      =   Hook::filter( 'register.crud', $namespace, $id );
+        $crudClass      =   Hook::filter( 'ns.crud-resource', $namespace, $id );
         $resource       =   new $crudClass;
 
         if ( empty( $resource ) ) {
@@ -72,7 +72,7 @@ class CrudController extends Controller
      */
     public function crudPost( String $namespace, CrudPostRequest $request )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -144,7 +144,7 @@ class CrudController extends Controller
      */
     public function crudPut( String $namespace, $entry, CrudPutRequest $request  ) 
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -219,7 +219,7 @@ class CrudController extends Controller
      */
     public function crudList( string $namespace )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -240,7 +240,7 @@ class CrudController extends Controller
      */
     public function crudBulkActions( String $namespace, Request $request )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -283,7 +283,7 @@ class CrudController extends Controller
      */
     public function crudGet( string $namespace, Request $request )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
 
         /**
          * Let's check it the resource has a method to retreive an item
@@ -304,7 +304,7 @@ class CrudController extends Controller
      */
     public function getColumns( string $namespace )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -323,7 +323,7 @@ class CrudController extends Controller
      */
     public function getConfig( string $namespace ) 
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -349,7 +349,7 @@ class CrudController extends Controller
      */
     public function getFormConfig( string $namespace, $id = null )
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
         $resource           =   new $crudClass( compact( 'namespace', 'id' ) );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -380,7 +380,7 @@ class CrudController extends Controller
      */
     public function canAccess( $namespace, Request $request ) 
     {
-        $crudClass          =   Hook::filter( 'register.crud', $namespace );
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'canAccess' ) ) {
