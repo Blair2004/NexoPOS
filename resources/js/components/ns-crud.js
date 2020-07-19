@@ -67,24 +67,26 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 </div>
             </div>
         </div>
-        <div>
-            <table class="table w-full">
-                <thead>
-                    <tr class="text-gray-700 border-b border-gray-200">
-                        <th class="text-center px-2 border-gray-200 w-16 py-2">
-                            <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
-                        </th>
-                        <th v-for="column of columns" class="text-left px-2 border-gray-200 py-2">{{ column.label }}</th>
-                        <th class="text-left px-2 border-gray-200 py-2 w-16"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ns-table-row v-for="row of rows" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
-                    <tr>
-                        <td :colspan="Object.values( columns ).length" class="text-center text-gray-600 py-3">There is nothing to display...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="flex">
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <thead>
+                        <tr class="text-gray-700 border-b border-gray-200">
+                            <th class="text-center px-2 border-gray-200 w-16 py-2">
+                                <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
+                            </th>
+                            <th v-for="column of columns" class="text-left px-2 border-gray-200 py-2">{{ column.label }}</th>
+                            <th class="text-left px-2 border-gray-200 py-2 w-16"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ns-table-row v-for="row of rows" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
+                        <tr>
+                            <td :colspan="Object.values( columns ).length" class="text-center text-gray-600 py-3">There is nothing to display...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     `,
