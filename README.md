@@ -59,22 +59,6 @@ clicking on a menu that has children, so that these latest are revealed to the u
 
 Submenu doesn't support icones, nor notifications.
 
-While browing to a component (for example customers), it's a good UX technique to have the customers menu expanded (toggled). If your control extends `App\Http\Controllers\DashboardController`, then it inherits the `menuService` object, used to manage the sidebar menu. You can with that aim a specific menu and toggle it like so : 
-
-```php
-use App\Http\Controllers\DashboardController;
-
-class CustomersController extends DashboardController
-{
-    public function __construct()
-    {
-        parent::__construct();
-        $this->menuService->toggleMenu( 'customers' ); // <= here.
-    }
-}
-```
-As you already know, the menus has an identifier, and that's the identified used as unique parametter of the method `toggleMenu`.
-
 # Javascript API
 NexoPOS 4 is built on top of Vue.js. It provides bunch of components that helps to prototype UI quickly. Some part of the applications are running as SPA, such as the setup page. This section will disclose the internal JavaScript API to help understanding how it works.
 
