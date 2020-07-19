@@ -59,7 +59,7 @@ clicking on a menu that has children, so that these latest are revealed to the u
 
 Submenu doesn't support icones, nor notifications.
 
-While browing to a component (for example customers), it's a good UX technique to have the customers menu expanded (toggled). If your control extends "App\Http\Controllers\DashboardController", then it inherite the `menuService` used to manage the sidebar menu. You can with that aim a specific menu and toggle it like so : 
+While browing to a component (for example customers), it's a good UX technique to have the customers menu expanded (toggled). If your control extends `App\Http\Controllers\DashboardController`, then it inherits the `menuService` object, used to manage the sidebar menu. You can with that aim a specific menu and toggle it like so : 
 
 ```php
 use App\Http\Controllers\DashboardController;
