@@ -116,7 +116,6 @@ class CustomerGroupCrud extends Crud
                             'type'          =>  'select',
                             'name'          =>  'reward_system_id',
                             'label'         =>  __( 'Reward System' ),
-                            'validation'    =>  'required',
                             'description'   =>  __( 'Select which Reward system applies to the group' )
                         ], [
                             'type'          =>  'textarea',

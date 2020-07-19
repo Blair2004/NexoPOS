@@ -62,7 +62,15 @@ class MenuService
                     'import-customers'  =>  [
                         'label' =>  __( 'Import Customers'),
                         'href'  =>  url( '/dashboard/customers/import' )
-                    ]
+                    ],
+                    'list-reward-system'    =>  [
+                        'label' =>  __( 'Reward Systems'),
+                        'href'  =>  url( '/dashboard/customers/reward-systems' )
+                    ],
+                    'create-reward-system'    =>  [
+                        'label' =>  __( 'Create Reward'),
+                        'href'  =>  url( '/dashboard/customers/reward-systems/create' )
+                    ],
                 ]
             ], 
             'providers' =>  [

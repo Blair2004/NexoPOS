@@ -48,12 +48,12 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 );
             }
 
+            console.log( tabsInvalidity, this.form );
+
             if ( this.form.main.errors.length > 0 || tabsInvalidity.length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'invalid-form' ] ? this.$slots[ 'invalid-form' ][0].text : 'No error provided for invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
-
-
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
