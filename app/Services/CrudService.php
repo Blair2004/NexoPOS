@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
-use App\Facades\Hook;
+use Hook;
 
 class CrudService 
 {
@@ -370,5 +370,75 @@ class CrudService
     public function getFillable()
     {
         return $this->fillable;
+    }
+
+    /**
+     * Get crud instance
+     * @param string namespace
+     * @return Crud
+     */
+    public function getCrudInstance( $namespace )
+    {
+        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+
+        /**
+         * In case nothing handle this crud
+         */
+        if ( ! class_exists( $crudClass ) ) {
+            throw new Exception( __( 'Unhandled crud resource' ) );
+        }
+
+        return new $crudClass;
+    }
+
+    /**
+     * Extracts Crud validation from a crud resource
+     * @param Crud $resource
+     * @return Array
+     */
+    public function extractCrudValidation( $crud )
+    {
+        $form   =   $crud->getForm();
+
+        $rules  =   [];
+
+        if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
+            $rules[ $form[ 'main' ][ 'name' ] ]     =   $form[ 'main' ][ 'validation' ];
+        }
+
+        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+            foreach( $tab[ 'fields' ] as $field ) {
+                if ( isset( $field[ 'validation' ] ) ) {
+                    $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+                }
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Return plain data that can be used 
+     * for inserting. The data is parsed form the defined
+     * form on the Request
+     * @param Crud $resource
+     * @param Request $request
+     * @return array
+     */
+    public function getPlainData( $resource, Request $request )
+    {
+        $form   =   $resource->getForm();
+        $data   =   [];
+        $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+
+        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+            foreach( $tab[ 'fields' ] as $field ) {
+                if ( isset( $field[ 'validation' ] ) ) {
+                    $data[ $field[ 'name' ] ]   =   $request->input( $field[ 'name' ] ); 
+                }
+            }
+        }
+
+        return $data;
     }
 }

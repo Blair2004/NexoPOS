@@ -14,6 +14,16 @@ new window.Vue({
     }
 });
 
+new Vue({
+    el: '#dashboard-header',
+    data: {
+        menuToggled: false,
+    },
+    mounted() {
+        console.log( 'mounted' );
+    }
+});
+
 new window.Vue({
     el: '#dashboard-content',
     mounted() {

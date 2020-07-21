@@ -3,7 +3,7 @@
 @section( 'layout.dashboard.body' )
     <div>
         @include( '../common/dashboard-header' )
-        <div id="dashboard-card" class="px-4">
+        <div id="dashboard-content" class="px-4">
             <div class="-m-4 flex flex-wrap">
                 <div class="p-4 w-full md:w-1/2 lg:w-1/4">
                     <div class="flex flex-auto rounded-lg shadow-lg bg-red-500 text-white px-3 py-5">

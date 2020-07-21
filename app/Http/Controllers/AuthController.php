@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Tendoo\Core\Exceptions\CoreException;
 
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -50,6 +51,8 @@ class AuthController extends Controller
         ]);
 
         if ( $attempt ) {
+            $token  =   Auth::user()->createToken( 'ns_token' )->plainTextToken;
+            Cookie::queue( Cookie::make( 'ns_token', $token, ( 60 * 24 ) * 7 ) );
             return redirect( route( 'dashboard.index' ) );
         }
 

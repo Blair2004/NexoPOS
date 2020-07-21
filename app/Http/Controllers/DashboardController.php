@@ -13,7 +13,7 @@ use App\Models\ProductCategory;
 
 
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller

@@ -52,7 +52,7 @@ class CustomerGroupCrud extends Crud
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   [];
 
     /**
      * Define Constructor

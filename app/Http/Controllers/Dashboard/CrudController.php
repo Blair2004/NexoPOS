@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Exception;
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\CrudPostRequest;
+use App\Services\CrudService;
 use Hook;
+use Illuminate\Support\Facades\Auth;
 
 class CrudController extends DashboardController
 {
@@ -74,16 +77,8 @@ class CrudController extends DashboardController
      */
     public function crudPost( String $namespace, CrudPostRequest $request )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
-
-        /**
-         * In case nothing handle this crud
-         */
-        if ( ! class_exists( $crudClass ) ) {
-            throw new Exception( __( 'Unhandled crud resource' ) );
-        }
-
-        $resource   =   new $crudClass;
+        $service    =   new CrudService;
+        $resource   =   $service->getCrudInstance( $namespace );
         $model      =   $resource->getModel();
         $entry      =   new $model;
 
@@ -91,19 +86,18 @@ class CrudController extends DashboardController
          * Filter POST input
          * check if on the CRUD resource the filter exists
          */
-        $inputs         =   $request->all();
+        $inputs         =   $request->getPlainData( $namespace );
 
         if ( method_exists( $resource, 'filterPostInputs' ) ) {
-            $inputs     =   $resource->filterPostInputs( $request->all() );
+            $inputs     =   $resource->filterPostInputs( $inputs );
         }
-
 
         foreach ( $inputs as $name => $value ) {
 
             /**
              * If submitted field are part of fillable fields
              */
-            if ( in_array( $name, $resource->getFillable() ) ) {
+            if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
 
                 /**
                  * We might give the capacity to filter fields 
@@ -117,6 +111,8 @@ class CrudController extends DashboardController
             }
         }
 
+        
+        $entry->author      =   Auth::id();
         $entry->save();
 
         /**

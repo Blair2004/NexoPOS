@@ -25,7 +25,7 @@ export default {
     }),
     methods: {
         validate() {
-            if ( this.form.validateForm( this.fields ) ) {
+            if ( this.form.validateFields( this.fields ) ) {
                 this.form.disableFields( this.fields );
                 const operation  =   this.checkDatabase( this.form.getValue( this.fields ) );
                 operation.subscribe( 

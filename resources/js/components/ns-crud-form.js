@@ -14,7 +14,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         console.log( this );
         this.loadForm();
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link' ],
+    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-link' ],
     computed: {
         activeTabFields() {
             for( identifier in this.form.tabs ) {
@@ -40,20 +40,25 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             });
         },
         submit() {
-            this.formValidation.validateField( this.form.main );
-            const tabsInvalidity    =   [];
-            for( key in this.form.tabs ) {
-                tabsInvalidity.push(
-                    this.formValidation.validateForm( this.form.tabs[ key ].fields )
-                );
-            }
-
-            console.log( tabsInvalidity, this.form );
-
-            if ( this.form.main.errors.length > 0 || tabsInvalidity.length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'invalid-form' ] ? this.$slots[ 'invalid-form' ][0].text : 'No error provided for invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+            if ( ! this.formValidation.validateForm( this.form ) ) {
+                return nsSnackBar.error( this.$slots[ 'invalid-form' ] ? this.$slots[ 'invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
+
+            this.formValidation.disableForm( this.form );
+
+            if ( this.submitLink === undefined ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-submit-link' ] ? this.$slots[ 'error-no-submit-link' ][0].text : 'No error message provided for not having a valid submit link.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
+            }
+
+            nsHttpClient.post( this.submitLink, this.formValidation.extractForm( this.form ) )
+                .subscribe( result => {
+                    document.location   =   this.returnLink;
+                }, ( error ) => {
+                    console.log( error.response )
+                    this.formValidation.enableForm( this.form );
+                })
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
@@ -98,13 +103,15 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                         <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
-                <div :class="form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
+                        :disabled="form.main.disabled"
                         type="text" 
+                        :class="form.main.disabled ? 'bg-gray-400' : ''"
                         class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button :class="form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                    <button :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">

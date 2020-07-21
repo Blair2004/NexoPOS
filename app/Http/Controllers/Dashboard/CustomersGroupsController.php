@@ -19,6 +19,7 @@ use Tendoo\Core\Exceptions\NotFoundException;
 use App\Models\CustomerGroup;
 use App\Models\Customer;
 use Exception;
+use Illuminate\Support\Facades\Cookie;
 
 class CustomersGroupsController extends DashboardController
 {
