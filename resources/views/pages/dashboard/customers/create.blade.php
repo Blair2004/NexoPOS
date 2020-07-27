@@ -8,7 +8,9 @@
             <h3 class="text-3xl text-gray-800 font-bold">{{ __( 'Create Customer' ) }}</h3>
             <p class="text-gray-600">{{ __( 'Add a new customers to the system' ) }}</p>
         </div>
-        <ns-crud-form src="{{ url( '/api/nexopos/v4/crud/ns.customers/form-config' ) }}">
+        <ns-crud-form 
+            submit-link="{{ url( '/api/nexopos/v4/crud/ns.customers' ) }}"
+            src="{{ url( '/api/nexopos/v4/crud/ns.customers/form-config' ) }}">
             <template v-slot:title>Customer Name</template>
             <template v-slot:save>Save Customer</template>
         </ns-crud-form>

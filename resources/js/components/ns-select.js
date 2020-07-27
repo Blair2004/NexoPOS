@@ -26,7 +26,7 @@ const nsInput      =   Vue.component( 'ns-select', {
     <div class="flex flex-col">
         <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
         <div :class="hasError ? 'border-red-400' : 'border-gray-200'" class="mt-1 relative rounded-md shadow-sm mb-2">
-            <select :class="inputClass" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10"/>
+            <select v-model="field.value" :class="inputClass" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10">
                 <option :value="option.value" v-for="option of field.options">{{ option.label }}</option>
             </select>
         </div>

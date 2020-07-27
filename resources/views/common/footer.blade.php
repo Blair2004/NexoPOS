@@ -1,6 +1,6 @@
 <script>
 const NexoPOS   =   {
-    token   :   @json(Cookie::get())
+    token   :   @json(Cookie::get( 'ns_token' ))
 }
 </script>
 <script src="{{ asset( 'js/manifest.js' ) }}"></script>

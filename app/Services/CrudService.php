@@ -322,6 +322,7 @@ class CrudService
             /**
              * @hook crud.entry
              */
+            $entry  =   Hook::filter( 'ns.crud-entry', $entry );
         }
 
         return $entries;

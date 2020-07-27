@@ -2,12 +2,12 @@
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Services\Crud;
+use App\Services\CrudService;
 use App\Models\User;
 use App\Models\Order;
 use Hook;
 
-class OrderCrud extends Crud
+class OrderCrud extends CrudService
 {
     /**
      * define the base table

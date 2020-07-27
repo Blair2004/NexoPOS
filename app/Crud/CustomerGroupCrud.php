@@ -2,12 +2,12 @@
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Services\Crud;
+use App\Services\CrudService;
 use App\Models\User;
 use Hook;
 use App\Models\CustomerGroup;
 
-class CustomerGroupCrud extends Crud
+class CustomerGroupCrud extends CrudService
 {
     /**
      * define the base table
@@ -34,7 +34,7 @@ class CustomerGroupCrud extends Crud
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_customers_groups.user_id', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users', 'nexopos_customers_groups.author', '=', 'nexopos_users.id' ],
     ];
 
     /**
@@ -62,7 +62,7 @@ class CustomerGroupCrud extends Crud
     {
         parent::__construct();
 
-        Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( 'ns.crud-entry', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -225,31 +225,19 @@ class CustomerGroupCrud extends Crud
      */
     public function getColumns() {
         return [
-            'id'  =>  [
-                'label'  =>  __( 'Id' )
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' )
             ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' )
-            ],
             'reward_system_id'  =>  [
-                'label'  =>  __( 'Reward_system_id' )
+                'label'  =>  __( 'Reward System' )
             ],
-            'author'  =>  [
+            'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' )
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' )
-            ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' )
+                'label'  =>  __( 'Created On' )
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' )
-            ],
-                    ];
+        ];
     }
 
     /**
@@ -257,6 +245,7 @@ class CustomerGroupCrud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
+        $entry->reward_system_id   =    $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
@@ -276,6 +265,8 @@ class CustomerGroupCrud extends Crud
                 ]
             ]
         ];
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
 
         return $entry;
     }

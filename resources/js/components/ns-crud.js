@@ -82,7 +82,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             </div>
         </div>
         <div class="flex">
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto flex-auto">
                 <table class="table w-full">
                     <thead>
                         <tr class="text-gray-700 border-b border-gray-200">

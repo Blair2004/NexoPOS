@@ -4,13 +4,13 @@
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Services\Crud;
+use App\Services\CrudService;
 use App\Models\User;
 use Hook;
 use Exception;
 use {{ trim( $model_name ) }};
 
-class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
+class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 {
     /**
      * define the base table
@@ -73,7 +73,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
     {
         parent::__construct();
 
-        Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( 'ns.crud-entry', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -241,6 +241,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends Crud
      */
     public function setActions( $entry, $namespace )
     {
+        // Don't overwrite
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
+
+        // you can make changes here
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),

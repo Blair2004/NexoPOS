@@ -2,12 +2,14 @@
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Services\Crud;
+use App\Services\CrudService;
+use App\Services\Helper;
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\CustomerGroup;
 use Hook;
 
-class CustomerCrud extends Crud
+class CustomerCrud extends CrudService
 {
     /**
      * define the base table
@@ -114,6 +116,7 @@ class CustomerCrud extends Crud
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
                             'validation'    =>  'required',
+                            'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
                         ], [
                             'type'          =>  'text',
