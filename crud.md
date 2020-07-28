@@ -57,7 +57,7 @@ to the creation form. Example :
 
 #### Slots
 
-As the table should be multilingual, translated labels should be provided as a slot. Here is the list of supported slot and their definition : 
+As the table should be multilingual, translated labels should be provided as a slot. Slot should be added as sub dom elements of the `<ns-crud/>` component. You therefore need to make sure that components is not a single tag ~~`<ns-crud/>`~~ but as a paired tags `<ns-crud></ns-crud>`. Here is the list of supported slot and their definition : 
 
 
 | Slot | Definition | Example |
@@ -70,3 +70,35 @@ As the table should be multilingual, translated labels should be provided as a s
 The creating forms loads his configuration from the CRUD Component class. Before, you need to start using the `<ns-crud-form></ns-crud-form>` component. As the previous table component,
 this components also requires parameters and slots.
 
+#### return-link
+This should be a link that takes the user back to the components
+
+```blade
+<ns-crud-form return-link="{{ url( '/dashboard/customers/groups' ) }}"></ns-crud-form>
+```
+#### submit-url
+This should be the URL to the backend where the form is validated and saved. Usually, you'll use the default CRUD url + your component identifier (namespace). Using the same example we're working on (customers groups), the submit url will look like this.
+
+```blade
+<ns-crud-form submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers-groups' ) }}"></ns-crud-form>
+```
+
+#### src
+This is a URL that helps the CRUD forms to configure the fields and tabs. Once again you'll use the default CRUD url + your component identifier + `/form-config`
+Here is an example
+
+```blade
+<ns-crud-form src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config' ) }}"></ns-crud-form>
+```
+
+#### Slots
+
+As the form should be multilingual, translated labels should be provided as a slot. Slot should be added as sub dom elements of the `<ns-crud-form/>` component. You therefore need to make sure that components is not a single tag ~~`<ns-crud-form/>`~~ but as a paired tags `<ns-crud-form></ns-crud-form>`. Here is the list of supported slot and their definition : 
+
+
+| Slot | Definition | Example |
+|------| ---------- | ------- |
+| title | Is the title of the form | `<template v-slot:title>{{ __( 'Create Customer Group' ) }}</template>` |
+| save | Used as label of the save button | `<template v-slot:title>{{ __( 'Save Group' ) }}</template>` |
+| error-required | Is used when an input throw a required error during the validation | `<template v-slot:required>{{ __( 'This field is required' ) }}</template>` |
+| error-invalid-form | Is the error used when the form is not valid | `<template v-slot:error-invalid-form>{{ __( 'Unable to save the group. The form is not valid.' ) }}</template>` |
