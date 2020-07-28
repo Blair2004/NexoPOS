@@ -1,7 +1,23 @@
 # Introduction
 Filters is part of the Hook api of NexoPOS that helps to extends the application. 
-Filters are values that can be mutated by subscribers, while actions are even that can be listened by subscribers. This documents describes filters and list all 
-available filters as long as their purpose and arguments.
+Filters are values that can be mutated by subscribers, while actions are even that can be listened by subscribers. Here is how to hook into a filter : 
+```php
+use Hook
+//...
+  public function __construct()
+  {
+    Hook::addFilter( 'ns-validation', [ $this, 'changeValidationRules' ]);
+  }
+  
+  // ...
+  public function changeValidationRules( $rules )
+  {
+    // changes rules here
+    return $rules;
+  }
+```
+
+Here is the list off all available filters as long as their purpose and arguments.
 
 | Filter | Description | Arguments
 | ------ | ----------- | -------- |
