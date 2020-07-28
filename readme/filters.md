@@ -6,3 +6,4 @@ available filters as long as their purpose and arguments.
 | Filter | Description | Arguments
 | ------ | ----------- | -------- |
 | {namespace}-catch-action | Helps to catch bulk action of a specific CRUD component. {namespace} should be replaced by the actual CRUD component namespace(identifier). | 2 (boolean, `Illuminate\Http\Request)`|
+| {namespace}-crud-entry | Helps to add actions or various other information on each row part of the result.data array. | 1 (`Illuminate\Database\Eloquent\Model`)|
