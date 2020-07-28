@@ -62,7 +62,10 @@ As the table should be multilingual, translated labels should be provided as a s
 
 | Slot | Definition | Example |
 |------| ---------- | ------- |
-| bulk-label | Provides a default label for the bulk select dropdown input | `<template v-slot:bulk-label>Bulk Actions</template>`
+| bulk-label | Provides a default label for the bulk select dropdown input | `<template v-slot:bulk-label>{{ __( 'Bulk Actions' ) }}</template>` |
+| error-no-action | Error used when no action is selected. | `<template v-slot:error-no-action>{{ __( 'You need to select an action.' ) }}</template>` |
+| error-no-selection | Error used when no entry is selected. | `<template v-slot:error-no-selection>{{ __( 'You need to select at least one entry.' ) }}</template>` |
+
 
 
 ### Creating Forms with <ns-crud-form/>
