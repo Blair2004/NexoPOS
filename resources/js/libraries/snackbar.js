@@ -32,6 +32,10 @@ export class SnackBar {
         return this.show( message, label, {...options, ...{ type : 'success' } } );
     }
 
+    info( message, label, options = { duration: 3000, type : 'info' }) {
+        return this.show( message, label, {...options, ...{ type : 'info' } } );
+    }
+
     /**
      * 
      * @param {number} duration 
@@ -84,10 +88,16 @@ export class SnackBar {
         }
         
         textNode.textContent        =   message;
-        buttonNode.textContent      =   label;
-        buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded-lg font-bold ${buttonThemeClass}` );
 
-        buttonsWrapper.appendChild( buttonNode );
+        /**
+         * if there is not label
+         * on the button, it's useless to add it
+         */
+        if ( label ) {
+            buttonNode.textContent      =   label;
+            buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded-lg font-bold ${buttonThemeClass}` );
+            buttonsWrapper.appendChild( buttonNode );
+        }
 
         sampleSnack.appendChild( textNode );
         sampleSnack.appendChild( buttonsWrapper );

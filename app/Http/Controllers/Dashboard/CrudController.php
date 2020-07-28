@@ -253,7 +253,7 @@ class CrudController extends DashboardController
          * Check if an entry is selected, 
          * else throw an error
          */
-        if ( $request->input( 'entries_id' ) == null ) {
+        if ( $request->input( 'entries' ) == null ) {
             throw new Exception( __( 'You need to select at least one item to delete' ) );
         }
 
@@ -265,7 +265,7 @@ class CrudController extends DashboardController
          * assuming we're bulk deleting
          * but the action might be different later
          */
-        $response           =   $resource->bulkDelete( $request );
+        $response           =   $resource->bulkAction( $request );
 
         return [
             'status'    =>  'success',
@@ -327,9 +327,9 @@ class CrudController extends DashboardController
         if ( method_exists( $resource, 'getEntries' ) ) {
             return [
                 'columns'               =>  $resource->getColumns(),
-                'labels'                 => $resource->getLabels(),
-                'links'                 =>  @$resource->getLinks(),
-                'results'               =>  $resource->getEntries(),
+                'labels'                =>  $resource->getLabels(),
+                'links'                 =>  $resource->getLinks() ?? [],
+                'bulkActions'           =>  $resource->getBulkActions(),
                 'namespace'             =>  $namespace,
             ];
         } 

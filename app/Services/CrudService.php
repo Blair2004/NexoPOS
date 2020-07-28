@@ -322,7 +322,7 @@ class CrudService
             /**
              * @hook crud.entry
              */
-            $entry  =   Hook::filter( 'ns.crud-entry', $entry );
+            $entry  =   Hook::filter( $this->namespace . '-crud-actions', $entry );
         }
 
         return $entries;

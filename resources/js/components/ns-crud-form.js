@@ -14,7 +14,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         console.log( this );
         this.loadForm();
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-link' ],
+    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url' ],
     computed: {
         activeTabFields() {
             for( identifier in this.form.tabs ) {
@@ -41,18 +41,18 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         },
         submit() {
             if ( ! this.formValidation.validateForm( this.form ) ) {
-                return nsSnackBar.error( this.$slots[ 'invalid-form' ] ? this.$slots[ 'invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
 
             this.formValidation.disableForm( this.form );
 
-            if ( this.submitLink === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-link' ] ? this.$slots[ 'error-no-submit-link' ][0].text : 'No error message provided for not having a valid submit link.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+            if ( this.submitUrl === undefined ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : 'No error message provided for not having a valid submit link.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
 
-            nsHttpClient.post( this.submitLink, this.formValidation.extractForm( this.form ) )
+            nsHttpClient.post( this.submitUrl, this.formValidation.extractForm( this.form ) )
                 .subscribe( result => {
                     document.location   =   this.returnLink;
                 }, ( error ) => {

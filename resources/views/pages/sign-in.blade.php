@@ -16,7 +16,7 @@
                             @else
                             <label for="" class="font-semibold text-sm mb-1">Username</label>
                             @endif
-                            <input name="username" type="text" class="border-2 border-blue-200 bg-blue-100 rounded p-2 w-full">
+                            <input name="username" type="text" class="border-2 outline-none border-gray-200 bg-gray-100 rounded p-2 w-full">
                             @if( $errors->has( 'username' ) )
                                 @foreach( $errors->get( 'username' ) as $error )
                                 <p class="text-xs text-red-600">{{ $error }}</p>
@@ -31,7 +31,7 @@
                             @else
                             <label for="" class="font-semibold text-sm mb-1">Password</label>
                             @endif
-                            <input name="password" type="password" class="border-2 border-blue-200 bg-blue-100 rounded p-2 w-full">
+                            <input name="password" type="password" class="border-2 outline-none border-gray-200 bg-gray-100 rounded p-2 w-full">
                             @if( $errors->has( 'password' ) )
                                 @foreach( $errors->get( 'password' ) as $error )
                                 <p class="text-xs text-red-600">{{ $error }}</p>

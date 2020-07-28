@@ -1,5 +1,9 @@
 @inject( 'Schema', 'Illuminate\Support\Facades\Schema' )
 @inject( 'Str', 'Illuminate\Support\Str' )
+<?php
+$model          =   explode( '\\', $model_name );
+$lastClassName  =   $model[ count( $model ) - 1 ];
+?>
 <{{ '?php' }}
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +35,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Model Used
      */
-    protected $model      =   \{{ trim( $model_name ) }}::class;
+    protected $model      =   {{ trim( $lastClassName ) }}::class;
 
     /**
      * Adding relation
@@ -73,7 +77,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( 'ns.crud-entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -147,7 +151,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param array of fields
      * @return array of fields
      */
-    public function filterPutInputs( $inputs, \{{ trim( $model_name ) }} $entry )
+    public function filterPutInputs( $inputs, {{ trim( $lastClassName ) }} $entry )
     {
         return $inputs;
     }
@@ -230,7 +234,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return [
             @foreach( $Schema::getColumnListing( $table_name ) as $column )
 '{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' )
+                'label'  =>  __( '{{ ucwords( $column ) }}' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
             @endforeach
         ];
@@ -244,6 +250,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         // Don't overwrite
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
 
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -275,7 +282,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param  object Request with object
      * @return  false/array
      */
-    public function bulkDelete( Request $request ) 
+    public function bulkActions( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
@@ -297,7 +304,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof {{ trim( $model_name ) }} ) {
+                if ( $entity instanceof {{ trim( $lastClassName ) }} ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -306,7 +313,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             }
             return $status;
         }
-        return false;
+
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
     /**

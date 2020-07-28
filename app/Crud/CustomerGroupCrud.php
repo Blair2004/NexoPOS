@@ -28,7 +28,7 @@ class CustomerGroupCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model      =   \App\Models\CustomerGroup::class;
+    protected $model      =   CustomerGroup::class;
 
     /**
      * Adding relation
@@ -62,7 +62,7 @@ class CustomerGroupCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( 'ns.crud-entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -226,16 +226,24 @@ class CustomerGroupCrud extends CrudService
     public function getColumns() {
         return [
             'name'  =>  [
-                'label'  =>  __( 'Name' )
+                'label'  =>  __( 'Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
             ],
             'reward_system_id'  =>  [
-                'label'  =>  __( 'Reward System' )
+                'label'  =>  __( 'Reward System' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
             ],
             'nexopos_users_username'  =>  [
-                'label'  =>  __( 'Author' )
+                'label'  =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created On' )
+                'label'  =>  __( 'Created On' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -267,6 +275,7 @@ class CustomerGroupCrud extends CrudService
         ];
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
 
         return $entry;
     }
@@ -277,13 +286,14 @@ class CustomerGroupCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkDelete( Request $request ) 
+    public function bulkAction( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
+        $user   =   app()->make( 'App\Services\Users' );
+
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
@@ -297,9 +307,9 @@ class CustomerGroupCrud extends CrudService
                 'failed'    =>  0
             ];
 
-            foreach ( $request->input( 'entries_id' ) as $id ) {
+            foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof App\Models\CustomerGroup ) {
+                if ( $entity instanceof CustomerGroup ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -308,7 +318,8 @@ class CustomerGroupCrud extends CrudService
             }
             return $status;
         }
-        return false;
+        
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
     /**
@@ -330,7 +341,15 @@ class CustomerGroupCrud extends CrudService
     **/
     public function getBulkActions()
     {
-        return [];
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Groups' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  route( 'crud.bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
     }
 
     /**

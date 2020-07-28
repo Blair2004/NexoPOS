@@ -29,7 +29,7 @@ class CrudPutRequest extends FormRequest
         /**
          * get resource defined
          */
-        $crudClass  =   Hook::filter( 'register.crud', $this->route( 'namespace' ) );
+        $crudClass  =   Hook::filter( 'ns.crud-resource', $this->route( 'namespace' ) );
 
         /**
          * In case nothing handle this crud
