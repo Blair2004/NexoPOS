@@ -9,6 +9,7 @@ use Hook;
 use App\Crud\Applications;
 use App\Exceptions\CoreException;
 use App\Services\CrudService;
+use Illuminate\Support\Arr;
 
 class CrudPostRequest extends BaseCrudRequest
 {
@@ -31,6 +32,6 @@ class CrudPostRequest extends BaseCrudRequest
     {
         $service    =   new CrudService;
         $resource   =   $service->getCrudInstance( $this->route( 'namespace' ) );
-        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $service->extractCrudValidation( $resource ) );
+        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), Arr::dot( $service->extractCrudValidation( $resource ) ) );
     }
 }

@@ -36,7 +36,8 @@ class CustomerCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-            ];
+        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', 'nexopos_customers_groups.id' ]
+    ];
 
     /**
      * Define where statement
@@ -53,7 +54,7 @@ class CustomerCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+    public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -106,6 +107,7 @@ class CustomerCrud extends CrudService
             'main'  =>  [
                 'label' =>  __( 'Customer Name' ),
                 'name'  =>  'name',
+                'validation'    =>  'required',
                 'description'   =>  __( 'Provide a unique name for the customer.' )
             ], 
             'tabs'  =>  [
@@ -113,26 +115,43 @@ class CustomerCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
+                            'type'          =>  'text',
+                            'label'         =>  __( 'Surname' ),
+                            'name'          =>  'surname',
+                            'description'   =>  __( 'Provide the customer surname' )
+                        ], [
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
                             'validation'    =>  'required',
+                            'name'          =>  'group_id',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
                         ], [
-                            'type'          =>  'text',
-                            'label'         =>  __( 'Surname' ),
-                            'validation'    =>  'required',
-                            'description'   =>  __( 'Provide the customer surname' )
-                        ], [
                             'type'          =>  'email',
                             'label'         =>  __( 'Email' ),
-                            'validation'    =>  'required|email',
+                            'name'          =>  'email',
+                            'validation'    =>  'required|email|unique:nexopos_customers',
                             'description'   =>  __( 'Provide the customer email' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'Phone Number' ),
-                            'validation'    =>  'required',
+                            'name'          =>  'phone',
                             'description'   =>  __( 'Provide the customer phone number' )
+                        ], [
+                            'type'          =>  'text',
+                            'label'         =>  __( 'PO Box' ),
+                            'name'          =>  'pobox',
+                            'description'   =>  __( 'Provide the customer PO.Box' )
+                        ], [
+                            'type'          =>  'select',
+                            'options'       =>  Helper::kvToJsOptions([
+                                'no_gender' =>  __( 'Not Defined' ),
+                                'male'      =>  __( 'Male' ),
+                                'female'    =>  __( 'Female' )          
+                            ]),
+                            'label'         =>  __( 'Gender' ),
+                            'name'          =>  'gender',
+                            'description'   =>  __( 'Provide the customer PO.Box' )
                         ]
                     ]
                 ]

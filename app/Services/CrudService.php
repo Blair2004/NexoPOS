@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Exception;
 use Hook;
 
 class CrudService 
@@ -415,6 +416,8 @@ class CrudService
             }
         }
 
+        dd( $rules );
+        
         return $rules;
     }
 
@@ -434,9 +437,7 @@ class CrudService
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
             foreach( $tab[ 'fields' ] as $field ) {
-                if ( isset( $field[ 'validation' ] ) ) {
-                    $data[ $field[ 'name' ] ]   =   $request->input( $field[ 'name' ] ); 
-                }
+                $data[ $field[ 'name' ] ]   =   $request->input( $tabKey . '.' . $field[ 'name' ] ); 
             }
         }
 

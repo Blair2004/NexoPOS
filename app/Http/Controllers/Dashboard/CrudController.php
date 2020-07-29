@@ -88,7 +88,7 @@ class CrudController extends DashboardController
          * check if on the CRUD resource the filter exists
          */
         $inputs         =   $request->getPlainData( $namespace );
-
+        
         if ( method_exists( $resource, 'filterPostInputs' ) ) {
             $inputs     =   $resource->filterPostInputs( $inputs );
         }

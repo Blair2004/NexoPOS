@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Event;
-use App\Exceptions\CoreException;
 use App\Services\CrudService;
 use Hook;
+use Illuminate\Support\Arr;
 
 class CrudPutRequest extends BaseCrudRequest
 {
@@ -29,6 +29,6 @@ class CrudPutRequest extends BaseCrudRequest
     {
         $service    =   new CrudService;
         $resource   =   $service->getCrudInstance( $this->route( 'namespace' ) );
-        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $service->extractCrudValidation( $resource ) );
+        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), Arr::dot( $service->extractCrudValidation( $resource ) ) );
     }
 }

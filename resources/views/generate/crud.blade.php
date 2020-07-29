@@ -67,7 +67,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         $field      =   trim( $field );
     }
     @endphp
-    public $fillable    =   {!! json_encode( $fillable ) !!};
+    public $fillable    =   {!! json_encode( $fillable ?? [] ) !!};
 
     /**
      * Define Constructor
