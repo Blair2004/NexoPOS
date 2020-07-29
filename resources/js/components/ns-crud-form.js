@@ -14,7 +14,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         console.log( this );
         this.loadForm();
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url' ],
+    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url', 'submit-method' ],
     computed: {
         activeTabFields() {
             for( identifier in this.form.tabs ) {
@@ -52,7 +52,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                     .subscribe();
             }
 
-            nsHttpClient.post( this.submitUrl, this.formValidation.extractForm( this.form ) )
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
                 .subscribe( result => {
                     document.location   =   this.returnLink;
                 }, ( error ) => {

@@ -4,10 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Event;
-use App\Facades\Hook;
 use App\Exceptions\CoreException;
+use App\Services\CrudService;
+use Hook;
 
-class CrudPutRequest extends FormRequest
+class CrudPutRequest extends BaseCrudRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,27 +27,8 @@ class CrudPutRequest extends FormRequest
      */
     public function rules()
     {
-        /**
-         * get resource defined
-         */
-        $crudClass  =   Hook::filter( 'ns.crud-resource', $this->route( 'namespace' ) );
-
-        /**
-         * In case nothing handle this crud
-         */
-        if ( ! class_exists( $crudClass ) ) {
-            throw new CoreException([
-                'message'   =>  __( 'Unhandled Crud resource' )
-            ]);
-        }
-        
-        $resource   =   new $crudClass;
-
-        if ( is_object( $resource ) ) {
-            return $resource->validationRules( $this );      
-        }
-
-        // if a resource is not defined. Let's return an empty array.
-        return [];
+        $service    =   new CrudService;
+        $resource   =   $service->getCrudInstance( $this->route( 'namespace' ) );
+        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $service->extractCrudValidation( $resource ) );
     }
 }

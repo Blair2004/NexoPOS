@@ -105,6 +105,7 @@ class CustomerGroupCrud extends CrudService
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' ),
                 'validation'    =>  'required'
             ],
@@ -116,10 +117,12 @@ class CustomerGroupCrud extends CrudService
                             'type'          =>  'select',
                             'name'          =>  'reward_system_id',
                             'label'         =>  __( 'Reward System' ),
+                            'value'         =>  $entry->reward_system_id ?? '',
                             'description'   =>  __( 'Select which Reward system applies to the group' )
                         ], [
                             'type'          =>  'textarea',
                             'name'          =>  'description',
+                            'value'         =>  $entry->description ?? '',
                             'description'   =>  __( 'A brief description about what this group is about' ),
                             'label'         =>  __( 'Description' )
                         ], 
@@ -144,7 +147,7 @@ class CustomerGroupCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, \App\Models\CustomerGroup $entry )
+    public function filterPutInputs( $inputs, CustomerGroup $entry )
     {
         return $inputs;
     }
@@ -257,16 +260,16 @@ class CustomerGroupCrud extends CrudService
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/ns.customers-group/edit/#'
+                'url'           =>      url( 'dashboard/customers/groups/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/ns.customers-group' . '/#',
+                'url'       =>  url( '/api/nexopos/v4/customers/groups/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )

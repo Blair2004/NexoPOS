@@ -15,13 +15,11 @@
                         <div class="w-8 h-8 rounded-full bg-gray-800"></div>
                     </div>
                 </div>
-                <div class="w-full h-0 flex z-10 relative -mb-2 pt-2" v-if="menuToggled">
-                    <ul class="text-gray-700 w-full bg-white shadow">
-                        <li class="hover:bg-blue-400 bg-white hover:text-white px-2 py-1"><i class="las text-lg mr-2 la-user-tie"></i> Hello</li>
-                        <li class="hover:bg-blue-400 bg-white hover:text-white px-2 py-1"><i class="las text-lg mr-2 la-user-tie"></i> World</li>
-                        <li class="hover:bg-blue-400 bg-white hover:text-white px-2 py-1"><i class="las text-lg mr-2 la-user-tie"></i> Here</li>
-                    </ul>
-                </div>
+            </div>
+            <div class="w-full shadow-lg rounded-br-lg rounded-bl-lg overflow-hidden flex z-10 relative -mb-2" v-if="menuToggled">
+                <ul class="text-gray-700 w-full bg-white shadow">
+                    <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.logout' ) }}"><i class="las text-lg mr-2 la-user-tie"></i> {{ __( 'Logout' ) }}</a></li>
+                </ul>
             </div>
         </div>
     </div>

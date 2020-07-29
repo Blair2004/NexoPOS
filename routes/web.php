@@ -18,12 +18,13 @@ Route::get('/', function () {
 });
 
 Route::middleware([ 'ns.installed' ])->group( function() {
-    Route::get( '/sign-in', 'AuthController@signIn' )->name( 'login' );
+    Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
     Route::get( '/sign-up', 'AuthController@signUp' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
     Route::get( '/new-password', 'AuthController@newPassword' );
 
     Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
+    Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
 
     Route::middleware([ 'auth' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
@@ -32,6 +33,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
         Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersGroupsController@listCustomersGroups' );
         Route::get( '/dashboard/customers/groups/create', 'Dashboard\CustomersGroupsController@createCustomerGroup' );
+        Route::get( '/dashboard/customers/groups/edit/{group}', 'Dashboard\CustomersGroupsController@editCustomerGroup' );
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
         Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );

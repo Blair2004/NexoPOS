@@ -43,6 +43,12 @@ class AuthController extends Controller
         return view( 'pages.new-password' );
     }
 
+    public function signOut()
+    {
+        Auth::logout();
+        return redirect( route( 'ns.login' ) );
+    }
+
     public function postSignIn( SignInRequest $request )
     {
         $attempt    =   Auth::attempt([
@@ -60,7 +66,7 @@ class AuthController extends Controller
         $validator->errors()->add( 'username', __( 'Unable to find record having that username.' ) );
         $validator->errors()->add( 'password', __( 'Unable to find record having that password.' ) );
 
-        return redirect( route( 'login' ) )->withErrors( $validator );
+        return redirect( route( 'ns.login' ) )->withErrors( $validator );
     }
 }
 

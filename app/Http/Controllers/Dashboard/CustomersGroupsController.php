@@ -42,6 +42,14 @@ class CustomersGroupsController extends DashboardController
         ]);
     }
 
+    public function editCustomerGroup( CustomerGroup $group )
+    {
+        return $this->view( 'pages.dashboard.customers-groups.edit', [
+            'title'     =>  sprintf( __( 'Edit Group %s' ), $group->name ),
+            'group'     =>  $group
+        ]);
+    }
+
     /**
      * get a list or a single customer
      * group using a provided id

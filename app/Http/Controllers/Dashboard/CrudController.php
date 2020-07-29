@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Exception;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
+use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
 use Hook;
 use Illuminate\Support\Facades\Auth;
@@ -140,45 +141,29 @@ class CrudController extends DashboardController
      * @param object request : CrudPutRequest
      * @return void
      */
-    public function crudPut( String $namespace, $entry, CrudPutRequest $request  ) 
+    public function crudPut( String $namespace, $id, CrudPutRequest $request  ) 
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
-
-        /**
-         * In case nothing handle this crud
-         */
-        if ( ! class_exists( $crudClass ) ) {
-            throw new Exception( __( 'Unhandled CRUD Resource' ) );
-        }
-        
-        $resource   =   new $crudClass;
+        $service    =   new CrudService;
+        $resource   =   $service->getCrudInstance( $namespace );
         $model      =   $resource->getModel();
-        $entry      =   $model::find( $entry );
+        $entry      =   $model::find( $id );
 
         /**
-         * Filter PUT input
+         * Filter POST input
          * check if on the CRUD resource the filter exists
          */
-        $inputs         =   $request->all();
-        if ( method_exists( $resource, 'filterPutInputs' ) ) {
-            $inputs     =   $resource->filterPutInputs( $request->all(), $entry );
+        $inputs         =   $request->getPlainData( $namespace );
 
-            /**
-             * if a redirect response is returned
-             * the execution should stop immediately
-             */
-            if ( $inputs instanceof RedirectResponse ) {
-                return $inputs;
-            }
+        if ( method_exists( $resource, 'filterPutInputs' ) ) {
+            $inputs     =   $resource->filterPutInputs( $inputs, $entry );
         }
 
         foreach ( $inputs as $name => $value ) {
 
             /**
              * If submitted field are part of fillable fields
-             * The field should not be null
              */
-            if ( in_array( $name, $resource->getFillable() ) && $value !== null ) {
+            if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
 
                 /**
                  * We might give the capacity to filter fields 
@@ -192,10 +177,12 @@ class CrudController extends DashboardController
             }
         }
 
+        
+        $entry->author      =   Auth::id();
         $entry->save();
 
         /**
-         * Create an event after crud put
+         * Create an event after crud POST
          */
         if ( method_exists( $resource, 'afterPut' ) ) {
             $resource->afterPut( $entry );
@@ -205,9 +192,9 @@ class CrudController extends DashboardController
          * @todo adding a link to edit the new entry
          */
         return [
-            'status'    =>   'success',
-            'message'   =>  __( 'the entry has been updated' ),
-            'data'      =>  compact( 'entry' )
+            'status'    =>  'success',
+            'entry'     =>  $entry,
+            'message'   =>  __( 'A new entry has been successfully created.' )
         ];
     }
 

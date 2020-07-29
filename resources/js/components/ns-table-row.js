@@ -1,4 +1,4 @@
-const { Vue, nsEvent }   =   require( './../bootstrap' );
+const { Vue, nsEvent, nsHttpClient, nsSnackBar }   =   require( './../bootstrap' );
 
 Vue.component( 'ns-table-row', {
     props: [
@@ -19,6 +19,19 @@ Vue.component( 'ns-table-row', {
         },
         handleChanged( event ) {
             this.row.$checked   =   event;
+        },
+        triggerAsync( action ) {
+            if ( action.confirm ) {
+                if ( confirm( action.confirm.message ) ) {
+                    nsHttpClient[ action.type.toLowerCase() ]( action.url )
+                        .subscribe( response => {
+                            nsSnackBar.success( result.data.message )
+                                .subscribe();
+                        }, ( response ) => {
+                            console.log( Object.keys( response ) );
+                        })
+                }
+            }
         }
     },
     template: `
@@ -31,7 +44,10 @@ Vue.component( 'ns-table-row', {
             <button @click="toggleMenu()" class="outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
             <div v-if="row.$toggled" class="rounded shadow-lg border border-gray-400 bg-gray-100 overflow-hidden w-32 absolute mt-12">
                 <ul>
-                    <li class="" v-for="action of row.$actions"><a :href="action.url" class="px-4 py-2 block hover:bg-blue-400 hover:text-white">{{ action.label }}</a></li>
+                    <li v-for="action of row.$actions">
+                        <a :href="action.url" v-if="action.type === 'GOTO'" class="px-4 py-2 block hover:bg-blue-400 hover:text-white">{{ action.label }}</a>
+                        <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE' ].includes( action.type )" class="px-4 py-2 block hover:bg-blue-400 hover:text-white">{{ action.label }}</a>
+                    </li>
                 </ul>
             </div>
         </td>
