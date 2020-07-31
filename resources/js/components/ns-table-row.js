@@ -27,6 +27,7 @@ Vue.component( 'ns-table-row', {
                         .subscribe( response => {
                             nsSnackBar.success( result.data.message )
                                 .subscribe();
+                            this.$emit( 'updated', true );
                         }, ( response ) => {
                             console.log( Object.keys( response ) );
                         })

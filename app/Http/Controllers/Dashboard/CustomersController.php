@@ -169,6 +169,21 @@ class CustomersController extends DashboardController
         ];
     }
 
+    public function editCustomer( Customer $customer )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  sprintf( __( 'Edit Customer : %s' ), $customer->name ),
+            'description'   =>  __( 'Edit an existing customer.' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.customers/' . $customer->id ),
+            'returnLink'    =>  url( '/dashboard/customers' ),
+            'submitMethod'  =>  'PUT',
+            'mainFieldLabel'    =>  __( 'Customer Name' ),
+            'saveButton'    =>  __( 'Update Customer' ),
+            'srcUrl'        =>  url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
+            'customer'      =>  $customer
+        ]);
+    }
+
     /**
      * get the address informations saved
      * under a specific customer id

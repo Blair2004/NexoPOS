@@ -31,6 +31,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
         Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
+        Route::get( '/dashboard/customers/edit/{customer}', 'Dashboard\CustomersController@editCustomer' );
         Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersGroupsController@listCustomersGroups' );
         Route::get( '/dashboard/customers/groups/create', 'Dashboard\CustomersGroupsController@createCustomerGroup' );
         Route::get( '/dashboard/customers/groups/edit/{group}', 'Dashboard\CustomersGroupsController@editCustomerGroup' );

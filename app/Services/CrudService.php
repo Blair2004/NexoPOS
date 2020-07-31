@@ -398,10 +398,9 @@ class CrudService
      * @param Crud $resource
      * @return Array
      */
-    public function extractCrudValidation( $crud )
+    public function extractCrudValidation( $crud, $entry = null )
     {
-        $form   =   $crud->getForm();
-
+        $form   =   $crud->getForm( $entry );
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {

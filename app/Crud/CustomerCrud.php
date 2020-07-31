@@ -37,7 +37,8 @@ class CustomerCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ]
+        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ],
+        [ 'nexopos_users', 'nexopos_customers.author', '=', 'nexopos_users.id' ],
     ];
 
     /**
@@ -65,7 +66,7 @@ class CustomerCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -102,13 +103,14 @@ class CustomerCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( Customer $entry = null ) 
     {
         return [
             'main'  =>  [
                 'label' =>  __( 'Customer Name' ),
                 'name'  =>  'name',
                 'validation'    =>  'required',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a unique name for the customer.' )
             ], 
             'tabs'  =>  [
@@ -119,43 +121,49 @@ class CustomerCrud extends CrudService
                             'type'          =>  'text',
                             'label'         =>  __( 'Surname' ),
                             'name'          =>  'surname',
+                            'value'         =>  $entry->surname ?? '',
                             'description'   =>  __( 'Provide the customer surname' )
                         ], [
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
                             'validation'    =>  'required',
                             'name'          =>  'group_id',
+                            'value'         =>  $entry->group_id ?? '',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
                         ], [
                             'type'          =>  'email',
                             'label'         =>  __( 'Email' ),
                             'name'          =>  'email',
+                            'value'         =>  $entry->email ?? '',
                             'validation'    =>  [
                                 'required',
                                 'email',
-                                $entry !== null ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id, 'id' ) : Rule::unique( 'nexopos_customers', 'email' )
+                                $entry instanceof Customer ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
                             ],
                             'description'   =>  __( 'Provide the customer email' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'Phone Number' ),
                             'name'          =>  'phone',
+                            'value'         =>  $entry->phone ?? '',
                             'description'   =>  __( 'Provide the customer phone number' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'PO Box' ),
                             'name'          =>  'pobox',
+                            'value'         =>  $entry->pobox ?? '',
                             'description'   =>  __( 'Provide the customer PO.Box' )
                         ], [
                             'type'          =>  'select',
                             'options'       =>  Helper::kvToJsOptions([
-                                'no_gender' =>  __( 'Not Defined' ),
+                                ''          =>  __( 'Not Defined' ),
                                 'male'      =>  __( 'Male' ),
                                 'female'    =>  __( 'Female' )          
                             ]),
                             'label'         =>  __( 'Gender' ),
                             'name'          =>  'gender',
+                            'value'         =>  $entry->gender ?? '',
                             'description'   =>  __( 'Provide the customer PO.Box' )
                         ]
                     ]
@@ -266,7 +274,7 @@ class CustomerCrud extends CrudService
             'surname'  =>  [
                 'label'  =>  __( 'Surname' )
             ],
-            'group_id'  =>  [
+            'nexopos_customers_groups_name'  =>  [
                 'label'  =>  __( 'Group' )
             ],
             'email'  =>  [
@@ -281,7 +289,7 @@ class CustomerCrud extends CrudService
             'pobox'  =>  [
                 'label'  =>  __( 'Pobox' )
             ],
-            'author'  =>  [
+            'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' )
             ],
             'created_at'  =>  [
@@ -314,9 +322,18 @@ class CustomerCrud extends CrudService
                 ]
             ]
         ];
+
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
+        $entry->surname         =   $entry->surname ?? __( 'Not Defined' );
+        $entry->pobox           =   $entry->pobox ?? __( 'Not Defined' );
+        
+        switch( $entry->gender ) {
+            case 'male': $entry->gender = __( 'Male' );break;
+            case 'female': $entry->gender = __( 'Female' );break;
+            default: $entry->gender = __( 'Not Defined' );break;
+        }
 
         return $entry;
     }
