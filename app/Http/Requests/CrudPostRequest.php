@@ -30,8 +30,13 @@ class CrudPostRequest extends BaseCrudRequest
      */
     public function rules()
     {
-        $service    =   new CrudService;
-        $resource   =   $service->getCrudInstance( $this->route( 'namespace' ) );
-        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), Arr::dot( $service->extractCrudValidation( $resource ) ) );
+        $service        =   new CrudService;
+        $resource       =   $service->getCrudInstance( $this->route( 'namespace' ) );
+        $arrayRules     =   $service->extractCrudValidation( $resource );
+        $isolatedRules  =   $service->isolateArrayRules( $arrayRules );
+        $flatRules      =   collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+            return [ $rule[0] => $rule[1] ];
+        })->toArray();
+        return Hook::filter( 'ns.validation.' . $this->route( 'namespace' ), $flatRules );
     }
 }

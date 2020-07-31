@@ -2,6 +2,7 @@
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Models\User;
@@ -36,7 +37,7 @@ class CustomerCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', 'nexopos_customers_groups.id' ]
+        [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ]
     ];
 
     /**
@@ -130,7 +131,11 @@ class CustomerCrud extends CrudService
                             'type'          =>  'email',
                             'label'         =>  __( 'Email' ),
                             'name'          =>  'email',
-                            'validation'    =>  'required|email|unique:nexopos_customers',
+                            'validation'    =>  [
+                                'required',
+                                'email',
+                                $entry !== null ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id, 'id' ) : Rule::unique( 'nexopos_customers', 'email' )
+                            ],
                             'description'   =>  __( 'Provide the customer email' )
                         ], [
                             'type'          =>  'text',
@@ -293,22 +298,25 @@ class CustomerCrud extends CrudService
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/ns.customers/edit/#'
+                'url'           =>      url( 'dashboard/customers/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/ns.customers' . '/#',
+                'url'       =>  url( '/api/nexopos/v4/customers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'title'     =>  __( 'Delete a customers' )
                 ]
             ]
         ];
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
 
         return $entry;
     }

@@ -415,8 +415,6 @@ class CrudService
                 }
             }
         }
-
-        dd( $rules );
         
         return $rules;
     }
@@ -442,5 +440,27 @@ class CrudService
         }
 
         return $data;
+    }
+
+    /**
+     * Isolate Rules that use the Rule class
+     * @param array
+     * @return array
+     */
+    public function isolateArrayRules( $arrayRules, $parentKey = '' )
+    {
+        $rules      =   [];
+
+        foreach( $arrayRules as $key => $value ) {
+            if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
+                return is_string( $key );
+            })->count() > 0 ) {
+                $rules  =   array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
+            } else {
+                $rules[]  =   [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
+            }
+        }
+
+        return $rules;
     }
 }

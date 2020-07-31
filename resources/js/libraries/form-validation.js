@@ -98,7 +98,7 @@ export default class FormValidation {
     }
 
     detectValidationRules( validation ) {
-        return validation.split( '|' ).map( rule => {
+        const execRule  =   ( rule ) => {
             let finalRules          =   [];
             const minRule 			=	/(min)\:([0-9])+/g;
             const maxRule 			=	/(max)\:([0-9])+/g;
@@ -122,7 +122,54 @@ export default class FormValidation {
             }
             
             return rule;
-        });
+        };
+
+        if ( Array.isArray( validation ) ) {
+            return validation.filter( r => typeof r === 'string' )
+                .map( execRule );
+        } else {
+            return validation.split( '|' ).map( execRule );
+        }
+    }
+
+    /**
+     * Will trigger an error on the form
+     * if the error is a validation object.
+     * @param {Object} Form 
+     * @param {Object} data 
+     */
+    triggerError( form, data ) {
+        console.log( data );
+        if ( data.errors ) {
+            for( let index in data.errors ) {
+                let path    =   index.split( '.' ).filter( exp => {
+                    return ! /^\d+$/.test( exp );
+                });
+
+                /**
+                 * if the validation path
+                 * has 2 entries we believe it's a 
+                 * an error on a field within a tab
+                 */
+                if ( path.length === 2 ) {
+                    form.tabs[ path[0] ].fields.forEach( field => {
+                        if ( field.name === path[1] ) {
+                            data.errors[ index ].forEach( errorMessage => {
+                                field.errors.push({
+                                    identifier: 'invalid',
+                                    invalid: true,
+                                    message: errorMessage
+                                });
+                            });
+                        }
+                    })
+                }
+
+                /**
+                 * @todo needs to do the same with the title
+                 */
+            }
+        }
     }
 
     fieldPassCheck( field, rule ) {
