@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerGroupCrud;
 use App\Crud\OrderCrud;
+use App\Crud\RewardSystemCrud;
 use Illuminate\Support\ServiceProvider;
 use Hook;
 
@@ -32,6 +33,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.customers': return CustomerCrud::class;
                 case 'ns.customers-groups': return CustomerGroupCrud::class;
+                case 'ns.rewards-system': return RewardSystemCrud::class;
             }
             return $namespace;
         });

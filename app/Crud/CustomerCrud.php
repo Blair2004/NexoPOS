@@ -315,7 +315,7 @@ class CustomerCrud extends CrudService
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  url( '/api/nexopos/v4/customers/' . $entry->id ),
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a customers' )
@@ -323,11 +323,12 @@ class CustomerCrud extends CrudService
             ]
         ];
 
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-        $entry->surname         =   $entry->surname ?? __( 'Not Defined' );
-        $entry->pobox           =   $entry->pobox ?? __( 'Not Defined' );
+        $entry->{ '$checked' }          =   false;
+        $entry->{ '$toggled' }          =   false;
+        $entry->{ '$id' }               =   $entry->id;
+        $entry->surname                 =   $entry->surname ?? __( 'Not Defined' );
+        $entry->pobox                   =   $entry->pobox ?? __( 'Not Defined' );
+        $entry->reward_system_id        =   $entry->reward_system_id ?? __( 'Not Defined' );
         
         switch( $entry->gender ) {
             case 'male': $entry->gender = __( 'Male' );break;

@@ -65,11 +65,11 @@ class MenuService
                     ],
                     'list-reward-system'    =>  [
                         'label' =>  __( 'Reward Systems'),
-                        'href'  =>  url( '/dashboard/customers/reward-systems' )
+                        'href'  =>  url( '/dashboard/customers/rewards-system' )
                     ],
                     'create-reward-system'    =>  [
                         'label' =>  __( 'Create Reward'),
-                        'href'  =>  url( '/dashboard/customers/reward-systems/create' )
+                        'href'  =>  url( '/dashboard/customers/rewards-system/create' )
                     ],
                 ]
             ], 

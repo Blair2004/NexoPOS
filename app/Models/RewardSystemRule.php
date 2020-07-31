@@ -5,5 +5,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class RewardSystemRule extends Model
 {
-    protected $table    =   'nexopos_' . 'rewards_systems_rules';
+    protected $table    =   'nexopos_' . 'rewards_system_rules';
 }

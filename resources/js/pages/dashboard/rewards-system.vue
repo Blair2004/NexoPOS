@@ -1,48 +1,21 @@
-const { Vue, EventEmitter, nsHttpClient, nsSnackBar }   =   require( '../bootstrap' );
-const FormValidation                        =   require( "./../libraries/form-validation" ).default;
-
-const nsCrud    =   Vue.component( 'ns-crud-form', {
-    data: () => {
-        return {
-            form: {},
-            globallyChecked: false,
-            formValidation: new FormValidation,
-            rows: []
-        }
-    }, 
+<script>
+import FormValidation from '../../libraries/form-validation';
+import { nsSnackBar, nsHttpClient } from '../../bootstrap';
+export default {
+    name: 'ns-rewards-system',
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url', 'submit-method', 'disable-tabs' ],
-    computed: {
-        activeTabFields() {
-            for( identifier in this.form.tabs ) {
-                if ( this.form.tabs[ identifier ].active ) {
-                    return this.form.tabs[ identifier ].fields;
-                }
-            }
-            return [];
+    data: () => {
+        return {
+            formValidation: new FormValidation,
+            form: {},
+            nsSnackBar,
+            nsHttpClient,
         }
     },
+    props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
-        toggle( identifier ) {
-            for( key in this.form.tabs ) {
-                this.form.tabs[ key ].active    =   false;
-            }
-            this.form.tabs[ identifier ].active     =   true;
-        },
-        /**
-         * Dpeca
-         * @param {Object} e Something
-         * @deprecated
-         */
-        handleShowOptions( e ) {
-            this.rows.forEach( row => {
-                if ( row.$id !== e.$id ) {
-                    row.$toggled    =   false;
-                }
-            });
-        },
         submit() {
             if ( ! this.formValidation.validateForm( this.form ) ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
@@ -60,7 +33,6 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 .subscribe( result => {
                     document.location   =   this.returnLink;
                 }, ( error ) => {
-                    // console.log( error.response )
                     nsSnackBar.error( error.response.data.message, undefined, {
                         duration: 5000
                     }).subscribe();
@@ -83,26 +55,51 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             form.main           =   this.formValidation.createForm([ form.main ])[0];
             let index           =   0;
 
-            for( key in form.tabs ) {
-                if ( index === 0 ) {
-                    form.tabs[ key ].active  =   true;
-                }
+            // for( key in form.tabs ) {
+                // if ( index === 0 ) {
+                    //     form.tabs[ key ].active  =   true;
+                // }
 
-                form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
-                form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
+                // form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
+                // form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
 
-                index++;
-            }
+                // index++;
+            // }
+                console.log( form );
+
 
             return form;
+        },
+        getRuleForm() {
+            return [
+                {
+                    label: 'Purchase',
+                    description: 'Purchase required',
+                    type: 'number',
+                    name: 'purchase',
+                }, {
+                    label: 'Points',
+                    description: 'Points Earned',
+                    type: 'number',
+                    name: 'points',
+                }
+            ];
+        },
+        addRule() {
+            this.form.rules.push( this.getRuleForm() );
+        },
+        removeRule( index ) {
+            this.form.rules.splice( index, 1 );
         }
-    },
-    template: `
-    <div class="form flex-auto" id="crud-form">
-        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
-            <ns-spinner />
+    }
+}
+</script>
+<template>
+    <div class="form flex-auto flex flex-col" id="crud-form">
+        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center flex-auto">
+            <ns-spinner/>
         </div>
-        <div v-if="Object.values( form ).length > 0">
+        <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
@@ -121,25 +118,40 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                     <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">
+                <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
-            <div id="tabs-container" class="my-5" v-if="disableTabs !== 'true'">
-                <div class="header flex" style="margin-bottom: -1px;">
-                    <div v-for="( tab , identifier ) of form.tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+            <div id="points-wrapper" class="flex -mx-4 mt-4">
+                <div class="w-full md:w-1/3 lg:1/4 px-4">
+                    <div class="bg-white rounded shadow">
+                        <div class="header border-b border-gray-200 p-2">General</div>
+                        <div class="body p-2">
+                            <ns-field class="mb-2" v-bind:key="index" :field="field" v-for="(field,index) of form.tabs.general.fields"></ns-field>
+                        </div>
+                    </div>
+                    <div class="rounded bg-gray-100 border border-gray-400 p-2 flex justify-between items-center my-3">
+                        <slot name="add"><span class="text-gray-700">Add Rule</span></slot>
+                        <button @click="addRule()" class="rounded bg-blue-500 text-white font-semibold flex items-center justify-center h-10 w-10">
+                            <i class="las la-plus"></i>
+                        </button>
+                    </div>
                 </div>
-                <div v-for="tab of form.tabs" class="border border-gray-400 p-4 bg-white">
-                    <div class="-mx-4 flex flex-wrap">
-                        <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
-                            <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                <div class="w-full md:w-2/3 lg:3/4 px-4 -m-3 flex flex-wrap items-start justify-start">
+                    <div class="w-full md:w-1/2 p-3" v-bind:key="index" v-for="(rule,index) of form.rules">
+                        <div class="rounded shadow bg-white flex-auto">
+                            <div class="body p-2">
+                                <ns-field class="mb-2" :field="field" v-bind:key="fieldIndex" v-for="(field,fieldIndex) of rule"></ns-field>
+                            </div>
+                            <div class="header border-t border-gray-200 p-2 flex justify-end">
+                                <ns-button @click="removeRule(index)" type="danger">
+                                    <i class="las la-times"></i>
+                                </ns-button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
-    `,
-});
-
-module.exports   =   nsCrud;
+</template>

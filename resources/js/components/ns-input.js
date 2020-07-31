@@ -39,7 +39,7 @@ const nsInput      =   Vue.component( 'ns-input', {
                 @blur="$emit( 'blur', this )" 
                 @change="$emit( 'change', this )" 
                 :id="field.name" :type="type || field.type || 'text'" 
-                :class="inputClass" class="form-input block w-full pr-12 sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
+                :class="inputClass" class="form-input block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
         </div>
         <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">

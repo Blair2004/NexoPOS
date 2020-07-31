@@ -27,7 +27,6 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     }, 
     mounted() {
-        console.log( this );
         this.loadConfig();
     },
     props: [ 'src', 'create-link' ],

@@ -57,8 +57,6 @@ class AuthController extends Controller
         ]);
 
         if ( $attempt ) {
-            $token  =   Auth::user()->createToken( 'ns_token' )->plainTextToken;
-            Cookie::queue( Cookie::make( 'ns_token', $token, ( 60 * 24 ) * 7 ) );
             return redirect( route( 'dashboard.index' ) );
         }
 

@@ -22,7 +22,7 @@ class CreateCustomersGroupsTable extends Migration
                 $table->bigIncrements('id');
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
-                $table->integer( 'reward_system_id' )->default(0);
+                $table->integer( 'reward_system_id' )->default(0)->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

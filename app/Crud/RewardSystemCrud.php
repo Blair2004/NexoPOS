@@ -1,10 +1,4 @@
-@inject( 'Schema', 'Illuminate\Support\Facades\Schema' )
-@inject( 'Str', 'Illuminate\Support\Str' )
 <?php
-$model          =   explode( '\\', $model_name );
-$lastClassName  =   $model[ count( $model ) - 1 ];
-?>
-<{{ '?php' }}
 namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -12,66 +6,57 @@ use App\Services\CrudService;
 use App\Models\User;
 use Hook;
 use Exception;
-use {{ trim( $model_name ) }};
+use App\Models\RewardSystem;
 
-class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
+class RewardSystemCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
+    protected $table      =   'nexopos_rewards_system';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $mainRoute      =   'ns.rewards_system';
 
     /**
      * Define namespace
-     * @param string
+     * @param  string
      */
-    protected $namespace  =   '{{ strtolower( trim( $namespace ) ) }}';
+    protected $namespace  =   'ns.rewards_system';
 
     /**
      * Model Used
      */
-    protected $model      =   {{ trim( $lastClassName ) }}::class;
+    protected $model      =   RewardSystem::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
-        @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
-        @endforeach
-        @endif
-    ];
+            ];
 
     /**
      * Define where statement
-     * @var array
+     * @var  array
     **/
     protected $listWhere    =   [];
 
     /**
      * Define where in statement
-     * @var array
+     * @var  array
      */
     protected $whereIn      =   [];
 
     /**
      * Fields which will be filled during post/put
      */
-    @php
-    $fields         =   explode( ',', $fillable );
-    foreach( $fields as &$field ) {
-        $field      =   trim( $field );
-    }
-    @endphp
-    public $fillable    =   {!! json_encode( $fillable ?? [] ) !!};
+        public $fillable    =   "";
 
     /**
      * Define Constructor
-     * @param 
+     * @param  
      */
     public function __construct()
     {
@@ -83,26 +68,26 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Return the label used for the crud 
      * instance
-     * @return array
+     * @return  array
     **/
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  __( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  __( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  __( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  __( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  __( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  __( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            'list_title'            =>  __( 'Reward Systems List' ),
+            'list_description'      =>  __( 'Display all reward systems.' ),
+            'no_entry'              =>  __( 'No reward systems has been registered' ),
+            'create_new'            =>  __( 'Add a new reward system' ),
+            'create_title'          =>  __( 'Create a new reward system' ),
+            'create_description'    =>  __( 'Register a new reward system and save it.' ),
+            'edit_title'            =>  __( 'Edit reward system' ),
+            'edit_description'      =>  __( 'Modify  Reward System.' ),
+            'back_to_list'          =>  __( 'Return to Reward Systems' ),
         ];
     }
 
     /**
      * Check whether a feature is enabled
-     * @return boolean
+     * @return  boolean
     **/
     public function isEnabled( $feature )
     {
@@ -111,26 +96,33 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Fields
-     * @param object/null
-     * @return array of field
+     * @param  object/null
+     * @return  array of field
      */
     public function getForm( $entry = null ) 
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
+                'name'          =>  'name',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
+            'rules'             =>  [],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
-                        @foreach( $Schema::getColumnListing( $table_name ) as $column )[
-                            'type'  =>  'text',
-                            'name'  =>  '{{ $column }}',
-                            'label' =>  __( '{{ ucwords( $column ) }}' ),
-                            'value' =>  $entry->{{ $column }} ?? '',
-                        ], @endforeach
+                        [
+                            'type'  =>  'select',
+                            'name'  =>  'coupon_id',
+                            'label' =>  __( 'Coupon' ),
+                            'description'   =>  __( 'Decide which coupon you would apply to the system' ),
+                        ], [
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                            'description'   =>  __( 'A short description about this system' ),
+                        ],                 
                     ]
                 ]
             ]
@@ -139,8 +131,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Filter POST input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -149,18 +141,18 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Filter PUT input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
-    public function filterPutInputs( $inputs, {{ trim( $lastClassName ) }} $entry )
+    public function filterPutInputs( $inputs, RewardSystem $entry )
     {
         return $inputs;
     }
 
     /**
      * After Crud POST
-     * @param object entry
-     * @return void
+     * @param  object entry
+     * @return  void
      */
     public function afterPost( $inputs )
     {
@@ -170,8 +162,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     
     /**
      * get
-     * @param string
-     * @return mixed
+     * @param  string
+     * @return  mixed
      */
     public function get( $param )
     {
@@ -182,8 +174,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * After Crud PUT
-     * @param object entry
-     * @return void
+     * @param  object entry
+     * @return  void
      */
     public function afterPut( $inputs )
     {
@@ -192,8 +184,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     
     /**
      * Protect an access to a specific crud UI
-     * @param array { namespace, id, type }
-     * @return array | throw Exception
+     * @param  array { namespace, id, type }
+     * @return  array | throw Exception
     **/
     public function canAccess( $fields )
     {
@@ -211,10 +203,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Before Delete
-     * @return void
+     * @return  void
      */
     public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
+        if ( $namespace == 'ns.rewards_system' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -229,17 +221,30 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Define Columns
-     * @return array of columns configuration
+     * @return  array of columns configuration
      */
     public function getColumns() {
         return [
-            @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' ),
+            'author'  =>  [
+                'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            @endforeach
+            'name'  =>  [
+                'label'  =>  __( 'Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'coupon_id'  =>  [
+                'label'  =>  __( 'Coupon' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
         ];
     }
 
@@ -260,13 +265,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/{{ strtolower( trim( $namespace ) ) }}/edit/#'
+                'url'           =>      '/dashboard/crud/ns.rewards_system/edit/#'
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/{{ strtolower( trim( $namespace ) ) }}' . '/#',
+                'url'       =>  'tendoo/crud/ns.rewards_system' . '/#',
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )
@@ -280,8 +285,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     
     /**
      * Bulk Delete Action
-     * @param  object Request with object
-     * @return  false/array
+     * @param    object Request with object
+     * @return    false/array
      */
     public function bulkActions( Request $request ) 
     {
@@ -305,7 +310,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof {{ trim( $lastClassName ) }} ) {
+                if ( $entity instanceof RewardSystem ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -320,20 +325,20 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * get Links
-     * @return array of links
+     * @return  array of links
      */
     public function getLinks()
     {
         return  [
-            'list'      =>  '{{ strtolower( trim( $route_name ) ) }}',
-            'create'    =>  '{{ strtolower( trim( $route_name ) ) }}/create',
-            'edit'      =>  '{{ strtolower( trim( $route_name ) ) }}/edit/#'
+            'list'  =>  'ns.rewards_system',
+            'create'    =>  'ns.rewards_system/create',
+            'edit'      =>  'ns.rewards_system/edit/#'
         ];
     }
 
     /**
      * Get Bulk actions
-     * @return array of actions
+     * @return  array of actions
     **/
     public function getBulkActions()
     {
@@ -342,7 +347,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * get exports
-     * @return array of export formats
+     * @return  array of export formats
     **/
     public function getExports()
     {

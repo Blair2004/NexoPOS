@@ -7,6 +7,8 @@ const {
     nsSubmenu 
 }   =   require( './components/components' );
 
+const NsRewardsSystem    =   require( './pages/dashboard/rewards-system.vue' ).default;
+
 new window.Vue({
     el: '#dashboard-aside',
     mounded() {
@@ -28,5 +30,8 @@ new window.Vue({
     el: '#dashboard-content',
     mounted() {
         console.log( 'mounted' );
+    },
+    components: {
+        NsRewardsSystem
     }
 });

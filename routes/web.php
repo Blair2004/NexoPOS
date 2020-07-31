@@ -35,6 +35,11 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/customers/groups', 'Dashboard\CustomersGroupsController@listCustomersGroups' );
         Route::get( '/dashboard/customers/groups/create', 'Dashboard\CustomersGroupsController@createCustomerGroup' );
         Route::get( '/dashboard/customers/groups/edit/{group}', 'Dashboard\CustomersGroupsController@editCustomerGroup' );
+        
+        Route::get( '/dashboard/customers/rewards-system', 'Dashboard\RewardsSystemController@list' );
+        Route::get( '/dashboard/customers/rewards-system/create', 'Dashboard\RewardsSystemController@create' );
+        Route::get( '/dashboard/customers/rewards-system/edit/{reward}', 'Dashboard\RewardsSystemController@edit' );
+
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
         Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
@@ -44,12 +49,44 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/products/units/groups', 'Dashboard\UnitsController@listUnitsGroups' );
         Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
         Route::get( '/dashboard/profile', 'Dashboard\UsersController@showProfile' );
+
+        Route::prefix( 'api/nexopos/v4' )->group( function() {
+            foreach([ '', '/store/{id}/' ] as $prefix ) {
+                Route::prefix( $prefix )->group( function() {
+                    include_once( dirname( __FILE__ ) . '/api/categories.php' );    
+                    include_once( dirname( __FILE__ ) . '/api/customers.php' );
+                    include_once( dirname( __FILE__ ) . '/api/expenses.php' );
+                    include_once( dirname( __FILE__ ) . '/api/orders.php' );
+                    include_once( dirname( __FILE__ ) . '/api/procurements.php' );
+                    include_once( dirname( __FILE__ ) . '/api/products.php' );
+                    include_once( dirname( __FILE__ ) . '/api/providers.php' );
+                    include_once( dirname( __FILE__ ) . '/api/registers.php' );
+                    include_once( dirname( __FILE__ ) . '/api/reset.php' );
+                    include_once( dirname( __FILE__ ) . '/api/rewards.php' );
+                    include_once( dirname( __FILE__ ) . '/api/transfer.php' );
+                    include_once( dirname( __FILE__ ) . '/api/taxes.php' );
+                    include_once( dirname( __FILE__ ) . '/api/units.php' );
+                    include_once( dirname( __FILE__ ) . '/api/crud.php' );
+                });
+            }
+        });
     });
+
+
+    include_once( dirname( __FILE__ ) . '/api/stores.php' );
 });
 
 Route::middleware([ 'ns.not-installed' ])->group( function() {
     Route::prefix( '/do-setup/' )->group( function() {
         Route::get( '', 'SetupController@welcome' )->name( 'setup' );
+    });
+
+    Route::prefix( 'api/nexopos/v4' )->group( function() {
+        Route::prefix( 'setup' )->group( function() {
+            Route::post( 'database', 'SetupController@checkDatabase' );
+            Route::get( 'database', 'SetupController@checkDbConfigDefined' );
+            Route::post( 'configuration', 'SetupController@saveConfiguration' );
+        });
     });
 });
 
