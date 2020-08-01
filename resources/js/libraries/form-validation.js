@@ -11,7 +11,7 @@ export default class FormValidation {
 
         const tabsInvalidity    =   [];
 
-        for( key in form.tabs ) {
+        for( let key in form.tabs ) {
             tabsInvalidity.push(
                 this.validateFields( form.tabs[ key ].fields )
             );

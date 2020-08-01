@@ -17,6 +17,18 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
         submit() {
+            if ( this.form.rules.length === 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-rules' ] ? this.$slots[ 'error-no-rules' ] : 'No error message is defined when no rules is provided' )
+                    .subscribe();
+            }
+
+            if ( this.form.rules.filter( rule => {
+                return rule.filter( field => ! field.value ).length > 0
+            }).length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : 'No error message is defined when no valid rules is provided' )
+                    .subscribe();
+            }
+
             if ( ! this.formValidation.validateForm( this.form ) ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
@@ -55,35 +67,23 @@ export default {
             form.main           =   this.formValidation.createForm([ form.main ])[0];
             let index           =   0;
 
-            // for( key in form.tabs ) {
-                // if ( index === 0 ) {
-                    //     form.tabs[ key ].active  =   true;
-                // }
+            console.log( form );
 
-                // form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
-                // form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
+            for( let key in form.tabs ) {
+                if ( index === 0 ) {
+                    form.tabs[ key ].active  =   true;
+                }
 
-                // index++;
-            // }
-                console.log( form );
+                form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
+                form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
 
+                index++;
+            }
 
             return form;
         },
         getRuleForm() {
-            return [
-                {
-                    label: 'Purchase',
-                    description: 'Purchase required',
-                    type: 'number',
-                    name: 'purchase',
-                }, {
-                    label: 'Points',
-                    description: 'Points Earned',
-                    type: 'number',
-                    name: 'points',
-                }
-            ];
+            return this.form.ruleForm;
         },
         addRule() {
             this.form.rules.push( this.getRuleForm() );

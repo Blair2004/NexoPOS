@@ -52,7 +52,7 @@ class RewardSystemCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+        public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -108,6 +108,24 @@ class RewardSystemCrud extends CrudService
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'rules'             =>  [],
+            'ruleForm'          =>  [
+                [
+                    'label'     =>  __( 'From' ),
+                    'name'      =>  'from',
+                    'description'   =>  __( 'The interval start here.' ),
+                    'type'      =>  'number'
+                ], [
+                    'label'     =>  __( 'To' ),
+                    'name'      =>  'to',
+                    'description'   =>  __( 'The interval ends here.' ),
+                    'type'      =>  'number'
+                ], [
+                    'label'     =>  __( 'Points' ),
+                    'name'      =>  'reward',
+                    'description'   =>  __( 'Points earned.' ),
+                    'type'      =>  'number'
+                ]
+            ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
