@@ -8,6 +8,7 @@ use App\Services\Helper;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
+use Exception;
 use Hook;
 
 class CustomerCrud extends CrudService
@@ -241,7 +242,7 @@ class CustomerCrud extends CrudService
             ];
         }
 
-        throw new AccessDeniedException( __( 'You don\'t have access to that ressource' ) );
+        throw new Exception( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**
@@ -345,7 +346,7 @@ class CustomerCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkDelete( Request $request ) 
+    public function bulkAction( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
@@ -367,7 +368,7 @@ class CustomerCrud extends CrudService
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof App\Models\Customer ) {
+                if ( $entity instanceof Customer ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -398,7 +399,15 @@ class CustomerCrud extends CrudService
     **/
     public function getBulkActions()
     {
-        return [];
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Customers' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  route( 'crud.bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
     }
 
     /**

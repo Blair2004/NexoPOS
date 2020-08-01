@@ -6,6 +6,7 @@ use App\Services\CrudService;
 use App\Models\User;
 use Hook;
 use App\Models\CustomerGroup;
+use Exception;
 
 class CustomerGroupCrud extends CrudService
 {
@@ -201,7 +202,7 @@ class CustomerGroupCrud extends CrudService
             ];
         }
 
-        throw new AccessDeniedException( __( 'You don\'t have access to that ressource' ) );
+        throw new Exception( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**

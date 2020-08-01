@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Http\Requests\CrudPostRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -7,6 +9,7 @@ use App\Models\User;
 use Hook;
 use Exception;
 use App\Models\RewardSystem;
+use App\Models\RewardSystemRule;
 
 class RewardSystemCrud extends CrudService
 {
@@ -35,7 +38,8 @@ class RewardSystemCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-            ];
+        [ 'nexopos_users', 'nexopos_rewards_system.author', '=', 'nexopos_users.id' ]
+    ];
 
     /**
      * Define where statement
@@ -52,7 +56,7 @@ class RewardSystemCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -101,31 +105,48 @@ class RewardSystemCrud extends CrudService
      */
     public function getForm( $entry = null ) 
     {
+        $ruleForm               =   [
+            [
+                'name'      =>  'id',
+                'type'      =>  'hidden'
+            ], [
+                'label'     =>  __( 'From' ),
+                'name'      =>  'from',
+                'description'   =>  __( 'The interval start here.' ),
+                'type'      =>  'number'
+            ], [
+                'label'     =>  __( 'To' ),
+                'name'      =>  'to',
+                'description'   =>  __( 'The interval ends here.' ),
+                'type'      =>  'number'
+            ], [
+                'label'     =>  __( 'Points' ),
+                'name'      =>  'reward',
+                'description'   =>  __( 'Points earned.' ),
+                'type'      =>  'number'
+            ]
+        ];
+
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
+                'validation'    =>  'required',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
-            'rules'             =>  [],
-            'ruleForm'          =>  [
-                [
-                    'label'     =>  __( 'From' ),
-                    'name'      =>  'from',
-                    'description'   =>  __( 'The interval start here.' ),
-                    'type'      =>  'number'
-                ], [
-                    'label'     =>  __( 'To' ),
-                    'name'      =>  'to',
-                    'description'   =>  __( 'The interval ends here.' ),
-                    'type'      =>  'number'
-                ], [
-                    'label'     =>  __( 'Points' ),
-                    'name'      =>  'reward',
-                    'description'   =>  __( 'Points earned.' ),
-                    'type'      =>  'number'
-                ]
-            ],
+
+            /**
+             * this is made to restore rules
+             * by populating the form used for the rules
+             */
+            'rules'             =>  collect( $entry->rules )->map( function( $rule ) use ( $ruleForm ) {
+                return collect( $ruleForm )->map( function( $field ) use ( $rule ) {
+                    $field[ 'value' ]   =   $rule[ $field[ 'name' ] ] ?? '';
+                    return $field;
+                });
+            }) ?? [],
+            'ruleForm'          =>  $ruleForm,
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
@@ -133,11 +154,19 @@ class RewardSystemCrud extends CrudService
                         [
                             'type'  =>  'select',
                             'name'  =>  'coupon_id',
+                            'value'         =>  $entry->coupon_id ?? '',
                             'label' =>  __( 'Coupon' ),
                             'description'   =>  __( 'Decide which coupon you would apply to the system' ),
                         ], [
+                            'type'  =>  'number',
+                            'name'  =>  'target',
+                            'value'         =>  $entry->target ?? '',
+                            'label' =>  __( 'Target' ),
+                            'description'   =>  __( 'This is the objective that the user should reach to trigger the reward.' ),
+                        ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
+                            'value'         =>  $entry->description ?? '',
                             'label' =>  __( 'Description' ),
                             'description'   =>  __( 'A short description about this system' ),
                         ],                 
@@ -172,11 +201,18 @@ class RewardSystemCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPost( $inputs )
+    public function afterPost( $request, RewardSystem $entry )
     {
-        return $inputs;
+        foreach( $request->input( 'rules' ) as $rule ) {
+            $newRule    =   new RewardSystemRule;
+            $newRule->from          =   $rule[ 'from' ];
+            $newRule->to            =   $rule[ 'to' ];
+            $newRule->reward        =   $rule[ 'reward' ];
+            $newRule->reward_id     =   $entry->id;
+            $newRule->author        =   Auth::id();
+            $newRule->save();
+        }
     }
-
     
     /**
      * get
@@ -195,9 +231,50 @@ class RewardSystemCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $inputs )
+    public function afterPut( $request, $entry )
     {
-        return $inputs;
+        $rules      =   $request->input( 'rules' );
+        
+        /**
+         * we filter the rules that are posted 
+         * with their original ID. Those not posted
+         * are deleted.
+         */
+        $ids    =   collect( $rules )->filter( function( $rule ) {
+            return isset( $rule[ 'id' ] );
+        })->map( function( $rule ) {
+            return $rule[ 'id' ];
+        });
+
+        /**
+         * Delete all rules that aren't submitted
+         */
+        RewardSystemRule::attachedTo( $entry->id )
+            ->whereNotIn( 'id', $ids )
+            ->delete();
+
+        /**
+         * Update old rules
+         * create new rules
+         */
+        foreach( $rules as $rule ) {
+            if ( isset( $rule[ 'id' ] ) ) {
+                $existingRule   =   RewardSystemRule::findOrFail( $rule[ 'id' ] );
+                $existingRule->from         =   $rule[ 'from' ];
+                $existingRule->to           =   $rule[ 'to' ];
+                $existingRule->reward       =   $rule[ 'reward' ];
+                $existingRule->author       =  Auth::id();
+                $existingRule->save();
+            } else {
+                $newRule                =   new RewardSystemRule;
+                $newRule->from          =   $rule[ 'from' ];
+                $newRule->to            =   $rule[ 'to' ];
+                $newRule->reward        =   $rule[ 'reward' ];
+                $newRule->reward_id     =   $entry->id;
+                $newRule->author        =  Auth::id();
+                $newRule->save();
+            }
+        }
     }
     
     /**
@@ -243,18 +320,23 @@ class RewardSystemCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'target'  =>  [
+                'label'  =>  __( 'Target' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'coupon_id'  =>  [
                 'label'  =>  __( 'Coupon' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'nexopos_users_username'  =>  [
+                'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -275,6 +357,7 @@ class RewardSystemCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
+        $entry->name            =   $entry->name . ' (' . RewardSystem::find( $entry->id )->rules()->count() . ')';
 
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -283,15 +366,15 @@ class RewardSystemCrud extends CrudService
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/ns.rewards_system/edit/#'
+                'url'           =>      url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  'tendoo/crud/ns.rewards_system' . '/#',
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
                 'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
+                    'message'  =>  __( 'Would you like to delete this reward system ?' ),
                     'title'     =>  __( 'Delete a licence' )
                 ]
             ]
@@ -306,13 +389,14 @@ class RewardSystemCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkActions( Request $request ) 
+    public function bulkAction( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
+        $user   =   app()->make( 'App\Services\Users' );
+
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
@@ -326,7 +410,7 @@ class RewardSystemCrud extends CrudService
                 'failed'    =>  0
             ];
 
-            foreach ( $request->input( 'entries_id' ) as $id ) {
+            foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof RewardSystem ) {
                     $entity->delete();
@@ -360,7 +444,16 @@ class RewardSystemCrud extends CrudService
     **/
     public function getBulkActions()
     {
-        return [];
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Rewards' ),
+                'confirm'       =>  __( 'Would you like to delete selected rewards?' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  route( 'crud.bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
     }
 
     /**

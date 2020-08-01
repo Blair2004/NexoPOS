@@ -71,6 +71,14 @@ class MenuService
                         'label' =>  __( 'Create Reward'),
                         'href'  =>  url( '/dashboard/customers/rewards-system/create' )
                     ],
+                    'list-coupons'    =>  [
+                        'label' =>  __( 'List Coupons'),
+                        'href'  =>  url( '/dashboard/customers/coupons' )
+                    ],
+                    'create-coupons'    =>  [
+                        'label' =>  __( 'Create Coupon'),
+                        'href'  =>  url( '/dashboard/customers/coupons/create' )
+                    ],
                 ]
             ], 
             'providers' =>  [

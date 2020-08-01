@@ -14,6 +14,7 @@
             submit-url="{{ $submitUrl }}"
             disable-tabs="true"
             src="{{ $srcUrl }}"
+            :rules="{{ $reward->rules ?? [] }}"
             >
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'Reward System Name' ) }}</template>
             <template v-slot:save>{{ $saveButton ?? __( 'Save' ) }}</template>

@@ -38,6 +38,13 @@ const nsCrud    =   Vue.component( 'ns-crud', {
          */
         getParsedSrc() {
             return `${this.src}?${this.sortColumn}${this.searchQuery}`
+        },
+
+        getSelectedAction() {
+            const action    =   this.bulkActions.filter( action => {
+                return action.identifier === this.bulkAction;
+            });
+            return action.length > 0 ? action[0] : false;
         }
     },
     methods: {
@@ -108,23 +115,28 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         bulkDo() {
             if ( this.bulkAction ) {
                 if ( this.result.data.filter( row => row.$checked ).length > 0 ) {
-                    return nsHttpClient.post( `${this.src}/bulk-actions`, {
-                        action: this.bulkAction,
-                        entries: this.result.data.filter( row => row.$checked ).map( r => r.$id )
-                    }).subscribe( result => {
-                        console.log( result );
-                        nsSnackBar.info( result.data.message ).subscribe();
-                        this.refresh();
-                    }, ( error ) => {
-                        console.log( Object.keys( error ) );
-                    })
+                    console.log( this.getSelectedAction );
+                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || 'No bulk confirmation message provided on the CRUD class.' ) ) {
+                        return nsHttpClient.post( `${this.src}/bulk-actions`, {
+                            action: this.bulkAction,
+                            entries: this.result.data.filter( row => row.$checked ).map( r => r.$id )
+                        }).subscribe( result => {
+                            console.log( result );
+                            nsSnackBar.info( result.data.message ).subscribe();
+                            this.refresh();
+                        }, ( error ) => {
+                            console.log( Object.keys( error ) );
+                        })
+                    }
+                } else {
+                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : 'No error provided when there is no selection selected (error-no-selection).' )
+                        .subscribe();
                 }
-                return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : 'No error provided when there is no selection selected (error-no-selection).' )
+            } else {
+                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : 'No error provided when there is no action selected (error-no-action).' )
                     .subscribe();
             }
 
-            return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : 'No error provided when there is no action selected (error-no-action).' )
-                .subscribe();
         },
         refresh() {
             const request   =   nsHttpClient.get( `${this.getParsedSrc}` );

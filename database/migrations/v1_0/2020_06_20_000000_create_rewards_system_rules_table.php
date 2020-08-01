@@ -22,9 +22,10 @@ class CreateRewardsSystemRulesTable extends Migration
                 $table->float( 'from' );
                 $table->float( 'to' );
                 $table->float( 'reward' );
-                $table->integer( 'rewards_id' );
+                $table->integer( 'reward_id' );
                 $table->string( 'uuid' )->nullable();
                 $table->integer( 'author' );
+                $table->timestamps();
             });
         }
     }

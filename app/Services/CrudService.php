@@ -426,9 +426,9 @@ class CrudService
      * @param Request $request
      * @return array
      */
-    public function getPlainData( $resource, Request $request )
+    public function getPlainData( $resource, Request $request, $entry = null )
     {
-        $form   =   $resource->getForm();
+        $form   =   $resource->getForm( $entry );
         $data   =   [];
         $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
 

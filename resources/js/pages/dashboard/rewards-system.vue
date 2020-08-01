@@ -5,6 +5,7 @@ export default {
     name: 'ns-rewards-system',
     mounted() {
         this.loadForm();
+        console.log( this.rules );
     },
     data: () => {
         return {
@@ -14,7 +15,7 @@ export default {
             nsHttpClient,
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
+    props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
     methods: {
         submit() {
             if ( this.form.rules.length === 0 ) {
@@ -23,7 +24,7 @@ export default {
             }
 
             if ( this.form.rules.filter( rule => {
-                return rule.filter( field => ! field.value ).length > 0
+                return rule.filter( field => ! field.value && field.type !== 'hidden' ).length > 0;
             }).length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : 'No error message is defined when no valid rules is provided' )
                     .subscribe();
@@ -41,9 +42,25 @@ export default {
                     .subscribe();
             }
 
-            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
+            const data  =   {
+                ...this.formValidation.extractForm( this.form ),
+                rules: this.form.rules.map( rule => {
+                    const fieldSet    =   {};
+                    
+                    rule.forEach( f => {
+                        fieldSet[ f.name ]  =   f.value;
+                    });
+
+                    return fieldSet;
+                })
+            }
+
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( result => {
-                    document.location   =   this.returnLink;
+                    if ( result.data.status === 'success' ) {
+                        return document.location   =   this.returnLink;
+                    }
+                    this.formValidation.enableForm( this.form );
                 }, ( error ) => {
                     nsSnackBar.error( error.response.data.message, undefined, {
                         duration: 5000

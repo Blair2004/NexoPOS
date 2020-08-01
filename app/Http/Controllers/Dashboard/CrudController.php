@@ -66,7 +66,7 @@ class CrudController extends DashboardController
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The entry has been successfully delete.' )
+            'message'   =>  __( 'The entry has been successfully deleted.' )
         ];
     }
 
@@ -91,6 +91,10 @@ class CrudController extends DashboardController
 
         if ( method_exists( $resource, 'filterPostInputs' ) ) {
             $inputs     =   $resource->filterPostInputs( $inputs );
+        }
+
+        if ( method_exists( $resource, 'beforePost' ) ) {
+            $resource->beforePost( $request );
         }
 
         foreach ( $inputs as $name => $value ) {
@@ -120,7 +124,7 @@ class CrudController extends DashboardController
          * Create an event after crud POST
          */
         if ( method_exists( $resource, 'afterPost' ) ) {
-            $resource->afterPost( $entry );
+            $resource->afterPost( $request, $entry );
         }
 
         /**
@@ -152,10 +156,14 @@ class CrudController extends DashboardController
          * Filter POST input
          * check if on the CRUD resource the filter exists
          */
-        $inputs         =   $request->getPlainData( $namespace );
+        $inputs         =   $request->getPlainData( $namespace, $entry );
 
         if ( method_exists( $resource, 'filterPutInputs' ) ) {
             $inputs     =   $resource->filterPutInputs( $inputs, $entry );
+        }
+
+        if ( method_exists( $resource, 'beforePut' ) ) {
+            $resource->beforePut( $request, $entry );
         }
 
         foreach ( $inputs as $name => $value ) {
@@ -177,7 +185,6 @@ class CrudController extends DashboardController
             }
         }
 
-        
         $entry->author      =   Auth::id();
         $entry->save();
 
@@ -185,7 +192,7 @@ class CrudController extends DashboardController
          * Create an event after crud POST
          */
         if ( method_exists( $resource, 'afterPut' ) ) {
-            $resource->afterPut( $entry );
+            $resource->afterPut( $request, $entry );
         }
 
         /**

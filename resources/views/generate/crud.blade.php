@@ -158,11 +158,22 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * After Crud POST
-     * @param object entry
+     * Before saving a record
+     * @param Request $request
      * @return void
      */
-    public function afterPost( $inputs )
+    public function beforePost( $request )
+    {
+        return $inputs;
+    }
+
+    /**
+     * After saving a record
+     * @param Request $request
+     * @param {{ trim( $lastClassName ) }} $entry
+     * @return void
+     */
+    public function afterPost( $request, {{ trim( $lastClassName ) }} $entry )
     {
         return $inputs;
     }
@@ -181,11 +192,23 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     }
 
     /**
-     * After Crud PUT
+     * Before updating a record
+     * @param Request $request
      * @param object entry
      * @return void
      */
-    public function afterPut( $inputs )
+    public function beforePut( $request, $entry )
+    {
+        return $inputs;
+    }
+
+    /**
+     * After updating a record
+     * @param Request $request
+     * @param object entry
+     * @return void
+     */
+    public function afterPut( $request, $entry )
     {
         return $inputs;
     }
@@ -257,19 +280,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/{{ strtolower( trim( $namespace ) ) }}/edit/#'
+                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       =>  'tendoo/crud/{{ strtolower( trim( $namespace ) ) }}' . '/#',
+                'url'       =>  url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
                 ]
             ]
         ];
@@ -283,7 +304,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param  object Request with object
      * @return  false/array
      */
-    public function bulkActions( Request $request ) 
+    public function bulkAction( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
@@ -303,7 +324,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'failed'    =>  0
             ];
 
-            foreach ( $request->input( 'entries_id' ) as $id ) {
+            foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof {{ trim( $lastClassName ) }} ) {
                     $entity->delete();
@@ -337,7 +358,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     **/
     public function getBulkActions()
     {
-        return [];
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Groups' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  route( 'crud.bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
     }
 
     /**

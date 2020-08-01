@@ -199,5 +199,14 @@ class CustomersController extends DashboardController
     {
         return $this->customerService->deleteUsingEmail( $email );
     }
+
+    public function listCoupons()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>      __( 'Coupons List' ),
+            'description'   =>  __( 'Manage all created coupons.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons' )
+        ]);
+    }
 }
 
