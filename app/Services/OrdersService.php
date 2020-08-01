@@ -257,7 +257,7 @@ class OrdersService
             'email'
         ];
 
-        foreach([ 'shipping', 'billing' ] as $type ) {
+        foreach( [ 'shipping', 'billing' ] as $type ) {
             $keys   =   array_keys( $fields[ 'addresses' ][ $type ] );
             foreach( $keys as $key ) {
                 if ( ! in_array( $key, $allowedKeys ) ) {
