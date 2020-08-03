@@ -23,7 +23,7 @@
     "dependencies": {
         "chart.js": "^2.9.3",
         "rx": "^4.1.0",
-        "tailwindcss": "^1.6.0",
+        "tailwindcss": "^1.6.1",
         "vue": "^2.6.11",
         "vue-router": "^3.3.4"
     }
