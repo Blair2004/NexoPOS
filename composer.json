@@ -10,8 +10,8 @@
     "require": {
         "php": "^7.2.5",
         "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.3",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0",
         "jackiedo/dotenv-editor": "^1.1",
         "laravel/framework": "^7.0",
         "laravel/sanctum": "^2.4",
