@@ -12,7 +12,7 @@
             return-link="{{ $returnLink }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
-            src="{{ $srcUrl }}">
+            src="{{ $src }}">
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'Unamed Form' ) }}</template>
             <template v-slot:save>{{ $saveButton ?? __( 'Save' ) }}</template>
             <template v-slot:error-required>{{ $fieldRequired ?? __( 'This field is required' ) }}</template>

@@ -1,49 +1,35 @@
-const { Vue, EventEmitter, nsHttpClient, nsSnackBar }   =   require( '../bootstrap' );
-const FormValidation                        =   require( "./../libraries/form-validation" ).default;
-
-const nsCrud    =   Vue.component( 'ns-crud-form', {
-    data: () => {
-        return {
-            form: {},
-            globallyChecked: false,
-            formValidation: new FormValidation,
-            rows: []
-        }
-    }, 
+<script>
+import FormValidation from '../../libraries/form-validation';
+import { nsSnackBar, nsHttpClient } from '../../bootstrap';
+export default {
+    name: 'ns-create-coupons',
     mounted() {
         this.loadForm();
+        console.log( this.rules );
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url', 'submit-method', 'disable-tabs' ],
-    computed: {
-        activeTabFields() {
-            for( identifier in this.form.tabs ) {
-                if ( this.form.tabs[ identifier ].active ) {
-                    return this.form.tabs[ identifier ].fields;
-                }
-            }
-            return [];
+    data: () => {
+        return {
+            formValidation: new FormValidation,
+            form: {},
+            nsSnackBar,
+            nsHttpClient,
         }
     },
+    props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
     methods: {
-        toggle( identifier ) {
-            for( key in this.form.tabs ) {
-                this.form.tabs[ key ].active    =   false;
-            }
-            this.form.tabs[ identifier ].active     =   true;
-        },
-        /**
-         * Dpeca
-         * @param {Object} e Something
-         * @deprecated
-         */
-        handleShowOptions( e ) {
-            this.rows.forEach( row => {
-                if ( row.$id !== e.$id ) {
-                    row.$toggled    =   false;
-                }
-            });
-        },
         submit() {
+            if ( this.form.rules.length === 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-rules' ] ? this.$slots[ 'error-no-rules' ] : 'No error message is defined when no rules is provided' )
+                    .subscribe();
+            }
+
+            if ( this.form.rules.filter( rule => {
+                return rule.filter( field => ! field.value && field.type !== 'hidden' ).length > 0;
+            }).length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : 'No error message is defined when no valid rules is provided' )
+                    .subscribe();
+            }
+
             if ( ! this.formValidation.validateForm( this.form ) ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
@@ -56,14 +42,26 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                     .subscribe();
             }
 
-            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
+            const data  =   {
+                ...this.formValidation.extractForm( this.form ),
+                rules: this.form.rules.map( rule => {
+                    const fieldSet    =   {};
+                    
+                    rule.forEach( f => {
+                        fieldSet[ f.name ]  =   f.value;
+                    });
+
+                    return fieldSet;
+                })
+            }
+
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( result => {
                     if ( result.data.status === 'success' ) {
                         return document.location   =   this.returnLink;
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    // console.log( error.response )
                     nsSnackBar.error( error.response.data.message, undefined, {
                         duration: 5000
                     }).subscribe();
@@ -86,7 +84,9 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             form.main           =   this.formValidation.createForm([ form.main ])[0];
             let index           =   0;
 
-            for( key in form.tabs ) {
+            console.log( form );
+
+            for( let key in form.tabs ) {
                 if ( index === 0 ) {
                     form.tabs[ key ].active  =   true;
                 }
@@ -98,14 +98,25 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             }
 
             return form;
+        },
+        getRuleForm() {
+            return this.form.ruleForm;
+        },
+        addRule() {
+            this.form.rules.push( this.getRuleForm() );
+        },
+        removeRule( index ) {
+            this.form.rules.splice( index, 1 );
         }
-    },
-    template: `
-    <div class="form flex-auto" id="crud-form">
-        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center h-full">
-            <ns-spinner />
+    }
+}
+</script>
+<template>
+    <div class="form flex-auto flex flex-col" id="crud-form">
+        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center flex-auto">
+            <ns-spinner/>
         </div>
-        <div v-if="Object.values( form ).length > 0">
+        <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
@@ -124,25 +135,32 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                     <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">
+                <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
-            <div id="tabs-container" class="my-5" v-if="disableTabs !== 'true'">
-                <div class="header flex" style="margin-bottom: -1px;">
-                    <div v-for="( tab , identifier ) of form.tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+            <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
+                <div class="px-4 w-full md:w-1/2">
+                    <div class="rounded bg-white shadow p-2" v-bind:key="index" v-for="( tab, index) of form.tabs">
+                        <ns-field v-bind:key="index" v-for="( field, index ) of tab.fields" :field="field"></ns-field>
+                    </div>
                 </div>
-                <div v-for="tab of form.tabs" class="border border-gray-400 p-4 bg-white">
-                    <div class="-mx-4 flex flex-wrap">
-                        <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
-                            <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                <div class="px-4 w-full md:w-1/2">
+                    <div id="tabbed-card">
+                        <div id="card-header" class="flex flex-wrap">
+                            <div class="bg-white cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                                Products
+                            </div>
+                            <div class="bg-gray-100 cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                                Categories
+                            </div>
+                        </div>
+                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
+                            
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
-    `,
-});
-
-module.exports   =   nsCrud;
+</template>

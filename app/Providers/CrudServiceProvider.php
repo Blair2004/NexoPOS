@@ -32,6 +32,7 @@ class CrudServiceProvider extends ServiceProvider
         Hook::addFilter( 'ns.crud-resource', function( $namespace ) {
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
+                case 'ns.coupons': return CustomerCouponCrud::class;
                 case 'ns.customers': return CustomerCrud::class;
                 case 'ns.customers-groups': return CustomerGroupCrud::class;
                 case 'ns.customers-coupons': return CustomerCouponCrud::class;

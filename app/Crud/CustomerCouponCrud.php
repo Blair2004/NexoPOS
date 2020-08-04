@@ -3,6 +3,7 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
+use App\Services\Helper;
 use App\Models\User;
 use Hook;
 use Exception;
@@ -35,7 +36,7 @@ class CustomerCouponCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-            ];
+    ];
 
     /**
      * Define where statement
@@ -111,76 +112,60 @@ class CustomerCouponCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
+                            'type'  =>  'select',
                             'name'  =>  'type',
+                            'options'   =>  Helper::kvToJsOptions([
+                                'percentage_discount'   =>  __( 'Percentage Discount' ),
+                                'flat_discount'         =>  __( 'Flat Discount' ),
+                                'give_away'             =>  __( 'Give Away' ),
+                            ]),
                             'label' =>  __( 'Type' ),
                             'value' =>  $entry->type ?? '',
+                            'description'   =>  __( 'Define which type of discount apply to the current coupon.' )
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'discount_value',
-                            'label' =>  __( 'Discount_value' ),
+                            'label' =>  __( 'Discount Value' ),
+                            'description'   =>  __( 'Define the percentage or flat value.' ),
                             'value' =>  $entry->discount_value ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'datetime',
                             'name'  =>  'valid_until',
-                            'label' =>  __( 'Valid_until' ),
+                            'label' =>  __( 'Valid Until' ),
+                            'description'   =>  __( 'Determin Until When the coupon is valid.' ),
                             'value' =>  $entry->valid_until ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'number',
                             'name'  =>  'minimum_cart_value',
-                            'label' =>  __( 'Minimum_cart_value' ),
+                            'label' =>  __( 'Minimum Cart Value' ),
+                            'description'   =>  __( 'What is the minimum value of the cart to make this coupon eligible.' ),
                             'value' =>  $entry->minimum_cart_value ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'maximum_cart_value',
-                            'label' =>  __( 'Maximum_cart_value' ),
+                            'label' =>  __( 'Maximum Cart Value' ),
+                            'description'   =>  __( 'The value above which the current coupon can\'t apply.' ),
                             'value' =>  $entry->maximum_cart_value ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'valid_hours_start',
-                            'label' =>  __( 'Valid_hours_start' ),
+                            'label' =>  __( 'Valid Hours Start' ),
+                            'description'   =>  __( 'Define form which hour during the day the coupons is valid.' ),
                             'value' =>  $entry->valid_hours_start ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'valid_hours_end',
-                            'label' =>  __( 'Valid_hours_end' ),
+                            'label' =>  __( 'Valid Hours End' ),
+                            'description'   =>  __( 'Define to which hour during the day the coupons end stop valid.' ),
                             'value' =>  $entry->valid_hours_end ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
-                            'value' =>  $entry->customer_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'assigned',
-                            'label' =>  __( 'Assigned' ),
-                            'value' =>  $entry->assigned ?? '',
-                        ], [
-                            'type'  =>  'text',
+                            'type'  =>  'number',
                             'name'  =>  'limit_usage',
-                            'label' =>  __( 'Limit_usage' ),
+                            'label' =>  __( 'Limit Usage' ),
+                            'description'   =>  __( 'Define how many time a coupons can be redeemed.' ),
                             'value' =>  $entry->limit_usage ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ],                     ]
+                        ], 
+                    ]
                 ]
             ]
         ];

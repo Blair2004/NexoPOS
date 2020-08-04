@@ -16,7 +16,7 @@ use App\Services\ProviderService;
 use Illuminate\Validation\ValidationException;
 
 
-class ProviderController extends DashboardController
+class ProvidersController extends DashboardController
 {
     public function __construct( 
         ProviderService $providerService,

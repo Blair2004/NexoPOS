@@ -11,4 +11,9 @@ class RewardSystemRule extends Model
     {
         return $query->where( 'reward_id', $id );
     }
+
+    public function reward()
+    {
+        return $this->belongsTo( RewardSystem::class, 'reward_id' );
+    }
 }

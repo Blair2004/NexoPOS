@@ -9,8 +9,8 @@
             <p class="text-gray-600">{{ $description ?? __( 'No description' ) }}</p>
         </div>
         <ns-crud 
-            src="{{ $srcUrl }}" 
-            create-link="{{ $createLink }}"
+            src="{{ $src }}" 
+            create-link="{{ $createLink ?? '#' }}"
             id="crud-table-body">
             <template v-slot:bulk-label>{{ $bulkLabel ?? __( 'Bulk Actions' ) }}</template>
         </ns-crud>

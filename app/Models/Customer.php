@@ -11,7 +11,7 @@ class Customer extends Model
      * define the relationship
      * @return Model\RelationShip
      */
-    public function groups()
+    public function group()
     {
         return $this->belongsTo( CustomerGroup::class, 'group_id' );
     }

@@ -10,12 +10,30 @@ Vue.component( 'ns-table-row', {
         }
     },
     mounted() {
-        console.log( this.row, this.columns );
     },
     methods: {
-        toggleMenu() {
+        getElementOffset(el) {
+            const rect = el.getBoundingClientRect();
+            
+            return {
+                top: rect.top + window.pageYOffset,
+                left: rect.left + window.pageXOffset,
+            };
+        },
+        toggleMenu( element ) {
             this.row.$toggled   =   !this.row.$toggled;
             this.$emit( 'toggled', this.row );
+
+            if ( this.row.$toggled ) {
+                setTimeout(() => {
+                    const contextMenu   =   element.target.parentElement.lastElementChild;
+                    console.log( contextMenu );
+                    const offset                =   this.getElementOffset( element.target );
+                    contextMenu.style.top       =   ( offset.top + element.target.offsetHeight ) + 'px';
+                    contextMenu.style.right     =   ( offset.right - element.target.offsetWidth ) + 'px';
+                    console.log( offset.left - element.target.offsetWidth );
+                }, 100 );
+            }
         },
         handleChanged( event ) {
             this.row.$checked   =   event;
@@ -43,9 +61,9 @@ Vue.component( 'ns-table-row', {
         </td>
         <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2">{{ row[ identifier ] }}</td>
         <td class="text-gray-700 font-sans border-gray-200 p-2 flex flex-col items-end justify-center">
-            <button @click="toggleMenu()" class="outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
-            
-            <div v-if="row.$toggled" class="origin-bottom-right absolute right-4 mt-16 w-56 rounded-md shadow-lg">
+            <button @click="toggleMenu( $event )" class="outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
+            <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
+            <div v-if="row.$toggled" class="z-50 origin-bottom-right right-4 w-56 mt-2 absolute rounded-md shadow-lg">
                 <div class="rounded-md bg-white shadow-xs">
                     <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                         <template v-for="action of row.$actions">

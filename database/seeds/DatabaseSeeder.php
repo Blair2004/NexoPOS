@@ -11,6 +11,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
+        DB::table( 'nexopos_rewards_system' )->truncate();
+        DB::table( 'nexopos_rewards_system_rules' )->truncate();
+        DB::table( 'nexopos_customers' )->truncate();
+        DB::table( 'nexopos_customers_groups' )->truncate();
+        
+        $this->call( RewardSystemSeeder::class );
+        $this->call( CustomerGroupSeeder::class );
     }
 }

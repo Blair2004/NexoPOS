@@ -8,6 +8,7 @@ const {
 }   =   require( './components/components' );
 
 const NsRewardsSystem    =   require( './pages/dashboard/rewards-system.vue' ).default;
+const NsCreateCoupons    =   require( './pages/dashboard/create-coupons.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
@@ -32,6 +33,7 @@ new window.Vue({
         console.log( 'mounted' );
     },
     components: {
-        NsRewardsSystem
+        NsRewardsSystem,
+        NsCreateCoupons
     }
 });

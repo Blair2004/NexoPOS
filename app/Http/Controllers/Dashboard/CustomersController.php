@@ -179,7 +179,7 @@ class CustomersController extends DashboardController
             'submitMethod'  =>  'PUT',
             'mainFieldLabel'    =>  __( 'Customer Name' ),
             'saveButton'    =>  __( 'Update Customer' ),
-            'srcUrl'        =>  url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
+            'src'        =>  url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
             'customer'      =>  $customer
         ]);
     }
@@ -206,6 +206,18 @@ class CustomersController extends DashboardController
             'title'         =>      __( 'Coupons List' ),
             'description'   =>  __( 'Manage all created coupons.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons' )
+        ]);
+    }
+
+    public function createCoupon()
+    {
+        return $this->view( 'pages.dashboard.coupons.create', [
+            'title'         =>  __( 'Create Coupon' ),
+            'description'   =>  __( 'helps you creating a coupon.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
+            'returnLink'    =>  url( '/dashboard/customers/coupons' ),
+            'submitMethod'  =>  'POST',
+            'submitUrl'     =>  '',
         ]);
     }
 }

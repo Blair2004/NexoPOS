@@ -284,12 +284,6 @@ class CustomerCrud extends CrudService
             'gender'  =>  [
                 'label'  =>  __( 'Gender' )
             ],
-            'phone'  =>  [
-                'label'  =>  __( 'Phone' )
-            ],
-            'pobox'  =>  [
-                'label'  =>  __( 'Pobox' )
-            ],
             'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' )
             ],

@@ -140,12 +140,12 @@ class RewardSystemCrud extends CrudService
              * this is made to restore rules
              * by populating the form used for the rules
              */
-            'rules'             =>  collect( $entry->rules )->map( function( $rule ) use ( $ruleForm ) {
+            'rules'             =>  $entry ? ( collect( $entry->rules )->map( function( $rule ) use ( $ruleForm ) {
                 return collect( $ruleForm )->map( function( $field ) use ( $rule ) {
                     $field[ 'value' ]   =   $rule[ $field[ 'name' ] ] ?? '';
                     return $field;
                 });
-            }) ?? [],
+            }) ?? [] ) : [],
             'ruleForm'          =>  $ruleForm,
             'tabs'  =>  [
                 'general'   =>  [

@@ -3,9 +3,11 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
+use App\Services\Helper;
 use App\Models\User;
 use Hook;
 use App\Models\CustomerGroup;
+use App\Models\RewardSystem;
 use Exception;
 
 class CustomerGroupCrud extends CrudService
@@ -118,6 +120,9 @@ class CustomerGroupCrud extends CrudService
                             'type'          =>  'select',
                             'name'          =>  'reward_system_id',
                             'label'         =>  __( 'Reward System' ),
+                            'options'       =>  Helper::toJsOptions(
+                                RewardSystem::get(), [ 'id', 'name' ]
+                            ),
                             'value'         =>  $entry->reward_system_id ?? '',
                             'description'   =>  __( 'Select which Reward system applies to the group' )
                         ], [

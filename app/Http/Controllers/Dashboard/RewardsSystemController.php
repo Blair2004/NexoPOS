@@ -18,7 +18,7 @@ class RewardsSystemController extends DashboardController
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Rewards System' ),
             'description'   =>  __( 'Manage all rewards program.' ),
-            'srcUrl'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system' ),
+            'src'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system' ),
             'createLink'    =>  url( '/dashboard/customers/rewards-system/create' )
         ]);
     }
@@ -28,7 +28,7 @@ class RewardsSystemController extends DashboardController
         return $this->view( 'pages.dashboard.rewards-system.create', [
             'title'         =>  __( 'Create A Reward System' ),
             'description'   =>  __( 'Add a new reward system.' ),
-            'srcUrl'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system/form-config' ),
+            'src'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system/form-config' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.rewards-system' ),
             'returnLink'    =>  url( '/dashboard/customers/rewards-system' )
         ]);
@@ -39,7 +39,7 @@ class RewardsSystemController extends DashboardController
         return $this->view( 'pages.dashboard.rewards-system.create', [
             'title'         =>  __( 'Edit A Reward System' ),
             'description'   =>  __( 'edit an existing reward system with the rules attached.' ),
-            'srcUrl'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system/form-config/' . $reward->id ),
+            'src'        =>  url( '/api/nexopos/v4/crud/ns.rewards-system/form-config/' . $reward->id ),
             'submitMethod'  =>  'PUT',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.rewards-system/' . $reward->id ),
             'returnLink'    =>  url( '/dashboard/customers/rewards-system' ),

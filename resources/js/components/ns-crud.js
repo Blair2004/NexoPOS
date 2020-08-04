@@ -6,6 +6,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             sortColumn: '',
             searchInput: '',
             searchQuery: '',
+            page: 1,
             bulkAction: '',
             bulkActions: [],
             columns: [],
@@ -37,7 +38,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
          * pagination, total items per pages
          */
         getParsedSrc() {
-            return `${this.src}?${this.sortColumn}${this.searchQuery}`
+            return `${this.src}?${this.sortColumn}${this.searchQuery}${this.queryPage}`
         },
 
         getSelectedAction() {
@@ -45,9 +46,34 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 return action.identifier === this.bulkAction;
             });
             return action.length > 0 ? action[0] : false;
+        },
+
+        pagination() {
+            if ( this.result ) {
+                return this.pageNumbers( this.result.last_page, this.result.current_page );
+            }
+            return [];
+        },
+
+        queryPage() {
+            if ( this.result ) {
+                return `&page=${this.page}`
+            }
+            return '';
         }
     },
     methods: {
+        pageNumbers(count, current) {
+            var shownPages = 3;
+            var result = [];
+            if (current > count - shownPages) {
+                result.push(count - 2, count - 1, count);
+            } else {
+                result.push(current, current + 1, current + 2, '...', count);
+            }
+            return result.filter( f => f > 0 || typeof f === 'string' );
+        },
+
         handleShowOptions( e ) {
             this.result.data.forEach( row => {
                 if ( row.$id !== e.$id ) {
@@ -141,12 +167,13 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         refresh() {
             const request   =   nsHttpClient.get( `${this.getParsedSrc}` );
             request.subscribe( f => {
-                this.result    =   f.data;
+                this.result     =   f.data;
+                this.page       =   f.data.current_page;
             });
         }
     },
     template: `
-    <div id="crud-table" class="w-full shadow rounded-lg bg-white">
+    <div id="crud-table" class="w-full shadow rounded-lg bg-white mb-8">
         <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
                 <div class="px-2 flex items-center justify-center">
@@ -214,7 +241,20 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 </select>
                 <button @click="bulkDo()" class="h-8 w-8 outline-none hover:bg-blue-400 hover:text-white rounded-full bg-white flex items-center justify-center"><slot name="bulk-go">Go</slot></button>
             </div>
-            <div id="pagination"></div>
+            <div id="pagination" class="flex -mx-1">
+                <template v-if="result.current_page">
+                    <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                        <i class="las la-angle-double-left"></i>
+                    </a>
+                    <template v-for="_paginationPage of pagination">
+                        <a v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
+                        <a v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+                    </template>
+                    <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                        <i class="las la-angle-double-right"></i>
+                    </a>
+                </template>
+            </div>
         </div>
     </div>
     `,
