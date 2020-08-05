@@ -23,6 +23,6 @@ Do you plan to contribute ? That's awesome. We're open to any type of contributi
 ## Documentation
 
 - [Menu API](/readme/menu.md)
-- [Javascript/Classes/FormValidation](/readme/javascript/classes/form-validation.md)
+- [JavaScript/Classes/FormValidation](/readme/javascript/classes/form-validation.md)
 
 
