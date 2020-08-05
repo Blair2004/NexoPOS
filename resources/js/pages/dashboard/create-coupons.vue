@@ -5,14 +5,20 @@ export default {
     name: 'ns-create-coupons',
     mounted() {
         this.loadForm();
-        console.log( this.rules );
+        console.log( this.options );
     },
-    data: () => {
+    data() {
         return {
             formValidation: new FormValidation,
             form: {},
             nsSnackBar,
             nsHttpClient,
+            options: (new Array(40)).fill('').map( a =>  {
+                return {
+                    label: 'Foo',
+                    value: 'bar'
+                }
+            })
         }
     },
     props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
@@ -156,7 +162,10 @@ export default {
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
-                            
+                            <div class="flex flex-col">
+                                <label for="" class="font-medium text-gray-700">Something</label>
+                                <ns-multiselect v-bind:options="options"></ns-multiselect>
+                            </div>
                         </div>
                     </div>
                 </div>

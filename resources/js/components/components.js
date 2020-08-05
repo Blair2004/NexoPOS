@@ -11,3 +11,4 @@ module.exports.nsSpinner        =   require( './ns-spinner' );
 module.exports.nsCrudForm       =   require( './ns-crud-form' );
 module.exports.nsTextarea       =   require( './ns-textarea' );
 module.exports.nsField          =   require( './ns-field' );
+module.exports.nsMultiselect    =   require( './ns-multiselect' );

@@ -1,5 +1,5 @@
 const { Vue }       =   require( '../bootstrap' );
-const nsInput      =   Vue.component( 'ns-select', {
+const nsSelect      =   Vue.component( 'ns-select', {
     data: () => {
         return {
         }
@@ -40,4 +40,4 @@ const nsInput      =   Vue.component( 'ns-select', {
     `,
 });
 
-module.exports     =   nsInput;
+module.exports     =   nsSelect;

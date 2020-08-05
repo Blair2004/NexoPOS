@@ -4,7 +4,7 @@ const {
     nsCheckbox,
     nsCrud,
     nsMenu,
-    nsSubmenu 
+    nsSubmenu
 }   =   require( './components/components' );
 
 const NsRewardsSystem    =   require( './pages/dashboard/rewards-system.vue' ).default;
