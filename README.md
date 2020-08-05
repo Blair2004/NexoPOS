@@ -1,5 +1,5 @@
 # NexoPOS 4.x
-NexoPOS 4 is the major upgrade of the version 3.x built from scratch using Laravel, TailwindCSS, Vue and other open-source resources. Based on the experience we had on the version 3.x we've learn alot about our mistakes and about our customers expectations. NexoPOS 4.x will keep what you've liked on the version 3.x and improve it by adding handy feature.
+NexoPOS 4 is the major upgrade of the version 3.x built from scratch using Laravel, TailwindCSS, Vue and other open-source resources. Based on the experience we had on the version 3.x we've learn from our mistakes and from our customers expectations. NexoPOS 4.x will keep what you've liked on the version 3.x and improve it by adding handy feature.
 
 This version available for free, aims to be more : 
 
