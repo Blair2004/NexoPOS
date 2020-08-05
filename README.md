@@ -1,4 +1,30 @@
 # NexoPOS 4
+NexoPOS 4 is the major upgrade of the version 3.x built from scratch using Laravel, TailwindCSS, Vue and other open-source resources. Based on the experience we had on the version 3.x we've learn alot about our mistakes and about our customers expectations. NexoPOS 4.x will keep what you've liked on the version 3.x and improve it by adding handy feature.
+
+This version available for free, aims to be more : 
+
+- Extensible & Flexible
+- Fast & Secured
+- Built Truly for small and large businesses
+
+Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
+
+## Major Additions & Benefits
+Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
+
+- Asynchronous Stock Operation (control avialable stock)
+- Asynchronous Notifications (get emailed about exausted, damaged & expired stock)
+- Grouped Actions For Components (example bulk change category for selected products)
+- Using PHP 7.4 more fast and reliable than PHP 7.1 (required on NexoPOS 3.x)
+- Really Responsive UI (to ensure a better support of mobile devices)
+- Unit of Measure embedded
+- Better Stock Taking Operation
+- Improved Stock Transfer with transport Progress*
+- Offline Service*
+- Accurate Stock Report (shows when a product sold has been procured).
+- Remote Printing With Nexo Print Server 4.x
+
+* : Might not be included on the core.
 
 ## Installation
 Before showing the step to install the application there is prior consideration to have in mind. The current root folder of the application, having the folders "app", "bootstrap", "config"... shouldn't be at the root of your server. If you're using Linux, you should configure apache to use the folder "public" (where the index.php is located) as the RootDocument of the installation. For Windows users, with [laragon](https://laragon.org/), you can also point what is the root directory. This technique prevents a lot of exploits. 
