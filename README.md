@@ -19,12 +19,11 @@ Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't pos
 - Really Responsive UI (to ensure a better support of mobile devices)
 - Unit of Measure embedded
 - Better Stock Taking Operation
-- Improved Stock Transfer with transport Progress*
+- Improved Stock Transfer with transport Progress (might be provided as a module)
 - Offline Service*
 - Accurate Stock Report (shows when a product sold has been procured).
 - Remote Printing With Nexo Print Server 4.x
-
-* : Might not be included on the core.
+- A lot more coming up...
 
 ## Installation
 Before showing the step to install the application there is prior consideration to have in mind. The current root folder of the application, having the folders "app", "bootstrap", "config"... shouldn't be at the root of your server. If you're using Linux, you should configure apache to use the folder "public" (where the index.php is located) as the RootDocument of the installation. For Windows users, with [laragon](https://laragon.org/), you can also point what is the root directory. This technique prevents a lot of exploits. 
