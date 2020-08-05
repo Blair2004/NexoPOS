@@ -22,7 +22,7 @@ Do you plan to contribute ? That's awesome. We're open to any type of contributi
 
 ## Documentation
 
-- [Menu API](https://github.com/blair2004/NexoPOS-4x/blob/readme/menu.md)
+- [Menu API](/readme/menu.md)
 - [Javascript/Classes/FormValidation](https://github.com/Blair2004/NexoPOS-4x/blob/master/readme/javascript/classes/form-validation.md)
 
 
