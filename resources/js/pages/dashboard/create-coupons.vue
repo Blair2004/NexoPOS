@@ -105,6 +105,12 @@ export default {
 
             return form;
         },
+        addOption( option ) {
+            console.log( option );
+        },
+        removeOption( option, index ) {
+
+        },  
         getRuleForm() {
             return this.form.ruleForm;
         },
@@ -164,7 +170,7 @@ export default {
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="flex flex-col">
                                 <label for="" class="font-medium text-gray-700">Something</label>
-                                <ns-multiselect v-bind:options="options"></ns-multiselect>
+                                <ns-multiselect @add="addOption( $event )" v-bind:options="options"></ns-multiselect>
                             </div>
                         </div>
                     </div>
