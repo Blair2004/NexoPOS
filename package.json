@@ -16,14 +16,15 @@
         "lodash": "^4.17.19",
         "resolve-url-loader": "^3.1.0",
         "sass": "^1.15.2",
-        "sass-loader": "^9.0.2",
+        "sass-loader": "^8.0.2",
         "vue-loader": "^15.9.3",
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
         "chart.js": "^2.9.3",
         "rx": "^4.1.0",
-        "tailwindcss": "^1.6.0",
+        "rxjs": "^6.6.2",
+        "tailwindcss": "^1.6.2",
         "vue": "^2.6.11",
         "vue-router": "^3.3.4"
     }

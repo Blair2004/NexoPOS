@@ -1,11 +1,13 @@
 <script>
 import FormValidation from '../../libraries/form-validation';
+import { Subject, BehaviorSubject } from "rxjs";
+import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
 export default {
     name: 'ns-create-coupons',
     mounted() {
         this.loadForm();
-        console.log( this.options );
+        // this.optionsSubject     =   new BehaviorSubject( this.options );
     },
     data() {
         return {
@@ -13,6 +15,7 @@ export default {
             form: {},
             nsSnackBar,
             nsHttpClient,
+            // optionsSubject: null,
             options: (new Array(40)).fill('').map( ( a, index ) =>  {
                 return {
                     label: 'Foo' + index,
@@ -107,13 +110,13 @@ export default {
         },
         addOption( option ) {
             const index     =   this.options.indexOf( option );
-            console.log( index );
+
             if ( index >= 0 ) {
                 this.options[ index ].selected  =   !this.options[ index ].selected;
             }
         },
-        removeOption( option, index ) {
-
+        removeOption({ option, index }) {
+            this.options.splice( index, 1 );
         },  
         getRuleForm() {
             return this.form.ruleForm;
@@ -174,7 +177,7 @@ export default {
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="flex flex-col">
                                 <label for="" class="font-medium text-gray-700">Something</label>
-                                <ns-multiselect @add="addOption( $event )" v-bind:options="options"></ns-multiselect>
+                                <ns-multiselect @removeOption="removeOption( $event )" @addOption="addOption( $event )" v-bind:options="options"></ns-multiselect>
                             </div>
                         </div>
                     </div>
