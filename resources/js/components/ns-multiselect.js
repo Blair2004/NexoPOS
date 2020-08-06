@@ -17,7 +17,8 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             }
             return [];
         },
-        selected() {
+        selectedOptions() {
+            console.log( this.options );
             if ( this.options ) {
                 return this.options.filter( o => o.selected );
             }
@@ -31,7 +32,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     <div class="bg-white flex flex-col" :class="showPanel ? 'shadow' : ''">
         <div @click="showPanel = !showPanel" :class="showPanel ? 'm-2' : ''" class="select-preview flex justify-between rounded border-2 border-gray-200 p-2 items-center">
             <div>
-                <div v-for="(tag,index) of selected" class="rounded bg-blue-400 text-white flex justify-between p-1 items-center">
+                <div v-for="(tag,index) of selectedOptions" class="rounded bg-blue-400 text-white flex justify-between p-1 items-center">
                     <span class="pr-8">{{ tag.label }}</span>
                     <button @click="$emit( 'remove', {tag, index} )" class="rounded outline-none hover:bg-blue-500 h-6 w-6 flex items-center justify-center">x</button>
                 </div>
@@ -47,7 +48,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                     <input class="p-2 w-full text-gray-600 outline-none" placeholder="Search">
                 </div>
                 <div class="h-40 overflow-y-auto">
-                    <div @click="$emit( 'add', option )" v-for="option of realOptions" :class="option.selected ? 'bg-blue-300' : ''" class="option p-2 text-gray-600 flex justify-between cursor-pointer hover:bg-gray-100">
+                    <div @click="$emit( 'add', option )" v-for="option of realOptions" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">
                         <span>{{ option.label }}</span>
                         <span>
                             <i v-if="option.checked" class="las la-check"></i>

@@ -13,10 +13,10 @@ export default {
             form: {},
             nsSnackBar,
             nsHttpClient,
-            options: (new Array(40)).fill('').map( a =>  {
+            options: (new Array(40)).fill('').map( ( a, index ) =>  {
                 return {
-                    label: 'Foo',
-                    value: 'bar'
+                    label: 'Foo' + index,
+                    value: 'bar' + index
                 }
             })
         }
@@ -106,7 +106,11 @@ export default {
             return form;
         },
         addOption( option ) {
-            console.log( option );
+            const index     =   this.options.indexOf( option );
+            console.log( index );
+            if ( index >= 0 ) {
+                this.options[ index ].selected  =   !this.options[ index ].selected;
+            }
         },
         removeOption( option, index ) {
 
