@@ -90,7 +90,14 @@ export default class FormValidation {
             }
 
             form.tabs[ tab ].fields.forEach( field => {
-                formValue[ tab ][ field.name ]  =   field.value;
+                if ( [ 'multiselect' ].includes( field.type ) ) {
+                    console.log( field );
+                    formValue[ tab ][ field.name ]  =   field.options
+                        .filter( option => option.selected )
+                        .map( option => option.value );
+                } else {
+                    formValue[ tab ][ field.name ]  =   field.value;
+                }
             });
         }
 

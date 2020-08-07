@@ -105,11 +105,49 @@ class CustomerCouponCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
+                'name'          =>  'name',
                 'description'   =>  __( 'Provide a name to the resource.' )
+            ],
+            'related'   =>  [
+                'selected_products'  =>  [
+                    'label' =>  __( 'Products' ),
+                    'active'    =>  true,
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'multiselect',
+                            'name'  =>  'products',
+                            'options'   =>  [
+                                [
+                                    'label' =>  'foo',
+                                    'value' =>  'bar'
+                                ], [
+                                    'label' =>  'bar',
+                                    'value' =>  'foo'
+                                ]
+                            ],
+                            'label'     =>  __( 'Select Products' ),
+                            'description'   =>  __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' )
+                        ], 
+                    ]
+                ], 
+                'selected_categories'  =>  [
+                    'label' =>  __( 'Categories' ),
+                    'active'    =>  false,
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'multiselect',
+                            'name'  =>  'categories',
+                            'options'   =>  [],
+                            'label'     =>  __( 'Select Categories' ),
+                            'description'   =>  __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' )
+                        ], 
+                    ]
+                ]
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
+                    'active'    =>  false,
                     'fields'    =>  [
                         [
                             'type'  =>  'select',
@@ -166,7 +204,7 @@ class CustomerCouponCrud extends CrudService
                             'value' =>  $entry->limit_usage ?? '',
                         ], 
                     ]
-                ]
+                ],
             ]
         ];
     }
@@ -178,7 +216,7 @@ class CustomerCouponCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        return $inputs;
+        return collect( $inputs )->filter( fn( $field ) => ! is_array( $field ) );
     }
 
     /**

@@ -9,6 +9,23 @@ export default {
         this.loadForm();
         // this.optionsSubject     =   new BehaviorSubject( this.options );
     },
+    computed: {
+        validTabs() {
+            if ( this.form ) {
+                const tabs  =   [];
+                for( let tab in this.form.tabs ) {
+                    if ([ 'selected_products', 'selected_categories' ].includes( tab ) ) {
+                        tabs.push( this.form.tabs[ tab ] );
+                    }
+                }
+                return tabs;
+            }
+            return [];
+        },
+        activeValidTab() {
+            return this.validTabs.filter( tab => tab.active )[0];
+        }
+    },
     data() {
         return {
             formValidation: new FormValidation,
@@ -26,42 +43,25 @@ export default {
     },
     props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
     methods: {
+        setTabActive( tab ) {
+            this.validTabs.forEach( tab => tab.active = false );
+            tab.active  =   true;
+        },
         submit() {
-            if ( this.form.rules.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-rules' ] ? this.$slots[ 'error-no-rules' ] : 'No error message is defined when no rules is provided' )
-                    .subscribe();
-            }
-
-            if ( this.form.rules.filter( rule => {
-                return rule.filter( field => ! field.value && field.type !== 'hidden' ).length > 0;
-            }).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : 'No error message is defined when no valid rules is provided' )
-                    .subscribe();
-            }
-
             if ( ! this.formValidation.validateForm( this.form ) ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
-
-            this.formValidation.disableForm( this.form );
 
             if ( this.submitUrl === undefined ) {
                 return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : 'No error message provided for not having a valid submit url.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
 
+            this.formValidation.disableForm( this.form );
+
             const data  =   {
                 ...this.formValidation.extractForm( this.form ),
-                rules: this.form.rules.map( rule => {
-                    const fieldSet    =   {};
-                    
-                    rule.forEach( f => {
-                        fieldSet[ f.name ]  =   f.value;
-                    });
-
-                    return fieldSet;
-                })
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
@@ -93,10 +93,8 @@ export default {
             form.main           =   this.formValidation.createForm([ form.main ])[0];
             let index           =   0;
 
-            console.log( form );
-
             for( let key in form.tabs ) {
-                if ( index === 0 ) {
+                if ( index === 1 && form.tabs[ key ].active === undefined ) {
                     form.tabs[ key ].active  =   true;
                 }
 
@@ -116,7 +114,7 @@ export default {
             }
         },
         removeOption({ option, index }) {
-            this.options.splice( index, 1 );
+            option.selected     =   false;
         },  
         getRuleForm() {
             return this.form.ruleForm;
@@ -167,17 +165,14 @@ export default {
                 <div class="px-4 w-full md:w-1/2">
                     <div id="tabbed-card">
                         <div id="card-header" class="flex flex-wrap">
-                            <div class="bg-white cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
-                                Products
-                            </div>
-                            <div class="bg-gray-100 cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
-                                Categories
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                                {{ tab.label }}
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="flex flex-col">
-                                <label for="" class="font-medium text-gray-700">Something</label>
-                                <ns-multiselect @removeOption="removeOption( $event )" @addOption="addOption( $event )" v-bind:options="options"></ns-multiselect>
+                            <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
+                                <label for="" class="font-medium text-gray-700 pb-1">{{ field.label }}</label>
+                                <ns-field  :field="field"></ns-field>
                             </div>
                         </div>
                     </div>

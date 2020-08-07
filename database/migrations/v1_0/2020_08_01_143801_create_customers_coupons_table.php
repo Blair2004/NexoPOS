@@ -26,6 +26,7 @@ class CreateCustomersCouponsTable extends Migration
             $table->integer( 'customer_id' )->nullable();
             $table->boolean( 'assigned' )->default(false);
             $table->float( 'limit_usage' )->default(0); // unlimited
+            $table->integer( 'author' );
             $table->timestamps();
         });
 

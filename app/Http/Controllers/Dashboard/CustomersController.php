@@ -217,7 +217,7 @@ class CustomersController extends DashboardController
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
             'returnLink'    =>  url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'POST',
-            'submitUrl'     =>  '',
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons' ),
         ]);
     }
 }
