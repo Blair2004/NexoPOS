@@ -7,9 +7,13 @@ use App\Services\Helper;
 use App\Models\User;
 use Hook;
 use Exception;
-use App\Models\CustomerCoupon;
+use App\Models\Coupon;
+use App\Models\CouponProduct;
+use App\Models\CouponCategory;
+use App\Models\Product;
+use App\Models\ProductCategory;
 
-class CustomerCouponCrud extends CrudService
+class CouponCrud extends CrudService
 {
     /**
      * define the base table
@@ -30,7 +34,7 @@ class CustomerCouponCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model      =   CustomerCoupon::class;
+    protected $model      =   Coupon::class;
 
     /**
      * Adding relation
@@ -219,7 +223,36 @@ class CustomerCouponCrud extends CrudService
 
     public function beforePost( Request $request )
     {
-        dd( $request->input( 'selected_categories.categories' ) );
+        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+            $product    =   Product::find( $product_id );
+            if ( ! $product instanceof Product ) {
+                throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
+            }
+        }
+
+        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+            $category    =   ProductCategory::find( $category_id );
+            if ( ! $category instanceof ProductCategory ) {
+                throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
+            }
+        }
+    }
+
+    public function afterPost( Request $request, Coupon $coupon )
+    {
+        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+            $productRelation                =   new CouponProduct;
+            $productRelation->coupon_id     =   $coupon->id;
+            $productRelation->product_id    =   $product_id;
+            $productRelation->save();
+        }
+
+        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+            $categoryRelation                =   new CouponCategory;
+            $categoryRelation->coupon_id     =   $coupon->id;
+            $categoryRelation->category_id  =   $category_id;
+            $categoryRelation->save();
+        }
     }
 
     /**
@@ -227,21 +260,10 @@ class CustomerCouponCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, CustomerCoupon $entry )
+    public function filterPutInputs( $inputs, Coupon $entry )
     {
         return $inputs;
     }
-
-    /**
-     * After Crud POST
-     * @param  object entry
-     * @return  void
-     */
-    public function afterPost( $inputs )
-    {
-        return $inputs;
-    }
-
     
     /**
      * get
@@ -443,7 +465,7 @@ class CustomerCouponCrud extends CrudService
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof CustomerCoupon ) {
+                if ( $entity instanceof Coupon ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
