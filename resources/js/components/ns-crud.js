@@ -88,8 +88,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         loadConfig() {
             const request   =   nsHttpClient.get( `${this.src}/config` );
             request.subscribe( f => {
-                this.columns        =   f.data.columns;
-                this.bulkActions    =   f.data.bulkActions;
+                this.columns        =   f.columns;
+                this.bulkActions    =   f.bulkActions;
                 this.refresh();
             });
         },
@@ -148,7 +148,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             entries: this.result.data.filter( row => row.$checked ).map( r => r.$id )
                         }).subscribe( result => {
                             console.log( result );
-                            nsSnackBar.info( result.data.message ).subscribe();
+                            nsSnackBar.info( result.message ).subscribe();
                             this.refresh();
                         }, ( error ) => {
                             console.log( Object.keys( error ) );
@@ -167,8 +167,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         refresh() {
             const request   =   nsHttpClient.get( `${this.getParsedSrc}` );
             request.subscribe( f => {
-                this.result     =   f.data;
-                this.page       =   f.data.current_page;
+                this.result     =   f;
+                this.page       =   f.current_page;
             });
         }
     },

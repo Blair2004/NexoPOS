@@ -42,7 +42,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
 
         Route::get( '/dashboard/customers/coupons', 'Dashboard\CustomersController@listCoupons' );
         Route::get( '/dashboard/customers/coupons/create', 'Dashboard\CustomersController@createCoupon' );
-        Route::get( '/dashboard/customers/coupons/edit/{reward}', 'Dashboard\CustomersController@editCoupon' );
+        Route::get( '/dashboard/customers/coupons/edit/{coupon}', 'Dashboard\CustomersController@editCoupon' );
 
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
@@ -57,6 +57,9 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
         Route::get( '/dashboard/profile', 'Dashboard\UsersController@showProfile' );
 
+        Route::get( '/dashboard/settings/{settings}', 'Dashboard\SettingsController@getSettings' );
+        Route::get( '/dashboard/settings/form/{settings}', 'Dashboard\SettingsController@loadSettingsForm' );
+
         Route::prefix( 'api/nexopos/v4' )->group( function() {
             foreach([ '', '/store/{id}/' ] as $prefix ) {
                 Route::prefix( $prefix )->group( function() {
@@ -69,6 +72,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
                     include_once( dirname( __FILE__ ) . '/api/providers.php' );
                     include_once( dirname( __FILE__ ) . '/api/registers.php' );
                     include_once( dirname( __FILE__ ) . '/api/reset.php' );
+                    include_once( dirname( __FILE__ ) . '/api/settings.php' );
                     include_once( dirname( __FILE__ ) . '/api/rewards.php' );
                     include_once( dirname( __FILE__ ) . '/api/transfer.php' );
                     include_once( dirname( __FILE__ ) . '/api/taxes.php' );

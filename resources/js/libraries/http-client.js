@@ -1,8 +1,9 @@
 import * as rx from "rx";
+import * as rxjs from 'rxjs';
 
 export class HttpClient {
     constructor() {
-        this._subject    =   new rx.Subject; 
+        this._subject    =   new rxjs.Subject; 
     }
 
     defineClient( client ) {
@@ -26,17 +27,17 @@ export class HttpClient {
     }
 
     _request( type, url, data = {} ) {
-        this._subject.onNext({ identifier: 'async.start', url, data });
-        return new rx.Observable.create( observer => {
+        this._subject.next({ identifier: 'async.start', url, data });
+        return new rxjs.Observable( observer => {
             this._client[ type ]( url, data ).then( result => {
-                observer.onNext( result );
-                observer.onCompleted();
-                this._subject.onNext({ identifier: 'async.stop' });
+                observer.next( result.data );
+                observer.complete();
+                this._subject.next({ identifier: 'async.stop' });
             }).catch( error => {
                 observer.onError( error );
-                this._subject.onNext({ identifier: 'async.stop' });
+                this._subject.next({ identifier: 'async.stop' });
             });
-        });
+        })
     }
 
     subject() {
@@ -44,6 +45,6 @@ export class HttpClient {
     }
 
     emit({ identifier, value }) {
-        this._subject.onNext({ identifier, value });
+        this._subject.next({ identifier, value });
     }
 }

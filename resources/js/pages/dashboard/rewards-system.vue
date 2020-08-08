@@ -56,8 +56,8 @@ export default {
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( result => {
-                    if ( result.data.status === 'success' ) {
+                .subscribe( data => {
+                    if ( data.status === 'success' ) {
                         return document.location   =   this.returnLink;
                     }
                     this.formValidation.enableForm( this.form );
@@ -76,7 +76,7 @@ export default {
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( f => {
-                this.form    =   this.parseForm( f.data.form );
+                this.form    =   this.parseForm( f.form );
             });
         },
         parseForm( form ) {

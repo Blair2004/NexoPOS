@@ -32,7 +32,7 @@ export default {
                     result => {
                         this.form.enableFields( this.fields );
                         nsRouter.push( '/configuration' );
-                        nsSnackBar.success( result.data.message, 'OKAY', { duration: 5000 }).subscribe();
+                        nsSnackBar.success( result.message, 'OKAY', { duration: 5000 }).subscribe();
                     }, 
                     error => {
                         this.form.enableFields( this.fields );

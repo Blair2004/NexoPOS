@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 use App\Http\Controllers\DashboardController;
+use App\Models\Coupon;
 use Tendoo\Core\Exceptions\NotFoundException;
 use Tendoo\Core\Exceptions\NotAllowedException;
 
@@ -205,6 +206,7 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Coupons List' ),
             'description'   =>  __( 'Manage all created coupons.' ),
+            'createLink'    =>  url( '/dashboard/customers/coupons/create' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons' )
         ]);
     }
@@ -218,6 +220,18 @@ class CustomersController extends DashboardController
             'returnLink'    =>  url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'POST',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons' ),
+        ]);
+    }
+
+    public function editCoupon( Coupon $coupon )
+    {
+        return $this->view( 'pages.dashboard.coupons.create', [
+            'title'         =>  __( 'Edit Coupon' ),
+            'description'   =>  __( 'Editing an existing coupon.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
+            'returnLink'    =>  url( '/dashboard/customers/coupons' ),
+            'submitMethod'  =>  'PUT',
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
 }

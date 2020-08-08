@@ -44,7 +44,7 @@ Vue.component( 'ns-table-row', {
                     nsHttpClient[ action.type.toLowerCase() ]( action.url )
                         .subscribe( response => {
                             console.log( response );
-                            nsSnackBar.success( response.data.message )
+                            nsSnackBar.success( response.message )
                                 .subscribe();
                             this.$emit( 'updated', true );
                         }, ( response ) => {

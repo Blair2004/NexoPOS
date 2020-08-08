@@ -24,6 +24,15 @@ export default {
         },
         activeValidTab() {
             return this.validTabs.filter( tab => tab.active )[0];
+        },
+        generalTab() {
+            const tabs  =   [];
+            for( let tab in this.form.tabs ) {
+                if ([ 'general' ].includes( tab ) ) {
+                    tabs.push( this.form.tabs[ tab ] );
+                }
+            }
+            return tabs;
         }
     },
     data() {
@@ -65,8 +74,8 @@ export default {
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( result => {
-                    if ( result.data.status === 'success' ) {
+                .subscribe( data => {
+                    if ( data.status === 'success' ) {
                         return document.location   =   this.returnLink;
                     }
                     this.formValidation.enableForm( this.form );
@@ -85,7 +94,7 @@ export default {
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( f => {
-                this.form    =   this.parseForm( f.data.form );
+                this.form    =   this.parseForm( f.form );
             });
         },
         parseForm( form ) {
@@ -158,7 +167,7 @@ export default {
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full md:w-1/2">
-                    <div class="rounded bg-white shadow p-2" v-bind:key="index" v-for="( tab, index) of form.tabs">
+                    <div class="rounded bg-white shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
                         <ns-field v-bind:key="index" v-for="( field, index ) of tab.fields" :field="field"></ns-field>
                     </div>
                 </div>

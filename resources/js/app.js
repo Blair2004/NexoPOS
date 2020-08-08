@@ -7,8 +7,9 @@ const {
     nsSubmenu
 }   =   require( './components/components' );
 
-const NsRewardsSystem    =   require( './pages/dashboard/rewards-system.vue' ).default;
-const NsCreateCoupons    =   require( './pages/dashboard/create-coupons.vue' ).default;
+const NsRewardsSystem   =   require( './pages/dashboard/rewards-system.vue' ).default;
+const NsCreateCoupons   =   require( './pages/dashboard/create-coupons.vue' ).default;
+const NsSettings        =   require( './pages/dashboard/settings.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
@@ -17,10 +18,15 @@ new window.Vue({
     }
 });
 
-new Vue({
+new window.Vue({
     el: '#dashboard-header',
     data: {
         menuToggled: false,
+    },
+    methods: {
+        toggleMenu() {
+            this.menuToggled    =   !this.menuToggled;
+        }
     },
     mounted() {
         console.log( 'mounted' );
@@ -34,6 +40,7 @@ new window.Vue({
     },
     components: {
         NsRewardsSystem,
-        NsCreateCoupons
+        NsCreateCoupons,
+        NsSettings,
     }
 });

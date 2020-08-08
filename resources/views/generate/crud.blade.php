@@ -236,7 +236,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Before Delete
      * @return void
      */
-    public function beforeDelete( $namespace, $id ) {
+    public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
             /**
              *  Perform an action before deleting an entry

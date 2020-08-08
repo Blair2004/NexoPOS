@@ -19,8 +19,8 @@ class CreateCustomersCouponsTable extends Migration
             $table->string( 'type' )->default( 'discount' ); // percentage_discount, flat_discount, giveaway
             $table->float( 'discount_value' )->default(0); // flat value or percentage
             $table->datetime( 'valid_until' )->nullable(); // unlimited
-            $table->float( 'minimum_cart_value' )->default(0);
-            $table->float( 'maximum_cart_value' )->default(0);
+            $table->float( 'minimum_cart_value' )->default(0)->nullable();
+            $table->float( 'maximum_cart_value' )->default(0)->nullable();
             $table->datetime( 'valid_hours_start' )->nullable();
             $table->datetime( 'valid_hours_end' )->nullable();
             $table->integer( 'customer_id' )->nullable();
