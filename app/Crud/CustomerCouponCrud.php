@@ -217,6 +217,11 @@ class CustomerCouponCrud extends CrudService
         return collect( $inputs )->filter( fn( $field ) => ! is_array( $field ) );
     }
 
+    public function beforePost( Request $request )
+    {
+        dd( $request->input( 'selected_categories.categories' ) );
+    }
+
     /**
      * Filter PUT input fields
      * @param  array of fields
