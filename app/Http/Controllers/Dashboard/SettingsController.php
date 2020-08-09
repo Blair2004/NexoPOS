@@ -9,6 +9,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\SettingsRequest;
+use App\Services\CrudService;
+use App\Services\Options;
 use App\Services\SettingsPage;
 use Exception;
 use Illuminate\Support\Facades\View;
@@ -19,9 +21,13 @@ use Hook;
 class SettingsController extends DashboardController
 {
     private $taxService;
+    private $options;
 
-    public function __construct()
+    public function __construct(
+        Options $options
+    )
     {
+        $this->options  =   $options;
         parent::__construct();
     }
 
@@ -137,9 +143,23 @@ class SettingsController extends DashboardController
         ]);
     }
 
-    public function postSettings( SettingsRequest $request )
+    public function saveSettingsForm( SettingsRequest $request, $identifier )
     {
+        $service    =   new CrudService;
+        $resource   =   Hook::filter( 'ns.settings', false, $identifier );
+ 
+        foreach( $service->getPlainData( $resource, $request ) as $key => $value ) {
+            if ( empty( $value ) ) {
+                $this->options->delete( $key );
+            } else {
+                $this->options->set( $key, $value );
+            }
+        }
 
+        return [
+            'status'    =>  'sucesss',
+            'message'   =>  __( 'The options has been successfully saved.' )
+        ];
     }
 }
 

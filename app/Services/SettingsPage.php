@@ -39,5 +39,7 @@ class SettingsPage
         $flatRules      =   collect( $isolatedRules )->mapWithKeys( function( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
+
+        return $flatRules;
     }
 }

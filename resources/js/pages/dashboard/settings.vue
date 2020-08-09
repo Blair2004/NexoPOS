@@ -29,11 +29,12 @@ export default {
     data() {
         return {
             validation: new FormValidation,
-            form: []
+            form: false
         }
     },
     computed: {
         activeTab() {
+            console.log( this.form );
             for( let tab in this.form.tabs ) {
                 if ( this.form.tabs[ tab ].active === true ) {
                     return this.form.tabs[ tab ];
@@ -51,6 +52,7 @@ export default {
                 return nsHttpClient.post( this.url, this.validation.extractForm( this.form ) )
                     .subscribe( result => {
                         this.validation.enableForm( this.form );
+                        nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
                         nsSnackBar.error( error.response.data.message || 'No error message provided in case the form is not valid.' )
@@ -58,7 +60,7 @@ export default {
                     })
             }
 
-            nsSnackBar.error( this.$slots[ 'error-form-invalid' ] || 'No error message provided in case the form is not valid.' )
+            nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || 'No error message provided in case the form is not valid.' )
                 .subscribe();
         },
         setActive( tab ) {

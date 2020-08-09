@@ -10,6 +10,7 @@ use App\Crud\Applications;
 use App\Exceptions\CoreException;
 use App\Services\CrudService;
 use App\Services\SettingsPage;
+use Exception;
 use Illuminate\Support\Arr;
 
 class SettingsRequest extends BaseCrudRequest
@@ -21,7 +22,7 @@ class SettingsRequest extends BaseCrudRequest
      */
     public function authorize()
     {
-        return true;
+        return true; // we'll check here the user has enough permissions
     }
 
     /**
@@ -31,7 +32,15 @@ class SettingsRequest extends BaseCrudRequest
      */
     public function rules()
     {
-        $service        =   new SettingsPage;
-        return $service->validateForm( $this );
+        $service        =   Hook::filter( 'ns.settings', false, $this->route( 'identifier' ) );
+
+        if ( $service instanceof SettingsPage ) {
+            return $service->validateForm( $this );
+        }
+
+        throw new Exception( 
+            sprintf( __( 'Unable to initialize the settings page. The identifier "%s" cannot be instantiated.' ), 
+            $this->route( 'identifier' ) 
+        ) );
     }
 }

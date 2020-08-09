@@ -7,7 +7,9 @@ export default class FormValidation {
     }
 
     validateForm( form ) {
-        this.validateField( form.main );
+        if ( form.main ) {
+            this.validateField( form.main );
+        }
 
         const tabsInvalidity    =   [];
 
@@ -30,9 +32,9 @@ export default class FormValidation {
 
     createFields( fields ) {
         return fields.map( field => {
-            field.type      =   field.type || 'text',
-            field.errors    =   field.errors || [];
-            field.disabled  =   field.disabled || false;
+            field.type      =   field.type      || 'text',
+            field.errors    =   field.errors    || [];
+            field.disabled  =   field.disabled  || false;
             return field;
         })
     }
@@ -45,6 +47,8 @@ export default class FormValidation {
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
         }
+
+        return form;
     }
 
     enableFields( fields ) {
@@ -63,8 +67,6 @@ export default class FormValidation {
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields.forEach( field => field.disabled = true );
         }
-        
-        console.log( form.main.disabled );
     }
 
     enableForm( form ) {
@@ -111,7 +113,6 @@ export default class FormValidation {
 
             form.tabs[ tab ].fields.forEach( field => {
                 if ( [ 'multiselect' ].includes( field.type ) ) {
-                    console.log( field );
                     formValue[ tab ][ field.name ]  =   field.options
                         .filter( option => option.selected )
                         .map( option => option.value );

@@ -401,6 +401,7 @@ class CrudService
     public function extractCrudValidation( $crud, $entry = null )
     {
         $form   =   $crud->getForm( $entry );
+
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
@@ -430,7 +431,10 @@ class CrudService
     {
         $form   =   $resource->getForm( $entry );
         $data   =   [];
-        $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+
+        if ( isset( $form[ 'main' ] ) ) {
+            $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+        }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
             foreach( $tab[ 'fields' ] as $field ) {
