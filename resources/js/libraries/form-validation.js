@@ -17,7 +17,7 @@ export default class FormValidation {
             );
         }
 
-        if ( form.main.errors.length > 0 || tabsInvalidity.filter( f => f === false ).length > 0 ) {
+        if ( ( form.main && form.main.errors.length > 0 ) || tabsInvalidity.filter( f => f === false ).length > 0 ) {
             return false;
         }
 
@@ -28,13 +28,23 @@ export default class FormValidation {
         return this.checkField( field );
     }
 
-    createForm( fields ) {
+    createFields( fields ) {
         return fields.map( field => {
             field.type      =   field.type || 'text',
             field.errors    =   field.errors || [];
             field.disabled  =   field.disabled || false;
             return field;
         })
+    }
+
+    createForm( form ) {
+        if ( form.main ) {
+            form.main   =   this.createFields([ form.main ])[0];
+        }
+
+        for( let tab in form.tabs ) {
+            form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
+        }
     }
 
     enableFields( fields ) {
@@ -46,15 +56,22 @@ export default class FormValidation {
     }
 
     disableForm( form ) {
-        form.main.disabled  =   true;
+        if ( form.main ) {
+            form.main.disabled  =   true;
+        }
+
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields.forEach( field => field.disabled = true );
         }
+        
         console.log( form.main.disabled );
     }
 
     enableForm( form ) {
-        form.main.disabled  =   false;
+        if ( form.main ) {
+            form.main.disabled  =   false;
+        }
+
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields.forEach( field => field.disabled = false );
         }
@@ -82,7 +99,10 @@ export default class FormValidation {
 
     extractForm( form ) {
         const formValue  =   {};
-        formValue[ form.main.name ]     =   form.main.value;
+
+        if ( form.main ) {
+            formValue[ form.main.name ]     =   form.main.value;
+        }
 
         for( let tab in form.tabs ) {
             if ( formValue[ tab ] === undefined ) {
@@ -146,7 +166,6 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
-        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {

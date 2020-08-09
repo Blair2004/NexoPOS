@@ -59,7 +59,7 @@ class SettingsController extends DashboardController
 
     public function customersSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.customers', [
             'title'     =>      __( 'Customers Settings' ),
             'description'   =>  __( 'Configure the customers settings of the application.' )
         ]);
@@ -75,7 +75,7 @@ class SettingsController extends DashboardController
 
     public function invoiceSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.invoices', [
             'title'     =>      __( 'Invoices Settings' ),
             'description'   =>  __( 'Configure the invoice settings.' )
         ]);
@@ -83,7 +83,7 @@ class SettingsController extends DashboardController
 
     public function ordersSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.orders', [
             'title'     =>      __( 'Orders Settings' ),
             'description'   =>  __( 'Configure the orders settings.' )
         ]);
@@ -91,7 +91,7 @@ class SettingsController extends DashboardController
 
     public function posSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.pos', [
             'title'     =>      __( 'POS Settings' ),
             'description'   =>  __( 'Configure the pos settings.' )
         ]);
@@ -99,7 +99,7 @@ class SettingsController extends DashboardController
 
     public function providersSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.providers', [
             'title'     =>      __( 'Providers Settings' ),
             'description'   =>  __( 'Configure the providers settings.' )
         ]);
@@ -107,7 +107,7 @@ class SettingsController extends DashboardController
 
     public function reportsSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.reports', [
             'title'     =>      __( 'Reports Settings' ),
             'description'   =>  __( 'Configure the reports.' )
         ]);
@@ -115,7 +115,7 @@ class SettingsController extends DashboardController
 
     public function resetSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.reset', [
             'title'     =>      __( 'Reset Settings' ),
             'description'   =>  __( 'Reste the applications' )
         ]);
@@ -123,7 +123,7 @@ class SettingsController extends DashboardController
 
     public function servicesSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.services', [
             'title'     =>      __( 'Services Settings' ),
             'description'   =>  __( 'Configure the services settings.' )
         ]);
@@ -131,7 +131,7 @@ class SettingsController extends DashboardController
     
     public function storesSettings()
     {
-        return $this->view( 'pages.dashboard.settings.general', [
+        return $this->view( 'pages.dashboard.settings.stores', [
             'title'     =>      __( 'Stores Settings' ),
             'description'   =>  __( 'Configure the stores settings.' )
         ]);

@@ -47,7 +47,7 @@ export default {
         }
     },
     mounted() {
-        this.fields     =   this.form.createForm([
+        this.fields     =   this.form.createFields([
             {
                 label: 'Hostname',
                 description: 'Provide the database hostname',

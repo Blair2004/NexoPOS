@@ -83,7 +83,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         },
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
-            form.main           =   this.formValidation.createForm([ form.main ])[0];
+            form.main           =   this.formValidation.createFields([ form.main ])[0];
             let index           =   0;
 
             for( key in form.tabs ) {
@@ -92,7 +92,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 }
 
                 form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
-                form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
+                form.tabs[ key ].fields     =   this.formValidation.createFields( form.tabs[ key ].fields );
 
                 index++;
             }

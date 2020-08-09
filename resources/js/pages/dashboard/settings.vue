@@ -14,13 +14,13 @@
                 </div>
             </div>
             <div class="border-t border-gray-400 p-2 flex justify-end">
-                <ns-button type="info"><slot name="submit-button">Save Settings</slot></ns-button>
+                <ns-button @click="submitForm()" type="info"><slot name="submit-button">Save Settings</slot></ns-button>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { nsHttpClient } from '../../bootstrap';
+import { nsHttpClient, nsSnackBar } from '../../bootstrap';
 import FormValidation from '../../libraries/form-validation';
 
 export default {
@@ -45,6 +45,22 @@ export default {
         this.loadSettingsForm();
     },
     methods: {
+        submitForm() {
+            if ( this.validation.validateForm( this.form ) ) {
+                this.validation.disableForm( this.form );
+                return nsHttpClient.post( this.url, this.validation.extractForm( this.form ) )
+                    .subscribe( result => {
+                        this.validation.enableForm( this.form );
+                    }, ( error ) => {
+                        this.validation.enableForm( this.form );
+                        nsSnackBar.error( error.response.data.message || 'No error message provided in case the form is not valid.' )
+                            .subscribe();
+                    })
+            }
+
+            nsSnackBar.error( this.$slots[ 'error-form-invalid' ] || 'No error message provided in case the form is not valid.' )
+                .subscribe();
+        },
         setActive( tab ) {
             for( let tab in this.form.tabs ) {
                 this.form.tabs[ tab ].active     =   false;
@@ -61,7 +77,7 @@ export default {
                     }
                     i++;
                 }
-                this.form  =    form;
+                this.form  =    this.validation.createForm( form );
             })
         }
     }

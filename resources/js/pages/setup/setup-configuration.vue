@@ -65,7 +65,7 @@ export default {
     mounted() {
         nsHttpClient.get( '/api/nexopos/v4/setup/database' )
             .subscribe( result => {
-                this.fields     =   this.form.createForm([
+                this.fields     =   this.form.createFields([
                     {
                         label: 'Application',
                         description: 'what is the application name',
