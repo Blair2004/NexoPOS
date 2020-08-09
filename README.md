@@ -45,11 +45,6 @@ The following installation steps require additionnal skills on using CLI (Comman
 
 As NexoPOS doesn't have a frontend already, you'll end on the default Laravel page. Access `/do-setup/` to launch the installer.
 
-## Troubleshooting
-Nothing is perfect. Issue happens and that's normal. Let's try to sort known issues : 
-
-- During the installation, you might not be able to generate a key if the ".env" file is missing. Normally, there should be a ".env.example" file at the root of the installation. If you can't find that file, you need to grab the file from Laravel repository (https://raw.githubusercontent.com/laravel/laravel/master/.env.example) and save it locally at the root of your installation with the name ".env". Now, you need to run the command `php artisan key:generate`. 
-
 ## Contribution Guidelines
 Do you plan to contribute ? That's awesome. We're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If youjust have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
 
