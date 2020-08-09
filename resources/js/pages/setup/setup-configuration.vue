@@ -69,7 +69,7 @@ export default {
                     {
                         label: 'Application',
                         description: 'what is the application name',
-                        name: 'app_name',
+                        name: 'ns_store_name',
                         validation: 'required',
                     }, {
                         label: 'Username',

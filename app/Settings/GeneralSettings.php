@@ -1,6 +1,8 @@
 <?php
 namespace App\Settings;
 
+use App\Models\Role;
+use App\Services\Helper;
 use App\Services\Options;
 use App\Services\SettingsPage;
 
@@ -67,11 +69,21 @@ class GeneralSettings extends SettingsPage
                         ], [
                             'name'  =>  'ns_store_additional',
                             'value'          =>  $options->get( 'ns_store_additional' ),
-                            'label' =>  __( 'Store Fax' ), 
-                            'type'          =>  'text',
-                            'description'   =>  __( 'The store fax number.' ),
+                            'label' =>  __( 'Store Additional Information' ), 
+                            'type'          =>  'textarea',
+                            'description'   =>  __( 'Store additional informations.' ),
                             'validation'    =>  'required'                           
-                        ]
+                        ], [
+                            'name'          =>  'ns_store_language',
+                            'value'         =>  $options->get( 'ns_store_language' ),
+                            'options'         =>  Helper::kvToJsOptions([
+                                'en'       =>  __( 'English' ),
+                            ]),
+                            'label' =>  __( 'Requires Validation' ), 
+                            'type'          =>  'select',
+                            'description'   =>  __( 'Force account validation after the registration.' ),
+                            'validation'    =>  'required'                           
+                        ], 
                     ]
                 ],
                 'currency'   =>  [
@@ -152,9 +164,51 @@ class GeneralSettings extends SettingsPage
                             'value'          =>  $options->get( 'ns_datetime_format' ),
                             'type'          =>  'text',
                             'description'   =>  __( 'This define how the date and times hould be formated. The default format is "Y-m-d H:i".' ),
+                        ], [
+                            'label'         =>  __( 'Date TimeZone' ),
+                            'name'          =>  'ns_datetime_timezone',
+                            'value'          =>  $options->get( 'ns_datetime_timezone' ),
+                            'type'          =>  'text',
+                            'description'   =>  __( 'Determine the default timezone of the store.' ),
                         ]
                     ]
-                ]
+                ],
+                'registration'   =>  [
+                    'label' =>  __( 'Registration' ),
+                    'fields'    =>  [
+                        [
+                            'name'          =>  'ns_registration_status',
+                            'value'         =>  $options->get( 'ns_registration_status' ),
+                            'options'         =>  Helper::kvToJsOptions([
+                                'yes'       =>  __( 'Yes' ),
+                                'no'        =>  __( 'No' )
+                            ]),
+                            'label' =>  __( 'Registration Open' ), 
+                            'type'          =>  'select',
+                            'description'   =>  __( 'Determine if everyone can register.' ),
+                            'validation'    =>  'required'                           
+                        ], [
+                            'name'          =>  'ns_registration_role',
+                            'value'         =>  $options->get( 'ns_registration_role' ),
+                            'options'         =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
+                            'label'         =>  __( 'Registration Open' ), 
+                            'type'          =>  'select',
+                            'description'   =>  __( 'Determine if everyone can register.' ),
+                            'validation'    =>  'required'                           
+                        ], [
+                            'name'          =>  'ns_registration_validated',
+                            'value'         =>  $options->get( 'ns_registration_validated' ),
+                            'options'         =>  Helper::kvToJsOptions([
+                                'yes'       =>  __( 'Yes' ),
+                                'no'        =>  __( 'No' )
+                            ]),
+                            'label' =>  __( 'Requires Validation' ), 
+                            'type'          =>  'select',
+                            'description'   =>  __( 'Force account validation after the registration.' ),
+                            'validation'    =>  'required'                           
+                        ], 
+                    ]
+                ],
             ]
         ];
     }

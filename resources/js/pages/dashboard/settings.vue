@@ -1,7 +1,7 @@
 <template>
     <div id="tabbed-card" v-if="form">
         <div id="card-header" class="flex flex-wrap">
-            <div :class="tab.active ? 'bg-white' : 'bg-gray-300'" @click="setActive( tab )" v-bind:key="key" v-for="( tab, key ) of form.tabs" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
+            <div :class="tab.active ? 'bg-white' : 'bg-gray-300'" @click="setActive( tab )" v-bind:key="key" v-for="( tab, key ) of form.tabs" class="text-gray-700 cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
                 {{ tab.label }}
             </div>
         </div>

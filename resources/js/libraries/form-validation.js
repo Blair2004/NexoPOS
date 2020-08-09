@@ -202,7 +202,7 @@ export default class FormValidation {
     fieldPassCheck( field, rule ) {
 
         if ( rule.identifier === 'required' ) {
-            if ( field.value === undefined || field.value.length === 0 ) {
+            if ( field.value === undefined || field.value === null || field.value.length === 0 ) {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,
