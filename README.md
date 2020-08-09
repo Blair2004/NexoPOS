@@ -33,6 +33,8 @@ Before showing the step to install the application there is prior consideration 
 
 The following installation steps require additionnal skills on using CLI (Command Line Interface), but when we'll release NexoPOS builds, that will be a full installation with all the dependencies. We might also create an installer with a very simplified user interface.
 
+**Note**: If you're running on linux, chances are the user that runs httpd process doesn't have any right on the directory where NexoPOS 4.x is installed. Ideally, you'll ake sure to `chown php-fpm . -R` if the user running php is "php-fpm" (otherwise it should be "apache").
+
 - Make sure to have PHP 7.4 & Apache Configured with required extensions : php-xml, php-mbstring, php-msqli... These are often already provided by virtual server like Laragon, XAMP, WAMP, MAMP.
 - [Installing Composer](https://getcomposer.org/download/).
 - Install Git (that will be helfpul if you want to contribue or just to download).
