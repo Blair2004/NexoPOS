@@ -14,9 +14,11 @@ class PosSettings extends SettingsPage
         
         $this->form    =   [
             'tabs'  =>  [
-                'layout'    =>  include_once( dirname( __FILE__ ) . '/pos/layout.php' ),
-                'registers' =>  include_once( dirname( __FILE__ ) . '/pos/registers.php' ),
-                'vat'       =>  include_once( dirname( __FILE__ ) . '/pos/vat.php' )
+                'layout'    =>  include( dirname( __FILE__ ) . '/pos/layout.php' ),
+                'registers' =>  include( dirname( __FILE__ ) . '/pos/registers.php' ),
+                'vat'       =>  include( dirname( __FILE__ ) . '/pos/vat.php' ),
+                'shortcuts' =>  include( dirname( __FILE__ ) . '/pos/shortcuts.php' ),
+                'features'  =>  include( dirname( __FILE__ ) . '/pos/features.php' ),
             ]
         ];
     }

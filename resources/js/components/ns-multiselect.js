@@ -44,7 +44,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                 <i class="las la-angle-up" v-if="!showPanel"></i>
             </div>
         </div>
-        <div class="h-0" v-if="showPanel">
+        <div class="h-0 z-10" v-if="showPanel">
             <div class="bg-white shadow">
                 <div class="search border-b border-gray-200">
                     <input class="p-2 w-full text-gray-600 outline-none" placeholder="Search">

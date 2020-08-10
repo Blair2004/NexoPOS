@@ -126,6 +126,12 @@ class CustomerGroupCrud extends CrudService
                             'value'         =>  $entry->reward_system_id ?? '',
                             'description'   =>  __( 'Select which Reward system applies to the group' )
                         ], [
+                            'type'          =>  'number',
+                            'name'          =>  'minimum_credit_payement',
+                            'label'         =>  __( 'Minimum Credit Amount' ),
+                            'value'         =>  $entry->minimum_credit_payement ?? '',
+                            'description'   =>  __( 'Determine in percentage, what is the first minimum credit payment made by all customers on the group, in case of credit order.' )
+                        ], [
                             'type'          =>  'textarea',
                             'name'          =>  'description',
                             'value'         =>  $entry->description ?? '',

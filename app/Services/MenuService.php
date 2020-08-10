@@ -299,9 +299,9 @@ class MenuService
                         'label' =>  __( 'Customers'),
                         'href'  =>  url( '/dashboard/settings/customers' )
                     ], 
-                    'providers'   =>  [
-                        'label' =>  __( 'Providers'),
-                        'href'  =>  url( '/dashboard/settings/providers' )
+                    'supplies-delivery'   =>  [
+                        'label' =>  __( 'Supplies & Deliveries'),
+                        'href'  =>  url( '/dashboard/settings/supplies-deliveries' )
                     ],
                     'orders'   =>  [
                         'label' =>  __( 'Orders'),

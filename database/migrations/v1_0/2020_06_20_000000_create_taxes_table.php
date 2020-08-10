@@ -20,10 +20,20 @@ class CreateTaxesTable extends Migration
             Schema::create( 'nexopos_taxes', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->string( 'type' ); // grouped, simple
                 $table->text( 'description' )->nullable();
                 $table->float( 'rate' );
-                $table->integer( 'parent_id' )->nullable()->default('0');
+                $table->integer( 'tax_group_id' );
+                $table->integer( 'author' );
+                $table->string( 'uuid' )->nullable();
+                $table->timestamps();
+            });
+        }
+
+        if ( ! Schema::hasTable( 'nexopos_tax_groups' ) ) {
+            Schema::create( 'nexopos_tax_groups', function( Blueprint $table ) {
+                $table->bigIncrements( 'id' );
+                $table->string( 'name' );
+                $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
@@ -40,6 +50,10 @@ class CreateTaxesTable extends Migration
     {
         if ( Schema::hasTable( 'nexopos_taxes' ) ) {
             Schema::drop( 'nexopos_taxes' );
+        }
+
+        if ( Schema::hasTable( 'nexopos_tax_groups' ) ) {
+            Schema::drop( 'nexopos_tax_groups' );
         }
     }
 }

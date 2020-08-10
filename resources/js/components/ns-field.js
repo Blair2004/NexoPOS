@@ -22,6 +22,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isMultiselect() {
             return [ 'multiselect' ].includes( this.field.type );
         },
+        isSwitch() {
+            return [ 'switch' ].includes( this.field.type );
+        },
     },
     props: [ 'field' ],
     methods: {
@@ -65,6 +68,13 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description>{{ field.description || '' }}</template>
         </ns-multiselect>
+        <ns-switch 
+            :field="field" 
+            @change="$emit( 'change', this )"
+            v-if="isSwitch">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description>{{ field.description || '' }}</template>
+        </ns-switch>
     </div>
     `,
 });

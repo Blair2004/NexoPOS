@@ -191,9 +191,9 @@ class GeneralSettings extends SettingsPage
                             'name'          =>  'ns_registration_role',
                             'value'         =>  $options->get( 'ns_registration_role' ),
                             'options'         =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
-                            'label'         =>  __( 'Registration Open' ), 
+                            'label'         =>  __( 'Registration Role' ), 
                             'type'          =>  'select',
-                            'description'   =>  __( 'Determine if everyone can register.' ),
+                            'description'   =>  __( 'Select what is the registration role.' ),
                             'validation'    =>  'required'                           
                         ], [
                             'name'          =>  'ns_registration_validated',

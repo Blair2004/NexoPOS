@@ -26,6 +26,8 @@ class CreateProcurementsProductsTable extends Migration
                 $table->integer( 'product_id' );
                 $table->integer( 'unit_id' );
                 $table->integer( 'procurement_id' );
+                $table->float( 'profit_margin' )->default(0);
+                $table->float( 'selling_price' )->default(0);
                 $table->float( 'base_quantity' ); // total of base unit compared to the selected unit id
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();

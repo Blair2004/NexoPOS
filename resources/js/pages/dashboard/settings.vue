@@ -1,5 +1,5 @@
 <template>
-    <div id="tabbed-card" v-if="form">
+    <div id="tabbed-card" v-if="formDefined">
         <div id="card-header" class="flex flex-wrap">
             <div :class="tab.active ? 'bg-white' : 'bg-gray-300'" @click="setActive( tab )" v-bind:key="key" v-for="( tab, key ) of form.tabs" class="text-gray-700 cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
                 {{ tab.label }}
@@ -29,12 +29,14 @@ export default {
     data() {
         return {
             validation: new FormValidation,
-            form: false
+            form: {}
         }
     },
     computed: {
+        formDefined() {
+            return Object.values( this.form ).length > 0;
+        },
         activeTab() {
-            console.log( this.form );
             for( let tab in this.form.tabs ) {
                 if ( this.form.tabs[ tab ].active === true ) {
                     return this.form.tabs[ tab ];
@@ -52,6 +54,7 @@ export default {
                 return nsHttpClient.post( this.url, this.validation.extractForm( this.form ) )
                     .subscribe( result => {
                         this.validation.enableForm( this.form );
+                        this.loadSettingsForm();
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
@@ -72,13 +75,24 @@ export default {
         loadSettingsForm() {
             nsHttpClient.get( this.url ).subscribe( form => {
                 let i   =   0;
+                const hasSelected   =   Object.values( form.tabs ).filter( t => t.active ).length > 0;
+
+                /**
+                 * only if it doesn't have selected
+                 * tab so that we can reload it without resetting the focused tab.
+                 */
                 for( let tab in form.tabs ) {
-                    form.tabs[ tab ].active  =   false;
-                    if ( i === 0 ) {
-                        form.tabs[ tab ].active  =   true;
+                    if ( ! this.formDefined ) {
+                        form.tabs[ tab ].active  =   false;
+                        if ( i === 0 ) {
+                            form.tabs[ tab ].active  =   true;
+                        }
+                    } else {
+                        form.tabs[ tab ].active  =   this.form.tabs[ tab ].active;
                     }
                     i++;
                 }
+
                 this.form  =    this.validation.createForm( form );
             })
         }
