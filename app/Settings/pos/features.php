@@ -36,6 +36,16 @@ return [
             ]),
             'description'       =>  __( 'Allow quick product to be created from the POS.' ),
         ], [
+            'name'              =>  'ns_pos_order_sms',
+            'value'             =>  $options->get( 'ns_pos_order_sms' ),
+            'label'             =>  __( 'SMS Order Confirmation' ), 
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' )
+            ]),
+            'description'       =>  __( 'Will send SMS to the customer once the order is placed.' ),
+        ], [
             'name'              =>  'ns_pos_unit_price_ediable',
             'value'             =>  $options->get( 'ns_pos_unit_price_ediable' ),
             'label'             =>  __( 'Editable Unit Price' ), 

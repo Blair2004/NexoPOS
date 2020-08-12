@@ -8,6 +8,7 @@ use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\StoresSettings;
 use App\Settings\SuppliesDeliveriesSettings;
+use App\Settings\ServiceProvidersSettings;
 use Hook;
 use Illuminate\Support\ServiceProvider;
 
@@ -38,6 +39,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.supplies-deliveries': return new SuppliesDeliveriesSettings; break;
                 case 'ns.orders': return new OrdersSettings; break;
                 case 'ns.stores': return new StoresSettings; break;
+                case 'ns.service-providers': return new ServiceProvidersSettings; break;
             }
             return $class;
         }, 10, 2 );

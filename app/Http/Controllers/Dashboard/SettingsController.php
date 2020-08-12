@@ -42,8 +42,9 @@ class SettingsController extends DashboardController
             case 'supplies-deliveries'; return $this->suppliesDeliveries(); break;
             case 'reports'; return $this->reportsSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
-            case 'services'; return $this->servicesSettings(); break;
+            case 'service-providers'; return $this->serviceProviders(); break;
             case 'stores'; return $this->storesSettings(); break;
+            default : return abort( 404, __( 'Settings Page Not Found' ) );break;
         }
     }
 
@@ -127,11 +128,11 @@ class SettingsController extends DashboardController
         ]);
     }
 
-    public function servicesSettings()
+    public function serviceProviders()
     {
-        return $this->view( 'pages.dashboard.settings.services', [
-            'title'     =>      __( 'Services Settings' ),
-            'description'   =>  __( 'Configure the services settings.' )
+        return $this->view( 'pages.dashboard.settings.service-providers', [
+            'title'     =>      __( 'Services Providers Settings' ),
+            'description'   =>  __( 'Configure the services providers settings.' )
         ]);
     }
     
