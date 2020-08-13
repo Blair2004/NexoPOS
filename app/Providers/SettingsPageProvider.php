@@ -4,12 +4,13 @@ namespace App\Providers;
 
 use App\Settings\CustomersSettings;
 use App\Settings\GeneralSettings;
+use App\Settings\InvoiceSettings;
 use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\StoresSettings;
 use App\Settings\SuppliesDeliveriesSettings;
 use App\Settings\ServiceProvidersSettings;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
 
 class SettingsPageProvider extends ServiceProvider
@@ -40,6 +41,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.orders': return new OrdersSettings; break;
                 case 'ns.stores': return new StoresSettings; break;
                 case 'ns.service-providers': return new ServiceProvidersSettings; break;
+                case 'ns.invoice-settings': return new InvoiceSettings; break;
             }
             return $class;
         }, 10, 2 );

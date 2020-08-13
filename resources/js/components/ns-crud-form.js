@@ -107,8 +107,8 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
         </div>
         <div v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
-                <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
+                <div class="flex justify-between items-center" v-if="form.main">
+                    <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-gray-700">
                         <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>

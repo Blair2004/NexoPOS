@@ -29,7 +29,8 @@ export default {
     data() {
         return {
             validation: new FormValidation,
-            form: {}
+            form: {},
+            test: ''
         }
     },
     computed: {

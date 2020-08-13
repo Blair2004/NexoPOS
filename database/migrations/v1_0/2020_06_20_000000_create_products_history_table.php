@@ -16,8 +16,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_history' ) ) {
-            Schema::create( 'nexopos_products_history', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_products_histories' ) ) {
+            Schema::create( 'nexopos_products_histories', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'product_id' );
                 $table->integer( 'procurement_id' )->nullable();
@@ -47,8 +47,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_history' ) ) {
-            Schema::drop( 'nexopos_products_history' );
+        if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
+            Schema::drop( 'nexopos_products_histories' );
         }
     }
 }

@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Models\User;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Coupon;
 use App\Models\CouponProduct;

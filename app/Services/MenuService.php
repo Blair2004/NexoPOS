@@ -111,9 +111,9 @@ class MenuService
                         'label' =>  __( 'Expense Categories'),
                         'href'  =>  url( '/dashboard/expenses/categories' )
                     ],
-                    'new-expenses-categories'   =>  [
-                        'label' =>  __( 'New Expense Category'),
-                        'href'  =>  url( '/dashboard/expenses/categories/new' )
+                    'create-expenses-categories'   =>  [
+                        'label' =>  __( 'Create Expense Category'),
+                        'href'  =>  url( '/dashboard/expenses/categories/create' )
                     ]
                 ]
             ], 
@@ -210,31 +210,7 @@ class MenuService
                     'create-products'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
                         'href'  =>  url( '/dashboard/products/stock-adjustment' )
-                    ],  
-                    'categories'   =>  [
-                        'label' =>  __( 'Categories'),
-                        'href'  =>  url( '/dashboard/categories' )
-                    ], 
-                    'create-categories'   =>  [
-                        'label' =>  __( 'Create Categories'),
-                        'href'  =>  url( '/dashboard/categories/create' )
                     ],
-                    'units'   =>  [
-                        'label' =>  __( 'Units'),
-                        'href'  =>  url( '/dashboard/units' )
-                    ],
-                    'create-units'   =>  [
-                        'label' =>  __( 'Create Unit'),
-                        'href'  =>  url( '/dashboard/units/create' )
-                    ],
-                    'unit-groups'   =>  [
-                        'label' =>  __( 'Unit Groups'),
-                        'href'  =>  url( '/dashboard/units/groups' )
-                    ],
-                    'create-unit-groups'   =>  [
-                        'label' =>  __( 'Create Unit Groups'),
-                        'href'  =>  url( '/dashboard/units/groups/create' )
-                    ]
                 ]
             ],
             'reports'      =>  [
@@ -325,7 +301,7 @@ class MenuService
                     ],
                     'reset'   =>  [
                         'label' =>  __( 'Reset'),
-                        'href'  =>  url( '/dashboard/units/groups/create' )
+                        'href'  =>  url( '/dashboard/settings/reset' )
                     ]
                 ]
             ],

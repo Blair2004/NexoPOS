@@ -44,12 +44,18 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/customers/coupons/create', 'Dashboard\CustomersController@createCoupon' );
         Route::get( '/dashboard/customers/coupons/edit/{coupon}', 'Dashboard\CustomersController@editCoupon' );
 
-        Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProvider' );
+        Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
         Route::get( '/dashboard/providers/edit/{provider}', 'Dashboard\ProvidersController@editProvider' );
 
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
+        Route::get( '/dashboard/expenses/create', 'Dashboard\ExpensesController@createExpense' );
+        Route::get( '/dashboard/expenses/edit/{expense}', 'Dashboard\ExpensesController@editExpense' );
+        
         Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
+        Route::get( '/dashboard/expenses/categories/create', 'Dashboard\ExpensesCategoriesController@createExpenseCategory' );
+        Route::get( '/dashboard/expenses/categories/edit/{category}', 'Dashboard\ExpensesCategoriesController@editExpenseCategory' );
+
         Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
         Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
         Route::get( '/dashboard/products/units', 'Dashboard\UnitsController@listUnits' );

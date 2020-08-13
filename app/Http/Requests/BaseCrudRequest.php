@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Services\CrudService;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BaseCrudRequest extends FormRequest

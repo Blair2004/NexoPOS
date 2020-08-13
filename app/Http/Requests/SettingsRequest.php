@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Event;
 use App\Services\Helper;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use App\Crud\Applications;
 use App\Exceptions\CoreException;
 use App\Services\CrudService;

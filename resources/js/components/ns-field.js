@@ -8,7 +8,10 @@ const nsField       =   Vue.component( 'ns-field', {
     },
     computed: {
         isInputField() {
-            return [ 'text', 'password', 'email', 'number', 'datetime', 'tel' ].includes( this.field.type );
+            return [ 'text', 'password', 'email', 'number', 'tel' ].includes( this.field.type );
+        },
+        isDateField() {
+            return [ 'date' ].includes( this.field.type );
         },
         isSelectField() {
             return [ 'select' ].includes( this.field.type );
@@ -46,19 +49,23 @@ const nsField       =   Vue.component( 'ns-field', {
     <div>
         <ns-input @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
+        <ns-date @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isDateField">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date>
         <ns-select @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isSelectField">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
         <ns-textarea @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isTextarea">
             <template>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-textarea v-slot>
         <ns-checkbox @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isCheckbox">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-checkbox>
         <ns-multiselect 
             @addOption="addOption( $event )" 
@@ -66,14 +73,14 @@ const nsField       =   Vue.component( 'ns-field', {
             :field="field" 
             v-if="isMultiselect">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-multiselect>
         <ns-switch 
             :field="field" 
             @change="$emit( 'change', this )"
             v-if="isSwitch">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-switch>
     </div>
     `,

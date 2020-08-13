@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService 
 {

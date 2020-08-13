@@ -29,6 +29,7 @@ export class HttpClient {
     _request( type, url, data = {} ) {
         this._subject.next({ identifier: 'async.start', url, data });
         return new rxjs.Observable( observer => {
+            console.log( type, this._client[ type ] );
             this._client[ type ]( url, data ).then( result => {
                 observer.next( result.data );
                 observer.complete();

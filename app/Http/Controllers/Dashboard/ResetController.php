@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 
@@ -11,6 +13,9 @@ class ResetController extends DashboardController
     {
         DB::statement( 'TRUNCATE `nexopos_customers_groups`' );
         DB::statement( 'TRUNCATE `nexopos_customers_metas`' );
+        DB::statement( 'TRUNCATE `nexopos_customers_coupons`' );
+        DB::statement( 'TRUNCATE `nexopos_customers_coupons_products`' );
+        DB::statement( 'TRUNCATE `nexopos_customers_coupons_categories`' );
         DB::statement( 'TRUNCATE `nexopos_customers`' );
         DB::statement( 'TRUNCATE `nexopos_customers_addresses`' );
         DB::statement( 'TRUNCATE `nexopos_expenses_categories`' );
@@ -19,14 +24,17 @@ class ResetController extends DashboardController
         DB::statement( 'TRUNCATE `nexopos_orders_metas`' );
         DB::statement( 'TRUNCATE `nexopos_orders_payments`' );
         DB::statement( 'TRUNCATE `nexopos_orders_products`' );
+        DB::statement( 'TRUNCATE `nexopos_orders_addresses`' );
         DB::statement( 'TRUNCATE `nexopos_orders`' );
         DB::statement( 'TRUNCATE `nexopos_procurements_products`' );
         DB::statement( 'TRUNCATE `nexopos_procurements`' );
         DB::statement( 'TRUNCATE `nexopos_products_categories`' );
-        DB::statement( 'TRUNCATE `nexopos_products_history`' );
+        DB::statement( 'TRUNCATE `nexopos_products_histories`' );
+        DB::statement( 'TRUNCATE `nexopos_products_galleries`' );
         DB::statement( 'TRUNCATE `nexopos_products_metas`' );
         DB::statement( 'TRUNCATE `nexopos_products`' );
         DB::statement( 'TRUNCATE `nexopos_products_taxes`' );
+        DB::statement( 'TRUNCATE `nexopos_products_unit_quantities`' );
         // DB::statement( 'TRUNCATE `nexopos_products_variations`' );
         DB::statement( 'TRUNCATE `nexopos_providers`' );
         DB::statement( 'TRUNCATE `nexopos_registers_history`' );
@@ -35,14 +43,25 @@ class ResetController extends DashboardController
         DB::statement( 'TRUNCATE `nexopos_rewards_system`' );
         DB::statement( 'TRUNCATE `nexopos_stores`' );
         DB::statement( 'TRUNCATE `nexopos_taxes`' );
+        DB::statement( 'TRUNCATE `nexopos_tax_groups`' );
         DB::statement( 'TRUNCATE `nexopos_transfers_products`' );
         DB::statement( 'TRUNCATE `nexopos_transfers`' );
+        DB::statement( 'TRUNCATE `nexopos_units_groups`' );
         DB::statement( 'TRUNCATE `nexopos_units`' );
+        DB::statement( 'TRUNCATE `nexopos_medias`' );
+        DB::statement( 'TRUNCATE `nexopos_options`' );
         DB::statement( 'TRUNCATE `nexopos_units_group`' );
+        DB::statement( 'TRUNCATE `nexopos_trucks`' );
         
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The table has been truncated.' )
         ];
+    }
+
+    public function truncateWithDemo( Request $request )
+    {
+        $this->truncateAllTables();
+        Artisan::call( 'db:seed' );
     }
 }

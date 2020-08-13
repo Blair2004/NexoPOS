@@ -10,7 +10,7 @@ use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use Exception;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerCrud extends CrudService
 {

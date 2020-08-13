@@ -9,8 +9,9 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
+use App\Services\Users;
 use App\Models\User;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use {{ trim( $model_name ) }};
 
@@ -119,6 +120,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
+                // 'name'          =>  'name',
+                // 'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -164,7 +167,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePost( $request )
     {
-        return $inputs;
+        return $request;
     }
 
     /**
@@ -175,7 +178,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function afterPost( $request, {{ trim( $lastClassName ) }} $entry )
     {
-        return $inputs;
+        return $request;
     }
 
     
@@ -199,7 +202,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        return $inputs;
+        return $request;
     }
 
     /**
@@ -210,7 +213,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
-        return $inputs;
+        return $request;
     }
     
     /**
@@ -310,7 +313,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
+        $user   =   app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',

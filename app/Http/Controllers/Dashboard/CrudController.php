@@ -12,7 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
 use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Facades\Auth;
 
 class CrudController extends DashboardController

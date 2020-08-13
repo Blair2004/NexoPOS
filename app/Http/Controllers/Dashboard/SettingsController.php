@@ -16,7 +16,7 @@ use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class SettingsController extends DashboardController
 {
@@ -43,7 +43,9 @@ class SettingsController extends DashboardController
             case 'reports'; return $this->reportsSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
+            case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'stores'; return $this->storesSettings(); break;
+            case 'reset'; return $this->resetSettings(); break;
             default : return abort( 404, __( 'Settings Page Not Found' ) );break;
         }
     }

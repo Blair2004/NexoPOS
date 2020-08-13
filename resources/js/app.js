@@ -10,6 +10,7 @@ const {
 const NsRewardsSystem   =   require( './pages/dashboard/rewards-system.vue' ).default;
 const NsCreateCoupons   =   require( './pages/dashboard/create-coupons.vue' ).default;
 const NsSettings        =   require( './pages/dashboard/settings.vue' ).default;
+const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
@@ -42,5 +43,6 @@ new window.Vue({
         NsRewardsSystem,
         NsCreateCoupons,
         NsSettings,
+        NsReset,
     }
 });

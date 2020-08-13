@@ -3,41 +3,40 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Helper;
+use App\Services\Users;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
-use App\Models\CustomerGroup;
-use App\Models\RewardSystem;
 use Exception;
+use App\Models\ExpenseCategory;
 
-class CustomerGroupCrud extends CrudService
+class ExpenseCategoryCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_customers_groups';
+    protected $table      =   'nexopos_expenses_categories';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.customers-group.index';
+    protected $mainRoute      =   'ns.expenses-categories';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.customers-group';
+    protected $namespace  =   'ns.expenses-categories';
 
     /**
      * Model Used
      */
-    protected $model      =   CustomerGroup::class;
+    protected $model      =   ExpenseCategory::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_customers_groups.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users', 'nexopos_expenses_categories.author', '=', 'nexopos_users.id' ],
     ];
 
     /**
@@ -55,7 +54,7 @@ class CustomerGroupCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+        public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -76,15 +75,15 @@ class CustomerGroupCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'CustomerGroups List' ),
-            'list_description'      =>  __( 'Display all customergroups.' ),
-            'no_entry'              =>  __( 'No customergroups has been registered' ),
-            'create_new'            =>  __( 'Add a new customergroup' ),
-            'create_title'          =>  __( 'Create a new customergroup' ),
-            'create_description'    =>  __( 'Register a new customergroup and save it.' ),
-            'edit_title'            =>  __( 'Edit customergroup' ),
-            'edit_description'      =>  __( 'Modify  Customergroup.' ),
-            'back_to_list'          =>  __( 'Return to CustomerGroups' ),
+            'list_title'            =>  __( 'ExpenseCategories List' ),
+            'list_description'      =>  __( 'Display all expensecategories.' ),
+            'no_entry'              =>  __( 'No expensecategories has been registered' ),
+            'create_new'            =>  __( 'Add a new expensecategory' ),
+            'create_title'          =>  __( 'Create a new expensecategory' ),
+            'create_description'    =>  __( 'Register a new expensecategory and save it.' ),
+            'edit_title'            =>  __( 'Edit expensecategory' ),
+            'edit_description'      =>  __( 'Modify  Expensecategory.' ),
+            'back_to_list'          =>  __( 'Return to ExpenseCategories' ),
         ];
     }
 
@@ -109,34 +108,17 @@ class CustomerGroupCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    =>  'required'
+                'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'          =>  'select',
-                            'name'          =>  'reward_system_id',
-                            'label'         =>  __( 'Reward System' ),
-                            'options'       =>  Helper::toJsOptions(
-                                RewardSystem::get(), [ 'id', 'name' ]
-                            ),
-                            'value'         =>  $entry->reward_system_id ?? '',
-                            'description'   =>  __( 'Select which Reward system applies to the group' )
-                        ], [
-                            'type'          =>  'number',
-                            'name'          =>  'minimum_credit_payement',
-                            'label'         =>  __( 'Minimum Credit Amount' ),
-                            'value'         =>  $entry->minimum_credit_payement ?? '',
-                            'description'   =>  __( 'Determine in percentage, what is the first minimum credit payment made by all customers on the group, in case of credit order.' )
-                        ], [
-                            'type'          =>  'textarea',
-                            'name'          =>  'description',
-                            'value'         =>  $entry->description ?? '',
-                            'description'   =>  __( 'A brief description about what this group is about' ),
-                            'label'         =>  __( 'Description' )
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                            'value' =>  $entry->description ?? '',
                         ], 
                     ]
                 ]
@@ -159,19 +141,30 @@ class CustomerGroupCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, CustomerGroup $entry )
+    public function filterPutInputs( $inputs, ExpenseCategory $entry )
     {
         return $inputs;
     }
 
     /**
-     * After Crud POST
-     * @param  object entry
+     * Before saving a record
+     * @param  Request $request
      * @return  void
      */
-    public function afterPost( $inputs )
+    public function beforePost( $request )
     {
-        return $inputs;
+        return $request;
+    }
+
+    /**
+     * After saving a record
+     * @param  Request $request
+     * @param  ExpenseCategory $entry
+     * @return  void
+     */
+    public function afterPost( $request, ExpenseCategory $entry )
+    {
+        return $request;
     }
 
     
@@ -188,19 +181,31 @@ class CustomerGroupCrud extends CrudService
     }
 
     /**
-     * After Crud PUT
+     * Before updating a record
+     * @param  Request $request
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $inputs )
+    public function beforePut( $request, $entry )
     {
-        return $inputs;
+        return $request;
+    }
+
+    /**
+     * After updating a record
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
+     */
+    public function afterPut( $request, $entry )
+    {
+        return $request;
     }
     
     /**
      * Protect an access to a specific crud UI
      * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
+     * @return  array | throw Exception
     **/
     public function canAccess( $fields )
     {
@@ -220,8 +225,8 @@ class CustomerGroupCrud extends CrudService
      * Before Delete
      * @return  void
      */
-    public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == 'ns.customers-group' ) {
+    public function beforeDelete( $namespace, $id, $model ) {
+        if ( $namespace == 'ns.expenses-categories' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -243,22 +248,17 @@ class CustomerGroupCrud extends CrudService
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false,
-            ],
-            'reward_system_id'  =>  [
-                'label'  =>  __( 'Reward System' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+                '$sort'         =>  false
             ],
             'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false,
+                '$sort'         =>  false
             ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created On' ),
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false,
+                '$sort'         =>  false
             ],
         ];
     }
@@ -268,29 +268,29 @@ class CustomerGroupCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->reward_system_id   =    $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
+        // Don't overwrite
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
+
+        // you can make changes here
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit_customers_group',
+                'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( 'dashboard/customers/groups/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       =>  url( '/api/nexopos/v4/customers/groups/' . $entry->id ),
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.expenses-categories/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
                 ]
             ]
         ];
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
 
         return $entry;
     }
@@ -307,8 +307,7 @@ class CustomerGroupCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'App\Services\Users' );
-
+        $user   =   app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
@@ -324,7 +323,7 @@ class CustomerGroupCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof CustomerGroup ) {
+                if ( $entity instanceof ExpenseCategory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -333,7 +332,7 @@ class CustomerGroupCrud extends CrudService
             }
             return $status;
         }
-        
+
         return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
@@ -344,9 +343,9 @@ class CustomerGroupCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'  =>  'ns.customers-group.index',
-            'create'    =>  'ns.customers-group.index/create',
-            'edit'      =>  'ns.customers-group.index/edit/#'
+            'list'      =>  'ns.expenses-categories',
+            'create'    =>  'ns.expenses-categories/create',
+            'edit'      =>  'ns.expenses-categories/edit/#'
         ];
     }
 

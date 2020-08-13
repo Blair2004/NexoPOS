@@ -8,12 +8,20 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Services\Options;
 use Illuminate\Support\Facades\View;
 
 // use Tendoo\Core\Services\Page;
 
 class ExpensesCategoriesController extends DashboardController
 {
+    public function __construct( Options $options )
+    {
+        parent::__construct();
+
+        $this->options      =   $options;
+    }
+
     /**
      * Index Controller Page
      * @return  view
@@ -22,6 +30,37 @@ class ExpensesCategoriesController extends DashboardController
     public function index()
     {
         return View::make( 'NexoPOS::index' );
+    }
+
+    /**
+     * Show expenses
+     * categories
+     * @return view
+     */
+    public function listExpensesCategories()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
+            'title'         =>  __( 'Expenses Categories' ),
+            'createLink'    =>  url( '/dashboard/expenses/categories/create' ),
+            'description'   =>  __( 'List all created expenses categories' ),
+        ]);
+    }
+
+    /**
+     * Show expenses
+     * categories
+     * @return view
+     */
+    public function createExpenseCategory()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories/form-config' ),
+            'title'         =>  __( 'Create New Expense Category' ),
+            'returnLink'    =>  url( '/dashboard/expenses/categories' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses-categories' ),
+            'description'   =>  __( 'Register a new expense category on the system.' ),
+        ]);
     }
 }
 

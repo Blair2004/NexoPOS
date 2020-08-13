@@ -42,6 +42,15 @@ class CreateRoles extends Migration
         $storeCashier->save();
 
         /**
+         * store administrator role
+         */
+        $driver                     =   new Role;
+        $driver->name               =   __( 'Vehicule Driver' );
+        $driver->namespace          =   'nexopos.store.driver';
+        $driver->description        =   __( 'Does the delivery' );
+        $driver->save();
+
+        /**
          * assigning permissions to roles
          */
         $storeAdmin         =   Role::namespace( 'nexopos.store.administrator' );
@@ -55,6 +64,7 @@ class CreateRoles extends Migration
         $storeAdmin->grantPermissions( Permission::includes( '.registers' )->get() );
         $storeAdmin->grantPermissions( Permission::includes( '.stores' )->get() );
         $storeAdmin->grantPermissions( Permission::includes( '.taxes' )->get() );
+        $storeAdmin->grantPermissions( Permission::includes( '.trucks' )->get() );
     }
 
     /**
@@ -70,6 +80,11 @@ class CreateRoles extends Migration
         }
 
         $role   =   Role::where( 'namespace', 'nexopos.store.cashier' )->first();
+        if ( $role instanceof Role ) {
+            $role->delete();
+        }
+
+        $role   =   Role::where( 'namespace', 'nexopos.store.drivers' )->first();
         if ( $role instanceof Role ) {
             $role->delete();
         }

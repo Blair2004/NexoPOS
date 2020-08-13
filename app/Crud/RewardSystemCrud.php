@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Models\User;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\RewardSystem;
 use App\Models\RewardSystemRule;

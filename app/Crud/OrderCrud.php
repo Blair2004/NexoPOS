@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Models\User;
 use App\Models\Order;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class OrderCrud extends CrudService
 {

@@ -25,7 +25,9 @@ class CreateExpensesTable extends Migration
                 $table->integer( 'media_id' )->default(0);
                 $table->float( 'value' )->default(0);
                 $table->boolean( 'recurring' )->default(false);
+                $table->integer( 'group_id' )->nullable();
                 $table->string( 'occurence' )->nullable(); // 1st 15th startOfMonth, endOfMonth
+                $table->string( 'occurence_value' )->nullable(); // 1st 15th startOfMonth, endOfMonth
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

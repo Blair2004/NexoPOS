@@ -25,9 +25,10 @@ class CreateProvidersTable extends Migration
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
                 $table->string( 'address_2' )->nullable();
-                $table->float( 'owned_amount' )->default(0);
                 $table->integer( 'author' );
                 $table->text( 'description' )->nullable();
+                $table->float( 'amount_due' )->default(0);
+                $table->float( 'amount_paid' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

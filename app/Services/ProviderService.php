@@ -131,7 +131,7 @@ class ProviderService
                 return 0;
             });
 
-            $provider->owned_amount  =   $owned;
+            $provider->amount_due  =   $owned;
             $provider->save();
 
         } catch( NotFoundException $exception ) {
