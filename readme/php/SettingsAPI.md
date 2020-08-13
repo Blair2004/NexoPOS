@@ -89,3 +89,11 @@ It's important to remind you that each Settings pages must have a unique identif
 NexoPOS settings page identifier starts with 'ns.'. 
 
 If you look closer at the above code, you'll see a Hook (filter), on the identifier 'ns.settings'. This should be useful to help you extending the declared settings right from your custom module without touching the source code.
+
+## Display A Settings Page
+We'll need to use the provided `<ns-settings/>` vue component to render our generated settings page. The work principle is actually simple : you provide a link to the component, and it will loads the form definition from the server and render the form, just as you've defined that. You won't need to create about data validation or saving as it's handled by the system already.
+
+```blade
+<ns-settings url="{{ url( 'api/nexopos/v4/settings/ns.general' ) }}"></ns-settings>
+```
+Here the identifier `ns.general` is a system registered settings page. Using the same identifier will overwrite system general settings.
