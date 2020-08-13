@@ -58,3 +58,11 @@ methods: {
 }
 // ...
 ```
+### Extracting Form Value
+If the provided form consist of an array of Field, then you'll need to extract the field value before submitting the form to the server. Ideally this is how you'll proceed :
+
+```js
+// assuming this.form is an instance of FormValidation
+const data =    this.form.extractFields( this.fields );
+nsHttpClient.post( '/foo/bar', data ).subscribe( _ => ... );
+```
