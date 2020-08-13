@@ -60,4 +60,32 @@ In our above example, here is the JSON object submitted to the server.
 The following JSON is generated using the JavaScript FormValidation class.
 
 ## Register A Settings Page
-Every settings page must be registered to be properly initialized. By default, all registration are made on the `App\Providers\SettingsPageProvider`, on the boot `method`.
+Every settings page must be registered to be properly initialized. By default, all registration are made on the `App\Providers\SettingsPageProvider`, on the boot `method`. Here is concretely how it's made :
+
+```php
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Hook::addFilter( 'ns.settings', function( $class, $identifier ) {
+            switch( $identifier ) {
+                case 'ns.general': return new GeneralSettings; break;
+                case 'ns.pos': return new PosSettings; break;
+                case 'ns.customers': return new CustomersSettings; break;
+                case 'ns.supplies-deliveries': return new SuppliesDeliveriesSettings; break;
+                case 'ns.orders': return new OrdersSettings; break;
+                case 'ns.stores': return new StoresSettings; break;
+                case 'ns.service-providers': return new ServiceProvidersSettings; break;
+                case 'ns.invoice-settings': return new InvoiceSettings; break;
+            }
+            return $class;
+        }, 10, 2 );
+    }
+```
+It's important to remind you that each Settings pages must have a unique identifier. As fields, this help the system to locate the right Settings to load. 
+NexoPOS settings page identifier starts with 'ns.'. 
+
+If you look closer at the above code, you'll see a Hook (filter), on the identifier 'ns.settings'. This should be useful to help you extending the declared settings right from your custom module without touching the source code.
