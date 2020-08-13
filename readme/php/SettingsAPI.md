@@ -51,8 +51,8 @@ In our above example, here is the JSON object submitted to the server.
 
 ```json
 {
-    'general': {
-        'ns_store_name': ''
+    "general": {
+        "ns_store_name": ""
     }
 }
 ```
