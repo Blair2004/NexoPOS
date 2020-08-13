@@ -52,7 +52,8 @@ Do you plan to contribute ? That's awesome. We're open to any type of contributi
 
 ## Documentation
 
-- [Menu API](/readme/menu.md)
+- [Menu API](/readme/php/MenuAPI.md)
+- [Settings API](/readme/php/SettingsAPI.md)
 - [JavaScript/Classes/FormValidation](/readme/javascript/classes/form-validation.md)
 
 
