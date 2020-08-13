@@ -44,7 +44,7 @@ class MySettings extends SettingsPage
 The class has a protected property named `form` which is requried as this hold the form definition. The settings page consist of tabs that has fields. 
 A settings page can have 1 or multple settings page (up to 8). Each fields but be prefixed with a unique expression. Every NexoPOS fields are prefixed with `ns_`.
 
-Regarding the field validation, you can use [aravel Validation rules](https://laravel.com/docs/7.x/validation), and during the submission, the data will be validated.
+Regarding the field validation, you can use [Laravel Validation rules](https://laravel.com/docs/7.x/validation), and during the submission, the data will be validated.
 
 **Note:** During the submission, the data submitted to the server consist of a multidimensionnal object. Every fields are contained within tabs identifier. 
 In our above example, here is the JSON object submitted to the server.
