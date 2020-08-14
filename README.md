@@ -10,7 +10,11 @@ This version available for free, aims to be more :
 Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
 
 ### ⚠️ Warning ⚠️
-As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. If you need support about NexoPOS 4.x (if you have an issue), post an issue here on Github. If you have an issue with NexoPOS 3.x or any of the related extension, please contact the support via contact@nexopos.com. NexoPOS 4.x doesn't have **yet** any representatives, don't let anyone doing the installation for you.
+As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. 
+
+If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. 
+
+If you need support about NexoPOS 4.x (if you have an issue), post an issue here on Github. If you have an issue with NexoPOS 3.x or any of the related extension, please contact the support via contact@nexopos.com. NexoPOS 4.x doesn't have **yet** any representatives, don't let anyone doing the installation for you.
 
 ## Major Additions & Benefits
 Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
