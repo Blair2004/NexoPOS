@@ -131,30 +131,56 @@ class MenuService
                     ], 
                     'categories'   =>  [
                         'label' =>  __( 'Categories'),
-                        'href'  =>  url( '/dashboard/categories' )
+                        'href'  =>  url( '/dashboard/products/categories' )
                     ], 
                     'create-categories'   =>  [
                         'label' =>  __( 'Create Categories'),
-                        'href'  =>  url( '/dashboard/categories/create' )
+                        'href'  =>  url( '/dashboard/products/categories/create' )
                     ],
                     'units'   =>  [
                         'label' =>  __( 'Units'),
-                        'href'  =>  url( '/dashboard/units' )
+                        'href'  =>  url( '/dashboard/products/units' )
                     ],
                     'create-units'   =>  [
                         'label' =>  __( 'Create Unit'),
-                        'href'  =>  url( '/dashboard/units/create' )
+                        'href'  =>  url( '/dashboard/products/units/create' )
                     ],
                     'unit-groups'   =>  [
                         'label' =>  __( 'Unit Groups'),
-                        'href'  =>  url( '/dashboard/units/groups' )
+                        'href'  =>  url( '/dashboard/products/units/groups' )
                     ],
                     'create-unit-groups'   =>  [
                         'label' =>  __( 'Create Unit Groups'),
-                        'href'  =>  url( '/dashboard/units/groups/create' )
-                    ]
+                        'href'  =>  url( '/dashboard/products/units/groups/create' )
+                    ],
+                    'create-products'   =>  [
+                        'label' =>  __( 'Stock Adjustment'),
+                        'href'  =>  url( '/dashboard/products/stock-adjustment' )
+                    ],
                 ]
             ], 
+            'taxes'     =>  [
+                'label' =>  __( 'Taxes' ),
+                'icon'  =>  'la-star',
+                'childrens' =>  [
+                    'taxes-groups'   =>  [
+                        'label' =>  __( 'Taxes Groups'),
+                        'href'  =>  url( '/dashboard/taxes/groups' )
+                    ],
+                    'create-taxes-group'   =>  [
+                        'label' =>  __( 'Create Tax Groups'),
+                        'href'  =>  url( '/dashboard/taxes/groups/create' )
+                    ],
+                    'taxes'   =>  [
+                        'label' =>  __( 'Taxes'),
+                        'href'  =>  url( '/dashboard/taxes' )
+                    ],
+                    'create-tax'   =>  [
+                        'label' =>  __( 'Create Tax'),
+                        'href'  =>  url( '/dashboard/taxes/create' )
+                    ]
+                ]
+            ],
             'modules' =>  [
                 'label' =>  __( 'Modules' ),
                 'icon'  =>  'la-plug',
@@ -204,13 +230,13 @@ class MenuService
                 'icon'          =>  'la-truck-loading',
                 'childrens'     =>  [
                     'procurements'  =>  [
-                        'label' =>  __( 'New Procurement' ),
+                        'label' =>  __( 'Procurements List' ),
                         'href'  =>  url( '/dashboard/procurements' )
                     ], 
-                    'create-products'   =>  [
-                        'label' =>  __( 'Stock Adjustment'),
-                        'href'  =>  url( '/dashboard/products/stock-adjustment' )
-                    ],
+                    'procurements-create'  =>  [
+                        'label' =>  __( 'New Procurement' ),
+                        'href'  =>  url( '/dashboard/procurements/create' )
+                    ], 
                 ]
             ],
             'reports'      =>  [

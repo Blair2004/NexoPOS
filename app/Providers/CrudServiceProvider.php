@@ -10,6 +10,15 @@ use App\Crud\ExpenseCrud;
 use App\Crud\OrderCrud;
 use App\Crud\ProviderCrud;
 use App\Crud\RewardSystemCrud;
+use App\Crud\UnitCrud;
+use App\Crud\UnitGroupCrud;
+use App\Crud\ProductCategoryCrud;
+use App\Crud\ProductCrud;
+use App\Crud\TaxCrud;
+use App\Crud\TaxesGroupCrud;
+use App\Crud\UserCrud;
+use App\Crud\ProcurementCrud;
+use App\Crud\RegisterCrud;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -43,6 +52,15 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.providers': return ProviderCrud::class;
                 case 'ns.expenses-categories': return ExpenseCategoryCrud::class;
                 case 'ns.expenses': return ExpenseCrud::class;
+                case 'ns.units-groups': return UnitGroupCrud::class;
+                case 'ns.units': return UnitCrud::class;
+                case 'ns.products': return ProductCrud::class;
+                case 'ns.products-categories': return ProductCategoryCrud::class;
+                case 'ns.taxes': return TaxCrud::class;
+                case 'ns.taxes-groups': return TaxesGroupCrud::class;
+                case 'ns.users': return UserCrud::class;
+                case 'ns.registers': return RegisterCrud::class;
+                case 'ns.procurements': return ProcurementCrud::class;
             }
             return $namespace;
         });

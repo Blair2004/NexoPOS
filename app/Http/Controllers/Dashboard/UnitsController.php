@@ -26,6 +26,7 @@ class UnitsController extends DashboardController
 
     public function __construct( UnitService $unit )
     {
+        parent::__construct();
         $this->unitService  =   $unit;
     }
 
@@ -109,6 +110,24 @@ class UnitsController extends DashboardController
     public function getUnitParentGroup( $id )
     {
         return $this->unitService->getUnitParentGroup( $id );
+    }
+
+    public function listUnitsGroups()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'Units Groups' ),
+            'description'   =>  __( 'List of available units groups.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
+        ]);
+    }
+
+    public function listUnits()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'Units' ),
+            'description'   =>  __( 'List of available units.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units' ),
+        ]);
     }
 }
 

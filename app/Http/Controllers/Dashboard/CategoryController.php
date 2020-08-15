@@ -212,5 +212,14 @@ class CategoryController extends DashboardController
             'parent_id'     =>  'number'
         ];
     }
+
+    public function listCategories()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'     =>      __( 'Product Categories' ),
+            'desccription'  =>  __( 'List all categories available.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
+        ]);
+    }
 }
 

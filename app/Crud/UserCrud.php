@@ -7,36 +7,36 @@ use App\Services\Users;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
-use App\Models\Order;
+use App\Models\User;
 
-class OrderCrud extends CrudService
+class UserCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_orders';
+    protected $table      =   'nexopos_users';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.orders';
+    protected $mainRoute      =   'ns.users';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.orders';
+    protected $namespace  =   'ns.users';
 
     /**
      * Model Used
      */
-    protected $model      =   Order::class;
+    protected $model      =   User::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users', 'nexopos_users.author', '=', 'nexopos_users.id' ],
                     ];
 
     /**
@@ -75,15 +75,15 @@ class OrderCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Orders List' ),
-            'list_description'      =>  __( 'Display all orders.' ),
-            'no_entry'              =>  __( 'No orders has been registered' ),
-            'create_new'            =>  __( 'Add a new order' ),
-            'create_title'          =>  __( 'Create a new order' ),
-            'create_description'    =>  __( 'Register a new order and save it.' ),
-            'edit_title'            =>  __( 'Edit order' ),
-            'edit_description'      =>  __( 'Modify  Order.' ),
-            'back_to_list'          =>  __( 'Return to Orders' ),
+            'list_title'            =>  __( 'Users List' ),
+            'list_description'      =>  __( 'Display all users.' ),
+            'no_entry'              =>  __( 'No users has been registered' ),
+            'create_new'            =>  __( 'Add a new user' ),
+            'create_title'          =>  __( 'Create a new user' ),
+            'create_description'    =>  __( 'Register a new user and save it.' ),
+            'edit_title'            =>  __( 'Edit user' ),
+            'edit_description'      =>  __( 'Modify  User.' ),
+            'back_to_list'          =>  __( 'Return to Users' ),
         ];
     }
 
@@ -116,19 +116,9 @@ class OrderCrud extends CrudService
                     'fields'    =>  [
                         [
                             'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'change',
-                            'label' =>  __( 'Change' ),
-                            'value' =>  $entry->change ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'code',
-                            'label' =>  __( 'Code' ),
-                            'value' =>  $entry->code ?? '',
+                            'name'  =>  'active',
+                            'label' =>  __( 'Active' ),
+                            'value' =>  $entry->active ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
@@ -136,39 +126,9 @@ class OrderCrud extends CrudService
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
-                            'value' =>  $entry->customer_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'delivery_status',
-                            'label' =>  __( 'Delivery_status' ),
-                            'value' =>  $entry->delivery_status ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount',
-                            'label' =>  __( 'Discount' ),
-                            'value' =>  $entry->discount ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_rate',
-                            'label' =>  __( 'Discount_rate' ),
-                            'value' =>  $entry->discount_rate ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_type',
-                            'label' =>  __( 'Discount_type' ),
-                            'value' =>  $entry->discount_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'gross_total',
-                            'label' =>  __( 'Gross_total' ),
-                            'value' =>  $entry->gross_total ?? '',
+                            'name'  =>  'email',
+                            'label' =>  __( 'Email' ),
+                            'value' =>  $entry->email ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'id',
@@ -176,54 +136,19 @@ class OrderCrud extends CrudService
                             'value' =>  $entry->id ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'net_total',
-                            'label' =>  __( 'Net_total' ),
-                            'value' =>  $entry->net_total ?? '',
+                            'name'  =>  'password',
+                            'label' =>  __( 'Password' ),
+                            'value' =>  $entry->password ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'payment_status',
-                            'label' =>  __( 'Payment_status' ),
-                            'value' =>  $entry->payment_status ?? '',
+                            'name'  =>  'remember_token',
+                            'label' =>  __( 'Remember_token' ),
+                            'value' =>  $entry->remember_token ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'process_status',
-                            'label' =>  __( 'Process_status' ),
-                            'value' =>  $entry->process_status ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping',
-                            'label' =>  __( 'Shipping' ),
-                            'value' =>  $entry->shipping ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping_rate',
-                            'label' =>  __( 'Shipping_rate' ),
-                            'value' =>  $entry->shipping_rate ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'shipping_type',
-                            'label' =>  __( 'Shipping_type' ),
-                            'value' =>  $entry->shipping_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tendered',
-                            'label' =>  __( 'Tendered' ),
-                            'value' =>  $entry->tendered ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'title',
-                            'label' =>  __( 'Title' ),
-                            'value' =>  $entry->title ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total',
-                            'label' =>  __( 'Total' ),
-                            'value' =>  $entry->total ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
+                            'name'  =>  'role_id',
+                            'label' =>  __( 'Role_id' ),
+                            'value' =>  $entry->role_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
@@ -231,9 +156,9 @@ class OrderCrud extends CrudService
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'name'  =>  'username',
+                            'label' =>  __( 'Username' ),
+                            'value' =>  $entry->username ?? '',
                         ],                     ]
                 ]
             ]
@@ -255,7 +180,7 @@ class OrderCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, Order $entry )
+    public function filterPutInputs( $inputs, User $entry )
     {
         return $inputs;
     }
@@ -273,10 +198,10 @@ class OrderCrud extends CrudService
     /**
      * After saving a record
      * @param  Request $request
-     * @param  Order $entry
+     * @param  User $entry
      * @return  void
      */
-    public function afterPost( $request, Order $entry )
+    public function afterPost( $request, User $entry )
     {
         return $request;
     }
@@ -340,7 +265,7 @@ class OrderCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == 'ns.orders' ) {
+        if ( $namespace == 'ns.users' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -359,18 +284,8 @@ class OrderCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'change'  =>  [
-                'label'  =>  __( 'Change' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'code'  =>  [
-                'label'  =>  __( 'Code' ),
+            'active'  =>  [
+                'label'  =>  __( 'Active' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -379,38 +294,8 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'customer_id'  =>  [
-                'label'  =>  __( 'Customer_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery_status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'discount'  =>  [
-                'label'  =>  __( 'Discount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'discount_rate'  =>  [
-                'label'  =>  __( 'Discount_rate' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'discount_type'  =>  [
-                'label'  =>  __( 'Discount_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'gross_total'  =>  [
-                'label'  =>  __( 'Gross_total' ),
+            'email'  =>  [
+                'label'  =>  __( 'Email' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -419,53 +304,18 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'net_total'  =>  [
-                'label'  =>  __( 'Net_total' ),
+            'password'  =>  [
+                'label'  =>  __( 'Password' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'payment_status'  =>  [
-                'label'  =>  __( 'Payment_status' ),
+            'remember_token'  =>  [
+                'label'  =>  __( 'Remember_token' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'process_status'  =>  [
-                'label'  =>  __( 'Process_status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping'  =>  [
-                'label'  =>  __( 'Shipping' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping_rate'  =>  [
-                'label'  =>  __( 'Shipping_rate' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping_type'  =>  [
-                'label'  =>  __( 'Shipping_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'tendered'  =>  [
-                'label'  =>  __( 'Tendered' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'title'  =>  [
-                'label'  =>  __( 'Title' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'total'  =>  [
-                'label'  =>  __( 'Total' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'type'  =>  [
-                'label'  =>  __( 'Type' ),
+            'role_id'  =>  [
+                'label'  =>  __( 'Role_id' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -474,8 +324,8 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
+            'username'  =>  [
+                'label'  =>  __( 'Username' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -504,7 +354,7 @@ class OrderCrud extends CrudService
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.users/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -542,7 +392,7 @@ class OrderCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof Order ) {
+                if ( $entity instanceof User ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -562,9 +412,9 @@ class OrderCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.orders',
-            'create'    =>  'ns.orders/create',
-            'edit'      =>  'ns.orders/edit/#'
+            'list'      =>  'ns.users',
+            'create'    =>  'ns.users/create',
+            'edit'      =>  'ns.users/edit/#'
         ];
     }
 

@@ -29,8 +29,8 @@ class CreateTaxesTable extends Migration
             });
         }
 
-        if ( ! Schema::hasTable( 'nexopos_tax_groups' ) ) {
-            Schema::create( 'nexopos_tax_groups', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_taxes_groups' ) ) {
+            Schema::create( 'nexopos_taxes_groups', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -52,8 +52,8 @@ class CreateTaxesTable extends Migration
             Schema::drop( 'nexopos_taxes' );
         }
 
-        if ( Schema::hasTable( 'nexopos_tax_groups' ) ) {
-            Schema::drop( 'nexopos_tax_groups' );
+        if ( Schema::hasTable( 'nexopos_taxes_groups' ) ) {
+            Schema::drop( 'nexopos_taxes_groups' );
         }
     }
 }

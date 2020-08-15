@@ -60,6 +60,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
         Route::get( '/dashboard/products/units', 'Dashboard\UnitsController@listUnits' );
         Route::get( '/dashboard/products/units/groups', 'Dashboard\UnitsController@listUnitsGroups' );
+        
         Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
         Route::get( '/dashboard/profile', 'Dashboard\UsersController@showProfile' );
 

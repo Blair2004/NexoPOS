@@ -299,5 +299,14 @@ class ProductsController extends DashboardController
         $parent     =   $this->productService->get( $parent_id );
         return $this->productService->updateProductVariation( $parent, $variation_id, $request->all() );
     }
+
+    public function listProducts()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'     =>      __( 'Products List' ),
+            'desccription'  =>  __( 'List all products available on the system' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products' ),
+        ]);
+    }
 }
 
