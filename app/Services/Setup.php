@@ -138,11 +138,14 @@ class Setup
         $this->options->set( 'allow_registration', false );
         $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
         
+        $userID             =   rand(1,99);
+        
         $user               =   new User;
-        $user->id           =   rand(1,99);
+        $user->id           =   $userID;
         $user->username     =   $request->input( 'admin_username' );
         $user->password     =   bcrypt( $request->input( 'password' ) );
         $user->email        =   $request->input( 'admin_email' );
+        $user->author       =   $userID;
         $user->active       =   true; // first user active by default;
         $user->save();
         

@@ -7,7 +7,6 @@ use App\Services\Users;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
-use App\Models\User;
 
 class UserCrud extends CrudService
 {
@@ -36,8 +35,8 @@ class UserCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_users.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as u', 'nexopos_users.author', '=', 'nexopos_users.id' ],
+    ];
 
     /**
      * Define where statement
