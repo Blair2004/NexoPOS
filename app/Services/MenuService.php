@@ -139,23 +139,23 @@ class MenuService
                     ],
                     'units'   =>  [
                         'label' =>  __( 'Units'),
-                        'href'  =>  url( '/dashboard/products/units' )
+                        'href'  =>  url( '/dashboard/units' )
                     ],
                     'create-units'   =>  [
                         'label' =>  __( 'Create Unit'),
-                        'href'  =>  url( '/dashboard/products/units/create' )
+                        'href'  =>  url( '/dashboard/units/create' )
                     ],
                     'unit-groups'   =>  [
                         'label' =>  __( 'Unit Groups'),
-                        'href'  =>  url( '/dashboard/products/units/groups' )
+                        'href'  =>  url( '/dashboard/units/groups' )
                     ],
                     'create-unit-groups'   =>  [
                         'label' =>  __( 'Create Unit Groups'),
-                        'href'  =>  url( '/dashboard/products/units/groups/create' )
+                        'href'  =>  url( '/dashboard/units/groups/create' )
                     ],
                     'create-products'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
-                        'href'  =>  url( '/dashboard/products/stock-adjustment' )
+                        'href'  =>  url( '/dashboard/stock-adjustment' )
                     ],
                 ]
             ], 

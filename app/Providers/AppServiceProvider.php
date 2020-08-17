@@ -98,10 +98,11 @@ class AppServiceProvider extends ServiceProvider
             $options    =   app()->make( Options::class );
             return new CurrencyService( 
                 0, [
-                    'decimal_precision'     =>  $options->get( 'nexopos_decimal_precision', 2 ),
-                    'thousand_separator'    =>  $options->get( 'nexopos_thousand_separator', '.' ),
-                    'decimal_separator'     =>  $options->get( 'nexopos_decimal_separator', ',' ),
-                    'currency'              =>  $options->get( 'nexopos_currency', 'USD' ),
+                    'decimal_precision'     =>  $options->get( 'ns_currency_precision', 2 ),
+                    'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
+                    'thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', '.' ),
+                    'ns_currency_position'  =>  $options->get( 'ns_currency_ns_currency_position', '.' ),
+                    'currency'              =>  $options->get( 'ns_currency_symbol' ),
                 ]                
             );
         });

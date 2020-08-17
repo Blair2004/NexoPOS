@@ -39,8 +39,14 @@ class ExpenseCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_expenses.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_expenses.author', '=', 'user.id' ],
+        [ 'nexopos_expenses_categories as expense_category', 'expense_category.id', '=', 'nexopos_expenses.category_id' ],
+    ];
+
+    protected $pick     =   [
+        'user'                  =>  [ 'username' ],
+        'expense_category'      =>  [ 'name' ],
+    ];
 
     /**
      * Define where statement
@@ -109,8 +115,8 @@ class ExpenseCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -126,7 +132,7 @@ class ExpenseCrud extends CrudService
                             'options'       =>  [ 
                                 [
                                     'label' =>  __( 'None' ),
-                                    'value' =>  'none',                                     
+                                    'value' =>  '0',                                     
                                 ], 
                                 ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ]) 
                             ],
@@ -320,28 +326,13 @@ class ExpenseCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'category_id'  =>  [
-                'label'  =>  __( 'Category_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'media_id'  =>  [
-                'label'  =>  __( 'Media_id' ),
+            'expense_category_name'  =>  [
+                'label'  =>  __( 'Category' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -360,27 +351,17 @@ class ExpenseCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'author'  =>  [
+            'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-                    ];
+        ];
     }
 
     /**
@@ -392,6 +373,18 @@ class ExpenseCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
+
+        $entry->value           =   ( string ) ns()->currency->value( $entry->value );
+        $entry->recurring       =   ( bool ) $entry->recurring ? __( 'Yes' ) : __( 'No' );
+
+        switch( $entry->occurence ) {
+            case 'month_start' : $entry->occurence = __( 'Month Starts' );break;
+            case 'month_mid' : $entry->occurence = __( 'Month Middle' );break;
+            case 'month_end' : $entry->occurence = __( 'Month Ends' );break;
+            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' );break;
+            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );break;
+            default: $entry->occurence = __( 'Unknown Occurance' ); break;
+        }
 
         // you can make changes here
         $entry->{'$actions'}    =   [

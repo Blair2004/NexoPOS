@@ -20,10 +20,11 @@ class CreateProductsCategoriesTable extends Migration
             Schema::create( 'nexopos_products_categories', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->integer( 'parent_id' )->default(0);
+                $table->integer( 'parent_id' )->default(0)->nullable();
                 $table->integer( 'media_id' )->default(0);
+                $table->boolean( 'displays_on_pos' )->default(true);
                 $table->integer( 'total_items' )->default(0);
-                $table->text( 'description' );
+                $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

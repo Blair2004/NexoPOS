@@ -17,6 +17,7 @@ class CurrencyService
     private static $_decimal_precision      =   2;
     private static $_thousand_separator     =   ',';
     private static $_decimal_separator      =   '.';
+    private static $_currency_position      =   'before';
 
     public function __construct( $value, $config = [])
     {
@@ -26,6 +27,9 @@ class CurrencyService
 
         $this->decimal_precision    =   $decimal_precision ?? self::$_decimal_precision;
         $this->currency             =   $currency ?? self::$_currency;
+        $this->decimal_separator    =   $decimal_separator ?? self::$_decimal_separator;
+        $this->thousand_separator   =   $thousand_separator ?? self::$_thousand_separator;
+        $this->currency_position    =   $currency_position ?? self::$_currency_position;
     }
 
     private static function __defineAmount( $amount )
@@ -34,7 +38,9 @@ class CurrencyService
             'decimal_precision'     =>  self::$_decimal_precision,
             'thousand_separator'    =>  self::$_thousand_separator,
             'decimal_separator'     =>  self::$_decimal_separator,
-            'currency'              =>  self::$_currency
+            'decimal_separator'     =>  self::$_decimal_separator,
+            'currency'              =>  self::$_currency,
+            'currency_position'     =>  self::$_currency_position,
         ]);
     }
 
@@ -52,6 +58,11 @@ class CurrencyService
     {
         $this->value    =   $amount;
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->format();
     }
 
     /**
@@ -128,11 +139,14 @@ class CurrencyService
      */
     public function format()
     {
-        return number_format( 
+        return sprintf( '%s ' . number_format( 
             $this->value, 
             $this->decimal_precision, 
             $this->decimal_separator, 
             $this->thousand_separator 
+        ) . ' %s', 
+            $this->currency_position === 'before' ? $this->currency : '',
+            $this->currency_position === 'after' ? $this->currency : ''
         );
     }
 
@@ -146,10 +160,10 @@ class CurrencyService
         $value  =   floatval( number_format( 
             $this->value, 
             $this->decimal_precision, 
-            '.', 
-            ''
+            $this->decimal_separator, 
+            $this->thousand_separator
         ) );
-        // Log::info( 'CurrencyService Value', compact( 'value' ) );
+
         return floatval( $value );
     }
 

@@ -37,7 +37,8 @@ class OrderCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'neoxpos_customers', 'neoxpos_customers.id', '=', 'nexopos_orders.customer_id' ],
+    ];
 
     /**
      * Define where statement
@@ -359,38 +360,13 @@ class OrderCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'change'  =>  [
-                'label'  =>  __( 'Change' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'code'  =>  [
                 'label'  =>  __( 'Code' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'customer_id'  =>  [
-                'label'  =>  __( 'Customer_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery_status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
+            'nexopos_customers_name'  =>  [
+                'label'         =>  __( 'Customer' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -399,58 +375,23 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'discount_rate'  =>  [
-                'label'  =>  __( 'Discount_rate' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'discount_type'  =>  [
-                'label'  =>  __( 'Discount_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'gross_total'  =>  [
-                'label'  =>  __( 'Gross_total' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'net_total'  =>  [
-                'label'  =>  __( 'Net_total' ),
+                'label'  =>  __( 'Net Total' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'delivery_status'  =>  [
+                'label'  =>  __( 'Delivery Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'payment_status'  =>  [
-                'label'  =>  __( 'Payment_status' ),
+                'label'  =>  __( 'Payment Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'process_status'  =>  [
-                'label'  =>  __( 'Process_status' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping'  =>  [
-                'label'  =>  __( 'Shipping' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping_rate'  =>  [
-                'label'  =>  __( 'Shipping_rate' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'shipping_type'  =>  [
-                'label'  =>  __( 'Shipping_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'tendered'  =>  [
-                'label'  =>  __( 'Tendered' ),
+                'label'  =>  __( 'Process Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -469,17 +410,17 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            'author'  =>  [
+                'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+        ];
     }
 
     /**

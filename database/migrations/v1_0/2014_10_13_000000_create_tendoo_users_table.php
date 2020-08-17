@@ -19,6 +19,7 @@ class CreateTendooUsersTable extends Migration
             $table->string( 'username' );
             $table->boolean( 'active' )->default( false );
             $table->integer( 'role_id' )->nullable();
+            $table->integer( 'author' )->nullable(); // the first user is created by him self
             $table->string( 'email' )->unique();
             $table->string('password');
             $table->rememberToken();

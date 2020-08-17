@@ -48,6 +48,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     ];
 
     /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
+    public $pick        =   [];
+
+    /**
      * Define where statement
      * @var array
     **/

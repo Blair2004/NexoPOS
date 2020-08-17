@@ -17,6 +17,8 @@ use Exception;
 
 use App\Http\Requests\UnitsGroupsRequest;
 use App\Http\Requests\UnitRequest;
+use App\Models\Unit;
+use App\Models\UnitGroup;
 use App\Services\UnitService;
 
 
@@ -116,6 +118,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units Groups' ),
+            'createLink'    =>  url( '/dashboard/units/groups/create' ),
             'description'   =>  __( 'List of available units groups.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
         ]);
@@ -125,8 +128,60 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units' ),
+            'createLink'    =>  url( '/dashboard/units/create' ),
             'description'   =>  __( 'List of available units.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units' ),
+        ]);
+    }
+
+    public function createUnitGroup()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Unit Group' ),
+            'returnLink'    =>  url( '/dashboard/units/groups' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
+            'description'   =>  __( 'Allows you to register a new unit group.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups/form-config' )
+        ]);
+    }
+
+    /**
+     * Edit existing unit group
+     * @param UnitGroup $group
+     * @return View
+     */
+    public function editUnitGroup( UnitGroup $group )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Edit Unit Group' ),
+            'returnLink'    =>  url( '/dashboard/units/groups' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups/' . $group->id ),
+            'submitMethod'  =>  'PUT',
+            'description'   =>  __( 'Edit an existing unit group.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups/form-config/' . $group->id )
+        ]);
+    }
+
+    public function createUnit()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Unit' ),
+            'returnLink'    =>  url( '/dashboard/units' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units' ),
+            'description'   =>  __( 'Allows you to register a new unit.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config' )
+        ]);
+    }
+
+    public function editUnit( Unit $unit )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'submitMethod'  =>  'PUT',
+            'title'         =>  __( 'Edit Unit' ),
+            'returnLink'    =>  url( '/dashboard/units' ),
+            'description'   =>  __( 'Adjusting an existing unit.' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units/' . $unit->id ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config/' . $unit->id )
         ]);
     }
 }

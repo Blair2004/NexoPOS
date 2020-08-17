@@ -8,6 +8,8 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Unit;
+use App\Models\UnitGroup;
+use App\Services\Helper;
 
 class UnitCrud extends CrudService
 {
@@ -36,8 +38,9 @@ class UnitCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_units.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_units.author', '=', 'user.id' ],
+        [ 'nexopos_units_groups as group', 'nexopos_units.group_id', '=', 'group.id' ],
+    ];
 
     /**
      * Define where statement
@@ -106,8 +109,8 @@ class UnitCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -116,55 +119,35 @@ class UnitCrud extends CrudService
                     'fields'    =>  [
                         [
                             'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'base_unit',
-                            'label' =>  __( 'Base_unit' ),
-                            'value' =>  $entry->base_unit ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'group_id',
-                            'label' =>  __( 'Group_id' ),
-                            'value' =>  $entry->group_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'value',
                             'label' =>  __( 'Value' ),
+                            'description'   =>  __( 'Define the value of the unit.' ),
+                            'validation'    =>  'required',
                             'value' =>  $entry->value ?? '',
-                        ],                     ]
+                        ], [
+                            'type'          =>  'select',
+                            'name'          =>  'group_id',
+                            'validation'    =>  'required',
+                            'options'       =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                            'label'         =>  __( 'Group' ),
+                            'description'   =>  __( 'Define to which group the unit should be assigned.' ),
+                            'value' =>  $entry->group_id ?? '',
+                        ], [
+                            'type'  =>  'switch',
+                            'name'  =>  'base_unit',
+                            'validation'    =>  'required',
+                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'label'         =>  __( 'Base Unit' ),
+                            'description'   =>  __( 'Determine if the unit is the base unit from the group.' ),
+                            'value'         =>  ( $entry->base_unit ? 1 : 0 ) ?? '',
+                        ], [
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                            'description'   =>  __( 'Provide a short description about the unit.' ),
+                            'value' =>  $entry->description ?? '',
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -289,48 +272,9 @@ class UnitCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'base_unit'  =>  [
-                'label'  =>  __( 'Base_unit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'group_id'  =>  [
-                'label'  =>  __( 'Group_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
+            
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -339,7 +283,27 @@ class UnitCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+            'base_unit'  =>  [
+                'label'  =>  __( 'Base Unit' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'group_name'  =>  [
+                'label'         =>  __( 'Group' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'         =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
     }
 
     /**
@@ -352,6 +316,7 @@ class UnitCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->base_unit       =   ( bool ) $entry->base_unit ? __( 'Yes' ) : __( 'No' );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -359,7 +324,7 @@ class UnitCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'units' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

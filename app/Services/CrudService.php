@@ -171,7 +171,7 @@ class CrudService
                 /**
                  * We're caching the columns to avoid once again many DB request
                  */
-                if( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) ) {
+                if( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) && true == false ) {
                     $columns        =   Cache::get( 'table-columns-' . $relation[0] );
                 } else {
                     /**
@@ -229,13 +229,11 @@ class CrudService
 
                 if ( in_array( $junction, [ 'join', 'leftJoin', 'rightJoin', 'crossJoin' ] ) ) {
                     if ( $junction !== 'join' ) {
-                        foreach( $relation as $junction_relation ) {
-                            $hasAlias           =   explode( 'as', $junction_relation[0]);
-                            if ( count( $hasAlias ) === 2 ) {
-                                $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $junction_relation[1], $junction_relation[2], $junction_relation[3] );
-                            } else {
-                                $query->$junction( $junction_relation[0], $junction_relation[1], $junction_relation[2], $junction_relation[3] );
-                            }
+                        $hasAlias           =   explode( 'as', $relation[0]);
+                        if ( count( $hasAlias ) === 2 ) {
+                            $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $relation[1], $relation[2], $relation[3] );
+                        } else {
+                            $query->$junction( $relation[0], $relation[1], $relation[2], $relation[3] );
                         }
                     } else {
                         $hasAlias           =   explode( 'as', $relation[0]);

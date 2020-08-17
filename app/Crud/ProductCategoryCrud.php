@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ProductCategory;
+use App\Services\Helper;
 
 class ProductCategoryCrud extends CrudService
 {
@@ -36,8 +37,14 @@ class ProductCategoryCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_products_categories.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_products_categories.author', '=', 'user.id' ],
+        'leftJoin'  =>  [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ],
+    ];
+
+    protected $pick     =   [
+        'user'      =>  [ 'username' ],
+        'parent'    =>  [ 'name' ],
+    ];
 
     /**
      * Define where statement
@@ -103,11 +110,17 @@ class ProductCategoryCrud extends CrudService
      */
     public function getForm( $entry = null ) 
     {
+        $parents    =   ProductCategory::where( 'id', '<>', $entry->id ?? 0 )->get();
+        $parents->prepend( ( object ) [
+            'id'    =>    0,
+            'name'  =>  __( 'No Parent' ),
+        ]);
+
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -115,56 +128,27 @@ class ProductCategoryCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type'          =>  'switch',
+                            'label'         =>  __( 'Displays On POS' ),
+                            'name'          =>  'displays_on_pos',
+                            'description'   =>  __( 'If clicked to no, all products assigned to this category or all sub categories, won\'t appear at the POS.' ),
+                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'validation'    =>  'required',
+                            'value'         =>  $entry->parent_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type'          =>  'select',
+                            'options'       =>  Helper::toJsOptions( $parents, [ 'id', 'name' ]),
+                            'name'          =>  'parent_id',
+                            'label'         =>  __( 'Parent' ),
+                            'description'   =>  __( 'If this category should be a child category of an existing category' ),
+                            'value'         =>  $entry->parent_id ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'textarea',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'media_id',
-                            'label' =>  __( 'Media_id' ),
-                            'value' =>  $entry->media_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'parent_id',
-                            'label' =>  __( 'Parent_id' ),
-                            'value' =>  $entry->parent_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total_items',
-                            'label' =>  __( 'Total_items' ),
-                            'value' =>  $entry->total_items ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
-                        ],                     ]
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -289,57 +273,32 @@ class ProductCategoryCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'media_id'  =>  [
-                'label'  =>  __( 'Media_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'parent_id'  =>  [
-                'label'  =>  __( 'Parent_id' ),
+            'parent_name'  =>  [
+                'label'  =>  __( 'Parent' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'total_items'  =>  [
-                'label'  =>  __( 'Total_items' ),
+                'label'  =>  __( 'Total Products' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            'user_username'  =>  [
+                'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+        ];
     }
 
     /**
@@ -352,6 +311,8 @@ class ProductCategoryCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->parent_name     =   $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
+        
         // you can make changes here
         $entry->{'$actions'}    =   [
             [

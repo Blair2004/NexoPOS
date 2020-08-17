@@ -330,6 +330,12 @@ class ProviderCrud extends CrudService
                 'index'         =>      'id',
                 'url'           =>      url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
             ], [
+                'label'         =>      __( 'See Procurements' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
+            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',

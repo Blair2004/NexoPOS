@@ -36,8 +36,12 @@ class UnitGroupCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_units_groups.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_units_groups.author', '=', 'user.id' ],
+    ];
+
+    public $pick        =   [
+        'user'  =>  [ 'username' ],
+    ];
 
     /**
      * Define where statement
@@ -106,15 +110,20 @@ class UnitGroupCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
-                                            ]
+                        [
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                        ]
+                    ]
                 ]
             ]
         ];
@@ -239,7 +248,22 @@ class UnitGroupCrud extends CrudService
      */
     public function getColumns() {
         return [
-                    ];
+            'name'              =>  [
+                'label'         =>  __( 'Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'         =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'         =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
     }
 
     /**
@@ -259,7 +283,7 @@ class UnitGroupCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
