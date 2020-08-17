@@ -57,10 +57,18 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/expenses/categories/edit/{category}', 'Dashboard\ExpensesCategoriesController@editExpenseCategory' );
 
         Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
+        Route::get( '/dashboard/products/create', 'Dashboard\ProductsController@createProduct' );
         Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
         Route::get( '/dashboard/products/categories/create', 'Dashboard\CategoryController@createCategory' );
-        Route::get( '/dashboard/products/categories/edit/{category}', 'Dashboard\CategoryController@createCategory' );
+        Route::get( '/dashboard/products/categories/edit/{category}', 'Dashboard\CategoryController@editCategory' );
 
+        Route::get( '/dashboard/taxes', 'Dashboard\TaxesController@listTaxes' );
+        Route::get( '/dashboard/taxes/create', 'Dashboard\TaxesController@createTax' );
+        Route::get( '/dashboard/taxes/edit/{tax}', 'Dashboard\TaxesController@editTax' );
+        Route::get( '/dashboard/taxes/groups', 'Dashboard\TaxesController@taxesGroups' );
+        Route::get( '/dashboard/taxes/groups/create', 'Dashboard\TaxesController@createTaxGroups' );
+        Route::get( '/dashboard/taxes/groups/edit/{group}', 'Dashboard\TaxesController@editTaxGroup' );
+        
         Route::get( '/dashboard/units', 'Dashboard\UnitsController@listUnits' );
         Route::get( '/dashboard/units/edit/{unit}', 'Dashboard\UnitsController@editUnit' );
         Route::get( '/dashboard/units/create', 'Dashboard\UnitsController@createUnit' );

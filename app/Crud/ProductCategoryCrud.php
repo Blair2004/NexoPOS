@@ -134,7 +134,7 @@ class ProductCategoryCrud extends CrudService
                             'description'   =>  __( 'If clicked to no, all products assigned to this category or all sub categories, won\'t appear at the POS.' ),
                             'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                             'validation'    =>  'required',
-                            'value'         =>  $entry->parent_id ?? '',
+                            'value'         =>  ( $entry !== null && $entry->displays_on_pos ? ( int ) $entry->displays_on_pos : 1 ),
                         ], [
                             'type'          =>  'select',
                             'options'       =>  Helper::toJsOptions( $parents, [ 'id', 'name' ]),
@@ -288,6 +288,11 @@ class ProductCategoryCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'displays_on_pos'  =>  [
+                'label'         =>  __( 'Displays On POS' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
@@ -312,6 +317,7 @@ class ProductCategoryCrud extends CrudService
         $entry->{ '$id' }       =   $entry->id;
 
         $entry->parent_name     =   $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
+        $entry->displays_on_pos =   ( int ) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
         
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -320,7 +326,7 @@ class ProductCategoryCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

@@ -216,9 +216,9 @@ class CategoryController extends DashboardController
     public function listCategories()
     {
         return $this->view( 'pages.dashboard.crud.table', [
-            'title'     =>      __( 'Product Categories' ),
+            'title'         =>      __( 'Product Categories' ),
             'createLink'    =>  url( '/dashboard/products/categories/create' ),
-            'desccription'  =>  __( 'List all categories available.' ),
+            'description'   =>  __( 'List all categories available.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
         ]);
     }
@@ -242,6 +242,7 @@ class CategoryController extends DashboardController
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Product Category' ),
             'returnLink'    =>  url( '/dashboard/products/categories' ),
+            'submitMethod'  =>  'PUT',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products-categories/' . $category->id ),
             'description'   =>  __( 'Allow you to edit an existing product category.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )

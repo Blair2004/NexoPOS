@@ -37,7 +37,9 @@ class ProductCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users', 'nexopos_products.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_products_categories', 'nexopos_products.category_id', '=', 'nexopos_products_categories.id' ],
+        'leftJoin'  =>  [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
+    ];
 
     /**
      * Define where statement
@@ -54,7 +56,7 @@ class ProductCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -106,20 +108,15 @@ class ProductCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
+                'identification'   =>  [
+                    'label'     =>  __( 'Identification' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
                             'type'  =>  'text',
                             'name'  =>  'barcode',
                             'label' =>  __( 'Barcode' ),
@@ -135,46 +132,16 @@ class ProductCrud extends CrudService
                             'label' =>  __( 'Category_id' ),
                             'value' =>  $entry->category_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
+                            'type'  =>  'textarea',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'expiration',
-                            'label' =>  __( 'Expiration' ),
-                            'value' =>  $entry->expiration ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'gross_sale_price',
-                            'label' =>  __( 'Gross_sale_price' ),
-                            'value' =>  $entry->gross_sale_price ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'name',
                             'label' =>  __( 'Name' ),
                             'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'net_sale_price',
-                            'label' =>  __( 'Net_sale_price' ),
-                            'value' =>  $entry->net_sale_price ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'on_expiration',
-                            'label' =>  __( 'On_expiration' ),
-                            'value' =>  $entry->on_expiration ?? '',
-                        ], [
+                        ],  [
                             'type'  =>  'text',
                             'name'  =>  'parent_id',
                             'label' =>  __( 'Parent_id' ),
@@ -184,36 +151,6 @@ class ProductCrud extends CrudService
                             'name'  =>  'product_type',
                             'label' =>  __( 'Product_type' ),
                             'value' =>  $entry->product_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'purchase_unit_id',
-                            'label' =>  __( 'Purchase_unit_id' ),
-                            'value' =>  $entry->purchase_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'purchase_unit_type',
-                            'label' =>  __( 'Purchase_unit_type' ),
-                            'value' =>  $entry->purchase_unit_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'sale_price',
-                            'label' =>  __( 'Sale_price' ),
-                            'value' =>  $entry->sale_price ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'sale_price_edit',
-                            'label' =>  __( 'Sale_price_edit' ),
-                            'value' =>  $entry->sale_price_edit ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'selling_unit_id',
-                            'label' =>  __( 'Selling_unit_id' ),
-                            'value' =>  $entry->selling_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'selling_unit_type',
-                            'label' =>  __( 'Selling_unit_type' ),
-                            'value' =>  $entry->selling_unit_type ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'sku',
@@ -231,6 +168,89 @@ class ProductCrud extends CrudService
                             'value' =>  $entry->stock_management ?? '',
                         ], [
                             'type'  =>  'text',
+                            'name'  =>  'thumbnail_id',
+                            'label' =>  __( 'Thumbnail_id' ),
+                            'value' =>  $entry->thumbnail_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'type',
+                            'label' =>  __( 'Type' ),
+                            'value' =>  $entry->type ?? '',
+                        ],                   
+                    ]
+                ],
+                'units'     =>  [
+                    'label' =>  __( 'Units' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'purchase_unit_id',
+                            'label' =>  __( 'Purchase_unit_id' ),
+                            'value' =>  $entry->purchase_unit_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'purchase_unit_type',
+                            'label' =>  __( 'Purchase_unit_type' ),
+                            'value' =>  $entry->purchase_unit_type ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'selling_unit_id',
+                            'label' =>  __( 'Selling_unit_id' ),
+                            'value' =>  $entry->selling_unit_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'selling_unit_type',
+                            'label' =>  __( 'Selling_unit_type' ),
+                            'value' =>  $entry->selling_unit_type ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'transfer_unit_id',
+                            'label' =>  __( 'Transfer_unit_id' ),
+                            'value' =>  $entry->transfer_unit_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'transfer_unit_type',
+                            'label' =>  __( 'Transfer_unit_type' ),
+                            'value' =>  $entry->transfer_unit_type ?? '',
+                        ]
+                    ]
+                ],
+                'expiracy'      =>  [
+                    'label'     =>  __( 'Expiracy' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'expiration',
+                            'label' =>  __( 'Expiration' ),
+                            'value' =>  $entry->expiration ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'on_expiration',
+                            'label' =>  __( 'On_expiration' ),
+                            'value' =>  $entry->on_expiration ?? '',
+                        ]
+                    ]
+                ],
+                'prices'    =>  [
+                    'label' =>  __( 'Price & Taxes' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'sale_price',
+                            'label' =>  __( 'Sale_price' ),
+                            'value' =>  $entry->sale_price ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'net_sale_price',
+                            'label' =>  __( 'Net_sale_price' ),
+                            'value' =>  $entry->net_sale_price ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'sale_price_edit',
+                            'label' =>  __( 'Sale_price_edit' ),
+                            'value' =>  $entry->sale_price_edit ?? '',
+                        ], [
+                            'type'  =>  'text',
                             'name'  =>  'tax_id',
                             'label' =>  __( 'Tax_id' ),
                             'value' =>  $entry->tax_id ?? '',
@@ -246,35 +266,11 @@ class ProductCrud extends CrudService
                             'value' =>  $entry->tax_value ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'thumbnail_id',
-                            'label' =>  __( 'Thumbnail_id' ),
-                            'value' =>  $entry->thumbnail_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'transfer_unit_id',
-                            'label' =>  __( 'Transfer_unit_id' ),
-                            'value' =>  $entry->transfer_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'transfer_unit_type',
-                            'label' =>  __( 'Transfer_unit_type' ),
-                            'value' =>  $entry->transfer_unit_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
-                        ],                     ]
+                            'name'  =>  'gross_sale_price',
+                            'label' =>  __( 'Gross_sale_price' ),
+                            'value' =>  $entry->gross_sale_price ?? '',
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -399,167 +395,67 @@ class ProductCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'barcode'  =>  [
-                'label'  =>  __( 'Barcode' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'barcode_type'  =>  [
-                'label'  =>  __( 'Barcode_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'category_id'  =>  [
-                'label'  =>  __( 'Category_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'expiration'  =>  [
-                'label'  =>  __( 'Expiration' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'gross_sale_price'  =>  [
-                'label'  =>  __( 'Gross_sale_price' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'net_sale_price'  =>  [
-                'label'  =>  __( 'Net_sale_price' ),
+            'sku'               =>  [
+                'label'         =>  __( 'Sku' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'on_expiration'  =>  [
-                'label'  =>  __( 'On_expiration' ),
+            'category_id'  =>  [
+                'label'  =>  __( 'Category' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'net_sale_price'  =>  [
+                'label'         =>  __( 'Net Sale Price' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'parent_id'  =>  [
-                'label'  =>  __( 'Parent_id' ),
+                'label'         =>  __( 'Parent' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'product_type'  =>  [
-                'label'  =>  __( 'Product_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'purchase_unit_id'  =>  [
-                'label'  =>  __( 'Purchase_unit_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'purchase_unit_type'  =>  [
-                'label'  =>  __( 'Purchase_unit_type' ),
+                'label'         =>  __( 'Product Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'sale_price'  =>  [
-                'label'  =>  __( 'Sale_price' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'sale_price_edit'  =>  [
-                'label'  =>  __( 'Sale_price_edit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'selling_unit_id'  =>  [
-                'label'  =>  __( 'Selling_unit_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'selling_unit_type'  =>  [
-                'label'  =>  __( 'Selling_unit_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'sku'  =>  [
-                'label'  =>  __( 'Sku' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'status'  =>  [
-                'label'  =>  __( 'Status' ),
+                'label'         =>  __( 'Sale Price' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'stock_management'  =>  [
-                'label'  =>  __( 'Stock_management' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'tax_id'  =>  [
-                'label'  =>  __( 'Tax_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'tax_type'  =>  [
-                'label'  =>  __( 'Tax_type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'tax_value'  =>  [
-                'label'  =>  __( 'Tax_value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'thumbnail_id'  =>  [
-                'label'  =>  __( 'Thumbnail_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'transfer_unit_id'  =>  [
-                'label'  =>  __( 'Transfer_unit_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'transfer_unit_type'  =>  [
-                'label'  =>  __( 'Transfer_unit_type' ),
+                'label'         =>  __( 'Stock Mngmt' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'type'  =>  [
-                'label'  =>  __( 'Type' ),
+                'label'         =>  __( 'Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            'status'  =>  [
+                'label'         =>  __( 'Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
+            'author'  =>  [
+                'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+            'created_at'  =>  [
+                'label'         =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
     }
 
     /**

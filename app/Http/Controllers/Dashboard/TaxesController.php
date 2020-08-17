@@ -169,5 +169,64 @@ class TaxesController extends DashboardController
             'parent_id'     =>  'number'
         ];
     }
+
+    /**
+     * List all available taxes
+     * @return view
+     */
+    public function listTaxes()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'List of Taxes' ),
+            'description'   =>  __( 'shows the list of available taxes.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns-taxes' )
+        ]);
+    }
+
+    /**
+     * Create new taxes
+     * @return view
+     */
+    public function createTax()
+    {
+
+    }
+
+    /**
+     * Edit existing taxes
+     * @param Tax $tax
+     * @return view
+     */
+    public function editTax()
+    {
+
+    }
+
+    /**
+     * Create tax groups
+     * @return view
+     */
+    public function taxesGroups()
+    {
+
+    }
+
+    /**
+     * Create tax groups
+     * @return view
+     */
+    public function createTaxGroups()
+    {
+
+    }
+
+    /**
+     * Edit tax groups
+     * @return view
+     */
+    public function editTaxGroup()
+    {
+
+    }
 }
 

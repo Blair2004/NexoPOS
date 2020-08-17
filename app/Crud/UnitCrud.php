@@ -139,7 +139,7 @@ class UnitCrud extends CrudService
                             'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                             'label'         =>  __( 'Base Unit' ),
                             'description'   =>  __( 'Determine if the unit is the base unit from the group.' ),
-                            'value'         =>  ( $entry->base_unit ? 1 : 0 ) ?? '',
+                            'value'         =>  $entry ? ( $entry->base_unit ? 1 : 0 ) : 0,
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',

@@ -181,7 +181,7 @@ class CouponCrud extends CrudService
                         [
                             'type'  =>  'multiselect',
                             'name'  =>  'products',
-                            'options'   =>  Helper::toJsOptions( Product::get(), [ 'id' => 'name' ]),
+                            'options'   =>  Helper::toJsOptions( Product::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Products' ),
                             'description'   =>  __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' )
                         ], 
@@ -194,7 +194,7 @@ class CouponCrud extends CrudService
                         [
                             'type'  =>  'multiselect',
                             'name'  =>  'categories',
-                            'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id' => 'name' ]),
+                            'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Categories' ),
                             'description'   =>  __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' )
                         ], 
