@@ -195,6 +195,15 @@ export default class FormValidation {
                 /**
                  * @todo needs to do the same with the title
                  */
+                if ( index === form.main.name ) {
+                    data.errors[ index ].forEach( errorMessage => {
+                        form.main.errors.push({
+                            identifier: 'invalid',
+                            invalid: true,
+                            message: errorMessage
+                        });
+                    });
+                }
             }
         }
     }

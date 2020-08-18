@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaxGroup extends Model
 {
-    protected $table    =   'nexopos_' . 'tax_groups';
+    protected $table    =   'nexopos_' . 'taxes_groups';
 
     /**
      * define the relationship

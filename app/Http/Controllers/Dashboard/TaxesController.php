@@ -178,8 +178,9 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'List of Taxes' ),
+            'createLink'    =>  url( '/dashboard/taxes/create' ),
             'description'   =>  __( 'shows the list of available taxes.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns-taxes' )
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes' )
         ]);
     }
 
@@ -189,7 +190,13 @@ class TaxesController extends DashboardController
      */
     public function createTax()
     {
-
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax' ),
+            'returnLink'    =>  url( '/dashboard/taxes' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
+            'description'   =>  __( 'add a new tax to the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
+        ]);
     }
 
     /**
@@ -199,7 +206,14 @@ class TaxesController extends DashboardController
      */
     public function editTax()
     {
-
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Edit Tax' ),
+            'returnLink'    =>  url( '/dashboard/taxes' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
+            'submitMethod'  =>  'PUT',
+            'description'   =>  __( 'adjust an existing tax.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
+        ]);
     }
 
     /**
@@ -208,7 +222,12 @@ class TaxesController extends DashboardController
      */
     public function taxesGroups()
     {
-
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'List of Taxes Groups' ),
+            'createLink'    =>  url( '/dashboard/taxes/groups/create' ),
+            'description'   =>  __( 'shows the list of available taxes groups.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' )
+        ]);
     }
 
     /**
@@ -217,7 +236,13 @@ class TaxesController extends DashboardController
      */
     public function createTaxGroups()
     {
-
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax Group' ),
+            'returnLink'    =>  url( '/dashboard/taxes/groups' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'description'   =>  __( 'Add a new tax group on the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+        ]);
     }
 
     /**
@@ -226,7 +251,14 @@ class TaxesController extends DashboardController
      */
     public function editTaxGroup()
     {
-
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax Group' ),
+            'returnLink'    =>  url( '/dashboard/taxes/groups' ),
+            'submitMethod'  =>  'PUT',
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'description'   =>  __( 'Add a new tax group on the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+        ]);
     }
 }
 

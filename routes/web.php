@@ -77,7 +77,9 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/units/groups/edit/{group}', 'Dashboard\UnitsController@editUnitGroup' );
         
         Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
-        Route::get( '/dashboard/profile', 'Dashboard\UsersController@showProfile' );
+        Route::get( '/dashboard/users/create', 'Dashboard\UsersController@createUser' );
+        Route::get( '/dashboard/users/edit/{user}', 'Dashboard\UsersController@editUser' );
+        Route::get( '/dashboard/users/profile', 'Dashboard\UsersController@showProfile' )->name( 'dashboard.users.profile' );
 
         Route::get( '/dashboard/settings/{settings}', 'Dashboard\SettingsController@getSettings' );
         Route::get( '/dashboard/settings/form/{settings}', 'Dashboard\SettingsController@loadSettingsForm' );

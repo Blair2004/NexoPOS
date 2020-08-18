@@ -1,12 +1,17 @@
 <?php
 namespace App\Crud;
+
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
 use App\Models\User;
+use App\Services\Helper;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserCrud extends CrudService
 {
@@ -35,7 +40,13 @@ class UserCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users as u', 'nexopos_users.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users as author', 'nexopos_users.author', '=', 'author.id' ],
+        [ 'nexopos_roles as role', 'nexopos_users.role_id', '=', 'role.id' ],
+    ];
+
+    public $pick        =   [
+        'author'        =>  [ 'username' ],
+        'role'          =>  [ 'name' ]
     ];
 
     /**
@@ -53,7 +64,13 @@ class UserCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [ 
+        'username',
+        'email',
+        'password',
+        'active',
+        'role_id ',
+    ];
 
     /**
      * Define Constructor
@@ -104,9 +121,13 @@ class UserCrud extends CrudService
     {
         return [
             'main' =>  [
-                'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'label'         =>  __( 'Username' ),
+                'name'          =>  'username',
+                'value'         =>  $entry->username ?? '',
+                'validation'    =>  $entry === null ? 'required|unique:nexopos_users,username' : [
+                    'required',
+                    Rule::unique( 'nexopos_users', 'username' )->ignore( $entry->id )
+                ],
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -114,51 +135,44 @@ class UserCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'active',
-                            'label' =>  __( 'Active' ),
-                            'value' =>  $entry->active ?? '',
+                            'type'          =>  'text',
+                            'name'          =>  'email',
+                            'label'         =>  __( 'Email' ),
+                            'validation'    =>  $entry === null ? 'required|email|unique:nexopos_users,email' : [
+                                'required',
+                                'email',
+                                Rule::unique( 'nexopos_users', 'email' )->ignore( $entry->id )
+                            ],
+                            'description'   =>  __( 'Will be used for various purposes such as email recovery.' ),
+                            'value'         =>  $entry->email ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type'          =>  'password',
+                            'name'          =>  'password',
+                            'label'         =>  __( 'Password' ),
+                            'validation'    =>  'sometimes|min:6',
+                            'description'   =>  __( 'Make a unit and secure password.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'email',
-                            'label' =>  __( 'Email' ),
-                            'value' =>  $entry->email ?? '',
+                            'type'          =>  'password',
+                            'name'          =>  'password_confirm',
+                            'validation'    =>  'sometimes|same:general.password',
+                            'label'         =>  __( 'Confirm Password' ),
+                            'description'   =>  __( 'Should be the same as the password.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type'          =>  'switch',
+                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name'          =>  'active',
+                            'label'         =>  __( 'Active' ),
+                            'description'   =>  __( 'Define wether the user can use the application.' ),
+                            'value'         =>  ( $entry !== null && $entry->active ? 1 : 0 ) ?? 0,
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'password',
-                            'label' =>  __( 'Password' ),
-                            'value' =>  $entry->password ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'remember_token',
-                            'label' =>  __( 'Remember_token' ),
-                            'value' =>  $entry->remember_token ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'role_id',
-                            'label' =>  __( 'Role_id' ),
-                            'value' =>  $entry->role_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'username',
-                            'label' =>  __( 'Username' ),
-                            'value' =>  $entry->username ?? '',
-                        ],                     ]
+                            'type'          =>  'select',
+                            'options'       =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ] ),
+                            'description'   =>  __( 'Define the role of the user' ),
+                            'name'          =>  'role_id',
+                            'label'         =>  __( 'Role' ),
+                            'value'         =>  $entry->role_id ?? '',
+                        ],
+                    ]
                 ]
             ]
         ];
@@ -171,6 +185,10 @@ class UserCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ]   =   Hash::make( $inputs[ 'password' ] );
+        }
+
         return $inputs;
     }
 
@@ -181,6 +199,10 @@ class UserCrud extends CrudService
      */
     public function filterPutInputs( $inputs, User $entry )
     {
+        if ( ! empty( $inputs[ 'password' ] ) ) {
+            $inputs[ 'password' ]   =   Hash::make( $inputs[ 'password' ] );
+        }
+
         return $inputs;
     }
 
@@ -283,52 +305,32 @@ class UserCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'active'  =>  [
-                'label'  =>  __( 'Active' ),
+            'username'  =>  [
+                'label'         =>  __( 'Username' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
+            'active'  =>  [
+                'label'         =>  __( 'Active' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'email'  =>  [
-                'label'  =>  __( 'Email' ),
+                'label'         =>  __( 'Email' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
+            'role_name'  =>  [
+                'label'         =>  __( 'Role' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'password'  =>  [
-                'label'  =>  __( 'Password' ),
+            'created_at'  =>  [
+                'label'         =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'remember_token'  =>  [
-                'label'  =>  __( 'Remember_token' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'role_id'  =>  [
-                'label'  =>  __( 'Role_id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'username'  =>  [
-                'label'  =>  __( 'Username' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-                    ];
+        ];
     }
 
     /**
@@ -341,6 +343,8 @@ class UserCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->active          =   ( bool ) $entry->active ? __( 'Yes' ) : __( 'No' );
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -348,7 +352,7 @@ class UserCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'users' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

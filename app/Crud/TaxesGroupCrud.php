@@ -36,8 +36,8 @@ class TaxesGroupCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_taxes_groups.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_taxes_groups.author', '=', 'user.id' ],
+    ];
 
     /**
      * Define where statement
@@ -106,15 +106,21 @@ class TaxesGroupCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
+                'valudation'    =>  'required',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
-                                            ]
+                        [
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                            'description'   =>  __( 'Provide a short description to the tax group.' ),
+                        ]
+                    ]
                 ]
             ]
         ];
@@ -239,7 +245,22 @@ class TaxesGroupCrud extends CrudService
      */
     public function getColumns() {
         return [
-                    ];
+            'name'  =>  [
+                'label'  =>  __( 'Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'  =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
     }
 
     /**

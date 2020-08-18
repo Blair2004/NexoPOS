@@ -97,7 +97,7 @@ class MenuService
             ], 
             'expenses' =>  [
                 'label' =>  __( 'Expenses' ),
-                'icon'  =>  'la-balance-scale-left',
+                'icon'  =>  'la-money-bill-wave',
                 'childrens'     =>  [
                     'expenses' =>  [
                         'label' =>  __( 'Expenses'),
@@ -161,7 +161,7 @@ class MenuService
             ], 
             'taxes'     =>  [
                 'label' =>  __( 'Taxes' ),
-                'icon'  =>  'la-star',
+                'icon'  =>  'la-balance-scale-left',
                 'childrens' =>  [
                     'taxes-groups'   =>  [
                         'label' =>  __( 'Taxes Groups'),

@@ -8,6 +8,8 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Tax;
+use App\Models\TaxGroup;
+use App\Services\Helper;
 
 class TaxCrud extends CrudService
 {
@@ -36,8 +38,14 @@ class TaxCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_taxes.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as user', 'nexopos_taxes.author', '=', 'user.id' ],
+        [ 'nexopos_taxes_groups as parent', 'nexopos_taxes.tax_group_id', '=', 'parent.id' ]
+    ];
+
+    protected $pick     =   [
+        'user'      =>  [ 'username' ],
+        'parent'    =>  [ 'name' ],
+    ];
 
     /**
      * Define where statement
@@ -106,65 +114,35 @@ class TaxCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
+                'description'   =>  __( 'Provide a name to the tax.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'parent_id',
-                            'label' =>  __( 'Parent_id' ),
-                            'value' =>  $entry->parent_id ?? '',
+                            'type'      =>  'select',
+                            'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                            'name'      =>  'tax_group_id',
+                            'label'     =>  __( 'Parent' ),
+                            'description'   =>  __( 'Assign the tax to a tax group.' ),
+                            'value'     =>  $entry->parent_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'rate',
                             'label' =>  __( 'Rate' ),
+                            'description'   =>  __( 'Define the rate value for the tax.' ),
                             'value' =>  $entry->rate ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
-                        ],                     ]
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'description'   =>  __( 'Provide a description to the tax.' ),
+                            'label' =>  __( 'Description' ),
+                            'value' =>  $entry->description ?? '',
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -289,57 +267,32 @@ class TaxCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'parent_id'  =>  [
-                'label'  =>  __( 'Parent_id' ),
+            'parent_name'  =>  [
+                'label'  =>  __( 'Parent' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'rate'  =>  [
-                'label'  =>  __( 'Rate' ),
+                'label'         =>  __( 'Rate' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'type'  =>  [
-                'label'  =>  __( 'Type' ),
+            'user_username'  =>  [
+                'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            'created_at'  =>  [
+                'label'         =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-                    ];
+        ];
     }
 
     /**

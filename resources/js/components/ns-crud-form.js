@@ -125,7 +125,8 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">
-                    <span><slot name="error-required">{{ error.identifier }}</slot></span>
+                    <span v-if="error.identifier=== 'required'"><slot name="error-required">{{ error.identifier }}</slot></span>
+                    <span v-if="error.identifier=== 'invalid'"><slot name="error-invalid">{{ error.message }}</slot></span>
                 </p>
             </div>
             <div id="tabs-container" class="my-5" v-if="disableTabs !== 'true'">
