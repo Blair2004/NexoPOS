@@ -8,6 +8,9 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\TaxGroup;
+use App\Services\Helper;
 
 class ProductCrud extends CrudService
 {
@@ -112,164 +115,214 @@ class ProductCrud extends CrudService
                 'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
-            'tabs'  =>  [
-                'identification'   =>  [
-                    'label'     =>  __( 'Identification' ),
-                    'fields'    =>  [
-                        [
-                            'type'  =>  'text',
-                            'name'  =>  'barcode',
-                            'label' =>  __( 'Barcode' ),
-                            'value' =>  $entry->barcode ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'barcode_type',
-                            'label' =>  __( 'Barcode_type' ),
-                            'value' =>  $entry->barcode_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'category_id',
-                            'label' =>  __( 'Category_id' ),
-                            'value' =>  $entry->category_id ?? '',
-                        ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ],  [
-                            'type'  =>  'text',
-                            'name'  =>  'parent_id',
-                            'label' =>  __( 'Parent_id' ),
-                            'value' =>  $entry->parent_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'product_type',
-                            'label' =>  __( 'Product_type' ),
-                            'value' =>  $entry->product_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'sku',
-                            'label' =>  __( 'Sku' ),
-                            'value' =>  $entry->sku ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'status',
-                            'label' =>  __( 'Status' ),
-                            'value' =>  $entry->status ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'stock_management',
-                            'label' =>  __( 'Stock_management' ),
-                            'value' =>  $entry->stock_management ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'thumbnail_id',
-                            'label' =>  __( 'Thumbnail_id' ),
-                            'value' =>  $entry->thumbnail_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
-                        ],                   
-                    ]
-                ],
-                'units'     =>  [
-                    'label' =>  __( 'Units' ),
-                    'fields'    =>  [
-                        [
-                            'type'  =>  'text',
-                            'name'  =>  'purchase_unit_id',
-                            'label' =>  __( 'Purchase_unit_id' ),
-                            'value' =>  $entry->purchase_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'purchase_unit_type',
-                            'label' =>  __( 'Purchase_unit_type' ),
-                            'value' =>  $entry->purchase_unit_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'selling_unit_id',
-                            'label' =>  __( 'Selling_unit_id' ),
-                            'value' =>  $entry->selling_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'selling_unit_type',
-                            'label' =>  __( 'Selling_unit_type' ),
-                            'value' =>  $entry->selling_unit_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'transfer_unit_id',
-                            'label' =>  __( 'Transfer_unit_id' ),
-                            'value' =>  $entry->transfer_unit_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'transfer_unit_type',
-                            'label' =>  __( 'Transfer_unit_type' ),
-                            'value' =>  $entry->transfer_unit_type ?? '',
+            'variations'    =>  [
+                [
+                    'id'    =>  '',
+                    'tabs'  =>  [
+                        'identification'   =>  [
+                            'label'     =>  __( 'Identification' ),
+                            'fields'    =>  [
+                                [
+                                    'type'  =>  'text',
+                                    'name'  =>  'name',
+                                    'description'   =>  __( 'Product unique name. If it\' variation, it should be relevant for that variation' ),
+                                    'label' =>  __( 'Name' ),
+                                    'value' =>  $entry->name ?? '',
+                                ], [
+                                    'type'  =>  'select',
+                                    'options'   =>  [],
+                                    'name'  =>  'type',
+                                    'label' =>  __( 'Type' ),
+                                    'value' =>  $entry->type ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'barcode',
+                                    'description'   =>  __( 'Define the barcode value. Focus the cursor here before scanning the product.' ),
+                                    'label' =>  __( 'Barcode' ),
+                                    'value' =>  $entry->barcode ?? '',
+                                ], [
+                                    'type'  =>  'select',
+                                    'description'   =>  __( 'Define the barcode type scanned.' ),
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        'ean8'      =>  __( 'EAN 8' ),
+                                        'ean13'     =>  __( 'EAN 13' ),
+                                        'codabar'   =>  __( 'Codeabar' ),
+                                    ]),
+                                    'name'  =>  'barcode_type',
+                                    'label' =>  __( 'Barcode Type' ),
+                                    'value' =>  $entry->barcode_type ?? '',
+                                ], [
+                                    'type'      =>  'select',
+                                    'description'   =>  __( 'Select to which category the item is assigned.' ),
+                                    'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
+                                    'name'      =>  'category_id',
+                                    'label'     =>  __( 'Category' ),
+                                    'value'     =>  $entry->category_id ?? '',
+                                ], [
+                                    'type'          =>  'select',
+                                    'options'       =>  Helper::kvToJsOptions([
+                                        'physical'      =>  __( 'Physical Product' ),
+                                        'unmaterial'    =>  __( 'Unmaterial Product' ),
+                                    ]),
+                                    'description'   =>  __( 'Define the product type. Applies to all variations.' ),
+                                    'name'          =>  'product_type',
+                                    'label'         =>  __( 'Product Type' ),
+                                    'value'         =>  $entry->product_type ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'sku',
+                                    'description'   =>  __( 'Define a unique SKU value for the product.' ),
+                                    'label' =>  __( 'SKU' ),
+                                    'value' =>  $entry->sku ?? '',
+                                ], [
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        'available'     =>  __( 'On Sale' ),
+                                        'unavailable'   =>  __( 'Hidden' ),
+                                    ]),
+                                    'description'   =>  __( 'Define wether the product is available for sale.' ),
+                                    'name'  =>  'status',
+                                    'label' =>  __( 'Status' ),
+                                    'value' =>  $entry->status ?? '',
+                                ], [
+                                    'type'      =>  'switch',
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        'enabled'   =>  __( 'Yes' ),
+                                        'disabled'  =>  __( 'No' ),
+                                    ]),
+                                    'description'   =>  __( 'Enable the stock management on the product. Will not work for service or uncountable products.' ),
+                                    'name'  =>  'stock_management',
+                                    'label' =>  __( 'Stock Management Enabled' ),
+                                    'value' =>  $entry->stock_management ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'thumbnail_id',
+                                    'label' =>  __( 'Thumbnail_id' ),
+                                    'value' =>  $entry->thumbnail_id ?? '',
+                                ], [
+                                    'type'  =>  'textarea',
+                                    'name'  =>  'description',
+                                    'label' =>  __( 'Description' ),
+                                    'value' =>  $entry->description ?? '',
+                                ],                 
+                            ]
+                        ],
+                        'units'     =>  [
+                            'label' =>  __( 'Units' ),
+                            'fields'    =>  [
+                                [
+                                    'type'  =>  'text',
+                                    'name'  =>  'purchase_unit_group',
+                                    'descriptin'    =>  __( 'Define the unit group used for purchasing' ),
+                                    'label' =>  __( 'Purchase Group' ),
+                                    'value' =>  $entry->purchase_unit_type ?? '',
+                                ], [
+                                    'type'  =>  'multiselect',
+                                    'name'  =>  'purchase_unit_ids',
+                                    'label' =>  __( 'Purchase Unit' ),
+                                    'descriptin'    =>  __( 'Define the unit or units used while purchasing' ),
+                                    'value' =>  $entry->purchase_unit_ids ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'selling_unit_group',
+                                    'label' =>  __( 'Selling Group' ),
+                                    'description'   =>  __( 'Define the unit group used for sale' ),
+                                    'value' =>  $entry->selling_unit_type ?? '',
+                                ], [
+                                    'type'  =>  'multiselect',
+                                    'name'  =>  'selling_unit_ids',
+                                    'label' =>  __( 'Selling Unit' ),
+                                    'description'   =>  __( 'Define the unit or units used for sale' ),
+                                    'value' =>  $entry->selling_unit_ids ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'transfer_unit_group',
+                                    'label' =>  __( 'Transfer Group' ),
+                                    'description'   =>  __( 'Define the unit group used for transfer' ),
+                                    'value' =>  $entry->transfer_unit_type ?? '',
+                                ], [
+                                    'type'  =>  'multiselect',
+                                    'name'  =>  'transfer_unit_ids',
+                                    'label' =>  __( 'Transfer Unit' ),
+                                    'description'   =>  __( 'Define the unit or units used for transfer' ),
+                                    'value' =>  $entry->transfer_unit_ids ?? '',
+                                ], 
+                            ]
+                        ],
+                        'expiracy'      =>  [
+                            'label'     =>  __( 'Expiracy' ),
+                            'fields'    =>  [
+                                [
+                                    'type'          =>  'switch',
+                                    'name'          =>  'expires',
+                                    'label'         =>  __( 'Product Expires' ),
+                                    'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                    'description'   =>  __( 'Set to "No" expiration time will be ignored.' ),
+                                    'value'         =>  ( $entry !== null && $entry->expires ? 1 : 0 ),
+                                ], [
+                                    'type'          =>  'datetime',
+                                    'name'          =>  'expiration',
+                                    'label'         =>  __( 'Expiration' ),
+                                    'description'   =>  __( 'Define when the product expires' ),
+                                    'value'         =>  $entry->expiration ?? '',
+                                ], [
+                                    'type'              =>  'select',
+                                    'options'           =>  Helper::kvToJsOptions([
+                                        'prevent_sales' =>  __( 'Prevent Sales' ),
+                                        'allow_sales'   =>  __( 'Allow Sales' ),
+                                    ]),
+                                    'description'       =>  __( 'Determine the action taken while a product has expired.' ),
+                                    'name'              =>  'on_expiration',
+                                    'label'             =>  __( 'On_expiration' ),
+                                    'value'             =>  $entry->on_expiration ?? '',
+                                ]
+                            ]
+                        ],
+                        'prices'    =>  [
+                            'label' =>  __( 'Price & Taxes' ),
+                            'fields'    =>  [
+                                [
+                                    'type'  =>  'text',
+                                    'name'  =>  'sale_price_edit',
+                                    'label' =>  __( 'Sale Price' ),
+                                    'description'   =>  __( 'Define the sale price excluding taxes.' ),
+                                    'value' =>  $entry->sale_price_edit ?? '',
+                                    'extra' =>  $entry->sale_price ?? 0
+                                ], [
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ]),
+                                    'description'   =>  __( 'Select the tax group that applies to the product/variation.' ),
+                                    'name'  =>  'tax_id',
+                                    'label' =>  __( 'Tax' ),
+                                    'value' =>  $entry->tax_id ?? '',
+                                ], [
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        'inclusive' =>  __( 'Inclusive' ),
+                                        'exclusive' =>  __( 'Exclusive' ),
+                                    ]),
+                                    'description'   =>  __( 'Define what is the type of the tax.' ),
+                                    'name'  =>  'tax_type',
+                                    'label' =>  __( 'Tax Type' ),
+                                    'value' =>  $entry->tax_type ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'tax_value',
+                                    'readonly'  =>  'readonly',
+                                    'label' =>  __( 'Tax Value' ),
+                                    'value' =>  $entry->tax_value ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'gross_sale_price',
+                                    'label' =>  __( 'Gross Price' ),
+                                    'value' =>  $entry->gross_sale_price ?? '',
+                                ], 
+                            ]
+                        ],
+                        'galleries'     =>  [
+                            'label'     =>  __( 'Galleries' ),
+                            'fields'    =>  []
                         ]
-                    ]
-                ],
-                'expiracy'      =>  [
-                    'label'     =>  __( 'Expiracy' ),
-                    'fields'    =>  [
-                        [
-                            'type'  =>  'text',
-                            'name'  =>  'expiration',
-                            'label' =>  __( 'Expiration' ),
-                            'value' =>  $entry->expiration ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'on_expiration',
-                            'label' =>  __( 'On_expiration' ),
-                            'value' =>  $entry->on_expiration ?? '',
-                        ]
-                    ]
-                ],
-                'prices'    =>  [
-                    'label' =>  __( 'Price & Taxes' ),
-                    'fields'    =>  [
-                        [
-                            'type'  =>  'text',
-                            'name'  =>  'sale_price',
-                            'label' =>  __( 'Sale_price' ),
-                            'value' =>  $entry->sale_price ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'net_sale_price',
-                            'label' =>  __( 'Net_sale_price' ),
-                            'value' =>  $entry->net_sale_price ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'sale_price_edit',
-                            'label' =>  __( 'Sale_price_edit' ),
-                            'value' =>  $entry->sale_price_edit ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tax_id',
-                            'label' =>  __( 'Tax_id' ),
-                            'value' =>  $entry->tax_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tax_type',
-                            'label' =>  __( 'Tax_type' ),
-                            'value' =>  $entry->tax_type ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tax_value',
-                            'label' =>  __( 'Tax_value' ),
-                            'value' =>  $entry->tax_value ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'gross_sale_price',
-                            'label' =>  __( 'Gross_sale_price' ),
-                            'value' =>  $entry->gross_sale_price ?? '',
-                        ], 
                     ]
                 ]
             ]

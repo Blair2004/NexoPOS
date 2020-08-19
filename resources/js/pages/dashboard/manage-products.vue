@@ -28,22 +28,32 @@
                 </p>
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
-                <div class="px-4 w-full md:w-1/2">
-                    <div class="rounded bg-white shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
-                        <ns-field v-bind:key="index" v-for="( field, index ) of tab.fields" :field="field"></ns-field>
-                    </div>
-                </div>
-                <div class="px-4 w-full md:w-1/2">
-                    <div id="tabbed-card">
-                        <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
-                                {{ tab.label }}
+                <div class="px-4 w-full">
+                    <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
+                        <div id="card-header" class="flex flex-wrap justify-between">
+                            <div class="flex flex-wrap">
+                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="cursor-pointer text-gray-700 px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                                    {{ tab.label }}
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-center -mx-1">
+                                <div class="px-1">
+                                    <button @click="newVariation()" class="rounded-full h-8 w-8 flex items-center justify-center bg-green-400 text-white">
+                                        <i class="las la-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="px-1">
+                                    <button @click="duplicate( variation )" class="rounded-full h-8 w-8 flex items-center justify-center bg-blue-400 text-white">
+                                        <i class="las la-copy"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
-                                <label for="" class="font-medium text-gray-700 pb-1">{{ field.label }}</label>
-                                <ns-field  :field="field"></ns-field>
+                            <div class="-mx-4 flex flex-wrap">
+                                <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
+                                    <ns-field :field="field"></ns-field>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -62,31 +72,81 @@ export default {
             formValidation: new FormValidation,
             nsSnackBar,
             nsHttpClient,
+            form: '',
         }
     },
+    computed: {
+        defaultVariation() {
+            const newVariation     =   new Object;
+
+            for( let tabIndex in this.form.variations[0].tabs ) {
+                newVariation[ tabIndex ]            =   new Object;
+                newVariation[ tabIndex ].label      =   this.form.variations[0].tabs[ tabIndex ].label;
+                newVariation[ tabIndex ].active     =   this.form.variations[0].tabs[ tabIndex ].active;
+                newVariation[ tabIndex ].fields     =   this.form.variations[0].tabs[ tabIndex ].fields.map( field => {
+                    field.value     =   '';
+                    return field;
+                });
+            }
+
+            return {
+                id: '',
+                tabs: newVariation
+            };
+        }
+    },  
+    props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
-        setTabActive( tab ) {
-            this.validTabs.forEach( tab => tab.active = false );
-            tab.active  =   true;
+        setTabActive( activeIndex, tabs ) {
+            for( let _index in tabs ) {
+                if ( _index !== activeIndex ) {
+                    tabs[ _index ].active    =   false;
+                }
+            }
+
+            tabs[ activeIndex ].active  =   true;
+        },      
+        newVariation() {
+            this.form.variations.push( this.defaultVariation );
         },
+        getActiveTab( tabs ) {
+            for( let key in tabs ) {
+                if ( tabs[ key ].active ) {
+                    return tabs[ key ];
+                }
+            }
+
+            return false;
+        }, 
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
             form.main           =   this.formValidation.createFields([ form.main ])[0];
             let index           =   0;
 
-            for( let key in form.tabs ) {
-                if ( index === 1 && form.tabs[ key ].active === undefined ) {
-                    form.tabs[ key ].active  =   true;
+            form.variations.forEach( variation => {
+                for( let key in variation.tabs ) {
+                    if ( index === 1 && variation.tabs[ key ].active === undefined ) {
+                        variation.tabs[ key ].active  =   true;
+                    }
+
+                    variation.tabs[ key ].active     =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].fields     =   this.formValidation.createFields( variation.tabs[ key ].fields );
+
+                    index++;
                 }
-
-                form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
-                form.tabs[ key ].fields     =   this.formValidation.createFields( form.tabs[ key ].fields );
-
-                index++;
-            }
+            });
 
             return form;
         },
+        loadForm() {
+            const request   =   nsHttpClient.get( `${this.src}` );
+            request.subscribe( f => {
+                this.form    =   this.parseForm( f.form );
+            });
+        },
+    },
+    mounted() {
+        this.loadForm();
     },
     name: 'ns-manage-products',
 }

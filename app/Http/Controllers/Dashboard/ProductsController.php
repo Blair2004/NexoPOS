@@ -313,9 +313,10 @@ class ProductsController extends DashboardController
     public function createProduct()
     {
         return $this->view( 'pages.dashboard.products.create', [
-            'title'     =>  __( 'Create a product' ),
+            'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns-products/form-config' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }
 }
