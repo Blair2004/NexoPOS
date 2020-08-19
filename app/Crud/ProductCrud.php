@@ -119,6 +119,7 @@ class ProductCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
+                'validation'    =>  'required',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'variations'    =>  [
@@ -133,18 +134,14 @@ class ProductCrud extends CrudService
                                     'name'  =>  'name',
                                     'description'   =>  __( 'Product unique name. If it\' variation, it should be relevant for that variation' ),
                                     'label' =>  __( 'Name' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->name ?? '',
-                                ], [
-                                    'type'  =>  'select',
-                                    'options'   =>  [],
-                                    'name'  =>  'type',
-                                    'label' =>  __( 'Type' ),
-                                    'value' =>  $entry->type ?? '',
                                 ], [
                                     'type'  =>  'text',
                                     'name'  =>  'barcode',
                                     'description'   =>  __( 'Define the barcode value. Focus the cursor here before scanning the product.' ),
                                     'label' =>  __( 'Barcode' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->barcode ?? '',
                                 ], [
                                     'type'  =>  'select',
@@ -156,6 +153,7 @@ class ProductCrud extends CrudService
                                     ]),
                                     'name'  =>  'barcode_type',
                                     'label' =>  __( 'Barcode Type' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->barcode_type ?? '',
                                 ], [
                                     'type'      =>  'select',
@@ -167,11 +165,12 @@ class ProductCrud extends CrudService
                                 ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::kvToJsOptions([
-                                        'physical'      =>  __( 'Physical Product' ),
-                                        'unmaterial'    =>  __( 'Unmaterial Product' ),
+                                        'materialized'      =>  __( 'Materialized Product' ),
+                                        'dematerialized'    =>  __( 'Dematerialized Product' ),
                                     ]),
                                     'description'   =>  __( 'Define the product type. Applies to all variations.' ),
                                     'name'          =>  'product_type',
+                                    'validation'    =>  'required',
                                     'label'         =>  __( 'Product Type' ),
                                     'value'         =>  $entry->product_type ?? '',
                                 ], [
@@ -179,6 +178,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'sku',
                                     'description'   =>  __( 'Define a unique SKU value for the product.' ),
                                     'label' =>  __( 'SKU' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->sku ?? '',
                                 ], [
                                     'type'  =>  'select',
@@ -188,6 +188,7 @@ class ProductCrud extends CrudService
                                     ]),
                                     'description'   =>  __( 'Define wether the product is available for sale.' ),
                                     'name'  =>  'status',
+                                    'validation'    =>  'required',
                                     'label' =>  __( 'Status' ),
                                     'value' =>  $entry->status ?? '',
                                 ], [
@@ -217,6 +218,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'purchase_unit_group',
                                     'description'    =>  __( 'Define the unit group used for purchasing' ),
                                     'label' =>  __( 'Purchase Group' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->purchase_unit_type ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
@@ -230,6 +232,7 @@ class ProductCrud extends CrudService
                                     'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'selling_unit_group',
                                     'label' =>  __( 'Selling Group' ),
+                                    'validation'    =>  'required',
                                     'description'   =>  __( 'Define the unit group used for sale' ),
                                     'value' =>  $entry->selling_unit_type ?? '',
                                 ], [
@@ -244,6 +247,7 @@ class ProductCrud extends CrudService
                                     'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'transfer_unit_group',
                                     'label' =>  __( 'Transfer Group' ),
+                                    'validation'    =>  'required',
                                     'description'   =>  __( 'Define the unit group used for transfer' ),
                                     'value' =>  $entry->transfer_unit_type ?? '',
                                 ], [
@@ -262,6 +266,7 @@ class ProductCrud extends CrudService
                                 [
                                     'type'          =>  'switch',
                                     'name'          =>  'expires',
+                                    'validation'    =>  'required',
                                     'label'         =>  __( 'Product Expires' ),
                                     'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                     'description'   =>  __( 'Set to "No" expiration time will be ignored.' ),
@@ -292,6 +297,7 @@ class ProductCrud extends CrudService
                                     'type'  =>  'text',
                                     'name'  =>  'sale_price_edit',
                                     'label' =>  __( 'Sale Price' ),
+                                    'validation'    =>  'required',
                                     'description'   =>  __( 'Define the sale price excluding taxes.' ),
                                     'value' =>  $entry->sale_price_edit ?? '',
                                     'extra' =>  $entry->sale_price ?? 0
@@ -312,17 +318,6 @@ class ProductCrud extends CrudService
                                     'name'  =>  'tax_type',
                                     'label' =>  __( 'Tax Type' ),
                                     'value' =>  $entry->tax_type ?? '',
-                                ], [
-                                    'type'  =>  'text',
-                                    'name'  =>  'tax_value',
-                                    'readonly'  =>  'readonly',
-                                    'label' =>  __( 'Tax Value' ),
-                                    'value' =>  $entry->tax_value ?? '',
-                                ], [
-                                    'type'  =>  'text',
-                                    'name'  =>  'gross_sale_price',
-                                    'label' =>  __( 'Gross Price' ),
-                                    'value' =>  $entry->gross_sale_price ?? '',
                                 ], 
                             ]
                         ],

@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center justify-center -mx-1">
-                                <div class="px-1" v-if="form.variations.length > 1">
+                                <!-- <div class="px-1" v-if="form.variations.length > 1 && variation_index > 0">
                                     <button @click="deleteVariation( variation_index )" class="rounded-full h-8 w-8 flex items-center justify-center bg-red-400 text-white">
                                         <i class="las la-times"></i>
                                     </button>
@@ -51,14 +51,16 @@
                                     <button @click="duplicate( variation )" class="rounded-full h-8 w-8 flex items-center justify-center bg-blue-400 text-white">
                                         <i class="las la-copy"></i>
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="-mx-4 flex flex-wrap">
-                                <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
-                                    <ns-field :field="field"></ns-field>
-                                </div>
+                                <template  v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
+                                    <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3" v-if="( variation_index === 0 && field.name !== 'name' ) || variation_index > 0">
+                                        <ns-field :field="field"></ns-field>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -83,12 +85,16 @@ export default {
     computed: {
         defaultVariation() {
             const newVariation     =   new Object;
-
             for( let tabIndex in this.form.variations[0].tabs ) {
                 newVariation[ tabIndex ]            =   new Object;
                 newVariation[ tabIndex ].label      =   this.form.variations[0].tabs[ tabIndex ].label;
                 newVariation[ tabIndex ].active     =   this.form.variations[0].tabs[ tabIndex ].active;
-                newVariation[ tabIndex ].fields     =   this.form.variations[0].tabs[ tabIndex ].fields.map( field => {
+                newVariation[ tabIndex ].fields     =   this.form.variations[0].tabs[ tabIndex ].fields
+                    .filter( field => {
+                        console.log( field );
+                        return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
+                    })
+                    .map( field => {
                     field.value     =   '';
                     return field;
                 });
@@ -102,6 +108,9 @@ export default {
     },  
     props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
+        submit() {
+            this.formValidation.validateFields([ this.form.main ]);            
+        },
         deleteVariation( index ) {
             if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : 'No error message provided with code "delete-variation"' ) ) {
                 this.form.variations.splice( index, 1 );
@@ -134,16 +143,17 @@ export default {
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
             form.main           =   this.formValidation.createFields([ form.main ])[0];
-            let index           =   0;
 
-            form.variations.forEach( variation => {
+            form.variations.forEach( ( variation, _index ) => {
+                let index           =   0;
                 for( let key in variation.tabs ) {
+
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active  =   true;
                     }
 
-                    variation.tabs[ key ].active     =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
-                    variation.tabs[ key ].fields     =   this.formValidation.createFields( variation.tabs[ key ].fields );
+                    variation.tabs[ key ].active    =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields );
 
                     index++;
                 }

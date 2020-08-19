@@ -15,6 +15,9 @@ module.exports = {
         },
       }
     },
+    future: {
+      removeDeprecatedGapUtilities: true,
+    },
     variants: {
       opacity: [ 'responsive', 'hover', 'active' ]
     }
