@@ -7,7 +7,7 @@
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
+                    <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-gray-700">
                         <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
@@ -37,6 +37,11 @@
                                 </div>
                             </div>
                             <div class="flex items-center justify-center -mx-1">
+                                <div class="px-1" v-if="form.variations.length > 1">
+                                    <button @click="deleteVariation( variation_index )" class="rounded-full h-8 w-8 flex items-center justify-center bg-red-400 text-white">
+                                        <i class="las la-times"></i>
+                                    </button>
+                                </div>
                                 <div class="px-1">
                                     <button @click="newVariation()" class="rounded-full h-8 w-8 flex items-center justify-center bg-green-400 text-white">
                                         <i class="las la-plus"></i>
@@ -97,6 +102,11 @@ export default {
     },  
     props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
+        deleteVariation( index ) {
+            if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : 'No error message provided with code "delete-variation"' ) ) {
+                this.form.variations.splice( index, 1 );
+            }
+        },
         setTabActive( activeIndex, tabs ) {
             for( let _index in tabs ) {
                 if ( _index !== activeIndex ) {
@@ -105,7 +115,10 @@ export default {
             }
 
             tabs[ activeIndex ].active  =   true;
-        },      
+        },  
+        duplicate( variation ) {
+            this.form.variations.push( Object.assign({}, variation ));
+        },
         newVariation() {
             this.form.variations.push( this.defaultVariation );
         },
@@ -125,7 +138,7 @@ export default {
 
             form.variations.forEach( variation => {
                 for( let key in variation.tabs ) {
-                    if ( index === 1 && variation.tabs[ key ].active === undefined ) {
+                    if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active  =   true;
                     }
 

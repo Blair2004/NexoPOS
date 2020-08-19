@@ -39,9 +39,15 @@ class ProductCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_products.author', '=', 'nexopos_users.id' ],
-        [ 'nexopos_products_categories', 'nexopos_products.category_id', '=', 'nexopos_products_categories.id' ],
+        [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
+        [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
         'leftJoin'  =>  [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
+    ];
+
+    protected $pick     =   [
+        'parent'    =>  [ 'name' ],
+        'user'      =>  [ 'username' ],
+        'category'  =>  [ 'name' ],
     ];
 
     /**
@@ -195,11 +201,6 @@ class ProductCrud extends CrudService
                                     'label' =>  __( 'Stock Management Enabled' ),
                                     'value' =>  $entry->stock_management ?? '',
                                 ], [
-                                    'type'  =>  'text',
-                                    'name'  =>  'thumbnail_id',
-                                    'label' =>  __( 'Thumbnail_id' ),
-                                    'value' =>  $entry->thumbnail_id ?? '',
-                                ], [
                                     'type'  =>  'textarea',
                                     'name'  =>  'description',
                                     'label' =>  __( 'Description' ),
@@ -211,37 +212,43 @@ class ProductCrud extends CrudService
                             'label' =>  __( 'Units' ),
                             'fields'    =>  [
                                 [
-                                    'type'  =>  'text',
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'purchase_unit_group',
-                                    'descriptin'    =>  __( 'Define the unit group used for purchasing' ),
+                                    'description'    =>  __( 'Define the unit group used for purchasing' ),
                                     'label' =>  __( 'Purchase Group' ),
                                     'value' =>  $entry->purchase_unit_type ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
+                                    'options'   =>  [],
                                     'name'  =>  'purchase_unit_ids',
                                     'label' =>  __( 'Purchase Unit' ),
-                                    'descriptin'    =>  __( 'Define the unit or units used while purchasing' ),
+                                    'description'    =>  __( 'Define the unit or units used while purchasing' ),
                                     'value' =>  $entry->purchase_unit_ids ?? '',
                                 ], [
-                                    'type'  =>  'text',
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'selling_unit_group',
                                     'label' =>  __( 'Selling Group' ),
                                     'description'   =>  __( 'Define the unit group used for sale' ),
                                     'value' =>  $entry->selling_unit_type ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
+                                    'options'   =>  [],
                                     'name'  =>  'selling_unit_ids',
                                     'label' =>  __( 'Selling Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for sale' ),
                                     'value' =>  $entry->selling_unit_ids ?? '',
                                 ], [
-                                    'type'  =>  'text',
+                                    'type'  =>  'select',
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'transfer_unit_group',
                                     'label' =>  __( 'Transfer Group' ),
                                     'description'   =>  __( 'Define the unit group used for transfer' ),
                                     'value' =>  $entry->transfer_unit_type ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
+                                    'options'   =>  [],
                                     'name'  =>  'transfer_unit_ids',
                                     'label' =>  __( 'Transfer Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for transfer' ),
@@ -260,7 +267,7 @@ class ProductCrud extends CrudService
                                     'description'   =>  __( 'Set to "No" expiration time will be ignored.' ),
                                     'value'         =>  ( $entry !== null && $entry->expires ? 1 : 0 ),
                                 ], [
-                                    'type'          =>  'datetime',
+                                    'type'          =>  'date',
                                     'name'          =>  'expiration',
                                     'label'         =>  __( 'Expiration' ),
                                     'description'   =>  __( 'Define when the product expires' ),
@@ -273,7 +280,7 @@ class ProductCrud extends CrudService
                                     ]),
                                     'description'       =>  __( 'Determine the action taken while a product has expired.' ),
                                     'name'              =>  'on_expiration',
-                                    'label'             =>  __( 'On_expiration' ),
+                                    'label'             =>  __( 'On Expiration' ),
                                     'value'             =>  $entry->on_expiration ?? '',
                                 ]
                             ]
@@ -319,10 +326,6 @@ class ProductCrud extends CrudService
                                 ], 
                             ]
                         ],
-                        'galleries'     =>  [
-                            'label'     =>  __( 'Galleries' ),
-                            'fields'    =>  []
-                        ]
                     ]
                 ]
             ]
@@ -458,13 +461,8 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'category_id'  =>  [
+            'category_name'  =>  [
                 'label'  =>  __( 'Category' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'net_sale_price'  =>  [
-                'label'         =>  __( 'Net Sale Price' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -483,6 +481,11 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'net_sale_price'  =>  [
+                'label'         =>  __( 'Net Sale Price' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'stock_management'  =>  [
                 'label'         =>  __( 'Stock Mngmt' ),
                 '$direction'    =>  '',
@@ -498,7 +501,7 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'author'  =>  [
+            'user_username'  =>  [
                 'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -521,6 +524,11 @@ class ProductCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->product_type        =   $entry->product_type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
+        $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
+        $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
+        $entry->sale_price          =   ( string ) ns()->currency->value( $entry->sale_price );
+        $entry->net_sale_price      =   ( string ) ns()->currency->value( $entry->net_sale_price );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [

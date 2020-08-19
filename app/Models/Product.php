@@ -7,6 +7,11 @@ class Product extends Model
 {
     protected $table    =   'nexopos_' . 'products';
 
+    public function category()
+    {
+        return $this->belongsTo( ProductCategory::class, 'category_id', 'id' );
+    }
+
     /**
      * get a product using a barcode
      * @param QueryBuilder

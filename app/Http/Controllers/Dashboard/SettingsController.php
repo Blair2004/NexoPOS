@@ -46,6 +46,7 @@ class SettingsController extends DashboardController
             case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'stores'; return $this->storesSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
+            case 'notifications'; return $this->notificationsSettings(); break;
             default : return abort( 404, __( 'Settings Page Not Found' ) );break;
         }
     }
@@ -79,6 +80,14 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.general', [
             'title'     =>      __( 'General Settings' ),
             'description'   =>  __( 'Configure the general settings of the application.' )
+        ]);
+    }
+
+    public function notificationsSettings()
+    {
+        return $this->view( 'pages.dashboard.settings.notifications', [
+            'title'     =>      __( 'Notifications Settings' ),
+            'description'   =>  __( 'Configure the notifications settings of the application.' )
         ]);
     }
 

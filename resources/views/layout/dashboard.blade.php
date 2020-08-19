@@ -16,7 +16,7 @@ use App\Services\Helper;
             <div id="dashboard-aside" class="w-64 flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
                 <div class="overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
-                        <h1 class="font-black text-white text-3xl">NexoPOS</h1>
+                        <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-300 to-teal-300 text-3xl">NexoPOS</h1>
                     </div>
                     <ul>
                         @foreach( $menus->getMenus() as $identifier => $menu )

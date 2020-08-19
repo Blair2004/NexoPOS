@@ -325,6 +325,10 @@ class MenuService
                         'label' =>  __( 'Service Providers'),
                         'href'  =>  url( '/dashboard/settings/service-providers' )
                     ],
+                    'notifications'   =>  [
+                        'label' =>  __( 'Notifications'),
+                        'href'  =>  url( '/dashboard/settings/notifications' )
+                    ],
                     'reset'   =>  [
                         'label' =>  __( 'Reset'),
                         'href'  =>  url( '/dashboard/settings/reset' )

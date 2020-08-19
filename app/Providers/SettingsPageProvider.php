@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Settings\CustomersSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\InvoiceSettings;
+use App\Settings\NotificationsSettings;
 use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\StoresSettings;
@@ -42,6 +43,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.stores': return new StoresSettings; break;
                 case 'ns.service-providers': return new ServiceProvidersSettings; break;
                 case 'ns.invoice-settings': return new InvoiceSettings; break;
+                case 'ns.notifications': return new NotificationsSettings; break;
             }
             return $class;
         }, 10, 2 );

@@ -12,7 +12,12 @@
             return-link="{{ $returnLink ?? '#' }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
-            src="{{ $src }}"></ns-manage-products>
+            src="{{ $src }}">
+            <template v-slot:title>{{ $mainFieldLabel ?? __( 'mainFieldLabel not defined' ) }}</template>
+            <template v-slot:save>{{ $saveButton ?? __( 'Save' ) }}</template>
+            <template v-slot:error-required>{{ $fieldRequired ?? __( 'This field is required' ) }}</template>
+            <template v-slot:error-invalid-form>{{ $formNotValid ?? __( 'The form is not valid. Please check it and try again' ) }}</template>
+        </ns-manage-products>
     </div>
 </div>
 @endsection
