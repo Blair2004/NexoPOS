@@ -32,8 +32,9 @@
                     <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
                         <div id="card-header" class="flex flex-wrap justify-between">
                             <div class="flex flex-wrap">
-                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="cursor-pointer text-gray-700 px-4 py-2 rounded-tl-lg rounded-tr-lg">
-                                    {{ tab.label }}
+                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="cursor-pointer text-gray-700 px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                    <span class="block mr-2">{{ tab.label }}</span>
+                                    <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                 </div>
                             </div>
                             <div class="flex items-center justify-center -mx-1">
@@ -109,7 +110,13 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
     methods: {
         submit() {
-            this.formValidation.validateFields([ this.form.main ]);            
+            let formValidGlobally   =   true;
+            this.formValidation.validateFields([ this.form.main ]);  
+            this.form.variations.forEach( variation => {
+                this.formValidation.validateForm( variation );
+            });
+
+            console.log( this.form );
         },
         deleteVariation( index ) {
             if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : 'No error message provided with code "delete-variation"' ) ) {

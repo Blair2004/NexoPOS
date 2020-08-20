@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         submitForm() {
-            if ( this.validation.validateForm( this.form ) ) {
+            if ( this.validation.validateForm( this.form ).length === 0 ) {
                 this.validation.disableForm( this.form );
                 return nsHttpClient.post( this.url, this.validation.extractForm( this.form ) )
                     .subscribe( result => {

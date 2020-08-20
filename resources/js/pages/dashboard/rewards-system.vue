@@ -30,7 +30,7 @@ export default {
                     .subscribe();
             }
 
-            if ( ! this.formValidation.validateForm( this.form ) ) {
+            if ( this.formValidation.validateForm( this.form ).length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }

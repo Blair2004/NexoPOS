@@ -6,24 +6,35 @@ export default class FormValidation {
         }).filter( f => f === false ).length === 0;
     }
 
+    validateFieldsErrors( fields ) {
+        return fields.map( field => {
+            this.checkField( field );
+            return field.errors;
+        }).flat();
+    }
+
     validateForm( form ) {
         if ( form.main ) {
             this.validateField( form.main );
         }
 
-        const tabsInvalidity    =   [];
-
+        const globalErrors          =   [];
+        
         for( let key in form.tabs ) {
-            tabsInvalidity.push(
-                this.validateFields( form.tabs[ key ].fields )
-            );
+            const tabsInvalidity    =   [];
+            const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
+            
+            if ( validErrors.length > 0 ) {
+                tabsInvalidity.push(
+                    validErrors
+                );
+            }
+
+            form.tabs[ key ].errors     =   tabsInvalidity.flat();
+            globalErrors.push( tabsInvalidity.flat() );
         }
 
-        if ( ( form.main && form.main.errors.length > 0 ) || tabsInvalidity.filter( f => f === false ).length > 0 ) {
-            return false;
-        }
-
-        return true;
+        return globalErrors.flat();
     }
 
     validateField( field ) {
@@ -46,6 +57,7 @@ export default class FormValidation {
 
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
+            form.tabs[ tab ].errors     =   [];
         }
 
         return form;
@@ -182,14 +194,16 @@ export default class FormValidation {
                     form.tabs[ path[0] ].fields.forEach( field => {
                         if ( field.name === path[1] ) {
                             data.errors[ index ].forEach( errorMessage => {
-                                field.errors.push({
+                                const error     =   {
                                     identifier: 'invalid',
                                     invalid: true,
                                     message: errorMessage
-                                });
+                                };
+
+                                field.errors.push( error );
                             });
                         }
-                    })
+                    });
                 }
 
                 /**
