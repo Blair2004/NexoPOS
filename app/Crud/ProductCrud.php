@@ -200,6 +200,7 @@ class ProductCrud extends CrudService
                                     'description'   =>  __( 'Enable the stock management on the product. Will not work for service or uncountable products.' ),
                                     'name'  =>  'stock_management',
                                     'label' =>  __( 'Stock Management Enabled' ),
+                                    'validation'    =>  'required',
                                     'value' =>  $entry->stock_management ?? '',
                                 ], [
                                     'type'  =>  'textarea',

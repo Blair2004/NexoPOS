@@ -15,8 +15,11 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\CrudService;
+use App\Services\Helper;
 use App\Services\ProductService;
 use Exception;
+use Illuminate\Support\Arr;
 
 class ProductsController extends DashboardController
 {
@@ -34,41 +37,21 @@ class ProductsController extends DashboardController
 
     public function saveProduct( Request $request )
     {
-        /**
-         * prior field validation
-         */
-        $fields     =   $request->only([ 
-            'name', 
-            'tax_type', 
-            'sale_price', 
-            'product_type', // simple, extended
-            'type', 
-            'gross_sale_price', 
-            'status', 
-            'stock_management', 
-            'on_expiration', 
-            'barcode', 
-            'barcode_type', 
-            'sku', 
-            'description', 
-            'thumbnail_id', 
-            'category_id', 
-            'tax_id', 
-            'selling_unit_id', 
-            'selling_unit_type',
-            'purchase_unit_id', 
-            'purchase_unit_type',
-            'transfer_unit_id', 
-            'transfer_unit_type',
-            'expiration',
-            'variations'
-        ]);
+        $primary    =   collect( $request->input( 'variations' ) )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
+
+        $primary[ 'identification' ][ 'name' ]  =   $request->input( 'name' );
+        $primary                    =    Helper::flatArrayWithKeys( $primary );
+        $primary[ 'product_type' ]  =   'product';
+        
+        unset( $primary[ '$primary' ] );
 
         /**
          * the method "create" is capable of 
          * creating either a product or a variable product
          */
-        return $this->productService->create( $fields );
+        return $this->productService->create( $primary );
     }
 
     /**
@@ -315,7 +298,7 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.create', [
             'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }

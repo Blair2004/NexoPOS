@@ -123,4 +123,21 @@ trait ArrayHelper {
             ]
         ];
     }
+
+    /**
+     * flat multidimensional array using 
+     * keys
+     * @param array $data
+     * @return array
+     */
+    static function flatArrayWithKeys( $data )
+    {
+        return collect( $data )->mapWithKeys( function( $data, $index ) {
+            if ( ! is_array( $data ) ) {
+                return [ $index => $data ];
+            } else {
+                return self::flatArrayWithKeys( $data );
+            }
+        });
+    }
 }

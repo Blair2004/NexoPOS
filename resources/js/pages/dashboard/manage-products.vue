@@ -58,7 +58,7 @@
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="-mx-4 flex flex-wrap">
                                 <template  v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
-                                    <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3" v-if="( variation_index === 0 && field.name !== 'name' ) || variation_index > 0">
+                                    <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field :field="field"></ns-field>
                                     </div>
                                 </template>
@@ -80,17 +80,18 @@ export default {
             formValidation: new FormValidation,
             nsSnackBar,
             nsHttpClient,
+            _sampleVariation: null,
             form: '',
         }
     },
     computed: {
         defaultVariation() {
             const newVariation     =   new Object;
-            for( let tabIndex in this.form.variations[0].tabs ) {
+            for( let tabIndex in this._sampleVariation.tabs ) {
                 newVariation[ tabIndex ]            =   new Object;
-                newVariation[ tabIndex ].label      =   this.form.variations[0].tabs[ tabIndex ].label;
-                newVariation[ tabIndex ].active     =   this.form.variations[0].tabs[ tabIndex ].active;
-                newVariation[ tabIndex ].fields     =   this.form.variations[0].tabs[ tabIndex ].fields
+                newVariation[ tabIndex ].label      =   this._sampleVariation.tabs[ tabIndex ].label;
+                newVariation[ tabIndex ].active     =   this._sampleVariation.tabs[ tabIndex ].active;
+                newVariation[ tabIndex ].fields     =   this._sampleVariation.tabs[ tabIndex ].fields
                     .filter( field => {
                         console.log( field );
                         return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
@@ -111,12 +112,46 @@ export default {
     methods: {
         submit() {
             let formValidGlobally   =   true;
-            this.formValidation.validateFields([ this.form.main ]);  
-            this.form.variations.forEach( variation => {
-                this.formValidation.validateForm( variation );
-            });
+            this.formValidation.validateFields([ this.form.main ]); 
 
-            console.log( this.form );
+            const validity  =   this.form.variations.map( variation => {
+                return this.formValidation.validateForm( variation );
+            }).filter( v => v.length > 0 );
+            
+            console.log( validity );
+
+            if ( validity.length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'No error has been provided for the slot "error-form-invalid"' ).subscribe();
+            }
+
+            /**
+             * let's correctly extract 
+             * the form before submitting that
+             */
+            const data  =   {
+                ...this.formValidation.extractForm( this.form ),
+                variations: this.form.variations.map( (v,i) => {
+                    const data  =   this.formValidation.extractForm( v );
+                    if ( i === 0 ) {
+                        data[ '$primary' ]  =   true;
+                    }
+                    return data;
+                })
+            }
+
+            nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
+                .subscribe( data => {
+                    if ( data.status === 'success' ) {
+                        return document.location   =   this.returnLink;
+                    }
+                    this.formValidation.enableForm( this.form );
+                }, ( error ) => {
+                    nsSnackBar.error( error.response.data.message, undefined, {
+                        duration: 5000
+                    }).subscribe();
+                    this.formValidation.triggerError( this.form, error.response.data );
+                    this.formValidation.enableForm( this.form );
+                })
         },
         deleteVariation( index ) {
             if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : 'No error message provided with code "delete-variation"' ) ) {
@@ -155,12 +190,20 @@ export default {
                 let index           =   0;
                 for( let key in variation.tabs ) {
 
+                    /**
+                     * here we need to explicitely remove the
+                     * name field as this is replaced by the top field.
+                     * We also save the default variation as that's used for variations
+                     */
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
-                        variation.tabs[ key ].active  =   true;
+                        variation.tabs[ key ].active    =   true;
+                        this._sampleVariation           =   Object.assign({}, variation );
+                        variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );
+                    } else {
+                        variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields );
                     }
 
                     variation.tabs[ key ].active    =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
-                    variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields );
 
                     index++;
                 }

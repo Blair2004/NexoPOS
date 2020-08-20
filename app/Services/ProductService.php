@@ -513,11 +513,13 @@ class ProductService
 
                 $type   =   $product[ $unitType ] === 'unit' ? __( 'Unit' ) : __( 'Unit Group' );
 
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  sprintf( __( 'The %s to which the item is assigned through the field "%s" doesn\'t exists or has been deleted.' ), $type, $field ),
-                    'message'      =>  $exception->getMessage()
-                ]);
+                throw new Exception( 
+                    sprintf( 
+                        __( 'The %s to which the item is assigned through the field "%s" doesn\'t exists or has been deleted.' ), 
+                        $type, 
+                        $field 
+                    ) 
+                );
             }
 
         } else {

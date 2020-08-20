@@ -118,20 +118,22 @@ export default class FormValidation {
             formValue[ form.main.name ]     =   form.main.value;
         }
 
-        for( let tab in form.tabs ) {
-            if ( formValue[ tab ] === undefined ) {
-                formValue[ tab ]    =   {};
-            }
-
-            form.tabs[ tab ].fields.forEach( field => {
-                if ( [ 'multiselect' ].includes( field.type ) ) {
-                    formValue[ tab ][ field.name ]  =   field.options
-                        .filter( option => option.selected )
-                        .map( option => option.value );
-                } else {
-                    formValue[ tab ][ field.name ]  =   field.value;
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                if ( formValue[ tab ] === undefined ) {
+                    formValue[ tab ]    =   {};
                 }
-            });
+    
+                form.tabs[ tab ].fields.forEach( field => {
+                    if ( [ 'multiselect' ].includes( field.type ) ) {
+                        formValue[ tab ][ field.name ]  =   field.options
+                            .filter( option => option.selected )
+                            .map( option => option.value );
+                    } else {
+                        formValue[ tab ][ field.name ]  =   field.value;
+                    }
+                });
+            }
         }
 
         return formValue;
@@ -197,7 +199,8 @@ export default class FormValidation {
                                 const error     =   {
                                     identifier: 'invalid',
                                     invalid: true,
-                                    message: errorMessage
+                                    message: errorMessage,
+                                    name: field.name
                                 };
 
                                 field.errors.push( error );
@@ -214,7 +217,8 @@ export default class FormValidation {
                         form.main.errors.push({
                             identifier: 'invalid',
                             invalid: true,
-                            message: errorMessage
+                            message: errorMessage,
+                            name: form.main.name
                         });
                     });
                 }
@@ -229,7 +233,8 @@ export default class FormValidation {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,
-                    invalid: true
+                    invalid: true,
+                    name: field.name
                 })
             } else {
                 field.errors.forEach( ( error, index ) => {
@@ -246,7 +251,8 @@ export default class FormValidation {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,
-                    invalid: true
+                    invalid: true,
+                    name: field.name
                 })
             } else {
                 field.errors.forEach( ( error, index ) => {
