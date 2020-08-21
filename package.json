@@ -18,7 +18,7 @@
         "sass": "^1.15.2",
         "sass-loader": "^9.0.3",
         "vue-loader": "^15.9.3",
-        "vue-template-compiler": "^2.6.11"
+        "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
         "chart.js": "^2.9.3",
@@ -26,7 +26,7 @@
         "rx": "^4.1.0",
         "rxjs": "^6.6.2",
         "tailwindcss": "^1.7.3",
-        "vue": "^2.6.11",
+        "vue": "^2.6.12",
         "vue-router": "^3.4.3"
     }
 }
