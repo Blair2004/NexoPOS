@@ -28176,7 +28176,16 @@ body {
  * Forms
 **/
 
-.form-input {
+.form-input label {
+  font-weight: 600;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  --text-opacity: 1;
+  color: #2d3748;
+  color: rgba(45, 55, 72, var(--text-opacity));
+}
+
+.form-input input {
   --bg-opacity: 1;
   background-color: #ebf8ff;
   background-color: rgba(235, 248, 255, var(--bg-opacity));
@@ -28189,17 +28198,44 @@ body {
   width: 100%;
 }
 
-.form-input-invalid {
+.form-input p {
+  font-size: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  --text-opacity: 1;
+  color: #718096;
+  color: rgba(113, 128, 150, var(--text-opacity));
+}
+
+.form-input-invalid label {
+  font-weight: 600;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  --text-opacity: 1;
+  color: #f56565;
+  color: rgba(245, 101, 101, var(--text-opacity));
+}
+
+.form-input-invalid input {
   --bg-opacity: 1;
   background-color: #fff5f5;
   background-color: rgba(255, 245, 245, var(--bg-opacity));
   --border-opacity: 1;
-  border-color: #fed7d7;
-  border-color: rgba(254, 215, 215, var(--border-opacity));
+  border-color: #fc8181;
+  border-color: rgba(252, 129, 129, var(--border-opacity));
   border-radius: 0.25rem;
   border-width: 2px;
   padding: 0.5rem;
   width: 100%;
+}
+
+.form-input-invalid p {
+  font-size: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  --text-opacity: 1;
+  color: #f56565;
+  color: rgba(245, 101, 101, var(--text-opacity));
 }
 
 @media (min-width: 640px){

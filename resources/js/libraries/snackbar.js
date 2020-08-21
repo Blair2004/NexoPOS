@@ -104,7 +104,7 @@ export class SnackBar {
         sampleSnack.setAttribute( 'class', `rounded-lg py-2 px-3 w-3/4 my-2 shadow-lg flex justify-between items-center ${snackThemeClass}` );
 
         snackWrapper.setAttribute( 'id', 'snack-wrapper' );
-        snackWrapper.setAttribute( 'class', 'absolute bottom-0 w-full flex justify-between items-center py-4 flex-col')
+        snackWrapper.setAttribute( 'class', 'absolute bottom-0 w-full flex justify-between items-center flex-col')
         snackWrapper.appendChild( sampleSnack );
 
         document.body.appendChild( snackWrapper );

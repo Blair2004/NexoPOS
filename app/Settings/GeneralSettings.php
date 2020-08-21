@@ -51,38 +51,34 @@ class GeneralSettings extends SettingsPage
                             'label' =>  __( 'Store Email' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The actual store email. Might be used on invoice or for reports.' ),
-                            'validation'    =>  'required|email'                           
+                            'validation'    =>  'sometimes|email'                           
                         ], [
                             'name'  =>  'ns_store_pobox',
                             'value'          =>  $options->get( 'ns_store_pobox' ),
                             'label' =>  __( 'Store PO.Box' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The store mail box number.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'  =>  'ns_store_fax',
                             'value'          =>  $options->get( 'ns_store_fax' ),
                             'label' =>  __( 'Store Fax' ), 
                             'type'          =>  'text',
-                            'description'   =>  __( 'The store fax number.' ),
-                            'validation'    =>  'required'                           
+                            'description'   =>  __( 'The store fax number.' ),     
                         ], [
                             'name'  =>  'ns_store_additional',
                             'value'          =>  $options->get( 'ns_store_additional' ),
                             'label' =>  __( 'Store Additional Information' ), 
                             'type'          =>  'textarea',
                             'description'   =>  __( 'Store additional informations.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'          =>  'ns_store_language',
                             'value'         =>  $options->get( 'ns_store_language' ),
                             'options'         =>  Helper::kvToJsOptions([
                                 'en'       =>  __( 'English' ),
                             ]),
-                            'label' =>  __( 'Requires Validation' ), 
+                            'label' =>  __( 'Language' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Force account validation after the registration.' ),
-                            'validation'    =>  'required'                           
                         ], 
                     ]
                 ],
@@ -106,7 +102,7 @@ class GeneralSettings extends SettingsPage
                         ], [
                             'name'  =>  'ns_currency_position',
                             'value'          =>  $options->get( 'ns_currency_position' ),
-                            'label' =>  __( 'Currency ISO' ), 
+                            'label' =>  __( 'Currency Position' ), 
                             'type'          =>  'select',
                             'options'       =>  [
                                 [
@@ -118,21 +114,18 @@ class GeneralSettings extends SettingsPage
                                 ]
                             ],
                             'description'   =>  __( 'Define where the currency should be located.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'  =>  'ns_currency_thousand_separator',
                             'value'          =>  $options->get( 'ns_currency_thousand_separator' ),
                             'label' =>  __( 'Currency Thousand Separator' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'Define the symbol that indicate thousand. By default "," is used.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'  =>  'ns_currency_decimal_separator',
                             'value'          =>  $options->get( 'ns_currency_decimal_separator' ),
                             'label' =>  __( 'Currency Decimal Separator' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'Define the symbol that indicate decimal number. By default "." is used.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'  =>  'ns_currency_precision',
                             'value'          =>  $options->get( 'ns_currency_precision' ),
@@ -145,7 +138,6 @@ class GeneralSettings extends SettingsPage
                                 ];
                             })->toArray(),
                             'description'   =>  __( 'Define where the currency should be located.' ),
-                            'validation'    =>  'required'                           
                         ],
                     ]
                 ],
@@ -186,7 +178,6 @@ class GeneralSettings extends SettingsPage
                             'label' =>  __( 'Registration Open' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Determine if everyone can register.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'          =>  'ns_registration_role',
                             'value'         =>  $options->get( 'ns_registration_role' ),
@@ -194,7 +185,6 @@ class GeneralSettings extends SettingsPage
                             'label'         =>  __( 'Registration Role' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Select what is the registration role.' ),
-                            'validation'    =>  'required'                           
                         ], [
                             'name'          =>  'ns_registration_validated',
                             'value'         =>  $options->get( 'ns_registration_validated' ),
@@ -205,7 +195,6 @@ class GeneralSettings extends SettingsPage
                             'label' =>  __( 'Requires Validation' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Force account validation after the registration.' ),
-                            'validation'    =>  'required'                           
                         ], 
                     ]
                 ],

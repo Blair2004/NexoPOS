@@ -28,7 +28,8 @@ class DashboardController extends Controller
     public function home()
     {
         return view( 'pages.dashboard.home', [
-            'menus' =>  $this->menuService
+            'menus' =>  $this->menuService,
+            'title' =>  __( 'Dashboard' )
         ]);
     }
 

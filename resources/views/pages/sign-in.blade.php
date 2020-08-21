@@ -9,48 +9,48 @@
                     <div class="flex justify-center items-center py-6">
                         <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                     </div>
-                    <div class="bg-white p-3 rounded shadow -my-2">
-                        <div class="form-field flex flex-col my-2">
-                            @if( $errors->has( 'password' ) )
-                            <label for="" class="font-semibold text-red-600 text-sm mb-1">Username</label>
-                            @else
-                            <label for="" class="font-semibold text-sm mb-1">Username</label>
-                            @endif
-                            <input name="username" type="text" class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }}">
-                            @if( $errors->has( 'username' ) )
-                                @foreach( $errors->get( 'username' ) as $error )
-                                <p class="text-xs text-red-600">{{ $error }}</p>
-                                @endforeach
-                            @else
-                            <p class="text-xs text-gray-600">Provide your username</p>
-                            @endif
+                    <div class="bg-white rounded shadow overflow-hidden">
+                        <div class="p-3 -my-2">
+                            <div class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }} flex flex-col my-2">
+                                @if( $errors->has( 'password' ) )
+                                <label for="username">{{ __( 'Username' ) }}</label>
+                                @else
+                                <label for="username">{{ __( 'Username' ) }}</label>
+                                @endif
+                                <input name="username" value="{{ old( 'username' ) }}" type="text">
+                                @if( $errors->has( 'username' ) )
+                                    @foreach( $errors->get( 'username' ) as $error )
+                                    <p>{{ $error }}</p>
+                                    @endforeach
+                                @else
+                                <p>{{ __( 'Provide your username' ) }}</p>
+                                @endif
+                            </div>
+                            <div class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }} flex flex-col my-2">
+                                @if( $errors->has( 'password' ) )
+                                <label for="password">{{ __( 'Password' ) }}</label>
+                                @else
+                                <label for="password">{{ __( 'Password' ) }}</label>
+                                @endif
+                                <input name="password" type="password">
+                                @if( $errors->has( 'password' ) )
+                                    @foreach( $errors->get( 'password' ) as $error )
+                                    <p>{{ $error }}</p>
+                                    @endforeach
+                                @else
+                                <p>{{ __( 'Provide your password' ) }}</p>
+                                @endif
+                            </div>
                         </div>
-                        <div class="form-field flex flex-col my-2">
-                            @if( $errors->has( 'password' ) )
-                            <label for="" class="font-semibold text-red-600 text-sm mb-1">Password</label>
-                            @else
-                            <label for="" class="font-semibold text-sm mb-1">Password</label>
-                            @endif
-                            <input name="password" type="password" class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }}">
-                            @if( $errors->has( 'password' ) )
-                                @foreach( $errors->get( 'password' ) as $error )
-                                <p class="text-xs text-red-600">{{ $error }}</p>
-                                @endforeach
-                            @else
-                            <p class="text-xs text-gray-600">Provide your password</p>
-                            @endif
+                        <div class="flex w-full items-center justify-center py-4">
+                            <a href="{{ url( '/password-lost' )}}" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
                         </div>
-                        <div class="flex justify-between flex-col items-center my-2">
-                            <div class="flex justify-between w-full mb-6">
-                                <div>
-                                    <x-ns-button :label="__( 'Sign In' )" color="blue"/>
-                                </div>
-                                <div>
-                                    <x-ns-link :href="url( '/sign-up' )" type="success" :label="__( 'Register' )"></x-ns-link>
-                                </div>
+                        <div class="flex justify-between items-center bg-gray-200 p-3">
+                            <div>
+                                <x-ns-button :label="__( 'Sign In' )" color="blue"/>
                             </div>
                             <div>
-                                <a href="{{ url( '/password-lost' )}}" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
+                                <x-ns-link :href="url( '/sign-up' )" type="success" :label="__( 'Register' )"></x-ns-link>
                             </div>
                         </div>
                     </div>
