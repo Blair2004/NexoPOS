@@ -57,13 +57,12 @@ body {
         @apply text-xs text-red-500 py-1;
     }
 }
-
 .btn {
     @apply text-center rounded shadow border py-2 px-3
-    .btn-blue {
-        @apply border-blue-600 bg-blue-600 text-white
-    }
-    .btn-red {
-        @apply border-red-600 bg-red-600 text-white
-    }
+}
+.btn-blue {
+    @apply border-blue-600 bg-blue-600 text-white
+}
+.btn-red {
+    @apply border-red-600 bg-red-600 text-white
 }

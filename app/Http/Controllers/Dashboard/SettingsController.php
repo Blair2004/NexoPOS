@@ -41,7 +41,6 @@ class SettingsController extends DashboardController
             case 'pos'; return $this->posSettings(); break;
             case 'supplies-deliveries'; return $this->suppliesDeliveries(); break;
             case 'reports'; return $this->reportsSettings(); break;
-            case 'reset'; return $this->resetSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'stores'; return $this->storesSettings(); break;
@@ -133,9 +132,16 @@ class SettingsController extends DashboardController
 
     public function resetSettings()
     {
+        /**
+         * @temp
+         */
+        if ( Auth::user()->role->namespace !== 'admin' ) {
+            throw new Exception( __( 'Access Denied' ) );
+        }
+
         return $this->view( 'pages.dashboard.settings.reset', [
             'title'     =>      __( 'Reset Settings' ),
-            'description'   =>  __( 'Reste the applications' )
+            'description'   =>  __( 'Reset the data and enable demo.' )
         ]);
     }
 

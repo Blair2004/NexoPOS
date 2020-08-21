@@ -52,6 +52,13 @@ class UsersController extends DashboardController
         if ( $user->id === Auth::id() ) {
             return redirect( route( 'dashboard.users.profile' ) );
         }
+
+        /**
+         * @temp
+         */
+        if ( Auth::user()->role->namespace !== 'admin' ) {
+            throw new Exception( __( 'Access Denied' ) );
+        }
         
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit User' ),

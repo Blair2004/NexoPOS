@@ -28238,6 +28238,41 @@ body {
   color: rgba(245, 101, 101, var(--text-opacity));
 }
 
+.btn {
+  border-radius: 0.25rem;
+  border-width: 1px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.btn-blue {
+  --bg-opacity: 1;
+  background-color: #3182ce;
+  background-color: rgba(49, 130, 206, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #3182ce;
+  border-color: rgba(49, 130, 206, var(--border-opacity));
+  --text-opacity: 1;
+  color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
+}
+
+.btn-red {
+  --bg-opacity: 1;
+  background-color: #e53e3e;
+  background-color: rgba(229, 62, 62, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #e53e3e;
+  border-color: rgba(229, 62, 62, var(--border-opacity));
+  --text-opacity: 1;
+  color: #fff;
+  color: rgba(255, 255, 255, var(--text-opacity));
+}
+
 @media (min-width: 640px){
   .sm\:container{
     width: 100%;

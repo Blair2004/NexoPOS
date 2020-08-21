@@ -296,6 +296,12 @@ class UserCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
+            /**
+             * @temp
+             */
+            if ( Auth::user()->role->namespace !== 'admin' ) {
+                throw new Exception( __( 'Access Denied' ) );
+            }
         }
     }
 
@@ -392,6 +398,13 @@ class UserCrud extends CrudService
                 'success'   =>  0,
                 'failed'    =>  0
             ];
+
+            /**
+             * @temp
+             */
+            if ( Auth::user()->role->namespace !== 'admin' ) {
+                throw new Exception( __( 'Access Denied' ) );
+            }
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
