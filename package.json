@@ -22,7 +22,7 @@
     },
     "dependencies": {
         "chart.js": "^2.9.3",
-        "dayjs": "^1.8.33",
+        "dayjs": "^1.8.34",
         "rx": "^4.1.0",
         "rxjs": "^6.6.2",
         "tailwindcss": "^1.7.1",
