@@ -19,11 +19,12 @@ Route::get('/', function () {
 
 Route::middleware([ 'ns.installed' ])->group( function() {
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
-    Route::get( '/sign-up', 'AuthController@signUp' );
+    Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
     Route::get( '/new-password', 'AuthController@newPassword' );
 
     Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
+    Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
     Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
 
     Route::middleware([ 'auth' ])->group( function() {

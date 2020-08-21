@@ -154,7 +154,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'barcode_type',
                                     'label' =>  __( 'Barcode Type' ),
                                     'validation'    =>  'required',
-                                    'value' =>  $entry->barcode_type ?? '',
+                                    'value' =>  $entry->barcode_type ?? 'ean8',
                                 ], [
                                     'type'      =>  'select',
                                     'description'   =>  __( 'Select to which category the item is assigned.' ),
@@ -172,7 +172,7 @@ class ProductCrud extends CrudService
                                     'name'          =>  'product_type',
                                     'validation'    =>  'required',
                                     'label'         =>  __( 'Product Type' ),
-                                    'value'         =>  $entry->product_type ?? '',
+                                    'value'         =>  $entry->product_type ?? 'materialized',
                                 ], [
                                     'type'  =>  'text',
                                     'name'  =>  'sku',
@@ -190,7 +190,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'status',
                                     'validation'    =>  'required',
                                     'label' =>  __( 'Status' ),
-                                    'value' =>  $entry->status ?? '',
+                                    'value' =>  $entry->status ?? 'available',
                                 ], [
                                     'type'      =>  'switch',
                                     'options'   =>  Helper::kvToJsOptions([
@@ -201,7 +201,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'stock_management',
                                     'label' =>  __( 'Stock Management Enabled' ),
                                     'validation'    =>  'required',
-                                    'value' =>  $entry->stock_management ?? '',
+                                    'value' =>  $entry->stock_management ?? 'enabled',
                                 ], [
                                     'type'  =>  'textarea',
                                     'name'  =>  'description',
@@ -287,7 +287,7 @@ class ProductCrud extends CrudService
                                     'description'       =>  __( 'Determine the action taken while a product has expired.' ),
                                     'name'              =>  'on_expiration',
                                     'label'             =>  __( 'On Expiration' ),
-                                    'value'             =>  $entry->on_expiration ?? '',
+                                    'value'             =>  $entry->on_expiration ?? 'prevent-sales',
                                 ]
                             ]
                         ],
@@ -318,7 +318,7 @@ class ProductCrud extends CrudService
                                     'description'   =>  __( 'Define what is the type of the tax.' ),
                                     'name'  =>  'tax_type',
                                     'label' =>  __( 'Tax Type' ),
-                                    'value' =>  $entry->tax_type ?? '',
+                                    'value' =>  $entry->tax_type ?? 'inclusive',
                                 ], 
                             ]
                         ],

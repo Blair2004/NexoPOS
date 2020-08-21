@@ -13,7 +13,7 @@ class CreateTrucksTable extends Migration
      */
     public function up()
     {
-        Schema::create( 'trucks', function (Blueprint $table) {
+        Schema::create( 'nexopos_trucks', function (Blueprint $table) {
             $table->id();
             $table->string( 'name' );
             $table->boolean( 'active' )->default(true);
@@ -31,6 +31,6 @@ class CreateTrucksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('trucks');
+        Schema::dropIfExists('nexopos_trucks');
     }
 }

@@ -118,8 +118,6 @@ export default {
                 return this.formValidation.validateForm( variation );
             }).filter( v => v.length > 0 );
             
-            console.log( validity );
-
             if ( validity.length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'No error has been provided for the slot "error-form-invalid"' ).subscribe();
             }
@@ -141,6 +139,7 @@ export default {
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {
+                    console.log( data );
                     if ( data.status === 'success' ) {
                         return document.location   =   this.returnLink;
                     }

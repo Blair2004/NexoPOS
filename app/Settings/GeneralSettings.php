@@ -177,8 +177,8 @@ class GeneralSettings extends SettingsPage
                     'label' =>  __( 'Registration' ),
                     'fields'    =>  [
                         [
-                            'name'          =>  'ns_registration_status',
-                            'value'         =>  $options->get( 'ns_registration_status' ),
+                            'name'          =>  'ns_registration_enabled',
+                            'value'         =>  $options->get( 'ns_registration_enabled' ),
                             'options'         =>  Helper::kvToJsOptions([
                                 'yes'       =>  __( 'Yes' ),
                                 'no'        =>  __( 'No' )

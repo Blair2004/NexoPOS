@@ -273,7 +273,7 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        if ( isset( $data[ 'tax_id' ] ) ) {
+        if ( isset( $data[ 'tax_id' ] ) && ! empty( $data[ 'tax_id' ] ) ) {
             $this->taxService->computeTax( $product, $data[ 'tax_id' ]);
         }
 

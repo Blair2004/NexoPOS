@@ -98,10 +98,7 @@ class TaxService
     {
         $tax    =   Tax::find( $tax_id );
         if ( ! $tax instanceof Tax ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested tax using the provided identifier.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested tax using the provided identifier.' ) );
         }
 
         return $tax;

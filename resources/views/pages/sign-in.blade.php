@@ -7,7 +7,7 @@
                 <form action="{{ url( '/auth/sign-in' ) }}" method="post">
                     @csrf
                     <div class="flex justify-center items-center py-6">
-                        <h2 class="text-6xl font-bold">NexoPOS</h2>
+                        <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                     </div>
                     <div class="bg-white p-3 rounded shadow -my-2">
                         <div class="form-field flex flex-col my-2">
@@ -16,7 +16,7 @@
                             @else
                             <label for="" class="font-semibold text-sm mb-1">Username</label>
                             @endif
-                            <input name="username" type="text" class="border-2 outline-none border-gray-200 bg-gray-100 rounded p-2 w-full">
+                            <input name="username" type="text" class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }}">
                             @if( $errors->has( 'username' ) )
                                 @foreach( $errors->get( 'username' ) as $error )
                                 <p class="text-xs text-red-600">{{ $error }}</p>
@@ -31,7 +31,7 @@
                             @else
                             <label for="" class="font-semibold text-sm mb-1">Password</label>
                             @endif
-                            <input name="password" type="password" class="border-2 outline-none border-gray-200 bg-gray-100 rounded p-2 w-full">
+                            <input name="password" type="password" class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }}">
                             @if( $errors->has( 'password' ) )
                                 @foreach( $errors->get( 'password' ) as $error )
                                 <p class="text-xs text-red-600">{{ $error }}</p>

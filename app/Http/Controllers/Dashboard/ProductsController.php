@@ -18,6 +18,7 @@ use App\Models\ProductCategory;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\ProductService;
+use App\Services\Options;
 use Exception;
 use Illuminate\Support\Arr;
 
@@ -299,6 +300,7 @@ class ProductsController extends DashboardController
             'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
+            'returnLink'    =>  url( '/dashboard/products' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }

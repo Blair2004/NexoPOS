@@ -28172,6 +28172,36 @@ body {
   }
 }
 
+/**
+ * Forms
+**/
+
+.form-input {
+  --bg-opacity: 1;
+  background-color: #ebf8ff;
+  background-color: rgba(235, 248, 255, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #bee3f8;
+  border-color: rgba(190, 227, 248, var(--border-opacity));
+  border-radius: 0.25rem;
+  border-width: 2px;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.form-input-invalid {
+  --bg-opacity: 1;
+  background-color: #fff5f5;
+  background-color: rgba(255, 245, 245, var(--bg-opacity));
+  --border-opacity: 1;
+  border-color: #fed7d7;
+  border-color: rgba(254, 215, 215, var(--border-opacity));
+  border-radius: 0.25rem;
+  border-width: 2px;
+  padding: 0.5rem;
+  width: 100%;
+}
+
 @media (min-width: 640px){
   .sm\:container{
     width: 100%;

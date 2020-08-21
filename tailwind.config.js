@@ -20,5 +20,8 @@ module.exports = {
     },
     variants: {
       opacity: [ 'responsive', 'hover', 'active' ]
-    }
+    },
+    experimental: {
+      applyComplexClasses: true,
+    },
   }
