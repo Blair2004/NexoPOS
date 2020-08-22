@@ -1,12 +1,17 @@
 <div id="dashboard-header" class="w-full flex justify-between p-4">
     <div class="flex items-center">
         <div>
-            <div class="hover:bg-white hover:text-gray-700 hover:shadow-lg hover:border-opacity-0 border border-gray-400 rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800">
-                <i class="las la-bell"></i>
+            <div @click="toggleSideMenu()" class="hover:bg-white hover:text-gray-700 hover:shadow-lg hover:border-opacity-0 border border-gray-400 rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800">
+                <i class="las la-bars"></i>
             </div>
         </div>
     </div>
     <div class="top-tools-side flex items-center -mx-2">
+        <div clss="px-2">
+            <div class="hover:bg-white hover:text-gray-700 hover:shadow-lg hover:border-opacity-0 border border-gray-400 rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800">
+                <i class="las la-bell"></i>
+            </div>
+        </div>
         <div class="px-2">
             <div @click="toggleMenu()" :class="menuToggled ? 'bg-white border-transparent shadow-lg rounded-t-lg' : 'border-gray-400 rounded-lg'" class="w-56 flex flex-col border py-2 justify-center hover:border-opacity-0 cursor-pointer hover:shadow-lg hover:bg-white">
                 <div class="flex justify-between items-center flex-shrink-0">
@@ -18,7 +23,8 @@
             </div>
             <div class="w-56 shadow-lg flex z-10 absolute -mb-2 rounded-br-lg rounded-bl-lg overflow-hidden" v-if="menuToggled">
                 <ul class="text-gray-700 w-full bg-white">
-                    <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.logout' ) }}"><i class="las text-lg mr-2 la-user-tie"></i> {{ __( 'Logout' ) }}</a></li>
+                    <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.dashboard.users.profile' ) }}"><i class="las text-lg mr-2 la-user-tie"></i> {{ __( 'Profile' ) }}</a></li>
+                    <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.logout' ) }}"><i class="las la-sign-out-alt mr-2"></i> {{ __( 'Logout' ) }}</a></li>
                 </ul>
             </div>
         </div>

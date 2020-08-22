@@ -1,4 +1,4 @@
-const { Vue, nsState }           =   require('./bootstrap'); 
+const { Vue, nsState, nsScreen }           =   require('./bootstrap'); 
 const { 
     nsButton,
     nsCheckbox,
@@ -16,12 +16,11 @@ const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 new window.Vue({
     el: '#dashboard-aside',
     data: {
-        sidebar: null
+        sidebar: 'visible'
     },
-    mounded() {
+    mounted() {
         nsState.behaviorState.subscribe(({ object }) => {
             this.sidebar    =   object.sidebar;
-            console.log( object );
         })
     }
 });
@@ -37,6 +36,10 @@ new window.Vue({
         })
     },
     methods: {
+        /**
+         * this is mean to appear only on mobile.
+         * If it's clicked, the menu should hide
+         */
         closeMenu() {
             nsState.setState({
                 sidebar: this.sidebar === 'hidden' ? 'visible' : 'hidden'
@@ -53,19 +56,26 @@ new window.Vue({
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;
+        },
+        toggleSideMenu() {
+            if ([ 'lg', 'xl' ].includes( nsScreen.breakpoint ) ) {
+                nsState.setState({ sidebar: this.sidebar === 'collapsed' ? 'visible': 'collapsed' });    
+            } else {
+                nsState.setState({ sidebar: this.sidebar === 'hidden' ? 'visible': 'hidden' });
+            }
         }
     },
     mounted() {
-        console.log( 'mounted' );
+        nsState.behaviorState.subscribe( ({ object }) => {
+            this.sidebar    =   object.sidebar;
+        })
     }
 });
 
 new window.Vue({
     el: '#dashboard-content',
     mounted() {
-        console.log( 'mounted' );
-        // we might need to detect the device side in order to trigger
-        // the drawer
+
     },
     components: {
         NsRewardsSystem,

@@ -17,12 +17,13 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
+                        cp /var/www/html/${{ secrets.DEPLOYHOST }}/.env /var/www/html/.env-backup
                         rm -rf /var/www/html/${{ secrets.DEPLOYHOST }}/; 
                         mkdir /var/www/html/${{ secrets.DEPLOYHOST }}/; 
+                        cp /var/www/html/.env-backup /var/www/html/${{ secrets.DEPLOYHOST }}/.env
                         cd /var/www/html/${{ secrets.DEPLOYHOST }}/; 
                         git clone https://github.com/blair2004/NexoPOS-4x .;
                         composer install;
-                        cp .env.example .env;
                         /usr/bin/php artisan key:generate;
                         npm i;
                         npm run prod;                   
