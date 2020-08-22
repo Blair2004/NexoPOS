@@ -23,7 +23,7 @@ jobs:
                         git clone https://github.com/blair2004/NexoPOS-4x .;
                         composer install;
                         cp .env.example .env;
-                        chown php-fpm . -R
+                        chown php-fpm . -R;
                         /usr/bin/php artisan generate:key;
                         npm i;
                         npm run prod;                   
