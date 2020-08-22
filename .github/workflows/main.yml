@@ -16,4 +16,11 @@ jobs:
                     username: ${{ secrets.USERNAME }}
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
-                    script: whoami
+                    script: 
+                        cd /var/www/html/deploy-v4/nexopos.com/; 
+                        git clone https://github.com/blair2004/NexoPOS-4x .;
+                        composer install;
+                        cp .env.example .env;
+                        php artisan generate:key;
+                        npm i;
+                        npm run prod;                   
