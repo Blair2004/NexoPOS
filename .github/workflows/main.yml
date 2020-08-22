@@ -7,7 +7,7 @@ on:
 jobs:
     build:
         name: Build and Deploy
-        runs-on: centos-7
+        runs-on: ubuntu-latest
         steps:               
             -   name: Connecting Deploy Server
                 uses: appleboy/ssh-action@master
