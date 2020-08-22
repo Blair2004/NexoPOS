@@ -22,9 +22,9 @@ jobs:
             -   name: Deploy to Server
                 uses: ngocquyhoang/deploy@laravel
                 with:
-                    user: user
-                    host: host
-                    path: path
-                    owner: owner
+                    user: root
+                    host: 140.82.33.146
+                    path: /var/www/html/v4.nexopos.com/
+                    owner: root
                 env:
                     DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
