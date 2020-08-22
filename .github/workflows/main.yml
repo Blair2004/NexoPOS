@@ -7,24 +7,13 @@ on:
 jobs:
     build:
         name: Build and Deploy
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Checkout Repository
-                uses: actions/checkout@master
-            -   name: Setup Enviroment
-                uses: shivammathur/setup-php@v2
+        runs-on: centos-7
+        steps:               
+            -   name: Connecting Deploy Server
+                uses: appleboy/ssh-action@master
                 with:
-                    php-version: '7.4'
-            -   name: Speed up the packages installation process
-                run: composer global require hirak/prestissimo
-            -   name: Install Packages
-                run: composer install --no-dev
-            -   name: Deploy to Server
-                uses: ngocquyhoang/deploy@laravel
-                with:
-                    user: root
-                    host: 140.82.33.146
-                    path: /var/www/html/v4.nexopos.com/
-                    owner: root
-                env:
-                    DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    password: ${{ secrets.PASSWORD }}
+                    port: ${{ secrets.PORT }}
+                    script: whoami
