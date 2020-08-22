@@ -13,7 +13,7 @@ use App\Services\Helper;
 <body>
     <div class="h-full w-full flex flex-col">
         <div id="dashboard-body" class="overflow-hidden flex flex-auto">
-            <div id="dashboard-aside" class="w-64 flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
+            <div id="dashboard-aside" v-if="sidebar === 'visible'" class="w-64 z-10 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
                 <div class="overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
                         <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-300 to-teal-300 text-3xl">NexoPOS</h1>
@@ -31,6 +31,7 @@ use App\Services\Helper;
                     </ul>
                 </div>
             </div>
+            <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             <div class="flex flex-auto overflow-hidden bg-gray-200">
                 <div class="flex-1 overflow-y-auto">
                     @yield( 'layout.dashboard.body' )

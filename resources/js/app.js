@@ -1,4 +1,4 @@
-const { Vue }           =   require('./bootstrap'); 
+const { Vue, nsState }           =   require('./bootstrap'); 
 const { 
     nsButton,
     nsCheckbox,
@@ -15,10 +15,35 @@ const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
+    data: {
+        sidebar: null
+    },
     mounded() {
-        console.log( nsMenu );
+        nsState.behaviorState.subscribe(({ object }) => {
+            this.sidebar    =   object.sidebar;
+            console.log( object );
+        })
     }
 });
+
+new window.Vue({
+    el: '#dashboard-overlay',
+    data: {
+        sidebar: null
+    },
+    mounted() {
+        nsState.behaviorState.subscribe(({ object }) => {
+            this.sidebar    =   object.sidebar;
+        })
+    },
+    methods: {
+        closeMenu() {
+            nsState.setState({
+                sidebar: this.sidebar === 'hidden' ? 'visible' : 'hidden'
+            });
+        }
+    }
+})
 
 new window.Vue({
     el: '#dashboard-header',
@@ -39,6 +64,8 @@ new window.Vue({
     el: '#dashboard-content',
     mounted() {
         console.log( 'mounted' );
+        // we might need to detect the device side in order to trigger
+        // the drawer
     },
     components: {
         NsRewardsSystem,
