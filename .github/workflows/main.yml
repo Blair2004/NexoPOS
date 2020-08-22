@@ -17,7 +17,7 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        cd /var/www/html/deploy-v4/nexopos.com/; 
+                        cd /var/www/html/deploy-v4.nexopos.com/; 
                         git clone https://github.com/blair2004/NexoPOS-4x .;
                         composer install;
                         cp .env.example .env;
