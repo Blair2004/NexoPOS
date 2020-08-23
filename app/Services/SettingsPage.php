@@ -47,12 +47,13 @@ class SettingsPage
     public function saveForm( Request $request )
     {
         $service        =   new CrudService;
+        $options        =   app()->make( Options::class );
 
         foreach( $service->getPlainData( $this, $request ) as $key => $value ) {
             if ( empty( $value ) ) {
-                $this->options->delete( $key );
+                $options->delete( $key );
             } else {
-                $this->options->set( $key, $value );
+                $options->set( $key, $value );
             }
         }
 
