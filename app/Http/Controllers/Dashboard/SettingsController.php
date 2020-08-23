@@ -163,21 +163,17 @@ class SettingsController extends DashboardController
 
     public function saveSettingsForm( SettingsRequest $request, $identifier )
     {
-        $service    =   new CrudService;
         $resource   =   Hook::filter( 'ns.settings', false, $identifier );
- 
-        foreach( $service->getPlainData( $resource, $request ) as $key => $value ) {
-            if ( empty( $value ) ) {
-                $this->options->delete( $key );
-            } else {
-                $this->options->set( $key, $value );
-            }
+        
+        if ( ! $resource instanceof SettingsPage ) {
+            throw new Exception( sprintf( 
+                __( '%s is not an instance of "%s".' ),
+                $identifier,
+                SettingsPage::class
+            ) );
         }
-
-        return [
-            'status'    =>  'sucesss',
-            'message'   =>  __( 'The options has been successfully saved.' )
-        ];
+        
+        return $resource->saveForm( $request );
     }
 }
 

@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\UserProfileRequest;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -68,6 +69,25 @@ class UsersController extends DashboardController
             'description'   =>  __( 'Update an existing user.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.users/form-config/' . $user->id ),
         ]);
+    }
+
+    /**
+     * displays the user profile
+     * @return view
+     */
+    public function getProfile()
+    {
+        return $this->view( 'pages.dashboard.users.profile', [
+            'title'         =>  __( 'My Profile' ),
+            'description'   =>  __( 'Change your personal settings' ),
+            'src'           =>  url( '/api/nexopos/v4/forms/ns.user-profile' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/users/profile')
+        ]);
+    }
+
+    public function updateProfile( UserProfileRequest $request )
+    {
+        
     }
 }
 

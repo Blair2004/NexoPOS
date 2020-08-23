@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
 class SettingsPage
@@ -41,5 +42,23 @@ class SettingsPage
         })->toArray();
 
         return $flatRules;
+    }
+
+    public function saveForm( Request $request )
+    {
+        $service        =   new CrudService;
+
+        foreach( $service->getPlainData( $this, $request ) as $key => $value ) {
+            if ( empty( $value ) ) {
+                $this->options->delete( $key );
+            } else {
+                $this->options->set( $key, $value );
+            }
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The form has been successfully saved.' )
+        ];
     }
 }
