@@ -27,4 +27,4 @@ jobs:
                         /usr/bin/php artisan key:generate;
                         npm i;
                         npm run prod;                   
-                        chown php-fpm . -R;
+                        chown php-fpm /var/www/html/${{ secrets.DEPLOYHOST }} -R;
