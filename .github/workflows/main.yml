@@ -21,6 +21,7 @@ jobs:
                         rm -rf /var/www/html/${{ secrets.DEPLOYHOST }}/; 
                         mkdir /var/www/html/${{ secrets.DEPLOYHOST }}/; 
                         mv /var/www/html/backup.env /var/www/html/${{ secrets.DEPLOYHOST }}/.env;
+                        rm /var/www/html/backup.env;
                         cd /var/www/html/${{ secrets.DEPLOYHOST }}/; 
                         git clone https://github.com/blair2004/NexoPOS-4x .;
                         composer install;
