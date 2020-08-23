@@ -9,7 +9,7 @@ jobs:
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:               
-            -   name: Connecting Deploy Server
+            -   name: Deploy To Server
                 uses: appleboy/ssh-action@master
                 with:
                     host: ${{ secrets.HOST }}
