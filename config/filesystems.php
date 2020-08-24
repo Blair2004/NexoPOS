@@ -68,6 +68,11 @@ return [
         'ns' => [
             'driver'    =>  'local',
             'root'      =>  base_path()
+        ],
+
+        'ns-modules' => [
+            'driver'    =>  'local',
+            'root'      =>  base_path( 'modules' )
         ]
     ],
 

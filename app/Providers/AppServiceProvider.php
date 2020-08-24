@@ -24,6 +24,7 @@ use App\Services\UnitService;
 use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
+use App\Services\ModulesService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -156,6 +157,13 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( ProductService::class ),
                 $app->make( CurrencyService::class )
             );
+        });
+
+        // register module singleton
+        $this->app->singleton( ModulesService::class, function( $app ) {
+            $modules    =   new ModulesService;
+            $modules->load();
+            return $modules;
         });
     }
 

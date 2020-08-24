@@ -1,3 +1,7 @@
 .env
 vendor
 node_modules
+modules/*
+!modules/index.html
+public/modules/*
+!public/modules/index.html
