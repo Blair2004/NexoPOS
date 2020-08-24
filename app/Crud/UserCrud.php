@@ -69,7 +69,7 @@ class UserCrud extends CrudService
         'email',
         'password',
         'active',
-        'role_id ',
+        'role_id',
     ];
 
     /**

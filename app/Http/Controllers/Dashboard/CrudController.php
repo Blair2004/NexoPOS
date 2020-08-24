@@ -106,7 +106,6 @@ class CrudController extends DashboardController
                 }
             }
         }
-
         
         $entry->author      =   Auth::id();
         $entry->save();
