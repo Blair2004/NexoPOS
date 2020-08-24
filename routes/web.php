@@ -45,6 +45,9 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/customers/coupons/create', 'Dashboard\CustomersController@createCoupon' );
         Route::get( '/dashboard/customers/coupons/edit/{coupon}', 'Dashboard\CustomersController@editCoupon' );
 
+        Route::get( '/dashboard/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
+        Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@uploadModule' )->name( 'ns.dashboard.modules.upload' );
+
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
         Route::get( '/dashboard/providers/edit/{provider}', 'Dashboard\ProvidersController@editProvider' );

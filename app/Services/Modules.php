@@ -21,7 +21,7 @@ class Modules
 
     public function __construct()
     {
-        if ( Helper::AppIsInstalled() ) {
+        if ( ns()->installed() ) {
             /**
              * We can only enable a module if the database is installed.
              */
