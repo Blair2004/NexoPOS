@@ -2,6 +2,8 @@
 vendor
 node_modules
 modules/*
+!modules/__temp
+modules/__temp/*
 !modules/index.html
 public/modules/*
 !public/modules/index.html

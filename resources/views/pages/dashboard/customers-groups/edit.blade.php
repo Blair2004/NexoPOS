@@ -1,7 +1,7 @@
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
-<div id="dashboard-content" class="h-full flex flex-col">
+<div id="dashboard-content" class="h-full flex flex-col flex-auto">
     @include( '../common/dashboard-header' )
     <div class="px-4 flex-auto flex flex-col">
         <div class="page-inner-header mb-4">

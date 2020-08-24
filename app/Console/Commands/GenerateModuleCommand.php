@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\Modules;
 use App\Services\Setup;
 use App\Services\Helper;
+use App\Services\ModulesService;
 
 class GenerateModuleCommand extends Command
 {
@@ -38,7 +39,7 @@ class GenerateModuleCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->modules   =   app()->make( Modules::class );
+        $this->modules   =   app()->make( ModulesService::class );
     }
 
     /**
@@ -116,7 +117,13 @@ class GenerateModuleCommand extends Command
 
             if ( ! \windows_os() ) {
                 Storage::disk( 'public' )->makeDirectory( 'modules/' . $this->module[ 'namespace' ] );
-                $link           =   \symlink( $target, public_path( '/modules/' . strtolower( $this->module[ 'namespace' ] ) ) );
+
+                $linkPath   =   public_path( '/modules/' . strtolower( $this->module[ 'namespace' ] ) );
+
+                if ( ! is_link( $linkPath ) ) {
+                    $link           =   \symlink( $target, $linkPath );
+                }
+
             } else {
                 $mode       =   'J';
                 $link       =   public_path( 'modules' . DIRECTORY_SEPARATOR . strtolower( $this->module[ 'namespace' ] ) );

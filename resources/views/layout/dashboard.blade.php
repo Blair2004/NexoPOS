@@ -33,7 +33,7 @@ use App\Services\Helper;
             </div>
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             <div class="flex flex-auto overflow-hidden bg-gray-200">
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-auto flex overflow-y-auto">
                     @yield( 'layout.dashboard.body' )
                 </div>
             </div>

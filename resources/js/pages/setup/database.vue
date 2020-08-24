@@ -36,7 +36,7 @@ export default {
                     }, 
                     error => {
                         this.form.enableFields( this.fields );
-                        nsSnackBar.error( error.response.data.message, 'OKAY' ).subscribe();
+                        nsSnackBar.error( error.message, 'OKAY' ).subscribe();
                     }
                 );
             }

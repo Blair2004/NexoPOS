@@ -8,7 +8,6 @@
 namespace Modules\{{ $module[ 'namespace' ] }}\Http\Controllers;
 use Illuminate\Support\Facades\View;
 use App\Http\Controllers\DashboardController;
-// use Tendoo\Core\Services\Page;
 
 class {{ $name }} extends DashboardController
 {

@@ -28,6 +28,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
                 include_once( dirname( __FILE__ ) . '/api/categories.php' );    
                 include_once( dirname( __FILE__ ) . '/api/customers.php' );
                 include_once( dirname( __FILE__ ) . '/api/expenses.php' );
+                include_once( dirname( __FILE__ ) . '/api/modules.php' );
                 include_once( dirname( __FILE__ ) . '/api/orders.php' );
                 include_once( dirname( __FILE__ ) . '/api/procurements.php' );
                 include_once( dirname( __FILE__ ) . '/api/products.php' );

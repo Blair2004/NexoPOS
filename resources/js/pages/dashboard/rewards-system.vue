@@ -62,7 +62,7 @@ export default {
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    nsSnackBar.error( error.response.data.message, undefined, {
+                    nsSnackBar.error( error.data.message, undefined, {
                         duration: 5000
                     }).subscribe();
                     this.formValidation.triggerError( this.form, error.response.data );

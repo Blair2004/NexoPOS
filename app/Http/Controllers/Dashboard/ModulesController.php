@@ -8,44 +8,98 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Requests\ModuleUploadRequest;
+use App\Models\ProductCategory;
+use App\Services\ModulesService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-
-use App\Services\Modules;
-use App\Models\ProductCategory;
 use Exception;
 
 class ModulesController extends DashboardController
 {
-    public function __construct()
+    /**
+     * @var ModulesService
+     */
+    protected $modules;
+
+    public function __construct(
+        ModulesService $modules
+    )
     {
         parent::__construct();
+
+        $this->modules  =   $modules;
     }
 
-    public function listModules()
+    public function listModules( $page = '' )
     {
-        /**
-         * @var Modules $modules;
-         */
-        $modules        =   app()->make( Modules::class );
-
         return $this->view( 'pages.dashboard.modules.list', [
-            'title'     =>      __( 'Modules List' ),
+            'title'         =>      __( 'Modules List' ),
             'description'   =>  __( 'List all available modules.' ),
-            'modules'       =>  $modules->get()
         ]);
     }
 
-    public function uploadModule()
+    public function getModules( $argument = '' )
+    {        
+        switch( $argument ) {
+            case '':
+                $list   =   $this->modules->get();
+            break;
+            case 'enabled':
+                $list   =   $this->modules->getEnabled();
+            break;
+            case 'disabled':
+                $list   =   $this->modules->getDisabled();
+            break;
+        };
+
+        return [
+            'modules'           =>  $list,
+            'total_enabled'     =>  count( $this->modules->getEnabled() ),
+            'total_disabled'    =>  count( $this->modules->getDisabled() )
+        ];
+    }
+
+    /**
+     * @param string module identifier
+     * @return array operation response
+     */
+    public function disableModule( $argument )
+    {
+        return $this->modules->disable( $argument );
+    }
+
+    /**
+     * @param string module identifier
+     * @return array operation response
+     */
+    public function enableModule( $argument )
+    {
+        return $this->modules->enable( $argument );
+    }
+
+    /**
+     * @param string module identifier
+     * @return array operation response
+     */
+    public function deleteModule( $argument )
+    {
+        return $this->modules->delete( $argument );
+    }
+
+
+    public function showUploadModule()
     {
         return $this->view( 'pages.dashboard.modules.upload', [
             'title'     =>      __( 'Upload A Module' ),
             'description'   =>  __( 'Extends NexoPOS features with some new modules.' )
         ]);
+    }
+
+    public function uploadModule( ModuleUploadRequest $request )
+    {
+        return $this->modules->upload( $request->file( 'module' ) );
     }
 }
 

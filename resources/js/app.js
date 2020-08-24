@@ -12,6 +12,7 @@ const NsCreateCoupons   =   require( './pages/dashboard/create-coupons.vue' ).de
 const NsManageProducts  =   require( './pages/dashboard/manage-products.vue' ).default;
 const NsSettings        =   require( './pages/dashboard/settings.vue' ).default;
 const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
+const NsModules         =   require( './pages/dashboard/modules.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
@@ -75,9 +76,10 @@ new window.Vue({
 new window.Vue({
     el: '#dashboard-content',
     mounted() {
-
+        console.log( NsModules );
     },
     components: {
+        NsModules,
         NsRewardsSystem,
         NsCreateCoupons,
         NsManageProducts,

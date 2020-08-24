@@ -57,7 +57,7 @@ export default {
                             });
                         }
                     })
-                    nsSnackBar.error( error.response.data.message, 'OK' )
+                    nsSnackBar.error( error.message, 'OK' )
                         .subscribe();
                 });
         }

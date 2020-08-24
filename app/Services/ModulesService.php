@@ -13,6 +13,7 @@ use PhpParser\Error;
 use PhpParser\NodeDumper;
 use PhpParser\ParserFactory;
 use App\Exceptions\CoreException;
+use Exception;
 
 class ModulesService
 {
@@ -54,10 +55,7 @@ class ModulesService
             collect( $directories )->map( function( $module ) {
                 return str_replace( '/', '\\', $module );
             })->map( function( $module ) {
-                $directory      =       $module;
-                if ( $directory !== '__temp' ) {
-                    $this->__init( $directory );
-                }
+                $this->__init( $module );
             });
         } else {
             $this->__init( $dir );
@@ -91,10 +89,10 @@ class ModulesService
             $xmlContent     =   file_get_contents( base_path() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml' );
             $xml            =   $this->xmlParser->extract( $xmlContent );
             $config         =   $xml->parse([
-                'namespace'             =>  [ 'uses'    => 'namespace' ],
-                'version'               =>  [ 'uses'    => 'version' ],
-                'author'                =>  [ 'uses'    => 'author' ],
-                'description'           =>  [ 'uses'    => 'description' ],
+                'namespace'             =>  [ 'uses'    =>  'namespace' ],
+                'version'               =>  [ 'uses'    =>  'version' ],
+                'author'                =>  [ 'uses'    =>  'author' ],
+                'description'           =>  [ 'uses'    =>  'description' ],
                 'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
                 'name'                  =>  [ 'uses'    =>  'name' ]
             ]);
@@ -104,7 +102,7 @@ class ModulesService
             // If a module has at least a namespace
             if ( $config[ 'namespace' ] != null ) {
                 // index path
-                $modulesPath        =   base_path() . DIRECTORY_SEPARATOR;
+                $modulesPath        =   base_path( 'modules' ) . DIRECTORY_SEPARATOR;
                 $currentModulePath  =   $modulesPath . $dir . DIRECTORY_SEPARATOR;
                 $indexPath          =   $currentModulePath . ucwords( $config[ 'namespace' ] . 'Module.php' );
                 $webRoutesPath      =   $currentModulePath . 'Routes' . DIRECTORY_SEPARATOR . 'web.php';
@@ -189,8 +187,9 @@ class ModulesService
                              * @todo run service provider
                              */
                             $fileInfo   =   pathinfo(  $modulesPath . $file );
+
                             if ( $fileInfo[ 'extension' ] == 'php' ) {
-                                include_once( base_path() . NS_S . $file );
+                                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
                             }
                         }
                     }
@@ -202,8 +201,8 @@ class ModulesService
                     $moduleConfig       =   [];
 
                     foreach( $files as $file ) {
-                        $info           =     pathinfo( $file );
-                        $_config        =   include_once( base_path() . NS_S . $file );
+                        $info               =     pathinfo( $file );
+                        $_config            =   include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
                         $final[ $config[ 'namespace' ] ]    =   [];
                         $final[ $config[ 'namespace' ] ][ $info[ 'filename' ] ]     =   $_config;   
                         $moduleConfig       =   Arr::dot( $final );
@@ -234,13 +233,6 @@ class ModulesService
      */
     public function init()
     {
-        /**
-         * Include Tendoo module Class
-         * Required to autoload module components
-         */
-
-        include_once( NS_ROOT . DIRECTORY_SEPARATOR .'Core' . DIRECTORY_SEPARATOR . 'Services' . DIRECTORY_SEPARATOR . 'TendooModule.php' );
-
         foreach( $this->modules as $module ) {
             if ( ! $module[ 'enabled' ] ) {
                 continue;
@@ -289,10 +281,23 @@ class ModulesService
      * Return the list of active module as an array
      * @return array of active modules
      */
-    public function getActives()
+    public function getEnabled()
     {
         return array_filter( $this->modules, function( $module ) {
             if ( $module[ 'enabled' ] === true ) {
+                return $module;
+            }
+        });
+    }
+
+    /**
+     * Return the list of active module as an array
+     * @return array of active modules
+     */
+    public function getDisabled()
+    {
+        return array_filter( $this->modules, function( $module ) {
+            if ( $module[ 'enabled' ] === false ) {
                 return $module;
             }
         });
@@ -393,8 +398,8 @@ class ModulesService
      */
     public function upload( $file )
     {
-        if ( ! is_dir( base_path() . DIRECTORY_SEPARATOR . '__temp' ) ) {
-            mkdir( base_path() . DIRECTORY_SEPARATOR . '__temp' );
+        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '__temp' ) ) {
+            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '__temp' );
         }
 
         $path   =   Storage::disk( 'ns-modules' )->putFile( 
@@ -519,6 +524,7 @@ class ModulesService
                  * the file send is not a valid module
                  */
                 $this->__clearTempFolder();
+                
                 return [
                     'status'    =>  'danger',
                     'code'      =>  'invalid_module'
@@ -822,7 +828,7 @@ class ModulesService
             try {
                 include_once( $module[ 'index-file' ] );
                 $moduleObject   =   new $module[ 'entry-class' ];
-            } catch( \ErrorException $error ) {
+            } catch( Exception $error ) {
                 return [
                     'status'    =>  'failed',
                     'message'   =>  $error->getMessage(),
@@ -839,13 +845,15 @@ class ModulesService
             return [
                 'status'    =>  'success',
                 'code'      =>  'module_enabled',
+                'message'   =>  __( 'The module has correctly been enabled.' ),
                 'module'    =>  $module
             ];
         }
 
         return [
             'status'    =>  'warning',
-            'code'      =>  'unknow_module'
+            'code'      =>  'unknow_module',
+            'message'   =>  __( 'Unable to enable the module.' ),
         ];
     }
 
@@ -872,13 +880,15 @@ class ModulesService
             return [
                 'status'    =>  'success',
                 'code'      =>  'module_disabled',
+                'message'   =>  __( 'The Module has been disabled.' ),
                 'module'    =>  $module
             ];
         }
 
         return [
             'status'        =>  'danger',
-            'code'          =>  'unknow_module'
+            'code'          =>  'unknow_module',
+            'message'   =>  __( 'Unable to disable the module.' ),
         ];
     }
 

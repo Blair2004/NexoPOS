@@ -46,7 +46,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/customers/coupons/edit/{coupon}', 'Dashboard\CustomersController@editCoupon' );
 
         Route::get( '/dashboard/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
-        Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@uploadModule' )->name( 'ns.dashboard.modules.upload' );
+        Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
 
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
@@ -94,6 +94,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
                     include_once( dirname( __FILE__ ) . '/api/categories.php' );    
                     include_once( dirname( __FILE__ ) . '/api/customers.php' );
                     include_once( dirname( __FILE__ ) . '/api/expenses.php' );
+                    include_once( dirname( __FILE__ ) . '/api/modules.php' );
                     include_once( dirname( __FILE__ ) . '/api/orders.php' );
                     include_once( dirname( __FILE__ ) . '/api/procurements.php' );
                     include_once( dirname( __FILE__ ) . '/api/products.php' );

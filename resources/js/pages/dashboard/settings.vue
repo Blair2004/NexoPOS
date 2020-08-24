@@ -59,7 +59,7 @@ export default {
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
-                        nsSnackBar.error( error.response.data.message || 'No error message provided in case the form is not valid.' )
+                        nsSnackBar.error( error.message || 'No error message provided in case the form is not valid.' )
                             .subscribe();
                     })
             }

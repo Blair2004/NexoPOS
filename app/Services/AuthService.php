@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\User;
 use App\Facades\Curl;
-use App\Facades\Hook;
 use App\Models\Oauth;
 use App\Services\Users;
 use App\Services\Options;
@@ -29,6 +28,7 @@ use App\Mail\UserRegistrationMail;
 use App\Exceptions\AccessDeniedException;
 use App\Exceptions\SessionExpiredException;
 use App\Exceptions\WrongCredentialException;
+use TorMorten\Eventy\Facades\Eventy as Hook;
 
 class AuthService 
 {
