@@ -11,4 +11,6 @@ use App\Models\Permission;
 class RolePermission extends Model
 {
     protected $table    =   'nexopos_role_permission';
+
+    public $timestamps   =   false;
 }

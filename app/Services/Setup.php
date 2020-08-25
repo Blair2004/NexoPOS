@@ -313,6 +313,7 @@ class Setup
         $this->role                 =   new Role;
         $this->role->name           =   __( 'User' );
         $this->role->namespace      =   'user';
+        $this->role->locked         =   true;
         $this->role->description    =   __( 'Basic user role.' );
         $this->role->save();
         $this->role->addPermissions([ 
@@ -323,6 +324,7 @@ class Setup
         $this->role                 =   new Role;
         $this->role->name           =   __( 'Supervisor' );
         $this->role->namespace      =   'supervisor';
+        $this->role->locked         =   true;
         $this->role->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
         $this->role->save(); 
         $this->role->addPermissions([ 
@@ -335,6 +337,7 @@ class Setup
         $this->role                 =   new Role;
         $this->role->name           =   __( 'Administrator' );
         $this->role->namespace      =   'admin';
+        $this->role->locked         =   true;
         $this->role->description    =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
         $this->role->save(); 
         $this->role->addPermissions([ 

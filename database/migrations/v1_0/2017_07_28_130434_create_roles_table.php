@@ -18,6 +18,8 @@ class CreateRolesTable extends Migration
             $table->string( 'name' )->unique();
             $table->string( 'namespace' )->unique();
             $table->text( 'description' );
+            $table->integer( 'author' )->nullable(); // when provided match the user id
+            $table->boolean( 'locked' )->default( true ); // means the role can be edited from the fronte
             $table->timestamps();
         });
 
