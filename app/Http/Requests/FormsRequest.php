@@ -38,7 +38,6 @@ class FormsRequest extends FormRequest
             ) );
         }
 
-        $rules  =   $service->extractCrudValidation( $instance );
-        return $rules;
+        return $instance->validateForm( $this );
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Requests\UserProfileRequest;
 use App\Models\Role;
 use App\Services\Helper;
 use App\Services\Options;
+use App\Services\UserOptions;
 use App\Services\SettingsPage;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class UserProfileSettings extends SettingsPage
 
         dd( $request->all() );
         
-        foreach( $request->all() as $field => $value ) {
+        foreach( $request->except( 'password', 'password_confirm' ) as $field => $value ) {
             if ( empty( $value ) ) {
                 $userOptions->delete( $field );
             } else {
