@@ -27,7 +27,9 @@ class FormsProvider extends ServiceProvider
     {
         Hook::addFilter( 'ns.forms', function( $class, $identifier ) {
             switch( $identifier ) {
-                case 'ns.user-profile': return new UserProfileSettings; break;
+                case 'ns.user-profile': 
+                    return new UserProfileSettings; 
+                break;
             }
             return $class;
         }, 10, 2 );

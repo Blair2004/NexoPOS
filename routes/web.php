@@ -47,6 +47,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
 
         Route::get( '/dashboard/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
         Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
+        Route::get( '/dashboard/modules/migrate/{namespace}', 'Dashboard\ModulesController@migrateModule' )->name( 'ns.dashboard.modules.migrate' );
 
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
@@ -83,6 +84,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/users', 'Dashboard\UsersController@listUsers' );
         Route::get( '/dashboard/users/create', 'Dashboard\UsersController@createUser' );
         Route::get( '/dashboard/users/edit/{user}', 'Dashboard\UsersController@editUser' );
+        Route::get( '/dashboard/users/roles/permissions-manager', 'Dashboard\UsersController@permissionManager' );
         Route::get( '/dashboard/users/profile', 'Dashboard\UsersController@getProfile' )->name( 'ns.dashboard.users.profile' );
 
         Route::get( '/dashboard/settings/{settings}', 'Dashboard\SettingsController@getSettings' );

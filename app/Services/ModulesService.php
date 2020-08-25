@@ -398,138 +398,132 @@ class ModulesService
      */
     public function upload( $file )
     {
-        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '__temp' ) ) {
-            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '__temp' );
+        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' ) ) {
+            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' );
         }
 
         $path   =   Storage::disk( 'ns-modules' )->putFile( 
-            '__temp', 
+            '.temp', 
             $file 
         );
 
-        $fullPath   =   base_path() . DIRECTORY_SEPARATOR . $path;        
-        $dir        =   dirname( $fullPath );
+        $fileInfo   =   pathinfo( $file->getClientOriginalName() );
+        $fullPath   =   base_path( 'modules' ) . DIRECTORY_SEPARATOR . $path;        
+        $dir        =   dirname( $fullPath . DIRECTORY_SEPARATOR );
+
         $archive    =   new \ZipArchive;
         $archive->open( $fullPath );
-        $archive->extractTo( $dir );
+        $archive->extractTo( $dir . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $archive->close();
 
         /**
          * Unlink the uploaded zipfile
          */
         unlink( $fullPath );
-        
-        $directories    =   Storage::disk( 'ns-modules' )->directories( '__temp' );
+
+        $rawFiles    =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $module         =   [];
-        
+
         /**
-         * Seach if we can have a config.xml file within the extracted files
+         * Just retreive the files name
          */
-        foreach( $directories as $dir ) {
-            // browse directory files
-            $rawFiles          =   Storage::disk( 'ns-modules' )->allFiles( $dir );
+        $files  =   array_map( function( $file ) {
+            $info   =   pathinfo( $file );
+            return $info[ 'basename' ];
+        }, $rawFiles );
 
-            /**
-             * Just retreive the files name
-             */
-            $files  =   array_map( function( $file ) {
-                $info   =   pathinfo( $file );
-                return $info[ 'basename' ];
-            }, $rawFiles );
+        if ( in_array( 'config.xml', $files ) ) {
 
-            if ( in_array( 'config.xml', $files ) ) {
-                
-                $file   =   $dir . DIRECTORY_SEPARATOR . 'config.xml';
+            
+            $file   =   '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR .'config.xml';
+            $xml    =   new \SimpleXMLElement( 
+                Storage::disk( 'ns-modules' )->get( $file )
+            );
 
-                $xml    =   new \SimpleXMLElement( 
-                    Storage::disk( 'ns-modules' )->get( $file )
-                );
+            if ( 
+                ! isset( $xml->namespace ) ||
+                ! isset( $xml->version ) ||
+                ! isset( $xml->name ) || 
+                $xml->getName() != 'module'
+            ) {
 
-                if ( 
-                    ! isset( $xml->namespace ) ||
-                    ! isset( $xml->version ) ||
-                    ! isset( $xml->name ) || 
-                    $xml->getName() != 'module'
-                ) {
-
-                    /**
-                     * the file send is not a valid module
-                     */
-                    $this->__clearTempFolder();
-                    
-                    return [
-                        'status'    =>  'danger',
-                        'code'      =>  'invalid_module'
-                    ];
-                }
-
-                $moduleNamespace    =   ucwords( $xml->namespace );
-                $moduleVersion      =   ucwords( $xml->version );
-
-                /**
-                 * Check if a similar module already exists
-                 * and if the new module is outdated
-                 */
-                if ( $module = $this->get( $moduleNamespace ) ) {
-                    
-                    if ( version_compare( $module[ 'version' ], $moduleVersion, '>=' ) ) {
-                        
-                        /**
-                         * We're dealing with old module
-                         */
-                        $this->__clearTempFolder();
-
-                        return [
-                            'status'    =>  'danger',
-                            'code'      =>  'old_module',
-                            'module'    =>  $module
-                        ];
-                    }
-                } 
-
-                /**
-                 * @step 1 : creating host folder
-                 * No errors has been found, We\'ll install the module then
-                 */
-                Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace );
-
-                /**
-                 * @step 2 : move files
-                 * We're now looping to move files
-                 * and create symlink for the assets
-                 */
-
-                 foreach( $rawFiles as $file ) {
-
-                    Storage::disk( 'ns-modules' )->put( 
-                        str_replace( '__temp' . DIRECTORY_SEPARATOR, '', $file ),
-                        Storage::disk( 'ns-modules' )->get( $file )
-                    );
-
-                    /**
-                     * create a symlink directory 
-                     * only if the module has that folder
-                     */
-                    $this->createSymLink( $moduleNamespace );
-                }
-
-                /**
-                 * @step 3 : run migrations
-                 * check if the module has a migration
-                 */                    
-                return $this->__runModuleMigration( $moduleNamespace, $xml->version );    
-
-            } else {
                 /**
                  * the file send is not a valid module
                  */
                 $this->__clearTempFolder();
                 
-                return [
-                    'status'    =>  'danger',
-                    'code'      =>  'invalid_module'
+                return [ 
+                    'status'    =>  'failed',
+                    'message'   =>  __( 'Invalid Module provided' )
                 ];
             }
+
+            $moduleNamespace    =   ucwords( $xml->namespace );
+            $moduleVersion      =   ucwords( $xml->version );
+
+            /**
+             * Check if a similar module already exists
+             * and if the new module is outdated
+             */
+            if ( $module = $this->get( $moduleNamespace ) ) {
+                
+                if ( version_compare( $module[ 'version' ], $moduleVersion, '>=' ) ) {
+                    
+                    /**
+                     * We're dealing with old module
+                     */
+                    $this->__clearTempFolder();
+
+                    return [
+                        'status'    =>  'danger',
+                        'message'   =>  __( 'Unable to upload this module as it\'s older than the current on' ),
+                        'module'    =>  $module
+                    ];
+                }
+            } 
+
+            /**
+             * @step 1 : creating host folder
+             * No errors has been found, We\'ll install the module then
+             */
+            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace );
+
+            /**
+             * @step 2 : move files
+             * We're now looping to move files
+             * and create symlink for the assets
+             */
+
+                foreach( $rawFiles as $file ) {
+
+                Storage::disk( 'ns-modules' )->put( 
+                    str_replace( '.temp' . DIRECTORY_SEPARATOR, '', $file ),
+                    Storage::disk( 'ns-modules' )->get( $file )
+                );
+
+                /**
+                 * create a symlink directory 
+                 * only if the module has that folder
+                 */
+                $this->createSymLink( $moduleNamespace );
+            }
+
+            /**
+             * @step 3 : run migrations
+             * check if the module has a migration
+             */                    
+            return $this->__runModuleMigration( $moduleNamespace, $xml->version );    
+
+        } else {
+            /**
+             * the file send is not a valid module
+             */
+            $this->__clearTempFolder();
+            
+            return [
+                'status'    =>  'danger',
+                'message'   =>  __( 'The uploaded file is not a valid module.' ),
+            ];
         }
     }
 
@@ -541,7 +535,7 @@ class ModulesService
      */
     public function createSymLink( $moduleNamespace )
     {
-        Storage::disk( 'ns-modules' )->makeDirectory( NS_PUBLIC_PATH . 'modules' );
+        Storage::disk( 'public' )->makeDirectory( 'modules' );
 
         /**
          * checks if a public directory exists and create a 
@@ -551,10 +545,10 @@ class ModulesService
             Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' ) && 
             ! is_link( base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) ) 
         ) {
-            $target     =   base_path( 'modules/' . $moduleNamespace . '/Public' );
+            $target         =   base_path( 'modules/' . $moduleNamespace . '/Public' );
 
             if ( ! \windows_os() ) {
-                Storage::disk( 'ns-modules' )->makeDirectory( NS_PUBLIC_PATH . 'modules/' . $moduleNamespace );
+                Storage::disk( 'public' )->makeDirectory( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace );
                 $link           =   @\symlink( $target, public_path( '/modules/' . strtolower( $moduleNamespace ) ) );
             } else {
                 $mode       =   'J';
@@ -597,9 +591,10 @@ class ModulesService
 
             return [
                 'status'    =>  'success',
-                'code'      =>  'check_for_migration',
-                'module'    =>  $this->get( $moduleNamespace )
+                'message'   =>  __( 'A migration is required for this module' ),
+                'action'    =>  'migration'
             ];
+
         } else {
 
             /**
@@ -639,8 +634,8 @@ class ModulesService
             $this->__clearTempFolder();
 
             return [
-                'status'    =>  'danger',
-                'code'      =>  'valid_module'
+                'status'    =>  'success',
+                'message'   =>  __( 'The module has been successfully installed.' )
             ];
         }
     }
@@ -656,7 +651,7 @@ class ModulesService
          * We should then delete everything and return an error.
          */
 
-        $directories  =   Storage::disk( 'ns-modules' )->allDirectories( '__temp' );
+        $directories  =   Storage::disk( 'ns-modules' )->allDirectories( '.temp' );
 
         foreach( $directories as $directory ) {
             Storage::disk( 'ns-modules' )->deleteDirectory( $directory );
@@ -665,7 +660,7 @@ class ModulesService
         /**
          * Delete unused files as well
          */
-        $files  =   Storage::disk( 'ns-modules' )->allFiles( '__temp' );
+        $files  =   Storage::disk( 'ns-modules' )->allFiles( '.temp' );
 
         foreach( $files as $file ) {
             Storage::disk( 'ns-modules' )->delete( $file );

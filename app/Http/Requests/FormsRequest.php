@@ -28,7 +28,7 @@ class FormsRequest extends FormRequest
     public function rules()
     {
         $service    =   new CrudService;
-        $instance   =   Events::filter( 'ns.forms', [], $this->route( 'identififer' ) ); 
+        $instance   =   Events::filter( 'ns.forms', [], $this->route( 'identifier' ) ); 
 
         if ( ! $instance instanceof SettingsPage ) {
             throw new Exception( sprintf( 
@@ -38,6 +38,7 @@ class FormsRequest extends FormRequest
             ) );
         }
 
-        return $service->extractCrudValidation( $instance );
+        $rules  =   $service->extractCrudValidation( $instance );
+        return $rules;
     }
 }

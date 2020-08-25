@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ModuleUploadRequest extends FormRequest
+class UserProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class ModuleUploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'module'    =>  'required|mimes:zip'
+            //
         ];
     }
 }

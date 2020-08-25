@@ -13,6 +13,7 @@ const NsManageProducts  =   require( './pages/dashboard/manage-products.vue' ).d
 const NsSettings        =   require( './pages/dashboard/settings.vue' ).default;
 const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 const NsModules         =   require( './pages/dashboard/modules.vue' ).default;
+const NsPermissions     =   require( './pages/dashboard/ns-permissions.vue' ).default;
 
 new window.Vue({
     el: '#dashboard-aside',
@@ -85,5 +86,6 @@ new window.Vue({
         NsManageProducts,
         NsSettings,
         NsReset,
+        NsPermissions
     }
 });

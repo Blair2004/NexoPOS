@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class ModulesController extends DashboardController
 {
@@ -99,7 +100,22 @@ class ModulesController extends DashboardController
 
     public function uploadModule( ModuleUploadRequest $request )
     {
-        return $this->modules->upload( $request->file( 'module' ) );
+        $result     =   $this->modules->upload( $request->file( 'module' ) );
+
+        if ( isset( $result[ 'action' ] ) ) {
+
+        }
+
+        /**
+         * if the module upload was successful
+         */
+        if ( $result[ 'status' ] === 'success' ) {
+            return redirect( route( 'ns.dashboard.modules.list' ) )->with( $result );
+        } else {
+            $validator      =   Validator::make( $request->all(), [] );
+            $validator->errors()->add( 'module', $result[ 'message' ] );
+            return redirect( route( 'ns.dashboard.modules.upload' ) )->withErrors( $validator );
+        }
     }
 }
 

@@ -9,6 +9,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\UserProfileRequest;
+use App\Models\Permission;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Tendoo\Core\Exceptions\CoreException;
 
 use App\Models\ProductCategory;
+use App\Models\Role;
 use App\Models\User;
 use Exception;
 
@@ -72,6 +74,18 @@ class UsersController extends DashboardController
     }
 
     /**
+     * displays the permission manager UI
+     * @return View
+     */
+    public function permissionManager()
+    {
+        return $this->view( 'pages.dashboard.users.permission-manager', [
+            'title'         =>  __( 'Permission Manager' ),
+            'description'   =>  __( 'Manage all permissions and roles' )
+        ]);
+    }
+
+    /**
      * displays the user profile
      * @return view
      */
@@ -88,6 +102,24 @@ class UsersController extends DashboardController
     public function updateProfile( UserProfileRequest $request )
     {
         
+    }
+
+    /**
+     * returns a list of existing roles
+     * @return array roles with permissions
+     */
+    public function getRoles()
+    {
+        return Role::with( 'permissions' )->get();
+    }
+
+    /**
+     * Returns a list of permissions
+     * @return array permissions
+     */
+    public function getPermissions()
+    {
+        return Permission::get();
     }
 }
 
