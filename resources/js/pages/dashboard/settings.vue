@@ -56,6 +56,17 @@ export default {
                     .subscribe( result => {
                         this.validation.enableForm( this.form );
                         this.loadSettingsForm();
+
+                        if ( result.data ) {
+                            result.data.forEach( response => {
+                                if ( response.status === 'failed' ) {
+                                    nsSnackBar.error( response.message ).subscribe();
+                                } else {
+                                    nsSnackBar.success( response.message ).subscribe();
+                                }
+                            });
+                        }
+
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );

@@ -314,7 +314,10 @@ class Setup
         $this->role->name           =   __( 'User' );
         $this->role->namespace      =   'user';
         $this->role->description    =   __( 'Basic user role.' );
-        $this->role->save(); 
+        $this->role->save();
+        $this->role->addPermissions([ 
+            'crud.profile' 
+        ]); 
 
         // Admin Role
         $this->role                 =   new Role;
@@ -322,6 +325,11 @@ class Setup
         $this->role->namespace      =   'supervisor';
         $this->role->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
         $this->role->save(); 
+        $this->role->addPermissions([ 
+            'crud.users', 
+            'manage.options', 
+            'crud.profile' 
+        ]);
 
         // Master User
         $this->role                 =   new Role;
@@ -329,22 +337,11 @@ class Setup
         $this->role->namespace      =   'admin';
         $this->role->description    =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
         $this->role->save(); 
-
-        Role::AddPermissions( 'admin', [ 
+        $this->role->addPermissions([ 
             'crud.users', 
             'crud.profile', 
             'manage.options', 
             'manage.modules',
-        ]);
-
-        Role::AddPermissions( 'supervisor', [ 
-            'crud.users', 
-            'manage.options', 
-            'crud.profile' 
-        ]);
-
-        Role::AddPermissions( 'user', [ 
-            'crud.profile' 
         ]);
     }
 }

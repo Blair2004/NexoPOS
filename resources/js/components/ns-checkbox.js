@@ -21,7 +21,7 @@ const nsCheckbox    =   Vue.component( 'ns-checkbox', {
     methods: {
         toggleIt() {
             if ( this.field !== undefined ) {
-                this.field.value    =   !this.checked;
+                this.field.value    =   !this.field.value;
             }
 
             this.$emit( 'change', !this.checked );

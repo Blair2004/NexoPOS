@@ -212,4 +212,13 @@ class User extends Authenticatable
     {
         return $value == '1';
     }
+
+    /**
+     * Quick access to user options
+     */
+    public function options( $option, $default = null ) 
+    {
+        $options    =   new UserOptions( $this->id );
+        return $options->get( $option, $default );
+    }
 }

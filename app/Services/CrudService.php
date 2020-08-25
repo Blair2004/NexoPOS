@@ -229,11 +229,13 @@ class CrudService
 
                 if ( in_array( $junction, [ 'join', 'leftJoin', 'rightJoin', 'crossJoin' ] ) ) {
                     if ( $junction !== 'join' ) {
-                        $hasAlias           =   explode( 'as', $relation[0]);
-                        if ( count( $hasAlias ) === 2 ) {
-                            $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $relation[1], $relation[2], $relation[3] );
-                        } else {
-                            $query->$junction( $relation[0], $relation[1], $relation[2], $relation[3] );
+                        foreach( $relation as $junction_relation ) {
+                            $hasAlias           =   explode( 'as', $junction_relation[0]);
+                            if ( count( $hasAlias ) === 2 ) {
+                                $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $junction_relation[1], $junction_relation[2], $junction_relation[3] );
+                            } else {
+                                $query->$junction( $junction_relation[0], $junction_relation[1], $junction_relation[2], $junction_relation[3] );
+                            }
                         }
                     } else {
                         $hasAlias           =   explode( 'as', $relation[0]);
