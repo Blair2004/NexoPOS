@@ -121,5 +121,30 @@ class UsersController extends DashboardController
     {
         return Permission::get();
     }
+
+    public function updateRole( Request $request )
+    {
+        $roles      =   $request->all();
+
+        foreach( $roles as $roleNamespace => $permissions ) {
+            $role       =   Role::namespace( $roleNamespace );
+
+            if ( $role instanceof Role ) {
+                $removedPermissions     =   collect( $permissions )->filter( fn( $permission ) => ! $permission );
+                $grantedPermissions     =   collect( $permissions )->filter( fn( $permission ) => $permission );
+
+                // dd( $removedPermissions->keys() );
+                dd( $grantedPermissions->keys() );
+
+                $role->removePermissions( $removedPermissions->keys() );
+                $role->addPermissions( $grantedPermissions->keys() );
+            }
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The permissions has been updated' )
+        ];
+    }
 }
 

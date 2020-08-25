@@ -10,7 +10,7 @@
                 <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
             </div>
         </div>
-        <div>
+        <div class="pb-4">
             <ns-permissions></ns-permissions>
         </div>
     </div>

@@ -44,6 +44,24 @@ class SettingsPage
         return $flatRules;
     }
 
+    /**
+     * Get form plain data, by excaping the tabs
+     * identifiers
+     * @param Request $request
+     * @return array
+     */
+    public function getPlainData( Request $request )
+    {
+        $service        =   new CrudService;
+        return $service->getPlainData( $this, $request );
+    }
+
+    /**
+     * Proceed to a saving using te provided
+     * request along with the plain data
+     * @param Request $request
+     * @return array
+     */
     public function saveForm( Request $request )
     {
         $service        =   new CrudService;
