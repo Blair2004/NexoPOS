@@ -1,9 +1,9 @@
 <template>
     <div id="permission-wrapper">
         <div class="rounded shadow bg-white flex">
-            <div id="permissions" class="w-56 bg-gray-700 flex-shrink-0">
-                <div class="py-4 px-2 border-b border-gray-800 text-gray-100">Permissions</div>
-                <div :key="permission.id" v-for="permission of permissions" class="p-2 border-b border-gray-800 text-gray-100">{{ permission.name }}</div>
+            <div id="permissions" class="w-56 bg-gray-800 flex-shrink-0">
+                <div class="py-4 px-2 border-b border-gray-700 text-gray-100">Permissions</div>
+                <div :key="permission.id" v-for="permission of permissions" class="p-2 border-b border-gray-700 text-gray-100">{{ permission.name }}</div>
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div class="overflow-y-auto">

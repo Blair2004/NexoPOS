@@ -42,6 +42,7 @@ class ResetCommand extends Command
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::save();
         Artisan::call( 'migrate:reset --path=/database/migrations/v1_0' );
+        exec( 'rm -rf public/storage' );
         $this->info( 'The database has been cleared' );
     }
 }

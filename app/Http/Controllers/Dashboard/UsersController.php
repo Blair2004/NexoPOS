@@ -122,6 +122,11 @@ class UsersController extends DashboardController
         return Permission::get();
     }
 
+    /**
+     * update roles permissions
+     * @param Request $request
+     * @return Json
+     */
     public function updateRole( Request $request )
     {
         $roles      =   $request->all();
@@ -142,6 +147,11 @@ class UsersController extends DashboardController
             'status'    =>  'success',
             'message'   =>  __( 'The permissions has been updated' )
         ];
+    }
+
+    public function listRoles()
+    {
+        
     }
 }
 

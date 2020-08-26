@@ -30,7 +30,7 @@ class CreateRoles extends Migration
         $storeAdmin->name           =   __( 'Store Administrator' );
         $storeAdmin->namespace      =   'nexopos.store.administrator';
         $storeAdmin->locked         =   true;
-        $storeAdmin->description    =   __( 'Has a control over an entire store of NexoPOS' );
+        $storeAdmin->description    =   __( 'Has a control over an entire store of NexoPOS.' );
         $storeAdmin->save();
         $storeAdmin->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -54,7 +54,7 @@ class CreateRoles extends Migration
         $storeCashier->name         =   __( 'Store Cashier' );
         $storeCashier->namespace    =   'nexopos.store.cashier';
         $storeCashier->locked       =   true;
-        $storeCashier->description  =   __( 'Has a control over the sale process' );
+        $storeCashier->description  =   __( 'Has a control over the sale process.' );
         $storeCashier->save();
         $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
@@ -65,7 +65,7 @@ class CreateRoles extends Migration
         $driver->name               =   __( 'Vehicule Driver' );
         $driver->namespace          =   'nexopos.store.driver';
         $driver->locked             =   true;
-        $driver->description        =   __( 'Does the delivery' );
+        $driver->description        =   __( 'Does the orders delivery.' );
         $driver->save();
         $driver->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );    }
 
