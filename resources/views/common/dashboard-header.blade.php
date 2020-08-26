@@ -23,7 +23,9 @@
             </div>
             <div class="w-56 shadow-lg flex z-10 absolute -mb-2 rounded-br-lg rounded-bl-lg overflow-hidden" v-if="menuToggled">
                 <ul class="text-gray-700 w-full bg-white">
+                    @if ( Auth::user()->allowedTo([ 'manage.profile' ]) )
                     <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.dashboard.users.profile' ) }}"><i class="las text-lg mr-2 la-user-tie"></i> {{ __( 'Profile' ) }}</a></li>
+                    @endif
                     <li class="hover:bg-blue-400 bg-white hover:text-white"><a class="block px-2 py-1" href="{{ route( 'ns.logout' ) }}"><i class="las la-sign-out-alt mr-2"></i> {{ __( 'Logout' ) }}</a></li>
                 </ul>
             </div>

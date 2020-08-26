@@ -317,7 +317,7 @@ class Setup
         $this->role->description    =   __( 'Basic user role.' );
         $this->role->save();
         $this->role->addPermissions([ 
-            'crud.profile' 
+            'manage.profile' 
         ]); 
 
         // Admin Role
@@ -328,10 +328,7 @@ class Setup
         $this->role->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
         $this->role->save(); 
         $this->role->addPermissions([ 
-            'create.profile', 
-            'read.profile', 
-            'update.profile', 
-            'delete.profile', 
+            'manage.profile', 
             'manage.options', 
         ]);
 
@@ -347,16 +344,21 @@ class Setup
             'read.users', 
             'update.users', 
             'delete.users', 
+            'create.applications', 
+            'read.applications', 
+            'update.applications', 
+            'delete.applications', 
             'create.roles', 
             'read.roles', 
             'update.roles', 
             'delete.roles', 
-            'create.profile', 
-            'read.profile', 
-            'update.profile', 
-            'delete.profile', 
+            'manage.profile', 
             'manage.options', 
-            'manage.modules',
+            'install.modules',
+            'enable.modules',
+            'disable.modules',
+            'update.modules',
+            'delete.modules',
         ]);
     }
 }

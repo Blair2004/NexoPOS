@@ -34,7 +34,7 @@ class CoreService
         });
 
         if ( ! $passed ) {
-            throw new NotEnoughPermissionException( $message ?? __( 'Your don\'t have enough permission to see this page.' ) );
+            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permission to see this page.' ) );
         }
     }    
 }

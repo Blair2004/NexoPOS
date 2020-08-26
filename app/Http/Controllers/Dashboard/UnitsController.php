@@ -112,6 +112,8 @@ class UnitsController extends DashboardController
 
     public function listUnitsGroups()
     {
+        ns()->restrict([ 'nexopos.read.units' ]);
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units Groups' ),
             'createUrl'    =>  url( '/dashboard/units/groups/create' ),
@@ -122,6 +124,8 @@ class UnitsController extends DashboardController
 
     public function listUnits()
     {
+        ns()->restrict([ 'nexopos.read.units' ]);
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units' ),
             'createUrl'    =>  url( '/dashboard/units/create' ),
@@ -132,6 +136,8 @@ class UnitsController extends DashboardController
 
     public function createUnitGroup()
     {
+        ns()->restrict([ 'nexopos.create.units' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit Group' ),
             'returnUrl'    =>  url( '/dashboard/units/groups' ),
@@ -148,6 +154,8 @@ class UnitsController extends DashboardController
      */
     public function editUnitGroup( UnitGroup $group )
     {
+        ns()->restrict([ 'nexopos.update.units' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Unit Group' ),
             'returnUrl'    =>  url( '/dashboard/units/groups' ),
@@ -160,6 +168,8 @@ class UnitsController extends DashboardController
 
     public function createUnit()
     {
+        ns()->restrict([ 'nexopos.create.units' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit' ),
             'returnUrl'    =>  url( '/dashboard/units' ),
@@ -171,6 +181,8 @@ class UnitsController extends DashboardController
 
     public function editUnit( Unit $unit )
     {
+        ns()->restrict([ 'nexopos.update.units' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'submitMethod'  =>  'PUT',
             'title'         =>  __( 'Edit Unit' ),
