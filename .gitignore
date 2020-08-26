@@ -7,3 +7,4 @@ modules/.temp/*
 !modules/index.html
 public/modules/*
 !public/modules/index.html
+composer-lock.json

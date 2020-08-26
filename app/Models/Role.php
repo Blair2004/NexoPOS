@@ -14,6 +14,10 @@ class Role extends Model
 {
     protected $table    =   'nexopos_roles';
 
+    protected $cats     =   [
+        'locked'        =>  'boolean'
+    ];
+
     /**
      * Relation with users
      * @return void
@@ -78,20 +82,14 @@ class Role extends Model
 
             throw new Exception( sprintf( __( 'Unable to find the permission with the namespace "%s".'), $permissions ) );
 
-        } else if ( is_array( $permissions ) ) {
+        } else if ( $permissions instanceof Collection ) {
             /**
              * looping over provided permissions
              * and attempt to create a relation
              */
-            foreach( $permissions as $permissionNamespace ) {
-                $permission     =   Permission::namespace( $permissionNamespace )->first();
-
-                if ( $permission instanceof Permission ) {
-                    self::__createRelation( $this, $permission, $silent );
-                } else {
-                    throw new Exception( sprintf( __( 'Unable to find the permission with the namespace "%s".'), $permissionNamespace ) );
-                }
-            }
+            $permissions->each( function( $permissionNamespace ) {
+                $this->addPermissions( $permissionNamespace );
+            });
         }
     }
 
@@ -104,22 +102,15 @@ class Role extends Model
      */
     private static function __createRelation( $role, $permission, $silent = true )
     {
-        $exists     =   DB::table( 'nexopos_role_permission' )
-            ->where( 'role_id', $role->id )
+        $rolePermission     =   RolePermission::where( 'role_id', $role->id )
             ->where( 'permission_id', $permission->id )
             ->first();
 
-        if ( empty( $exists ) ) {
-            return DB::table( 'nexopos_role_permission' )->insert([
-                'role_id'           =>  $role->id,
-                'permission_id'     =>  $permission->id
-            ]);
-        } else if ( $silent === false ) {
-            throw new Exception( sprintf(
-                __( 'A relation already exist because role "%s" and permission "%s".' ),
-                $role->name,
-                $permission->name
-            ) );
+        if ( ! $rolePermission instanceof RolePermission ) {
+            $rolePermission                     =    new RolePermission;
+            $rolePermission->permission_id      =   $permission->id;
+            $rolePermission->role_id            =   $role->id;
+            $rolePermission->save();
         }
     }
 
@@ -131,10 +122,8 @@ class Role extends Model
      */
     public function removePermissions( $permissionNamespace )
     {
-        if ( is_array( $permissionNamespace ) ) {
-            foreach( $permissionNamespace as $permission ) {
-                $this->removePermissions( $permission );
-            }
+        if ( $permissionNamespace instanceof Collection ) {
+            $permissionNamespace->each( fn( $permission ) => $this->removePermissions( $permission ) );
         } else {
             $permission     =   Permission::where([ 'namespace' => $permissionNamespace ])
                 ->first();

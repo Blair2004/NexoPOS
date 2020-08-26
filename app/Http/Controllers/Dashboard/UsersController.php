@@ -133,9 +133,6 @@ class UsersController extends DashboardController
                 $removedPermissions     =   collect( $permissions )->filter( fn( $permission ) => ! $permission );
                 $grantedPermissions     =   collect( $permissions )->filter( fn( $permission ) => $permission );
 
-                // dd( $removedPermissions->keys() );
-                dd( $grantedPermissions->keys() );
-
                 $role->removePermissions( $removedPermissions->keys() );
                 $role->addPermissions( $grantedPermissions->keys() );
             }

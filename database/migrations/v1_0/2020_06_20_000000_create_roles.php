@@ -29,8 +29,23 @@ class CreateRoles extends Migration
         $storeAdmin                 =   new Role;
         $storeAdmin->name           =   __( 'Store Administrator' );
         $storeAdmin->namespace      =   'nexopos.store.administrator';
+        $storeAdmin->locked         =   true;
         $storeAdmin->description    =   __( 'Has a control over an entire store of NexoPOS' );
         $storeAdmin->save();
+        $storeAdmin->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.products' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.expenses' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.orders' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.coupons' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.expenses-categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.procurements' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.registers' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.stores' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.taxes' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.trucks' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $storeAdmin->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
+
         
         /**
          * store administrator role
@@ -38,8 +53,10 @@ class CreateRoles extends Migration
         $storeCashier               =   new Role;
         $storeCashier->name         =   __( 'Store Cashier' );
         $storeCashier->namespace    =   'nexopos.store.cashier';
+        $storeCashier->locked       =   true;
         $storeCashier->description  =   __( 'Has a control over the sale process' );
         $storeCashier->save();
+        $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
         /**
          * store administrator role
@@ -47,25 +64,10 @@ class CreateRoles extends Migration
         $driver                     =   new Role;
         $driver->name               =   __( 'Vehicule Driver' );
         $driver->namespace          =   'nexopos.store.driver';
+        $driver->locked             =   true;
         $driver->description        =   __( 'Does the delivery' );
         $driver->save();
-
-        /**
-         * assigning permissions to roles
-         */
-        $storeAdmin         =   Role::namespace( 'nexopos.store.administrator' );
-        $storeAdmin->grantPermissions( Permission::includes( '.categories' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.products' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.expenses' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.orders' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.coupons' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.expenses-categories' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.procurements' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.registers' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.stores' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.taxes' )->get() );
-        $storeAdmin->grantPermissions( Permission::includes( '.trucks' )->get() );
-    }
+        $driver->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );    }
 
     /**
      * Reverse the migrations.

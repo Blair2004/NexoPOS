@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\Helper;
 use App\Services\Options;
+use App\Services\UserOptions;
 use App\Services\SettingsPage;
 use App\Services\UserOptions;
 use Illuminate\Http\Request;

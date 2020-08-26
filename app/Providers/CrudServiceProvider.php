@@ -41,6 +41,10 @@ class CrudServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        /**
+         * every crud class on the system should be
+         * added here in order to be available and supported.
+         */
         Hook::addFilter( 'ns.crud-resource', function( $namespace ) {
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
@@ -61,6 +65,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.users': return UserCrud::class;
                 case 'ns.registers': return RegisterCrud::class;
                 case 'ns.procurements': return ProcurementCrud::class;
+                case 'ns.roles': return RolesCrud::class;
             }
             return $namespace;
         });

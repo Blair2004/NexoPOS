@@ -86,6 +86,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/users/edit/{user}', 'Dashboard\UsersController@editUser' );
         Route::get( '/dashboard/users/roles/permissions-manager', 'Dashboard\UsersController@permissionManager' );
         Route::get( '/dashboard/users/profile', 'Dashboard\UsersController@getProfile' )->name( 'ns.dashboard.users.profile' );
+        Route::get( '/dashboard/users/roles', 'Dashboard\UsersController@rolesList' );
+        Route::get( '/dashboard/users/roles/{id}', 'Dashboard\UsersController@editRole' );
 
         Route::get( '/dashboard/settings/{settings}', 'Dashboard\SettingsController@getSettings' );
         Route::get( '/dashboard/settings/form/{settings}', 'Dashboard\SettingsController@loadSettingsForm' );

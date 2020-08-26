@@ -12,7 +12,7 @@
                     </div>
                     <div :key="permission.id" v-for="permission of permissions" class="permission flex border-b border-gray-200">
                         <div v-for="role of roles" :key="role.id" class="w-48 flex-shrink-0 p-2 flex items-center justify-center border-r">
-                            <ns-checkbox @change="submitPermissions( role )" :field="role.fields[ permission.namespace ]"></ns-checkbox>
+                            <ns-checkbox @change="submitPermissions( role, role.fields[ permission.namespace ] )" :field="role.fields[ permission.namespace ]"></ns-checkbox>
                         </div>
                     </div>
                 </div>
@@ -35,13 +35,11 @@ export default {
         this.loadPermissionsAndRoles();
     },
     methods: {
-        submitPermissions( role ) {
+        submitPermissions( role, permission ) {
             const roles   =   new Object;
 
-            roles[ role.namespace ]     =   new Object;
-            for( let permission in role.fields ) {
-                roles[ role.namespace ][ permission ]   =   role.fields[ permission ].value;
-            }
+            roles[ role.namespace ]                     =   new Object;
+            roles[ role.namespace ][ permission.name ]  =   permission.value;
 
             nsHttpClient.put( '/api/nexopos/v4/users/roles', roles )
                 .subscribe( result => {
