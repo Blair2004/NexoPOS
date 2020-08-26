@@ -9,7 +9,7 @@
             <p class="text-gray-600">{{ __( 'Save a new customer group' ) }}</p>
         </div>
         <ns-crud-form 
-            return-link="{{ url( '/dashboard/customers/groups' ) }}"
+            return-url="{{ url( '/dashboard/customers/groups' ) }}"
             submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers-groups' ) }}"
             src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config' ) }}">
             <template v-slot:title>Group Name</template>

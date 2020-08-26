@@ -8,8 +8,9 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Role;
+use Illuminate\Validation\Rule;
 
-class RoleCrud extends CrudService
+class RolesCrud extends CrudService
 {
     /**
      * define the base table
@@ -116,9 +117,9 @@ class RoleCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
+                'description'   =>  __( 'Provide a name to the role.' )
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -126,35 +127,22 @@ class RoleCrud extends CrudService
                     'fields'    =>  [
                         [
                             'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'namespace',
                             'label' =>  __( 'Namespace' ),
+                            'validation'    =>  $entry === null ? 'required|unique:nexopos_roles,namespace' : [
+                                'required',
+                                Rule::unique( 'nexopos_roles', 'namespace' )->ignore( $entry->id )
+                            ],
+                            'description'   =>  __( 'Should be a unique value with no spaces or special character' ),
                             'value' =>  $entry->namespace ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ],                     ]
+                            'type'          =>  'textarea',
+                            'name'          =>  'description',
+                            'label'         =>  __( 'Description' ),
+                            'description'   =>  __( 'Provide more details about what this role is about.' ),
+                            'value'         =>  $entry->description ?? '',
+                        ],  
+                    ]
                 ]
             ]
         ];
@@ -167,6 +155,7 @@ class RoleCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        $inputs[ 'locked' ]     =   false;
         return $inputs;
     }
 
@@ -187,6 +176,11 @@ class RoleCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        ns()->restrict(
+            [ 'create.roles' ],
+            __( 'You do not have enough permissions to perform this action.' )
+        );
+
         return $request;
     }
 
@@ -222,6 +216,11 @@ class RoleCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        ns()->restrict(
+            [ 'update.roles' ],
+            __( 'You do not have enough permissions to perform this action.' )
+        );
+
         return $request;
     }
 
@@ -261,15 +260,14 @@ class RoleCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.roles' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            ns()->restrict(
+                [ 'deletee.roles' ],
+                __( 'You do not have enough permissions to perform this action.' )
+            );
+
+            if ( $model->locked ) {
+                throw new Exception( __( 'Unable to delete a system role.' ) );
+            }
         }
     }
 
@@ -279,21 +277,6 @@ class RoleCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
@@ -303,13 +286,13 @@ class RoleCrud extends CrudService
                 'label'  =>  __( 'Namespace' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
-            ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            ],            
+            'created_at'  =>  [
+                'label'  =>  __( 'Created_at' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+        ];
     }
 
     /**
@@ -321,7 +304,7 @@ class RoleCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
-
+        $entry->locked          =   ( bool ) $entry->locked;
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -365,6 +348,12 @@ class RoleCrud extends CrudService
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+            
+            ns()->restrict(
+                [ 'delete.roles' ],
+                __( 'You do not have enough permissions to perform this action.' )
+            );
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -372,9 +361,17 @@ class RoleCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
+
+                /**
+                 * make sure system roles can't be deleted
+                 */
                 if ( $entity instanceof Role ) {
-                    $entity->delete();
-                    $status[ 'success' ]++;
+                    if ( $entity->locked ) {
+                        $status[ 'failed' ]++;
+                    } else {
+                        $entity->delete();
+                        $status[ 'success' ]++;
+                    }
                 } else {
                     $status[ 'failed' ]++;
                 }

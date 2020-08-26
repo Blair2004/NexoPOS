@@ -9,7 +9,7 @@
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
@@ -108,7 +108,7 @@ export default {
             };
         }
     },  
-    props: [ 'submit-method', 'submit-url', 'return-link', 'src' ],
+    props: [ 'submit-method', 'submit-url', 'return-url', 'src' ],
     methods: {
         submit() {
             let formValidGlobally   =   true;
@@ -141,7 +141,7 @@ export default {
                 .subscribe( data => {
                     console.log( data );
                     if ( data.status === 'success' ) {
-                        return document.location   =   this.returnLink;
+                        return document.location   =   this.returnUrl;
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {

@@ -13,7 +13,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
     mounted() {
         this.loadForm();
     },
-    props: [ 'src', 'create-link', 'field-class', 'return-link', 'submit-url', 'submit-method', 'disable-tabs' ],
+    props: [ 'src', 'create-url', 'field-class', 'return-url', 'submit-url', 'submit-method', 'disable-tabs' ],
     computed: {
         activeTabFields() {
             for( identifier in this.form.tabs ) {
@@ -59,15 +59,16 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
                 .subscribe( result => {
                     if ( result.status === 'success' ) {
-                        return document.location   =   this.returnLink;
+                        return document.location   =   this.returnUrl;
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    // console.log( error.response )
-                    nsSnackBar.error( error.response.data.message, undefined, {
+                    nsSnackBar.error( error.message, undefined, {
                         duration: 5000
                     }).subscribe();
-                    this.formValidation.triggerError( this.form, error.response.data );
+                    
+                    this.formValidation.triggerError( this.form, error );
+
                     this.formValidation.enableForm( this.form );
                 })
         },
@@ -110,7 +111,7 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
                 <div class="flex justify-between items-center" v-if="form.main">
                     <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">

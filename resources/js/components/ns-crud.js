@@ -30,7 +30,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
     mounted() {
         this.loadConfig();
     },
-    props: [ 'src', 'create-link' ],
+    props: [ 'src', 'create-url' ],
     computed: {
         /**
          * helps to get parsed
@@ -177,7 +177,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
                 <div class="px-2 flex items-center justify-center">
-                    <a :href="createLink || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
+                    <a :href="createUrl || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 bg-gray-200 flex">

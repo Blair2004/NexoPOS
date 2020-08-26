@@ -26,11 +26,10 @@ Vue.component( 'ns-table-row', {
 
             if ( this.row.$toggled ) {
                 setTimeout(() => {
-                    const contextMenu   =   element.target.parentElement.lastElementChild;
-                    console.log( contextMenu );
-                    const offset                =   this.getElementOffset( element.target );
-                    contextMenu.style.top       =   ( offset.top + element.target.offsetHeight ) + 'px';
-                    contextMenu.style.right     =   ( offset.right - element.target.offsetWidth ) + 'px';
+                    const contextMenu               =   element.target.parentElement.lastElementChild;
+                    const offset                    =   this.getElementOffset( element.target );
+                    contextMenu.style.top           =   ( offset.top + element.target.offsetHeight ) + 'px';
+                    contextMenu.style.right         =   ( offset.right - element.target.offsetWidth ) + 'px';
                     console.log( offset.left - element.target.offsetWidth );
                 }, 100 );
             }
@@ -43,12 +42,12 @@ Vue.component( 'ns-table-row', {
                 if ( confirm( action.confirm.message ) ) {
                     nsHttpClient[ action.type.toLowerCase() ]( action.url )
                         .subscribe( response => {
-                            console.log( response );
                             nsSnackBar.success( response.message )
                                 .subscribe();
                             this.$emit( 'updated', true );
                         }, ( response ) => {
-                            console.log( Object.keys( response ) );
+                            this.toggleMenu();
+                            nsSnackBar.error( response.message ).subscribe();
                         })
                 }
             }

@@ -9,7 +9,7 @@
             <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
         </div>
         <ns-rewards-system class="mt-4"
-            return-link="{{ $returnLink }}"
+            return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
             disable-tabs="true"

@@ -9,7 +9,7 @@
             <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
         </div>
         <ns-manage-products
-            return-link="{{ $returnLink ?? '#' }}"
+            return-url="{{ $returnUrl ?? '#' }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}">

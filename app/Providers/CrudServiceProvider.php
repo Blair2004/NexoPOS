@@ -19,6 +19,7 @@ use App\Crud\TaxesGroupCrud;
 use App\Crud\UserCrud;
 use App\Crud\ProcurementCrud;
 use App\Crud\RegisterCrud;
+use App\Crud\RolesCrud;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 

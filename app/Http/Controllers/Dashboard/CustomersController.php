@@ -176,7 +176,7 @@ class CustomersController extends DashboardController
             'title'         =>  sprintf( __( 'Edit Customer : %s' ), $customer->name ),
             'description'   =>  __( 'Edit an existing customer.' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.customers/' . $customer->id ),
-            'returnLink'    =>  url( '/dashboard/customers' ),
+            'returnUrl'    =>  url( '/dashboard/customers' ),
             'submitMethod'  =>  'PUT',
             'mainFieldLabel'    =>  __( 'Customer Name' ),
             'saveButton'    =>  __( 'Update Customer' ),
@@ -206,7 +206,7 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Coupons List' ),
             'description'   =>  __( 'Manage all created coupons.' ),
-            'createLink'    =>  url( '/dashboard/customers/coupons/create' ),
+            'createUrl'    =>  url( '/dashboard/customers/coupons/create' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons' )
         ]);
     }
@@ -217,7 +217,7 @@ class CustomersController extends DashboardController
             'title'         =>  __( 'Create Coupon' ),
             'description'   =>  __( 'helps you creating a coupon.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
-            'returnLink'    =>  url( '/dashboard/customers/coupons' ),
+            'returnUrl'    =>  url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'POST',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons' ),
         ]);
@@ -229,7 +229,7 @@ class CustomersController extends DashboardController
             'title'         =>  __( 'Edit Coupon' ),
             'description'   =>  __( 'Editing an existing coupon.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
-            'returnLink'    =>  url( '/dashboard/customers/coupons' ),
+            'returnUrl'    =>  url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'PUT',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);

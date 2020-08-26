@@ -10,11 +10,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-
-
-use Tendoo\Core\Exceptions\NotFoundException;
 use Exception;
-
 use App\Http\Requests\UnitsGroupsRequest;
 use App\Http\Requests\UnitRequest;
 use App\Models\Unit;
@@ -118,7 +114,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units Groups' ),
-            'createLink'    =>  url( '/dashboard/units/groups/create' ),
+            'createUrl'    =>  url( '/dashboard/units/groups/create' ),
             'description'   =>  __( 'List of available units groups.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
         ]);
@@ -128,7 +124,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units' ),
-            'createLink'    =>  url( '/dashboard/units/create' ),
+            'createUrl'    =>  url( '/dashboard/units/create' ),
             'description'   =>  __( 'List of available units.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units' ),
         ]);
@@ -138,7 +134,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit Group' ),
-            'returnLink'    =>  url( '/dashboard/units/groups' ),
+            'returnUrl'    =>  url( '/dashboard/units/groups' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
             'description'   =>  __( 'Allows you to register a new unit group.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups/form-config' )
@@ -154,7 +150,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Unit Group' ),
-            'returnLink'    =>  url( '/dashboard/units/groups' ),
+            'returnUrl'    =>  url( '/dashboard/units/groups' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups/' . $group->id ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'Edit an existing unit group.' ),
@@ -166,7 +162,7 @@ class UnitsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit' ),
-            'returnLink'    =>  url( '/dashboard/units' ),
+            'returnUrl'    =>  url( '/dashboard/units' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units' ),
             'description'   =>  __( 'Allows you to register a new unit.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config' )
@@ -178,7 +174,7 @@ class UnitsController extends DashboardController
         return $this->view( 'pages.dashboard.crud.form', [
             'submitMethod'  =>  'PUT',
             'title'         =>  __( 'Edit Unit' ),
-            'returnLink'    =>  url( '/dashboard/units' ),
+            'returnUrl'    =>  url( '/dashboard/units' ),
             'description'   =>  __( 'Adjusting an existing unit.' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units/' . $unit->id ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config/' . $unit->id )

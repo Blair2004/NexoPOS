@@ -15,7 +15,7 @@ export default {
             nsHttpClient,
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
+    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
         submit() {
             if ( this.form.rules.length === 0 ) {
@@ -58,7 +58,7 @@ export default {
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {
                     if ( data.status === 'success' ) {
-                        return document.location   =   this.returnLink;
+                        return document.location   =   this.returnUrl;
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
@@ -121,7 +121,7 @@ export default {
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">

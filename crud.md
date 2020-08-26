@@ -73,11 +73,11 @@ As the table should be multilingual, translated labels should be provided as a s
 The creating forms loads his configuration from the CRUD Component class. Before, you need to start using the `<ns-crud-form></ns-crud-form>` component. As the previous table component,
 this components also requires parameters and slots.
 
-#### return-link
+#### return-url
 This should be a link that takes the user back to the components
 
 ```blade
-<ns-crud-form return-link="{{ url( '/dashboard/customers/groups' ) }}"></ns-crud-form>
+<ns-crud-form return-url="{{ url( '/dashboard/customers/groups' ) }}"></ns-crud-form>
 ```
 #### submit-url
 This should be the URL to the backend where the form is validated and saved. Usually, you'll use the default CRUD url + your component identifier (namespace). Using the same example we're working on (customers groups), the submit url will look like this.

@@ -47,7 +47,7 @@ class ProvidersController extends DashboardController
             'src'           =>  url( '/api/nexopos/v4/crud/ns.providers' ),
             'title'         =>  __( 'Providers' ),
             'description'   =>  __( 'List of registered providers' ),
-            'createLink'    =>  url( '/dashboard/providers/create' ),
+            'createUrl'    =>  url( '/dashboard/providers/create' ),
         ]);
     }
 
@@ -58,7 +58,7 @@ class ProvidersController extends DashboardController
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.providers' ),
             'title'         =>  __( 'Create A Provider' ),
             'description'   =>  __( 'Add a new provider to the system' ),
-            'returnLink'    =>  url( '/dashboard/providers' ),
+            'returnUrl'    =>  url( '/dashboard/providers' ),
         ]);
     }
 
@@ -70,7 +70,7 @@ class ProvidersController extends DashboardController
             'title'         =>  __( 'Edit Provider' ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'Modify an existing provider' ),
-            'returnLink'    =>  url( '/dashboard/providers' ),
+            'returnUrl'    =>  url( '/dashboard/providers' ),
         ]);
     }
 

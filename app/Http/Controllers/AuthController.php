@@ -18,6 +18,7 @@ use Tendoo\Core\Exceptions\CoreException;
 
 use App\Services\Options;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -62,6 +63,20 @@ class AuthController extends Controller
         ]);
 
         if ( $attempt ) {
+
+            /**
+             * check if the account is authorized to 
+             * login
+             */
+            if ( ! Auth::user()->active ) {
+                Auth::logout();
+                
+                $validator      =   Validator::make( $request->all(), []);
+                $validator->errors()->add( 'username', __( 'This account is disabled.' ) );
+
+                return redirect( route( 'ns.login' ) )->withErrors( $validator );
+            }
+
             return redirect( route( 'dashboard.index' ) );
         }
 

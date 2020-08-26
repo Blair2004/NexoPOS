@@ -19,6 +19,7 @@ use Tendoo\Core\Exceptions\NotAllowedException;
 
 use App\Models\Tax;
 use App\Services\TaxService;
+use Exception;
 
 class TaxesController extends DashboardController
 {
@@ -38,10 +39,7 @@ class TaxesController extends DashboardController
         if ( ! empty( $id ) ) {
             $productTax   =   Tax::find( $id );
             if( ! $productTax instanceof Tax ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the requeted product tax using the provided id' )
-                ]);
+                throw new Exception( __( 'Unable to find the requeted product tax using the provided id' ) );
             }
             return $productTax;
         }
@@ -70,10 +68,7 @@ class TaxesController extends DashboardController
     {
         $productTax     =   Tax::find( $id );
         if ( ! $productTax instanceof Tax ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested product tax using the provided identifier.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested product tax using the provided identifier.' ) );
         }
         return $productTax;
     }
@@ -138,17 +133,11 @@ class TaxesController extends DashboardController
         $tax    =   Tax::find( $taxId );
 
         if ( ! $tax instanceof Tax ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the parent taxes using the provided id.' )
-            ]);
+            throw new Exception( __( 'Unable to find the parent taxes using the provided id.' ) );
         }
 
         if ( $tax->type === 'simple' ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find sub taxes from a tax with a simple form.' )
-            ]);
+            throw new Exception( __( 'Unable to find sub taxes from a tax with a simple form.' ) );
         }
 
         return $tax->subTaxes;
@@ -178,7 +167,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'List of Taxes' ),
-            'createLink'    =>  url( '/dashboard/taxes/create' ),
+            'createUrl'    =>  url( '/dashboard/taxes/create' ),
             'description'   =>  __( 'shows the list of available taxes.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes' )
         ]);
@@ -192,7 +181,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Tax' ),
-            'returnLink'    =>  url( '/dashboard/taxes' ),
+            'returnUrl'    =>  url( '/dashboard/taxes' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
             'description'   =>  __( 'add a new tax to the system.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
@@ -208,7 +197,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Tax' ),
-            'returnLink'    =>  url( '/dashboard/taxes' ),
+            'returnUrl'    =>  url( '/dashboard/taxes' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'adjust an existing tax.' ),
@@ -224,7 +213,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'List of Taxes Groups' ),
-            'createLink'    =>  url( '/dashboard/taxes/groups/create' ),
+            'createUrl'    =>  url( '/dashboard/taxes/groups/create' ),
             'description'   =>  __( 'shows the list of available taxes groups.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' )
         ]);
@@ -238,7 +227,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Tax Group' ),
-            'returnLink'    =>  url( '/dashboard/taxes/groups' ),
+            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
             'description'   =>  __( 'Add a new tax group on the system.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
@@ -253,7 +242,7 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Tax Group' ),
-            'returnLink'    =>  url( '/dashboard/taxes/groups' ),
+            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
             'submitMethod'  =>  'PUT',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
             'description'   =>  __( 'Add a new tax group on the system.' ),

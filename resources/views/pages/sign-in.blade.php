@@ -11,8 +11,8 @@
                     </div>
                     <div class="bg-white rounded shadow overflow-hidden">
                         <div class="p-3 -my-2">
-                            <div class="{{ $errors->has( 'password' ) ? 'form-input-invalid' : 'form-input' }} flex flex-col my-2">
-                                @if( $errors->has( 'password' ) )
+                            <div class="{{ $errors->has( 'username' ) ? 'form-input-invalid' : 'form-input' }} flex flex-col my-2">
+                                @if( $errors->has( 'username' ) )
                                 <label for="username">{{ __( 'Username' ) }}</label>
                                 @else
                                 <label for="username">{{ __( 'Username' ) }}</label>

@@ -31,15 +31,20 @@ class CreatePermissions extends Migration
         define( 'NEXO_CREATE_PERMISSIONS', true );
         
         include_once( dirname( __FILE__ ) . '/../../permissions/categories.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/customers.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/customers-groups.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/coupons.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/expenses-categories.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/expenses.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/orders.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/procurements.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/providers.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/products.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/registers.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/rewards.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/stores.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/taxes.php' );
+        include_once( dirname( __FILE__ ) . '/../../permissions/reports.php' );
     }
 
     /**

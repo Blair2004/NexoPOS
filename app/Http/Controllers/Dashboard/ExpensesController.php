@@ -33,7 +33,7 @@ class ExpensesController extends DashboardController
             'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
             'title'         =>  __( 'Expenses' ),
             'description'   =>  __( 'List all created expenses' ),
-            'createLink'    =>  url( '/dashboard/expenses/create' )
+            'createUrl'    =>  url( '/dashboard/expenses/create' )
         ]);
     }
 
@@ -44,7 +44,7 @@ class ExpensesController extends DashboardController
             'title'         =>  __( 'Create Expense' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
             'description'   =>  __( 'add new expense on the system' ),
-            'returnLink'    =>  url( '/dashboard/expenses' )
+            'returnUrl'    =>  url( '/dashboard/expenses' )
         ]);
     }
 
@@ -56,7 +56,7 @@ class ExpensesController extends DashboardController
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'edit an existing expense' ),
-            'returnLink'    =>  url( '/dashboard/expenses' )
+            'returnUrl'    =>  url( '/dashboard/expenses' )
         ]);
     }
 

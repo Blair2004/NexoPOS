@@ -10,7 +10,7 @@
         </div>
         <ns-crud 
             src="{{ $src }}" 
-            create-link="{{ $createLink ?? '#' }}"
+            create-url="{{ $createUrl ?? '#' }}"
             id="crud-table-body">
             <template v-slot:bulk-label>{{ $bulkLabel ?? __( 'Bulk Actions' ) }}</template>
         </ns-crud>

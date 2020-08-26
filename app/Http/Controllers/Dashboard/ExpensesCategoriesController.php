@@ -42,7 +42,7 @@ class ExpensesCategoriesController extends DashboardController
         return $this->view( 'pages.dashboard.crud.table', [
             'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
             'title'         =>  __( 'Expenses Categories' ),
-            'createLink'    =>  url( '/dashboard/expenses/categories/create' ),
+            'createUrl'    =>  url( '/dashboard/expenses/categories/create' ),
             'description'   =>  __( 'List all created expenses categories' ),
         ]);
     }
@@ -57,7 +57,7 @@ class ExpensesCategoriesController extends DashboardController
         return $this->view( 'pages.dashboard.crud.form', [
             'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories/form-config' ),
             'title'         =>  __( 'Create New Expense Category' ),
-            'returnLink'    =>  url( '/dashboard/expenses/categories' ),
+            'returnUrl'    =>  url( '/dashboard/expenses/categories' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses-categories' ),
             'description'   =>  __( 'Register a new expense category on the system.' ),
         ]);

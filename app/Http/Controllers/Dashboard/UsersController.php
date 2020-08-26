@@ -33,7 +33,7 @@ class UsersController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Users List' ),
-            'createLink'    =>  url( '/dashboard/users/create' ),
+            'createUrl'    =>  url( '/dashboard/users/create' ),
             'description'   =>  __( 'Manage all users available.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.users' ),
         ]);
@@ -43,7 +43,7 @@ class UsersController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create User' ),
-            'returnLink'    =>  url( '/dashboard/users' ),
+            'returnUrl'    =>  url( '/dashboard/users' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.users' ),
             'description'   =>  __( 'Add a new user to the system.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.users/form-config' ),
@@ -65,7 +65,7 @@ class UsersController extends DashboardController
         
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit User' ),
-            'returnLink'    =>  url( '/dashboard/users' ),
+            'returnUrl'    =>  url( '/dashboard/users' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.users/' . $user->id ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'Update an existing user.' ),
@@ -79,6 +79,11 @@ class UsersController extends DashboardController
      */
     public function permissionManager()
     {
+        /**
+         * force permissions check
+         */
+        ns()->restrict([ 'update.roles' ]);
+
         return $this->view( 'pages.dashboard.users.permission-manager', [
             'title'         =>  __( 'Permission Manager' ),
             'description'   =>  __( 'Manage all permissions and roles' )
@@ -97,11 +102,6 @@ class UsersController extends DashboardController
             'src'           =>  url( '/api/nexopos/v4/forms/ns.user-profile' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/users/profile')
         ]);
-    }
-
-    public function updateProfile( UserProfileRequest $request )
-    {
-        
     }
 
     /**
@@ -145,13 +145,37 @@ class UsersController extends DashboardController
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The permissions has been updated' )
+            'message'   =>  __( 'The permissions has been updated.' )
         ];
     }
 
-    public function listRoles()
+    /**
+     * List all available roles
+     * @return View
+     */
+    public function rolesList()
     {
-        
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'Roles' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.roles' ),
+            'createUrl'    =>  url( 'dashboard/users/roles/create' ),
+            'description'   =>  __( 'List all available roles.' )
+        ]);
+    }
+
+    /**
+     * List all available roles
+     * @return View
+     */
+    public function editRole()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create Role' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.roles' ),
+            'description'   =>  __( 'Will a new custom role that can be edited.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.roles/form-config' ),
+            'returnUrl'    =>  url( 'dashboard/users/roles' ),
+        ]);
     }
 }
 

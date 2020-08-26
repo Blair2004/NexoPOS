@@ -288,7 +288,7 @@ class ProductsController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'     =>      __( 'Products List' ),
-            'createLink'    =>  url( '/dashboard/products/create' ),
+            'createUrl'    =>  url( '/dashboard/products/create' ),
             'desccription'  =>  __( 'List all products available on the system' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products' ),
         ]);
@@ -300,7 +300,7 @@ class ProductsController extends DashboardController
             'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
-            'returnLink'    =>  url( '/dashboard/products' ),
+            'returnUrl'    =>  url( '/dashboard/products' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }

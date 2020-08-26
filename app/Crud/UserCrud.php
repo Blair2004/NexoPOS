@@ -199,6 +199,12 @@ class UserCrud extends CrudService
      */
     public function filterPutInputs( $inputs, User $entry )
     {
+        /**
+         * if the password is not changed, no
+         * need to hash it
+         */
+        $inputs  =   collect( $inputs )->filter( fn( $input ) => ! empty( $input ) || $input === 0 )->toArray();
+
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ]   =   Hash::make( $inputs[ 'password' ] );
         }

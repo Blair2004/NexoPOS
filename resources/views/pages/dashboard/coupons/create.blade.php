@@ -9,7 +9,7 @@
             <p class="text-gray-600">{{ $description }}</p>
         </div>
         <ns-create-coupons
-            return-link="{{ $returnLink }}"
+            return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}"

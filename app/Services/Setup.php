@@ -204,7 +204,7 @@ class Setup
          * All roles with basic permissions
          */
         // Crud for users and options
-        foreach( [ 'users', 'profile', 'applications' ] as $permission ) {
+        foreach( [ 'users', 'profile', 'applications', 'roles' ] as $permission ) {
             foreach( [ 'create', 'read', 'update', 'delete' ] as $crud ) {
                 // Create User
                 $this->permission                   =   new Permission;
@@ -328,9 +328,11 @@ class Setup
         $this->role->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
         $this->role->save(); 
         $this->role->addPermissions([ 
-            'crud.users', 
+            'create.profile', 
+            'read.profile', 
+            'update.profile', 
+            'delete.profile', 
             'manage.options', 
-            'crud.profile' 
         ]);
 
         // Master User
@@ -341,8 +343,18 @@ class Setup
         $this->role->description    =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
         $this->role->save(); 
         $this->role->addPermissions([ 
-            'crud.users', 
-            'crud.profile', 
+            'create.users', 
+            'read.users', 
+            'update.users', 
+            'delete.users', 
+            'create.roles', 
+            'read.roles', 
+            'update.roles', 
+            'delete.roles', 
+            'create.profile', 
+            'read.profile', 
+            'update.profile', 
+            'delete.profile', 
             'manage.options', 
             'manage.modules',
         ]);
