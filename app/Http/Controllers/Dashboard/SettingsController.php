@@ -28,11 +28,14 @@ class SettingsController extends DashboardController
     )
     {
         $this->options  =   $options;
+
         parent::__construct();
     }
 
     public function getSettings( $identifier )
     {
+        ns()->restrict([ 'manage.options' ]);
+        
         switch( $identifier ) {
             case 'customers'; return $this->customersSettings(); break;
             case 'general'; return $this->generalSettings(); break;
@@ -163,6 +166,8 @@ class SettingsController extends DashboardController
 
     public function saveSettingsForm( SettingsRequest $request, $identifier )
     {
+        ns()->restrict([ 'manage.options' ]);
+
         $resource   =   Hook::filter( 'ns.settings', false, $identifier );
         
         if ( ! $resource instanceof SettingsPage ) {

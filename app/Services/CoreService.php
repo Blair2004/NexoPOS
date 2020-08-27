@@ -19,7 +19,8 @@ class CoreService
 
     /**
      * check if a use is allowed to
-     * access a page or trigger an error
+     * access a page or trigger an error. This should not be used
+     * on middleware or controller constructor.
      */
     public function restrict( $permissions, $message = '' )
     {
