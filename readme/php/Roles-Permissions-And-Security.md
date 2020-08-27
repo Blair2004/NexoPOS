@@ -98,3 +98,16 @@ ns()->restrict([ 'nexopos.delete.orders', 'nexopos.create.orders' ]); // the rol
 ```php
 ns()->restrict([ 'nexopos.delete.orders', 'nexopos.create.orders' ], 'any' ); // the role must have at least one permissions
 ```
+As mentionned above, you can also use it on a middleware to completely secure a whole controller.
+
+**Example : as a middleware**
+```php
+    // ...
+    public function __construct()
+    {
+        $this->middleware( function( $request, $next ) {
+            ns()->restrict([ 'manage.modules' ]);
+            return $next( $request );
+        });
+    }
+```
