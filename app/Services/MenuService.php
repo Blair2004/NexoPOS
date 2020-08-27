@@ -15,29 +15,35 @@ class MenuService
     {
         $this->menus    =   [
             'dashboard' =>  [
-                'label' =>  __( 'Dashboard' ),
-                'href'  =>  url( '/dashboard' ),
-                'icon'  =>  'la-home',
+                'label'         =>  __( 'Dashboard' ),                
+                'permissions'   =>  [ 'update.core', 'read.dashboard' ],
+                'icon'          =>  'la-home',
                 'childrens'     =>  [
-                    'updates'   =>  [
-                        'label' =>  __( 'Updates'),
-                        'href'  =>  url( '/dashboard/updates' )
+                    'index'             =>  [
+                        'label'         =>  __( 'Home' ),
+                        'permissions'   =>  [ 'read.dashboard' ],
+                        'href'          =>  url( '/dashboard' ),
+                    ],
+                    'updates'           =>  [
+                        'label'         =>  __( 'Updates'),
+                        'permissions'   =>  [ 'update.core' ],
+                        'href'          =>  url( '/dashboard/updates' )
                     ], 
-                    'about'     =>  [
-                        'label' =>  __( 'About'),
-                        'href'  =>  url( '/dashboard/about' )
+                    'about'             =>  [
+                        'label'         =>  __( 'About'),
+                        'href'          =>  url( '/dashboard/about' )
                     ]
                 ]
             ], 
             'pos'   =>  [
                 'label' =>  __( 'POS' ),
                 'icon'  =>  'la-cash-register',
-                'permissions'   =>  [ 'create.orders' ],
+                'permissions'   =>  [ 'nexopos.create.orders' ],
                 'href'  =>  url( '/dashboard/pos' )
             ], 
             'orders'    =>  [
                 'label' =>  __( 'Orders' ),
-                'permissions'   =>  [ 'update.orders', 'read.orders' ],
+                'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
                 'icon'  =>  'la-list-ol',
                 'href'  =>  url( '/dashboard/orders' )
             ], 
@@ -221,30 +227,30 @@ class MenuService
                 'label' =>  __( 'Taxes' ),
                 'icon'  =>  'la-balance-scale-left',
                 'permissions'           =>  [
-                    'read.taxes',
-                    'create.taxes',
-                    'read.taxes',
-                    'create.taxes',
+                    'nexopos.create.taxes',
+                    'nexopos.read.taxes',
+                    'nexopos.update.taxes',
+                    'nexopos.delete.taxes',
                 ],
                 'childrens' =>  [
                     'taxes-groups'   =>  [
                         'label'         =>  __( 'Taxes Groups'),
-                        'permissions'   =>  [ 'read.taxes' ],
+                        'permissions'   =>  [ 'nexopos.read.taxes' ],
                         'href'          =>  url( '/dashboard/taxes/groups' )
                     ],
                     'create-taxes-group'   =>  [
                         'label'         =>  __( 'Create Tax Groups'),
-                        'permissions'   =>  [ 'create.taxes' ],
+                        'permissions'   =>  [ 'nexopos.create.taxes' ],
                         'href'          =>  url( '/dashboard/taxes/groups/create' )
                     ],
                     'taxes'             =>  [
                         'label'         =>  __( 'Taxes'),
-                        'permissions'   =>  [ 'read.taxes' ],
+                        'permissions'   =>  [ 'nexopos.read.taxes' ],
                         'href'          =>  url( '/dashboard/taxes' )
                     ],
                     'create-tax'        =>  [
                         'label'         =>  __( 'Create Tax'),
-                        'permissions'   =>  [ 'create.taxes' ],
+                        'permissions'   =>  [ 'nexopos.create.taxes' ],
                         'href'          =>  url( '/dashboard/taxes/create' )
                     ]
                 ]
@@ -252,16 +258,14 @@ class MenuService
             'modules' =>  [
                 'label' =>  __( 'Modules' ),
                 'icon'  =>  'la-plug',
-                'permissions'   =>  [ 'install.modules', 'enable.modules' ],
+                'permissions'   =>  [ 'manage.modules' ],
                 'childrens'     =>  [
                     'modules'  =>  [
                         'label' =>  __( 'List' ),
-                        'permissions'   =>  [ 'enable.module' ],
                         'href'  =>  url( '/dashboard/modules' )
                     ], 
                     'upload-module'   =>  [
                         'label' =>  __( 'Upload Module'),
-                        'permissions'   =>  [ 'install.modules' ],
                         'href'  =>  url( '/dashboard/modules/upload' )
                     ], 
                 ]
@@ -270,6 +274,11 @@ class MenuService
                 'label'         =>  __( 'Users' ),
                 'icon'          =>  'la-users',
                 'childrens'     =>  [
+                    'profile'  =>  [
+                        'label' =>  __( 'List' ),
+                        'permissions'   =>  [ 'manage.profile' ],
+                        'href'  =>  url( '/dashboard/users/profile' )
+                    ], 
                     'users'  =>  [
                         'label' =>  __( 'List' ),
                         'permissions'   =>  [ 'read.users' ],

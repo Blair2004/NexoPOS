@@ -90,6 +90,14 @@ class Role extends Model
             $permissions->each( function( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
             });
+        } else if ( is_array( $permissions ) ) {
+            /**
+             * looping over provided permissions
+             * and attempt to create a relation
+             */
+            collect( $permissions )->each( function( $permissionNamespace ) {
+                $this->addPermissions( $permissionNamespace );
+            });
         }
     }
 

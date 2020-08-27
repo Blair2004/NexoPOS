@@ -123,18 +123,7 @@ class Setup
          * then we can launch option service
          */
         $this->options  =   app()->make( Options::class );
-        
-        /**
-         * Add permissions
-         */
-        $this->createPermissions();
-
-        /**
-         * Create Roles
-         */
-        $this->createRoles();
-        
-        $this->options->set( 'app_name', $request->input( 'app_name' ) );
+        $this->options->set( 'ns_store_name', $request->input( 'app_name' ) );
         $this->options->set( 'allow_registration', false );
         $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
         
@@ -193,61 +182,6 @@ class Setup
         ];
     }
 
-    /**
-     * Create Permission
-     * @param void
-     * @return void
-     */
-    private function createPermissions()
-    {
-        /**
-         * All roles with basic permissions
-         */
-        // Crud for users and options
-        foreach( [ 'users', 'profile', 'applications', 'roles' ] as $permission ) {
-            foreach( [ 'create', 'read', 'update', 'delete' ] as $crud ) {
-                // Create User
-                $this->permission                   =   new Permission;
-                $this->permission->name             =   ucwords( $crud ) . ' ' . ucwords( $permission );
-                $this->permission->namespace        =   $crud . '.' . $permission;
-                $this->permission->description      =   sprintf( __( 'Can %s %s' ), $crud, $permission );
-                $this->permission->save();
-            }
-        }
-
-        foreach( [ 'modules' ] as $permission ) {
-            foreach( [ 'install', 'enable', 'disable', 'update', 'delete' ] as $crud ) {
-                // Create User
-                $this->permission                   =   new Permission;
-                $this->permission->name             =   ucwords( $crud ) . ' ' . ucwords( $permission );
-                $this->permission->namespace        =   $crud . '.' . $permission;
-                $this->permission->description      =   sprintf( __( 'Can %s %s' ), $crud, $permission );
-                $this->permission->save();
-            }
-        }
-
-        // for core update
-        $this->permission                   =   new Permission;
-        $this->permission->name             =   __( 'Update Core' );
-        $this->permission->namespace        =   'update.core';
-        $this->permission->description      =   __( 'Can update core' );
-        $this->permission->save();
-        
-        // for module migration
-        $this->permission                   =   new Permission;
-        $this->permission->name             =   __( 'Manage Modules' );
-        $this->permission->namespace        =   'manage.modules';
-        $this->permission->description      =   __( 'Can manage module : install, delete, update, migrate, enable, disable' );
-        $this->permission->save();
-        
-        // for options
-        $this->permission                   =   new Permission;
-        $this->permission->name             =   __( 'Manage Options' );
-        $this->permission->namespace        =   'manage.options';
-        $this->permission->description      =   __( 'Can manage options : read, update' );
-        $this->permission->save();
-    }
-
     public function testDBConnexion()
     {
         try {
@@ -300,63 +234,5 @@ class Setup
 
             return response()->json( $message, 403 );
         }
-    }
-
-    /**
-     * Create Roles
-     * @param void
-     * @return void
-     */
-    private function createRoles()
-    {
-        // User Role
-        $this->role                 =   new Role;
-        $this->role->name           =   __( 'User' );
-        $this->role->namespace      =   'user';
-        $this->role->locked         =   true;
-        $this->role->description    =   __( 'Basic user role.' );
-        $this->role->save();
-        $this->role->addPermissions([ 
-            'crud.profile' 
-        ]); 
-
-        // Admin Role
-        $this->role                 =   new Role;
-        $this->role->name           =   __( 'Supervisor' );
-        $this->role->namespace      =   'supervisor';
-        $this->role->locked         =   true;
-        $this->role->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
-        $this->role->save(); 
-        $this->role->addPermissions([ 
-            'create.profile', 
-            'read.profile', 
-            'update.profile', 
-            'delete.profile', 
-            'manage.options', 
-        ]);
-
-        // Master User
-        $this->role                 =   new Role;
-        $this->role->name           =   __( 'Administrator' );
-        $this->role->namespace      =   'admin';
-        $this->role->locked         =   true;
-        $this->role->description    =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
-        $this->role->save(); 
-        $this->role->addPermissions([ 
-            'create.users', 
-            'read.users', 
-            'update.users', 
-            'delete.users', 
-            'create.roles', 
-            'read.roles', 
-            'update.roles', 
-            'delete.roles', 
-            'create.profile', 
-            'read.profile', 
-            'update.profile', 
-            'delete.profile', 
-            'manage.options', 
-            'manage.modules',
-        ]);
     }
 }
