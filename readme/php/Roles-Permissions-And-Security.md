@@ -78,7 +78,7 @@ Guards are security measure added to NexoPOS to restrict some action to the righ
 By default, NexoPOS is built with various roles that has various permissions. It's also possible to create customs roles and permissions. 
 
 Once you have your roles, permissions created and your permissions and roles linked, it's time to protect your pages. 
-This can be made on any of your controller methods. We'll here just need to use the helper `ns()`.
+This can be made on any of your controller methods or on middleware. We'll here just need to use the helper `ns()`.
 
 **Example :**
 ```php
