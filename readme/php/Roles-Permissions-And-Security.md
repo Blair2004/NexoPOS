@@ -85,7 +85,7 @@ This can be made on any of your controller methods. We'll here just need to use 
 ns()->restrict([ 'manage.options' ]);
 ```
 
-The method "restrict" takes an array of permissions as a parameters. by default, if more than one permission is passed, that means the user with a specific role
+The method "restrict" takes an array of permission's namespace as values. by default, if more than one permission is passed, that means the user with a specific role
 will have to have all the permissions provided. In order to grant the access for one of the permissions provided, a second parameter is required. That second parameter
 can either be "all" or "any". By default, the second parameter is set to "all".
 
