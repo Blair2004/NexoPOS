@@ -12,8 +12,7 @@ class NotEnoughPermissionException extends Exception
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-enough-permissions', [
                 'title'         =>  __( 'Not Enough Permissions &mdash; Errors' ),
-                'description'   =>  __('You\'re not allowed to see that page.' ),
-                'message'       =>  $this->getMessage()
+                'message'       =>  $this->getMessage() ?? __('You\'re not allowed to see that page.' )
             ]);
         }
 

@@ -31,6 +31,8 @@ class UsersController extends DashboardController
 
     public function listUsers()
     {
+        ns()->restrict([ 'read.users' ]);
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Users List' ),
             'createUrl'    =>  url( '/dashboard/users/create' ),
@@ -41,6 +43,8 @@ class UsersController extends DashboardController
 
     public function createUser()
     {
+        ns()->restrict([ 'create.users' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create User' ),
             'returnUrl'    =>  url( '/dashboard/users' ),
@@ -52,6 +56,8 @@ class UsersController extends DashboardController
 
     public function editUser( User $user )
     {
+        ns()->restrict([ 'update.users' ]);
+
         if ( $user->id === Auth::id() ) {
             return redirect( route( 'dashboard.users.profile' ) );
         }
@@ -96,6 +102,8 @@ class UsersController extends DashboardController
      */
     public function getProfile()
     {
+        ns()->restrict([ 'manage.profile' ]);
+
         return $this->view( 'pages.dashboard.users.profile', [
             'title'         =>  __( 'My Profile' ),
             'description'   =>  __( 'Change your personal settings' ),
@@ -129,6 +137,8 @@ class UsersController extends DashboardController
      */
     public function updateRole( Request $request )
     {
+        ns()->restrict([ 'update.roles' ]);
+
         $roles      =   $request->all();
 
         foreach( $roles as $roleNamespace => $permissions ) {
@@ -155,6 +165,8 @@ class UsersController extends DashboardController
      */
     public function rolesList()
     {
+        ns()->restrict([ 'read.roles' ]);
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Roles' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.roles' ),
@@ -169,6 +181,8 @@ class UsersController extends DashboardController
      */
     public function editRole()
     {
+        ns()->restrict([ 'update.roles' ]);
+
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create Role' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.roles' ),

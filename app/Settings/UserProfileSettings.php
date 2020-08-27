@@ -8,7 +8,6 @@ use App\Services\Helper;
 use App\Services\Options;
 use App\Services\UserOptions;
 use App\Services\SettingsPage;
-use App\Services\UserOptions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +29,8 @@ class UserProfileSettings extends SettingsPage
 
     public function saveForm( Request $request )
     {
+        ns()->restrict([ 'manage.profile' ]);
+
         $result         =   [];
         $userOptions    =   app()->make( UserOptions::class );
         $inputs         =   $this->getPlainData( $request );
