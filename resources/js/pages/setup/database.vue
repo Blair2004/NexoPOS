@@ -72,8 +72,8 @@ export default {
                 value : 'nexopos_v4',
                 validation: 'required',
             }, {
-                label: 'Database Name',
-                description: 'Provide the database name.',
+                label: 'Database Prefix',
+                description: 'Provide the database prefix.',
                 name: 'database_prefix',
                 value : 'ns_',
                 validation: 'required',
