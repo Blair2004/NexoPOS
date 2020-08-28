@@ -2,7 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Helper;
+use App\Services\ModulesService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class MakeModuleServiceProviderCommand extends Command
 {
@@ -43,10 +47,10 @@ class MakeModuleServiceProviderCommand extends Command
      */
     public function handle()
     {
-        if ( Helper::AppIsInstalled() ) {
+        if ( ns()->installed() ) {
             if ( ! empty( $this->argument( 'namespace' ) && ! empty( $this->argument( 'name' ) ) ) ) {
                 
-                $modules     =   app()->make( 'Tendoo\Core\Services\Modules' );
+                $modules     =   app()->make( ModulesService::class );
 
                 /**
                  * Check if the module exists
@@ -70,7 +74,7 @@ class MakeModuleServiceProviderCommand extends Command
                 }
             }
         } else {
-            $this->info( 'Tendoo is not yet installed.' );
+            $this->info( 'NexoPOS is not yet installed.' );
         }
     }
 }

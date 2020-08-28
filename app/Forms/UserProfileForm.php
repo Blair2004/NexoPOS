@@ -1,5 +1,5 @@
 <?php
-namespace App\Settings;
+namespace App\Forms;
 
 use App\Http\Requests\UserProfileRequest;
 use App\Models\Role;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class UserProfileSettings extends SettingsPage
+class UserProfileForm extends SettingsPage
 {
     public function __construct()
     {

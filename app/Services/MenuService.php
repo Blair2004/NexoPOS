@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use TorMorten\Eventy\Facades\Eventy as Hook;
+
 class MenuService
 {
     protected $menus;
@@ -173,7 +175,7 @@ class MenuService
                     'nexopos.create.product-units',
                     'nexopos.read.product-units',
                     'nexopos.create.product-units',
-                    'nexopos.make.products-adjustment',
+                    'nexopos.make.products-adjustments',
                 ],
                 'childrens'     =>  [
                     'products'  =>  [
@@ -198,27 +200,27 @@ class MenuService
                     ],
                     'units'   =>  [
                         'label' =>  __( 'Units'),
-                        'permissions'   =>  [ 'nexopos.read.product-units' ],
+                        'permissions'   =>  [ 'nexopos.read.products-units' ],
                         'href'  =>  url( '/dashboard/units' )
                     ],
                     'create-units'   =>  [
                         'label' =>  __( 'Create Unit'),
-                        'permissions'   =>  [ 'nexopos.create.product-units' ],
+                        'permissions'   =>  [ 'nexopos.create.products-units' ],
                         'href'  =>  url( '/dashboard/units/create' )
                     ],
                     'unit-groups'   =>  [
                         'label' =>  __( 'Unit Groups'),
-                        'permissions'   =>  [ 'nexopos.read.product-units' ],
+                        'permissions'   =>  [ 'nexopos.read.products-units' ],
                         'href'  =>  url( '/dashboard/units/groups' )
                     ],
                     'create-unit-groups'   =>  [
                         'label' =>  __( 'Create Unit Groups'),
-                        'permissions'   =>  [ 'nexopos.create.product-units' ],
+                        'permissions'   =>  [ 'nexopos.create.products-units' ],
                         'href'  =>  url( '/dashboard/units/groups/create' )
                     ],
                     'create-products'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
-                        'permissions'   =>  [ 'nexopos.make.products-adjustment' ],
+                        'permissions'   =>  [ 'nexopos.make.products-adjustments' ],
                         'href'  =>  url( '/dashboard/stock-adjustment' )
                     ],
                 ]
@@ -451,7 +453,7 @@ class MenuService
      */
     public function getMenus()
     {
-        return $this->menus;
+        return Hook::filter( 'ns-dashboard-menus', $this->menus );
     }
 
     /**

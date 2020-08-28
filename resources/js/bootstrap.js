@@ -62,4 +62,8 @@ const nsState           =   new State({
 
 nsHttpClient.defineClient( Axios );
 
+window.nsEvent          =   nsEvent;
+window.nsHttpClient     =   nsHttpClient;
+window.nsSnackBar       =   nsSnackBar;
+
 export { Vue, VueRouter, Axios, ChartJS, EventEmitter, SnackBar, nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen };

@@ -158,13 +158,6 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( CurrencyService::class )
             );
         });
-
-        // register module singleton
-        $this->app->singleton( ModulesService::class, function( $app ) {
-            $modules    =   new ModulesService;
-            $modules->load();
-            return $modules;
-        });
     }
 
     /**

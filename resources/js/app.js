@@ -15,7 +15,7 @@ const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 const NsModules         =   require( './pages/dashboard/modules.vue' ).default;
 const NsPermissions     =   require( './pages/dashboard/ns-permissions.vue' ).default;
 
-new window.Vue({
+window.nsDashboardAside  =   new window.Vue({
     el: '#dashboard-aside',
     data: {
         sidebar: 'visible'
@@ -27,7 +27,7 @@ new window.Vue({
     }
 });
 
-new window.Vue({
+window.nsDashboardOverlay    =   new window.Vue({
     el: '#dashboard-overlay',
     data: {
         sidebar: null
@@ -50,7 +50,7 @@ new window.Vue({
     }
 })
 
-new window.Vue({
+window.nsDashboardHeader     =   new window.Vue({
     el: '#dashboard-header',
     data: {
         menuToggled: false,
@@ -74,7 +74,7 @@ new window.Vue({
     }
 });
 
-new window.Vue({
+window.nsDashboardContent    =   new window.Vue({
     el: '#dashboard-content',
     mounted() {
         console.log( NsModules );

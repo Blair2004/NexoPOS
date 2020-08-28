@@ -26,3 +26,4 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-crud-resource | Used to return relevant CRUD component class when there is a match with the identifier(namespace). | 2 ( `<string>namespace`, `<number>?identifier` )|
 | ns-crud-form | Used to hold form as defined on the `getForm` on the CRUD component class. | 3 ( `<array>form`, `<string>namespace`, `<array>(model, namespace, id)` )|
 | ns-validation | Contains the validation rules for a specific CRUD Component class. | 1 ( `<array>validation` )|
+| ns-dashboard-menus | Contains the array where is defined the Dashboard menus. | 1 ( `<array>validation` )|

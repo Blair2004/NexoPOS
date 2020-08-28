@@ -3,6 +3,7 @@
 /**
  * {{ $module[ 'name' ] }} Controller
  * @since {{ $module[ 'version' ] }}
+ * @package modules/{{ $module[ 'namespace' ] }}
 **/
 
 namespace Modules\{{ $module[ 'namespace' ] }}\Http\Controllers;
@@ -23,7 +24,6 @@ class {{ $name }} extends DashboardController
     **/
     public function index()
     {
-        Page::setTitle( __( 'Unammed Page' ) );
         return View::make( '{{ $module[ 'namespace' ] }}::index' );
     }
 }

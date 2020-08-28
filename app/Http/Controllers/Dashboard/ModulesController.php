@@ -46,6 +46,11 @@ class ModulesController extends DashboardController
         ]);
     }
 
+    /**
+     * Get modules using various statuses
+     * @param string status
+     * @return array of modules
+     */
     public function getModules( $argument = '' )
     {        
         switch( $argument ) {
@@ -65,6 +70,24 @@ class ModulesController extends DashboardController
             'total_enabled'     =>  count( $this->modules->getEnabled() ),
             'total_disabled'    =>  count( $this->modules->getDisabled() )
         ];
+    }
+
+    /**
+     * Performs a single migration file for a specific module
+     * @param string module namespace
+     * @return Request $request
+     * @return Array response
+     */
+    public function migrate( $namespace, Request $request )
+    {
+        $module     =   $this->modules->get( $namespace );
+        $result     =   $this->modules->runMigration( $module[ 'namespace' ], $request->input( 'version' ), $request->input( 'file' ) );
+
+        if ( $result[ 'status' ] === 'failed' ) {
+            throw new Exception( $result[ 'message' ] );
+        }
+
+        return $result;
     }
 
     /**
@@ -103,6 +126,11 @@ class ModulesController extends DashboardController
         ]);
     }
 
+    /**
+     * Upload a module. Except a "module" provided as a file input
+     * @param ModuleUploadRequest $request
+     * @return Json|Redirect response
+     */
     public function uploadModule( ModuleUploadRequest $request )
     {
         $result     =   $this->modules->upload( $request->file( 'module' ) );

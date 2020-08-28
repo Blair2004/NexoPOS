@@ -9,6 +9,14 @@ use App\Services\Helper;
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
     <link rel="stylesheet" href="{{ asset( 'css/app.css' ) }}">
     @yield( 'layout.dashboard.header' )
+    <script>
+        /**
+         * constant where is registered
+         * global custom components
+         * @param {Object}
+         */
+        const nsExtraComponents     =   new Object;
+    </script>
 </head>
 <body>
     <div class="h-full w-full flex flex-col">

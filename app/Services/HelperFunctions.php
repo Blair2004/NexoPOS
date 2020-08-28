@@ -181,7 +181,7 @@ function execThis( $className ) {
 		$method 	=	$vars[1];
 		return (new $class)->$method();
 	}
-	throw \Exception( sprintf( __( 'Unable to execute the following class callback string : %s' ), $className ) );
+	throw new Exception( sprintf( __( 'Unable to execute the following class callback string : %s' ), $className ) );
 }
 
 function ns()

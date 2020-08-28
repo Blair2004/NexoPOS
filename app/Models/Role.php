@@ -46,6 +46,10 @@ class Role extends Model
         return $this->belongsToMany( Permission::class, 'nexopos_role_permission' );
     }
 
+    public function scopeWithNamespace( $query, $param ) {
+        return $query->where( 'namespace', $param );
+    }
+
     /**
      * Get Name
      * @param string role name
@@ -74,7 +78,7 @@ class Role extends Model
     public function addPermissions( $permissions, $silent = false )
     {
         if ( is_string( $permissions ) ) {
-            $permission     =   Permission::namespace( $permissions )->first();
+            $permission     =   Permission::namespace( $permissions );
 
             if ( $permission instanceof Permission ) {
                 return self::__createRelation( $this, $permission, $silent );
@@ -114,6 +118,10 @@ class Role extends Model
             ->where( 'permission_id', $permission->id )
             ->first();
 
+        /**
+         * if the relation already exists, we'll just skip 
+         * that and proceed
+         */
         if ( ! $rolePermission instanceof RolePermission ) {
             $rolePermission                     =    new RolePermission;
             $rolePermission->permission_id      =   $permission->id;

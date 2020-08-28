@@ -1,8 +1,8 @@
-@inject( 'SchemaService', 'Tendoo\Core\Services\Schema' )<{{ '?php' }}
+@inject( 'SchemaService', 'App\Services\Schema' )<{{ '?php' }}
 @inject( 'Str', 'Illuminate\Support\Str' )
 /**
  * Table Migration
- * @package {{ config( 'tendoo.version' ) }}
+ * @package {{ config( 'nexopos.version' ) }}
 **/
 
 namespace Modules\{{ $module[ 'namespace' ] }}\Migrations;

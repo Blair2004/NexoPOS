@@ -100,7 +100,7 @@ class ModulesService
             $config[ 'files' ]          =   $files;
 
             // If a module has at least a namespace
-            if ( $config[ 'namespace' ] != null ) {
+            if ( $config[ 'namespace' ] !== null ) {
                 // index path
                 $modulesPath        =   base_path( 'modules' ) . DIRECTORY_SEPARATOR;
                 $currentModulePath  =   $modulesPath . $dir . DIRECTORY_SEPARATOR;
@@ -118,6 +118,7 @@ class ModulesService
                 $config[ 'views-path' ]                 =   $currentModulePath . 'Resources' . DIRECTORY_SEPARATOR . 'Views';
                 $config[ 'dashboard-path' ]             =   $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ]                    =   false; // by default the module is set as disabled
+                $config[ 'migrations' ]                 =   $this->__getModuleMigration( $config );
 
                 /**
                  * If the system is installed, then we can check if the module is enabled or not
@@ -153,8 +154,8 @@ class ModulesService
                          */
                         $fileInfo   =   pathinfo( $service );
 
-                        if ( is_file( base_path() . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
-                            include_once( base_path() . DIRECTORY_SEPARATOR . $service );
+                        if ( is_file( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
+                            include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service );
     
                             $className      =   ucwords( $fileInfo[ 'filename' ] );
                             $fullClassName  =   'Modules\\' . $config[ 'namespace' ] . '\\Providers\\' . $className;
@@ -742,7 +743,7 @@ class ModulesService
         /**
          * include initial migration files
          */             
-        $filePath   =   base_path() . DIRECTORY_SEPARATOR . $file;
+        $filePath   =   base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file;
         $fileInfo   =   pathinfo( $filePath );
         $fileName   =   $fileInfo[ 'filename' ];
         $className  =   str_replace( ' ', '', ucwords( str_replace( '_', ' ', $fileName ) ) );
@@ -838,10 +839,13 @@ class ModulesService
             }
 
             return [
-                'status'    =>  'success',
-                'code'      =>  'module_enabled',
-                'message'   =>  __( 'The module has correctly been enabled.' ),
-                'module'    =>  $module
+                'status'            =>  'success',
+                'message'           =>  __( 'The module has correctly been enabled.' ),
+                'data'              =>  [
+                    'code'          =>  'module_enabled',
+                    'module'        =>  $module,
+                    'migrations'    =>  $this->getMigrations( $module[ 'namespace' ] )
+                ]
             ];
         }
 
@@ -900,55 +904,67 @@ class ModulesService
          * if module exists
          */
         if ( $module ) {
-            /**
-             * If the last migration is not defined
-             * that means we're running it for the first time
-             * we'll set the migration to 0.0 then.
-             */
-            $lastVersion        =   $this->options->get( strtolower( $module[ 'namespace' ] ) . '_last_migration', '0.0.0' );
-            $currentVersion     =   $module[ 'version' ];
-            $directories        =   Storage::disk( 'ns-modules' )->directories( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
-            $version_names      =   [];
+            return $this->__getModuleMigration( $namespace );
+        }
 
-            foreach( $directories as $dir ) {
-                $version        =   basename( $dir );
+        return [];
+    }
+
+    /**
+     * get module migration without
+     * having the modules array built.
+     * @param array module namespace
+     * @return array of migration files
+     */
+    private function __getModuleMigration( $module )
+    {
+        /**
+         * If the last migration is not defined
+         * that means we're running it for the first time
+         * we'll set the migration to 0.0 then.
+         */
+        $lastVersion        =   $this->options->get( strtolower( $module[ 'namespace' ] ) . '_last_migration', '0.0.0' );
+        $currentVersion     =   $module[ 'version' ];
+        $directories        =   Storage::disk( 'ns-modules' )->directories( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+        $version_names      =   [];
+
+        foreach( $directories as $dir ) {
+            $version        =   basename( $dir );
+
+            /**
+             * the last version should be lower than the looped versions
+             * the current version should greather or equal to the looped versions
+             */
+            if ( 
+                version_compare( $lastVersion, $version, '<' ) && 
+                version_compare( $currentVersion, $version, '>=' )
+            ) {					
+                $files      =   Storage::disk( 'ns-modules' )->allFiles( 
+                    ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $version 
+                );
 
                 /**
-                 * the last version should be lower than the looped versions
-                 * the current version should greather or equal to the looped versions
+                 * add a migration only if there is a file to add.
                  */
-                if ( 
-                    version_compare( $lastVersion, $version, '<' ) && 
-                    version_compare( $currentVersion, $version, '>=' )
-                ) {					
-                    $files      =   Storage::disk( 'ns-modules' )->allFiles( 
-                        ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $version 
-                    );
-
-                    /**
-                     * add a migration only if there is a file to add.
-                     */
-                    if ( count( $files ) ) {
-                        $version_names[ $version ]    =   $files;
-                    }
+                if ( count( $files ) ) {
+                    $version_names[ $version ]    =   $files;
                 }
             }
-
-            $version_array     =   array_keys( $version_names );
-
-            usort( $version_array, function( $a, $b ) {
-                return version_compare( $a, $b, '>' );
-            });
-
-            $ordered_versions    =   [];
-
-            foreach( $version_array as $version ) {
-                $ordered_versions[ $version ]   =   $version_names[ $version ];
-            }
-            
-            return $ordered_versions;
         }
-        return [];
+
+        $version_array     =   array_keys( $version_names );
+
+        usort( $version_array, function( $a, $b ) {
+            return version_compare( $a, $b, '>' );
+        });
+
+        $ordered_versions    =   [];
+
+        foreach( $version_array as $version ) {
+            $ordered_versions[ $version ]   =   $version_names[ $version ];
+        }
+        
+        return $ordered_versions;
     }
 
     /**

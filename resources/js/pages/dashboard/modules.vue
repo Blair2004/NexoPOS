@@ -3,7 +3,7 @@
         <div class="flex justify-between items-center">
             <div class="flex justify-between items-center -mx-2">
                 <span class="px-2">
-                    <a @click="loadModules()" class="rounded-full text-gray-600 bg-white shadow flex items-center justify-center px-3 py-1 h-10 w-10 hover:bg-blue-400 hover:text-white"><i class="las la-sync"></i></a>
+                    <a @click="refreshModules()" class="rounded-full text-gray-600 bg-white shadow flex items-center justify-center px-3 py-1 h-10 w-10 hover:bg-blue-400 hover:text-white"><i class="las la-sync"></i></a>
                 </span>
                 <span class="px-2">
                     <a :href="upload" class="rounded-lg text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white">Upload<i class="las la-angle-right"></i></a>
@@ -14,7 +14,7 @@
                 <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'disabled' ] ? $slots[ 'disabled' ][0].text : 'Disabled' }} ({{ total_disabled }})</a></div>
             </div>
         </div>
-        <div class="module-section flex-auto flex flex-wrap py-4 -my-4 -mx-4">
+        <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules" class="p-4 flex-auto flex">
                 <div class="flex h-full flex-auto border-dashed border-2 border-gray-600 bg-white justify-center items-center">
                     <h2 class="font-bold text-xl text-gray-700">{{ noModuleMessage }}</h2>
@@ -33,7 +33,20 @@
                     <div class="footer bg-gray-200 p-2 flex justify-between">
                         <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">Enable</ns-button>
                         <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">Disable</ns-button>
-                        <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
+                        <div class="flex -mx-1">
+                            <div class="px-1">
+                                <ns-button 
+                                    @click="performMigration( moduleObject )" 
+                                    v-if="Object.values( moduleObject.migrations ).length > 0 && ! moduleObject.migrating && ! moduleObject.migrated">
+                                    <i class="las la-sync text-xl"></i>
+                                </ns-button>
+                                <ns-button v-if="moduleObject.migrating" disabled><i class="las la-sync text-xl animate-spin"></i></ns-button>
+                                <ns-button v-if="moduleObject.migrated" disabled type="success"><i class="las la-check text-xl"></i></ns-button>
+                            </div>
+                            <div class="px-1">
+                                <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,11 +80,50 @@ export default {
         }
     },
     methods: {
+        performMigration: async ( module, migrations ) => {
+            const syncRunMigration  =   async ( file, version ) => {
+                return new Promise( ( resolve, reject ) => {
+                    nsHttpClient.post( `/api/nexopos/v4/modules/${module.namespace}/migrate`, { file, version })
+                        .subscribe( result => {
+                            resolve( true );
+                        }, error => {
+                            return nsSnackBar.error( error.message, null, { duration: 4000 })
+                                .subscribe();
+                        })
+                })
+            }
+
+            /**
+             * if a migration is not provded
+             * let's check from the module definition
+             */
+            migrations      =   migrations || module.migrations;
+
+            if ( migrations ) {
+                module.migrating    =   true;
+
+                for( let version in migrations ) {
+                    for( let index = 0; index < migrations[ version ].length ; index++ ) {
+                        const file  =   migrations[ version ][ index ];
+                        await syncRunMigration( file, version );
+                    }
+                }
+
+                module.migrating     =   false;
+                module.migrated      =   true;
+            }
+        },
+        refreshModules() {
+            this.loadModules().subscribe();
+        },
         enableModule( object ) {
             const url   =   `${this.url}/${object.namespace}/enable`;
             nsHttpClient.put( url )
-                .subscribe( result => {
+                .subscribe( async result => {
                     nsSnackBar.success( result.message ).subscribe();
+
+                    this.performMigration( object, result.data.migrations );
+
                     this.loadModules().subscribe( result => {
                         document.location.reload();
                     }, ( error ) => {
@@ -99,6 +151,14 @@ export default {
             return nsHttpClient.get( this.url )
                 .pipe(
                     map( result => {
+                        /**
+                         * provide default attributes
+                         */
+                        for( let namespace in result.modules ) {
+                            result.modules[ namespace ].migrating       =   false;
+                            result.modules[ namespace ].migrated        =   false;
+                        };
+                        
                         this.modules            =   result.modules;
                         this.total_enabled      =   result.total_enabled;
                         this.total_disabled     =   result.total_disabled;

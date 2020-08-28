@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Settings\UserProfileSettings;
+use App\Forms\UserProfileForm;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,7 +28,7 @@ class FormsProvider extends ServiceProvider
         Hook::addFilter( 'ns.forms', function( $class, $identifier ) {
             switch( $identifier ) {
                 case 'ns.user-profile': 
-                    return new UserProfileSettings; 
+                    return new UserProfileForm; 
                 break;
             }
             return $class;
