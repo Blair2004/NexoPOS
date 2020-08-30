@@ -3525,10 +3525,6 @@ video {
   background-color: rgba(156, 219, 255, var(--bg-opacity)) !important;
 }
 
-.bg-none{
-  background-image: none !important;
-}
-
 .bg-gradient-to-t{
   background-image: linear-gradient(to top, var(--gradient-color-stops)) !important;
 }
@@ -31211,10 +31207,6 @@ body {
     background-color: rgba(156, 219, 255, var(--bg-opacity)) !important;
   }
 
-  .sm\:bg-none{
-    background-image: none !important;
-  }
-
   .sm\:bg-gradient-to-t{
     background-image: linear-gradient(to top, var(--gradient-color-stops)) !important;
   }
@@ -52793,10 +52785,6 @@ body {
     --bg-opacity: 1 !important;
     background-color: #9cdbff !important;
     background-color: rgba(156, 219, 255, var(--bg-opacity)) !important;
-  }
-
-  .md\:bg-none{
-    background-image: none !important;
   }
 
   .md\:bg-gradient-to-t{
@@ -74379,10 +74367,6 @@ body {
     background-color: rgba(156, 219, 255, var(--bg-opacity)) !important;
   }
 
-  .lg\:bg-none{
-    background-image: none !important;
-  }
-
   .lg\:bg-gradient-to-t{
     background-image: linear-gradient(to top, var(--gradient-color-stops)) !important;
   }
@@ -95961,10 +95945,6 @@ body {
     --bg-opacity: 1 !important;
     background-color: #9cdbff !important;
     background-color: rgba(156, 219, 255, var(--bg-opacity)) !important;
-  }
-
-  .xl\:bg-none{
-    background-image: none !important;
   }
 
   .xl\:bg-gradient-to-t{
