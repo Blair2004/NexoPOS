@@ -112,7 +112,7 @@ class UnitsController extends DashboardController
 
     public function listUnitsGroups()
     {
-        ns()->restrict([ 'nexopos.read.units' ]);
+        ns()->restrict([ 'nexopos.read.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units Groups' ),
@@ -124,7 +124,7 @@ class UnitsController extends DashboardController
 
     public function listUnits()
     {
-        ns()->restrict([ 'nexopos.read.units' ]);
+        ns()->restrict([ 'nexopos.read.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units' ),
@@ -136,7 +136,7 @@ class UnitsController extends DashboardController
 
     public function createUnitGroup()
     {
-        ns()->restrict([ 'nexopos.create.units' ]);
+        ns()->restrict([ 'nexopos.create.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit Group' ),
@@ -154,7 +154,7 @@ class UnitsController extends DashboardController
      */
     public function editUnitGroup( UnitGroup $group )
     {
-        ns()->restrict([ 'nexopos.update.units' ]);
+        ns()->restrict([ 'nexopos.update.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Unit Group' ),
@@ -168,7 +168,7 @@ class UnitsController extends DashboardController
 
     public function createUnit()
     {
-        ns()->restrict([ 'nexopos.create.units' ]);
+        ns()->restrict([ 'nexopos.create.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit' ),
@@ -181,7 +181,7 @@ class UnitsController extends DashboardController
 
     public function editUnit( Unit $unit )
     {
-        ns()->restrict([ 'nexopos.update.units' ]);
+        ns()->restrict([ 'nexopos.update.products-units' ]);
 
         return $this->view( 'pages.dashboard.crud.form', [
             'submitMethod'  =>  'PUT',
