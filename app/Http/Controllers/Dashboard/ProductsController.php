@@ -287,8 +287,8 @@ class ProductsController extends DashboardController
     public function listProducts()
     {
         return $this->view( 'pages.dashboard.crud.table', [
-            'title'     =>      __( 'Products List' ),
-            'createUrl'    =>  url( '/dashboard/products/create' ),
+            'title'         =>      __( 'Products List' ),
+            'createUrl'     =>  url( '/dashboard/products/create' ),
             'desccription'  =>  __( 'List all products available on the system' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products' ),
         ]);
