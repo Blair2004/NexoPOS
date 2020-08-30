@@ -74,18 +74,21 @@ window.nsDashboardHeader     =   new window.Vue({
     }
 });
 
+const components    =   {
+    NsModules,
+    NsRewardsSystem,
+    NsCreateCoupons,
+    NsManageProducts,
+    NsSettings,
+    NsReset,
+    NsPermissions,
+    ...nsExtraComponents, // add extra components provided by plugins.
+};
+
 window.nsDashboardContent    =   new window.Vue({
     el: '#dashboard-content',
     mounted() {
         console.log( NsModules );
     },
-    components: {
-        NsModules,
-        NsRewardsSystem,
-        NsCreateCoupons,
-        NsManageProducts,
-        NsSettings,
-        NsReset,
-        NsPermissions
-    }
+    components
 });

@@ -904,7 +904,7 @@ class ModulesService
          * if module exists
          */
         if ( $module ) {
-            return $this->__getModuleMigration( $namespace );
+            return $this->__getModuleMigration( $module );
         }
 
         return [];

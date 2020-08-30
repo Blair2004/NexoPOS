@@ -9,7 +9,6 @@ export class State {
         this.behaviorState   =  new BehaviorSubject;
         this.behaviorState.subscribe( state => {
             this.state  =   state;
-            console.log( state );
         });
 
         this.setState( state );
