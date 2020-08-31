@@ -16,7 +16,7 @@ A Crud component must have a unique identifier (namespace). All default componen
 For example, the Crud Component responsible of managing the customers group is `ns.customers-groups`. A deeper guide on registering/extending existing Crud components will be provided later.
 
 ## Using Crud API
-As every crud class inherist the `CrudService::class`, you now can just return a single line of code from your controller to create a table or a form. 
+As every crud class inherit from the `CrudService::class`, you now can just return a single line of code from your controller to either render a table or a form. 
 
 ### Create Table with CrudService::table()
 That static method will be the Crud object call the necessary properties to build your CRUD UI. Here is concretely how you can do that : 
