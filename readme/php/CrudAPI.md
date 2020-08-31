@@ -96,13 +96,13 @@ the final `src` will look like `url( 'api/nexopos/v4/crud/ns.customers-groups' )
 <ns-crud src="{{ url( 'api/nexopos/v4/crud/ns.customers-groups' ) }}"></ns-crud>
 ```
 
-#### create-link
+#### create-url
 This is the placeholder link to create a new component entity. Concretly, the link you'll add here will be used on the "+" button. And this should takes the user
 to the creation form. Example : 
 
 ```blade
 <ns-crud 
-  create-link="{{ url( 'dashboard/customers/groups/create' ) }}"
+  create-url="{{ url( 'dashboard/customers/groups/create' ) }}"
   src="{{ url( 'api/nexopos/v4/crud/ns.customers-groups' ) }}"></ns-crud>
 ```
 
