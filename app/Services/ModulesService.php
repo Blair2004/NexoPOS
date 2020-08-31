@@ -118,14 +118,14 @@ class ModulesService
                 $config[ 'views-path' ]                 =   $currentModulePath . 'Resources' . DIRECTORY_SEPARATOR . 'Views';
                 $config[ 'dashboard-path' ]             =   $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ]                    =   false; // by default the module is set as disabled
-                $config[ 'migrations' ]                 =   $this->__getModuleMigration( $config );
-
+                
                 /**
                  * If the system is installed, then we can check if the module is enabled or not
                  * since by default it's not enabled
                  */
                 if ( ns()->installed() ) {
                     $modules                =   ( array ) $this->options->get( 'enabled_modules' );
+                    $config[ 'migrations' ] =   $this->__getModuleMigration( $config );
                     $config[ 'enabled' ]    =   in_array( $config[ 'namespace' ], $modules ) ? true : false;
                 }
                 

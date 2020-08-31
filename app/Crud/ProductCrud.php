@@ -479,7 +479,7 @@ class ProductCrud extends CrudService
             ],
             'net_sale_price'  =>  [
                 'label'         =>  __( 'Net Sale Price' ),
-                'width'         =>  '150px',
+                'width'         =>  '120px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
