@@ -15,9 +15,60 @@ Once a CRUD component has been generated, it needs to be registered to be workin
 A Crud component must have a unique identifier (namespace). All default components are prefixed with "ns.". 
 For example, the Crud Component responsible of managing the customers group is `ns.customers-groups`. A deeper guide on registering/extending existing Crud components will be provided later.
 
+## Using Crud API
+As every crud class inherist the `CrudService::class`, you now can just return a single line of code from your controller to create a table or a form. 
+
+### Create Table with CrudService::table()
+That static method will be the Crud object call the necessary properties to build your CRUD UI. Here is concretely how you can do that : 
+
+```php
+  // ...
+  public function listUsers()
+  {
+      return UsersCrud::table();
+  }
+```
+
+Here we assume `listUsers` is a method of a controller. The class `UsersCrud` must extends `App\Services\CrudService::class` (already extended when generated using the above command). If you would like to change things like the title, description, you can still perform this from your Crud class.
+
+### Create Form with CrudService::form( $model = null, $config = [])
+
+The `form` method renders a form. It will build that form using the internal Crud properties like the `getLinks()` method, `permissions` parameters (to ensure the user has the right to perform that action) and much more. In order to adjust your Crud resource, you need to perform your changes directly within your class.
+
+```php
+    // ...
+    public function createUser()
+    {
+        return UsersCrud::form();
+    }
+```
+
+If we would like to edit a user, we would have used similar call : 
+
+```php
+    // ...
+    public function updateUser( User $user )
+    {
+        return UserCrud::form( $user );
+    }
+```
+
+The method `form` takes a second parameter (array) that allow you to directly perform quick modification to some values that normally should be fetched from the Crud instance. For example, you can change the `returnUrl` or the `title`. Here is the list of supported attributes : 
+
+| Attribute      | Description |
+|----------------|-------------|
+| title          | Adjut the resource title  |
+| description    | Adjust the resource description  |
+| src            | Change the source Url  |
+| returnUrl      | Change the returnUrl that takes back to the table  |
+| submitUrl      | Change the submit Url, used to submit the form  |
+| submitMethod   | Change the method, either "post" or "put" if a Model object is provided  |
+
 ## Using the Vue.js Components
-You'll need to use Vue.js components for the table and the forms. You should note that, you're not forced to use those as you can create your own components. By default, 
-Vue.js components are loaded on the dashboard. 
+
+The following instructions describes how to manually create the forms and table. You might not need it if you use the above API. It can however be used to better understand how it works.
+
+You can use Vue.js components for the table and the forms. You should note that, you're not forced to use those as you can create your own components. By default, Vue.js components are loaded on the dashboard. 
 
 ### Creating Tables with <ns-crud/>
 
