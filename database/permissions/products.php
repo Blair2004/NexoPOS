@@ -34,7 +34,7 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
 
     $product                 =   new Permission;
     $product->name           =   __( 'Adjust Product Stock' );
-    $product->namespace      =   'nexopos.make.products-adjustment';
+    $product->namespace      =   'nexopos.make.products-adjustments';
     $product->description    =   __( 'Let the user adjust product stock.' );
     $product->save();
 

@@ -273,8 +273,8 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        if ( isset( $data[ 'tax_id' ] ) && ! empty( $data[ 'tax_id' ] ) ) {
-            $this->taxService->computeTax( $product, $data[ 'tax_id' ]);
+        if ( isset( $data[ 'tax_group_id' ] ) && ! empty( $data[ 'tax_group_id' ] ) ) {
+            $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
         }
 
         return [
@@ -314,6 +314,17 @@ class ProductService
     }
 
     /**
+     * Will release the product taxes
+     * before a new modification is made to it
+     * @param Product 
+     * @return void
+     */
+    public function releaseProductTaxes( $product ) 
+    {
+        $product->product_taxes()->delete();
+    }
+
+    /**
      * Update a simple product. This doesn't delete 
      * the variable within a product, if this latest has 
      * the type "product" before
@@ -330,6 +341,8 @@ class ProductService
          */
         $product        =   $this->getProductUsingArgument( 'id', $id );
         $mode           =   'edit';
+
+        $this->releaseProductTaxes( $product );
 
         if ( $existingProduct = $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
@@ -348,7 +361,7 @@ class ProductService
         }
 
         foreach( $data as $field => $value ) {
-            if ( ! in_array( $field, [ 'varitaions' ] ) ) {
+            if ( ! in_array( $field, [ 'varitations' ] ) ) {
                 $fields     =   $data;
                 $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields') );
             }
@@ -360,7 +373,7 @@ class ProductService
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $data[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',
@@ -465,64 +478,40 @@ class ProductService
         if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
-        } else if ( in_array( $field, [ 'selling_unit_id', 'purchase_unit_id', 'transfer_unit_id' ]) ) {
+        } else if ( in_array( $field, [ 'selling_unit_group', 'purchase_unit_group', 'transfer_unit_group' ]) ) {
 
             /**
-             * @important : if the unit assigned to an item is a parent unit
-             * then the user will have to choose between the sub unit while
-             * sale, purchase or transfer.
+             * let's try to get the unit defined
+             * for the unit fields and trigger an
+             * error if necessary.
              */
-            
-            
-            try {
-                /**
-                 * let's try to get the unit defined
-                 * for the unit fields and trigger an
-                 * error if necessary.
-                 */
-                switch( $field ) {
-                    case 'selling_unit_id':
-                        $unitType   =   'selling_unit_type';
-                    break;
-                    case 'purchase_unit_id':
-                        $unitType   =   'purchase_unit_type';
-                    break;
-                    case 'transfer_unit_id':
-                        $unitType   =   'transfer_unit_type';
-                    break;
-                }
-
-                /**
-                 * we only verifiy the unit and unit group
-                 * a valid value is provided. Note that for 
-                 * variable product, these fields aren't provided
-                 */
-                if ( ! empty( $fields[ $unitType ] ) ) {
-                    /**
-                     * try to get either a unit group or the unit itself
-                     * according to the choice made on the item.
-                     */
-                    $unit               =   $fields[ $unitType ] === 'unit' ? 
-                    $this->unitService->get( $value ) : 
-                    $this->unitService->getGroups( $value );
-
-                    $product->$field    =   $unit->id;
-                }
-
-            } catch( Exception $exception ) {
-
-                $type   =   $product[ $unitType ] === 'unit' ? __( 'Unit' ) : __( 'Unit Group' );
-
-                throw new Exception( 
-                    sprintf( 
-                        __( 'The %s to which the item is assigned through the field "%s" doesn\'t exists or has been deleted.' ), 
-                        $type, 
-                        $field 
-                    ) 
-                );
+            switch( $field ) {
+                case 'selling_unit_group':
+                    $unitType   =   'selling_unit_id';
+                break;
+                case 'purchase_unit_group':
+                    $unitType   =   'purchase_unit_id';
+                break;
+                case 'transfer_unit_group':
+                    $unitType   =   'transfer_unit_id';
+                break;
             }
 
-        } else {
+            /**
+             * we only verifiy the unit group
+             * a valid value is provided. Note that for 
+             * variable product, these fields aren't provided
+             */
+            if ( ! empty( $fields[ $unitType ] ) ) {
+                /**
+                 * try to get either a unit group or the unit itself
+                 * according to the choice made on the item.
+                 */
+                $this->unitService->getGroups( $value );
+                $product->$unitType     =   json_encode( $value );
+            }
+
+        } else if ( ! array( $value ) ) {
             $product->$field    =   $value;
         }
 
@@ -536,7 +525,7 @@ class ProductService
      */
     public function refreshPrices( Product $product )
     {
-        return $this->taxService->computeTax( $product, $product->tax_id );
+        return $this->taxService->computeTax( $product, $product->tax_group_id );
     }
 
     /**
@@ -1184,7 +1173,7 @@ class ProductService
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',
@@ -1218,7 +1207,7 @@ class ProductService
          * for the meantime we assume the tax applies on the 
          * main product
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',

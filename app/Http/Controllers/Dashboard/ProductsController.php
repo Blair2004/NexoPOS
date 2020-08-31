@@ -43,8 +43,8 @@ class ProductsController extends DashboardController
             ->first();
 
         $primary[ 'identification' ][ 'name' ]  =   $request->input( 'name' );
-        $primary                    =    Helper::flatArrayWithKeys( $primary );
-        $primary[ 'product_type' ]  =   'product';
+        $primary                                =    Helper::flatArrayWithKeys( $primary );
+        $primary[ 'product_type' ]              =   'product';
         
         unset( $primary[ '$primary' ] );
 
@@ -72,48 +72,23 @@ class ProductsController extends DashboardController
      * @param int product id
      * @return array
      */
-    public function updateProduct( Request $request, $identifier )
+    public function updateProduct( Request $request, Product $product )
     {
-        /**
-         * prior field validation
-         */
-        $fields     =   $request->only([ 
-            'name', 
-            'tax_type', 
-            'sale_price', 
-            'product_type', // product, variation, variable
-            'type', 
-            'gross_sale_price', 
-            'status', 
-            'stock_management', 
-            'on_expiration', 
-            'barcode', 
-            'barcode_type', 
-            'sku', 
-            'description', 
-            'thumbnail_id', 
-            'category_id', 
-            'tax_id', 
-            'selling_unit_id', 
-            'selling_unit_type',
-            'purchase_unit_id', 
-            'purchase_unit_type',
-            'transfer_unit_id', 
-            'transfer_unit_type',
-            'variations',
-            'expiration' 
-        ]);
+        $primary    =   collect( $request->input( 'variations' ) )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
 
-        $product    =   $this->productService->getProductUsingArgument(
-            request()->query( 'as' ) ?? 'id',
-            $identifier
-        );
+        $primary[ 'identification' ][ 'name' ]  =   $request->input( 'name' );
+        $primary                                =    Helper::flatArrayWithKeys( $primary );
+        $primary[ 'product_type' ]              =   'product';
+        
+        unset( $primary[ '$primary' ] );
 
         /**
-         * let's handle single product
-         * for the meantime
+         * the method "create" is capable of 
+         * creating either a product or a variable product
          */
-        return $this->productService->update( $product, $fields );
+        return $this->productService->update( $product, $primary );
     }
 
     public function refreshPrices( $id )
@@ -286,6 +261,8 @@ class ProductsController extends DashboardController
 
     public function listProducts()
     {
+        ns()->restrict([ 'nexopos.read.products' ]);
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Products List' ),
             'createUrl'     =>  url( '/dashboard/products/create' ),
@@ -294,13 +271,31 @@ class ProductsController extends DashboardController
         ]);
     }
 
+    public function editProduct( Product $product )
+    {
+        ns()->restrict([ 'nexopos.update.products' ]);
+
+        return $this->view( 'pages.dashboard.products.create', [
+            'title'         =>  __( 'Edit a product' ),
+            'description'   =>  __( 'Makes modifications to a product' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/products/' . $product->id ),
+            'returnUrl'     =>  url( '/dashboard/products' ),
+            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'submitMethod'  =>  'PUT',
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+        ]);
+    }
+
     public function createProduct()
     {
+        ns()->restrict([ 'nexopos.create.products' ]);
+
         return $this->view( 'pages.dashboard.products.create', [
             'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
             'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
             'returnUrl'    =>  url( '/dashboard/products' ),
+            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }

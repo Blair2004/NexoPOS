@@ -23,9 +23,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
 
     /**
-     * base route name
+     * default identifier
      */
-    protected $mainRoute      =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $identifier   =   '{{ strtolower( trim( $route_name ) ) }}';
 
     /**
      * Define namespace
@@ -37,6 +37,17 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Model Used
      */
     protected $model      =   {{ trim( $lastClassName ) }}::class;
+
+    /**
+     * Define permissions
+     * @param array
+     */
+    protected $permissions  =   [
+        'create'    =>  'manage.profile',
+        'read'      =>  'manage.profile',
+        'update'    =>  'manage.profile',
+        'delete'    =>  'manage.profile',
+    ];
 
     /**
      * Adding relation
@@ -178,6 +189,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePost( $request )
     {
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+        }
+
         return $request;
     }
 
@@ -213,6 +228,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+        }
+
         return $request;
     }
 
@@ -225,25 +244,6 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function afterPut( $request, $entry )
     {
         return $request;
-    }
-    
-    /**
-     * Protect an access to a specific crud UI
-     * @param array { namespace, id, type }
-     * @return array | throw Exception
-    **/
-    public function canAccess( $fields )
-    {
-        $users      =   app()->make( Users::class );
-        
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**
@@ -261,6 +261,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            }
         }
     }
 
@@ -324,15 +327,16 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -360,9 +364,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  '{{ strtolower( trim( $route_name ) ) }}',
-            'create'    =>  '{{ strtolower( trim( $route_name ) ) }}/create',
-            'edit'      =>  '{{ strtolower( trim( $route_name ) ) }}/edit/#'
+            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
+            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' )
+            'post'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'put'       =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/' . '' ),
         ];
     }
 

@@ -38,7 +38,9 @@ class ProductCategoryCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users as user', 'nexopos_products_categories.author', '=', 'user.id' ],
-        'leftJoin'  =>  [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ],
+        'leftJoin'  =>  [
+            [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ]
+        ],
     ];
 
     protected $pick     =   [

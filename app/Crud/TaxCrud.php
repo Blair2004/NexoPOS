@@ -128,7 +128,7 @@ class TaxCrud extends CrudService
                             'name'      =>  'tax_group_id',
                             'label'     =>  __( 'Parent' ),
                             'description'   =>  __( 'Assign the tax to a tax group.' ),
-                            'value'     =>  $entry->parent_id ?? '',
+                            'value'     =>  $entry->tax_group_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'rate',
@@ -305,6 +305,8 @@ class TaxCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->rate            =   sprintf( '%s%%', $entry->rate );
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -312,7 +314,7 @@ class TaxCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

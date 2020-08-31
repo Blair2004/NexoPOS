@@ -62,10 +62,7 @@ class UnitService
             $group      =   UnitGroup::find( $id );
 
             if ( ! $group instanceof UnitGroup ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the unit group to which this unit is attached.' )
-                ]);
+                throw new Exception( __( 'Unable to find the unit group to which this unit is attached.' ) );
             }
             return $group;
         } else {

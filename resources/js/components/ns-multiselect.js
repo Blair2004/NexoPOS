@@ -5,6 +5,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     data() {
         return {
             showPanel: false,
+            search: '',
         }
     },
     props: [ 'field' ],
@@ -42,6 +43,9 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             }
         }
     },
+    watch: {
+
+    },
     mounted() {},
     template: `
     <div class="flex flex-col">
@@ -66,7 +70,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
                 <div class="bg-white shadow">
                     <div class="search border-b border-gray-200">
-                        <input class="p-2 w-full text-gray-600 outline-none" placeholder="Search">
+                        <input v-model="search" class="p-2 w-full text-gray-600 outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
                         <div @click="addOption( option )" v-for="option of _options" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">

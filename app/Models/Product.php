@@ -40,6 +40,11 @@ class Product extends Model
         return $this->hasMany( ProductUnitQuantity::class, 'product_id' );
     }
 
+    public function product_taxes()
+    {
+        return $this->hasMany( ProductTax::class, 'product_id' );
+    }
+
     public function variations()
     {
         return $this->hasMany( Product::class, 'parent_id' );

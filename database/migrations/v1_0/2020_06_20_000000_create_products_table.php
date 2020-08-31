@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'tax_type' )->nullable(); // inclusive, exclusive
-                $table->integer( 'tax_id' )->nullable(); 
+                $table->integer( 'tax_group_id' )->nullable(); 
                 $table->float( 'tax_value' )->default(0); // computed automatically
                 $table->string( 'product_type' )->default( 'product' ); // product, variation, variable
                 $table->string( 'type' )->default( 'tangible' ); // intangible, tangible (or any other extended types)

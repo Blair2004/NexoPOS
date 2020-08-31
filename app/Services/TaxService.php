@@ -10,7 +10,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\Product;
 use App\Models\ProductTax;
 use App\Models\Tax;
-
+use App\Models\TaxGroup;
 
 class TaxService
 {
@@ -105,6 +105,16 @@ class TaxService
     }
 
     /**
+     * Returns a single instance of a group
+     * @param int group id
+     * @return TaxGroup
+     */
+    public function getGroup( $group_id )
+    {
+        return TaxGroup::findOrFail( $group_id );
+    }
+
+    /**
      * create a tax using the provided informations
      * @param array tax fields
      * @return Tax
@@ -177,38 +187,44 @@ class TaxService
      * compute the tax added to a 
      * product
      */
-    public function computeTax( Product $product, $tax_id )
+    public function computeTax( Product $product, $tax_group_id )
     {
-        $tax        =   $this->get( $tax_id );
+        $taxGroup                       =   TaxGroup::find( $tax_group_id );
+        $product->net_sale_price        =   floatval( $product->sale_price_edit );
 
         /**
-         * @todo needs to handle for multiple taxes | grouped taxes
+         * calculate the taxes wether they are all
+         * inclusive or exclusive
          */
-        if ( $tax->type === 'simple' && $product->sale_price > 0 ) {
-            $taxValue   =   $this->currency->value( $product->sale_price )
-                ->multiplyBy( $tax->rate )
-                ->divideBy(100)
-                ->get();
+        if ( $taxGroup instanceof TaxGroup ) {
+            $taxValue       =   $taxGroup->taxes
+                ->map( function( $tax ) use ( $product ) {
+                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $product->sale_price_edit ) / 100;
+
+                    $productTax                 =   new ProductTax;
+                    $productTax->product_id     =   $product->id;
+                    $productTax->tax_id         =   $tax->id;
+                    $productTax->rate           =   $tax->rate;
+                    $productTax->name           =   $tax->name;
+                    $productTax->author         =   Auth::id();
+                    $productTax->value          =   $taxValue;
+                    $productTax->save();
+
+                    return $taxValue;
+                })
+                ->sum();
 
             if ( $product->tax_type === 'inclusive' ) {
-                $product->net_sale_price    =   $product->sale_price;
-                $product->gross_sale_price  =   $this->currency->value( $product->sale_price )
-                    ->subtractBy( $taxValue )
-                    ->get();
-            } else if ( $product->tax_type === 'exclusive' ) {
-                $product->net_sale_price    =   $this->currency->value( $product->sale_price )
-                    ->additionateBy( $taxValue )
-                    ->get();
-                $product->gross_sale_price  =   $this->currency->value( $product->sale_price )->get();
+                $product->gross_sale_price       =   floatval( $product->sale_price_edit ) - $taxValue;
+            } else {
+                $product->gross_sale_price       =   floatval( $product->sale_price_edit );
+                $product->net_sale_price         =   floatval( $product->sale_price_edit ) + $taxValue;
             }
 
-            $product->save();
-
-            /**
-             * update product tax
-             */
-            $this->saveProductTax( $product, $tax );
+            $product->tax_value                 =   $taxValue;
         }
+
+        $product->save();
     }
 
     /**

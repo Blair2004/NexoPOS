@@ -49,7 +49,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
         Route::get( '/dashboard/modules/migrate/{namespace}', 'Dashboard\ModulesController@migrateModule' )->name( 'ns.dashboard.modules.migrate' );
 
-        Route::get( '/dashboard/procurement', 'Dashboard\ProvidersController@listProviders' );
+        Route::get( '/dashboard/procurements', 'Dashboard\ProcurementController@listProcurements' );
 
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
@@ -65,6 +65,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
 
         Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
         Route::get( '/dashboard/products/create', 'Dashboard\ProductsController@createProduct' );
+        Route::get( '/dashboard/products/edit/{product}', 'Dashboard\ProductsController@editProduct' );
         Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
         Route::get( '/dashboard/products/categories/create', 'Dashboard\CategoryController@createCategory' );
         Route::get( '/dashboard/products/categories/edit/{category}', 'Dashboard\CategoryController@editCategory' );

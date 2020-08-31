@@ -20,4 +20,4 @@ Route::post( 'products', 'Dashboard\ProductsController@saveProduct' );
 Route::post( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@createSingleVariation' );
 
 Route::put( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@editSingleVariation' );
-Route::put( 'products/{id}', 'Dashboard\ProductsController@updateProduct' );
+Route::put( 'products/{product}', 'Dashboard\ProductsController@updateProduct' );

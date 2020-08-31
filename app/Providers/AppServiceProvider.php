@@ -13,6 +13,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\ExpenseService;
 use App\Services\MediaService;
+use App\Services\MenuService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use App\Services\ProcurementService;
@@ -42,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( Options::class, function(){
             return new Options();
+        });
+
+        $this->app->singleton( MenuService::class, function(){
+            return new MenuService();
         });
 
         // save Singleton for options

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\View;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService 
@@ -21,7 +22,6 @@ class CrudService
         'single-action'     =>  true, // enable single action
         'checkboxes'        =>  true // enable checkboxes
     ];
-
 
     /**
      * Actions Array
@@ -465,5 +465,105 @@ class CrudService
         }
 
         return $rules;
+    }
+
+    public static function table()
+    {
+        $className  =   get_called_class();
+        $instance   =   new $className;
+
+        /**
+         * if a permission for reading is 
+         * not disabled let's check it
+         */
+        if ( $instance->getPermission( 'read' ) !== false ) {
+            ns()->permissions([ $instance->getPermission( 'read' ) ]);
+        }
+        
+        return View::make( 'pages.dashboard.crud.table', [
+            'title'         =>  $instance->getLabels()[ 'list_title' ],
+            'description'   =>  $instance->getLabels()[ 'list_description' ],
+            'src'           =>  url( '/api/nexopos/v4/crud/' . $instance->identifier ),
+            'createUrl'     =>  $instance->getLinks()[ 'create' ] ?? '#',
+            'menus'         =>  app()->make( MenuService::class )
+        ]);
+    }
+
+    /**
+     * Will render a form UI
+     * @param Model|null reference passed
+     * @param array custom configuration
+     */
+    public static function form( $entry = null, $config = [] )
+    {
+        $className          =   get_called_class();
+        $instance           =   new $className;
+        $permissionType     =   $entry === null ? 'create' : 'update';
+
+        /**
+         * if a permission for creating or updating is 
+         * not disabled let's make a validation.
+         */
+        if ( $instance->getPermission( $permissionType ) !== false ) {
+            ns()->permissions([ $instance->getPermission( $permissionType ) ]);
+        }
+        
+        /**
+         * use crud form to render
+         * a valid form.
+         */
+        return View::make( 'pages.dashboard.crud.form', [
+            /**
+             * this pull the title either
+             * the form is made to create or edit a resource.
+             */
+            'title'         =>  $config[ 'title' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_title' ] : $instance->getLabels()[ 'edit_title' ] ),
+
+            /**
+             * this pull the description either the form is made to
+             * create or edit a resource.
+             */
+            'description'   =>  $config[ 'description' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_description' ] : $instance->getLabels()[ 'edit_description' ] ),
+
+            /**
+             * this automatically build a source URL based on the identifier
+             * provided. But can be overwritten with the config.
+             */
+            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->identifier . '/' . ( $entry ? $entry->id . '/form-config' : 'form-config' ) ) ),
+
+            /**
+             * this use the built in links to create a return URL.
+             * It can also be overwritten by the configuration.
+             */
+            'returnUrl'     =>  $config[ 'returnUrl' ] ?? ( $instance->getLinks()[ 'list' ] ?? '#' ),
+
+            /**
+             * This will pull the submitURL that might be different wether the $entry is
+             * provided or not. can be overwritten on the configuration ($config).
+             */
+            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : $instance->getLinks()[ 'put' ] ),
+            
+            /**
+             * By default the method used is "post" but might change to "put" according to 
+             * wether the entry is provided (Model). Can be changed from the $config.
+             */
+            'submitMethod'  =>  $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
+
+            /**
+             * This will pass an instance of the MenuService.
+             */
+            'menus'         =>  app()->make( MenuService::class )
+        ]);
+    }
+
+    /**
+     * retrieve one of the declared permissions
+     * the name must either be "create", "read", "update", "delete".
+     * @param string $name
+     * @return string $permission
+     */
+    public function getPermission( $name ) 
+    {
+        return $permissions[ $name ] ?? false;
     }
 }

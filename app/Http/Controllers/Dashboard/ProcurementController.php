@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ProcurementCrud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Services\Validation;
@@ -166,6 +167,11 @@ class ProcurementController extends DashboardController
     public function bulkUpdateProducts( $procurement_id, Request $request )
     {
         return $this->procurementService->bulkUpdateProducts( $procurement_id, $request->input( 'items' ) );
+    }
+
+    public function listProcurements()
+    {
+        return ProcurementCrud::table();
     }
 }
 

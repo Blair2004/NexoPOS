@@ -9,7 +9,10 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductTax;
+use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Models\UnitGroup;
 use App\Services\Helper;
 
 class ProductCrud extends CrudService
@@ -41,7 +44,10 @@ class ProductCrud extends CrudService
     public $relations   =  [
         [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
         [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
-        'leftJoin'  =>  [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
+        'leftJoin'  =>  [
+            [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
+            [ 'nexopos_taxes_groups as taxes_groups', 'nexopos_products.tax_group_id', '=', 'taxes_groups.id' ],
+        ],
     ];
 
     protected $pick     =   [
@@ -215,12 +221,12 @@ class ProductCrud extends CrudService
                             'fields'    =>  [
                                 [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'purchase_unit_group',
                                     'description'    =>  __( 'Define the unit group used for purchasing' ),
                                     'label' =>  __( 'Purchase Group' ),
                                     'validation'    =>  'required',
-                                    'value' =>  $entry->purchase_unit_type ?? '',
+                                    'value' =>  $entry->purchase_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
                                     'options'   =>  [],
@@ -230,12 +236,12 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->purchase_unit_ids ?? '',
                                 ], [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'selling_unit_group',
                                     'label' =>  __( 'Selling Group' ),
                                     'validation'    =>  'required',
                                     'description'   =>  __( 'Define the unit group used for sale' ),
-                                    'value' =>  $entry->selling_unit_type ?? '',
+                                    'value' =>  $entry->selling_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
                                     'options'   =>  [],
@@ -245,12 +251,12 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->selling_unit_ids ?? '',
                                 ], [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
                                     'name'  =>  'transfer_unit_group',
                                     'label' =>  __( 'Transfer Group' ),
                                     'validation'    =>  'required',
                                     'description'   =>  __( 'Define the unit group used for transfer' ),
-                                    'value' =>  $entry->transfer_unit_type ?? '',
+                                    'value' =>  $entry->transfer_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
                                     'options'   =>  [],
@@ -306,9 +312,9 @@ class ProductCrud extends CrudService
                                     'type'  =>  'select',
                                     'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ]),
                                     'description'   =>  __( 'Select the tax group that applies to the product/variation.' ),
-                                    'name'  =>  'tax_id',
-                                    'label' =>  __( 'Tax' ),
-                                    'value' =>  $entry->tax_id ?? '',
+                                    'name'  =>  'tax_group_id',
+                                    'label' =>  __( 'Tax Group' ),
+                                    'value' =>  $entry->tax_group_id ?? '',
                                 ], [
                                     'type'  =>  'select',
                                     'options'   =>  Helper::kvToJsOptions([
@@ -349,6 +355,49 @@ class ProductCrud extends CrudService
     }
 
     /**
+     * Will only calculate taxes
+     * @param array $fields
+     * @return array $fields
+     */
+    private function calculateTaxes( $inputs, Product $product = null )
+    {
+        $taxGroup                       =   TaxGroup::find( $inputs[ 'tax_id' ] );
+        $inputs[ 'net_sale_price' ]     =   $inputs[ 'net_sale_price_edit' ];
+
+        /**
+         * calculate the taxes wether they are all
+         * inclusive or exclusive
+         */
+        if ( $taxGroup instanceof TaxGroup ) {
+            $taxValue       =   $taxGroup->taxes
+                ->map( function( $tax ) use ( $inputs, $product ) {
+                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $inputs[ 'net_sale_price_edit' ] ) / 100;
+
+                    ProductTax::create([
+                        'product_id'    =>  $product->id,
+                        'tax_id'        =>  $tax->id,
+                        'rate'          =>  $tax->rate,
+                        'name'          =>  $tax->name,
+                        'author'        =>  Auth::id(),
+                        'value'         =>  $taxValue
+                    ]);
+
+                    return $taxValue;
+                })
+                ->sum();
+
+            if ( $inputs[ 'tax_type' ] === 'inclusive' ) {
+                $inputs[ 'gross_sale_price' ]       =   floatval( $inputs[ 'net_sale_price_edit' ] ) - $taxValue;
+            } else {
+                $inputs[ 'gross_sale_price' ]       =   floatval( $inputs[ 'net_sale_price_edit' ] );
+                $inputs[ 'net_sale_price' ]         =   floatval( $inputs[ 'net_sale_price_edit' ] ) + $taxValue;
+            }
+        }
+
+        return $inputs;
+    }
+
+    /**
      * Before saving a record
      * @param  Request $request
      * @return  void
@@ -366,6 +415,8 @@ class ProductCrud extends CrudService
      */
     public function afterPost( $request, Product $entry )
     {
+        $this->calculateTaxes( $request->all(), $entry );
+
         return $request;
     }
 
@@ -399,8 +450,18 @@ class ProductCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut( $request, Product $product )
     {
+        /**
+         * delete all assigned taxes as it 
+         * be newly assigned
+         */
+        if ( $product instanceof Product ) {
+            $product->taxes()->delete();
+        }
+
+        $this->calculateTaxes( $request->all(), $product );
+
         return $request;
     }
     
@@ -450,6 +511,7 @@ class ProductCrud extends CrudService
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
+                'width'         =>  '150px',
                 '$sort'         =>  false
             ],
             'sku'               =>  [
@@ -459,37 +521,24 @@ class ProductCrud extends CrudService
             ],
             'category_name'  =>  [
                 'label'  =>  __( 'Category' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'parent_id'  =>  [
-                'label'         =>  __( 'Parent' ),
+                'width'         =>  '150px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'product_type'  =>  [
-                'label'         =>  __( 'Product Type' ),
+                'label'         =>  __( 'Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'sale_price'  =>  [
-                'label'         =>  __( 'Sale Price' ),
+            'gross_sale_price'  =>  [
+                'label'         =>  __( 'G.S Price' ),
+                'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'net_sale_price'  =>  [
                 'label'         =>  __( 'Net Sale Price' ),
-                'width'         =>  '120px',
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'stock_management'  =>  [
-                'label'         =>  __( 'Stock Mngmt' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'type'  =>  [
-                'label'         =>  __( 'Type' ),
+                'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -504,7 +553,8 @@ class ProductCrud extends CrudService
                 '$sort'         =>  false
             ],
             'created_at'  =>  [
-                'label'         =>  __( 'Created At' ),
+                'label'         =>  __( 'Date' ),
+                'width'         =>  '150px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -526,6 +576,8 @@ class ProductCrud extends CrudService
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->sale_price          =   ( string ) ns()->currency->value( $entry->sale_price );
         $entry->net_sale_price      =   ( string ) ns()->currency->value( $entry->net_sale_price );
+        $entry->gross_sale_price    =   ( string ) ns()->currency->value( $entry->gross_sale_price );
+        $entry->tax_value           =   ( string ) ns()->currency->value( $entry->tax_value );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -533,7 +585,7 @@ class ProductCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

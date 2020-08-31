@@ -22,7 +22,7 @@ class DashboardController extends Controller
 
     public function __construct()
     {
-        $this->menuService    =   new MenuService;
+        $this->menuService    =   app()->make( MenuService::class );
     }
     
     public function home()

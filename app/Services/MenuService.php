@@ -218,7 +218,7 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.create.products-units' ],
                         'href'  =>  url( '/dashboard/units/groups/create' )
                     ],
-                    'create-products'   =>  [
+                    'stock-adjustment'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
                         'permissions'   =>  [ 'nexopos.make.products-adjustments' ],
                         'href'  =>  url( '/dashboard/stock-adjustment' )

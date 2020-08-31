@@ -59,7 +59,7 @@
                             <div class="-mx-4 flex flex-wrap">
                                 <template  v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field :field="field"></ns-field>
+                                        <ns-field @change="detectChange( variation_index, $event )" :field="field"></ns-field>
                                     </div>
                                 </template>
                             </div>
@@ -87,6 +87,7 @@ export default {
     computed: {
         defaultVariation() {
             const newVariation     =   new Object;
+
             for( let tabIndex in this._sampleVariation.tabs ) {
                 newVariation[ tabIndex ]            =   new Object;
                 newVariation[ tabIndex ].label      =   this._sampleVariation.tabs[ tabIndex ].label;
@@ -108,8 +109,42 @@ export default {
             };
         }
     },  
-    props: [ 'submit-method', 'submit-url', 'return-url', 'src' ],
+    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
+        detectChange( variation_index, field ) {
+            if ( [ 'purchase_unit_group', 'transfer_unit_group', 'selling_unit_group' ].includes( field.name ) ) {
+                switch( field.name ) {
+                    case 'purchase_unit_group' :
+                        this.loadOptionsFor( 'purchase_unit_ids', field.value, variation_index );
+                    break;
+                    case 'transfer_unit_group' :
+                        this.loadOptionsFor( 'transfer_unit_ids', field.value, variation_index );
+                    break;
+                    case 'selling_unit_group' :
+                        this.loadOptionsFor( 'selling_unit_ids', field.value, variation_index );
+                    break;
+                }
+            }
+        },
+        loadOptionsFor( fieldName, value, variation_index ) {
+            nsHttpClient.get( this.unitsUrl.replace( '{id}', value ) )
+                .subscribe( result => {
+                    console.log( this.form.variations[ variation_index ] );
+                    this.form.variations[ variation_index ].tabs.units.fields.forEach( _field => {
+                        if ( _field.name === fieldName ) {
+                            _field.options    =   result.map( option => {
+                                return {
+                                    label: option.name,
+                                    value: option.id,
+                                    selected: false,
+                                };
+                            })
+                        }
+                    });
+                    this.$forceUpdate();
+                    console.log( this.form );
+                })
+        },
         submit() {
             let formValidGlobally   =   true;
             this.formValidation.validateFields([ this.form.main ]); 
@@ -117,8 +152,8 @@ export default {
             const validity  =   this.form.variations.map( variation => {
                 return this.formValidation.validateForm( variation );
             }).filter( v => v.length > 0 );
-            
-            if ( validity.length > 0 ) {
+
+            if ( validity.length > 0 || Object.values( this.form.main.errors ).length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'No error has been provided for the slot "error-form-invalid"' ).subscribe();
             }
 

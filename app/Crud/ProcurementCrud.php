@@ -19,7 +19,7 @@ class ProcurementCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.procurements';
+    protected $identifier   =   'ns.procurements';
 
     /**
      * Define namespace
@@ -36,8 +36,9 @@ class ProcurementCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_procurements.author', '=', 'nexopos_users.id' ],
-                    ];
+        [ 'nexopos_users as users', 'nexopos_procurements.author', '=', 'users.id' ],
+        [ 'nexopos_providers as providers', 'nexopos_procurements.provider_id', '=', 'providers.id' ]
+    ];
 
     /**
      * Define where statement
@@ -106,8 +107,8 @@ class ProcurementCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -294,33 +295,13 @@ class ProcurementCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'provider_id'  =>  [
-                'label'  =>  __( 'Provider_id' ),
+            'providers_name'  =>  [
+                'label'  =>  __( 'Provider' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -329,27 +310,22 @@ class ProcurementCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'total_items'  =>  [
-                'label'  =>  __( 'Total_items' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'value'  =>  [
-                'label'  =>  __( 'Value' ),
+                'label'         =>  __( 'Value' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+            'users_username'    =>  [
+                'label'         =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Date' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
     }
 
     /**

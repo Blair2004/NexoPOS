@@ -12,6 +12,7 @@
             return-url="{{ $returnUrl ?? '#' }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
+            units-url="{{ $unitsUrl }}"
             src="{{ $src }}">
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'mainFieldLabel not defined' ) }}</template>
             <template v-slot:save>{{ $saveButton ?? __( 'Save' ) }}</template>

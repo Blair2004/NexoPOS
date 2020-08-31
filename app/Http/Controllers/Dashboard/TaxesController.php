@@ -193,15 +193,15 @@ class TaxesController extends DashboardController
      * @param Tax $tax
      * @return view
      */
-    public function editTax()
+    public function editTax( Tax $tax )
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Tax' ),
-            'returnUrl'    =>  url( '/dashboard/taxes' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
+            'returnUrl'     =>  url( '/dashboard/taxes' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes/' . $tax->id ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'adjust an existing tax.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config/' . $tax->id )
         ]);
     }
 
