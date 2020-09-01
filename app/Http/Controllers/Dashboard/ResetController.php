@@ -59,7 +59,11 @@ class ResetController extends DashboardController
 
     public function truncateWithDemo( Request $request )
     {
-        $this->truncateAllTables();
         Artisan::call( 'db:seed' );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The database has been purged' )
+        ];
     }
 }

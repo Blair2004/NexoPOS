@@ -13,7 +13,7 @@ class TaxSeeder extends Seeder
     {
         factory( App\Models\TaxGroup::class, 5 )->create()->each( function( $taxGroup ) {
             $taxGroup->taxes()->saveMany(
-                factory( App\Models\Tax::class, 5 )->make()
+                factory( App\Models\Tax::class, 2 )->make()
             );
         });
     }

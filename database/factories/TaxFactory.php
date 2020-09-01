@@ -11,7 +11,7 @@ $factory->define( Tax::class, function (Faker $faker) {
     return [
         'name'  =>  $faker->name,
         'description'   =>  $faker->sentence,
-        'rate'          =>  $faker->numberBetween( 1, 99 ),
+        'rate'          =>  $faker->numberBetween( 1, 20 ),
         'author'        =>  $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
     ];
 });
