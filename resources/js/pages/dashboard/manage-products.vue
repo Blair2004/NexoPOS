@@ -1,7 +1,7 @@
 
 <template>
-    <div class="form flex-auto flex flex-col" id="crud-form">
-        <div v-if="Object.values( form ).length === 0" class="flex items-center justify-center flex-auto">
+    <div class="form flex-auto" id="crud-form">
+        <div v-if="Object.values( form ).length === 0" class="flex items-center h-full justify-center flex-auto">
             <ns-spinner/>
         </div>
         <template v-if="Object.values( form ).length > 0">

@@ -43,7 +43,7 @@ const nsField       =   Vue.component( 'ns-field', {
         removeOption({ option, index }) {
             option.selected     =   false;
             this.$emit( 'change', { action: 'removeOption', option });
-        }
+        },
     },
     template: `
     <div>

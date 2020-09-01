@@ -12,6 +12,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductTax;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\Helper;
 
@@ -120,6 +121,18 @@ class ProductCrud extends CrudService
      */
     public function getForm( $entry = null ) 
     {
+        if ( $entry instanceof Product ) {
+            $purchaseUnitGroup      =   UnitGroup::where( 'id', $entry->purchase_unit_group )->with( 'units' )->first();
+            $sellingUnitGroup       =   UnitGroup::where( 'id', $entry->selling_unit_group )->with( 'units' )->first();
+            $transferUnitGroup      =   UnitGroup::where( 'id', $entry->transfer_unit_group )->with( 'units' )->first();
+        } else {
+            $purchaseUnitGroup      =   collect([]);
+            $sellingUnitGroup       =   collect([]);
+            $transferUnitGroup      =   collect([]);
+        }
+
+        $groups             =   UnitGroup::get();
+
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
@@ -130,7 +143,7 @@ class ProductCrud extends CrudService
             ],
             'variations'    =>  [
                 [
-                    'id'    =>  '',
+                    'id'    =>  $entry->id ?? '',
                     'tabs'  =>  [
                         'identification'   =>  [
                             'label'     =>  __( 'Identification' ),
@@ -221,7 +234,7 @@ class ProductCrud extends CrudService
                             'fields'    =>  [
                                 [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name'  =>  'purchase_unit_group',
                                     'description'    =>  __( 'Define the unit group used for purchasing' ),
                                     'label' =>  __( 'Purchase Group' ),
@@ -229,14 +242,20 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->purchase_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  [],
+                                    'options'   =>  $purchaseUnitGroup->isEmpty() ? [] : $purchaseUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                        return [
+                                            'label'     =>  $unit->name,
+                                            'value'     =>  $unit->id,
+                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->purchase_unit_ids, true ) )
+                                        ];
+                                    }),
                                     'name'  =>  'purchase_unit_ids',
                                     'label' =>  __( 'Purchase Unit' ),
                                     'description'    =>  __( 'Define the unit or units used while purchasing' ),
                                     'value' =>  $entry->purchase_unit_ids ?? '',
                                 ], [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name'  =>  'selling_unit_group',
                                     'label' =>  __( 'Selling Group' ),
                                     'validation'    =>  'required',
@@ -244,14 +263,20 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->selling_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  [],
+                                    'options'   =>  $sellingUnitGroup->isEmpty() ? [] : $sellingUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                        return [
+                                            'label'     =>  $unit->name,
+                                            'value'     =>  $unit->id,
+                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->selling_unit_ids, true ) )
+                                        ];
+                                    }),
                                     'name'  =>  'selling_unit_ids',
                                     'label' =>  __( 'Selling Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for sale' ),
                                     'value' =>  $entry->selling_unit_ids ?? '',
                                 ], [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name'  =>  'transfer_unit_group',
                                     'label' =>  __( 'Transfer Group' ),
                                     'validation'    =>  'required',
@@ -259,7 +284,13 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->transfer_unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  [],
+                                    'options'   =>  $transferUnitGroup->isEmpty() ? [] : $transferUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                        return [
+                                            'label'     =>  $unit->name,
+                                            'value'     =>  $unit->id,
+                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->transfer_unit_ids, true ) )
+                                        ];
+                                    }),
                                     'name'  =>  'transfer_unit_ids',
                                     'label' =>  __( 'Transfer Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for transfer' ),

@@ -42,9 +42,27 @@ class ProductsController extends DashboardController
             ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
             ->first();
 
-        $primary[ 'identification' ][ 'name' ]  =   $request->input( 'name' );
-        $primary                                =    Helper::flatArrayWithKeys( $primary );
-        $primary[ 'product_type' ]              =   'product';
+        $units                                  =   $primary[ 'units' ];
+
+        /**
+         * this is made to ensure the array 
+         * provided aren't flatten
+         */
+        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+
+        $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
+        $primary                                        =    Helper::flatArrayWithKeys( $primary );
+        $primary[ 'product_type' ]                      =   'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'units' ][ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
+        $primary[ 'units' ][ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
+        $primary[ 'units' ][ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
         
         unset( $primary[ '$primary' ] );
 
@@ -78,10 +96,28 @@ class ProductsController extends DashboardController
             ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
             ->first();
 
-        $primary[ 'identification' ][ 'name' ]  =   $request->input( 'name' );
-        $primary                                =    Helper::flatArrayWithKeys( $primary );
-        $primary[ 'product_type' ]              =   'product';
+        $units                                  =   $primary[ 'units' ];
         
+        /**
+         * this is made to ensure the array 
+         * provided aren't flatten
+         */
+        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+
+        $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
+        $primary                                        =    Helper::flatArrayWithKeys( $primary );
+        $primary[ 'product_type' ]                      =   'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
+        $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
+        $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
+
         unset( $primary[ '$primary' ] );
 
         /**

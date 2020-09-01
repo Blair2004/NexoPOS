@@ -332,7 +332,7 @@ class ProductService
      * @param array fields
      * @return array response
      */
-    public function updateSimpleProduct( $id, $data )
+    public function updateSimpleProduct( $id, $fields )
     {
         /**
          * will get a product if
@@ -340,11 +340,11 @@ class ProductService
          * and not an instance of Product
          */
         $product        =   $this->getProductUsingArgument( 'id', $id );
-        $mode           =   'edit';
+        $mode           =   'update';
 
         $this->releaseProductTaxes( $product );
 
-        if ( $existingProduct = $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
+        if ( $existingProduct = $this->getProductUsingBarcode( $fields[ 'barcode' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided barcode is already in use.' ) );
             }
@@ -354,17 +354,14 @@ class ProductService
          * search a product using the provided SKU
          * and throw an error if it's the case
          */
-        if ( $existingProduct = $this->getProductUsingSKU( $data[ 'sku' ] ) ) {
+        if ( $existingProduct = $this->getProductUsingSKU( $fields[ 'sku' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided SKU is already in use.' ) );
             }
         }
 
-        foreach( $data as $field => $value ) {
-            if ( ! in_array( $field, [ 'varitations' ] ) ) {
-                $fields     =   $data;
-                $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields') );
-            }
+        foreach( $fields as $field => $value ) {
+            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();
@@ -373,7 +370,7 @@ class ProductService
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',
@@ -465,7 +462,7 @@ class ProductService
      * @param array of the data to handle
      * @return array response of the process
      */
-    private function __fillProductFields( Product $product, array $data )
+    private function __fillProductFields( Product $product, array $data ): Product
     {
         /**
          * @param string $field
@@ -478,7 +475,7 @@ class ProductService
         if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
-        } else if ( in_array( $field, [ 'selling_unit_group', 'purchase_unit_group', 'transfer_unit_group' ]) ) {
+        } else if ( in_array( $field, [ 'selling_unit_group', 'purchase_unit_group', 'transfer_unit_group' ]) && ! empty( $value ) ) {
 
             /**
              * let's try to get the unit defined
@@ -487,13 +484,13 @@ class ProductService
              */
             switch( $field ) {
                 case 'selling_unit_group':
-                    $unitType   =   'selling_unit_id';
+                    $unitGroupReference   =   'selling_unit_ids';
                 break;
                 case 'purchase_unit_group':
-                    $unitType   =   'purchase_unit_id';
+                    $unitGroupReference   =   'purchase_unit_ids';
                 break;
                 case 'transfer_unit_group':
-                    $unitType   =   'transfer_unit_id';
+                    $unitGroupReference   =   'transfer_unit_ids';
                 break;
             }
 
@@ -502,13 +499,18 @@ class ProductService
              * a valid value is provided. Note that for 
              * variable product, these fields aren't provided
              */
-            if ( ! empty( $fields[ $unitType ] ) ) {
+            if ( ! empty( $fields[ $field ] ) ) {
                 /**
                  * try to get either a unit group or the unit itself
                  * according to the choice made on the item.
                  */
-                $this->unitService->getGroups( $value );
-                $product->$unitType     =   json_encode( $value );
+                $this->unitService->getGroups( $fields[ $field ] );
+
+                /**
+                 * as we'll need to store that as a json.
+                 */
+                $product->$unitGroupReference   =   json_encode( array_values( $fields[ $unitGroupReference ] ) );
+                $product->$field                =   $value;
             }
 
         } else if ( ! array( $value ) ) {
@@ -1135,11 +1137,8 @@ class ProductService
                 case 'barcode' :
                     return $this->getProductUsingBarcodeOrFail( $identifier );
             }
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'Unable to find the product, as the argument "%s" which value is "%s", doesn\'t have any match.' ), $argument, $identifier )
-            ]);
+        } catch( Exception $exception ) {
+            throw new Exception( sprintf( __( 'Unable to find the product, as the argument "%s" which value is "%s", doesn\'t have any match.' ), $argument, $identifier ) );
         }
     }
 
@@ -1157,7 +1156,7 @@ class ProductService
 
         foreach( $fields as $field => $value ) {
             $fields         =   $fields;
-            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
+            $product        =   $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();
@@ -1165,9 +1164,6 @@ class ProductService
         $product->type          =   $parent->type;
         $product->category_id   =   $parent->category_id;
         $product->product_type  =   'variation';
-
-        Log::info( 'Product Status', $product->toArray() );
-
         $product->save();
 
         /**
@@ -1193,7 +1189,7 @@ class ProductService
              * since the variation don't need to
              * access the parent data informations.
              */
-            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
+            $product    =   $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();
