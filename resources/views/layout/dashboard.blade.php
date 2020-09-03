@@ -16,6 +16,12 @@ use App\Services\Helper;
          * @param {Object}
          */
         const nsExtraComponents     =   new Object;
+
+        /**
+         * describe a global NexoPOS object
+         * @param {object} ns
+         */
+        const ns                    =   { nsExtraComponents };
     </script>
 </head>
 <body>

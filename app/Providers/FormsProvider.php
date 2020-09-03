@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +30,9 @@ class FormsProvider extends ServiceProvider
             switch( $identifier ) {
                 case 'ns.user-profile': 
                     return new UserProfileForm; 
+                break;
+                case 'ns.procurement':
+                    return new ProcurementForm;
                 break;
             }
             return $class;

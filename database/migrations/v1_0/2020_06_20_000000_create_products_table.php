@@ -28,9 +28,15 @@ class CreateProductsTable extends Migration
                 $table->float( 'sale_price' )->default(0); // could be 0 if the product support variations
                 $table->float( 'gross_sale_price' )->default(0); // must be computed automatically
                 $table->float( 'net_sale_price' )->default(0); // must be computed automatically
+                $table->string( 'sale_price_edit' )->default(0); // to let the system consider the price sent by the client
+                
+                $table->float( 'wholesale_price' )->default(0);
+                $table->float( 'net_wholesale_price' )->default(0);
+                $table->float( 'gross_wholesale_price' )->default(0);
+                $table->float( 'wholesale_price_edit' )->default(0);
+
                 $table->string( 'status' )->default( 'available' ); // available, unavailable
                 $table->string( 'stock_management' )->default( 'enabled' ); // enabled, disabled
-                $table->string( 'sale_price_edit' )->boolean()->default(false); // to let the system consider the price sent by the client
                 $table->string( 'barcode' ); // works if the product type is "product"
                 $table->string( 'barcode_type' ); // works if the product type is "product"
                 $table->string( 'sku' ); // works if the product type is "product"

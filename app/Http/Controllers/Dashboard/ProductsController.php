@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\Unit;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\ProductService;
@@ -125,6 +126,27 @@ class ProductsController extends DashboardController
          * creating either a product or a variable product
          */
         return $this->productService->update( $product, $primary );
+    }
+
+    public function searchProduct( Request $request )
+    {
+        return Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->orWhere( 'sku', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->limit(5)
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $taxID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $taxID ) );
+                    });
+                }
+
+                return $product;
+            });
     }
 
     public function refreshPrices( $id )

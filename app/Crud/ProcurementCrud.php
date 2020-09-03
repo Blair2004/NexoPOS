@@ -408,9 +408,9 @@ class ProcurementCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.procurements',
-            'create'    =>  'ns.procurements/create',
-            'edit'      =>  'ns.procurements/edit/#'
+            'list'      =>  'procurements',
+            'create'    =>  'procurements/create',
+            'edit'      =>  'procurements/edit'
         ];
     }
 

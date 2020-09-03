@@ -173,5 +173,13 @@ class ProcurementController extends DashboardController
     {
         return ProcurementCrud::table();
     }
+
+    public function createProcurement()
+    {
+        return $this->view( 'pages.dashboard.procurements.create', [
+            'title'         =>  __( 'New Procurement' ),
+            'description'   =>  __( 'Make a new procurement' )
+        ]);
+    }
 }
 

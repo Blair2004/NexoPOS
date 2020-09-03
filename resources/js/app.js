@@ -4,8 +4,12 @@ const {
     nsCheckbox,
     nsCrud,
     nsMenu,
-    nsSubmenu
+    nsSubmenu,
 }   =   require( './components/components' );
+
+const {
+    nsCurrency
+}   =   require( './filters/declarations' );
 
 const NsRewardsSystem   =   require( './pages/dashboard/rewards-system.vue' ).default;
 const NsCreateCoupons   =   require( './pages/dashboard/create-coupons.vue' ).default;
@@ -14,6 +18,7 @@ const NsSettings        =   require( './pages/dashboard/settings.vue' ).default;
 const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 const NsModules         =   require( './pages/dashboard/modules.vue' ).default;
 const NsPermissions     =   require( './pages/dashboard/ns-permissions.vue' ).default;
+const NsProcurement     =   require( './pages/dashboard/ns-procurement.vue' ).default;
 
 window.nsDashboardAside  =   new window.Vue({
     el: '#dashboard-aside',
@@ -82,13 +87,11 @@ const components    =   {
     NsSettings,
     NsReset,
     NsPermissions,
+    NsProcurement,
     ...nsExtraComponents, // add extra components provided by plugins.
 };
 
 window.nsDashboardContent    =   new window.Vue({
     el: '#dashboard-content',
-    mounted() {
-        console.log( NsModules );
-    },
     components
 });

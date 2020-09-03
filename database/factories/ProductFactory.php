@@ -15,6 +15,11 @@ $factory->define( Product::class, function (Faker $faker) {
         'sale_price'            =>  $salePrice = $faker->numberBetween( 20, 100 ),
         'gross_sale_price'      =>  $faker->numberBetween( 10, $salePrice ),
         'net_sale_price'        =>  $faker->numberBetween( 20, $salePrice ),
+
+        'wholesale_price'            =>  $salePrice = $faker->numberBetween( 20, 100 ),
+        'gross_wholesale_price'      =>  $faker->numberBetween( 10, $salePrice ),
+        'net_wholesale_price'        =>  $faker->numberBetween( 20, $salePrice ),
+
         'barcode'               =>  $faker->word,
         'stock_management'      =>  $faker->randomElement([ 'enabled', 'disabled' ]),
         'barcode_type'          =>  $faker->randomElement([ 'ean8', 'ean13' ]),

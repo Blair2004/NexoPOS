@@ -50,6 +50,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/modules/migrate/{namespace}', 'Dashboard\ModulesController@migrateModule' )->name( 'ns.dashboard.modules.migrate' );
 
         Route::get( '/dashboard/procurements', 'Dashboard\ProcurementController@listProcurements' );
+        Route::get( '/dashboard/procurements/create', 'Dashboard\ProcurementController@createProcurement' );
 
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );

@@ -18,6 +18,7 @@ use Tendoo\Core\Exceptions\NotFoundException;
 use Tendoo\Core\Exceptions\NotAllowedException;
 
 use App\Models\Tax;
+use App\Models\TaxGroup;
 use App\Services\TaxService;
 use Exception;
 
@@ -128,19 +129,13 @@ class TaxesController extends DashboardController
      * @param int tax id
      * @return json
      */
-    public function subTaxes( $taxId )
+    public function getTaxGroup( $taxId = null )
     {
-        $tax    =   Tax::find( $taxId );
-
-        if ( ! $tax instanceof Tax ) {
-            throw new Exception( __( 'Unable to find the parent taxes using the provided id.' ) );
+        if ( $taxId === null ) {
+            return TaxGroup::with( 'taxes' )->get();
         }
 
-        if ( $tax->type === 'simple' ) {
-            throw new Exception( __( 'Unable to find sub taxes from a tax with a simple form.' ) );
-        }
-
-        return $tax->subTaxes;
+        return TaxGroup::findOrFail( $taxId )->with( 'taxes' );
     }
 
     /**

@@ -467,7 +467,7 @@ class CrudService
         return $rules;
     }
 
-    public static function table()
+    public static function table( $config = [] )
     {
         $className  =   get_called_class();
         $instance   =   new $className;

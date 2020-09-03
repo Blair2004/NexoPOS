@@ -59,7 +59,10 @@ const nsCrud    =   Vue.component( 'ns-crud-form', {
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, this.formValidation.extractForm( this.form ) )
                 .subscribe( result => {
                     if ( result.status === 'success' ) {
-                        return document.location   =   this.returnUrl;
+                        if ( this.returnUrl && this.returnUrl.length > 0 ) {
+                            return document.location   =   this.returnUrl;
+                        }
+                        this.$emit( 'save' );
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {

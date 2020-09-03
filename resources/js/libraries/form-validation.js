@@ -55,9 +55,11 @@ export default class FormValidation {
             form.main   =   this.createFields([ form.main ])[0];
         }
 
-        for( let tab in form.tabs ) {
-            form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
-            form.tabs[ tab ].errors     =   [];
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
+                form.tabs[ tab ].errors     =   [];
+            }
         }
 
         return form;

@@ -17,6 +17,7 @@ Route::delete( 'products/{identifier}/variations/{variation_id}', 'Dashboard\Pro
 Route::delete( 'products', 'Dashboard\ProductsController@deleteAllProducts' );
 
 Route::post( 'products', 'Dashboard\ProductsController@saveProduct' );
+Route::post( 'products/search', 'Dashboard\ProductsController@searchProduct' );
 Route::post( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@createSingleVariation' );
 
 Route::put( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@editSingleVariation' );

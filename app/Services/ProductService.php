@@ -273,9 +273,7 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        if ( isset( $data[ 'tax_group_id' ] ) && ! empty( $data[ 'tax_group_id' ] ) ) {
-            $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
-        }
+        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
 
         return [
             'status'    =>      'success',
@@ -368,7 +366,8 @@ class ProductService
         $product->save();
 
         /**
-         * compute product tax
+         * compute product tax for either the wholesale_price
+         * and the sale price
          */
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 

@@ -25,10 +25,7 @@ class TaxService
     private function __checkTaxParentExists( $parent )
     {
         if ( ! $parent instanceof Tax ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed. The parent tax doesn\'t exists.' )
-            ]);
+            throw new Exception( __( 'Unable to proceed. The parent tax doesn\'t exists.' ) );
         }
     }
 
@@ -41,17 +38,11 @@ class TaxService
     private function __checkTaxParentOnCreation( Tax $parent )
     {
         if ( $parent->type !== 'grouped' ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'A simple tax must not be assigned to a parent tax with the type "simple", but "grouped" instead.' )
-            ]);
+            throw new Exception( __( 'A simple tax must not be assigned to a parent tax with the type "simple", but "grouped" instead.' ) );
         }
 
         if ( ! $parent instanceof Tax ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed. The parent tax doesn\'t exists.' )
-            ]);
+            throw new Exception( __( 'Unable to proceed. The parent tax doesn\'t exists.' ) );
         }
     }
 
@@ -65,10 +56,7 @@ class TaxService
     private function __checkTaxParentOnModification( Tax $parent, $id )
     {
         if ( $parent->id === $id ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'A tax cannot be his own parent.' )
-            ]);
+            throw new Exception( __( 'A tax cannot be his own parent.' ) );
         }
     }
 
@@ -81,10 +69,7 @@ class TaxService
     private function __checkIfNotGroupedTax( $fields )
     {
         if ( $fields[ 'type' ] === 'grouped' ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'The tax hierarchy is limited to 1. A sub tax must not have the tax type set to "grouped".' )
-            ]);
+            throw new Exception( __( 'The tax hierarchy is limited to 1. A sub tax must not have the tax type set to "grouped".' ) );
         }
     }
 
@@ -190,11 +175,13 @@ class TaxService
     public function computeTax( Product $product, $tax_group_id )
     {
         $taxGroup                       =   TaxGroup::find( $tax_group_id );
+
         $product->net_sale_price        =   floatval( $product->sale_price_edit );
+        $product->net_wholesale_price   =   floatval( $product->wholesale_price_edit );
 
         /**
          * calculate the taxes wether they are all
-         * inclusive or exclusive
+         * inclusive or exclusive for the sale_price
          */
         if ( $taxGroup instanceof TaxGroup ) {
             $taxValue       =   $taxGroup->taxes
@@ -219,6 +206,38 @@ class TaxService
             } else {
                 $product->gross_sale_price       =   floatval( $product->sale_price_edit );
                 $product->net_sale_price         =   floatval( $product->sale_price_edit ) + $taxValue;
+            }
+
+            $product->tax_value                 =   $taxValue;
+        }
+
+        /**
+         * calculate the taxes wether they are all
+         * inclusive or exclusive for the wholesale price
+         */
+        if ( $taxGroup instanceof TaxGroup ) {
+            $taxValue       =   $taxGroup->taxes
+                ->map( function( $tax ) use ( $product ) {
+                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $product->wholesale_price_edit ) / 100;
+
+                    $productTax                 =   new ProductTax;
+                    $productTax->product_id     =   $product->id;
+                    $productTax->tax_id         =   $tax->id;
+                    $productTax->rate           =   $tax->rate;
+                    $productTax->name           =   $tax->name;
+                    $productTax->author         =   Auth::id();
+                    $productTax->value          =   $taxValue;
+                    $productTax->save();
+
+                    return $taxValue;
+                })
+                ->sum();
+
+            if ( $product->tax_type === 'inclusive' ) {
+                $product->gross_wholesale_price       =   floatval( $product->wholesale_price_edit ) - $taxValue;
+            } else {
+                $product->gross_wholesale_price       =   floatval( $product->wholesale_price_edit );
+                $product->net_wholesale_price         =   floatval( $product->wholesale_price_edit ) + $taxValue;
             }
 
             $product->tax_value                 =   $taxValue;

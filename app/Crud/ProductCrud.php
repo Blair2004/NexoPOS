@@ -336,9 +336,17 @@ class ProductCrud extends CrudService
                                     'name'  =>  'sale_price_edit',
                                     'label' =>  __( 'Sale Price' ),
                                     'validation'    =>  'required',
-                                    'description'   =>  __( 'Define the sale price excluding taxes.' ),
+                                    'description'   =>  __( 'Define the sale price.' ),
                                     'value' =>  $entry->sale_price_edit ?? '',
                                     'extra' =>  $entry->sale_price ?? 0
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'wholesale_price_edit',
+                                    'label' =>  __( 'WholeSale Price' ),
+                                    'validation'    =>  'required',
+                                    'description'   =>  __( 'Define the wholesale price.' ),
+                                    'value' =>  $entry->wholesale_price_edit ?? '',
+                                    'extra' =>  $entry->wholesale_price ?? 0
                                 ], [
                                     'type'  =>  'select',
                                     'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ]),

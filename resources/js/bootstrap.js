@@ -14,8 +14,8 @@ window.Vue              =   Vue;
 window.Axios            =   Axios;
 window.VueRouter        =   VueRouter;
 window.SnackBar         =   SnackBar;
-window.Axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.Axios.defaults.headers.common['Authorization'] = `Bearer ${NexoPOS.token}`;
+window.Axios.defaults.headers.common['X-Requested-With']    = 'XMLHttpRequest';
+window.Axios.defaults.headers.common['Authorization']       = `Bearer ${ns.authentication.token}`;
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;

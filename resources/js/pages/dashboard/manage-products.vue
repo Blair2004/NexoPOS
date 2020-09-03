@@ -176,7 +176,10 @@ export default {
                 .subscribe( data => {
                     console.log( data );
                     if ( data.status === 'success' ) {
-                        return document.location   =   this.returnUrl;
+                        if ( this.returnUrl !== false ) {
+                            return document.location   =   this.returnUrl;
+                        }
+                        this.$emit( 'save' );
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
