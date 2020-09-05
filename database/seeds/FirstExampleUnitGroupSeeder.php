@@ -5,7 +5,7 @@ use App\Models\UnitGroup;
 use App\Models\Unit;
 use App\Models\User;
 
-class UnitGroupFirstExampleSeeder extends Seeder
+class FirstExampleUnitGroupSeeder extends Seeder
 {
     /**
      * Run the database seeds.

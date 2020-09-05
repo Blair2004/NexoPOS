@@ -136,13 +136,16 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
         computeTotal() {
+
             this.totalTaxValues = 0;
+
             if ( this.form.products.length > 0 ) {
                 this.totalTaxValues = this.form.products.map( p => p.tax_value )
                     .reduce( ( b, a ) => b + a );
             }
 
             this.totalPurchasePrice     =   0;
+
             if ( this.form.products.length > 0 ) {
                 this.totalPurchasePrice     =   this.form.products.map( p => parseFloat( p.total_purchase_price ) )
                     .reduce( ( b, a ) => b + a );
@@ -170,7 +173,7 @@ export default {
                         return ( parseFloat( tax.rate ) * product.purchase_price_edit ) / 100;
                     });
 
-                    product.tax_value   =   totalTaxes.reduce( ( b, a ) => b + a );
+                    product.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) ) * parseFloat( product.quantity );
 
                     if ( product.tax_type === 'inclusive' ) {
                         product.gross_purchase_price    =   parseFloat( product.purchase_price_edit ) - product.tax_value;
@@ -411,7 +414,7 @@ export default {
                                             </td>
                                             <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start flex-col">
-                                                    <span class="text-sm text-gray-600">{{ product.tax_value * product.quantity | currency }}</span>
+                                                    <span class="text-sm text-gray-600">{{ product.tax_value | currency }}</span>
                                                 </div>
                                             </td>
                                             <td width="100" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">

@@ -36,13 +36,22 @@ const nsField       =   Vue.component( 'ns-field', {
                 this.field.options.forEach( option => option.selected = false );
             }
 
-            option.selected     =   ! option.selected;
+            option.selected     =   true;
+
+            this.refreshMultiselect();
 
             this.$emit( 'change', { action: 'addOption', option })
         },
-        removeOption({ option, index }) {
-            this.field.options[ index ].selected    =   false;
-            console.log( this.field.options, index );
+        refreshMultiselect() {
+            this.field.value    =   this.field.options
+                .filter( option => option.selected )
+                .map( option => option.value );
+
+            console.log( this.field.options );
+        },
+        removeOption( option ) {
+            option.selected     =   false;
+            this.refreshMultiselect();                
             this.$emit( 'change', { action: 'removeOption', option });
         },
     },

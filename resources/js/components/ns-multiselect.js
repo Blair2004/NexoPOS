@@ -36,11 +36,11 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                 }, 100 );
             }
         },
-        removeOption( option, index, event ) {
+        removeOption( option, event ) {
             if ( ! this.field.disabled ) {
                 event.preventDefault();
                 event.stopPropagation();
-                this.$emit( 'removeOption', { option, index } );
+                this.$emit( 'removeOption', option );
                 this.$forceUpdate();
                 setTimeout( () => {
                     this.search     =   '';
@@ -59,7 +59,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                     <div class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-blue-400 text-white flex justify-between p-1 items-center">
                             <span class="pr-8">{{ option.label }}</span>
-                            <button @click="removeOption( option, index, $event )" class="rounded outline-none hover:bg-blue-500 h-6 w-6 flex items-center justify-center">
+                            <button @click="removeOption( option, $event )" class="rounded outline-none hover:bg-blue-500 h-6 w-6 flex items-center justify-center">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
@@ -76,7 +76,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                         <input v-model="search" class="p-2 w-full text-gray-600 outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
-                        <div @click="addOption( option )" v-for="option of _options" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">
+                        <div @click="addOption( option )" v-for="(option, index) of _options" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">
                             <span>{{ option.label }}</span>
                             <span>
                                 <i v-if="option.checked" class="las la-check"></i>

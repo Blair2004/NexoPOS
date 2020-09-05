@@ -474,7 +474,7 @@ class ProductService
         if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
-        } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) && ! empty( $value ) ) {
+        } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) ) {
 
             /**
              * we only verifiy the unit group
@@ -492,7 +492,9 @@ class ProductService
                 /**
                  * as we'll need to store that as a json.
                  */
-                $product->$field   =   json_encode( array_values( $fields[ $field ] ) );
+                $product->$field    =   json_encode( array_values( $fields[ $field ] ) );
+            } else {
+                $product->$field    =   '[]';
             }
 
         } else if ( ! is_array( $value ) ) {
