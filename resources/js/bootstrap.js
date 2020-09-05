@@ -5,12 +5,14 @@ import * as ChartJS from "chart.js";
 import VueRouter from "vue-router";
 import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
 import { fromEvent } from "rxjs";
+import * as moment from 'moment';
 
 Vue.use( VueRouter );
 
 window._                =   Lodash;
 window.CharJS           =   ChartJS;
 window.Vue              =   Vue;
+window.moment           =   moment;
 window.Axios            =   Axios;
 window.VueRouter        =   VueRouter;
 window.SnackBar         =   SnackBar;
@@ -65,5 +67,9 @@ nsHttpClient.defineClient( Axios );
 window.nsEvent          =   nsEvent;
 window.nsHttpClient     =   nsHttpClient;
 window.nsSnackBar       =   nsSnackBar;
+window.nsState          =   nsState;
+window.nsScreen         =   nsScreen;
+window.ChartJS          =   ChartJS;
+window.EventEmitter     =   EventEmitter;
 
 export { Vue, VueRouter, Axios, ChartJS, EventEmitter, SnackBar, nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen };

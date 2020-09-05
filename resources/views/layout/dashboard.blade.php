@@ -1,5 +1,6 @@
 <?php
 use App\Services\Helper;
+use App\Services\DateService;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +22,15 @@ use App\Services\Helper;
          * describe a global NexoPOS object
          * @param {object} ns
          */
-        const ns                    =   { nsExtraComponents };
+        const ns =   { nsExtraComponents };
+
+        /**
+         * store the server date
+         * @param {string}
+         */
+        ns.date                     =   {
+            current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
+        }
     </script>
 </head>
 <body>

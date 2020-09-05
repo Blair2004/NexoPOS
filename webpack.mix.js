@@ -15,6 +15,7 @@ const tailwindcss = require('tailwindcss');
 mix.disableNotifications();
 mix.sourceMaps();
 mix
+    .js('resources/js/bootstrap.js', 'public/js')
     .js('resources/js/app.js', 'public/js')
     .js('resources/js/auth.js', 'public/js')
     .js('resources/js/setup.js', 'public/js')

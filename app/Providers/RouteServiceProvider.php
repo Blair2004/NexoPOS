@@ -117,7 +117,7 @@ class RouteServiceProvider extends ServiceProvider
             }
 
             if ( $module[ 'api-file' ] !== false ) {
-                Route::middleware([ 'ns.cors', 'ns.installed' ])
+                Route::middleware([ 'ns.installed' ]) // 'ns.cors', 
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'api-file' ] );
             }
