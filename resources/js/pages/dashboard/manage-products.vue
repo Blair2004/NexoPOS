@@ -112,15 +112,11 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
         detectChange( variation_index, field ) {
-            if ( [ 'purchase_unit_group', 'transfer_unit_group', 'selling_unit_group' ].includes( field.name ) ) {
+            if ( [ 'unit_group' ].includes( field.name ) ) {
                 switch( field.name ) {
-                    case 'purchase_unit_group' :
+                    case 'unit_group' :
                         this.loadOptionsFor( 'purchase_unit_ids', field.value, variation_index );
-                    break;
-                    case 'transfer_unit_group' :
                         this.loadOptionsFor( 'transfer_unit_ids', field.value, variation_index );
-                    break;
-                    case 'selling_unit_group' :
                         this.loadOptionsFor( 'selling_unit_ids', field.value, variation_index );
                     break;
                 }
@@ -129,7 +125,6 @@ export default {
         loadOptionsFor( fieldName, value, variation_index ) {
             nsHttpClient.get( this.unitsUrl.replace( '{id}', value ) )
                 .subscribe( result => {
-                    console.log( this.form.variations[ variation_index ] );
                     this.form.variations[ variation_index ].tabs.units.fields.forEach( _field => {
                         if ( _field.name === fieldName ) {
                             _field.options    =   result.map( option => {
@@ -142,7 +137,6 @@ export default {
                         }
                     });
                     this.$forceUpdate();
-                    console.log( this.form );
                 })
         },
         submit() {

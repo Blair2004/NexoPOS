@@ -18,27 +18,21 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
         },
         _options() {
             return this.field.options.map( option => {
-                option.selected     =   false;
-                if ( this.field.value && this.field.value.includes( option.value ) && option.selected === undefined ) {
+                option.selected     =   option.selected === undefined ? false : option.selected;
+                if ( this.field.value && this.field.value.includes( option.value ) ) {
                     option.selected     =   true;
                 }
                 return option;
-            }).filter( option => {
-                if ( this.search.length > 0 ) {
-                    return option.label.search( this.search ) >= 0;
-                }
-                return true;
-            })
+            });
         },
     },
     methods: {
         addOption( option ) {
             if ( ! this.field.disabled ) {
-                console.log( option );
                 this.$emit( 'addOption', option );
                 this.$forceUpdate();
                 setTimeout( () => {
-                    this.search     =   '';
+                    // this.search     =   '';
                 }, 100 );
             }
         },

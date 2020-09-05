@@ -1,15 +1,16 @@
 <?php
-namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\DashboardController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-
-class ResetController extends DashboardController
+class FirstDemoSeeder extends Seeder
 {
-    public function truncateAllTables()
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
     {
         DB::table( 'nexopos_customers_groups' )->truncate();
         DB::table( 'nexopos_customers_metas' )->truncate();
@@ -51,23 +52,10 @@ class ResetController extends DashboardController
         DB::table( 'nexopos_options' )->truncate();
         // DB::table( 'nexopos_trucks' )->truncate();
         
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The table has been truncated.' )
-        ];
-    }
-
-    public function truncateWithDemo( Request $request )
-    {
-        if ( $request->input( 'mode' ) === 'wipe_plus_grocery' ) {
-            Artisan::call( 'db:seed --class=FirstDemoSeeder' );
-        } else {
-            Artisan::call( 'db:seed' );
-        }
-
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The database has been purged' )
-        ];
+        $this->call( RewardSystemSeeder::class );
+        $this->call( CustomerGroupSeeder::class );
+        $this->call( UnitGroupFirstExampleSeeder::class );
+        $this->call( TaxSeeder::class );
+        $this->call( ProductsSeeder::class );
     }
 }

@@ -36,11 +36,11 @@ export default {
             const fields   =   this.validation.getValue( this.fields );
 
             if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : 'Would you like to proceed ?' ) ) {
-                nsHttpClient.post( '/api/nexopos/v4/reset', {fields} )
+                nsHttpClient.post( '/api/nexopos/v4/reset', fields )
                     .subscribe( result => {
                         nsSnackBar.success( result.message ).subscribe();
                     }, error => {
-                        nsSnackbar.error( error.message ).subscribe();
+                        nsSnackBar.error( error.message ).subscribe();
                     })
             }
         }

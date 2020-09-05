@@ -461,7 +461,7 @@ class ProductService
      * @param array of the data to handle
      * @return array response of the process
      */
-    private function __fillProductFields( Product $product, array $data ): Product
+    private function __fillProductFields( Product $product, array $data )
     {
         /**
          * @param string $field
@@ -474,24 +474,7 @@ class ProductService
         if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
-        } else if ( in_array( $field, [ 'selling_unit_group', 'purchase_unit_group', 'transfer_unit_group' ]) && ! empty( $value ) ) {
-
-            /**
-             * let's try to get the unit defined
-             * for the unit fields and trigger an
-             * error if necessary.
-             */
-            switch( $field ) {
-                case 'selling_unit_group':
-                    $unitGroupReference   =   'selling_unit_ids';
-                break;
-                case 'purchase_unit_group':
-                    $unitGroupReference   =   'purchase_unit_ids';
-                break;
-                case 'transfer_unit_group':
-                    $unitGroupReference   =   'transfer_unit_ids';
-                break;
-            }
+        } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) && ! empty( $value ) ) {
 
             /**
              * we only verifiy the unit group
@@ -502,21 +485,19 @@ class ProductService
                 /**
                  * try to get either a unit group or the unit itself
                  * according to the choice made on the item.
+                 * @todo needs to be moved out from here
                  */
-                $this->unitService->getGroups( $fields[ $field ] );
+                $this->unitService->getGroups( $fields[ 'unit_group' ] );
 
                 /**
                  * as we'll need to store that as a json.
                  */
-                $product->$unitGroupReference   =   json_encode( array_values( $fields[ $unitGroupReference ] ) );
-                $product->$field                =   $value;
+                $product->$field   =   json_encode( array_values( $fields[ $field ] ) );
             }
 
-        } else if ( ! array( $value ) ) {
+        } else if ( ! is_array( $value ) ) {
             $product->$field    =   $value;
         }
-
-        return $product;
     }
 
     /**
@@ -1155,7 +1136,7 @@ class ProductService
 
         foreach( $fields as $field => $value ) {
             $fields         =   $fields;
-            $product        =   $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
+            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();
@@ -1188,7 +1169,7 @@ class ProductService
              * since the variation don't need to
              * access the parent data informations.
              */
-            $product    =   $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
+            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();

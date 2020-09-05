@@ -47,14 +47,10 @@ class CreateProductsTable extends Migration
                 $table->integer( 'category_id' )->nullable(); // could be nullable specially if it's a variation
                 $table->integer( 'parent_id' )->default(0); // to refer to a parent variable product
                 
+                $table->integer( 'unit_group' );
                 $table->string( 'selling_unit_ids' )->nullable(); // either unit id or set of ids
-                $table->integer( 'selling_unit_group' );
-
                 $table->string( 'purchase_unit_ids' )->nullable();
-                $table->integer( 'purchase_unit_group' );
-
                 $table->string( 'transfer_unit_ids' )->nullable();
-                $table->integer( 'transfer_unit_group' );
 
                 $table->string( 'on_expiration' )->default( 'prevent_sales' ); // allow_sales, prevent_sales
                 $table->boolean( 'expires' )->default(false); // true/false

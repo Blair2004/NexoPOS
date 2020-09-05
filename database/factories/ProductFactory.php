@@ -25,9 +25,7 @@ $factory->define( Product::class, function (Faker $faker) {
         'barcode_type'          =>  $faker->randomElement([ 'ean8', 'ean13' ]),
         'sku'                   =>  $faker->word . date( 's' ),
         'product_type'          =>  $faker->randomElement([ 'materialized', 'dematerialized']),
-        'selling_unit_group'    =>  $faker->randomElement( TaxGroup::get()->map( fn( $group ) => $group->id ) ),
-        'purchase_unit_group'   =>  $faker->randomElement( TaxGroup::get()->map( fn( $group ) => $group->id ) ),
-        'transfer_unit_group'   =>  $faker->randomElement( TaxGroup::get()->map( fn( $group ) => $group->id ) ),
+        'unit_group'            =>  $faker->randomElement( TaxGroup::get()->map( fn( $group ) => $group->id ) ),
         'author'                =>  $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
     ];
 });

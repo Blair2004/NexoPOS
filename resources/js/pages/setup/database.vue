@@ -15,7 +15,6 @@
 
 <script>
 import FormValidation from './../../libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from "./../../bootstrap";
 import { nsRouter } from './../../setup';
 
 export default {

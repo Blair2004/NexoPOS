@@ -41,7 +41,8 @@ const nsField       =   Vue.component( 'ns-field', {
             this.$emit( 'change', { action: 'addOption', option })
         },
         removeOption({ option, index }) {
-            option.selected     =   false;
+            this.field.options[ index ].selected    =   false;
+            console.log( this.field.options, index );
             this.$emit( 'change', { action: 'removeOption', option });
         },
     },

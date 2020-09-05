@@ -128,7 +128,7 @@ trait ArrayHelper {
      * flat multidimensional array using 
      * keys
      * @param array $data
-     * @return array
+     * @return Collection
      */
     static function flatArrayWithKeys( $data )
     {

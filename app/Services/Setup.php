@@ -122,13 +122,12 @@ class Setup
          * We assume so far the application is installed
          * then we can launch option service
          */
-        $this->options  =   app()->make( Options::class );
-        $this->options->set( 'ns_store_name', $request->input( 'app_name' ) );
+        $this->options      =   app()->make( Options::class );
+        $this->options->set( 'ns_store_name', $request->input( 'ns_store_name' ) );
         $this->options->set( 'allow_registration', false );
         $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
         
         $userID             =   rand(1,99);
-        
         $user               =   new User;
         $user->id           =   $userID;
         $user->username     =   $request->input( 'admin_username' );

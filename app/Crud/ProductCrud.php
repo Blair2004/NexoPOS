@@ -122,13 +122,9 @@ class ProductCrud extends CrudService
     public function getForm( $entry = null ) 
     {
         if ( $entry instanceof Product ) {
-            $purchaseUnitGroup      =   UnitGroup::where( 'id', $entry->purchase_unit_group )->with( 'units' )->first();
-            $sellingUnitGroup       =   UnitGroup::where( 'id', $entry->selling_unit_group )->with( 'units' )->first();
-            $transferUnitGroup      =   UnitGroup::where( 'id', $entry->transfer_unit_group )->with( 'units' )->first();
+            $unitGroup              =   UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
         } else {
-            $purchaseUnitGroup      =   collect([]);
-            $sellingUnitGroup       =   collect([]);
-            $transferUnitGroup      =   collect([]);
+            $unitGroup      =   null;
         }
 
         $groups             =   UnitGroup::get();
@@ -233,68 +229,52 @@ class ProductCrud extends CrudService
                             'label' =>  __( 'Units' ),
                             'fields'    =>  [
                                 [
-                                    'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
-                                    'name'  =>  'purchase_unit_group',
-                                    'description'    =>  __( 'Define the unit group used for purchasing' ),
-                                    'label' =>  __( 'Purchase Group' ),
+                                    'type'          =>  'select',
+                                    'options'       =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
+                                    'name'          =>  'unit_group',
+                                    'description'   =>  __( 'What unit group applies to the actual item' ),
+                                    'label'         =>  __( 'Unit Group' ),
                                     'validation'    =>  'required',
-                                    'value' =>  $entry->purchase_unit_group ?? '',
+                                    'value'         =>  $entry->unit_group ?? '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  $purchaseUnitGroup->isEmpty() ? [] : $purchaseUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
                                         return [
                                             'label'     =>  $unit->name,
                                             'value'     =>  $unit->id,
-                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->purchase_unit_ids, true ) )
+                                            'selected'  =>  ! empty( $entry->purchase_unit_ids ) ? in_array( $unit->id, json_decode( $entry->purchase_unit_ids, true ) ) : false,
                                         ];
                                     }),
                                     'name'  =>  'purchase_unit_ids',
                                     'label' =>  __( 'Purchase Unit' ),
                                     'description'    =>  __( 'Define the unit or units used while purchasing' ),
-                                    'value' =>  $entry->purchase_unit_ids ?? '',
-                                ], [
-                                    'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
-                                    'name'  =>  'selling_unit_group',
-                                    'label' =>  __( 'Selling Group' ),
-                                    'validation'    =>  'required',
-                                    'description'   =>  __( 'Define the unit group used for sale' ),
-                                    'value' =>  $entry->selling_unit_group ?? '',
+                                    'value' =>  ! empty( $entry->purchase_unit_ids ) ? json_decode( $entry->purchase_unit_ids, true ) : '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  $sellingUnitGroup->isEmpty() ? [] : $sellingUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
                                         return [
                                             'label'     =>  $unit->name,
                                             'value'     =>  $unit->id,
-                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->selling_unit_ids, true ) )
+                                            'selected'  =>  ! empty( $entry->selling_unit_ids ) ? in_array( $unit->id, json_decode( $entry->selling_unit_ids, true ) ) : false,
                                         ];
                                     }),
                                     'name'  =>  'selling_unit_ids',
                                     'label' =>  __( 'Selling Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for sale' ),
-                                    'value' =>  $entry->selling_unit_ids ?? '',
-                                ], [
-                                    'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
-                                    'name'  =>  'transfer_unit_group',
-                                    'label' =>  __( 'Transfer Group' ),
-                                    'validation'    =>  'required',
-                                    'description'   =>  __( 'Define the unit group used for transfer' ),
-                                    'value' =>  $entry->transfer_unit_group ?? '',
+                                    'value' =>  ! empty( $entry->selling_unit_ids ) ? json_decode( $entry->selling_unit_ids, true ) : '',
                                 ], [
                                     'type'  =>  'multiselect',
-                                    'options'   =>  $transferUnitGroup->isEmpty() ? [] : $transferUnitGroup->units->map( function( $unit ) use ( $entry ) {
+                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
                                         return [
                                             'label'     =>  $unit->name,
                                             'value'     =>  $unit->id,
-                                            'selected'  =>  in_array( $unit->id, json_decode( $entry->transfer_unit_ids, true ) )
+                                            'selected'  =>  ! empty( $entry->transfer_unit_ids ) ? in_array( $unit->id, json_decode( $entry->transfer_unit_ids, true ) ) : false,
                                         ];
                                     }),
                                     'name'  =>  'transfer_unit_ids',
                                     'label' =>  __( 'Transfer Unit' ),
                                     'description'   =>  __( 'Define the unit or units used for transfer' ),
-                                    'value' =>  $entry->transfer_unit_ids ?? '',
+                                    'value' =>  ! empty( $entry->transfer_unit_ids ) ? json_decode( $entry->transfer_unit_ids, true ) : '',
                                 ], 
                             ]
                         ],
