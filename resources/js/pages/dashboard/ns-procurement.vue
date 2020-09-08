@@ -104,20 +104,14 @@ export default {
                     label: 'Products',
                     identifier: 'products',
                     active: false,
-                }, {
-                    label: 'Providers',
-                    identifier: 'providers',
-                    active: false,
-                }, {
-                    label: 'Categories',
-                    identifier: 'categories',
-                    active: false
-                }, {
-                    label: 'New Product',
-                    identifier: 'new_product',
-                    active: false
-                }
-            ]
+                }, 
+            ],
+
+            /**
+             * control the state of the reloading
+             * spinner
+             */
+            reloading: false
         }
     },
     watch: {
@@ -232,12 +226,14 @@ export default {
          * @return void
          */
         reloadEntities() {
+            this.reloading          =   true;
             forkJoin([
                 nsHttpClient.get( '/api/nexopos/v4/categories' ),
                 nsHttpClient.get( '/api/nexopos/v4/products' ),
                 nsHttpClient.get( '/api/nexopos/v4/forms/ns.procurement' ),
                 nsHttpClient.get( '/api/nexopos/v4/taxes/groups' ),
             ]).subscribe( result => {
+                this.reloading      =   false;
                 this.categories     =   result[0];
                 this.products       =   result[1];
                 this.fields         =   result[2].tabs.general.fields;
@@ -337,7 +333,7 @@ export default {
                         :class="form.main.disabled ? 'bg-gray-400' : ''"
                         class="flex-auto text-gray-700 outline-none h-10 px-2">
                     <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
-                    <button @click="reloadEntities()" class="bg-white text-gray-700 outline-none px-4 h-10 border-gray-400"><i class="las la-sync"></i></button>
+                    <button @click="reloadEntities()" class="bg-white text-gray-700 outline-none px-4 h-10 border-gray-400"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
@@ -443,37 +439,6 @@ export default {
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'providers'">
-                            <ns-crud-form
-                                src="/api/nexopos/v4/crud/ns.providers/form-config"
-                                :returnUrl="false"
-                                submitUrl="/api/nexopos/v4/crud/ns.providers"
-                                submitMethod=""
-                                @save="reloadEntities()"
-                                disableTabs=""
-                                ></ns-crud-form>
-                        </div>
-                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'categories'">
-                            <ns-crud-form
-                                src="/api/nexopos/v4/crud/ns.products-categories/form-config"
-                                :returnUrl="false"
-                                submitUrl="/api/nexopos/v4/crud/ns.products-categories"
-                                submitMethod=""
-                                @save="reloadEntities()"
-                                disableTabs=""
-                                ></ns-crud-form>
-                        </div>
-                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'new_product'">
-                            <ns-manage-products
-                                src="/api/nexopos/v4/crud/ns.products/form-config"
-                                :returnUrl="false"
-                                submitUrl="/api/nexopos/v4/crud/ns.products"
-                                submitMethod=""
-                                @save="reloadEntities()"
-                                unitsUrl="/api/nexopos/v4/units-groups/{id}/units"
-                                disableTabs=""
-                                ></ns-manage-products>
                         </div>
                     </div>
                 </div>
