@@ -21,7 +21,9 @@ class CreateProvidersTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'surname' )->nullable();
-                $table->string( 'email' )->nullable();
+                $table->string( 'email' )
+                    ->unique()
+                    ->nullable();
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
                 $table->string( 'address_2' )->nullable();

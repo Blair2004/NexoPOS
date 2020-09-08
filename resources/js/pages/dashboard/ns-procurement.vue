@@ -173,7 +173,7 @@ export default {
                         return ( parseFloat( tax.rate ) * product.purchase_price_edit ) / 100;
                     });
 
-                    product.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) ) * parseFloat( product.quantity );
+                    product.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
 
                     if ( product.tax_type === 'inclusive' ) {
                         product.gross_purchase_price    =   parseFloat( product.purchase_price_edit ) - product.tax_value;
@@ -191,6 +191,7 @@ export default {
                     product.tax_value               =   0;
                 }
 
+                product.tax_value                   =   product.tax_value * parseFloat( product.quantity );
                 product.total_purchase_price        =   product.purchase_price * parseFloat( product.quantity );
             }
 
