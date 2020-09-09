@@ -34,14 +34,14 @@ return [
                 'delievered'    =>  __( 'Delivered' ),
             ]),
             'label'         =>  __( 'Delivery Status' ),
-            'description'   =>  __( 'Determine what is the actual value of the procurement. Once "Delivered" the status can\'t be changed.' )
+            'description'   =>  __( 'Determine what is the actual value of the procurement. Once "Delivered" the status can\'t be changed, and the stock will be updated.' )
         ], [
             'type'          =>  'select',
             'name'          =>  'payment_status',
             'validation'    =>  'required',
             'options'           =>  Helper::kvToJsOptions([
-                'pending'       =>  __( 'Pending' ),
-                'delievered'    =>  __( 'Delivered' ),
+                'unpaid'    =>  __( 'Unpaid' ),
+                'paid'      =>  __( 'Paid' ),
             ]),
             'label'         =>  __( 'Payment Status' ),
             'description'   =>  __( 'Determine what is the actual payment status of the procurement.' )

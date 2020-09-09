@@ -34,7 +34,7 @@ export default class FormValidation {
             globalErrors.push( tabsInvalidity.flat() );
         }
 
-        return globalErrors.flat();
+        return globalErrors.flat().filter( error => error !== undefined );
     }
 
     validateField( field ) {

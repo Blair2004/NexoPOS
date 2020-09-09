@@ -25,12 +25,9 @@ class CreateProductsHistoryTable extends Migration
                 $table->integer( 'order_id' )->nullable();
                 $table->string( 'operation_type' ); // sale, procurement, adjustment, return, defective
                 $table->integer( 'unit_id' );
-                $table->float( 'before_quantity' );
+                $table->float( 'before_quantity' )->nullable();
                 $table->float( 'quantity' ); // current unit quantity
-                $table->float( 'after_quantity' );
-                // $table->float( 'base_before_quantity' )->nullable();
-                // $table->float( 'base_quantity' )->nullable(); // base unit quantity
-                // $table->float( 'base_after_quantity' )->nullable();
+                $table->float( 'after_quantity' )->nullable();
                 $table->float( 'unit_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->float( 'total_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->integer( 'author' );

@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::get( 'procurements/{id?}', 'Dashboard\ProcurementController@list' )->where( 'id', '[0-9]+');
 Route::get( 'procurements/{id}/products', 'Dashboard\ProcurementController@procurementProducts' );
 Route::get( 'procurements/{id}/reset', 'Dashboard\ProcurementController@resetProcurement' );
@@ -13,3 +16,5 @@ Route::put( 'procurements/{id}/products', 'Dashboard\ProcurementController@bulkU
 
 Route::delete( 'procurements/{id}/products/{product_id}', 'Dashboard\ProcurementController@deleteProcurementProduct' );
 Route::delete( 'procurements/{id}', 'Dashboard\ProcurementController@deleteProcurement' )->where('id', '[0-9]+');
+
+Route::post( 'procurements', 'Dashboard\ProcurementController@makeProcurement' );
