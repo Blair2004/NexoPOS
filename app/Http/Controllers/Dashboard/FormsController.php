@@ -20,7 +20,7 @@ use App\Models\ProductCategory;
 use App\Models\User;
 use App\Services\SettingsPage;
 use Exception;
-use TorMorten\Eventy\Facades\Events;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class FormsController extends DashboardController
 {
@@ -34,7 +34,7 @@ class FormsController extends DashboardController
         /**
          * @var SettingsPage
          */
-        $instance   =   Events::filter( 'ns.forms', [], $identifier );
+        $instance   =   Hook::filter( 'ns.forms', [], $identifier );
 
         if ( ! $instance instanceof SettingsPage ) {
             throw new Exception( sprintf( 
@@ -49,7 +49,7 @@ class FormsController extends DashboardController
 
     public function saveForm( FormsRequest $request, $identifier )
     {
-        $instance   =   Events::filter( 'ns.forms', [], $identifier );
+        $instance   =   Hook::filter( 'ns.forms', [], $identifier );
 
         if ( ! $instance instanceof SettingsPage ) {
             throw new Exception( sprintf( 

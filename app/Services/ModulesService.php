@@ -144,6 +144,27 @@ class ModulesService
                 if ( $config[ 'enabled' ] ) {
 
                     /**
+                     * Load module folder contents
+                     */
+                    foreach([ 'Models', 'Services', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms' ] as $folder ) {
+                        /**
+                         * Load Module models
+                         */
+                        $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
+
+                        foreach( $files as $file ) {
+                            /**
+                             * @todo run service provider
+                             */
+                            $fileInfo   =   pathinfo(  $modulesPath . $file );
+
+                            if ( $fileInfo[ 'extension' ] == 'php' ) {
+                                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
+                            }
+                        }
+                    }
+
+                    /**
                      * register module service provider
                      */
                     $servicesProviders   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
@@ -170,27 +191,6 @@ class ModulesService
                                 if ( method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
                                     call_user_func([ $config[ 'providers' ][ $className ], 'register' ]);
                                 }
-                            }
-                        }
-                    }
-
-                    /**
-                     * Load module folder contents
-                     */
-                    foreach([ 'Models', 'Services', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests' ] as $folder ) {
-                        /**
-                         * Load Module models
-                         */
-                        $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
-
-                        foreach( $files as $file ) {
-                            /**
-                             * @todo run service provider
-                             */
-                            $fileInfo   =   pathinfo(  $modulesPath . $file );
-
-                            if ( $fileInfo[ 'extension' ] == 'php' ) {
-                                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
                             }
                         }
                     }

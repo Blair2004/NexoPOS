@@ -114,7 +114,7 @@ export default class FormValidation {
     }
 
     extractForm( form ) {
-        const formValue  =   {};
+        let formValue  =   {};
 
         if ( form.main ) {
             formValue[ form.main.name ]     =   form.main.value;
@@ -126,17 +126,23 @@ export default class FormValidation {
                     formValue[ tab ]    =   {};
                 }
     
-                form.tabs[ tab ].fields.forEach( field => {
-                    if ( [ 'multiselect' ].includes( field.type ) ) {
-                        formValue[ tab ][ field.name ]  =   field.options
-                            .filter( option => option.selected )
-                            .map( option => option.value );
-                    } else {
-                        formValue[ tab ][ field.name ]  =   field.value;
-                    }
-                });
+                formValue[ tab ]   =   this.extractFields( form.tabs[ tab ].fields );
             }
         }
+
+        return formValue;
+    }
+
+    extractFields( fields, formValue = {} ) {
+        fields.forEach( field => {
+            if ( [ 'multiselect' ].includes( field.type ) ) {
+                formValue[ field.name ]  =   field.options
+                    .filter( option => option.selected )
+                    .map( option => option.value );
+            } else {
+                formValue[ field.name ]  =   field.value;
+            }
+        });
 
         return formValue;
     }

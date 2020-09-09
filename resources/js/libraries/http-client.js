@@ -10,26 +10,29 @@ export class HttpClient {
         this._client    =   client;
     }
 
-    post( url, data ) { 
-        return this._request( 'post', url, data );
+    post( url, data, config = {} ) { 
+        return this._request( 'post', url, data, config );
     }
 
-    get( url ) {
-        return this._request( 'get', url );
+    get( url, config = {} ) {
+        return this._request( 'get', url, undefined, config );
     }
 
-    delete( url ) {
-        return this._request( 'delete', url );
+    delete( url, config = {} ) {
+        return this._request( 'delete', url, undefined, config );
     }
 
-    put( url, data ) {
-        return this._request( 'put', url, data );
+    put( url, data , config = {} ) {
+        return this._request( 'put', url, data, config );
     }
 
-    _request( type, url, data = {} ) {
+    _request( type, url, data = {}, config = {} ) {
         this._subject.next({ identifier: 'async.start', url, data });
         return new rxjs.Observable( observer => {
-            this._client[ type ]( url, data ).then( result => {
+            this._client[ type ]( url, data, { 
+                ...this._client.defaults[ type ],
+                config
+            }).then( result => {
                 observer.next( result.data );
                 observer.complete();
                 this._subject.next({ identifier: 'async.stop' });
