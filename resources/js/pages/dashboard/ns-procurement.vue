@@ -236,7 +236,7 @@ export default {
                 this.reloading      =   false;
                 this.categories     =   result[0];
                 this.products       =   result[1];
-                this.fields         =   result[2].tabs.general.fields;
+                this.form.tabs      =   result[2].tabs;
                 this.taxes          =   result[3];
             })
         },
@@ -267,6 +267,7 @@ export default {
             product.unit_id                     =   0;
             product.product_id                  =   product.id;
             product.procurement_id              =   null;
+            product.$invalid                    =   false;
 
             this.searchResult           =   [];
             this.searchValue            =   '';
@@ -274,7 +275,36 @@ export default {
             this.form.products.push( product );
         },
         submit() {
+
+            if ( this.form.products.length === 0 ) {
+                // return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : 'No error message provided on the slot "error-no-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                //     .subscribe();
+            }
+
+            this.form.products.forEach( product => {
+                console.log( product );
+                if ( ! parseFloat( product.quantity ) >= 1 ) {
+                    product.$invalid    =   true;
+                } else if ( product.unit_id === 0 ) {
+                    product.$invalid    =   true;
+                } else {
+                    product.$invalid    =   false;
+                }
+            });
+
+            const invalidProducts   =   this.form.products.filter( product => product.$invalid );
+
+            if ( invalidProducts.length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-invalid-products' ] ? this.$slots[ 'error-invalid-products' ][0].text : 'No error message provided on the slot "error-invalid-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
+            }
+
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
+                /**
+                 * hack to force rerendering
+                 * there might be a better solutin here.
+                 */
+                this.setTabActive( this.activeTab );
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
@@ -349,8 +379,8 @@ export default {
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'details'">
-                            <div class="-mx-4 flex flex-wrap">
-                                <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of fields">
+                            <div class="-mx-4 flex flex-wrap" v-if="form.tabs">
+                                <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of form.tabs.general.fields">
                                     <ns-field :field="field"></ns-field>
                                 </div>
                             </div>
@@ -363,7 +393,6 @@ export default {
                                         type="text" 
                                         :placeholder="$slots[ 'search-placeholder' ] ? $slots[ 'search-placeholder' ][0].text : 'SKU, Barcode, Name'"
                                         class="flex-auto text-gray-700 outline-none h-10 px-2">
-                                    <button @click="submit()" class="bg-blue-500 outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="search-button">Search</slot></button>
                                 </div>
                                 <div class="h-0">
                                     <div class="shadow bg-white relative z-10">
@@ -389,52 +418,52 @@ export default {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(product, index ) of form.products" :key="index">
-                                            <td width="200" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                        <tr v-for="(product, index ) of form.products" :key="index" :class="product.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
+                                            <td width="200" class="p-2 text-gray-600 border border-gray-300">
                                                 <h3 class="font-semibold">{{ product.name }}</h3>
                                                 <div class="flex -mx-1">
                                                     <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
                                                     <span @click="switchTaxType( product, index )" class="text-xs text-red-500 cursor-pointer underline px-1">Tax {{ product.tax_type === 'inclusive' ? 'Inclusive' : 'Exclusive' }}</span>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <input @change="updateLine( index )" type="text" v-model="product.purchase_price_edit" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <select @change="updateLine( index )" v-model="product.tax_group_id" class="rounded border-blue-500 border-2 p-2 w-56">
                                                         <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start flex-col">
                                                     <span class="text-sm text-gray-600">{{ product.tax_value | currency }}</span>
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <select v-model="product.unit_id" class="rounded border-blue-500 border-2 p-2 w-56">
                                                         <option v-for="option of product.purchase_units" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <input @change="updateLine( index )" type="text" v-model="product.quantity" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">{{ product.total_purchase_price | currency }}</div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300" colspan="3"></td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">{{ totalTaxValues | currency }}</td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300" colspan="2"></td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">{{ totalPurchasePrice | currency }}</td>
+                                        <tr class="bg-gray-100">
+                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="3"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300">{{ totalTaxValues | currency }}</td>
+                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="2"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300">{{ totalPurchasePrice | currency }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

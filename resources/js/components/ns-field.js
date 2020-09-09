@@ -56,7 +56,7 @@ const nsField       =   Vue.component( 'ns-field', {
         },
     },
     template: `
-    <div>
+    <div class="flex flex-auto">
         <ns-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

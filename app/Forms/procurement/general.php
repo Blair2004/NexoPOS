@@ -28,6 +28,7 @@ return [
         ], [
             'type'          =>  'select',
             'name'          =>  'delivery_status',
+            'validation'    =>  'required',
             'options'           =>  Helper::kvToJsOptions([
                 'pending'       =>  __( 'Pending' ),
                 'delievered'    =>  __( 'Delivered' ),
@@ -37,6 +38,7 @@ return [
         ], [
             'type'          =>  'select',
             'name'          =>  'payment_status',
+            'validation'    =>  'required',
             'options'           =>  Helper::kvToJsOptions([
                 'pending'       =>  __( 'Pending' ),
                 'delievered'    =>  __( 'Delivered' ),
@@ -46,6 +48,7 @@ return [
         ], [
             'type'          =>  'select',
             'name'          =>  'provider_id',
+            'validation'    =>  'required',
             'options'       =>  Helper::toJsOptions( Provider::get(), [ 'id', 'name' ]),
             'label'         =>  __( 'Provider' ),
             'description'   =>  __( 'Determine what is the actual provider of the current procurement.' )
