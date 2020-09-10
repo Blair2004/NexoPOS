@@ -4,6 +4,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Provider;
 use App\Exceptions\NotFoundException;
+use App\Models\Procurement;
+use Exception;
 
 class ProviderService
 {
@@ -134,11 +136,24 @@ class ProviderService
             $provider->amount_due  =   $owned;
             $provider->save();
 
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the provider using the specified identifier.' )
-            ]);
+        } catch( Exception $exception ) {
+            throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
         }
+    }
+
+    /**
+     * refresh provider amount 
+     * using theprovided procurement
+     * @param Procurement $procurement
+     */
+    public function refreshFromProcurement( Procurement $procurement )
+    {
+        $provider       =   Provider::find( $procurement->provider_id );
+        $totalOwed      =   $provider->procurements()->where( 'payment_status', 'unpaid' )->sum( 'value' );
+        $totalPaid      =   $provider->procurements()->where( 'payment_status', 'paid' )->sum( 'value' );
+
+        $provider->amount_due       =   $totalOwed;
+        $provider->amount_paid      =   $totalPaid;
+        $provider->save();
     }
 }

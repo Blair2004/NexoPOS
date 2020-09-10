@@ -183,21 +183,5 @@ class ProcurementController extends DashboardController
             'description'   =>  __( 'Make a new procurement' )
         ]);
     }
-
-    public function makeProcurement( Request $request )
-    {
-        $validation     =   Validator::make( $request->input( 'general' ), [
-            'delivery_status'   =>  'required',
-            'payment_status'    =>  'required',
-            'provider_id'       =>  'required'
-        ]);
-
-        return response([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to proceed. The procurement information aren\'t avalid' )
-        ])->with( $validation->errors() );
-        if ( $validation->fails() ) {
-        }
-    }
 }
 

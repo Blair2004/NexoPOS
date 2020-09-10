@@ -18,7 +18,7 @@ class EventsProvider extends ServiceProvider
     public function register()
     {
         /**
-         * might be @deprecated
+         * @todo check if it's still relevant
          */
         Hook::addFilter( 'nexopos.units-groups.validation', useThis( ValidationEvent::class )->method( 'unitsGroups' ) );
         Hook::addFilter( 'nexopos.units.validation', useThis( ValidationEvent::class )->method( 'unitValidation' ) );

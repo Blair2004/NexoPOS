@@ -20,6 +20,10 @@ use App\Events\ProcurementAfterDeleteProduct;
 use App\Events\ProcurementAfterUpdateProduct;
 use App\Events\ProcurementBeforeDeleteProduct;
 use App\Events\ProcurementBeforeUpdateProduct;
+use App\Events\ProcurementRefreshedEvent;
+use App\Models\Product;
+use App\Models\ProductHistory;
+use App\Models\ProductUnitQuantity;
 use App\Models\Unit;
 use Exception;
 
@@ -79,7 +83,7 @@ class ProcurementService
          * try to find the provider
          * or return an error
          */
-        $provider           =   $this->providerService->get( @$provider_id );
+        $provider           =   $this->providerService->get( $data[ 'general' ][ 'provider_id' ] );
 
         if ( ! $provider instanceof Provider ) {
             throw new Exception( __( 'Unable to find the assigned provider.' ) );
@@ -98,11 +102,10 @@ class ProcurementService
 
         $procurement->author            =   Auth::id();
         $procurement->value             =   0;
-        $procurement->status            =   'unpaid'; // or default value while creating procurement
         $procurement->save();
 
         if ( $data[ 'products' ] ) {
-            $result     =   $this->procure( $procurement, $data[ 'products' ] );
+            $result     =   $this->procure( $procurement, collect( $data[ 'products' ] ) );
         }
 
         return [
@@ -242,19 +245,26 @@ class ProcurementService
 
     public function procure( Procurement $procurement, Collection $products )
     {  
-        $procuredProducts     =   $products->map( function( $product ) use ( $procurement ) {
+        /**
+         * We'll just make sure to have a reference
+         * of all the product that has been procured.
+         */
+        $procuredProducts                                   =   $products->map( function( $procuredProduct ) use ( $procurement ) {
+            $product                                        =   Product::find( $procuredProduct[ 'product_id' ] );
             $procurementProduct                             =   new ProcurementProduct;
-            $procurementProduct->gross_purchase_price       =   $product[ 'gross_purchase_price' ];
-            $procurementProduct->net_purchase_price         =   $product[ 'net_purchase_price' ];
+            $procurementProduct->name                       =   $product->name;
+            $procurementProduct->gross_purchase_price       =   $procuredProduct[ 'gross_purchase_price' ];
+            $procurementProduct->net_purchase_price         =   $procuredProduct[ 'net_purchase_price' ];
             $procurementProduct->procurement_id             =   $procurement->id;
-            $procurementProduct->product_id                 =   $product[ 'product_id' ];
-            $procurementProduct->purchase_price             =   $product[ 'purchase_price' ];
-            $procurementProduct->quantity                   =   $product[ 'quantity' ];
-            $procurementProduct->tax_group_id               =   $product[ 'tax_group_id' ];
-            $procurementProduct->tax_type                   =   $product[ 'tax_type' ];
-            $procurementProduct->tax_value                  =   $product[ 'tax_value' ];
-            $procurementProduct->total_purchase_price       =   $product[ 'total_purchase_price' ];
-            $procurementProduct->unit_id                    =   $product[ 'unit_id' ];
+            $procurementProduct->product_id                 =   $procuredProduct[ 'product_id' ];
+            $procurementProduct->purchase_price             =   $procuredProduct[ 'purchase_price' ];
+            $procurementProduct->quantity                   =   $procuredProduct[ 'quantity' ];
+            $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
+            $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
+            $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
+            $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
+            $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
+            $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
 
             return $procurementProduct;
@@ -392,19 +402,97 @@ class ProcurementService
      */
     public function refresh( Procurement $procurement )
     {
-        $totalCost      =   0;
-        $procurement    =   Procurement::find( $procurement->id );
-        $totalEntries   =   $procurement->products->count();
+        /**
+         * Let's loop all procured produt
+         * and get unit quantity if that exists
+         * otherwise we'll create a new one.
+         */
+        $purchases  =   $procurement
+            ->products()
+            ->get()
+            ->map( function( $procurementProduct ) use ( $procurement ) {
 
-        $procurement->products->each( function( $product ) use ( &$totalCost ) {
-            $totalCost  =  $this->currency->value( $totalCost )->additionateBy( $product->total_purchase_price )
-                ->get();
+            /**
+             * If a previous unit stock doesn't exists
+             * we'll need to create a new one.
+             */
+            $productUnitQuantity              =   ProductUnitQuantity::withProduct( $procurementProduct->product_id )
+                ->withUnit( $procurementProduct->unit_id )
+                ->first();
+
+            if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
+                $productUnitQuantity  =   new ProductUnitQuantity();
+                $productUnitQuantity->quantity  =   0;
+            }
+
+            /**
+             * the stock get reflected on the system
+             * only when the delivery status changes.
+             * We'll update the status to "procured" to make
+             * sure on update, that delivery doesn't reflect the stock twice.
+             */
+            if ( $procurement->delivery_status === 'delivered' ) {
+                
+                $totalQuantity      =   $productUnitQuantity->quantity + floatval( $procurementProduct->quantity );
+
+                /**
+                 * We'll keep an history of what has just happened.
+                 * this will help to track how the stock evolve.
+                 */
+                $history                            =   new ProductHistory();
+                $history->procurement_id            =   $procurementProduct->procurement_id;
+                $history->product_id                =   $procurementProduct->product_id;
+                $history->procurement_product_id    =   $procurementProduct->id;
+                $history->operation_type            =   'procurement';
+                $history->quantity                  =   $procurementProduct->quantity;
+                $history->unit_price                =   $procurementProduct->purchase_price;
+                $history->total_price               =   $procurementProduct->total_purchase_price;
+                $history->before_quantity           =   $productUnitQuantity->quantity;
+                $history->quantity                  =   $totalQuantity;
+                $history->after_quantity            =   $procurementProduct->total_purchase_price;
+                $history->unit_id                   =   $procurementProduct->unit_id;
+                $history->save();
+
+                /**
+                 * let's update the product quantity with
+                 * the unit attached to the object.
+                 */
+                $productUnitQuantity->quantity      =   $totalQuantity;
+                $productUnitQuantity->save();
+            }
+
+            /**
+             * We'll return the total purchase
+             * price to update the procurement total fees.
+             */
+            return [
+                'total_purchase_price'  =>  $procurementProduct->total_purchase_price,
+                'tax_value'             =>  $procurementProduct->tax_value,
+            ];
         });
+        
 
-        $procurement->total_items   =   $totalEntries;
-        $procurement->value         =   $totalCost;
-        $procurement->author        =   Auth::id();
+        /**
+         * the stock get reflected on the system
+         * only when the delivery status changes.
+         * We'll update the status to "procured" to make
+         * sure on update, that delivery doesn't reflect the stock twice.
+         */
+        if ( $procurement->delivery_status === 'delivered' ) {
+            /**
+             * Let's make sure the delivery status change
+             * to "stocked" to avoid twice procurement.
+             */
+            $procurement->delivery_status     =   'stocked';
+        }
+        
+        $procurement->value               =   $purchases->sum( 'total_purchase_price' );
+        $procurement->tax_value           =   $purchases->sum( 'tax_value' );
+        $procurement->total_items         =   count( $purchases );
+        $procurement->author              =   Auth::id();
         $procurement->save();
+
+        event( new ProcurementRefreshedEvent( $procurement ) );
 
         return [
             'status'    =>  'success',

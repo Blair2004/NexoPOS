@@ -16,5 +16,3 @@ Route::put( 'procurements/{id}/products', 'Dashboard\ProcurementController@bulkU
 
 Route::delete( 'procurements/{id}/products/{product_id}', 'Dashboard\ProcurementController@deleteProcurementProduct' );
 Route::delete( 'procurements/{id}', 'Dashboard\ProcurementController@deleteProcurement' )->where('id', '[0-9]+');
-
-Route::post( 'procurements', 'Dashboard\ProcurementController@makeProcurement' );

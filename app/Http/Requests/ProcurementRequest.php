@@ -24,9 +24,10 @@ class ProcurementRequest extends FormRequest
     public function rules()
     {
         return [
-            'delivery_status'   =>  'required',
-            'payment_status'    =>  'required',
-            'provider_id'       =>  'required'
+            'name'                      =>  'required',
+            'general.delivery_status'   =>  'required',
+            'general.payment_status'    =>  'required',
+            'general.provider_id'       =>  'required'
         ];
     }
 }

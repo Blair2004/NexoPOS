@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CoreService
 {
+    /**
+     * @param CurrenService;
+     */
+    public $currency;
+    
     public function __construct()
     {
         $this->currency     =   app()->make( CurrencyService::class );

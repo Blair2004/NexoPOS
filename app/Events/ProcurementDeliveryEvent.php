@@ -3,6 +3,8 @@ namespace App\Events;
 
 use Illuminate\Queue\SerializesModels;
 use App\Models\Procurement;
+use App\Models\ProductHistory;
+use App\Models\ProductUnitQuantity;
 
 class ProcurementDeliveryEvent 
 {

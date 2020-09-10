@@ -8,15 +8,6 @@ import NsManageProducts from './manage-products';
 export default {
     name: 'ns-procurement',
     mounted() {
-        this.form   =   {
-            main: {
-                label: 'Name',
-                name: 'name',
-                disabled: false
-            },
-            products: []
-        };
-        this.form   =   this.formValidation.createForm( this.form );
         this.reloadEntities();
     },
     computed: {
@@ -169,7 +160,7 @@ export default {
 
                     product.procurement.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
 
-                    if ( product.tax_type === 'inclusive' ) {
+                    if ( product.procurement.tax_type === 'inclusive' ) {
                         product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) - product.tax_value;
                         product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
                         product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
@@ -236,8 +227,17 @@ export default {
                 this.reloading      =   false;
                 this.categories     =   result[0];
                 this.products       =   result[1];
-                this.form.tabs      =   result[2].tabs;
                 this.taxes          =   result[3];
+
+                this.form           =   Object.assign( this.form, result[2] );
+                this.form           =   this.formValidation.createForm( this.form );
+                
+
+                if ( this.form.products === undefined ) {
+                    this.form.products  =   [];
+                }
+                
+                this.$forceUpdate();
             })
         },
         setTabActive( tab ) {
@@ -278,8 +278,8 @@ export default {
         submit() {
 
             if ( this.form.products.length === 0 ) {
-                // return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : 'No error message provided on the slot "error-no-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
-                //     .subscribe();
+                return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : 'No error message provided on the slot "error-no-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
             }
 
             this.form.products.forEach( product => {
@@ -333,12 +333,17 @@ export default {
                     nsSnackBar.error( error.message, undefined, {
                         duration: 5000
                     }).subscribe();
-                    this.formValidation.triggerError( this.form, error.response.data );
+
                     this.formValidation.enableForm( this.form );
+                    
+                    if ( error.errors ) {
+                        this.formValidation.triggerError( this.form, error.errors );
+                    }
                 })
         },
         deleteProduct( index ) {
             this.form.products.splice( index, 1 );
+            this.$forceUpdate();
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
@@ -349,7 +354,7 @@ export default {
 </script>
 <template>
     <div class="form flex-auto flex flex-col" id="crud-form">
-        <template v-if="Object.values( form ).length > 0">
+        <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
@@ -421,7 +426,7 @@ export default {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
+                                        <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
                                             <td width="200" class="p-2 text-gray-600 border border-gray-300">
                                                 <h3 class="font-semibold">{{ product.name }}</h3>
                                                 <div class="flex -mx-1">

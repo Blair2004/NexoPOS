@@ -305,13 +305,23 @@ class ProcurementCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'status'  =>  [
-                'label'  =>  __( 'Status' ),
+            'delivery_status'  =>  [
+                'label'  =>  __( 'Delivery Status' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'payment_status'  =>  [
+                'label'  =>  __( 'Payment Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'value'  =>  [
                 'label'         =>  __( 'Value' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'tax_value'  =>  [
+                'label'         =>  __( 'Taxes' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -338,6 +348,37 @@ class ProcurementCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        switch( $entry->delivery_status ) {
+            case 'pending':
+                $entry->delivery_status = __( 'Pending' );
+            break;
+            case 'delivered':
+                $entry->delivery_status = __( 'Delivered' );
+            break;
+            case 'stocked':
+                $entry->delivery_status = __( 'Stocked' );
+            break;
+        }
+
+        switch( $entry->payment_status ) {
+            case 'unpaid':
+                $entry->payment_status = __( 'Unpaid' );
+            break;
+            case 'paid':
+                $entry->payment_status = __( 'Paid' );
+            break;
+        }
+
+        $entry->value       =   ns()
+            ->currency
+            ->define( $entry->value )
+            ->format();
+
+        $entry->tax_value   =   ns()
+            ->currency
+            ->define( $entry->tax_value )
+            ->format();
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -345,7 +386,7 @@ class ProcurementCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
