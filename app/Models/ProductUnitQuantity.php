@@ -15,12 +15,17 @@ class ProductUnitQuantity extends Model
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
     }
 
+    public function scopeWithUnit( Builder $query, $id )
+    {
+        return $query->where( 'unit_id', $id );
+    }
+
     public function product()
     {
         return $this->hasOne( Product::class );
     }
 
-    public function scopeFindProduct( Builder $query, $id )
+    public function scopeWithProduct( Builder $query, $id )
     {
         return $query->where( 'product_id', $id );
     }

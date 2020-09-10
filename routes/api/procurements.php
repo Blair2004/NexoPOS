@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::get( 'procurements/{id?}', 'Dashboard\ProcurementController@list' )->where( 'id', '[0-9]+');
 Route::get( 'procurements/{id}/products', 'Dashboard\ProcurementController@procurementProducts' );
 Route::get( 'procurements/{id}/reset', 'Dashboard\ProcurementController@resetProcurement' );

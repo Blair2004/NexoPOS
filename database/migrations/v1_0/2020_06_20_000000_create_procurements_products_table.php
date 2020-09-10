@@ -21,18 +21,16 @@ class CreateProcurementsProductsTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->float( 'gross_purchase_price' )->default(0);
-                $table->float( 'purchase_price_edit' )->default(0); // this is actually what the user changes
-                $table->float( 'tax_value' )->default(0);
                 $table->float( 'net_purchase_price' )->default(0);
+                $table->integer( 'procurement_id' );
+                $table->integer( 'product_id' );
                 $table->float( 'purchase_price' )->default(0);
                 $table->float( 'quantity' );
-                $table->float( 'total_purchase_price' )->default(0);
-                $table->string( 'tax_type' ); // inclusive or exclusive;
                 $table->integer( 'tax_group_id' );
-                $table->integer( 'product_id' );
+                $table->string( 'tax_type' ); // inclusive or exclusive;
+                $table->float( 'tax_value' )->default(0);
+                $table->float( 'total_purchase_price' )->default(0);
                 $table->integer( 'unit_id' );
-                $table->integer( 'procurement_id' );
-                $table->float( 'base_quantity' ); // total of base unit compared to the selected unit id
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

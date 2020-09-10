@@ -184,7 +184,7 @@ function execThis( $className ) {
 	throw new Exception( sprintf( __( 'Unable to execute the following class callback string : %s' ), $className ) );
 }
 
-function ns()
+function ns(): CoreService
 {
     return app()->make( CoreService::class );
 }

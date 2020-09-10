@@ -12,7 +12,7 @@ const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
         return currency.formatToParts( value ).map(({ type, value }) => {
             switch( type ) {
                 case 'decimal': return ( ns.currency.ns_currency_decimal_separator || '.' );break;
-                case 'group': ( ns.currency.ns_currency_thousand_separator || ',' ) ; break;
+                case 'group': return ( ns.currency.ns_currency_thousand_separator || ',' ) ; break;
                 default: return value;
             }
         }).reduce( ( b, a ) => b + a );

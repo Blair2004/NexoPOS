@@ -53,7 +53,7 @@ class ProcurementController extends DashboardController
     public function create( ProcurementRequest $request )
     {
         return $this->procurementService->create( $request->only([
-            'name', 'description', 'provider_id'
+            'general', 'name', 'products'
         ]));
     }
 
@@ -176,6 +176,8 @@ class ProcurementController extends DashboardController
 
     public function createProcurement()
     {
+        ns()->restrict([ 'nexopos.create.procurements' ]);
+
         return $this->view( 'pages.dashboard.procurements.create', [
             'title'         =>  __( 'New Procurement' ),
             'description'   =>  __( 'Make a new procurement' )

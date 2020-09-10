@@ -8,15 +8,6 @@ import NsManageProducts from './manage-products';
 export default {
     name: 'ns-procurement',
     mounted() {
-        this.form   =   {
-            main: {
-                label: 'Name',
-                name: 'name',
-                disabled: false
-            },
-            products: []
-        };
-        this.form   =   this.formValidation.createForm( this.form );
         this.reloadEntities();
     },
     computed: {
@@ -130,15 +121,18 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
         computeTotal() {
+
             this.totalTaxValues = 0;
+
             if ( this.form.products.length > 0 ) {
-                this.totalTaxValues = this.form.products.map( p => p.tax_value )
+                this.totalTaxValues = this.form.products.map( p => p.procurement.tax_value )
                     .reduce( ( b, a ) => b + a );
             }
 
             this.totalPurchasePrice     =   0;
+
             if ( this.form.products.length > 0 ) {
-                this.totalPurchasePrice     =   this.form.products.map( p => parseFloat( p.total_purchase_price ) )
+                this.totalPurchasePrice     =   this.form.products.map( p => parseFloat( p.procurement.total_purchase_price ) )
                     .reduce( ( b, a ) => b + a );
             }
         },
@@ -151,9 +145,9 @@ export default {
          */
         updateLine( index ) {
             const product   =   this.form.products[ index ];
-            const taxGroup  =   this.taxes.filter( taxGroup => taxGroup.id === product.tax_group_id );
+            const taxGroup  =   this.taxes.filter( taxGroup => taxGroup.id === product.procurement.tax_group_id );
 
-            if ( parseFloat( product.purchase_price_edit ) > 0 && parseFloat( product.quantity ) > 0 ) {
+            if ( parseFloat( product.procurement.purchase_price_edit ) > 0 && parseFloat( product.procurement.quantity ) > 0 ) {
 
                 /**
                  * if some tax group is provided
@@ -161,28 +155,29 @@ export default {
                  */
                 if ( taxGroup.length > 0 ) {
                     const totalTaxes    =   taxGroup[0].taxes.map( tax => {
-                        return ( parseFloat( tax.rate ) * product.purchase_price_edit ) / 100;
+                        return ( parseFloat( tax.rate ) * product.procurement.purchase_price_edit ) / 100;
                     });
 
-                    product.tax_value   =   totalTaxes.reduce( ( b, a ) => b + a );
+                    product.procurement.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
 
-                    if ( product.tax_type === 'inclusive' ) {
-                        product.gross_purchase_price    =   parseFloat( product.purchase_price_edit ) - product.tax_value;
-                        product.purchase_price          =   parseFloat( product.purchase_price_edit );
-                        product.net_purchase_price      =   parseFloat( product.purchase_price_edit );
+                    if ( product.procurement.tax_type === 'inclusive' ) {
+                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) - product.tax_value;
+                        product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
+                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
                     } else {
-                        product.gross_purchase_price    =   parseFloat( product.purchase_price_edit );
-                        product.purchase_price          =   parseFloat( product.purchase_price_edit ) + product.tax_value;
-                        product.net_purchase_price      =   parseFloat( product.purchase_price_edit ) + product.tax_value;
+                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit );
+                        product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit ) + product.procurement.tax_value;
+                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit ) + product.procurement.tax_value;
                     }
                 } else {
-                    product.gross_purchase_price    =   parseFloat( product.purchase_price_edit );
-                    product.purchase_price          =   parseFloat( product.purchase_price_edit );
-                    product.net_purchase_price      =   parseFloat( product.purchase_price_edit );
-                    product.tax_value               =   0;
+                    product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit );
+                    product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
+                    product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
+                    product.procurement.tax_value               =   0;
                 }
 
-                product.total_purchase_price        =   product.purchase_price * parseFloat( product.quantity );
+                product.procurement.tax_value                   =   product.procurement.tax_value * parseFloat( product.procurement.quantity );
+                product.procurement.total_purchase_price        =   product.procurement.purchase_price * parseFloat( product.procurement.quantity );
             }
 
             this.computeTotal();
@@ -194,7 +189,7 @@ export default {
          * on the current product.
          */
         switchTaxType( product, index ) {
-            product.tax_type =  product.tax_type === 'inclusive' ? 'exclusive' : 'inclusive';
+            product.procurement.tax_type =  product.procurement.tax_type === 'inclusive' ? 'exclusive' : 'inclusive';
             this.updateLine( index );
         },
 
@@ -232,8 +227,17 @@ export default {
                 this.reloading      =   false;
                 this.categories     =   result[0];
                 this.products       =   result[1];
-                this.fields         =   result[2].tabs.general.fields;
                 this.taxes          =   result[3];
+
+                this.form           =   Object.assign( this.form, result[2] );
+                this.form           =   this.formValidation.createForm( this.form );
+                
+
+                if ( this.form.products === undefined ) {
+                    this.form.products  =   [];
+                }
+                
+                this.$forceUpdate();
             })
         },
         setTabActive( tab ) {
@@ -250,19 +254,21 @@ export default {
                     .subscribe();
             }
 
-            product.gross_purchase_price        =   0;
-            product.purchase_price_edit         =   0;
-            product.tax_value                   =   0;
-            product.net_purchase_price          =   0;
-            product.purchase_price              =   0;
-            product.total_price                 =   0;
-            product.total_purchase_price        =   0;
-            product.quantity                    =   1;
-            product.tax_group_id                =   0;
-            product.tax_type                    =   'inclusive';
-            product.unit_id                     =   0;
-            product.product_id                  =   product.id;
-            product.procurement_id              =   null;
+            product.procurement                             =   new Object;
+            product.procurement.gross_purchase_price        =   0;
+            product.procurement.purchase_price_edit         =   0;
+            product.procurement.tax_value                   =   0;
+            product.procurement.net_purchase_price          =   0;
+            product.procurement.purchase_price              =   0;
+            product.procurement.total_price                 =   0;
+            product.procurement.total_purchase_price        =   0;
+            product.procurement.quantity                    =   1;
+            product.procurement.tax_group_id                =   0;
+            product.procurement.tax_type                    =   'inclusive';
+            product.procurement.unit_id                     =   0;
+            product.procurement.product_id                  =   product.id;
+            product.procurement.procurement_id              =   null;
+            product.procurement.$invalid                    =   false;
 
             this.searchResult           =   [];
             this.searchValue            =   '';
@@ -270,7 +276,36 @@ export default {
             this.form.products.push( product );
         },
         submit() {
+
+            if ( this.form.products.length === 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : 'No error message provided on the slot "error-no-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
+            }
+
+            this.form.products.forEach( product => {
+                if ( ! parseFloat( product.procurement.quantity ) >= 1 ) {
+                    product.procurement.$invalid    =   true;
+                } else if ( product.unit_id === 0 ) {
+                    product.procurement.$invalid    =   true;
+                } else {
+                    product.procurement.$invalid    =   false;
+                }
+            });
+
+            const invalidProducts   =   this.form.products.filter( product => product.procurement.$invalid );
+
+            if ( invalidProducts.length > 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-invalid-products' ] ? this.$slots[ 'error-invalid-products' ][0].text : 'No error message provided on the slot "error-invalid-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                    .subscribe();
+            }
+
             if ( this.formValidation.validateForm( this.form ).length > 0 ) {
+                /**
+                 * hack to force rerendering
+                 * there might be a better solutin here.
+                 */
+                this.setTabActive( this.activeTab );
+
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
@@ -283,7 +318,9 @@ export default {
             this.formValidation.disableForm( this.form );
 
             const data  =   {
-                ...this.formValidation.extractForm( this.form ),
+                ...this.formValidation.extractForm( this.form ), ...{
+                    products: this.form.products.map( product => product.procurement )
+                }
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
@@ -296,12 +333,17 @@ export default {
                     nsSnackBar.error( error.message, undefined, {
                         duration: 5000
                     }).subscribe();
-                    this.formValidation.triggerError( this.form, error.response.data );
+
                     this.formValidation.enableForm( this.form );
+                    
+                    if ( error.errors ) {
+                        this.formValidation.triggerError( this.form, error.errors );
+                    }
                 })
         },
         deleteProduct( index ) {
             this.form.products.splice( index, 1 );
+            this.$forceUpdate();
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
@@ -312,7 +354,7 @@ export default {
 </script>
 <template>
     <div class="form flex-auto flex flex-col" id="crud-form">
-        <template v-if="Object.values( form ).length > 0">
+        <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
@@ -345,8 +387,8 @@ export default {
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2" v-if="activeTab.identifier === 'details'">
-                            <div class="-mx-4 flex flex-wrap">
-                                <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of fields">
+                            <div class="-mx-4 flex flex-wrap" v-if="form.tabs">
+                                <div class="flex px-4 w-full md:w-1/2 lg:w-1/3" :key="index" v-for="(field, index) of form.tabs.general.fields">
                                     <ns-field :field="field"></ns-field>
                                 </div>
                             </div>
@@ -359,7 +401,6 @@ export default {
                                         type="text" 
                                         :placeholder="$slots[ 'search-placeholder' ] ? $slots[ 'search-placeholder' ][0].text : 'SKU, Barcode, Name'"
                                         class="flex-auto text-gray-700 outline-none h-10 px-2">
-                                    <button @click="submit()" class="bg-blue-500 outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="search-button">Search</slot></button>
                                 </div>
                                 <div class="h-0">
                                     <div class="shadow bg-white relative z-10">
@@ -385,52 +426,52 @@ export default {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(product, index ) of form.products" :key="index">
-                                            <td width="200" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                        <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
+                                            <td width="200" class="p-2 text-gray-600 border border-gray-300">
                                                 <h3 class="font-semibold">{{ product.name }}</h3>
                                                 <div class="flex -mx-1">
                                                     <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
-                                                    <span @click="switchTaxType( product, index )" class="text-xs text-red-500 cursor-pointer underline px-1">Tax {{ product.tax_type === 'inclusive' ? 'Inclusive' : 'Exclusive' }}</span>
+                                                    <span @click="switchTaxType( product, index )" class="text-xs text-red-500 cursor-pointer underline px-1">Tax {{ product.procurement.tax_type === 'inclusive' ? 'Inclusive' : 'Exclusive' }}</span>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <input @change="updateLine( index )" type="text" v-model="product.purchase_price_edit" class="w-24 border-2 p-2 border-blue-400 rounded">
+                                                    <input @change="updateLine( index )" type="text" v-model="product.procurement.purchase_price_edit" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <select @change="updateLine( index )" v-model="product.tax_group_id" class="rounded border-blue-500 border-2 p-2 w-56">
+                                                    <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="rounded border-blue-500 border-2 p-2 w-56">
                                                         <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start flex-col">
-                                                    <span class="text-sm text-gray-600">{{ product.tax_value * product.quantity | currency }}</span>
+                                                    <span class="text-sm text-gray-600">{{ product.procurement.tax_value | currency }}</span>
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <select v-model="product.unit_id" class="rounded border-blue-500 border-2 p-2 w-56">
+                                                    <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-56">
                                                         <option v-for="option of product.purchase_units" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <input @change="updateLine( index )" type="text" v-model="product.quantity" class="w-24 border-2 p-2 border-blue-400 rounded">
+                                                    <input @change="updateLine( index )" type="text" v-model="product.procurement.quantity" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                 </div>
                                             </td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">{{ product.total_purchase_price | currency }}</div>
+                                            <td class="p-2 text-gray-600 border border-gray-300">
+                                                <div class="flex items-start">{{ product.procurement.total_purchase_price | currency }}</div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300" colspan="3"></td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">{{ totalTaxValues | currency }}</td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300" colspan="2"></td>
-                                            <td class="p-2 bg-gray-100 text-gray-600 border border-gray-300">{{ totalPurchasePrice | currency }}</td>
+                                        <tr class="bg-gray-100">
+                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="3"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300">{{ totalTaxValues | currency }}</td>
+                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="2"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300">{{ totalPurchasePrice | currency }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

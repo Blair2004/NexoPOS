@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CoreService
 {
+    /**
+     * @param CurrenService;
+     */
+    public $currency;
+    
     public function __construct()
     {
         $this->currency     =   app()->make( CurrencyService::class );
@@ -24,6 +29,15 @@ class CoreService
      */
     public function restrict( $permissions, $message = '' )
     {
+        $passed     =   $this->allowedTo( $permissions );
+
+        if ( ! $passed ) {
+            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permission to see this page.' ) );
+        }
+    }    
+
+    public function allowedTo( $permissions ): bool
+    {
         $passed     =   false;
 
         collect( $permissions )->each( function( $permission ) use ( &$passed ) {
@@ -34,8 +48,6 @@ class CoreService
             $passed     =   in_array( $permission, $userPermissionsNamespaces );
         });
 
-        if ( ! $passed ) {
-            throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permission to see this page.' ) );
-        }
-    }    
+        return $passed;
+    }
 }

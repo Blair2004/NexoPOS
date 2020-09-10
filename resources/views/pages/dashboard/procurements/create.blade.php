@@ -8,7 +8,9 @@
             <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
             <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
         </div>
-        <ns-procurement>
+        <ns-procurement
+            submit-url="{{ url( '/api/nexopos/v4/procurements' ) }}"
+            return-url="{{ url( '/dashboard/procurements' ) }}">
             <template v-slot:title>{{ __( 'Procurement Name' ) }}</template>
         </ns-procurement>
     </div>

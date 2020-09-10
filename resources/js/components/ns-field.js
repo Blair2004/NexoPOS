@@ -36,18 +36,27 @@ const nsField       =   Vue.component( 'ns-field', {
                 this.field.options.forEach( option => option.selected = false );
             }
 
-            option.selected     =   ! option.selected;
+            option.selected     =   true;
+
+            this.refreshMultiselect();
 
             this.$emit( 'change', { action: 'addOption', option })
         },
-        removeOption({ option, index }) {
-            this.field.options[ index ].selected    =   false;
-            console.log( this.field.options, index );
+        refreshMultiselect() {
+            this.field.value    =   this.field.options
+                .filter( option => option.selected )
+                .map( option => option.value );
+
+            console.log( this.field.options );
+        },
+        removeOption( option ) {
+            option.selected     =   false;
+            this.refreshMultiselect();                
             this.$emit( 'change', { action: 'removeOption', option });
         },
     },
     template: `
-    <div>
+    <div class="flex flex-auto">
         <ns-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

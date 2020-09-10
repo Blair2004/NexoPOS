@@ -321,6 +321,9 @@ class ProviderCrud extends CrudService
         $entry->phone           =   $entry->phone ?? __( 'N/A' );
         $entry->email           =   $entry->email ?? __( 'N/A' );
 
+        $entry->amount_due      =   ns()->currency->define( $entry->amount_due )->format();
+        $entry->amount_paid     =   ns()->currency->define( $entry->amount_paid )->format();
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [

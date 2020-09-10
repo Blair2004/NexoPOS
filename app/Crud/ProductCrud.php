@@ -549,8 +549,8 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'gross_sale_price'  =>  [
-                'label'         =>  __( 'G.S Price' ),
+            'wholesale_price'  =>  [
+                'label'         =>  __( 'WholeSale Price' ),
                 'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -594,6 +594,7 @@ class ProductCrud extends CrudService
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->sale_price          =   ( string ) ns()->currency->value( $entry->sale_price );
+        $entry->wholesale_price     =   ( string ) ns()->currency->value( $entry->wholesale_price );
         $entry->net_sale_price      =   ( string ) ns()->currency->value( $entry->net_sale_price );
         $entry->gross_sale_price    =   ( string ) ns()->currency->value( $entry->gross_sale_price );
         $entry->tax_value           =   ( string ) ns()->currency->value( $entry->tax_value );
