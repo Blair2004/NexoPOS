@@ -4,7 +4,7 @@ namespace App\Events;
 use Illuminate\Queue\SerializesModels;
 use App\Models\ProcurementProduct;
 
-class ProcurementBeforeUpdateProduct
+class ProcurementAfterUpdateProductEvent
 {
     use SerializesModels;
     public $product;

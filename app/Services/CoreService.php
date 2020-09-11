@@ -45,7 +45,11 @@ class CoreService
                 ->map( fn( $permission ) => $permission->namespace )
                 ->toArray();
 
-            $passed     =   in_array( $permission, $userPermissionsNamespaces );
+            /**
+             * if there is a match with the permission or the provided permission is "true" 
+             * that causes permission check bypass.
+             */
+            $passed     =   in_array( $permission, $userPermissionsNamespaces ) || $permission === true;
         });
 
         return $passed;

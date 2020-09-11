@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotEnoughPermissionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -473,18 +475,43 @@ class CrudService
         $instance   =   new $className;
 
         /**
-         * if a permission for reading is 
-         * not disabled let's check it
+         * "manage.profile" is the default permission
+         * granted to every user. If a permission check return "false"
+         * that means performing that action is disabled.
          */
         if ( $instance->getPermission( 'read' ) !== false ) {
-            ns()->permissions([ $instance->getPermission( 'read' ) ]);
+            ns()->restrict([ $instance->getPermission( 'read' ) ]);
+        } else {
+            throw new NotAllowedException();
         }
         
         return View::make( 'pages.dashboard.crud.table', [
+            /**
+             * that displays the title on the page.
+             * It fetches the value from the labels
+             */
             'title'         =>  $instance->getLabels()[ 'list_title' ],
+
+            /**
+             * That displays the page description. This allow pull the value
+             * from the labels.
+             */
             'description'   =>  $instance->getLabels()[ 'list_description' ],
-            'src'           =>  url( '/api/nexopos/v4/crud/' . $instance->identifier ),
+
+            /**
+             * This create the src URL using the "namespace".
+             */
+            'src'           =>  url( '/api/nexopos/v4/crud/' . $instance->namespace ),
+
+            /**
+             * This pull the creation link. That link should takes the user
+             * to the creation form.
+             */
             'createUrl'     =>  $instance->getLinks()[ 'create' ] ?? '#',
+
+            /**
+             * Provided to render the side menu.
+             */
             'menus'         =>  app()->make( MenuService::class )
         ]);
     }
@@ -505,7 +532,7 @@ class CrudService
          * not disabled let's make a validation.
          */
         if ( $instance->getPermission( $permissionType ) !== false ) {
-            ns()->permissions([ $instance->getPermission( $permissionType ) ]);
+            ns()->restrict([ $instance->getPermission( $permissionType ) ]);
         }
         
         /**
@@ -529,7 +556,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->identifier . '/' . ( $entry ? $entry->id . '/form-config' : 'form-config' ) ) ),
+            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( $entry ? $entry->id . '/form-config' : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.
@@ -564,6 +591,6 @@ class CrudService
      */
     public function getPermission( $name ) 
     {
-        return $permissions[ $name ] ?? false;
+        return $this->permissions[ $name ] ?? false;
     }
 }

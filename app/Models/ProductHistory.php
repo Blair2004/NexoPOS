@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductHistory extends Model
 {
-    protected $table    =   'nexopos_' . 'products_history';
+    protected $table    =   'nexopos_' . 'products_histories';
 
     public function scopeFindProduct( $query, $id )
     {

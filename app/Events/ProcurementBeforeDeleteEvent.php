@@ -3,9 +3,8 @@ namespace App\Events;
 
 use Illuminate\Queue\SerializesModels;
 use App\Models\Procurement;
-use App\Models\ProcurementProduct;
 
-class ProcurementAfterDelete
+class ProcurementBeforeDeleteEvent
 {
     use SerializesModels;
     public $procurement;

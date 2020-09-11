@@ -67,6 +67,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
         Route::get( '/dashboard/products/create', 'Dashboard\ProductsController@createProduct' );
         Route::get( '/dashboard/products/edit/{product}', 'Dashboard\ProductsController@editProduct' );
+        Route::get( '/dashboard/products/{product}/units', 'Dashboard\ProductsController@productUnits' );
+        Route::get( '/dashboard/products/{product}/history', 'Dashboard\ProductsController@productHistory' );
         Route::get( '/dashboard/products/categories', 'Dashboard\CategoryController@listCategories' );
         Route::get( '/dashboard/products/categories/create', 'Dashboard\CategoryController@createCategory' );
         Route::get( '/dashboard/products/categories/edit/{category}', 'Dashboard\CategoryController@editCategory' );

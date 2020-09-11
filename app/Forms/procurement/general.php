@@ -31,7 +31,7 @@ return [
             'validation'    =>  'required',
             'options'           =>  Helper::kvToJsOptions([
                 'pending'       =>  __( 'Pending' ),
-                'delievered'    =>  __( 'Delivered' ),
+                'delivered'     =>  __( 'Delivered' ),
             ]),
             'label'         =>  __( 'Delivery Status' ),
             'description'   =>  __( 'Determine what is the actual value of the procurement. Once "Delivered" the status can\'t be changed, and the stock will be updated.' )
