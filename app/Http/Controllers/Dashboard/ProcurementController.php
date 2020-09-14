@@ -17,6 +17,7 @@ use App\Fields\ProcurementFields;
 use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
 use App\Http\Requests\ProcurementRequest;
+use App\Models\Procurement;
 use Tendoo\Core\Exceptions\AccessDeniedException;
 
 
@@ -169,11 +170,18 @@ class ProcurementController extends DashboardController
         return $this->procurementService->bulkUpdateProducts( $procurement_id, $request->input( 'items' ) );
     }
 
+    /**
+     * Renders a table page for a procurement
+     * @return Table
+     */
     public function listProcurements()
     {
         return ProcurementCrud::table();
     }
 
+    /**
+     * Render a creation page for a procurement
+     */
     public function createProcurement()
     {
         ns()->restrict([ 'nexopos.create.procurements' ]);
@@ -181,6 +189,17 @@ class ProcurementController extends DashboardController
         return $this->view( 'pages.dashboard.procurements.create', [
             'title'         =>  __( 'New Procurement' ),
             'description'   =>  __( 'Make a new procurement' )
+        ]);
+    }
+
+    public function updateProcurement( Procurement $procurement )
+    {
+        ns()->restrict([ 'nexopos.update.procurements' ]);
+
+        return $this->view( 'pages.dashboard.procurements.edit', [
+            'title'         =>  __( 'Edit Procurement' ),
+            'description'   =>  __( 'Perform adjustment on existing procurement.' ),
+            'procurement'   =>  $procurement
         ]);
     }
 }

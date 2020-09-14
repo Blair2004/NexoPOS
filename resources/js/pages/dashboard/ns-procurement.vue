@@ -221,7 +221,7 @@ export default {
             forkJoin([
                 nsHttpClient.get( '/api/nexopos/v4/categories' ),
                 nsHttpClient.get( '/api/nexopos/v4/products' ),
-                nsHttpClient.get( '/api/nexopos/v4/forms/ns.procurement' ),
+                nsHttpClient.get( this.src ),
                 nsHttpClient.get( '/api/nexopos/v4/taxes/groups' ),
             ]).subscribe( result => {
                 this.reloading      =   false;
@@ -232,9 +232,38 @@ export default {
                 this.form           =   Object.assign( this.form, result[2] );
                 this.form           =   this.formValidation.createForm( this.form );
                 
-
                 if ( this.form.products === undefined ) {
                     this.form.products  =   [];
+                } else {
+                    /**
+                     * if the product has been provided by the
+                     * server we need to format it.
+                     */
+                    this.form.products  =   this.form.products.map( product => {
+                        [
+                            'gross_purchase_price',
+                            'purchase_price_edit',
+                            'tax_value',
+                            'net_purchase_price',
+                            'purchase_price',
+                            'total_price',
+                            'total_purchase_price',
+                            'quantity',
+                            'tax_group_id',
+                        ].forEach( field => {
+                            if ( product[ field ] === undefined ) {
+                                product[ field ]    =   0;
+                            }
+                        });
+
+                        product.$invalid                =   product.$invalid || false;
+                        product.purchase_price_edit     =   product.purchase_price;
+                        
+                        return {
+                            name: product.name,
+                            procurement: product
+                        }
+                    });
                 }
                 
                 this.$forceUpdate();

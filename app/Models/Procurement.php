@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Models\Provider;
 use Illuminate\Database\Eloquent\Model;

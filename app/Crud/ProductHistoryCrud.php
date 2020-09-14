@@ -491,6 +491,11 @@ class ProductHistoryCrud extends CrudService
         return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
+    public function hook( $query )
+    {
+        $query->orderBy( 'id', 'desc' );
+    }
+
     /**
      * get Links
      * @return  array of links

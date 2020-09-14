@@ -2,5 +2,5 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get( '/forms/{identifier}', 'Dashboard\FormsController@getForm' );
-Route::post( '/forms/{identifier}', 'Dashboard\FormsController@saveForm' );
+Route::get( '/forms/{resource}/{identifier?}', 'Dashboard\FormsController@getForm' );
+Route::post( '/forms/{resource}/{identifier?}', 'Dashboard\FormsController@saveForm' );
