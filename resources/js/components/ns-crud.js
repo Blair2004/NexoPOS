@@ -151,7 +151,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             nsSnackBar.info( result.message ).subscribe();
                             this.refresh();
                         }, ( error ) => {
-                            console.log( Object.keys( error ) );
+                            nsSnackBar.error( error.message )
+                                .subscribe();
                         })
                     }
                 } else {

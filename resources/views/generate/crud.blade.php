@@ -6,10 +6,12 @@ $lastClassName  =   $model[ count( $model ) - 1 ];
 ?>
 <{{ '?php' }}
 namespace App\Crud;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
+use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
@@ -19,11 +21,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 {
     /**
      * define the base table
+     * @param string
      */
     protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
 
     /**
      * default identifier
+     * @param string
      */
     protected $identifier   =   '{{ strtolower( trim( $route_name ) ) }}';
 
@@ -35,6 +39,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Model Used
+     * @param string
      */
     protected $model      =   {{ trim( $lastClassName ) }}::class;
 
@@ -43,14 +48,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * @param array
      */
     protected $permissions  =   [
-        'create'    =>  'manage.profile',
-        'read'      =>  'manage.profile',
-        'update'    =>  'manage.profile',
-        'delete'    =>  'manage.profile',
+        'create'    =>  true,
+        'read'      =>  true,
+        'update'    =>  true,
+        'delete'    =>  true,
     ];
 
     /**
      * Adding relation
+     * @param array
      */
     public $relations   =  [
         @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
@@ -191,6 +197,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         if ( $this->permissions[ 'create' ] !== false ) {
             ns()->restrict( $this->permissions[ 'create' ] );
+        } else {
+            throw new NotAllowedException;
         }
 
         return $request;
@@ -230,6 +238,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         if ( $this->permissions[ 'update' ] !== false ) {
             ns()->restrict( $this->permissions[ 'update' ] );
+        } else {
+            throw new NotAllowedException;
         }
 
         return $request;
@@ -263,6 +273,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
             }
         }
     }
@@ -335,6 +347,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              */
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
             }
 
             $status     =   [
@@ -366,7 +380,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return  [
             'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
             'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
-            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' )
+            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
             'post'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
             'put'       =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/' . '' ),
         ];

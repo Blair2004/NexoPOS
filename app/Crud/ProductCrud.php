@@ -607,6 +607,18 @@ class ProductCrud extends CrudService
                 'index'         =>      'id',
                 'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
             ], [
+                'label'         =>      __( 'See Quantities' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/units' )
+            ], [
+                'label'         =>      __( 'See History' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/history' )
+            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',

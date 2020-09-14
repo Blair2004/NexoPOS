@@ -121,20 +121,20 @@ class ProviderService
      * @param int provider id
      * @return array
      */
-    public function computeOwned( $provider_id )
+    public function computeSummary( Provider $provider )
     {
         try {
-            $provider   =   Provider::find( $id );
+            $totalOwed      =   $provider->procurements()->where( 'payment_status', 'unpaid' )->sum( 'value' );
+            $totalPaid      =   $provider->procurements()->where( 'payment_status', 'paid' )->sum( 'value' );
 
-            $owned      =   collect( $provider->procurements )->sum( function( $procurement ) {
-                if ( $procurement->status === 'unpaid' ) {
-                    return $procurement->value;
-                }
-                return 0;
-            });
-
-            $provider->amount_due  =   $owned;
+            $provider->amount_due       =   $totalOwed;
+            $provider->amount_paid      =   $totalPaid;
             $provider->save();
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The provider account has been updated.' )
+            ];
 
         } catch( Exception $exception ) {
             throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
@@ -149,11 +149,6 @@ class ProviderService
     public function refreshFromProcurement( Procurement $procurement )
     {
         $provider       =   Provider::find( $procurement->provider_id );
-        $totalOwed      =   $provider->procurements()->where( 'payment_status', 'unpaid' )->sum( 'value' );
-        $totalPaid      =   $provider->procurements()->where( 'payment_status', 'paid' )->sum( 'value' );
-
-        $provider->amount_due       =   $totalOwed;
-        $provider->amount_paid      =   $totalPaid;
-        $provider->save();
+        return $this->computeSummary( $provider );
     }
 }

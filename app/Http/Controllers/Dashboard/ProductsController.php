@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ProductHistoryCrud;
+use App\Crud\ProductUnitQuantitiesCrud;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
@@ -356,6 +358,26 @@ class ProductsController extends DashboardController
             'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
+    }
+
+    /**
+     * Renders the crud table for the product
+     * units
+     * @return View
+     */
+    public function productUnits()
+    {
+        return ProductUnitQuantitiesCrud::table();
+    }
+
+    /**
+     * render the crud table for the product
+     * history
+     * @return View
+     */
+    public function productHistory()
+    {
+        return ProductHistoryCrud::table();
     }
 }
 

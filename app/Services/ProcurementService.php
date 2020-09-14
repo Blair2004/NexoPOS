@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Crud\ProductUnitQuantitiesCrud;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -9,22 +10,19 @@ use App\Models\Procurement;
 use App\Services\ProductService;
 use App\Exceptions\NotFoundException;
 use App\Models\ProcurementProduct;
-use App\Exceptions\NotAllowedException;
-use App\Events\ProcurementAfterDelete;
-use App\Events\ProcurementBeforeDelete;
+use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementDeliveryEvent;
-use App\Events\ProcurementDeliveredEvent;
 use App\Events\ProcurementCancelationEvent;
 use App\Events\ProcurementProductSavedEvent;
-use App\Events\ProcurementAfterDeleteProduct;
+use App\Events\ProcurementAfterDeleteProductEvent;
 use App\Events\ProcurementAfterUpdateProduct;
-use App\Events\ProcurementBeforeDeleteProduct;
+use App\Events\ProcurementBeforeDeleteEvent;
+use App\Events\ProcurementBeforeDeleteProductEvent;
 use App\Events\ProcurementBeforeUpdateProduct;
 use App\Events\ProcurementRefreshedEvent;
 use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
-use App\Models\Unit;
 use Exception;
 
 class ProcurementService
@@ -57,12 +55,11 @@ class ProcurementService
     {
         if ( $id !== null ) {
             $provider   =   Procurement::find( $id ); 
+            
             if ( ! $provider instanceof Procurement ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the requested procurement using the provided identifier.' )
-                ]);
+                throw new Exception( __( 'Unable to find the requested procurement using the provided identifier.' ) );
             }
+
             return $provider;
         }
 
@@ -159,23 +156,54 @@ class ProcurementService
             throw new Exception( 'Unable to find the requested procurement using the provided id.' );
         }
 
-        event( new ProcurementBeforeDelete( $procurement ) );
+        event( new ProcurementBeforeDeleteEvent( $procurement ) );
 
-        $totalProducts      =   $procurement->products->count();
-        $procurement->products->each( function( ProcurementProduct $product ) {
-            $this->deleteProduct( $product );
-        });
-
-        $procurement->delete();
-
-        event( new ProcurementAfterDelete( $procurement ) );
+        $totalDeletions     =   $procurement->products->map( function( ProcurementProduct $product ) use ( $procurement ) {
+            return $this->deleteProduct( $product, $procurement );
+        })->count();
 
         $procurement->delete();
+
+        event( new ProcurementAfterDeleteEvent( $procurement ) );
 
         return [
             'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalProducts )
+            'message'   =>  sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions )
         ];
+    }
+
+    /**
+     * Attempt a product stock removal
+     * if the procurement has been stocked
+     * @param Procurement $procurement
+     */
+    public function attemptProductsStockRemoval( Procurement $procurement )
+    {
+        if ( $procurement->delivery_status === 'stocked' ) {
+            $procurement->products->each( function( ProcurementProduct $procurementProduct ) {
+                $unitQuantity   =   ProductUnitQuantity::withProduct( $procurementProduct->product_id )
+                    ->withUnit( $procurementProduct->unit_id )
+                    ->first();
+    
+                if ( $unitQuantity instanceof ProductUnitQuantity ) {
+                    if ( floatval( $unitQuantity->quantity ) - floatval( $procurementProduct->quantity ) < 0 ) {
+                        throw new Exception( __( 'Unable to delete the procurement as there is not enough stock remaining for "%s". This likely means the stock count has changed either with a sale, adjustment after the procurement has been stocked.' ) );
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * This will delete product available on a procurement
+     * and dispatch some events before and after that occurs.
+     * @param Procurement
+     */
+    public function deleteProcurementProducts( Procurement $procurement )
+    {
+        $procurement->products->each( function( ProcurementProduct $product ) use ( $procurement ) {
+            $this->deleteProduct( $product, $procurement );
+        });
     }
 
     /**
@@ -420,9 +448,11 @@ class ProcurementService
                 ->withUnit( $procurementProduct->unit_id )
                 ->first();
 
-            if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
-                $productUnitQuantity  =   new ProductUnitQuantity();
-                $productUnitQuantity->quantity  =   0;
+            if ( ! $productUnitQuantity instanceof ProductUnitQuantity ) {
+                $productUnitQuantity                =   new ProductUnitQuantity();
+                $productUnitQuantity->product_id    =   $procurementProduct->product_id;
+                $productUnitQuantity->unit_id       =   $procurementProduct->unit_id;
+                $productUnitQuantity->quantity      =   0;
             }
 
             /**
@@ -448,9 +478,10 @@ class ProcurementService
                 $history->unit_price                =   $procurementProduct->purchase_price;
                 $history->total_price               =   $procurementProduct->total_purchase_price;
                 $history->before_quantity           =   $productUnitQuantity->quantity;
-                $history->quantity                  =   $totalQuantity;
-                $history->after_quantity            =   $procurementProduct->total_purchase_price;
+                $history->quantity                  =   $procurementProduct->quantity;
+                $history->after_quantity            =   $totalQuantity;
                 $history->unit_id                   =   $procurementProduct->unit_id;
+                $history->author                    =   Auth::id();
                 $history->save();
 
                 /**
@@ -629,21 +660,31 @@ class ProcurementService
      * @param int procurement product id
      * @return array response
      */
-    public function deleteProduct( $product_id )
+    public function deleteProduct( ProcurementProduct $procurementProduct, Procurement $procurement )
     {
-        /**
-         * no we don't want to 
-         * reload the product from the database again
-         * That's where ORM could sucks.
-         */
-        $procurementProduct     =   $product_id instanceof ProcurementProduct ? $product_id : $this->getProcurementProduct( $product_id );
-        $procurement_id         =   $procurementProduct->procurement_id;
-
         /**
          * this could be useful to prevent deletion for
          * product which might be in use by another resource
          */
-        event( new ProcurementBeforeDeleteProduct( $procurementProduct ) );
+        event( new ProcurementBeforeDeleteProductEvent( $procurementProduct ) );
+
+        /**
+         * we'll reduce the stock only if the 
+         * procurement has been stocked.
+         */
+        if ( $procurement->delivery_status === 'stocked' ) {
+            /**
+             * Record the deletion on the product
+             * history
+             */
+            $this->productService->stockAdjustment( 'deleted', [
+                'total_price'   =>  $procurementProduct->total_purchase_price,
+                'unit_price'    =>  $procurementProduct->purchase_price,
+                'unit_id'       =>  $procurementProduct->unit_id,
+                'product_id'    =>  $procurementProduct->product_id,
+                'quantity'      =>  $procurementProduct->quantity,
+            ]);
+        }
 
         $procurementProduct->delete();
 
@@ -651,7 +692,16 @@ class ProcurementService
          * the product has been deleted, so we couldn't pass
          * the Model Object anymore
          */
-        event( new ProcurementAfterDeleteProduct( $product_id, $procurement_id ) );
+        event( new ProcurementAfterDeleteProductEvent( $procurementProduct->id, $procurement ) );
+
+        return [
+            'status'    =>  'sucecss',
+            'message'   =>  sprintf(
+                __( 'The product %s has been deleted from the procurement %s' ),
+                $procurementProduct->name,
+                $procurement->name,
+            )
+        ];
     }
 
     public function getProcurementProducts( $procurement_id )

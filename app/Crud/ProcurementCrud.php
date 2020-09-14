@@ -1,5 +1,9 @@
 <?php
 namespace App\Crud;
+
+use App\Events\ProcurementBeforeDelete;
+use App\Events\ProcurementBeforeDeleteEvent;
+use App\Events\ProcurementDeletionEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -19,7 +23,7 @@ class ProcurementCrud extends CrudService
     /**
      * base route name
      */
-    protected $identifier   =   'ns.procurements';
+    protected $identifier   =   '/procurements';
 
     /**
      * Define namespace
@@ -55,7 +59,17 @@ class ProcurementCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
+
+    /**
+     * define permission
+     */
+    public $permissions     =   [
+        'create'    =>  'nexopos.create.procurements',
+        'read'      =>  'nexopos.read.procurements',
+        'update'    =>  false,
+        'delete'    =>  'nexopos.delete.procurements',
+    ];
 
     /**
      * Define Constructor
@@ -86,6 +100,11 @@ class ProcurementCrud extends CrudService
             'edit_description'      =>  __( 'Modify  Procurement.' ),
             'back_to_list'          =>  __( 'Return to Procurements' ),
         ];
+    }
+
+    public function hook( $query )
+    {
+        $query->orderBy( 'created_at', 'desc' );
     }
 
     /**
@@ -286,6 +305,7 @@ class ProcurementCrud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
+            ns()->restrict([ 'nexopos.delete.procurements' ]);
         }
     }
 

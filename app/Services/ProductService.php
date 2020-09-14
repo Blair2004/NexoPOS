@@ -57,10 +57,7 @@ class ProductService
         $product    =   Product::find( $id );
         
         if ( ! $product instanceof Product ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the product using the provided id.' )
-            ]);
+            throw new Exception( __( 'Unable to find the product using the provided id.' ) );
         }
 
         return $product;
@@ -140,10 +137,7 @@ class ProductService
         $product    =   $this->getProductUsingSKU( $barcode );
 
         if ( ! $product instanceof Product ) {
-            throw new NotFoundException([
-                'message'       =>  __( 'Unable to find the requested product using the provided SKU.' ),
-                'status'        =>  'failed'
-            ]);
+            throw new Exception( __( 'Unable to find the requested product using the provided SKU.' ) );
         }
 
         return $product;
@@ -849,10 +843,7 @@ class ProductService
          * actions which are allowed on the current request
          */
         if ( ! in_array( $action, [ 'removed', 'sold', 'procured', 'deleted', 'added', 'damaged', 'returned' ]) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'The action is not an allowed operation.' )
-            ]);
+            throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
 
         /**
@@ -880,10 +871,7 @@ class ProductService
          * the history should remain clear
          */
         if ( $diffQuantity === $this->currency->define(0)->get() ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed, since nothing has been changed on the current unit quantities.' )
-            ]);
+            throw new NotAllowedException( __( 'Unable to proceed, since nothing has been changed on the current unit quantities.' ) );
         }
 
         if ( in_array( $action, [ 'remove', 'sold', 'deleted', 'damaged' ] ) ) {
@@ -893,10 +881,7 @@ class ProductService
              * stock on the current item
              */
             if ( $diffQuantity < 0 ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to proceed, this action will cause negative stock.' )
-                ]);
+                throw new NotAllowedException( __( 'Unable to proceed, this action will cause negative stock.' ) );
             }
 
             /**

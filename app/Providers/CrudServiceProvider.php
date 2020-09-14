@@ -18,6 +18,8 @@ use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
 use App\Crud\UserCrud;
 use App\Crud\ProcurementCrud;
+use App\Crud\ProductHistoryCrud;
+use App\Crud\ProductUnitQuantitiesCrud;
 use App\Crud\RegisterCrud;
 use App\Crud\RolesCrud;
 use Illuminate\Support\ServiceProvider;
@@ -61,6 +63,8 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.units': return UnitCrud::class;
                 case 'ns.products': return ProductCrud::class;
                 case 'ns.products-categories': return ProductCategoryCrud::class;
+                case 'ns.products-units': return ProductUnitQuantitiesCrud::class;
+                case 'ns.products-histories': return ProductHistoryCrud::class;
                 case 'ns.taxes': return TaxCrud::class;
                 case 'ns.taxes-groups': return TaxesGroupCrud::class;
                 case 'ns.users': return UserCrud::class;
