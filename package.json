@@ -23,7 +23,7 @@
     "dependencies": {
         "chart.js": "^2.9.3",
         "dayjs": "^1.8.35",
-        "moment": "^2.27.0",
+        "moment": "^2.28.0",
         "rx": "^4.1.0",
         "rxjs": "^6.6.3",
         "tailwindcss": "^1.8.6",
