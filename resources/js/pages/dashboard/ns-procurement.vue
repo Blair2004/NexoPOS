@@ -161,7 +161,7 @@ export default {
                     product.procurement.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
 
                     if ( product.procurement.tax_type === 'inclusive' ) {
-                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) - product.tax_value;
+                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) - product.procurement.tax_value;
                         product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
                         product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
                     } else {
@@ -269,9 +269,12 @@ export default {
                         
                         return {
                             name: product.name,
+                            purchase_units: product.purchase_units,
                             procurement: product
                         }
                     });
+
+                    console.log( this.form.products );
                 }
                 
                 this.$forceUpdate();

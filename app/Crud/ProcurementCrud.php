@@ -1,14 +1,9 @@
 <?php
 namespace App\Crud;
 
-use App\Events\ProcurementBeforeDelete;
-use App\Events\ProcurementBeforeDeleteEvent;
-use App\Events\ProcurementDeletionEvent;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Procurement;
@@ -104,7 +99,13 @@ class ProcurementCrud extends CrudService
 
     public function hook( $query )
     {
-        $query->orderBy( 'created_at', 'desc' );
+        /**
+         * should not block default
+         * crud sorting
+         */
+        if ( ! request()->query( 'active' ) && ! request()->query( 'direction' ) ) {
+            $query->orderBy( 'created_at', 'desc' );
+        }
     }
 
     /**
@@ -369,22 +370,22 @@ class ProcurementCrud extends CrudService
         $entry->{ '$id' }       =   $entry->id;
 
         switch( $entry->delivery_status ) {
-            case 'pending':
+            case Procurement::PENDING:
                 $entry->delivery_status = __( 'Pending' );
             break;
-            case 'delivered':
+            case Procurement::DELIVERED:
                 $entry->delivery_status = __( 'Delivered' );
             break;
-            case 'stocked':
+            case Procurement::STOCKED:
                 $entry->delivery_status = __( 'Stocked' );
             break;
         }
 
         switch( $entry->payment_status ) {
-            case 'unpaid':
+            case Procurement::PAYMENT_UNPAID:
                 $entry->payment_status = __( 'Unpaid' );
             break;
-            case 'paid':
+            case Procurement::PAYMENT_PAID:
                 $entry->payment_status = __( 'Paid' );
             break;
         }

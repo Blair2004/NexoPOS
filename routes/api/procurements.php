@@ -10,7 +10,7 @@ Route::get( 'procurements/{id}/refresh', 'Dashboard\ProcurementController@refres
 Route::post( 'procurements/{id}/products', 'Dashboard\ProcurementController@procure' );
 Route::post( 'procurements', 'Dashboard\ProcurementController@create' );
 
-Route::put( 'procurements/{id}', 'Dashboard\ProcurementController@edit' );
+Route::put( 'procurements/{procurement}', 'Dashboard\ProcurementController@edit' );
 Route::put( 'procurements/{id}/products/{product_id}', 'Dashboard\ProcurementController@editProduct' );
 Route::put( 'procurements/{id}/products', 'Dashboard\ProcurementController@bulkUpdateProducts' );
 

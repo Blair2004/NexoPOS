@@ -65,10 +65,7 @@ class ProviderService
             ];
         }
         
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to find the provider using the specified id.' )
-        ]);
+        throw new Exception( __( 'Unable to find the provider using the specified id.' ) );
     }
 
     /**
@@ -79,21 +76,13 @@ class ProviderService
      */
     public function delete( $id )
     {
-        try {
-            $provider   =   Provider::findOrFail( $id );
-            $provider->delete();
+        $provider   =   Provider::findOrFail( $id );
+        $provider->delete();
 
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The provider has been deleted.' )
-            ];
-
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to delete. The specified id is not valid or the provider with the same id doesn\'t exists.' )
-            ]);
-        }
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The provider has been deleted.' )
+        ];
     }
 
     /**
@@ -107,10 +96,7 @@ class ProviderService
         $provider   =   Provider::find( $provider_id );
 
         if ( ! $provider instanceof Provider ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the provider using the specified identifier.' )
-            ]);
+            throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
         }
 
         return $provider->procurements;
@@ -142,13 +128,27 @@ class ProviderService
     }
 
     /**
-     * refresh provider amount 
-     * using theprovided procurement
+     * When a procurement is being edited
+     * we'll consider editing the provide payments
+     * to avoid having the payment made twice for the same procurement
      * @param Procurement $procurement
+     * @return void
      */
-    public function refreshFromProcurement( Procurement $procurement )
+    public function cancelPaymentForProcurement( Procurement $procurement )
     {
         $provider       =   Provider::find( $procurement->provider_id );
-        return $this->computeSummary( $provider );
+
+        if ( $procurement->payment_status === 'paid' ) {
+            $provider->amount_paid      -=   $procurement->value;
+        } else {
+            $provider->amount_due       -=  $procurement->value;
+        }
+
+        $provider->save();
+
+        return [
+            'status'    =>  'succecss',
+            'message'   =>  __( 'The procurement payment has been deducted.' )
+        ];
     }
 }

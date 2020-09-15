@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 
+use App\Crud\ProductHistoryCrud;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,7 @@ use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
+use App\Models\Procurement;
 
 class ProductService
 {
@@ -538,7 +540,7 @@ class ProductService
     public function saveHistory( $operationType, array $data )
     {
         switch( $operationType ) {
-            case 'procurement':
+            case ProductHistory::ACTION_STOCKED :
                 $this->__saveProcurementHistory( $data );
             break;
         }
@@ -573,8 +575,8 @@ class ProductService
         $history->procurement_id                =   $procurement_id;
         $history->procurement_product_id        =   $procurement_product_id;
         $history->unit_id                       =   $unit_id;
-        $history->operation_type                =   'procured';
-        $history->unit_price                    =   $purchase_price;
+        $history->operation_type                =   ProductHistory::ACTION_STOCKED;
+        $history->unit_price                    =   $unit_price;
         $history->total_price                   =   $total_price;
         $history->before_quantity               =   $currentQuantity;
         $history->quantity                      =   $quantity;
@@ -582,7 +584,7 @@ class ProductService
         $history->author                        =   Auth::id();
         $history->save();
 
-        $this->setQuantity( $product_id, $unit_id, $newQuantity );
+        return $this->setQuantity( $product_id, $unit_id, $newQuantity );
     }
 
     /**
@@ -759,10 +761,7 @@ class ProductService
             ->first();
 
         if ( ! $variation instanceof Product ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested variation using the provided ID.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested variation using the provided ID.' ) );
         }
 
         return $variation;
@@ -810,7 +809,7 @@ class ProductService
      */
     public function procurementStockOuting( ProcurementProduct $oldProduct, $fields )
     {
-        $history    =   $this->stockAdjustment( 'removed', [
+        $history    =   $this->stockAdjustment( ProductHistory::ACTION_REMOVED, [
             'unit_id'                   =>      $oldProduct->unit_id,
             'product_id'                =>      $oldProduct->product_id,
             'unit_price'                =>      $oldProduct->purchase_price,
@@ -842,7 +841,17 @@ class ProductService
          * let's check the different 
          * actions which are allowed on the current request
          */
-        if ( ! in_array( $action, [ 'removed', 'sold', 'procured', 'deleted', 'added', 'damaged', 'returned' ]) ) {
+        if ( ! in_array( $action, [ 
+            ProductHistory::ACTION_DEFECTIVE,
+            ProductHistory::ACTION_DELETED,
+            ProductHistory::ACTION_STOCKED,
+            ProductHistory::ACTION_REMOVED,
+            ProductHistory::ACTION_ADDED,
+            ProductHistory::ACTION_RETURNED,
+            ProductHistory::ACTION_SOLD,
+            ProductHistory::ACTION_TRANSFER_IN,
+            ProductHistory::ACTION_TRANSFER_OUT
+        ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
 
@@ -866,15 +875,12 @@ class ProductService
             ->subtractBy( $quantity )
             ->get();
 
-        /**
-         * let's prevent annoying stock change
-         * the history should remain clear
-         */
-        if ( $diffQuantity === $this->currency->define(0)->get() ) {
-            throw new NotAllowedException( __( 'Unable to proceed, since nothing has been changed on the current unit quantities.' ) );
-        }
-
-        if ( in_array( $action, [ 'remove', 'sold', 'deleted', 'damaged' ] ) ) {
+        if ( in_array( $action, [ 
+            ProductHistory::ACTION_REMOVED,
+            ProductHistory::ACTION_SOLD,
+            ProductHistory::ACTION_DELETED,
+            ProductHistory::ACTION_DEFECTIVE 
+        ] ) ) {
 
             /**
              * this should prevent negative 
@@ -1002,7 +1008,7 @@ class ProductService
      */
     public function procurementStockEntry( ProcurementProduct $product, $fields )
     {
-        $history                        =   $this->stockAdjustment( 'added', [
+        $history                        =   $this->stockAdjustment( ProductHistory::ACTION_ADDED, [
             'unit_id'                   =>      $product->unit_id,
             'product_id'                =>      $product->product_id,
             'unit_price'                =>      $product->purchase_price,

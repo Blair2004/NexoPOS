@@ -439,6 +439,19 @@ class ProductHistoryCrud extends CrudService
         $entry->total_price         =   ns()->currency->define( $entry->total_price )
             ->format();
 
+        switch( $entry->operation_type ) {
+            case ProductHistory::ACTION_STOCKED : $entry->operation_type = __( 'Stocked' ); break;
+            case ProductHistory::ACTION_DEFECTIVE : $entry->operation_type = __( 'Defective' ); break;
+            case ProductHistory::ACTION_DELETED : $entry->operation_type = __( 'Deleted' ); break;
+            case ProductHistory::ACTION_REMOVED : $entry->operation_type = __( 'Removed' ); break;
+            case ProductHistory::ACTION_RETURNED : $entry->operation_type = __( 'Returned' ); break;
+            case ProductHistory::ACTION_SOLD : $entry->operation_type = __( 'Sold' ); break;
+            case ProductHistory::ACTION_ADDED : $entry->operation_type = __( 'Added' ); break;
+            case ProductHistory::ACTION_TRANSFER_IN : $entry->operation_type = __( 'Incoming Transfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_OUT : $entry->operation_type = __( 'Outgoing Transfer' ); break;
+            default: $entry->operation_type;break;
+        }
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             

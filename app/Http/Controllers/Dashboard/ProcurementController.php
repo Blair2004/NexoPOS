@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\ProcurementCrud;
+use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use App\Services\Validation;
@@ -58,18 +59,13 @@ class ProcurementController extends DashboardController
         ]));
     }
 
-    public function edit( $id, Request $request )
+    public function edit( Procurement $procurement, ProcurementRequest $request )
     {
-        $rules              =   $this->validation
-            ->from( ProcurementFields::class )
-            ->extract( 'get', $this->procurementService->get( $id ) );
+        if ( $procurement->delivery_status === Procurement::STOCKED ) {
+            throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
+        }
 
-        $validationResult   =   Validator::make( 
-            $request->all(), 
-            $rules
-        );
-
-        return $this->procurementService->edit( $id, $request->only([
+        return $this->procurementService->edit( $procurement->id, $request->only([
             'general', 'name', 'products'
         ]) );
     }
@@ -85,7 +81,7 @@ class ProcurementController extends DashboardController
     {
         $procurement    =   $this->procurementService->get( $procurement_id );
 
-        return $this->procurementService->procure(
+        return $this->procurementService->saveProducts(
             $procurement,
             collect( $request->input( 'items' ) )
         );
@@ -195,6 +191,10 @@ class ProcurementController extends DashboardController
     public function updateProcurement( Procurement $procurement )
     {
         ns()->restrict([ 'nexopos.update.procurements' ]);
+
+        if ( $procurement->delivery_status === Procurement::STOCKED ) {
+            throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
+        }
 
         return $this->view( 'pages.dashboard.procurements.edit', [
             'title'         =>  __( 'Edit Procurement' ),

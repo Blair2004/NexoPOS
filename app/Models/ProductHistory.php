@@ -8,6 +8,16 @@ class ProductHistory extends Model
 {
     protected $table    =   'nexopos_' . 'products_histories';
 
+    const ACTION_STOCKED       =   'procured';
+    const ACTION_DELETED       =   'deleted';
+    const ACTION_TRANSFER_OUT  =   'outgoing-transfer';
+    const ACTION_TRANSFER_IN   =   'incoming-transfer';
+    const ACTION_REMOVED       =   'removed';
+    const ACTION_ADDED         =   'added';
+    const ACTION_SOLD          =   'sold';
+    const ACTION_RETURNED      =   'returned';
+    const ACTION_DEFECTIVE     =   'defective';
+
     public function scopeFindProduct( $query, $id )
     {
         return $query->where( 'product_id', $id );

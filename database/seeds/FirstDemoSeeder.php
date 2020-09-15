@@ -57,5 +57,6 @@ class FirstDemoSeeder extends Seeder
         $this->call( FirstExampleUnitGroupSeeder::class );
         $this->call( FirstExampleTaxesSeeder::class );
         $this->call( ProductsSeeder::class );
+        $this->call( FirstExampleProviderSeeder::class );
     }
 }

@@ -5,10 +5,13 @@
 use App\Model;
 use App\Models\Product;
 use App\Models\TaxGroup;
+use App\Models\UnitGroup;
 use App\Models\User;
 use Faker\Generator as Faker;
 
 $factory->define( Product::class, function (Faker $faker) {
+    $unitGroup  =   $faker->randomElement( UnitGroup::with( 'units' )->get() );
+
     return [
         'name'                  =>  $faker->word,
         'product_type'          =>  'product',
@@ -25,7 +28,10 @@ $factory->define( Product::class, function (Faker $faker) {
         'barcode_type'          =>  $faker->randomElement([ 'ean8', 'ean13' ]),
         'sku'                   =>  $faker->word . date( 's' ),
         'product_type'          =>  $faker->randomElement([ 'materialized', 'dematerialized']),
-        'unit_group'            =>  $faker->randomElement( TaxGroup::get()->map( fn( $group ) => $group->id ) ),
+        'unit_group'            =>  $unitGroup->id,
+        'purchase_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
+        'selling_unit_ids'      =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
+        'transfer_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
         'author'                =>  $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
     ];
 });
