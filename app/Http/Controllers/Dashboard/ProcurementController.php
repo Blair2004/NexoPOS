@@ -70,7 +70,7 @@ class ProcurementController extends DashboardController
         );
 
         return $this->procurementService->edit( $id, $request->only([
-            'name', 'description', 'provider_id'
+            'general', 'name', 'products'
         ]) );
     }
 

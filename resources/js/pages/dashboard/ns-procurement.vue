@@ -229,6 +229,14 @@ export default {
                 this.products       =   result[1];
                 this.taxes          =   result[3];
 
+                if ( this.form.general ) {
+                    result[2].tabs.general.fieds.forEach( (field,index) => {
+                        field.value     =   this.form.tabs.general.fields[ index ].value || '';
+                    });
+                } 
+
+                console.log( result[2] );
+
                 this.form           =   Object.assign( this.form, result[2] );
                 this.form           =   this.formValidation.createForm( this.form );
                 

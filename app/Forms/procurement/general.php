@@ -8,8 +8,8 @@ return [
     'fields'    =>  [
         [
             'type'  =>  'text',
-            'name'  =>  'invoice_number',
-            'value' =>  $procurement->invoice_number ?? '',
+            'name'  =>  'invoice_reference',
+            'value' =>  $procurement->invoice_reference ?? '',
             'label' =>  __( 'Invoice Number' ),
             'description'   =>  __( 'If the procurement has been issued outside of NexoPOS, please provide a unique reference.' )
         ], [
