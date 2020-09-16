@@ -10,6 +10,7 @@ use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\StoresSettings;
 use App\Settings\SuppliesDeliveriesSettings;
+use App\Settings\WorkersSettings;
 use App\Settings\ServiceProvidersSettings;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
@@ -44,6 +45,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.service-providers': return new ServiceProvidersSettings; break;
                 case 'ns.invoice-settings': return new InvoiceSettings; break;
                 case 'ns.notifications': return new NotificationsSettings; break;
+                case 'ns.workers': return new WorkersSettings; break;
             }
             return $class;
         }, 10, 2 );

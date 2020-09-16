@@ -49,6 +49,7 @@ class SettingsController extends DashboardController
             case 'stores'; return $this->storesSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
             case 'notifications'; return $this->notificationsSettings(); break;
+            case 'workers'; return $this->workersSettings(); break;
             default : return abort( 404, __( 'Settings Page Not Found' ) );break;
         }
     }
@@ -161,6 +162,14 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.stores', [
             'title'     =>      __( 'Stores Settings' ),
             'description'   =>  __( 'Configure the stores settings.' )
+        ]);
+    }
+
+    public function workersSettings()
+    {
+        return $this->view( 'pages.dashboard.settings.workers', [
+            'title'     =>      __( 'Workers Settings' ),
+            'description'   =>  __( 'Configure the workers settings.' )
         ]);
     }
 

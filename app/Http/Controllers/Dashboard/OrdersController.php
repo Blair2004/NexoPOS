@@ -77,5 +77,10 @@ class OrdersController extends DashboardController
         $order  =   $this->ordersService->getOrder( $orderId );
         return $this->ordersService->deleteOrderProduct( $order, $productId );
     }
+
+    public function showPOS()
+    {
+        return $this->view( 'pages.dashboard.orders.pos' );
+    }
 }
 

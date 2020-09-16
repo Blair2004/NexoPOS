@@ -379,5 +379,13 @@ class ProductsController extends DashboardController
     {
         return ProductHistoryCrud::table();
     }
+
+    public function showStockAdjustment()
+    {
+        return $this->view( 'pages.dashboard.products.stock-adjustment', [
+            'title'     =>      __( 'Stock Adjustment' ),
+            'description'   =>  __( 'Adjust stock of existing products.' ),
+        ]);
+    }
 }
 

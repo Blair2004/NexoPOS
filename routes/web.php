@@ -30,6 +30,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
     Route::middleware([ 'auth' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
         Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
+        Route::get( '/dashboard/pos', 'Dashboard\OrdersController@showPOS' );
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
         Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
         Route::get( '/dashboard/customers/edit/{customer}', 'Dashboard\CustomersController@editCustomer' );
@@ -67,6 +68,7 @@ Route::middleware([ 'ns.installed' ])->group( function() {
 
         Route::get( '/dashboard/products', 'Dashboard\ProductsController@listProducts' );
         Route::get( '/dashboard/products/create', 'Dashboard\ProductsController@createProduct' );
+        Route::get( '/dashboard/products/stock-adjustment', 'Dashboard\ProductsController@showStockAdjustment' );
         Route::get( '/dashboard/products/edit/{product}', 'Dashboard\ProductsController@editProduct' );
         Route::get( '/dashboard/products/{product}/units', 'Dashboard\ProductsController@productUnits' );
         Route::get( '/dashboard/products/{product}/history', 'Dashboard\ProductsController@productHistory' );

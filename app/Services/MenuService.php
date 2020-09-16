@@ -221,7 +221,7 @@ class MenuService
                     'stock-adjustment'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
                         'permissions'   =>  [ 'nexopos.make.products-adjustments' ],
-                        'href'  =>  url( '/dashboard/stock-adjustment' )
+                        'href'  =>  url( '/dashboard/products/stock-adjustment' )
                     ],
                 ]
             ], 
@@ -437,6 +437,10 @@ class MenuService
                     'notifications'     =>  [
                         'label'         =>  __( 'Notifications'),
                         'href'          =>  url( '/dashboard/settings/notifications' )
+                    ],
+                    'workers'           =>  [
+                        'label'         =>  __( 'Workers' ),
+                        'href'          =>  url( '/dashboard/settings/workers' ),
                     ],
                     'reset'         =>  [
                         'label'     =>  __( 'Reset'),
