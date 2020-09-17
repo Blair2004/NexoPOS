@@ -8,3 +8,4 @@ modules/.temp/*
 public/modules/*
 !public/modules/index.html
 composer-lock.json
+package-lock.json
