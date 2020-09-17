@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::get( 'categories/{id?}', 'Dashboard\CategoryController@get' )->where([ 'id' => '[0-9]+' ]);
 Route::get( 'categories/{id?}/products', 'Dashboard\CategoryController@getCategoriesProducts' )->where([ 'id' => '[0-9]+' ]);
 Route::get( 'categories/{id?}/variations', 'Dashboard\CategoryController@getCategoriesVariations' )->where([ 'id' => '[0-9]+' ]);

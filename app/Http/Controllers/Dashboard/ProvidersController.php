@@ -12,6 +12,8 @@ use App\Services\Validation;
 use Illuminate\Support\Facades\Validator;
 use App\Fields\ProviderFields;
 use App\Http\Controllers\DashboardController;
+use App\Models\Provider;
+use App\Services\Options;
 use App\Services\ProviderService;
 use Illuminate\Validation\ValidationException;
 
@@ -20,10 +22,14 @@ class ProvidersController extends DashboardController
 {
     public function __construct( 
         ProviderService $providerService,
+        Options $options,
         Validation $validation
     ) {
+        parent::__construct();
+
+        $this->options              =   $options;
         $this->providerService      =   $providerService;
-        $this->validation           =   $validation;
+        $this->validation           =   $validation;        
     }
 
     /**
@@ -33,6 +39,39 @@ class ProvidersController extends DashboardController
     public function list()
     {
         return $this->providerService->get();
+    }
+
+    public function listProviders()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.providers' ),
+            'title'         =>  __( 'Providers' ),
+            'description'   =>  __( 'List of registered providers' ),
+            'createUrl'    =>  url( '/dashboard/providers/create' ),
+        ]);
+    }
+
+    public function createProvider()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.providers/form-config' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.providers' ),
+            'title'         =>  __( 'Create A Provider' ),
+            'description'   =>  __( 'Add a new provider to the system' ),
+            'returnUrl'    =>  url( '/dashboard/providers' ),
+        ]);
+    }
+
+    public function editProvider( Provider $provider )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.providers/form-config/' . $provider->id ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.providers/' . $provider->id ),
+            'title'         =>  __( 'Edit Provider' ),
+            'submitMethod'  =>  'PUT',
+            'description'   =>  __( 'Modify an existing provider' ),
+            'returnUrl'    =>  url( '/dashboard/providers' ),
+        ]);
     }
 
     /**

@@ -6,11 +6,14 @@ $lastClassName  =   $model[ count( $model ) - 1 ];
 ?>
 <{{ '?php' }}
 namespace App\Crud;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
+use App\Services\Users;
+use App\Exceptions\NotAllowedException;
 use App\Models\User;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use {{ trim( $model_name ) }};
 
@@ -18,13 +21,15 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 {
     /**
      * define the base table
+     * @param string
      */
     protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
 
     /**
-     * base route name
+     * default identifier
+     * @param string
      */
-    protected $mainRoute      =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $identifier   =   '{{ strtolower( trim( $route_name ) ) }}';
 
     /**
      * Define namespace
@@ -34,17 +39,41 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Model Used
+     * @param string
      */
     protected $model      =   {{ trim( $lastClassName ) }}::class;
 
     /**
+     * Define permissions
+     * @param array
+     */
+    protected $permissions  =   [
+        'create'    =>  true,
+        'read'      =>  true,
+        'update'    =>  true,
+        'delete'    =>  true,
+    ];
+
+    /**
      * Adding relation
+     * @param array
      */
     public $relations   =  [
         @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
         @endforeach
         @endif
     ];
+
+    /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
+    public $pick        =   [];
 
     /**
      * Define where statement
@@ -119,6 +148,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
+                // 'name'          =>  'name',
+                // 'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -164,7 +195,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePost( $request )
     {
-        return $inputs;
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+        } else {
+            throw new NotAllowedException;
+        }
+
+        return $request;
     }
 
     /**
@@ -175,7 +212,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function afterPost( $request, {{ trim( $lastClassName ) }} $entry )
     {
-        return $inputs;
+        return $request;
     }
 
     
@@ -199,7 +236,13 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        return $inputs;
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+        } else {
+            throw new NotAllowedException;
+        }
+
+        return $request;
     }
 
     /**
@@ -210,33 +253,14 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
-        return $inputs;
-    }
-    
-    /**
-     * Protect an access to a specific crud UI
-     * @param array { namespace, id, type }
-     * @return array | throw Exception
-    **/
-    public function canAccess( $fields )
-    {
-        $users      =   app()->make( Users::class );
-        
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        return $request;
     }
 
     /**
      * Before Delete
      * @return void
      */
-    public function beforeDelete( $namespace, $id ) {
+    public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
             /**
              *  Perform an action before deleting an entry
@@ -247,6 +271,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
             **/
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
         }
     }
 
@@ -310,15 +339,18 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -346,9 +378,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  '{{ strtolower( trim( $route_name ) ) }}',
-            'create'    =>  '{{ strtolower( trim( $route_name ) ) }}/create',
-            'edit'      =>  '{{ strtolower( trim( $route_name ) ) }}/edit/#'
+            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
+            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
+            'post'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'put'       =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/' . '' ),
         ];
     }
 

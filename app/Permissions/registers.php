@@ -1,5 +1,5 @@
 <?php
-use Tendoo\Core\Models\Permission;
+use App\Models\Permission;
 
 if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $registers                 =   new Permission;

@@ -57,7 +57,7 @@ trait ArrayHelper {
      * @param array
      * @return an array of options
      */
-    static function toJsOptions( $collections, $config ) 
+    static function toJsOptions( $collections, $config ): Array 
     {
         $result         =   [];
         if ( $collections ) {
@@ -122,5 +122,22 @@ trait ArrayHelper {
                 'value' =>  false
             ]
         ];
+    }
+
+    /**
+     * flat multidimensional array using 
+     * keys
+     * @param array $data
+     * @return Collection
+     */
+    static function flatArrayWithKeys( $data )
+    {
+        return collect( $data )->mapWithKeys( function( $data, $index ) {
+            if ( ! is_array( $data ) ) {
+                return [ $index => $data ];
+            } else {
+                return self::flatArrayWithKeys( $data );
+            }
+        });
     }
 }

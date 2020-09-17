@@ -48,16 +48,15 @@ export default {
                     this.processing     =   false;
                     this.form.enableFields( this.fields );
                     this.fields.forEach( field => {
-                        let currentError;
-                        if ( currentError = error.response.data.errors[ field.name ] ) {
+                        if ( error.errors && error.errors[ field.name ] ) {
                             field.errors    =   [];
                             field.errors.push({
                                 'identifier'    :   'invalid',
-                                'message'       :   currentError[0]   
+                                'message'       :   error.errors[ field.name ][0]   
                             });
                         }
                     })
-                    nsSnackBar.error( error.response.data.message, 'OK' )
+                    nsSnackBar.error( error.message, 'OK' )
                         .subscribe();
                 });
         }
@@ -65,11 +64,11 @@ export default {
     mounted() {
         nsHttpClient.get( '/api/nexopos/v4/setup/database' )
             .subscribe( result => {
-                this.fields     =   this.form.createForm([
+                this.fields     =   this.form.createFields([
                     {
                         label: 'Application',
                         description: 'what is the application name',
-                        name: 'app_name',
+                        name: 'ns_store_name',
                         validation: 'required',
                     }, {
                         label: 'Username',

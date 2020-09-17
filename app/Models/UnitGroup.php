@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UnitGroup extends Model 
 {
-    protected $table = 'nexopos_units_group';
+    protected $table = 'nexopos_units_groups';
 
     public function units()
     {

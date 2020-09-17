@@ -7,20 +7,21 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Permission;
 
 use App\Models\RolePermission;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-
-    private static $cachedPermissions   =   [];
     protected $table    =   'nexopos_roles';
 
-    
+    protected $cats     =   [
+        'locked'        =>  'boolean'
+    ];
+
     /**
      * Relation with users
      * @return void
     **/
-
     public function users()
     {
         return $this->hasMany( User::class );
@@ -29,8 +30,8 @@ class Role extends Model
     /**
      * Relation with users
      * @return void
+     * @deprecated
     **/
-
     public function user()
     {
         return $this->hasMany( User::class );
@@ -40,10 +41,13 @@ class Role extends Model
      * Relation with Permissions
      * @return void
     **/
-
     public function permissions()
     {
         return $this->belongsToMany( Permission::class, 'nexopos_role_permission' );
+    }
+
+    public function scopeWithNamespace( $query, $param ) {
+        return $query->where( 'namespace', $param );
     }
 
     /**
@@ -51,190 +55,106 @@ class Role extends Model
      * @param string role name
      * @return model
     **/
-
     public static function namespace( $name )
     {
         return self::where( 'namespace', $name )->first();
     }
 
+    /**
+     * @param string namespace
+     * @deprecated
+     * @return Role
+     */
     public static function withNamespace( $name )
     {
         return self::where( 'namespace', $name );
     }
 
     /**
-     * Permission
-     * @param string role name
-     * @param array permission array
-     * @deprecated
-    **/
-    public static function AddPermissions( $role_name, $permissions ) 
+     * Add permission to an existing role
+     * @param array|string Permissions
+     * @param boolean silent
+     */
+    public function addPermissions( $permissions, $silent = false )
     {
-        $role       =   self::namespace( $role_name );
-        
-        if( $role ) {
-            
-            $relations          =   [];
+        if ( is_string( $permissions ) ) {
+            $permission     =   Permission::namespace( $permissions );
 
-            foreach( ( array ) $permissions as $permission ) {
-                $perm       =   explode( '.', $permission );
-               
-
-                if( $perm[0] == 'crud' ) {
-                    foreach( [ 'create', 'read', 'update', 'delete' ] as $prefix ) {
-
-                        /**
-                         * Caching permission, to avoid more request during the installation
-                         */
-                        if ( @self::$cachedPermissions[ $prefix . '.' . $perm[1] ] == null ) {
-                            self::$cachedPermissions[ $prefix . '.' . $perm[1] ]   =   Permission::where( 'namespace', $prefix . '.' . $perm[1] )->first();
-                        }
-
-                        
-                        $getPerm =  self::$cachedPermissions[ $prefix . '.' . $perm[1] ];
-
-                        $relations[]    =   [
-                            'role_id'           =>  $role->id,
-                            'permission_id'     =>  $getPerm->id
-                        ];
-                    }
-                } else {
-                    if ( @self::$cachedPermissions[ $permission ] == null ) {
-                        self::$cachedPermissions[ $permission ]   =   Permission::where( 'namespace', $permission )->first();
-                    }
-
-                    $getPerm                =   self::$cachedPermissions[ $permission ];
-
-                    $relations[]    =   [
-                        'role_id'           =>  $role->id,
-                        'permission_id'     =>  $getPerm->id
-                    ];
-                }
+            if ( $permission instanceof Permission ) {
+                return self::__createRelation( $this, $permission, $silent );
             }
 
+            throw new Exception( sprintf( __( 'Unable to find the permission with the namespace "%s".'), $permissions ) );
+
+        } else if ( $permissions instanceof Collection ) {
             /**
-             * if the relation array is set, then we can insert all
+             * looping over provided permissions
+             * and attempt to create a relation
              */
-            if ( $relations ) {
-                DB::table( 'nexopos_role_permission' )->insert( $relations );
-            }
-            return true;
-        }
-
-        return false;
-    }
-
-    public static function addPermission( $role_name, $permissions, $silent = true )
-    {
-        $role   =   self::namespace( $role_name );
-
-        if ( $role instanceof Role ) {
-            if ( is_string( $permissions ) ) {
-                $permission     =   Permission::namespace( $permissions )->first();
-
-                if ( $permission instanceof Permission ) {
-                    self::__createRelation( $role, $permission, $silent );
-                }
-            } else if ( is_array( $permissions ) ) {
-                $relations   =   [];
-                foreach( $permissions as $permission ) {
-                    $permission     =   Permission::namespace( $permissions )->first();
-
-                    if ( $permission instanceof Permission ) {
-                        self::__createRelation( $role, $permission, $silent );
-                    }
-                }
-            }
+            $permissions->each( function( $permissionNamespace ) {
+                $this->addPermissions( $permissionNamespace );
+            });
+        } else if ( is_array( $permissions ) ) {
+            /**
+             * looping over provided permissions
+             * and attempt to create a relation
+             */
+            collect( $permissions )->each( function( $permissionNamespace ) {
+                $this->addPermissions( $permissionNamespace );
+            });
         }
     }
 
-    private static function __createRelation( $role, $permission, $silent )
+    /**
+     * create relation between role and permissions
+     * @param Role $role
+     * @param Permission $permission
+     * @param boolean $silent
+     * @return void
+     */
+    private static function __createRelation( $role, $permission, $silent = true )
     {
-        $exists     =   DB::table( 'nexopos_role_permission' )
-            ->where( 'role_id', $role->id )
+        $rolePermission     =   RolePermission::where( 'role_id', $role->id )
             ->where( 'permission_id', $permission->id )
             ->first();
 
-        if ( empty( $exists ) ) {
-            DB::table( 'nexopos_role_permission' )->insert([
-                'role_id'           =>  $role->id,
-                'permission_id'     =>  $permission->id
-            ]);
-        } else if ( $silent === false ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf(
-                    __( 'A relation already exist because role "%s" and permission "%s".' ),
-                    $role->name,
-                    $permission->name
-                )
-            ]);
+        /**
+         * if the relation already exists, we'll just skip 
+         * that and proceed
+         */
+        if ( ! $rolePermission instanceof RolePermission ) {
+            $rolePermission                     =    new RolePermission;
+            $rolePermission->permission_id      =   $permission->id;
+            $rolePermission->role_id            =   $role->id;
+            $rolePermission->save();
         }
     }
 
     /**
-     * add permissions to 
-     * an role model
-     * @param array|Collection string permissions
+     * is used to remove a set of permission
+     * attached to the 
+     * @param array of permissions
+     * @return void
      */
-    public function scopeGrantPermissions( $query, $permissions )
+    public function removePermissions( $permissionNamespace )
     {
-        if ( $permissions instanceof Collection ) {
-            $roleNamespace      =   $this->namespace;
-            $permissions->map( function( $permission ) use ( $roleNamespace ) {
-                self::AddPermissions( $roleNamespace, $permission->namespace );
-            });
+        if ( $permissionNamespace instanceof Collection ) {
+            $permissionNamespace->each( fn( $permission ) => $this->removePermissions( $permission ) );
         } else {
-            if ( ! is_array( $permissions ) ) {
-                return self::AddPermissions( $this->namespace, [ $permissions ]);
+            $permission     =   Permission::where([ 'namespace' => $permissionNamespace ])
+                ->first();
+
+            if ( $permission instanceof Permission ) {
+                RolePermission::where([ 
+                    'role_id' => $this->id, 
+                    'permission_id' => $permission->id, 
+                ])->delete();
+            } else {
+                throw new Exception( sprintf( 
+                    __( 'Unable to remove the permissions "%s". It doesn\'t exists.' ),
+                    $permissionNamespace
+                ) );
             }
-            return self::AddPermissions( $this->namespace, $permissions );
         }
-    }
-
-
-    /**
-     * is used to remove a set of permission
-     * attached to the 
-     * @param Query
-     * @param array of permissions
-     * @return void
-     */
-    public function scopeRemovePermissions( $query, $permissions )
-    {
-        $query
-            ->get()
-            ->each( function( $role ) use ( $permissions ) {
-                collect( $permissions )->each( function( $perm_namespace ) use ( $role ) {
-                    $permission     =   Permission::where([ 'namespace' => $perm_namespace ])->first();
-                    if ( $permission instanceof Permission ) {
-                        RolePermission::where([ 
-                            'role_id' => $role->id, 
-                            'permission_id' => $permission->id, 
-                        ])->delete();
-                    }
-                });
-        });
-    }
-
-    /**
-     * is used to remove a set of permission
-     * attached to the 
-     * @param Query
-     * @param array of permissions
-     * @return void
-     */
-    public function scopeAddPermissions( $query, $permissions )
-    {
-        $query
-            ->get()
-            ->each( function( $role ) use ( $permissions ) {
-                collect( $permissions )->each( function( $perm_namespace ) use ( $role ) {
-                    $permission     =   Permission::where([ 'namespace' => $perm_namespace ])->first();
-                    if ( $permission instanceof Permission ) {
-                        self::__createRelation( $role, $permission );
-                    }
-                });
-        });
     }
 }

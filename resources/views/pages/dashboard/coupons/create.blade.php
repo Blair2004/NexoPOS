@@ -1,15 +1,15 @@
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
-<div id="dashboard-content" class="h-full flex flex-col">
+<div class="h-full flex flex-col flex-auto">
     @include( '../common/dashboard-header' )
-    <div class="px-4 flex-auto flex flex-col">
+    <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         <div class="page-inner-header mb-4">
             <h3 class="text-3xl text-gray-800 font-bold">{{ $title }}</h3>
             <p class="text-gray-600">{{ $description }}</p>
         </div>
         <ns-create-coupons
-            return-link="{{ $returnLink }}"
+            return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"
             submit-url="{{ $submitUrl }}"
             src="{{ $src }}"

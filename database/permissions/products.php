@@ -31,4 +31,34 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $product->namespace      =   'nexopos.read.products-history';
     $product->description    =   __( 'Let the user read products history' );
     $product->save();
+
+    $product                 =   new Permission;
+    $product->name           =   __( 'Adjust Product Stock' );
+    $product->namespace      =   'nexopos.make.products-adjustments';
+    $product->description    =   __( 'Let the user adjust product stock.' );
+    $product->save();
+
+    $product                 =   new Permission;
+    $product->name           =   __( 'Create Product Units/Unit Group' );
+    $product->namespace      =   'nexopos.create.products-units';
+    $product->description    =   __( 'Let the user create products units.' );
+    $product->save();
+
+    $product                 =   new Permission;
+    $product->name           =   __( 'Read Product Units/Unit Group' );
+    $product->namespace      =   'nexopos.read.products-units';
+    $product->description    =   __( 'Let the user read products units.' );
+    $product->save();
+
+    $product                 =   new Permission;
+    $product->name           =   __( 'Update Product Units/Unit Group' );
+    $product->namespace      =   'nexopos.update.products-units';
+    $product->description    =   __( 'Let the user update products units.' );
+    $product->save();
+
+    $product                 =   new Permission;
+    $product->name           =   __( 'Delete Product Units/Unit Group' );
+    $product->namespace      =   'nexopos.delete.products-units';
+    $product->description    =   __( 'Let the user delete products units.' );
+    $product->save();
 }

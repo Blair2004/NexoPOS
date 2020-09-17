@@ -15,7 +15,7 @@ export default {
             nsHttpClient,
         }
     },
-    props: [ 'submit-method', 'submit-url', 'return-link', 'src', 'rules' ],
+    props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
         submit() {
             if ( this.form.rules.length === 0 ) {
@@ -30,7 +30,7 @@ export default {
                     .subscribe();
             }
 
-            if ( ! this.formValidation.validateForm( this.form ) ) {
+            if ( this.formValidation.validateForm( this.form ).length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
                     .subscribe();
             }
@@ -56,13 +56,13 @@ export default {
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( result => {
-                    if ( result.data.status === 'success' ) {
-                        return document.location   =   this.returnLink;
+                .subscribe( data => {
+                    if ( data.status === 'success' ) {
+                        return document.location   =   this.returnUrl;
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    nsSnackBar.error( error.response.data.message, undefined, {
+                    nsSnackBar.error( error.data.message, undefined, {
                         duration: 5000
                     }).subscribe();
                     this.formValidation.triggerError( this.form, error.response.data );
@@ -76,12 +76,12 @@ export default {
         loadForm() {
             const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( f => {
-                this.form    =   this.parseForm( f.data.form );
+                this.form    =   this.parseForm( f.form );
             });
         },
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
-            form.main           =   this.formValidation.createForm([ form.main ])[0];
+            form.main           =   this.formValidation.createFields([ form.main ])[0];
             let index           =   0;
 
             console.log( form );
@@ -92,7 +92,7 @@ export default {
                 }
 
                 form.tabs[ key ].active     =   form.tabs[ key ].active === undefined ? false : form.tabs[ key ].active;
-                form.tabs[ key ].fields     =   this.formValidation.createForm( form.tabs[ key ].fields );
+                form.tabs[ key ].fields     =   this.formValidation.createFields( form.tabs[ key ].fields );
 
                 index++;
             }
@@ -121,7 +121,7 @@ export default {
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnLink" :href="returnLink" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">

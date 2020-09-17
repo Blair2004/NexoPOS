@@ -212,5 +212,41 @@ class CategoryController extends DashboardController
             'parent_id'     =>  'number'
         ];
     }
+
+    public function listCategories()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>      __( 'Product Categories' ),
+            'createUrl'    =>  url( '/dashboard/products/categories/create' ),
+            'description'   =>  __( 'List all categories available.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
+        ]);
+    }
+
+    public function createCategory()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Product Category' ),
+            'returnUrl'    =>  url( '/dashboard/products/categories' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
+            'description'   =>  __( 'Allow you to create a new product category.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config' )
+        ]);
+    }
+
+    /**
+     * Edit an existing category
+     */
+    public function editCategory( ProductCategory $category )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Edit Product Category' ),
+            'returnUrl'    =>  url( '/dashboard/products/categories' ),
+            'submitMethod'  =>  'PUT',
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products-categories/' . $category->id ),
+            'description'   =>  __( 'Allow you to edit an existing product category.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )
+        ]);
+    }
 }
 

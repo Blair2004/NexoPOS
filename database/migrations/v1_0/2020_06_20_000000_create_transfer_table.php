@@ -23,6 +23,7 @@ class CreateTransferTable extends Migration
                 $table->text( 'description' )->nullable();
                 $table->integer( 'location_from' );
                 $table->integer( 'location_to' );
+                $table->integer( 'truck_id' );
                 $table->string( 'type' ); // request, transfer
                 $table->string( 'status' ); // approved, pending, sent, requested
                 $table->integer( 'author' );

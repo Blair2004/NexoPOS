@@ -8,7 +8,10 @@ const nsField       =   Vue.component( 'ns-field', {
     },
     computed: {
         isInputField() {
-            return [ 'text', 'password', 'email', 'number', 'datetime', 'tel' ].includes( this.field.type );
+            return [ 'text', 'password', 'email', 'number', 'tel' ].includes( this.field.type );
+        },
+        isDateField() {
+            return [ 'date' ].includes( this.field.type );
         },
         isSelectField() {
             return [ 'select' ].includes( this.field.type );
@@ -19,26 +22,76 @@ const nsField       =   Vue.component( 'ns-field', {
         isCheckbox() {
             return [ 'checkbox' ].includes( this.field.type );
         },
+        isMultiselect() {
+            return [ 'multiselect' ].includes( this.field.type );
+        },
+        isSwitch() {
+            return [ 'switch' ].includes( this.field.type );
+        },
     },
     props: [ 'field' ],
+    methods: {
+        addOption( option ) {
+            if( this.field.type === 'select' ) {
+                this.field.options.forEach( option => option.selected = false );
+            }
+
+            option.selected     =   true;
+
+            this.refreshMultiselect();
+
+            this.$emit( 'change', { action: 'addOption', option })
+        },
+        refreshMultiselect() {
+            this.field.value    =   this.field.options
+                .filter( option => option.selected )
+                .map( option => option.value );
+
+            console.log( this.field.options );
+        },
+        removeOption( option ) {
+            option.selected     =   false;
+            this.refreshMultiselect();                
+            this.$emit( 'change', { action: 'removeOption', option });
+        },
+    },
     template: `
-    <div>
-        <ns-input @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isInputField">
+    <div class="flex flex-auto">
+        <ns-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isInputField">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
-        <ns-select @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isSelectField">
+        <ns-date @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateField">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date>
+        <ns-select @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectField">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
-        <ns-textarea @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isTextarea">
+        <ns-textarea @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isTextarea">
             <template>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-textarea v-slot>
-        <ns-checkbox @blur="$emit( 'blur', this )" @change="$emit( 'change', this )"  :field="field" v-if="isCheckbox">
+        <ns-checkbox @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isCheckbox">
             <template v-slot>{{ field.label }}</template>
-            <template v-slot:description>{{ field.description || '' }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-checkbox>
+        <ns-multiselect 
+            @addOption="addOption( $event )" 
+            @removeOption="removeOption( $event )" 
+            :field="field" 
+            v-if="isMultiselect">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-multiselect>
+        <ns-switch 
+            :field="field" 
+            @change="$emit( 'change', field )"
+            v-if="isSwitch">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-switch>
     </div>
     `,
 });

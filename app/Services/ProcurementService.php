@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Crud\ProductUnitQuantitiesCrud;
+use App\Events\ProcurementAfterCreateEvent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -9,17 +11,23 @@ use App\Models\Procurement;
 use App\Services\ProductService;
 use App\Exceptions\NotFoundException;
 use App\Models\ProcurementProduct;
-use App\Exceptions\NotAllowedException;
-use App\Events\ProcurementAfterDelete;
-use App\Events\ProcurementBeforeDelete;
+use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementDeliveryEvent;
-use App\Events\ProcurementDeliveredEvent;
 use App\Events\ProcurementCancelationEvent;
 use App\Events\ProcurementProductSavedEvent;
-use App\Events\ProcurementAfterDeleteProduct;
+use App\Events\ProcurementAfterDeleteProductEvent;
+use App\Events\ProcurementAfterUpdateEvent;
 use App\Events\ProcurementAfterUpdateProduct;
-use App\Events\ProcurementBeforeDeleteProduct;
+use App\Events\ProcurementBeforeCreateEvent;
+use App\Events\ProcurementBeforeDeleteEvent;
+use App\Events\ProcurementBeforeDeleteProductEvent;
+use App\Events\ProcurementBeforeUpdateEvent;
 use App\Events\ProcurementBeforeUpdateProduct;
+use App\Events\ProcurementRefreshedEvent;
+use App\Models\Product;
+use App\Models\ProductHistory;
+use App\Models\ProductUnitQuantity;
+use Exception;
 
 class ProcurementService
 {
@@ -51,12 +59,11 @@ class ProcurementService
     {
         if ( $id !== null ) {
             $provider   =   Procurement::find( $id ); 
+            
             if ( ! $provider instanceof Procurement ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the requested procurement using the provided identifier.' )
-                ]);
+                throw new Exception( __( 'Unable to find the requested procurement using the provided identifier.' ) );
             }
+
             return $provider;
         }
 
@@ -77,35 +84,58 @@ class ProcurementService
          * try to find the provider
          * or return an error
          */
-        $provider           =   $this->providerService->get( @$provider_id );
+        $provider           =   $this->providerService->get( $data[ 'general' ][ 'provider_id' ] );
+
         if ( ! $provider instanceof Provider ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the assigned provider.' )
-            ]);
+            throw new Exception( __( 'Unable to find the assigned provider.' ) );
         }
 
-        // mustFind( Provider::class, $provider_id )->handleResponse( function( $instance ) {
-        // })->orThrow([
-        //     'status'    =>  'failed',
-        //     'message'   =>  __( 'Unable to find the assigned Provider' )
-        // ]);
+        /**
+         * We'll create a new instance
+         * of the procurement
+         * @param Procurement
+         */
+        $procurement                    =   new Procurement;
 
-        $procurement    =       new Procurement;
+        /**
+         * we'll make sure to trigger some event before 
+         * performing some change on the procurement
+         */
+        event( new ProcurementBeforeCreateEvent( $procurement ) );
 
-        foreach( $data as $field => $value ) {
-            $procurement->$field        =   $value;
+        /**
+         * We don't want the event ProcurementBeforeCreateEvent
+         * and ProcurementAfterCreateEvent to trigger while saving
+         */
+        Procurement::withoutEvents( function() use( $procurement, $data ) {
+            $procurement->name              =   $data[ 'name' ];
+
+            foreach( $data[ 'general' ] as $field => $value ) {
+                $procurement->$field        =   $value;
+            }
+
+            $procurement->author            =   Auth::id();
+            $procurement->value             =   0;
+            $procurement->save();
+        });
+        
+        /**
+         * Let's save the product that are procured
+         * This doesn't affect the stock but only store the product
+         */
+        if ( $data[ 'products' ] ) {
+            $this->saveProducts( $procurement, collect( $data[ 'products' ] ) );
         }
 
-        $procurement->author            =   Auth::id();
-        $procurement->value             =   0;
-        $procurement->status            =   'unpaid'; // or default value while creating procurement
-        $procurement->save();
+        /**
+         * We can now safely trigger the event here
+         * that will ensure correct computing
+         */
+        event( new ProcurementAfterCreateEvent( $procurement ) );
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The provider has been created.' ),
-            'data'      =>  compact( 'procurement' )
         ];
     }
 
@@ -117,20 +147,65 @@ class ProcurementService
      */
     public function edit( $id, $data )
     {
-        extract( $data );
         /**
-         * -> provider_id
+         * @param array $general
+         * @param string $name
+         * @param array $products
          */
+        extract( $data );
 
-        $procurement        =   Procurement::findOrFail( $id );
-        $provider           =   $this->providerService->get( $provider_id );
+        /**
+         * try to find the provider
+         * or return an error
+         */
+        $provider           =   $this->providerService->get( $data[ 'general' ][ 'provider_id' ] );
 
-        foreach( $data as $field => $value ) {
-            $procurement->$field        =   $value;
+        if ( ! $provider instanceof Provider ) {
+            throw new Exception( __( 'Unable to find the assigned provider.' ) );
         }
 
-        $procurement->author            =   Auth::id();
-        $procurement->save();
+        $procurement        =   Procurement::findOrFail( $id );
+
+        /**
+         * we'll make sure to trigger some event before 
+         * performing some change on the procurement
+         */
+        event( new ProcurementBeforeUpdateEvent( $procurement ) );
+
+        /**
+         * We won't dispatch the even while savin the procurement
+         * however we'll do that once the product has been stored.
+         */
+        Procurement::withoutEvents( function() use ( $data, $id, $procurement ) {
+
+            if ( $procurement->delivery_status === 'stocked' ) {
+                throw new Exception( __( 'Unable to edit a procurement that has already been stocked. Please consider performing and stock adjustment.' ) );
+            }
+
+            $procurement->name              =   $data[ 'name' ];
+
+            foreach( $data[ 'general' ] as $field => $value ) {
+                $procurement->$field        =   $value;
+            }
+
+            $procurement->author            =   Auth::id();
+            $procurement->value             =   0;
+            $procurement->save();
+        });
+
+        /**
+         * We can now safely save
+         * the procurement products
+         */
+        if ( $data[ 'products' ] ) {
+            $this->saveProducts( $procurement, collect( $data[ 'products' ] ) );
+        }
+
+        /**
+         * we want to dispatch the even
+         * only when the product has been created
+         */
+        event( new ProcurementAfterUpdateEvent( $procurement ) );
 
         return [
             'status'    =>  'success',
@@ -150,29 +225,57 @@ class ProcurementService
         $procurement    =   Procurement::find( $id );
 
         if ( ! $procurement instanceof Procurement ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested procurement using the provided id.' )
-            ]);
+            throw new Exception( 'Unable to find the requested procurement using the provided id.' );
         }
 
-        event( new ProcurementBeforeDelete( $procurement ) );
+        event( new ProcurementBeforeDeleteEvent( $procurement ) );
 
-        $totalProducts      =   $procurement->products->count();
-        $procurement->products->each( function( ProcurementProduct $product ) {
-            $this->deleteProduct( $product );
-        });
-
-        $procurement->delete();
-
-        event( new ProcurementAfterDelete( $procurement ) );
+        $totalDeletions     =   $procurement->products->map( function( ProcurementProduct $product ) use ( $procurement ) {
+            return $this->deleteProduct( $product, $procurement );
+        })->count();
 
         $procurement->delete();
+
+        event( new ProcurementAfterDeleteEvent( $procurement ) );
 
         return [
             'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalProducts )
+            'message'   =>  sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions )
         ];
+    }
+
+    /**
+     * Attempt a product stock removal
+     * if the procurement has been stocked
+     * @param Procurement $procurement
+     */
+    public function attemptProductsStockRemoval( Procurement $procurement )
+    {
+        if ( $procurement->delivery_status === 'stocked' ) {
+            $procurement->products->each( function( ProcurementProduct $procurementProduct ) {
+                $unitQuantity   =   ProductUnitQuantity::withProduct( $procurementProduct->product_id )
+                    ->withUnit( $procurementProduct->unit_id )
+                    ->first();
+    
+                if ( $unitQuantity instanceof ProductUnitQuantity ) {
+                    if ( floatval( $unitQuantity->quantity ) - floatval( $procurementProduct->quantity ) < 0 ) {
+                        throw new Exception( __( 'Unable to delete the procurement as there is not enough stock remaining for "%s". This likely means the stock count has changed either with a sale, adjustment after the procurement has been stocked.' ) );
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * This will delete product available on a procurement
+     * and dispatch some events before and after that occurs.
+     * @param Procurement
+     */
+    public function deleteProcurementProducts( Procurement $procurement )
+    {
+        $procurement->products->each( function( ProcurementProduct $product ) use ( $procurement ) {
+            $this->deleteProduct( $product, $procurement );
+        });
     }
 
     /**
@@ -226,7 +329,7 @@ class ProcurementService
 
             try {
                 extract( $this->__procureForUnitGroup( compact( 'procurementProduct', 'storedunitReference', 'itemsToSave', 'item' ) ) );
-            } catch( NotFoundException $exception ) {
+            } catch( Exception $exception ) {
                 $errors[]   =   [
                     'status'    =>  'failed',
                     'message'   =>  $exception->getMessage(),
@@ -240,50 +343,45 @@ class ProcurementService
         return $data;
     }
 
-    public function procure( Procurement $procurement, Collection $products )
-    {        
+    public function saveProducts( Procurement $procurement, Collection $products )
+    {
         /**
-         * we want to retreive the 
-         * base unit only once if a similar id
-         * is already provided.
+         * We'll just make sure to have a reference
+         * of all the product that has been procured.
          */
-        $storedUnitReference            =   [];
-        $itemsToSave                    =   [];
-        $errors                         =   [];
-
-        $products->each( function( $procurementProduct ) use ( &$storedUnitReference, &$itemsToSave, &$errors ) {
-            $procurementProduct    =   ( object ) $procurementProduct;
+        $procuredProducts                                   =   $products->map( function( $procuredProduct ) use ( $procurement ) {
+            $product                                        =   Product::find( $procuredProduct[ 'product_id' ] );
             
-            if ( isset( $procurementProduct->id ) ) {
-                $argument   =   'id';
-            } else if ( isset( $procurementProduct->sku ) ) {
-                $argument   =   'sku';
-            } else if ( isset( $procurementProduct->barcode ) ) {
-                $argument   =   'barcode';
+            /**
+             * as the id might not always be provided
+             * We'll find some record having an id set to 0
+             * as not result will pop, that will create a new instance.
+             */
+            $procurementProduct             =   ProcurementProduct::find( $procuredProduct[ 'id' ] ?? 0 );
+
+            if ( ! $procurementProduct instanceof ProcurementProduct ) {
+                $procurementProduct                             =   new ProcurementProduct;
             }
 
-            try {
-                $item               =   $this->productService->getProductUsingArgument( $argument, $procurementProduct->$argument );
-                extract( $this->__computeProcurementProductValues( compact( 'item', 'procurementProduct', 'storeUnitReference', 'itemsToSave', 'errors' ) ) );
-            } catch( NotFoundException $exception ) {
-                $errors[]           =   [
-                    'status'        =>  'failed',
-                    'message'       =>  $exception->getMessage()
-                ];
-            }
+            $procurementProduct->name                       =   $product->name;
+            $procurementProduct->gross_purchase_price       =   $procuredProduct[ 'gross_purchase_price' ];
+            $procurementProduct->net_purchase_price         =   $procuredProduct[ 'net_purchase_price' ];
+            $procurementProduct->procurement_id             =   $procurement->id;
+            $procurementProduct->product_id                 =   $procuredProduct[ 'product_id' ];
+            $procurementProduct->purchase_price             =   $procuredProduct[ 'purchase_price' ];
+            $procurementProduct->quantity                   =   $procuredProduct[ 'quantity' ];
+            $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
+            $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
+            $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
+            $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
+            $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
+            $procurementProduct->author                     =   Auth::id();
+            $procurementProduct->save();
+
+            return $procurementProduct;
         });
 
-        $result     =   $this->saveProcurementProducts( $procurement->id, $itemsToSave );
-
-        /**
-         * trigger a specific event
-         * to let other perform some action
-         */
-        event( new ProcurementDeliveryEvent( $procurement ) );
-
-        $result[ 'data' ][ 'errors' ]    =   $errors;
-
-        return $result;
+        return $procuredProducts;
     }
 
     /**
@@ -312,21 +410,18 @@ class ProcurementService
          * unit assigned to the item.
          */
         if ( $group->id !== $item->purchase_unit_id ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'The unit used for the product %s doesn\'t belongs to the Unit Group assigned to the item' ), $item->name )
-            ]);
+            throw new Exception( sprintf( __( 'The unit used for the product %s doesn\'t belongs to the Unit Group assigned to the item' ), $item->name ) );
         }
 
         $itemData       =   [
-            'product_id'        =>  $item->id,
-            'unit_id'           =>  $procurementProduct->unit_id,
-            'base_quantity'     =>  $base_quantity,
-            'quantity'          =>  $procurementProduct->quantity,
-            'purchase_price'    =>  $this->currency->value( $procurementProduct->purchase_price )->get(),
-            'total_price'       =>  $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
-            'author'            =>  Auth::id(),
-            'name'              =>  $item->name
+            'product_id'                =>  $item->id,
+            'unit_id'                   =>  $procurementProduct->unit_id,
+            'base_quantity'             =>  $base_quantity,
+            'quantity'                  =>  $procurementProduct->quantity,
+            'purchase_price'            =>  $this->currency->value( $procurementProduct->purchase_price )->get(),
+            'total_purchase_price'      =>  $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
+            'author'                    =>  Auth::id(),
+            'name'                      =>  $item->name
         ];
 
         $itemsToSave[]  =   $itemData;
@@ -391,8 +486,6 @@ class ProcurementService
             $product->save();
 
             $procuredItems[]            =   $product->toArray();
-
-            event( new ProcurementProductSavedEvent( $product ) );
         }
 
         return [
@@ -412,19 +505,33 @@ class ProcurementService
      */
     public function refresh( Procurement $procurement )
     {
-        $totalCost      =   0;
-        $procurement    =   Procurement::find( $procurement->id );
-        $totalEntries   =   $procurement->products->count();
+        Procurement::withoutEvents( function() use ( $procurement ) {
+            /**
+             * Let's loop all procured produt
+             * and get unit quantity if that exists
+             * otherwise we'll create a new one.
+             */
+            $purchases  =   $procurement
+                ->products()
+                ->get()
+                ->map( function( $procurementProduct ) use ( $procurement ) {
 
-        $procurement->products->each( function( $product ) use ( &$totalCost ) {
-            $totalCost  =  $this->currency->value( $totalCost )->additionateBy( $product->total_price )
-                ->get();
+                /**
+                 * We'll return the total purchase
+                 * price to update the procurement total fees.
+                 */
+                return [
+                    'total_purchase_price'  =>  $procurementProduct->total_purchase_price,
+                    'tax_value'             =>  $procurementProduct->tax_value,
+                ];
+            });
+            
+            $procurement->value               =   $purchases->sum( 'total_purchase_price' );
+            $procurement->tax_value           =   $purchases->sum( 'tax_value' );
+            $procurement->total_items         =   count( $purchases );
+            $procurement->author              =   Auth::id();
+            $procurement->save();
         });
-
-        $procurement->total_items   =   $totalEntries;
-        $procurement->value         =   $totalCost;
-        $procurement->author        =   Auth::id();
-        $procurement->save();
 
         return [
             'status'    =>  'success',
@@ -436,6 +543,7 @@ class ProcurementService
     /**
      * delete all items recorded for a procurement
      * and reset all value including the computed owned money
+     * @deprecated
      */
     public function resetProcurement( $id )
     {
@@ -451,12 +559,9 @@ class ProcurementService
          */
         event( new ProcurementCancelationEvent( $procurement ) );
 
-        /**
-         * @todo reset owned amount as well
-         */
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The procurement has been resetted.' )
+            'message'   =>  __( 'The procurement has been reset.' )
         ];
     }
 
@@ -495,14 +600,17 @@ class ProcurementService
         })->count() > 0 ;
     }
 
+    /**
+     * @deprecated
+     */
     public function updateProcurementProduct( $product_id, $fields )
     {
-        $procurementProduct        =   $this->getProcurementProduct( $product_id );
-        $item                   =   $this->productService->get( $procurementProduct->product_id );
-        $storedUnitReference    =   [];
-        $itemsToSave            =   [];
+        $procurementProduct         =   $this->getProcurementProduct( $product_id );
+        $item                       =   $this->productService->get( $procurementProduct->product_id );
+        $storedUnitReference        =   [];
+        $itemsToSave                =   [];
 
-        event( new ProcurementBeforeUpdateProduct( $procurementProduct, $fields ) );
+        // event( new ProcurementBeforeUpdateProduct( $procurementProduct, $fields ) );
 
         /**
          * the idea here it to update the procurement
@@ -530,7 +638,7 @@ class ProcurementService
         $procurementProduct->author    =   Auth::id();
         $procurementProduct->save();
 
-        event( new ProcurementAfterUpdateProduct( $procurementProduct, $fields ) );
+        // event( new ProcurementAfterUpdateProduct( $procurementProduct, $fields ) );
 
         return [
             'status'    =>  'success',
@@ -546,10 +654,7 @@ class ProcurementService
         $product    =   ProcurementProduct::find( $product_id );
       
         if ( ! $product instanceof ProcurementProduct ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the procurement product using the provided id.' )
-            ]);
+            throw new Exception( __( 'Unable to find the procurement product using the provided id.' ) );
         }
 
         return $product;
@@ -560,21 +665,31 @@ class ProcurementService
      * @param int procurement product id
      * @return array response
      */
-    public function deleteProduct( $product_id )
+    public function deleteProduct( ProcurementProduct $procurementProduct, Procurement $procurement )
     {
-        /**
-         * no we don't want to 
-         * reload the product from the database again
-         * That's where ORM could sucks.
-         */
-        $procurementProduct     =   $product_id instanceof ProcurementProduct ? $product_id : $this->getProcurementProduct( $product_id );
-        $procurement_id         =   $procurementProduct->procurement_id;
-
         /**
          * this could be useful to prevent deletion for
          * product which might be in use by another resource
          */
-        event( new ProcurementBeforeDeleteProduct( $procurementProduct ) );
+        event( new ProcurementBeforeDeleteProductEvent( $procurementProduct ) );
+
+        /**
+         * we'll reduce the stock only if the 
+         * procurement has been stocked.
+         */
+        if ( $procurement->delivery_status === 'stocked' ) {
+            /**
+             * Record the deletion on the product
+             * history
+             */
+            $this->productService->stockAdjustment( 'deleted', [
+                'total_price'   =>  $procurementProduct->total_purchase_price,
+                'unit_price'    =>  $procurementProduct->purchase_price,
+                'unit_id'       =>  $procurementProduct->unit_id,
+                'product_id'    =>  $procurementProduct->product_id,
+                'quantity'      =>  $procurementProduct->quantity,
+            ]);
+        }
 
         $procurementProduct->delete();
 
@@ -582,7 +697,16 @@ class ProcurementService
          * the product has been deleted, so we couldn't pass
          * the Model Object anymore
          */
-        event( new ProcurementAfterDeleteProduct( $product_id, $procurement_id ) );
+        event( new ProcurementAfterDeleteProductEvent( $procurementProduct->id, $procurement ) );
+
+        return [
+            'status'    =>  'sucecss',
+            'message'   =>  sprintf(
+                __( 'The product %s has been deleted from the procurement %s' ),
+                $procurementProduct->name,
+                $procurement->name,
+            )
+        ];
     }
 
     public function getProcurementProducts( $procurement_id )
@@ -597,6 +721,7 @@ class ProcurementService
      * @param int procurement id
      * @param array array
      * @return array status
+     * @deprecated
      */
     public function bulkUpdateProducts( $procurement_id, $products )
     {
@@ -606,10 +731,7 @@ class ProcurementService
         $result     =   collect( $products )
             ->map( function( $product ) use ( $productsId ) {
                 if ( ! in_array( $product[ 'id' ], $productsId ) ) {
-                    throw new NotFoundException([
-                        'status'    =>  'failed',
-                        'message'   =>  sprintf( __( 'The product with the following ID "%s" is not initially included on the procurement' ), $product[ 'id' ] )
-                    ]);
+                    throw new Exception( sprintf( __( 'The product with the following ID "%s" is not initially included on the procurement' ), $product[ 'id' ] ) );
                 }
                 return $product;
             })
@@ -634,5 +756,44 @@ class ProcurementService
         $procurement    =   $this->get( $procurement_id );
 
         return $procurement->products;
+    }
+
+    public function setDeliveryStatus( Procurement $procurement, string $status )
+    {
+        Procurement::withoutEvents( function() use ( $procurement, $status ) {
+            $procurement->delivery_status   =   $status;
+            $procurement->save();
+        });
+    }
+
+    /**
+     * When a procurement is being made
+     * this will actually save the history and update
+     * the product stock
+     * @param Procurement $procurement
+     * @return void
+     */
+    public function handleProcurement( Procurement $procurement )
+    {
+        if ( $procurement->delivery_status === Procurement::DELIVERED ) {
+            $procurement->products->map( function( $product ) {
+                /**
+                 * We'll keep an history of what has just happened.
+                 * this will help to track how the stock evolve.
+                 */
+                $this->productService->saveHistory( ProductHistory::ACTION_STOCKED, [
+                    'procurement_id'            =>  $product->procurement_id,
+                    'product_id'                =>  $product->product_id,
+                    'procurement_product_id'    =>  $product->id,
+                    'operation_type'            =>  ProductHistory::ACTION_STOCKED,
+                    'quantity'                  =>  $product->quantity,
+                    'unit_price'                =>  $product->purchase_price,
+                    'total_price'               =>  $product->total_purchase_price,
+                    'unit_id'                   =>  $product->unit_id,
+                ]);
+            });
+    
+            $this->setDeliveryStatus( $procurement, Procurement::STOCKED );
+        }
     }
 }

@@ -21,9 +21,13 @@ class CreateProcurementsTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'provider_id' );
-                // $table->float( 'cost' )->default(0);
                 $table->float( 'value' )->default(0);
-                $table->string( 'status' )->default( 'unpaid' ); // paid | unpaid
+                $table->float( 'tax_value' )->default(0);
+                $table->string( 'invoice_reference' )->nullable();
+                $table->boolean( 'automatic_approval' )->default(false)->nullable();
+                $table->datetime( 'delivery_time' )->nullable();
+                $table->string( 'payment_status' )->default( 'unpaid' ); // paid | unpaid
+                $table->string( 'delivery_status' )->default( 'unpaid' ); // paid | unpaid
                 $table->integer( 'total_items' )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );

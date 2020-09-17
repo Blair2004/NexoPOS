@@ -16,8 +16,8 @@ class CreateProductsGalleryTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_gallery' ) ) {
-            Schema::create( 'nexopos_products_gallery', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_products_galleries' ) ) {
+            Schema::create( 'nexopos_products_galleries', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'product_id' );
@@ -38,8 +38,8 @@ class CreateProductsGalleryTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_gallery' ) ) {
-            Schema::drop( 'nexopos_products_gallery' );
+        if ( Schema::hasTable( 'nexopos_products_galleries' ) ) {
+            Schema::drop( 'nexopos_products_galleries' );
         }
     }
 }

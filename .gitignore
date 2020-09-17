@@ -1,3 +1,10 @@
 .env
 vendor
 node_modules
+modules/*
+!modules/.temp
+modules/.temp/*
+!modules/index.html
+public/modules/*
+!public/modules/index.html
+composer-lock.json

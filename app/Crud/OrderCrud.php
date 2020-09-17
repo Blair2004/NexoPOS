@@ -3,9 +3,11 @@ namespace App\Crud;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
+use App\Services\Users;
 use App\Models\User;
+use TorMorten\Eventy\Facades\Events as Hook;
+use Exception;
 use App\Models\Order;
-use Hook;
 
 class OrderCrud extends CrudService
 {
@@ -17,7 +19,7 @@ class OrderCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.orders.index';
+    protected $mainRoute      =   'ns.orders';
 
     /**
      * Define namespace
@@ -28,13 +30,15 @@ class OrderCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model      =   \App\Models\Order::class;
+    protected $model      =   Order::class;
 
     /**
      * Adding relation
      */
     public $relations   =  [
-            ];
+        [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
+    ];
 
     /**
      * Define where statement
@@ -51,7 +55,7 @@ class OrderCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   "";
+        public $fillable    =   [];
 
     /**
      * Define Constructor
@@ -61,7 +65,7 @@ class OrderCrud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( 'crud.entry', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
@@ -98,10 +102,142 @@ class OrderCrud extends CrudService
      * @param  object/null
      * @return  array of field
      */
-    public function getFields( $entry = null ) 
+    public function getForm( $entry = null ) 
     {
         return [
-            // your field here
+            'main' =>  [
+                'label'         =>  __( 'Name' ),
+                // 'name'          =>  'name',
+                // 'value'         =>  $entry->name ?? '',
+                'description'   =>  __( 'Provide a name to the resource.' )
+            ],
+            'tabs'  =>  [
+                'general'   =>  [
+                    'label'     =>  __( 'General' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'author',
+                            'label' =>  __( 'Author' ),
+                            'value' =>  $entry->author ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'change',
+                            'label' =>  __( 'Change' ),
+                            'value' =>  $entry->change ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'code',
+                            'label' =>  __( 'Code' ),
+                            'value' =>  $entry->code ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'created_at',
+                            'label' =>  __( 'Created_at' ),
+                            'value' =>  $entry->created_at ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'customer_id',
+                            'label' =>  __( 'Customer_id' ),
+                            'value' =>  $entry->customer_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'delivery_status',
+                            'label' =>  __( 'Delivery_status' ),
+                            'value' =>  $entry->delivery_status ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),
+                            'value' =>  $entry->description ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'discount',
+                            'label' =>  __( 'Discount' ),
+                            'value' =>  $entry->discount ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'discount_rate',
+                            'label' =>  __( 'Discount_rate' ),
+                            'value' =>  $entry->discount_rate ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'discount_type',
+                            'label' =>  __( 'Discount_type' ),
+                            'value' =>  $entry->discount_type ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'gross_total',
+                            'label' =>  __( 'Gross_total' ),
+                            'value' =>  $entry->gross_total ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'id',
+                            'label' =>  __( 'Id' ),
+                            'value' =>  $entry->id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'net_total',
+                            'label' =>  __( 'Net_total' ),
+                            'value' =>  $entry->net_total ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'payment_status',
+                            'label' =>  __( 'Payment_status' ),
+                            'value' =>  $entry->payment_status ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'process_status',
+                            'label' =>  __( 'Process_status' ),
+                            'value' =>  $entry->process_status ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'shipping',
+                            'label' =>  __( 'Shipping' ),
+                            'value' =>  $entry->shipping ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'shipping_rate',
+                            'label' =>  __( 'Shipping_rate' ),
+                            'value' =>  $entry->shipping_rate ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'shipping_type',
+                            'label' =>  __( 'Shipping_type' ),
+                            'value' =>  $entry->shipping_type ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'tendered',
+                            'label' =>  __( 'Tendered' ),
+                            'value' =>  $entry->tendered ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'title',
+                            'label' =>  __( 'Title' ),
+                            'value' =>  $entry->title ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'total',
+                            'label' =>  __( 'Total' ),
+                            'value' =>  $entry->total ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'type',
+                            'label' =>  __( 'Type' ),
+                            'value' =>  $entry->type ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'updated_at',
+                            'label' =>  __( 'Updated_at' ),
+                            'value' =>  $entry->updated_at ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'uuid',
+                            'label' =>  __( 'Uuid' ),
+                            'value' =>  $entry->uuid ?? '',
+                        ],                     ]
+                ]
+            ]
         ];
     }
 
@@ -120,19 +256,30 @@ class OrderCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, \App\Models\Order $entry )
+    public function filterPutInputs( $inputs, Order $entry )
     {
         return $inputs;
     }
 
     /**
-     * After Crud POST
-     * @param  object entry
+     * Before saving a record
+     * @param  Request $request
      * @return  void
      */
-    public function afterPost( $inputs )
+    public function beforePost( $request )
     {
-        return $inputs;
+        return $request;
+    }
+
+    /**
+     * After saving a record
+     * @param  Request $request
+     * @param  Order $entry
+     * @return  void
+     */
+    public function afterPost( $request, Order $entry )
+    {
+        return $request;
     }
 
     
@@ -149,19 +296,31 @@ class OrderCrud extends CrudService
     }
 
     /**
-     * After Crud PUT
+     * Before updating a record
+     * @param  Request $request
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $inputs )
+    public function beforePut( $request, $entry )
     {
-        return $inputs;
+        return $request;
+    }
+
+    /**
+     * After updating a record
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
+     */
+    public function afterPut( $request, $entry )
+    {
+        return $request;
     }
     
     /**
      * Protect an access to a specific crud UI
      * @param  array { namespace, id, type }
-     * @return  array | throw AccessDeniedException
+     * @return  array | throw Exception
     **/
     public function canAccess( $fields )
     {
@@ -174,14 +333,14 @@ class OrderCrud extends CrudService
             ];
         }
 
-        throw new AccessDeniedException( __( 'You don\'t have access to that ressource' ) );
+        throw new Exception( __( 'You don\'t have access to that ressource' ) );
     }
 
     /**
      * Before Delete
      * @return  void
      */
-    public function beforeDelete( $namespace, $id ) {
+    public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.orders' ) {
             /**
              *  Perform an action before deleting an entry
@@ -201,41 +360,65 @@ class OrderCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'customer_id'  =>  [
-                'label'  =>  __( 'Customer' )
-            ],
             'code'  =>  [
-                'label'  =>  __( 'Code' )
+                'label'  =>  __( 'Code' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'nexopos_customers_name'  =>  [
+                'label'         =>  __( 'Customer' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
             'discount'  =>  [
-                'label'  =>  __( 'Discount' )
-            ],
-            'discount_rate'  =>  [
-                'label'  =>  __( 'Discount Rate' )
-            ],
-            'shipping_rate'  =>  [
-                'label'  =>  __( 'Ship. Rate' )
-            ],
-            'gross_total'  =>  [
-                'label'  =>  __( 'Gross Total' )
-            ],
-            'total'  =>  [
-                'label'  =>  __( 'Total' )
+                'label'  =>  __( 'Discount' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
             'net_total'  =>  [
-                'label'  =>  __( 'Net Total' )
-            ],
-            'author'  =>  [
-                'label'  =>  __( 'Author' )
+                'label'  =>  __( 'Net Total' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
             'delivery_status'  =>  [
-                'label'  =>  __( 'Delivered On' )
+                'label'  =>  __( 'Delivery Status' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' )
+            'payment_status'  =>  [
+                'label'  =>  __( 'Payment Status' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'process_status'  =>  [
+                'label'  =>  __( 'Process Status' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'title'  =>  [
+                'label'  =>  __( 'Title' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'total'  =>  [
+                'label'  =>  __( 'Total' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
             'type'  =>  [
-                'label'  =>  __( 'Type' )
+                'label'  =>  __( 'Type' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'author'  =>  [
+                'label'  =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
             ],
         ];
     }
@@ -245,22 +428,26 @@ class OrderCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
+        // Don't overwrite
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
+
+        // you can make changes here
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
+                'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      '/dashboard/crud/ns.orders/edit/#'
+                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       =>  'tendoo/crud/ns.orders' . '/#',
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
                 ]
             ]
         ];
@@ -274,13 +461,13 @@ class OrderCrud extends CrudService
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkDelete( Request $request ) 
+    public function bulkAction( Request $request ) 
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
+        $user   =   app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
@@ -294,9 +481,9 @@ class OrderCrud extends CrudService
                 'failed'    =>  0
             ];
 
-            foreach ( $request->input( 'entries_id' ) as $id ) {
+            foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof App\Models\Order ) {
+                if ( $entity instanceof Order ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -305,7 +492,8 @@ class OrderCrud extends CrudService
             }
             return $status;
         }
-        return false;
+
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
     }
 
     /**
@@ -315,9 +503,9 @@ class OrderCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'  =>  'ns.orders.index',
-            'create'    =>  'ns.orders.index/create',
-            'edit'      =>  'ns.orders.index/edit/#'
+            'list'      =>  'ns.orders',
+            'create'    =>  'ns.orders/create',
+            'edit'      =>  'ns.orders/edit/#'
         ];
     }
 
@@ -327,7 +515,15 @@ class OrderCrud extends CrudService
     **/
     public function getBulkActions()
     {
-        return [];
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Groups' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  route( 'crud.bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
     }
 
     /**

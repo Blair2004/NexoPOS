@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 
+use App\Crud\ProductHistoryCrud;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,7 @@ use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
+use App\Models\Procurement;
 
 class ProductService
 {
@@ -57,10 +59,7 @@ class ProductService
         $product    =   Product::find( $id );
         
         if ( ! $product instanceof Product ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the product using the provided id.' )
-            ]);
+            throw new Exception( __( 'Unable to find the product using the provided id.' ) );
         }
 
         return $product;
@@ -140,10 +139,7 @@ class ProductService
         $product    =   $this->getProductUsingSKU( $barcode );
 
         if ( ! $product instanceof Product ) {
-            throw new NotFoundException([
-                'message'       =>  __( 'Unable to find the requested product using the provided SKU.' ),
-                'status'        =>  'failed'
-            ]);
+            throw new Exception( __( 'Unable to find the requested product using the provided SKU.' ) );
         }
 
         return $product;
@@ -273,9 +269,7 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        if ( isset( $data[ 'tax_id' ] ) ) {
-            $this->taxService->computeTax( $product, $data[ 'tax_id' ]);
-        }
+        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
 
         return [
             'status'    =>      'success',
@@ -314,6 +308,17 @@ class ProductService
     }
 
     /**
+     * Will release the product taxes
+     * before a new modification is made to it
+     * @param Product 
+     * @return void
+     */
+    public function releaseProductTaxes( $product ) 
+    {
+        $product->product_taxes()->delete();
+    }
+
+    /**
      * Update a simple product. This doesn't delete 
      * the variable within a product, if this latest has 
      * the type "product" before
@@ -321,7 +326,7 @@ class ProductService
      * @param array fields
      * @return array response
      */
-    public function updateSimpleProduct( $id, $data )
+    public function updateSimpleProduct( $id, $fields )
     {
         /**
          * will get a product if
@@ -329,9 +334,11 @@ class ProductService
          * and not an instance of Product
          */
         $product        =   $this->getProductUsingArgument( 'id', $id );
-        $mode           =   'edit';
+        $mode           =   'update';
 
-        if ( $existingProduct = $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
+        $this->releaseProductTaxes( $product );
+
+        if ( $existingProduct = $this->getProductUsingBarcode( $fields[ 'barcode' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided barcode is already in use.' ) );
             }
@@ -341,26 +348,24 @@ class ProductService
          * search a product using the provided SKU
          * and throw an error if it's the case
          */
-        if ( $existingProduct = $this->getProductUsingSKU( $data[ 'sku' ] ) ) {
+        if ( $existingProduct = $this->getProductUsingSKU( $fields[ 'sku' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided SKU is already in use.' ) );
             }
         }
 
-        foreach( $data as $field => $value ) {
-            if ( ! in_array( $field, [ 'varitaions' ] ) ) {
-                $fields     =   $data;
-                $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields') );
-            }
+        foreach( $fields as $field => $value ) {
+            $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
         $product->author        =   Auth::id();
         $product->save();
 
         /**
-         * compute product tax
+         * compute product tax for either the wholesale_price
+         * and the sale price
          */
-        $this->taxService->computeTax( $product, $data[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',
@@ -465,66 +470,32 @@ class ProductService
         if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
-        } else if ( in_array( $field, [ 'selling_unit_id', 'purchase_unit_id', 'transfer_unit_id' ]) ) {
+        } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) ) {
 
             /**
-             * @important : if the unit assigned to an item is a parent unit
-             * then the user will have to choose between the sub unit while
-             * sale, purchase or transfer.
+             * we only verifiy the unit group
+             * a valid value is provided. Note that for 
+             * variable product, these fields aren't provided
              */
-            
-            
-            try {
+            if ( ! empty( $fields[ $field ] ) ) {
                 /**
-                 * let's try to get the unit defined
-                 * for the unit fields and trigger an
-                 * error if necessary.
+                 * try to get either a unit group or the unit itself
+                 * according to the choice made on the item.
+                 * @todo needs to be moved out from here
                  */
-                switch( $field ) {
-                    case 'selling_unit_id':
-                        $unitType   =   'selling_unit_type';
-                    break;
-                    case 'purchase_unit_id':
-                        $unitType   =   'purchase_unit_type';
-                    break;
-                    case 'transfer_unit_id':
-                        $unitType   =   'transfer_unit_type';
-                    break;
-                }
+                $this->unitService->getGroups( $fields[ 'unit_group' ] );
 
                 /**
-                 * we only verifiy the unit and unit group
-                 * a valid value is provided. Note that for 
-                 * variable product, these fields aren't provided
+                 * as we'll need to store that as a json.
                  */
-                if ( ! empty( $fields[ $unitType ] ) ) {
-                    /**
-                     * try to get either a unit group or the unit itself
-                     * according to the choice made on the item.
-                     */
-                    $unit               =   $fields[ $unitType ] === 'unit' ? 
-                    $this->unitService->get( $value ) : 
-                    $this->unitService->getGroups( $value );
-
-                    $product->$field    =   $unit->id;
-                }
-
-            } catch( Exception $exception ) {
-
-                $type   =   $product[ $unitType ] === 'unit' ? __( 'Unit' ) : __( 'Unit Group' );
-
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  sprintf( __( 'The %s to which the item is assigned through the field "%s" doesn\'t exists or has been deleted.' ), $type, $field ),
-                    'message'      =>  $exception->getMessage()
-                ]);
+                $product->$field    =   json_encode( array_values( $fields[ $field ] ) );
+            } else {
+                $product->$field    =   '[]';
             }
 
-        } else {
+        } else if ( ! is_array( $value ) ) {
             $product->$field    =   $value;
         }
-
-        return $product;
     }
 
     /**
@@ -534,7 +505,7 @@ class ProductService
      */
     public function refreshPrices( Product $product )
     {
-        return $this->taxService->computeTax( $product, $product->tax_id );
+        return $this->taxService->computeTax( $product, $product->tax_group_id );
     }
 
     /**
@@ -569,7 +540,7 @@ class ProductService
     public function saveHistory( $operationType, array $data )
     {
         switch( $operationType ) {
-            case 'procurement':
+            case ProductHistory::ACTION_STOCKED :
                 $this->__saveProcurementHistory( $data );
             break;
         }
@@ -604,8 +575,8 @@ class ProductService
         $history->procurement_id                =   $procurement_id;
         $history->procurement_product_id        =   $procurement_product_id;
         $history->unit_id                       =   $unit_id;
-        $history->operation_type                =   'procured';
-        $history->unit_price                    =   $purchase_price;
+        $history->operation_type                =   ProductHistory::ACTION_STOCKED;
+        $history->unit_price                    =   $unit_price;
         $history->total_price                   =   $total_price;
         $history->before_quantity               =   $currentQuantity;
         $history->quantity                      =   $quantity;
@@ -613,7 +584,7 @@ class ProductService
         $history->author                        =   Auth::id();
         $history->save();
 
-        $this->setQuantity( $product_id, $unit_id, $newQuantity );
+        return $this->setQuantity( $product_id, $unit_id, $newQuantity );
     }
 
     /**
@@ -790,10 +761,7 @@ class ProductService
             ->first();
 
         if ( ! $variation instanceof Product ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested variation using the provided ID.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested variation using the provided ID.' ) );
         }
 
         return $variation;
@@ -841,7 +809,7 @@ class ProductService
      */
     public function procurementStockOuting( ProcurementProduct $oldProduct, $fields )
     {
-        $history    =   $this->stockAdjustment( 'removed', [
+        $history    =   $this->stockAdjustment( ProductHistory::ACTION_REMOVED, [
             'unit_id'                   =>      $oldProduct->unit_id,
             'product_id'                =>      $oldProduct->product_id,
             'unit_price'                =>      $oldProduct->purchase_price,
@@ -873,11 +841,18 @@ class ProductService
          * let's check the different 
          * actions which are allowed on the current request
          */
-        if ( ! in_array( $action, [ 'removed', 'sold', 'procured', 'deleted', 'added', 'damaged', 'returned' ]) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'The action is not an allowed operation.' )
-            ]);
+        if ( ! in_array( $action, [ 
+            ProductHistory::ACTION_DEFECTIVE,
+            ProductHistory::ACTION_DELETED,
+            ProductHistory::ACTION_STOCKED,
+            ProductHistory::ACTION_REMOVED,
+            ProductHistory::ACTION_ADDED,
+            ProductHistory::ACTION_RETURNED,
+            ProductHistory::ACTION_SOLD,
+            ProductHistory::ACTION_TRANSFER_IN,
+            ProductHistory::ACTION_TRANSFER_OUT
+        ]) ) {
+            throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
 
         /**
@@ -900,28 +875,19 @@ class ProductService
             ->subtractBy( $quantity )
             ->get();
 
-        /**
-         * let's prevent annoying stock change
-         * the history should remain clear
-         */
-        if ( $diffQuantity === $this->currency->define(0)->get() ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed, since nothing has been changed on the current unit quantities.' )
-            ]);
-        }
-
-        if ( in_array( $action, [ 'remove', 'sold', 'deleted', 'damaged' ] ) ) {
+        if ( in_array( $action, [ 
+            ProductHistory::ACTION_REMOVED,
+            ProductHistory::ACTION_SOLD,
+            ProductHistory::ACTION_DELETED,
+            ProductHistory::ACTION_DEFECTIVE 
+        ] ) ) {
 
             /**
              * this should prevent negative 
              * stock on the current item
              */
             if ( $diffQuantity < 0 ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to proceed, this action will cause negative stock.' )
-                ]);
+                throw new NotAllowedException( __( 'Unable to proceed, this action will cause negative stock.' ) );
             }
 
             /**
@@ -1042,7 +1008,7 @@ class ProductService
      */
     public function procurementStockEntry( ProcurementProduct $product, $fields )
     {
-        $history                        =   $this->stockAdjustment( 'added', [
+        $history                        =   $this->stockAdjustment( ProductHistory::ACTION_ADDED, [
             'unit_id'                   =>      $product->unit_id,
             'product_id'                =>      $product->product_id,
             'unit_price'                =>      $product->purchase_price,
@@ -1144,11 +1110,8 @@ class ProductService
                 case 'barcode' :
                     return $this->getProductUsingBarcodeOrFail( $identifier );
             }
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'Unable to find the product, as the argument "%s" which value is "%s", doesn\'t have any match.' ), $argument, $identifier )
-            ]);
+        } catch( Exception $exception ) {
+            throw new Exception( sprintf( __( 'Unable to find the product, as the argument "%s" which value is "%s", doesn\'t have any match.' ), $argument, $identifier ) );
         }
     }
 
@@ -1174,15 +1137,12 @@ class ProductService
         $product->type          =   $parent->type;
         $product->category_id   =   $parent->category_id;
         $product->product_type  =   'variation';
-
-        Log::info( 'Product Status', $product->toArray() );
-
         $product->save();
 
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',
@@ -1216,7 +1176,7 @@ class ProductService
          * for the meantime we assume the tax applies on the 
          * main product
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
         return [
             'status'    =>  'success',

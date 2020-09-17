@@ -101,7 +101,7 @@ class User extends Authenticatable
     /**
      * Check if a user can perform an action
      */
-    public static function allowedTo( $action )
+    public static function allowedTo( $action, $type = 'all' )
     {
         if ( ! is_array( $action ) ) {
             // check if there is a wildcard on the permission request
@@ -130,12 +130,15 @@ class User extends Authenticatable
              * While looping, if one permission is not granted, exit the loop and return false
              */
             if ( $action ) {
+                $hasPassed  =   false;
                 foreach ( $action as $_permission ) {
-                    if ( ! self::allowedTo( $_permission ) ) {
+                    if ( ! self::allowedTo( $_permission ) && $type === 'all' ) {
                         return false;
+                    } else if ( self::allowedTo( $_permission ) && $type === 'some' ) {
+                        $hasPassed  =   true;
                     }
                 }    
-                return true;
+                return $type === 'all' ? true : $hasPassed;
             }
             return false;
         }
@@ -211,5 +214,14 @@ class User extends Authenticatable
     public function getActiveAttribute( $value )
     {
         return $value == '1';
+    }
+
+    /**
+     * Quick access to user options
+     */
+    public function options( $option, $default = null ) 
+    {
+        $options    =   new UserOptions( $this->id );
+        return $options->get( $option, $default );
     }
 }

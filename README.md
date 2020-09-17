@@ -9,6 +9,13 @@ This version available for free, aims to be more :
 
 Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
 
+### ⚠️ Warning ⚠️
+As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. 
+
+If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. 
+
+If you need support about NexoPOS 4.x (if you have an issue), post an issue here on Github. If you have an issue with NexoPOS 3.x or any of the related extension, please contact the support via contact@nexopos.com. NexoPOS 4.x doesn't have **yet** any representatives, don't let anyone doing the installation for you.
+
 ## Major Additions & Benefits
 Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
 
@@ -30,13 +37,15 @@ Before showing the step to install the application there is prior consideration 
 
 The following installation steps require additionnal skills on using CLI (Command Line Interface), but when we'll release NexoPOS builds, that will be a full installation with all the dependencies. We might also create an installer with a very simplified user interface.
 
+**Note**: If you're running on linux, chances are the user that runs httpd process doesn't have any right on the directory where NexoPOS 4.x is installed. Ideally, you'll ake sure to `chown php-fpm . -R` if the user running php is "php-fpm" (otherwise it should be "apache").
+
 - Make sure to have PHP 7.4 & Apache Configured with required extensions : php-xml, php-mbstring, php-msqli... These are often already provided by virtual server like Laragon, XAMP, WAMP, MAMP.
 - [Installing Composer](https://getcomposer.org/download/).
 - Install Git (that will be helfpul if you want to contribue or just to download).
-- Run the following CLI command on the directory where NexoPOS should be installed : `sudo git clone https://github.com/blair2004/NexoPOS-v4.git`
-- Run on the CLI `cd NexoPOS-v4`, if that's the directory name created by the previous step.
+- Run the following CLI command on the directory where NexoPOS should be installed : `sudo git clone https://github.com/blair2004/NexoPOS-4x.git`
+- Run on the CLI `cd NexoPOS-4x`, if that's the directory name created by the previous step.
 - Run on the CLI `composer install`, to install Laravel and all dependencies.
-- (Optional) if the project comes without a .env file, you need to create one. You can use the .env.example that should be available at the root. Then run `php artisan key:generate`
+- If the project comes without a .env file, you need to create one. You can use the .env.example that should be available at the root. A quick copy paste command will be to do so `cp .env.example .env`. Then run `php artisan key:generate`
 - (Optional) Run on the CLI `npm i` to install JavaScript dependencies if you plan to contribute.
 - (Optional) Run `php artisan serve` if you don't have your virtual server pointing to your installation. This will run a php server for development purpose only.
 
@@ -47,7 +56,8 @@ Do you plan to contribute ? That's awesome. We're open to any type of contributi
 
 ## Documentation
 
-- [Menu API](/readme/menu.md)
+- [Menu API](/readme/php/MenuAPI.md)
+- [Settings API](/readme/php/SettingsAPI.md)
 - [JavaScript/Classes/FormValidation](/readme/javascript/classes/form-validation.md)
 
 

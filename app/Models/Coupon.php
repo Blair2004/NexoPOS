@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Coupon extends Model
+{
+    protected $table    =   'nexopos_' . 'customers_coupons';
+
+    public function categories()
+    {
+        return $this->hasMany( CouponCategory::class );
+    }
+
+    public function products()
+    {
+        return $this->hasMany( CouponProduct::class );
+    }
+}

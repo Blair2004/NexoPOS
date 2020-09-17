@@ -12,7 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
 use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Facades\Auth;
 
 class CrudController extends DashboardController
@@ -35,15 +35,10 @@ class CrudController extends DashboardController
         /**
          * Catch event before deleting user
          */
-        $crudClass      =   Hook::filter( 'ns.crud-resource', $namespace, $id );
-        $resource       =   new $crudClass;
-
-        if ( empty( $resource ) ) {
-            return response([
-                'status'    =>  'danger',
-                'message'   =>  __( 'The crud resource is either not handled by the system or by any installed module.' )
-            ], 403 );
-        }
+        $service    =   new CrudService;
+        $resource   =   $service->getCrudInstance( $namespace );
+        $modelClass =   $resource->getModel();
+        $model      =   $modelClass::find( $id );
 
         /**
          * Run the filter before deleting
@@ -53,16 +48,12 @@ class CrudController extends DashboardController
             /**
              * the callback should return an empty value to proceed.
              */
-            if( ! empty( $response = $resource->beforeDelete( $namespace, $id ) ) ) {
+            if( ! empty( $response = $resource->beforeDelete( $namespace, $id, $model ) ) ) {
                 return $response;
             }
         }
 
-        /**
-         * We'll retreive the model and delete it
-         */
-        $model          =   $resource->get( 'model' );
-        $model::find( $id )->delete();
+        $model->delete();
 
         return [
             'status'    =>  'success',
@@ -115,7 +106,6 @@ class CrudController extends DashboardController
                 }
             }
         }
-
         
         $entry->author      =   Auth::id();
         $entry->save();

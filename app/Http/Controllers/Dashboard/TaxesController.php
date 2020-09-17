@@ -18,7 +18,9 @@ use Tendoo\Core\Exceptions\NotFoundException;
 use Tendoo\Core\Exceptions\NotAllowedException;
 
 use App\Models\Tax;
+use App\Models\TaxGroup;
 use App\Services\TaxService;
+use Exception;
 
 class TaxesController extends DashboardController
 {
@@ -38,10 +40,7 @@ class TaxesController extends DashboardController
         if ( ! empty( $id ) ) {
             $productTax   =   Tax::find( $id );
             if( ! $productTax instanceof Tax ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the requeted product tax using the provided id' )
-                ]);
+                throw new Exception( __( 'Unable to find the requeted product tax using the provided id' ) );
             }
             return $productTax;
         }
@@ -70,10 +69,7 @@ class TaxesController extends DashboardController
     {
         $productTax     =   Tax::find( $id );
         if ( ! $productTax instanceof Tax ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested product tax using the provided identifier.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested product tax using the provided identifier.' ) );
         }
         return $productTax;
     }
@@ -133,25 +129,13 @@ class TaxesController extends DashboardController
      * @param int tax id
      * @return json
      */
-    public function subTaxes( $taxId )
+    public function getTaxGroup( $taxId = null )
     {
-        $tax    =   Tax::find( $taxId );
-
-        if ( ! $tax instanceof Tax ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the parent taxes using the provided id.' )
-            ]);
+        if ( $taxId === null ) {
+            return TaxGroup::with( 'taxes' )->get();
         }
 
-        if ( $tax->type === 'simple' ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find sub taxes from a tax with a simple form.' )
-            ]);
-        }
-
-        return $tax->subTaxes;
+        return TaxGroup::findOrFail( $taxId )->with( 'taxes' );
     }
 
     /**
@@ -168,6 +152,97 @@ class TaxesController extends DashboardController
             'media_id'      =>  'number',
             'parent_id'     =>  'number'
         ];
+    }
+
+    /**
+     * List all available taxes
+     * @return view
+     */
+    public function listTaxes()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'List of Taxes' ),
+            'createUrl'    =>  url( '/dashboard/taxes/create' ),
+            'description'   =>  __( 'shows the list of available taxes.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes' )
+        ]);
+    }
+
+    /**
+     * Create new taxes
+     * @return view
+     */
+    public function createTax()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax' ),
+            'returnUrl'    =>  url( '/dashboard/taxes' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
+            'description'   =>  __( 'add a new tax to the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
+        ]);
+    }
+
+    /**
+     * Edit existing taxes
+     * @param Tax $tax
+     * @return view
+     */
+    public function editTax( Tax $tax )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Edit Tax' ),
+            'returnUrl'     =>  url( '/dashboard/taxes' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes/' . $tax->id ),
+            'submitMethod'  =>  'PUT',
+            'description'   =>  __( 'adjust an existing tax.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config/' . $tax->id )
+        ]);
+    }
+
+    /**
+     * Create tax groups
+     * @return view
+     */
+    public function taxesGroups()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>  __( 'List of Taxes Groups' ),
+            'createUrl'    =>  url( '/dashboard/taxes/groups/create' ),
+            'description'   =>  __( 'shows the list of available taxes groups.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' )
+        ]);
+    }
+
+    /**
+     * Create tax groups
+     * @return view
+     */
+    public function createTaxGroups()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax Group' ),
+            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'description'   =>  __( 'Add a new tax group on the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+        ]);
+    }
+
+    /**
+     * Edit tax groups
+     * @return view
+     */
+    public function editTaxGroup()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'title'         =>  __( 'Create New Tax Group' ),
+            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
+            'submitMethod'  =>  'PUT',
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'description'   =>  __( 'Add a new tax group on the system.' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+        ]);
     }
 }
 

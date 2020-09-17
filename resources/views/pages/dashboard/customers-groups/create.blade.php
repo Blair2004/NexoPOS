@@ -1,15 +1,15 @@
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
-<div id="dashboard-content" class="h-full flex flex-col">
+<div class="h-full flex flex-col flex-auto">
     @include( '../common/dashboard-header' )
-    <div class="px-4 flex-auto flex flex-col">
+    <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
         <div class="page-inner-header mb-4">
             <h3 class="text-3xl text-gray-800 font-bold">{{ __( 'Create Customer Group' ) }}</h3>
             <p class="text-gray-600">{{ __( 'Save a new customer group' ) }}</p>
         </div>
         <ns-crud-form 
-            return-link="{{ url( '/dashboard/customers/groups' ) }}"
+            return-url="{{ url( '/dashboard/customers/groups' ) }}"
             submit-url="{{ url( '/api/nexopos/v4/crud/ns.customers-groups' ) }}"
             src="{{ url( '/api/nexopos/v4/crud/ns.customers-groups/form-config' ) }}">
             <template v-slot:title>Group Name</template>

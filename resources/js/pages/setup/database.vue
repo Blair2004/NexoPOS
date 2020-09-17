@@ -15,7 +15,6 @@
 
 <script>
 import FormValidation from './../../libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from "./../../bootstrap";
 import { nsRouter } from './../../setup';
 
 export default {
@@ -32,11 +31,11 @@ export default {
                     result => {
                         this.form.enableFields( this.fields );
                         nsRouter.push( '/configuration' );
-                        nsSnackBar.success( result.data.message, 'OKAY', { duration: 5000 }).subscribe();
+                        nsSnackBar.success( result.message, 'OKAY', { duration: 5000 }).subscribe();
                     }, 
                     error => {
                         this.form.enableFields( this.fields );
-                        nsSnackBar.error( error.response.data.message, 'OKAY' ).subscribe();
+                        nsSnackBar.error( error.message, 'OKAY' ).subscribe();
                     }
                 );
             }
@@ -47,7 +46,7 @@ export default {
         }
     },
     mounted() {
-        this.fields     =   this.form.createForm([
+        this.fields     =   this.form.createFields([
             {
                 label: 'Hostname',
                 description: 'Provide the database hostname',
@@ -72,8 +71,8 @@ export default {
                 value : 'nexopos_v4',
                 validation: 'required',
             }, {
-                label: 'Database Name',
-                description: 'Provide the database name.',
+                label: 'Database Prefix',
+                description: 'Provide the database prefix.',
                 name: 'database_prefix',
                 value : 'ns_',
                 validation: 'required',

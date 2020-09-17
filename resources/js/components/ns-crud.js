@@ -30,7 +30,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
     mounted() {
         this.loadConfig();
     },
-    props: [ 'src', 'create-link' ],
+    props: [ 'src', 'create-url' ],
     computed: {
         /**
          * helps to get parsed
@@ -88,8 +88,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         loadConfig() {
             const request   =   nsHttpClient.get( `${this.src}/config` );
             request.subscribe( f => {
-                this.columns        =   f.data.columns;
-                this.bulkActions    =   f.data.bulkActions;
+                this.columns        =   f.columns;
+                this.bulkActions    =   f.bulkActions;
                 this.refresh();
             });
         },
@@ -148,10 +148,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             entries: this.result.data.filter( row => row.$checked ).map( r => r.$id )
                         }).subscribe( result => {
                             console.log( result );
-                            nsSnackBar.info( result.data.message ).subscribe();
+                            nsSnackBar.info( result.message ).subscribe();
                             this.refresh();
                         }, ( error ) => {
-                            console.log( Object.keys( error ) );
+                            nsSnackBar.error( error.message )
+                                .subscribe();
                         })
                     }
                 } else {
@@ -167,8 +168,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         refresh() {
             const request   =   nsHttpClient.get( `${this.getParsedSrc}` );
             request.subscribe( f => {
-                this.result     =   f.data;
-                this.page       =   f.data.current_page;
+                this.result     =   f;
+                this.page       =   f.current_page;
             });
         }
     },
@@ -177,7 +178,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
                 <div class="px-2 flex items-center justify-center">
-                    <a :href="createLink || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
+                    <a :href="createUrl || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 bg-gray-200 flex">
@@ -210,7 +211,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             <th class="text-center px-2 border-gray-200 bg-gray-100 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th @click="sort( identifier )" v-for="(column, identifier) of columns" class="cursor-pointer justify-betweenw-40 border bg-gray-100 text-left px-2 border-gray-200 py-2">
+                            <th @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border bg-gray-100 text-left px-2 border-gray-200 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">

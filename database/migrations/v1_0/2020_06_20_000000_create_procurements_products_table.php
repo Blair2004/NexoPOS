@@ -20,13 +20,17 @@ class CreateProcurementsProductsTable extends Migration
             Schema::create( 'nexopos_procurements_products', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->float( 'purchase_price' )->default(0);
-                $table->float( 'total_price' )->default(0);
-                $table->float( 'quantity' );
-                $table->integer( 'product_id' );
-                $table->integer( 'unit_id' );
+                $table->float( 'gross_purchase_price' )->default(0);
+                $table->float( 'net_purchase_price' )->default(0);
                 $table->integer( 'procurement_id' );
-                $table->float( 'base_quantity' ); // total of base unit compared to the selected unit id
+                $table->integer( 'product_id' );
+                $table->float( 'purchase_price' )->default(0);
+                $table->float( 'quantity' );
+                $table->integer( 'tax_group_id' );
+                $table->string( 'tax_type' ); // inclusive or exclusive;
+                $table->float( 'tax_value' )->default(0);
+                $table->float( 'total_purchase_price' )->default(0);
+                $table->integer( 'unit_id' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

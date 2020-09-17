@@ -16,8 +16,8 @@ class CreateUnitsGroupTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_units_group' ) ) {
-            Schema::create( 'nexopos_units_group', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_units_groups' ) ) {
+            Schema::create( 'nexopos_units_groups', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -35,8 +35,8 @@ class CreateUnitsGroupTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_units_group' ) ) {
-            Schema::drop( 'nexopos_units_group' );
+        if ( Schema::hasTable( 'nexopos_units_groups' ) ) {
+            Schema::drop( 'nexopos_units_groups' );
         }
     }
 }

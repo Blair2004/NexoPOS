@@ -13,6 +13,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\ExpenseService;
 use App\Services\MediaService;
+use App\Services\MenuService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use App\Services\ProcurementService;
@@ -24,6 +25,7 @@ use App\Services\UnitService;
 use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
+use App\Services\ModulesService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( Options::class, function(){
             return new Options();
+        });
+
+        $this->app->singleton( MenuService::class, function(){
+            return new MenuService();
         });
 
         // save Singleton for options
@@ -98,10 +104,11 @@ class AppServiceProvider extends ServiceProvider
             $options    =   app()->make( Options::class );
             return new CurrencyService( 
                 0, [
-                    'decimal_precision'     =>  $options->get( 'nexopos_decimal_precision', 2 ),
-                    'thousand_separator'    =>  $options->get( 'nexopos_thousand_separator', '.' ),
-                    'decimal_separator'     =>  $options->get( 'nexopos_decimal_separator', ',' ),
-                    'currency'              =>  $options->get( 'nexopos_currency', 'USD' ),
+                    'decimal_precision'     =>  $options->get( 'ns_currency_precision', 2 ),
+                    'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
+                    'thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', '.' ),
+                    'ns_currency_position'  =>  $options->get( 'ns_currency_ns_currency_position', '.' ),
+                    'currency'              =>  $options->get( 'ns_currency_symbol' ),
                 ]                
             );
         });
@@ -165,6 +172,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // ...
     }
 }

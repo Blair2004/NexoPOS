@@ -8,20 +8,56 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use App\Services\ExpenseService;
-
+use App\Services\Options;
 
 class ExpensesController extends DashboardController
 {
-    public function __construct( ExpenseService $expense )
+    public function __construct( ExpenseService $expense, Options $options )
     {
+        parent::__construct();
+        $this->optionsService   =   $options;
         $this->expenseService   =   $expense;
     }
 
     public function get( $id = null )
     {
         return $this->expenseService->get( $id );
+    }
+
+    public function listExpenses()
+    {
+        return $this->view( 'pages.dashboard.crud.table', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
+            'title'         =>  __( 'Expenses' ),
+            'description'   =>  __( 'List all created expenses' ),
+            'createUrl'    =>  url( '/dashboard/expenses/create' )
+        ]);
+    }
+
+    public function createExpense()
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses/form-config' ),
+            'title'         =>  __( 'Create Expense' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
+            'description'   =>  __( 'add new expense on the system' ),
+            'returnUrl'    =>  url( '/dashboard/expenses' )
+        ]);
+    }
+
+    public function editExpense( Expense $expense )
+    {
+        return $this->view( 'pages.dashboard.crud.form', [
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
+            'title'         =>  __( 'Edit Expense' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
+            'submitMethod'  =>  'PUT',
+            'description'   =>  __( 'edit an existing expense' ),
+            'returnUrl'    =>  url( '/dashboard/expenses' )
+        ]);
     }
 
     /**

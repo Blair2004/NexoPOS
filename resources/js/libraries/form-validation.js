@@ -6,35 +6,63 @@ export default class FormValidation {
         }).filter( f => f === false ).length === 0;
     }
 
+    validateFieldsErrors( fields ) {
+        return fields.map( field => {
+            this.checkField( field );
+            return field.errors;
+        }).flat();
+    }
+
     validateForm( form ) {
-        this.validateField( form.main );
+        if ( form.main ) {
+            this.validateField( form.main );
+        }
 
-        const tabsInvalidity    =   [];
-
+        const globalErrors          =   [];
+        
         for( let key in form.tabs ) {
-            tabsInvalidity.push(
-                this.validateFields( form.tabs[ key ].fields )
-            );
+            const tabsInvalidity    =   [];
+            const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
+            
+            if ( validErrors.length > 0 ) {
+                tabsInvalidity.push(
+                    validErrors
+                );
+            }
+
+            form.tabs[ key ].errors     =   tabsInvalidity.flat();
+            globalErrors.push( tabsInvalidity.flat() );
         }
 
-        if ( form.main.errors.length > 0 || tabsInvalidity.filter( f => f === false ).length > 0 ) {
-            return false;
-        }
-
-        return true;
+        return globalErrors.flat().filter( error => error !== undefined );
     }
 
     validateField( field ) {
         return this.checkField( field );
     }
 
-    createForm( fields ) {
+    createFields( fields ) {
         return fields.map( field => {
-            field.type      =   field.type || 'text',
-            field.errors    =   field.errors || [];
-            field.disabled  =   field.disabled || false;
+            field.type      =   field.type      || 'text',
+            field.errors    =   field.errors    || [];
+            field.disabled  =   field.disabled  || false;
             return field;
         })
+    }
+
+    createForm( form ) {
+        if ( form.main ) {
+            form.main   =   this.createFields([ form.main ])[0];
+        }
+
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
+                form.tabs[ tab ].errors     =   [];
+            }
+        }
+
+        return form;
     }
 
     enableFields( fields ) {
@@ -46,15 +74,20 @@ export default class FormValidation {
     }
 
     disableForm( form ) {
-        form.main.disabled  =   true;
+        if ( form.main ) {
+            form.main.disabled  =   true;
+        }
+
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields.forEach( field => field.disabled = true );
         }
-        console.log( form.main.disabled );
     }
 
     enableForm( form ) {
-        form.main.disabled  =   false;
+        if ( form.main ) {
+            form.main.disabled  =   false;
+        }
+
         for( let tab in form.tabs ) {
             form.tabs[ tab ].fields.forEach( field => field.disabled = false );
         }
@@ -81,18 +114,35 @@ export default class FormValidation {
     }
 
     extractForm( form ) {
-        const formValue  =   {};
-        formValue[ form.main.name ]     =   form.main.value;
+        let formValue  =   {};
 
-        for( let tab in form.tabs ) {
-            if ( formValue[ tab ] === undefined ) {
-                formValue[ tab ]    =   {};
-            }
-
-            form.tabs[ tab ].fields.forEach( field => {
-                formValue[ tab ][ field.name ]  =   field.value;
-            });
+        if ( form.main ) {
+            formValue[ form.main.name ]     =   form.main.value;
         }
+
+        if ( form.tabs ) {
+            for( let tab in form.tabs ) {
+                if ( formValue[ tab ] === undefined ) {
+                    formValue[ tab ]    =   {};
+                }
+    
+                formValue[ tab ]   =   this.extractFields( form.tabs[ tab ].fields );
+            }
+        }
+
+        return formValue;
+    }
+
+    extractFields( fields, formValue = {} ) {
+        fields.forEach( field => {
+            if ( [ 'multiselect' ].includes( field.type ) ) {
+                formValue[ field.name ]  =   field.options
+                    .filter( option => option.selected )
+                    .map( option => option.value );
+            } else {
+                formValue[ field.name ]  =   field.value;
+            }
+        });
 
         return formValue;
     }
@@ -139,7 +189,6 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
-        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {
@@ -155,19 +204,32 @@ export default class FormValidation {
                     form.tabs[ path[0] ].fields.forEach( field => {
                         if ( field.name === path[1] ) {
                             data.errors[ index ].forEach( errorMessage => {
-                                field.errors.push({
+                                const error     =   {
                                     identifier: 'invalid',
                                     invalid: true,
-                                    message: errorMessage
-                                });
+                                    message: errorMessage,
+                                    name: field.name
+                                };
+
+                                field.errors.push( error );
                             });
                         }
-                    })
+                    });
                 }
 
                 /**
                  * @todo needs to do the same with the title
                  */
+                if ( index === form.main.name ) {
+                    data.errors[ index ].forEach( errorMessage => {
+                        form.main.errors.push({
+                            identifier: 'invalid',
+                            invalid: true,
+                            message: errorMessage,
+                            name: form.main.name
+                        });
+                    });
+                }
             }
         }
     }
@@ -175,11 +237,12 @@ export default class FormValidation {
     fieldPassCheck( field, rule ) {
 
         if ( rule.identifier === 'required' ) {
-            if ( field.value === undefined || field.value.length === 0 ) {
+            if ( field.value === undefined || field.value === null || field.value.length === 0 ) {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,
-                    invalid: true
+                    invalid: true,
+                    name: field.name
                 })
             } else {
                 field.errors.forEach( ( error, index ) => {
@@ -196,7 +259,8 @@ export default class FormValidation {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,
-                    invalid: true
+                    invalid: true,
+                    name: field.name
                 })
             } else {
                 field.errors.forEach( ( error, index ) => {

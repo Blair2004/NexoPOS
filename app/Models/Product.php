@@ -7,6 +7,11 @@ class Product extends Model
 {
     protected $table    =   'nexopos_' . 'products';
 
+    public function category()
+    {
+        return $this->belongsTo( ProductCategory::class, 'category_id', 'id' );
+    }
+
     /**
      * get a product using a barcode
      * @param QueryBuilder
@@ -33,6 +38,11 @@ class Product extends Model
     public function unit_quantities()
     {
         return $this->hasMany( ProductUnitQuantity::class, 'product_id' );
+    }
+
+    public function product_taxes()
+    {
+        return $this->hasMany( ProductTax::class, 'product_id' );
     }
 
     public function variations()

@@ -5,11 +5,12 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Options;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\CustomerGroup;
 use Exception;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerCrud extends CrudService
 {
@@ -66,6 +67,8 @@ class CustomerCrud extends CrudService
     public function __construct()
     {
         parent::__construct();
+
+        $this->options      =   app()->make( Options::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
@@ -127,7 +130,6 @@ class CustomerCrud extends CrudService
                         ], [
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
-                            'validation'    =>  'required',
                             'name'          =>  'group_id',
                             'value'         =>  $entry->group_id ?? '',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
@@ -180,7 +182,15 @@ class CustomerCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        return $inputs;
+        return collect( $inputs )->map( function( $value, $key ) {
+            if ( $key === 'group_id' && empty( $value ) ) {
+                $value    =   $this->options->get( 'ns_customers_default_group', false );
+                if ( $value === false ) {
+                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+                }
+            }
+            return $value;
+        });
     }
 
     /**
@@ -190,7 +200,15 @@ class CustomerCrud extends CrudService
      */
     public function filterPutInputs( $inputs, \App\Models\Customer $entry )
     {
-        return $inputs;
+        return collect( $inputs )->map( function( $value, $key ) {
+            if ( $key === 'group_id' && empty( $value ) ) {
+                $value    =   $this->options->get( 'ns_customers_default_group', false );
+                if ( $value === false ) {
+                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+                }
+            }
+            return $value;
+        });
     }
 
     /**

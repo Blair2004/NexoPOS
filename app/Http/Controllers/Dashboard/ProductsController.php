@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ProductHistoryCrud;
+use App\Crud\ProductUnitQuantitiesCrud;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +17,13 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\Unit;
+use App\Services\CrudService;
+use App\Services\Helper;
 use App\Services\ProductService;
+use App\Services\Options;
 use Exception;
+use Illuminate\Support\Arr;
 
 class ProductsController extends DashboardController
 {
@@ -34,41 +41,39 @@ class ProductsController extends DashboardController
 
     public function saveProduct( Request $request )
     {
+        $primary    =   collect( $request->input( 'variations' ) )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
+
+        $units                                  =   $primary[ 'units' ];
+
         /**
-         * prior field validation
+         * this is made to ensure the array 
+         * provided aren't flatten
          */
-        $fields     =   $request->only([ 
-            'name', 
-            'tax_type', 
-            'sale_price', 
-            'product_type', // simple, extended
-            'type', 
-            'gross_sale_price', 
-            'status', 
-            'stock_management', 
-            'on_expiration', 
-            'barcode', 
-            'barcode_type', 
-            'sku', 
-            'description', 
-            'thumbnail_id', 
-            'category_id', 
-            'tax_id', 
-            'selling_unit_id', 
-            'selling_unit_type',
-            'purchase_unit_id', 
-            'purchase_unit_type',
-            'transfer_unit_id', 
-            'transfer_unit_type',
-            'expiration',
-            'variations'
-        ]);
+        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+
+        $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
+        $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary[ 'product_type' ]                      =   'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
+        $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
+        $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
+        
+        unset( $primary[ '$primary' ] );
 
         /**
          * the method "create" is capable of 
          * creating either a product or a variable product
          */
-        return $this->productService->create( $fields );
+        return $this->productService->create( $primary );
     }
 
     /**
@@ -88,48 +93,62 @@ class ProductsController extends DashboardController
      * @param int product id
      * @return array
      */
-    public function updateProduct( Request $request, $identifier )
+    public function updateProduct( Request $request, Product $product )
     {
-        /**
-         * prior field validation
-         */
-        $fields     =   $request->only([ 
-            'name', 
-            'tax_type', 
-            'sale_price', 
-            'product_type', // product, variation, variable
-            'type', 
-            'gross_sale_price', 
-            'status', 
-            'stock_management', 
-            'on_expiration', 
-            'barcode', 
-            'barcode_type', 
-            'sku', 
-            'description', 
-            'thumbnail_id', 
-            'category_id', 
-            'tax_id', 
-            'selling_unit_id', 
-            'selling_unit_type',
-            'purchase_unit_id', 
-            'purchase_unit_type',
-            'transfer_unit_id', 
-            'transfer_unit_type',
-            'variations',
-            'expiration' 
-        ]);
+        $primary    =   collect( $request->input( 'variations' ) )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
 
-        $product    =   $this->productService->getProductUsingArgument(
-            request()->query( 'as' ) ?? 'id',
-            $identifier
-        );
+        $units                                  =   $primary[ 'units' ];
+        
+        /**
+         * this is made to ensure the array 
+         * provided aren't flatten
+         */
+        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
+        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+
+        $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
+        $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary[ 'product_type' ]                      =   'product';
 
         /**
-         * let's handle single product
-         * for the meantime
+         * let's restore the fields before
+         * storing that.
          */
-        return $this->productService->update( $product, $fields );
+        $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
+        $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
+        $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
+
+        unset( $primary[ '$primary' ] );
+
+        /**
+         * the method "create" is capable of 
+         * creating either a product or a variable product
+         */
+        return $this->productService->update( $product, $primary );
+    }
+
+    public function searchProduct( Request $request )
+    {
+        return Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->orWhere( 'sku', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->limit(5)
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $taxID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $taxID ) );
+                    });
+                }
+
+                return $product;
+            });
     }
 
     public function refreshPrices( $id )
@@ -298,6 +317,75 @@ class ProductsController extends DashboardController
     {
         $parent     =   $this->productService->get( $parent_id );
         return $this->productService->updateProductVariation( $parent, $variation_id, $request->all() );
+    }
+
+    public function listProducts()
+    {
+        ns()->restrict([ 'nexopos.read.products' ]);
+
+        return $this->view( 'pages.dashboard.crud.table', [
+            'title'         =>      __( 'Products List' ),
+            'createUrl'     =>  url( '/dashboard/products/create' ),
+            'desccription'  =>  __( 'List all products available on the system' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products' ),
+        ]);
+    }
+
+    public function editProduct( Product $product )
+    {
+        ns()->restrict([ 'nexopos.update.products' ]);
+
+        return $this->view( 'pages.dashboard.products.create', [
+            'title'         =>  __( 'Edit a product' ),
+            'description'   =>  __( 'Makes modifications to a product' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/products/' . $product->id ),
+            'returnUrl'     =>  url( '/dashboard/products' ),
+            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'submitMethod'  =>  'PUT',
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+        ]);
+    }
+
+    public function createProduct()
+    {
+        ns()->restrict([ 'nexopos.create.products' ]);
+
+        return $this->view( 'pages.dashboard.products.create', [
+            'title'         =>  __( 'Create a product' ),
+            'description'   =>  __( 'Add a new product on the system' ),
+            'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
+            'returnUrl'    =>  url( '/dashboard/products' ),
+            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
+        ]);
+    }
+
+    /**
+     * Renders the crud table for the product
+     * units
+     * @return View
+     */
+    public function productUnits()
+    {
+        return ProductUnitQuantitiesCrud::table();
+    }
+
+    /**
+     * render the crud table for the product
+     * history
+     * @return View
+     */
+    public function productHistory()
+    {
+        return ProductHistoryCrud::table();
+    }
+
+    public function showStockAdjustment()
+    {
+        return $this->view( 'pages.dashboard.products.stock-adjustment', [
+            'title'     =>      __( 'Stock Adjustment' ),
+            'description'   =>  __( 'Adjust stock of existing products.' ),
+        ]);
     }
 }
 

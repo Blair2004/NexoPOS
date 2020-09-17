@@ -177,6 +177,10 @@ return [
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\BladeComponentsProvider::class,
         App\Providers\CrudServiceProvider::class,
+        App\Providers\SettingsPageProvider::class,
+        App\Providers\FormsProvider::class,
+        App\Providers\ModulesServiceProvider::class,
+        App\Providers\EventsProvider::class,
     ],
 
     /*

@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Event;
 use App\Services\CrudService;
 use Exception;
-use Hook;
+use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Arr;
 
 class CrudPutRequest extends BaseCrudRequest

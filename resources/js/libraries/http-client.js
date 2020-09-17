@@ -1,42 +1,46 @@
 import * as rx from "rx";
+import * as rxjs from 'rxjs';
 
 export class HttpClient {
     constructor() {
-        this._subject    =   new rx.Subject; 
+        this._subject    =   new rxjs.Subject; 
     }
 
     defineClient( client ) {
         this._client    =   client;
     }
 
-    post( url, data ) { 
-        return this._request( 'post', url, data );
+    post( url, data, config = {} ) { 
+        return this._request( 'post', url, data, config );
     }
 
-    get( url ) {
-        return this._request( 'get', url );
+    get( url, config = {} ) {
+        return this._request( 'get', url, undefined, config );
     }
 
-    delete( url ) {
-        return this._request( 'delete', url );
+    delete( url, config = {} ) {
+        return this._request( 'delete', url, undefined, config );
     }
 
-    put( url, data ) {
-        return this._request( 'put', url, data );
+    put( url, data , config = {} ) {
+        return this._request( 'put', url, data, config );
     }
 
-    _request( type, url, data = {} ) {
-        this._subject.onNext({ identifier: 'async.start', url, data });
-        return new rx.Observable.create( observer => {
-            this._client[ type ]( url, data ).then( result => {
-                observer.onNext( result );
-                observer.onCompleted();
-                this._subject.onNext({ identifier: 'async.stop' });
+    _request( type, url, data = {}, config = {} ) {
+        this._subject.next({ identifier: 'async.start', url, data });
+        return new rxjs.Observable( observer => {
+            this._client[ type ]( url, data, { 
+                ...this._client.defaults[ type ],
+                config
+            }).then( result => {
+                observer.next( result.data );
+                observer.complete();
+                this._subject.next({ identifier: 'async.stop' });
             }).catch( error => {
-                observer.onError( error );
-                this._subject.onNext({ identifier: 'async.stop' });
+                observer.error( error.response.data );
+                this._subject.next({ identifier: 'async.stop' });
             });
-        });
+        })
     }
 
     subject() {
@@ -44,6 +48,6 @@ export class HttpClient {
     }
 
     emit({ identifier, value }) {
-        this._subject.onNext({ identifier, value });
+        this._subject.next({ identifier, value });
     }
 }

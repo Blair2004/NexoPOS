@@ -4,6 +4,8 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Provider;
 use App\Exceptions\NotFoundException;
+use App\Models\Procurement;
+use Exception;
 
 class ProviderService
 {
@@ -63,10 +65,7 @@ class ProviderService
             ];
         }
         
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to find the provider using the specified id.' )
-        ]);
+        throw new Exception( __( 'Unable to find the provider using the specified id.' ) );
     }
 
     /**
@@ -77,21 +76,13 @@ class ProviderService
      */
     public function delete( $id )
     {
-        try {
-            $provider   =   Provider::findOrFail( $id );
-            $provider->delete();
+        $provider   =   Provider::findOrFail( $id );
+        $provider->delete();
 
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The provider has been deleted.' )
-            ];
-
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to delete. The specified id is not valid or the provider with the same id doesn\'t exists.' )
-            ]);
-        }
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The provider has been deleted.' )
+        ];
     }
 
     /**
@@ -105,10 +96,7 @@ class ProviderService
         $provider   =   Provider::find( $provider_id );
 
         if ( ! $provider instanceof Provider ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the provider using the specified identifier.' )
-            ]);
+            throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
         }
 
         return $provider->procurements;
@@ -119,26 +107,48 @@ class ProviderService
      * @param int provider id
      * @return array
      */
-    public function computeOwned( $provider_id )
+    public function computeSummary( Provider $provider )
     {
         try {
-            $provider   =   Provider::find( $id );
+            $totalOwed      =   $provider->procurements()->where( 'payment_status', 'unpaid' )->sum( 'value' );
+            $totalPaid      =   $provider->procurements()->where( 'payment_status', 'paid' )->sum( 'value' );
 
-            $owned      =   collect( $provider->procurements )->sum( function( $procurement ) {
-                if ( $procurement->status === 'unpaid' ) {
-                    return $procurement->value;
-                }
-                return 0;
-            });
-
-            $provider->owned_amount  =   $owned;
+            $provider->amount_due       =   $totalOwed;
+            $provider->amount_paid      =   $totalPaid;
             $provider->save();
 
-        } catch( NotFoundException $exception ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the provider using the specified identifier.' )
-            ]);
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The provider account has been updated.' )
+            ];
+
+        } catch( Exception $exception ) {
+            throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
         }
+    }
+
+    /**
+     * When a procurement is being edited
+     * we'll consider editing the provide payments
+     * to avoid having the payment made twice for the same procurement
+     * @param Procurement $procurement
+     * @return void
+     */
+    public function cancelPaymentForProcurement( Procurement $procurement )
+    {
+        $provider       =   Provider::find( $procurement->provider_id );
+
+        if ( $procurement->payment_status === 'paid' ) {
+            $provider->amount_paid      -=   $procurement->value;
+        } else {
+            $provider->amount_due       -=  $procurement->value;
+        }
+
+        $provider->save();
+
+        return [
+            'status'    =>  'succecss',
+            'message'   =>  __( 'The procurement payment has been deducted.' )
+        ];
     }
 }

@@ -9,8 +9,18 @@ class Permission extends Model
 {
     protected $table    =   'nexopos_permissions';
 
-    public function scopeNamespace( $query, $param ) {
+    public function scopeWithNamespace( $query, $param ) {
         return $query->where( 'namespace', $param );
+    }
+
+    /**
+     * Get Name
+     * @param string permission name
+     * @return model
+    **/
+    public static function namespace( $name )
+    {
+        return self::where( 'namespace', $name )->first();
     }
 
     public function roles()

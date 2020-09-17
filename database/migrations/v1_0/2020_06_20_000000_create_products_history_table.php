@@ -16,8 +16,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_history' ) ) {
-            Schema::create( 'nexopos_products_history', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( 'nexopos_products_histories' ) ) {
+            Schema::create( 'nexopos_products_histories', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'product_id' );
                 $table->integer( 'procurement_id' )->nullable();
@@ -25,12 +25,9 @@ class CreateProductsHistoryTable extends Migration
                 $table->integer( 'order_id' )->nullable();
                 $table->string( 'operation_type' ); // sale, procurement, adjustment, return, defective
                 $table->integer( 'unit_id' );
-                $table->float( 'before_quantity' );
+                $table->float( 'before_quantity' )->nullable();
                 $table->float( 'quantity' ); // current unit quantity
-                $table->float( 'after_quantity' );
-                // $table->float( 'base_before_quantity' )->nullable();
-                // $table->float( 'base_quantity' )->nullable(); // base unit quantity
-                // $table->float( 'base_after_quantity' )->nullable();
+                $table->float( 'after_quantity' )->nullable();
                 $table->float( 'unit_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->float( 'total_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->integer( 'author' );
@@ -47,8 +44,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_history' ) ) {
-            Schema::drop( 'nexopos_products_history' );
+        if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
+            Schema::drop( 'nexopos_products_histories' );
         }
     }
 }

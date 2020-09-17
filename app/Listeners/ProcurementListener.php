@@ -1,160 +1,157 @@
 <?php
 namespace App\Listeners;
 
+use App\Events\ProcurementAfterCreateEvent;
+use App\Events\ProcurementAfterDeleteEvent;
+use App\Events\ProcurementAfterUpdateEvent;
 use App\Services\ProductService;
 use App\Services\ProcurementService;
-use App\Events\ProcurementDeletionEvent;
-use App\Events\ProcurementDeliveryEvent;
 use App\Events\ProcurementCancelationEvent;
-use App\Events\ProcurementProductSavedEvent;
-use App\Events\ProcurementAfterUpdateProduct;
-use App\Events\ProcurementBeforeDeleteProduct;
-use App\Events\ProcurementBeforeUpdateProduct;
+use App\Events\ProcurementBeforeDeleteEvent;
+use App\Events\ProcurementBeforeUpdateEvent;
+use App\Events\ProcurementBeforeUpdateProductEvent;
+use App\Models\Provider;
+use App\Services\ProviderService;
 
 class ProcurementListener
 {
     protected $procurementService;
+    protected $providerService;
+    protected $productService;
 
     public function __construct( 
         ProcurementService $procurementService,
-        ProductService $productService
+        ProductService $productService,
+        ProviderService $providerService
     )
     {
         $this->procurementService   =   $procurementService;
+        $this->providerService      =   $providerService;
         $this->productService       =   $productService;
     }
 
     public function subscribe( $events )
     {
         $events->listen(
-            ProcurementDeliveryEvent::class,
-            useThis( ProcurementListener::class )->method( 'procurementRefreshing' )
+            ProcurementAfterCreateEvent::class,
+            fn( $event ) => $this->procurementService->refresh( $event->procurement )
         );
 
+        /**
+         * this will compute the provider
+         * summary when a procurement is being created
+         */
+        $events->listen(
+            ProcurementAfterCreateEvent::class,
+            fn( $event ) => $this->providerService->computeSummary( $event->procurement->provider )
+        );
+
+        /**
+         * This will record an history
+         * only when the created procurement as his 
+         * status set to delivered
+         */
+        $events->listen(
+            ProcurementAfterCreateEvent::class,
+            fn( $event ) => $this->procurementService->handleProcurement( $event->procurement )
+        );
+
+        /**
+         * This will cancel the payment made on the provider
+         * that was assigned to the procurement
+         */
+        $events->listen( 
+            ProcurementBeforeUpdateEvent::class,
+            fn( $event ) => $this->providerService->cancelPaymentForProcurement( $event->procurement )
+        );
+
+        /**
+         * This will compute the 
+         * value of the procurement (total_items, value, tax_value )
+         */
+        $events->listen(
+            ProcurementAfterUpdateEvent::class,
+            fn( $event ) => $this->procurementService->refresh( $event->procurement )
+        );
+
+        /**
+         * This will recompute the provider assigned to the procurement
+         * summary (amount_paid & amount_due)
+         */
+        $events->listen( 
+            ProcurementAfterUpdateEvent::class,
+            fn( $event ) => $this->providerService->computeSummary( $event->procurement->provider )
+        );
+
+        /**
+         * This will record an history
+         * only when the updated procurement as his 
+         * status set to delivered
+         */
+        $events->listen(
+            ProcurementAfterUpdateEvent::class,
+            fn( $event ) => $this->procurementService->handleProcurement( $event->procurement )
+        );
+
+        /**
+         * @deprecated
+         */
         $events->listen(
             ProcurementCancelationEvent::class,
-            useThis( ProcurementListener::class )->method( 'procurementRefreshing' )
+            fn( $event ) => $this->procurementService->refresh( $event->procurement )
+        );
+
+        /**
+         * this will helps to remove the
+         * stock which has been previously 
+         * provided on the product
+         * @param ProcurementBeforeUpdateProductEvent
+         * @return void
+         */
+        $events->listen(
+            ProcurementBeforeUpdateProductEvent::class,
+            fn( $event ) => null
         );
 
         $events->listen(
-            ProcurementDeletionEvent::class,
-            useThis( ProcurementListener::class )->method( 'deleteProcurementProducts' )
+            ProcurementAfterUpdateProductEvent::class,
+            fn( $event ) => $this->productService->procurementStockEntry( $event->product, $event->fields )
         );
 
         $events->listen(
-            ProcurementProductSavedEvent::class,
-            useThis( ProcurementListener::class )->method( 'recordProcurementHistory' )
+            ProcurementAfterUpdateProductEvent::class,
+            fn( $event ) => $this->procurementService->refresh( $event->product->procurement )
         );
 
         $events->listen(
-            ProcurementBeforeUpdateProduct::class,
-            useThis( ProcurementListener::class )->method( 'cancelProductProcurement' )
+            ProcurementBeforeDeleteProductEvent::class,
+            fn( $event ) => null
         );
 
         $events->listen(
-            ProcurementAfterUpdateProduct::class,
-            useThis( ProcurementListener::class )->method( 'updateProductProcurement' )
+            ProcurementAfterDeleteProductEvent::class,
+            fn( $event ) => $this->procurementService->refresh( $event->procurement_id )
         );
 
         $events->listen(
-            ProcurementAfterUpdateProduct::class,
-            useThis( ProcurementListener::class )->method( 'refreshProcurement' )
+            ProcurementAfterDeleteEvent::class,
+            fn( $event ) => $this->providerService->computeSummary( 
+                Provider::find( $event->procurement_data[ 'provider_id' ] ) 
+            )
         );
 
         $events->listen(
-            ProcurementBeforeDeleteProduct::class,
-            useThis( ProcurementListener::class )->method( 'handleBeforeDeletingProduct' )
+            ProcurementBeforeDeleteEvent::class,
+            fn( $event ) => $this->procurementService->attemptProductsStockRemoval( $event->procurement ),
         );
 
+        /**
+         * This will delete all the product that are
+         * assigned to a procurement before deleting the procurement itself
+         */
         $events->listen(
-            ProcurementAfterDeleteProduct::class,
-            useThis( ProcurementListener::class )->method( 'handleAfterDeletingProduct' )
-        );
-
-        $events->listen(
-            ProcurementAfterDelete::class,
-            useThis( ProcurementListener::class )->method( 'handleAfterProcurementDeleted' )
-        );
-
-        $events->listen(
-            ProcurementBeforeDelete::class,
-            useThis( ProcurementListener::class )->method( 'handleBeforeProcurementDeleted' )
+            ProcurementBeforeDeleteEvent::class,
+            fn( $event ) => $this->procurementService->deleteProcurementProducts( $event->procurement ),
         );
     }
-
-    public function procurementRefreshing( $event )
-    {
-        $this->procurementService->refresh( $event->procurement );
-    }
-
-    public function deleteProcurementProducts( $event )
-    {
-        $this->procurementService->deleteProducts( $event->procurement );
-    }
-
-    public function recordProcurementHistory( $event )
-    {
-        $this->productService->saveHistory( 'procurement', [
-            'product_id'                =>  $event->product->product_id,
-            'purchase_price'            =>  $event->product->purchase_price,
-            'total_price'               =>  $event->product->total_price,
-            'quantity'                  =>  $event->product->quantity,
-            'unit_id'                   =>  $event->product->unit_id,
-            'procurement_id'            =>  $event->product->procurement->id,
-            'procurement_product_id'    =>  $event->product->id
-        ]);
-    }
-
-    /**
-     * this will helps to remove the
-     * stock which has been previously 
-     * provided on the product
-     * @param ProcurementBeforeUpdateProduct
-     * @return void
-     */
-    public function cancelProductProcurement( $event )
-    {
-        // 
-    }
-
-    /**
-     * this will record a new procurement
-     * product
-     * @param ProcurementAfterUpdateProduct
-     */
-    public function updateProductProcurement( $event )
-    {
-        $this->productService->procurementStockEntry( $event->product, $event->fields );
-    }
-
-    /**
-     * refresh a procurement when a product has
-     * been edited
-     * @param ProcurementAfterUpdateProduct
-     */
-    public function refreshProcurement( $event )
-    {
-        $this->procurementService->refresh( $event->product->procurement );
-    }
-
-    public function handleBeforeDeletingProduct( ProcurementBeforeDeleteProduct $event )
-    {
-        // ...
-    }
-
-    public function handleAfterDeletingProduct( ProcurementBeforeDeleteProduct $event )
-    {
-        $this->procurementService->refresh( $event->procurement_id );                
-    }
-
-    public function handleAfterProcurementDeleted( ProcurementAfterDelete $event ) 
-    {
-        // ...
-    }
-
-    public function handleBeforeProcurementDeleted( ProcurementBeforeDelete $event ) 
-    {
-        // ...
-    }
-
 }

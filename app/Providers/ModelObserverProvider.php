@@ -31,6 +31,7 @@ use App\Models\TransferProduct;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\UnitGroup;
+use App\Observers\ProcurementProductObserver;
 use App\Observers\RewardSystemObserver;
 // observers
 use App\Observers\UUIDObserver;
@@ -58,6 +59,7 @@ class ModelObserverProvider extends ServiceProvider
         OrderPayment::observe( UUIDObserver::class );
         Procurement::observe( UUIDObserver::class );
         ProcurementProduct::observe( UUIDObserver::class );
+        ProcurementProduct::observe( ProcurementProductObserver::class );
         Product::observe( UUIDObserver::class );
         ProductHistory::observe( UUIDObserver::class );
         ProductCategory::observe( UUIDObserver::class );

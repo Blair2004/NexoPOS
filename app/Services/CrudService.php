@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotEnoughPermissionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -8,7 +10,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
-use Hook;
+use Illuminate\Support\Facades\View;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService 
 {
@@ -21,7 +24,6 @@ class CrudService
         'single-action'     =>  true, // enable single action
         'checkboxes'        =>  true // enable checkboxes
     ];
-
 
     /**
      * Actions Array
@@ -171,7 +173,7 @@ class CrudService
                 /**
                  * We're caching the columns to avoid once again many DB request
                  */
-                if( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) ) {
+                if( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) && true == false ) {
                     $columns        =   Cache::get( 'table-columns-' . $relation[0] );
                 } else {
                     /**
@@ -401,6 +403,7 @@ class CrudService
     public function extractCrudValidation( $crud, $entry = null )
     {
         $form   =   $crud->getForm( $entry );
+
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
@@ -430,7 +433,10 @@ class CrudService
     {
         $form   =   $resource->getForm( $entry );
         $data   =   [];
-        $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+
+        if ( isset( $form[ 'main' ] ) ) {
+            $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+        }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
             foreach( $tab[ 'fields' ] as $field ) {
@@ -461,5 +467,130 @@ class CrudService
         }
 
         return $rules;
+    }
+
+    public static function table( $config = [] )
+    {
+        $className  =   get_called_class();
+        $instance   =   new $className;
+
+        /**
+         * "manage.profile" is the default permission
+         * granted to every user. If a permission check return "false"
+         * that means performing that action is disabled.
+         */
+        if ( $instance->getPermission( 'read' ) !== false ) {
+            ns()->restrict([ $instance->getPermission( 'read' ) ]);
+        } else {
+            throw new NotAllowedException();
+        }
+        
+        return View::make( 'pages.dashboard.crud.table', [
+            /**
+             * that displays the title on the page.
+             * It fetches the value from the labels
+             */
+            'title'         =>  $instance->getLabels()[ 'list_title' ],
+
+            /**
+             * That displays the page description. This allow pull the value
+             * from the labels.
+             */
+            'description'   =>  $instance->getLabels()[ 'list_description' ],
+
+            /**
+             * This create the src URL using the "namespace".
+             */
+            'src'           =>  url( '/api/nexopos/v4/crud/' . $instance->namespace ),
+
+            /**
+             * This pull the creation link. That link should takes the user
+             * to the creation form.
+             */
+            'createUrl'     =>  $instance->getLinks()[ 'create' ] ?? '#',
+
+            /**
+             * Provided to render the side menu.
+             */
+            'menus'         =>  app()->make( MenuService::class )
+        ]);
+    }
+
+    /**
+     * Will render a form UI
+     * @param Model|null reference passed
+     * @param array custom configuration
+     */
+    public static function form( $entry = null, $config = [] )
+    {
+        $className          =   get_called_class();
+        $instance           =   new $className;
+        $permissionType     =   $entry === null ? 'create' : 'update';
+
+        /**
+         * if a permission for creating or updating is 
+         * not disabled let's make a validation.
+         */
+        if ( $instance->getPermission( $permissionType ) !== false ) {
+            ns()->restrict([ $instance->getPermission( $permissionType ) ]);
+        }
+        
+        /**
+         * use crud form to render
+         * a valid form.
+         */
+        return View::make( 'pages.dashboard.crud.form', [
+            /**
+             * this pull the title either
+             * the form is made to create or edit a resource.
+             */
+            'title'         =>  $config[ 'title' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_title' ] : $instance->getLabels()[ 'edit_title' ] ),
+
+            /**
+             * this pull the description either the form is made to
+             * create or edit a resource.
+             */
+            'description'   =>  $config[ 'description' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_description' ] : $instance->getLabels()[ 'edit_description' ] ),
+
+            /**
+             * this automatically build a source URL based on the identifier
+             * provided. But can be overwritten with the config.
+             */
+            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( $entry ? $entry->id . '/form-config' : 'form-config' ) ) ),
+
+            /**
+             * this use the built in links to create a return URL.
+             * It can also be overwritten by the configuration.
+             */
+            'returnUrl'     =>  $config[ 'returnUrl' ] ?? ( $instance->getLinks()[ 'list' ] ?? '#' ),
+
+            /**
+             * This will pull the submitURL that might be different wether the $entry is
+             * provided or not. can be overwritten on the configuration ($config).
+             */
+            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : $instance->getLinks()[ 'put' ] ),
+            
+            /**
+             * By default the method used is "post" but might change to "put" according to 
+             * wether the entry is provided (Model). Can be changed from the $config.
+             */
+            'submitMethod'  =>  $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
+
+            /**
+             * This will pass an instance of the MenuService.
+             */
+            'menus'         =>  app()->make( MenuService::class )
+        ]);
+    }
+
+    /**
+     * retrieve one of the declared permissions
+     * the name must either be "create", "read", "update", "delete".
+     * @param string $name
+     * @return string $permission
+     */
+    public function getPermission( $name ) 
+    {
+        return $this->permissions[ $name ] ?? false;
     }
 }
