@@ -380,7 +380,6 @@ pre {
 button {
   background-color: transparent;
   background-image: none;
-  padding: 0;
 }
 
 /**
@@ -7897,6 +7896,45 @@ video {
 
 .scrolling-auto{
   -webkit-overflow-scrolling: auto !important;
+}
+
+.overscroll-auto{
+  -ms-scroll-chaining: chained !important;
+      overscroll-behavior: auto !important;
+}
+
+.overscroll-contain{
+  -ms-scroll-chaining: none !important;
+      overscroll-behavior: contain !important;
+}
+
+.overscroll-none{
+  -ms-scroll-chaining: none !important;
+      overscroll-behavior: none !important;
+}
+
+.overscroll-y-auto{
+  overscroll-behavior-y: auto !important;
+}
+
+.overscroll-y-contain{
+  overscroll-behavior-y: contain !important;
+}
+
+.overscroll-y-none{
+  overscroll-behavior-y: none !important;
+}
+
+.overscroll-x-auto{
+  overscroll-behavior-x: auto !important;
+}
+
+.overscroll-x-contain{
+  overscroll-behavior-x: contain !important;
+}
+
+.overscroll-x-none{
+  overscroll-behavior-x: none !important;
 }
 
 .p-0{
@@ -18044,6 +18082,123 @@ video {
   transition-delay: 1000ms !important;
 }
 
+@-webkit-keyframes spin{
+  from{
+    transform: rotate(0deg);
+  }
+
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin{
+  from{
+    transform: rotate(0deg);
+  }
+
+  to{
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes ping{
+  0%{
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  75%, 100%{
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes ping{
+  0%{
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  75%, 100%{
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes pulse{
+  0%, 100%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: .5;
+  }
+}
+
+@keyframes pulse{
+  0%, 100%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: .5;
+  }
+}
+
+@-webkit-keyframes bounce{
+  0%, 100%{
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50%{
+    transform: translateY(0);
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+@keyframes bounce{
+  0%, 100%{
+    transform: translateY(-25%);
+    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
+            animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50%{
+    transform: translateY(0);
+    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
+            animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-none{
+  -webkit-animation: none !important;
+          animation: none !important;
+}
+
+.animate-spin{
+  -webkit-animation: spin 1s linear infinite !important;
+          animation: spin 1s linear infinite !important;
+}
+
+.animate-ping{
+  -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+          animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+}
+
+.animate-pulse{
+  -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+}
+
+.animate-bounce{
+  -webkit-animation: bounce 1s infinite !important;
+          animation: bounce 1s infinite !important;
+}
+
 .lar,
 .las,
 .lab {
@@ -23981,6 +24136,34 @@ body {
 }
 
 @media (min-width: 640px){
+  .sm\:container{
+    width: 100%;
+  }
+
+  @media (min-width: 640px){
+    .sm\:container{
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px){
+    .sm\:container{
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px){
+    .sm\:container{
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px){
+    .sm\:container{
+      max-width: 1280px;
+    }
+  }
+
   .sm\:space-y-0 > :not(template) ~ :not(template){
     --space-y-reverse: 0 !important;
     margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
@@ -31257,6 +31440,45 @@ body {
 
   .sm\:scrolling-auto{
     -webkit-overflow-scrolling: auto !important;
+  }
+
+  .sm\:overscroll-auto{
+    -ms-scroll-chaining: chained !important;
+        overscroll-behavior: auto !important;
+  }
+
+  .sm\:overscroll-contain{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: contain !important;
+  }
+
+  .sm\:overscroll-none{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: none !important;
+  }
+
+  .sm\:overscroll-y-auto{
+    overscroll-behavior-y: auto !important;
+  }
+
+  .sm\:overscroll-y-contain{
+    overscroll-behavior-y: contain !important;
+  }
+
+  .sm\:overscroll-y-none{
+    overscroll-behavior-y: none !important;
+  }
+
+  .sm\:overscroll-x-auto{
+    overscroll-behavior-x: auto !important;
+  }
+
+  .sm\:overscroll-x-contain{
+    overscroll-behavior-x: contain !important;
+  }
+
+  .sm\:overscroll-x-none{
+    overscroll-behavior-x: none !important;
   }
 
   .sm\:p-0{
@@ -41403,9 +41625,62 @@ body {
   .sm\:delay-1000{
     transition-delay: 1000ms !important;
   }
+
+  .sm\:animate-none{
+    -webkit-animation: none !important;
+            animation: none !important;
+  }
+
+  .sm\:animate-spin{
+    -webkit-animation: spin 1s linear infinite !important;
+            animation: spin 1s linear infinite !important;
+  }
+
+  .sm\:animate-ping{
+    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+
+  .sm\:animate-pulse{
+    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+
+  .sm\:animate-bounce{
+    -webkit-animation: bounce 1s infinite !important;
+            animation: bounce 1s infinite !important;
+  }
 }
 
 @media (min-width: 768px){
+  .md\:container{
+    width: 100%;
+  }
+
+  @media (min-width: 640px){
+    .md\:container{
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px){
+    .md\:container{
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px){
+    .md\:container{
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px){
+    .md\:container{
+      max-width: 1280px;
+    }
+  }
+
   .md\:space-y-0 > :not(template) ~ :not(template){
     --space-y-reverse: 0 !important;
     margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
@@ -48682,6 +48957,45 @@ body {
 
   .md\:scrolling-auto{
     -webkit-overflow-scrolling: auto !important;
+  }
+
+  .md\:overscroll-auto{
+    -ms-scroll-chaining: chained !important;
+        overscroll-behavior: auto !important;
+  }
+
+  .md\:overscroll-contain{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: contain !important;
+  }
+
+  .md\:overscroll-none{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: none !important;
+  }
+
+  .md\:overscroll-y-auto{
+    overscroll-behavior-y: auto !important;
+  }
+
+  .md\:overscroll-y-contain{
+    overscroll-behavior-y: contain !important;
+  }
+
+  .md\:overscroll-y-none{
+    overscroll-behavior-y: none !important;
+  }
+
+  .md\:overscroll-x-auto{
+    overscroll-behavior-x: auto !important;
+  }
+
+  .md\:overscroll-x-contain{
+    overscroll-behavior-x: contain !important;
+  }
+
+  .md\:overscroll-x-none{
+    overscroll-behavior-x: none !important;
   }
 
   .md\:p-0{
@@ -58828,9 +59142,62 @@ body {
   .md\:delay-1000{
     transition-delay: 1000ms !important;
   }
+
+  .md\:animate-none{
+    -webkit-animation: none !important;
+            animation: none !important;
+  }
+
+  .md\:animate-spin{
+    -webkit-animation: spin 1s linear infinite !important;
+            animation: spin 1s linear infinite !important;
+  }
+
+  .md\:animate-ping{
+    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+
+  .md\:animate-pulse{
+    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+
+  .md\:animate-bounce{
+    -webkit-animation: bounce 1s infinite !important;
+            animation: bounce 1s infinite !important;
+  }
 }
 
 @media (min-width: 1024px){
+  .lg\:container{
+    width: 100%;
+  }
+
+  @media (min-width: 640px){
+    .lg\:container{
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px){
+    .lg\:container{
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px){
+    .lg\:container{
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px){
+    .lg\:container{
+      max-width: 1280px;
+    }
+  }
+
   .lg\:space-y-0 > :not(template) ~ :not(template){
     --space-y-reverse: 0 !important;
     margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
@@ -66107,6 +66474,45 @@ body {
 
   .lg\:scrolling-auto{
     -webkit-overflow-scrolling: auto !important;
+  }
+
+  .lg\:overscroll-auto{
+    -ms-scroll-chaining: chained !important;
+        overscroll-behavior: auto !important;
+  }
+
+  .lg\:overscroll-contain{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: contain !important;
+  }
+
+  .lg\:overscroll-none{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: none !important;
+  }
+
+  .lg\:overscroll-y-auto{
+    overscroll-behavior-y: auto !important;
+  }
+
+  .lg\:overscroll-y-contain{
+    overscroll-behavior-y: contain !important;
+  }
+
+  .lg\:overscroll-y-none{
+    overscroll-behavior-y: none !important;
+  }
+
+  .lg\:overscroll-x-auto{
+    overscroll-behavior-x: auto !important;
+  }
+
+  .lg\:overscroll-x-contain{
+    overscroll-behavior-x: contain !important;
+  }
+
+  .lg\:overscroll-x-none{
+    overscroll-behavior-x: none !important;
   }
 
   .lg\:p-0{
@@ -76253,9 +76659,62 @@ body {
   .lg\:delay-1000{
     transition-delay: 1000ms !important;
   }
+
+  .lg\:animate-none{
+    -webkit-animation: none !important;
+            animation: none !important;
+  }
+
+  .lg\:animate-spin{
+    -webkit-animation: spin 1s linear infinite !important;
+            animation: spin 1s linear infinite !important;
+  }
+
+  .lg\:animate-ping{
+    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+
+  .lg\:animate-pulse{
+    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+
+  .lg\:animate-bounce{
+    -webkit-animation: bounce 1s infinite !important;
+            animation: bounce 1s infinite !important;
+  }
 }
 
 @media (min-width: 1280px){
+  .xl\:container{
+    width: 100%;
+  }
+
+  @media (min-width: 640px){
+    .xl\:container{
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px){
+    .xl\:container{
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px){
+    .xl\:container{
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px){
+    .xl\:container{
+      max-width: 1280px;
+    }
+  }
+
   .xl\:space-y-0 > :not(template) ~ :not(template){
     --space-y-reverse: 0 !important;
     margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
@@ -83532,6 +83991,45 @@ body {
 
   .xl\:scrolling-auto{
     -webkit-overflow-scrolling: auto !important;
+  }
+
+  .xl\:overscroll-auto{
+    -ms-scroll-chaining: chained !important;
+        overscroll-behavior: auto !important;
+  }
+
+  .xl\:overscroll-contain{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: contain !important;
+  }
+
+  .xl\:overscroll-none{
+    -ms-scroll-chaining: none !important;
+        overscroll-behavior: none !important;
+  }
+
+  .xl\:overscroll-y-auto{
+    overscroll-behavior-y: auto !important;
+  }
+
+  .xl\:overscroll-y-contain{
+    overscroll-behavior-y: contain !important;
+  }
+
+  .xl\:overscroll-y-none{
+    overscroll-behavior-y: none !important;
+  }
+
+  .xl\:overscroll-x-auto{
+    overscroll-behavior-x: auto !important;
+  }
+
+  .xl\:overscroll-x-contain{
+    overscroll-behavior-x: contain !important;
+  }
+
+  .xl\:overscroll-x-none{
+    overscroll-behavior-x: none !important;
   }
 
   .xl\:p-0{
@@ -93677,5 +94175,30 @@ body {
 
   .xl\:delay-1000{
     transition-delay: 1000ms !important;
+  }
+
+  .xl\:animate-none{
+    -webkit-animation: none !important;
+            animation: none !important;
+  }
+
+  .xl\:animate-spin{
+    -webkit-animation: spin 1s linear infinite !important;
+            animation: spin 1s linear infinite !important;
+  }
+
+  .xl\:animate-ping{
+    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+
+  .xl\:animate-pulse{
+    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+
+  .xl\:animate-bounce{
+    -webkit-animation: bounce 1s infinite !important;
+            animation: bounce 1s infinite !important;
   }
 }
