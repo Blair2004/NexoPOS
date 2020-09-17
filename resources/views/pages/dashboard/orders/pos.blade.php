@@ -15,11 +15,32 @@
                             <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">{{ __( 'Total' ) }}</div>
                         </div>
                         <div class="flex-auto bg-white">
-                            
+                            <div class="overflow-y-scroll">
+                                @for( $i = 0; $i < 4; $i++ )
+                                <div class="text-gray-700 flex">
+                                    <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                                        <h3 class="font-semibold">Some Product</h3>
+                                        <div class="-mx-1 flex">
+                                            <div class="px-1">
+                                                <a class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Price : $25</a>
+                                            </div>
+                                            <div class="px-1"> 
+                                                <a class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount 5% : $10</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-1/6 p-2 border-b border-gray-200 flex items-center justify-center cursor-pointer hover:bg-blue-100">
+                                        <span class="border-b border-dashed border-blue-400 p-2">12</span>
+                                    </div>
+                                    <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 flex items-center justify-center">$20</div>
+                                </div>
+                                @endfor
+                            </div>
                         </div>
                         <div class="h-16 flex border-t border-gray-200">
                             <div class="flex items-center font-bold text-gray-700 cursor-pointer justify-center hover:bg-green-100 border-r border-gray-200 flex-auto">Pay</div>
                             <div class="flex items-center font-bold text-gray-700 cursor-pointer justify-center border-r border-gray-200 hover:bg-teal-100 flex-auto">Hold</div>
+                            <div class="flex items-center font-bold text-gray-700 cursor-pointer justify-center border-r border-gray-200 hover:bg-indigo-100 flex-auto">Button</div>
                             <div class="flex items-center font-bold text-gray-700 cursor-pointer justify-center border-gray-200 hover:bg-red-100 flex-auto">Void</div>
                         </div>
                     </div>
