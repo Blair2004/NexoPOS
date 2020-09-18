@@ -1,31 +1,51 @@
-    @extends( 'layout.base' )
+@extends( 'layout.base' )
+
+@section( 'layout.base.header' )
+    @parent
+    <script>
+    const POS               =   new Object;
+    POS.order               =   new Object;
+    POS.order.products      =   [];
+    POS.order.customer      =   new Object;
+    POS.breadcrumb          =   [];
+    POS.grid                =   [];
+    POS.header              =   new Object;
+    POS.header.buttons      =   [];
+    POS.activeCategory      =   new Object;
+    </script>
+    @yield( 'layout.base.header.pos' )
+@endsection
 
 @section( 'layout.base.body' )
-@if( true === false )
-<div class="h-full bg-gray-100 flex flex-col">
-    <div class="h-36 bg-blue-200 flex-shrink-0">C</div>
-    <div class="flex flex-auto overflow-hidden bg-red-200">
-        <div class="w-full">
-            <div class="h-full bg-gray-100 flex flex-col">
-                <div class="h-36 bg-blue-200 flex-shrink-0">C</div>
-                <div class="flex overflow-hidden bg-red-200">
-                    <div class="overflow-auto w-full">
-                    <div style="height: 500px" class="flex flex-auto">Hello World</div>
-                    <div style="height: 500px" class="flex flex-auto">Hello World</div>
-                    <div style="height: 500px" class="flex flex-auto">Hello World</div>
-                    <div style="height: 500px" class="flex flex-auto">Hello World</div>
-                    </div>
-                </div>
-                <div class="h-36 bg-blue-200 flex-shrink-0">D</div>
+<div class="h-full bg-gray-300 flex flex-col" id="pos-container">
+    <div class="h-12 flex-shrink-0 px-2 pt-2 flex">
+        <div class="-mx-2 flex">
+            <div class="flex px-2">
+                <button class="flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
+                    <i class="mr-1 text-xl las la-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </button>
+            </div>
+            <div class="flex px-2">
+                <button class="flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
+                    <i class="mr-1 text-xl lar la-hand-pointer"></i>
+                    <span>Pending Orders</span>
+                </button>
+            </div>
+            <div class="flex px-2">
+                <button class="flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
+                    <i class="mr-1 text-xl las la-truck"></i>
+                    <span> Delivery</span>
+                </button>
+            </div>
+            <div class="flex px-2">
+                <button class="flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
+                    <i class="mr-1 text-xl lar la-user-circle"></i>
+                    <span>Customers</span>
+                </button>
             </div>
         </div>
     </div>
-    <div class="h-36 bg-blue-200 flex-shrink-0">D</div>
-</div>
-@endif
-@if( true === true )
-<div class="h-full bg-gray-200 flex flex-col">
-    <div class="h-12 flex-shrink-0"></div>
     <div class="flex-auto overflow-hidden flex p-2">
         <div class="flex flex-auto overflow-hidden -m-2">
             <div class="w-1/2 flex overflow-hidden p-2">
@@ -57,11 +77,47 @@
                             </div>
                             @endfor
                         </div>
+                        <div class="flex">
+                            <table class="table w-full text-sm text-gray-700">
+                                <tr>
+                                    <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                                    <td width="200" class="border border-gray-400 p-2">Sub Total</td>
+                                    <td width="200" class="border border-gray-400 p-2"></td>
+                                </tr>
+                                <tr>
+                                    <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                                    <td width="200" class="border border-gray-400 p-2">Discount</td>
+                                    <td width="200" class="border border-gray-400 p-2"></td>
+                                </tr>
+                                <tr>
+                                    <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                                    <td width="200" class="border border-gray-400 p-2">Shipping</td>
+                                    <td width="200" class="border border-gray-400 p-2"></td>
+                                </tr>
+                                <tr class="bg-green-200">
+                                    <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                                    <td width="200" class="border border-gray-400 p-2">Total</td>
+                                    <td width="200" class="border border-gray-400 p-2"></td>
+                                </tr>
+                            </table>
+                        </div>
                         <div class="h-16 flex flex-shrink-0 border-t border-gray-200">
-                            <div class="flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">Pay</div>
-                            <div class="flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">Hold</div>
-                            <div class="flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto">Discount</div>
-                            <div class="flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">Void</div>
+                            <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
+                                <i class="mr-2 text-3xl las la-cash-register"></i> 
+                                <span class="text-2xl">Pay</span>
+                            </div>
+                            <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
+                                <i class="mr-2 text-3xl las la-pause"></i> 
+                                <span class="text-2xl">Hold</span>
+                            </div>
+                            <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
+                                <i class="mr-2 text-3xl las la-percent"></i> 
+                                <span class="text-2xl">Discount</span>
+                            </div>
+                            <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
+                                <i class="mr-2 text-3xl las la-trash"></i> 
+                                <span class="text-2xl">Void</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,5 +151,20 @@
         </div>
     </div>
 </div>
-@endif
+
+@endsection
+
+@section( 'layout.base.footer' )
+    @parent
+<script>
+    const nsPopup   =   new Popup({
+        primarySelector: '#pos-container'
+    });
+
+    nsPopup.show();
+
+    setTimeout( () => {
+        nsPopup.close();
+    }, 2000 );
+</script>
 @endsection

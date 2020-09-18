@@ -6,6 +6,7 @@ import VueRouter from "vue-router";
 import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
 import { fromEvent } from "rxjs";
 import * as moment from 'moment';
+import * as Popup from "./libraries/popup";
 
 Vue.use( VueRouter );
 
@@ -71,5 +72,6 @@ window.nsState          =   nsState;
 window.nsScreen         =   nsScreen;
 window.ChartJS          =   ChartJS;
 window.EventEmitter     =   EventEmitter;
+window.Popup            =   Popup;
 
 export { Vue, VueRouter, Axios, ChartJS, EventEmitter, SnackBar, nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen };
