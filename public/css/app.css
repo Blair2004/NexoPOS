@@ -7885,54 +7885,10 @@ video {
   border-color: rgba(254, 252, 191, var(--border-opacity)) !important;
 }
 
-<<<<<<< HEAD
-.overscroll-auto{
-  -ms-scroll-chaining: chained !important;
-      overscroll-behavior: auto !important;
-}
-
-.overscroll-contain{
-  -ms-scroll-chaining: none !important;
-      overscroll-behavior: contain !important;
-}
-
-.overscroll-none{
-  -ms-scroll-chaining: none !important;
-      overscroll-behavior: none !important;
-}
-
-.overscroll-y-auto{
-  overscroll-behavior-y: auto !important;
-}
-
-.overscroll-y-contain{
-  overscroll-behavior-y: contain !important;
-}
-
-.overscroll-y-none{
-  overscroll-behavior-y: none !important;
-}
-
-.overscroll-x-auto{
-  overscroll-behavior-x: auto !important;
-}
-
-.overscroll-x-contain{
-  overscroll-behavior-x: contain !important;
-}
-
-.overscroll-x-none{
-  overscroll-behavior-x: none !important;
-}
-
-.p-0{
-  padding: 0 !important;
-=======
 .border-yellow-300{
   --border-opacity: 1 !important;
   border-color: #faf089 !important;
   border-color: rgba(250, 240, 137, var(--border-opacity)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
 }
 
 .border-yellow-400{
@@ -18133,140 +18089,10 @@ video {
   color: rgba(76, 81, 191, var(--text-opacity)) !important;
 }
 
-<<<<<<< HEAD
-@-webkit-keyframes spin{
-  from{
-    transform: rotate(0deg);
-  }
-
-  to{
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spin{
-  from{
-    transform: rotate(0deg);
-  }
-
-  to{
-    transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes ping{
-  0%{
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  75%, 100%{
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes ping{
-  0%{
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  75%, 100%{
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@-webkit-keyframes pulse{
-  0%, 100%{
-    opacity: 1;
-  }
-
-  50%{
-    opacity: .5;
-  }
-}
-
-@keyframes pulse{
-  0%, 100%{
-    opacity: 1;
-  }
-
-  50%{
-    opacity: .5;
-  }
-}
-
-@-webkit-keyframes bounce{
-  0%, 100%{
-    transform: translateY(-25%);
-    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
-            animation-timing-function: cubic-bezier(0.8,0,1,1);
-  }
-
-  50%{
-    transform: translateY(0);
-    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
-            animation-timing-function: cubic-bezier(0,0,0.2,1);
-  }
-}
-
-@keyframes bounce{
-  0%, 100%{
-    transform: translateY(-25%);
-    -webkit-animation-timing-function: cubic-bezier(0.8,0,1,1);
-            animation-timing-function: cubic-bezier(0.8,0,1,1);
-  }
-
-  50%{
-    transform: translateY(0);
-    -webkit-animation-timing-function: cubic-bezier(0,0,0.2,1);
-            animation-timing-function: cubic-bezier(0,0,0.2,1);
-  }
-}
-
-.animate-none{
-  -webkit-animation: none !important;
-          animation: none !important;
-}
-
-.animate-spin{
-  -webkit-animation: spin 1s linear infinite !important;
-          animation: spin 1s linear infinite !important;
-}
-
-.animate-ping{
-  -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-          animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-}
-
-.animate-pulse{
-  -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-}
-
-.animate-bounce{
-  -webkit-animation: bounce 1s infinite !important;
-          animation: bounce 1s infinite !important;
-}
-
-.lar,
-.las,
-.lab {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  line-height: 1;
-=======
 .text-indigo-800{
   --text-opacity: 1 !important;
   color: #434190 !important;
   color: rgba(67, 65, 144, var(--text-opacity)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
 }
 
 .text-indigo-900{
@@ -47136,46 +46962,10 @@ body {
     color: rgba(40, 94, 97, var(--text-opacity)) !important;
   }
 
-<<<<<<< HEAD
-@media (min-width: 640px){
-  .sm\:container{
-    width: 100%;
-  }
-
-  @media (min-width: 640px){
-    .sm\:container{
-      max-width: 640px;
-    }
-  }
-
-  @media (min-width: 768px){
-    .sm\:container{
-      max-width: 768px;
-    }
-  }
-
-  @media (min-width: 1024px){
-    .sm\:container{
-      max-width: 1024px;
-    }
-  }
-
-  @media (min-width: 1280px){
-    .sm\:container{
-      max-width: 1280px;
-    }
-  }
-
-  .sm\:space-y-0 > :not(template) ~ :not(template){
-    --space-y-reverse: 0 !important;
-    margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
-    margin-bottom: calc(0px * var(--space-y-reverse)) !important;
-=======
   .sm\:focus\:text-teal-900:focus{
     --text-opacity: 1 !important;
     color: #234e52 !important;
     color: rgba(35, 78, 82, var(--text-opacity)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .sm\:focus\:text-blue-100:focus{
@@ -54409,52 +54199,8 @@ body {
     --gradient-to-color: #f6ad55 !important;
   }
 
-<<<<<<< HEAD
-  .sm\:overscroll-auto{
-    -ms-scroll-chaining: chained !important;
-        overscroll-behavior: auto !important;
-  }
-
-  .sm\:overscroll-contain{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: contain !important;
-  }
-
-  .sm\:overscroll-none{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: none !important;
-  }
-
-  .sm\:overscroll-y-auto{
-    overscroll-behavior-y: auto !important;
-  }
-
-  .sm\:overscroll-y-contain{
-    overscroll-behavior-y: contain !important;
-  }
-
-  .sm\:overscroll-y-none{
-    overscroll-behavior-y: none !important;
-  }
-
-  .sm\:overscroll-x-auto{
-    overscroll-behavior-x: auto !important;
-  }
-
-  .sm\:overscroll-x-contain{
-    overscroll-behavior-x: contain !important;
-  }
-
-  .sm\:overscroll-x-none{
-    overscroll-behavior-x: none !important;
-  }
-
-  .sm\:p-0{
-    padding: 0 !important;
-=======
   .md\:to-orange-500{
     --gradient-to-color: #ed8936 !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .md\:to-orange-600{
@@ -64007,74 +63753,11 @@ body {
     color: #4299e1 !important;
     color: rgba(66, 153, 225, var(--placeholder-opacity)) !important;
   }
-<<<<<<< HEAD
-
-  .sm\:animate-none{
-    -webkit-animation: none !important;
-            animation: none !important;
-  }
-
-  .sm\:animate-spin{
-    -webkit-animation: spin 1s linear infinite !important;
-            animation: spin 1s linear infinite !important;
-  }
-
-  .sm\:animate-ping{
-    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-  }
-
-  .sm\:animate-pulse{
-    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-  }
-
-  .sm\:animate-bounce{
-    -webkit-animation: bounce 1s infinite !important;
-            animation: bounce 1s infinite !important;
-  }
-}
-
-@media (min-width: 768px){
-  .md\:container{
-    width: 100%;
-  }
-
-  @media (min-width: 640px){
-    .md\:container{
-      max-width: 640px;
-    }
-  }
-
-  @media (min-width: 768px){
-    .md\:container{
-      max-width: 768px;
-    }
-  }
-
-  @media (min-width: 1024px){
-    .md\:container{
-      max-width: 1024px;
-    }
-  }
-
-  @media (min-width: 1280px){
-    .md\:container{
-      max-width: 1280px;
-    }
-  }
-
-  .md\:space-y-0 > :not(template) ~ :not(template){
-    --space-y-reverse: 0 !important;
-    margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
-    margin-bottom: calc(0px * var(--space-y-reverse)) !important;
-=======
 
   .md\:placeholder-blue-500::-ms-input-placeholder{
     --placeholder-opacity: 1 !important;
     color: #4299e1 !important;
     color: rgba(66, 153, 225, var(--placeholder-opacity)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .md\:placeholder-blue-500::placeholder{
@@ -71451,52 +71134,8 @@ body {
     --transform-translate-y: 0.5rem !important;
   }
 
-<<<<<<< HEAD
-  .md\:overscroll-auto{
-    -ms-scroll-chaining: chained !important;
-        overscroll-behavior: auto !important;
-  }
-
-  .md\:overscroll-contain{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: contain !important;
-  }
-
-  .md\:overscroll-none{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: none !important;
-  }
-
-  .md\:overscroll-y-auto{
-    overscroll-behavior-y: auto !important;
-  }
-
-  .md\:overscroll-y-contain{
-    overscroll-behavior-y: contain !important;
-  }
-
-  .md\:overscroll-y-none{
-    overscroll-behavior-y: none !important;
-  }
-
-  .md\:overscroll-x-auto{
-    overscroll-behavior-x: auto !important;
-  }
-
-  .md\:overscroll-x-contain{
-    overscroll-behavior-x: contain !important;
-  }
-
-  .md\:overscroll-x-none{
-    overscroll-behavior-x: none !important;
-  }
-
-  .md\:p-0{
-    padding: 0 !important;
-=======
   .md\:hover\:translate-y-3:hover{
     --transform-translate-y: 0.75rem !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .md\:hover\:translate-y-4:hover{
@@ -81550,72 +81189,9 @@ body {
   .lg\:inline-flex{
     display: inline-flex !important;
   }
-<<<<<<< HEAD
-
-  .md\:animate-none{
-    -webkit-animation: none !important;
-            animation: none !important;
-  }
-
-  .md\:animate-spin{
-    -webkit-animation: spin 1s linear infinite !important;
-            animation: spin 1s linear infinite !important;
-  }
-
-  .md\:animate-ping{
-    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-  }
-
-  .md\:animate-pulse{
-    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-  }
-
-  .md\:animate-bounce{
-    -webkit-animation: bounce 1s infinite !important;
-            animation: bounce 1s infinite !important;
-  }
-}
-
-@media (min-width: 1024px){
-  .lg\:container{
-    width: 100%;
-  }
-
-  @media (min-width: 640px){
-    .lg\:container{
-      max-width: 640px;
-    }
-  }
-
-  @media (min-width: 768px){
-    .lg\:container{
-      max-width: 768px;
-    }
-  }
-
-  @media (min-width: 1024px){
-    .lg\:container{
-      max-width: 1024px;
-    }
-  }
-
-  @media (min-width: 1280px){
-    .lg\:container{
-      max-width: 1280px;
-    }
-  }
-
-  .lg\:space-y-0 > :not(template) ~ :not(template){
-    --space-y-reverse: 0 !important;
-    margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
-    margin-bottom: calc(0px * var(--space-y-reverse)) !important;
-=======
 
   .lg\:table{
     display: table !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .lg\:table-caption{
@@ -88903,54 +88479,10 @@ body {
     color: rgba(151, 38, 109, var(--placeholder-opacity)) !important;
   }
 
-<<<<<<< HEAD
-  .lg\:overscroll-auto{
-    -ms-scroll-chaining: chained !important;
-        overscroll-behavior: auto !important;
-  }
-
-  .lg\:overscroll-contain{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: contain !important;
-  }
-
-  .lg\:overscroll-none{
-    -ms-scroll-chaining: none !important;
-        overscroll-behavior: none !important;
-  }
-
-  .lg\:overscroll-y-auto{
-    overscroll-behavior-y: auto !important;
-  }
-
-  .lg\:overscroll-y-contain{
-    overscroll-behavior-y: contain !important;
-  }
-
-  .lg\:overscroll-y-none{
-    overscroll-behavior-y: none !important;
-  }
-
-  .lg\:overscroll-x-auto{
-    overscroll-behavior-x: auto !important;
-  }
-
-  .lg\:overscroll-x-contain{
-    overscroll-behavior-x: contain !important;
-  }
-
-  .lg\:overscroll-x-none{
-    overscroll-behavior-x: none !important;
-  }
-
-  .lg\:p-0{
-    padding: 0 !important;
-=======
   .lg\:focus\:placeholder-pink-800:focus::-ms-input-placeholder{
     --placeholder-opacity: 1 !important;
     color: #97266d !important;
     color: rgba(151, 38, 109, var(--placeholder-opacity)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .lg\:focus\:placeholder-pink-800:focus::placeholder{
@@ -98859,73 +98391,10 @@ body {
     --gradient-from-color: #fed7e2 !important;
     --gradient-color-stops: var(--gradient-from-color), var(--gradient-to-color, rgba(254, 215, 226, 0)) !important;
   }
-<<<<<<< HEAD
-
-  .lg\:animate-none{
-    -webkit-animation: none !important;
-            animation: none !important;
-  }
-
-  .lg\:animate-spin{
-    -webkit-animation: spin 1s linear infinite !important;
-            animation: spin 1s linear infinite !important;
-  }
-
-  .lg\:animate-ping{
-    -webkit-animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-            animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-  }
-
-  .lg\:animate-pulse{
-    -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
-  }
-
-  .lg\:animate-bounce{
-    -webkit-animation: bounce 1s infinite !important;
-            animation: bounce 1s infinite !important;
-  }
-}
-
-@media (min-width: 1280px){
-  .xl\:container{
-    width: 100%;
-  }
-
-  @media (min-width: 640px){
-    .xl\:container{
-      max-width: 640px;
-    }
-  }
-
-  @media (min-width: 768px){
-    .xl\:container{
-      max-width: 768px;
-    }
-  }
-
-  @media (min-width: 1024px){
-    .xl\:container{
-      max-width: 1024px;
-    }
-  }
-
-  @media (min-width: 1280px){
-    .xl\:container{
-      max-width: 1280px;
-    }
-  }
-
-  .xl\:space-y-0 > :not(template) ~ :not(template){
-    --space-y-reverse: 0 !important;
-    margin-top: calc(0px * calc(1 - var(--space-y-reverse))) !important;
-    margin-bottom: calc(0px * var(--space-y-reverse)) !important;
-=======
 
   .xl\:hover\:from-pink-300:hover{
     --gradient-from-color: #fbb6ce !important;
     --gradient-color-stops: var(--gradient-from-color), var(--gradient-to-color, rgba(251, 182, 206, 0)) !important;
->>>>>>> ad48ab04f95b71c1eeaffff36c8a3bac67008349
   }
 
   .xl\:hover\:from-pink-400:hover{
