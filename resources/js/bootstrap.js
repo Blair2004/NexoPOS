@@ -6,7 +6,7 @@ import VueRouter from "vue-router";
 import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
 import { fromEvent } from "rxjs";
 import * as moment from 'moment';
-import * as Popup from "./libraries/popup";
+import { Popup } from "./libraries/popup";
 
 Vue.use( VueRouter );
 

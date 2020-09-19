@@ -164,7 +164,7 @@
     nsPopup.show();
 
     setTimeout( () => {
-        nsPopup.close();
-    }, 2000 );
+        // nsPopup.close();
+    }, 5000 );
 </script>
 @endsection
