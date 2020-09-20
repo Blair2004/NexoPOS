@@ -156,15 +156,44 @@
 
 @section( 'layout.base.footer' )
     @parent
+@verbatim
 <script>
     const nsPopup   =   new Popup({
-        primarySelector: '#pos-container'
+        primarySelector: '#pos-container',
+        popupClass : `shadow-lg h-4/5-screen w-4/5 bg-white`
     });
 
-    nsPopup.show();
+    const sampleComponent   =   Vue.component( 'sample', {
+        template: `
+        <div class="h-full w-full">
+            <h1>Hello World {{ count }}</h1>
+            <button @click="increase()" class="px-3 py-2 bg-blue-400">Click</button>
+        </div>
+        `,
+        data: () => {
+            return {
+                count: 0
+            }
+        },
+        methods: {
+            increase() {
+                this.count++;
+                if ( this.count === 4 ) {
+                    this.close();
+                }
+            },
+            close() {
+                console.log( this.$popup );
+                // this.$popup.close();
+            }
+        }
+    });
+
+    nsPopup.show( sampleComponent );
 
     setTimeout( () => {
         // nsPopup.close();
     }, 5000 );
 </script>
+@endverbatim
 @endsection
