@@ -7,6 +7,7 @@ $options            =   app()->make( Options::class );
 
 $authentication     =   [
     'token'         =>  Cookie::get( 'ns_token' ),
+    'csrf'          =>  csrf_token()
 ];
 
 $json               =   [

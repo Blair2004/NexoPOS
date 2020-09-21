@@ -38,6 +38,7 @@ export default {
         }
     },
     mounted() {
+        console.log( ns );
         /**
          * when the media is being opened
          * from a popup
@@ -170,18 +171,18 @@ export default {
                 class="w-full h-full flex"
                 v-model="files"
                 :multiple="true"
+                :headers="{ 'X-Requested-With': 'XMLHttpRequest' }"
                 accept="image/*"
-                post-action="/api/v4/medias"
-                put-action="/api/v4/medias"
+                post-action="/api/nexopos/v4/medias"
                 @input-file="inputFile"
                 @input-filter="inputFilter">
                 <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
                     <h3 class="text-3xl font-bold text-gray-600 mb-4">Click Here Or Drop Your File To Upload</h3>
-                    <div class="rounded w-full md:w-2/3 text-gray-700">
+                    <div class="rounded w-full md:w-2/3 text-gray-700 bg-gray-500 h-56 overflow-y-auto p-2">
                         <ul>
                             <li v-for="(file, index) of files" :key="index" class="p-2 mb-2 shadow bg-white flex items-center justify-between rounded">
                                 <span>{{ file.name }}</span>
-                                <span class="rounded-full bg-blue-400 flex h-12 w-12 items-center justify-center text-xs">{{ file.progress }}%</span>
+                                <span class="rounded bg-blue-400 flex items-center justify-center text-xs p-2">{{ file.progress }}%</span>
                             </li>
                         </ul>
                     </div>

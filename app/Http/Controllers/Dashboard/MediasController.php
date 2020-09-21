@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Services\MediaService;
 use Illuminate\Http\Request;
 
 class MediasController extends DashboardController
 {
-    public function __construct()
+    protected $mediaSerice;
+
+    public function __construct(
+        MediaService $mediaService
+    )
     {
         parent::__construct();
     }
@@ -50,4 +55,8 @@ class MediasController extends DashboardController
 
     }   
 
+    public function uploadMedias( Request $request )
+    {
+        return $this->mediaSerice->upload( $request->file( 'file' ) );
+    }
 }
