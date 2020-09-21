@@ -20,11 +20,19 @@ export default {
                 name : 'gallery',
                 selected: true,
             }],
+            /**
+             * done for demo purposes
+             */
             resources: (new Array(100)).fill( '' ).map( ( v,i ) => {
                 return {
                     selected: false
                 }
             }),
+
+            /**
+             * determine wether the bulk
+             * selector is enabled or not.
+             */
             bulkSelect: false,
             files: [],
         }
