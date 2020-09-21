@@ -24341,6 +24341,64 @@ video {
           animation: bounce 1s infinite !important;
 }
 
+@-webkit-keyframes ZoomOutEntrance {
+  0% {
+    transform: scale(1.1, 1.1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes ZoomOutEntrance {
+  0% {
+    transform: scale(1.1, 1.1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes ZoomInExit {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.1, 1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes ZoomInExit {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.1, 1.1);
+    opacity: 0;
+  }
+}
+
+.zoom-out-entrance {
+  -webkit-animation: ZoomOutEntrance 500ms;
+          animation: ZoomOutEntrance 500ms;
+}
+
+.zoom-in-exit {
+  -webkit-animation: ZoomInExit 300ms;
+          animation: ZoomInExit 300ms;
+}
+
 .lar,
 .las,
 .lab {

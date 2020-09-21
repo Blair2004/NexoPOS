@@ -80,6 +80,7 @@ class CreatePermissions extends Migration
         $this->permission->description      =   __( 'Can access the dashboard and see metrics' );
         $this->permission->save();
         
+        include_once( dirname( __FILE__ ) . '/../../permissions/medias.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/categories.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/customers.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/customers-groups.php' );

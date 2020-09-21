@@ -14,3 +14,4 @@ module.exports.nsField          =   require( './ns-field' );
 module.exports.nsMultiselect    =   require( './ns-multiselect' );
 module.exports.nsSwitch         =   require( './ns-switch' );
 module.exports.nsDate           =   require( './ns-date' );
+module.exports.nsMediaInput     =   require( './ns-media-input' );

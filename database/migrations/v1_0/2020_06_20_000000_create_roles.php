@@ -71,6 +71,7 @@ class CreateRoles extends Migration
         ]);
 
         $admin->addPermissions( Permission::includes( '.expenses' )->get()->map( fn( $permission ) => $permission->namespace ) );
+        $admin->addPermissions( Permission::includes( '.medias' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.expenses-categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.categories' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.customers' )->get()->map( fn( $permission ) => $permission->namespace ) );

@@ -4,13 +4,18 @@ const {
     nsCrud,
     nsMenu,
     nsSubmenu,
+    nsMediaInput,
 }   =   require( './components/components' );
 
 const {
     nsCurrency
 }   =   require( './filters/declarations' );
 
-const moment            =   require( 'moment' );
+/**
+ * Will bootstrap time and 
+ * start counting
+ */
+require( './shared/time' );
 
 const NsRewardsSystem   =   require( './pages/dashboard/rewards-system.vue' ).default;
 const NsCreateCoupons   =   require( './pages/dashboard/create-coupons.vue' ).default;
@@ -20,23 +25,7 @@ const NsReset           =   require( './pages/dashboard/reset.vue' ).default;
 const NsModules         =   require( './pages/dashboard/modules.vue' ).default;
 const NsPermissions     =   require( './pages/dashboard/ns-permissions.vue' ).default;
 const NsProcurement     =   require( './pages/dashboard/ns-procurement.vue' ).default;
-
-/**
- * till will make sure the frontend
- * time remain in sync or almost with
- * the backend date
- */
-ns.date.moment          =   moment( ns.date.current );
-
-/**
- * define the interval that will
- * increate the value of the date
- * locally
- * @param {Interval} interval
- */
-ns.date.interval        =   setInterval( () => {
-    ns.date.moment.add( 1, 'seconds' );
-}, 1000 );
+const NsMedia           =   require( './pages/dashboard/ns-media.vue' ).default;
 
 window.nsDashboardAside  =   new window.Vue({
     el: '#dashboard-aside',
@@ -106,6 +95,7 @@ const components    =   {
     NsReset,
     NsPermissions,
     NsProcurement,
+    NsMedia,
     ...nsExtraComponents, // add extra components provided by plugins.
 };
 

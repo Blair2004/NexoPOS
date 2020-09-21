@@ -1,27 +1,73 @@
+import { Subject } from "rxjs";
+
 declare const Vue;
 
 export class Popup {
     private config  =   {
-        primarySelector     :   '',
+        primarySelector     :   undefined,
         popupClass  :   'shadow-lg h-half w-1/2 bg-white',
     }; 
 
     private container   =   document.createElement( 'div' );
     private popupBody   =   document.createElement( 'div' );
-    private vue;
-    private primarySelector: HTMLDivElement;
+    private event: Subject<{ event: string, value: any }>;
+    private instance;
+    private parentWrapper: HTMLDivElement | HTMLBodyElement;
 
-    constructor( config ) {
+    constructor( config: {
+        primarySelector?: string,
+        popupClass?: string
+    } = {} ) {
         this.config             =   Object.assign( this.config, config );
-        this.primarySelector    =   document.querySelector( this.config.primarySelector );
+        
+        if ( 
+            this.config.primarySelector === undefined &&
+            document.querySelectorAll( '.is-popup' ).length > 0
+        ) {
+            const items             =   document.querySelectorAll( '.is-popup' ).length;
+            this.parentWrapper      =   <HTMLDivElement>(document.querySelectorAll( '.is-popup' )[ items - 1 ]);
+        } else {
+            this.parentWrapper      =   <HTMLDivElement>document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
+        }
+
+        this.event              =   new Subject;
     }
 
-    show( component ) {
-        this.primarySelector.style.filter   =   'blur(5px)';
-        this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center' );
-        this.container.id                   =   'popup-container';
-        this.popupBody.setAttribute( 'class', this.config.popupClass );
-        this.popupBody.innerHTML            =   '<component v-bind:is="component"></component>'
+    open( component ) {
+        console.log( this.parentWrapper );
+        this.parentWrapper.style.filter   =   'blur(5px)';
+        
+        this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );
+
+        /**
+         * We need to listen to click even on the container
+         * as it might be used to close the popup
+         */
+        this.container.addEventListener( 'click', ( event ) => {
+            /**
+             * this will emit an even
+             * when the overlay is clicked
+             */
+            this.event.next({
+                event: 'click-overlay',
+                value: true
+            });
+
+            event.stopPropagation();
+        });
+
+        /**
+         * We don't want to propagate to the
+         * overlay, that closes the popup
+         */
+        this.popupBody.addEventListener( 'click', ( event ) => {
+            event.stopImmediatePropagation();
+        });
+
+        this.container.style.background     =   'rgb(51 51 51 / 20%)';
+        this.container.id                   =   'popup-container-' + document.querySelectorAll( '.is-popup' ).length;
+        this.popupBody.setAttribute( 'class', this.config.popupClass + ' zoom-out-entrance' );
+        this.popupBody.innerHTML            =   '<div class="popup-body"></div>'
         this.container.appendChild( this.popupBody );  
 
         document.body.appendChild( this.container );
@@ -32,28 +78,47 @@ export class Popup {
          * can manipulate that.
          */
         const componentClass        =   Vue.extend( component );
-        const instance              =   new componentClass();
-
-        instance.$popup             =   this;
-        instance.template           =   component.options.template;
-        instance.methods            =   component.options.methods;
-        instance.data               =   component.options.data;
-        instance.$mount();
-
-        this.vue    =   new Vue({
-            el: `#${this.container.id}`,
-            data: {
-                component: instance
-            },
+        this.instance               =   new componentClass({
+            propsData:  {
+                popup   :   this
+            }
         });
 
-        
+        /**
+         * Let's intanciaate the component
+         * and mount it
+         */
+        this.instance.template           =   component?.options?.template || undefined;
+        this.instance.render             =   component.render || undefined;
+        this.instance.methods            =   component?.options?.methods || component?.methods;
+        this.instance.data               =   component?.options?.data || component?.data;
+        this.instance.$mount( `#${this.container.id} .popup-body` );
     }
 
     close() {
-        this.primarySelector.style.filter   =   'blur(0px)';
-        const element   =   document.querySelector( '#popup-wrapper' );
-        // make some animation
-        element.remove();
+        /**
+         * Let's start by destorying the
+         * Vue component attached to the popup
+         */
+        this.instance.$destroy();
+        
+        /**
+         * The Subject we've initialized earlier
+         * need to be closed
+         */
+        this.event.unsubscribe();
+
+        /**
+         * For some reason we need to fetch the 
+         * primary selector once again.
+         */
+        this.parentWrapper.style.filter   =   'blur(0px)';
+        
+        this.popupBody.classList.remove( 'zoom-out-entrance' );
+        this.popupBody.classList.add( 'zoom-in-exit' );
+
+        setTimeout( () => {
+            this.container.remove();
+        }, 300 ); // as by default the animation is set to 500ms
     }
 }

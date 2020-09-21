@@ -49,6 +49,12 @@ class MenuService
                 'icon'  =>  'la-list-ol',
                 'href'  =>  url( '/dashboard/orders' )
             ], 
+            'medias'    =>  [
+                'label'         =>  __( 'Medias' ),
+                'permissions'   =>  [ 'nexopos.upload.medias', 'nexopos.see.medias' ],
+                'icon'          =>  'la-photo-video',
+                'href'          =>  url( '/dashboard/medias' )
+            ], 
             'customers' =>  [
                 'label' =>  __( 'Customers' ),
                 'permissions'   =>  [

@@ -4,6 +4,7 @@
     "/js/bootstrap.js": "/js/bootstrap.js",
     "/css/app.css": "/css/app.css",
     "/js/manifest.js": "/js/manifest.js",
+    "/js/pos.js": "/js/pos.js",
     "/js/setup.js": "/js/setup.js",
     "/js/vendor.js": "/js/vendor.js"
 }

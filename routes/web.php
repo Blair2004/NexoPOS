@@ -54,6 +54,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/procurements/create', 'Dashboard\ProcurementController@createProcurement' );
         Route::get( '/dashboard/procurements/edit/{procurement}', 'Dashboard\ProcurementController@updateProcurement' );
 
+        Route::get( '/dashboard/medias', 'Dashboard\MediasController@showMedia' );
+
         Route::get( '/dashboard/providers', 'Dashboard\ProvidersController@listProviders' );
         Route::get( '/dashboard/providers/create', 'Dashboard\ProvidersController@createProvider' );
         Route::get( '/dashboard/providers/edit/{provider}', 'Dashboard\ProvidersController@editProvider' );

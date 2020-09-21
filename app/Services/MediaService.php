@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\Services\DateService;
 use App\Models\Media;
 use App\Exceptions\NotFoundException;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -67,8 +68,8 @@ class MediaService
              */
             $media          =   Media::where( 'name', $fullFileName )->first();
 
-            if ( $media instanceof Medias ) {
-                $fileName       =   $fileName . str_slug( $this->date->toDateTimeString() );    
+            if ( $media instanceof Media ) {
+                $fileName       =   $fileName . Str::slug( $this->date->toDateTimeString() );    
                 $fullFileName   =   $fileName . '.' . strtolower( $file->getClientOriginalExtension() );
             }
 
@@ -212,7 +213,7 @@ class MediaService
     /**
      * @private
      * @param object media entry
-     * @return array
+     * @return Media
      */
     private function getSizesUrls( Media $media ) 
     {
@@ -246,14 +247,8 @@ class MediaService
                 return Storage::disk( 'public' )->download( $media->slug . ( ! empty( $size ) ? '-' . $size : '' ) . '.' . $media->extension  );
             }
 
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested file.' )
-            ]);
+            throw new Exception( __( 'Unable to find the requested file.' ) );
         }
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to find the media entry' )
-        ]);
+        throw new Exception( __( 'Unable to find the media entry' ) );
     }
 }
