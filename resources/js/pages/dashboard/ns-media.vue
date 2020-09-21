@@ -47,6 +47,17 @@ export default {
         const gallery   =   this.pages.filter( p => p.name === 'gallery' )[0];
         this.select( gallery );
     },
+    watch: {
+        files() {
+            /**
+             * as long as there are file that aren't 
+             * yet uploaded. We'll trigger the "active" status.
+             */
+            if ( this.files.filter( f => f.progress === '0.00' ).length > 0 ) {
+                this.$refs.upload.active = true;
+            }
+        }
+    },
     computed: {
         currentPage() {
             return this.pages.filter( page => page.selected )[0];
@@ -141,20 +152,32 @@ export default {
         <div class="sidebar w-48 bg-gray-300 h-full flex-shrink-0">
             <h3 class="text-xl font-bold text-gray-800 my-8 text-center">Media Manager</h3>
             <ul>
-                <li @click="select( page )" v-for="(page,index) of pages" class="hover:bg-gray-400 py-2 px-3 text-gray-700" :class="page.selected ? 'bg-gray-400' : ''" :key="index">{{ page.label }}</li>
+                <li @click="select( page )" v-for="(page,index) of pages" class="hover:bg-gray-400 py-2 px-3 text-gray-700 border-l-8 cursor-pointer" :class="page.selected ? 'bg-gray-400 border-blue-400' : 'border-transparent'" :key="index">{{ page.label }}</li>
             </ul>
         </div>
         <div class="content w-full" v-if="currentPage.name === 'upload'">
             <vue-upload
                 ref="upload"
                 :drop="true"
-                class="w-full h-full items-center flex justify-center"
+                class="w-full h-full flex"
                 v-model="files"
+                :multiple="true"
+                accept="image/*"
                 post-action="/api/v4/medias"
                 put-action="/api/v4/medias"
                 @input-file="inputFile"
                 @input-filter="inputFilter">
-                
+                <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
+                    <h3 class="text-3xl font-bold text-gray-600 mb-4">Click Here Or Drop Your File To Upload</h3>
+                    <div class="rounded w-full md:w-2/3 text-gray-700">
+                        <ul>
+                            <li v-for="(file, index) of files" :key="index" class="p-2 mb-2 shadow bg-white flex items-center justify-between rounded">
+                                <span>{{ file.name }}</span>
+                                <span class="rounded-full bg-blue-400 flex h-12 w-12 items-center justify-center text-xs">{{ file.progress }}%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </vue-upload>
         </div>
         <div class="content flex w-full" v-if="currentPage.name === 'gallery'">
