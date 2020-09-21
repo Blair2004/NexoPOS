@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 
 class MediasController extends DashboardController
 {
-    protected $mediaSerice;
+    protected $mediaService;
 
     public function __construct(
         MediaService $mediaService
     )
     {
         parent::__construct();
+        
+        $this->mediaService     =   $mediaService;
     }
 
     public function showMedia()
@@ -32,7 +34,7 @@ class MediasController extends DashboardController
      */
     public function getMedias()
     {
-
+        return $this->mediaService->loadAjax();
     }   
     
     /**
@@ -55,8 +57,25 @@ class MediasController extends DashboardController
 
     }   
 
+    public function bulkDeleteMedias( Request $request )
+    {
+        ns()->restrict( 'nexopos.delete.medias' );
+
+        $result         =   [];
+
+        foreach( $request->input( 'ids' ) as $id ) {
+            $result[]   =   $this->mediaService->deleteMedia( $id );
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The operation was successful.' ),
+            'data'      =>  compact( 'result' )
+        ];
+    }
+
     public function uploadMedias( Request $request )
     {
-        return $this->mediaSerice->upload( $request->file( 'file' ) );
+        return $this->mediaService->upload( $request->file( 'file' ) );
     }
 }

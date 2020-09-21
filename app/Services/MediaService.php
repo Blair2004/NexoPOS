@@ -198,7 +198,7 @@ class MediaService
     public function loadAjax()
     {
         $per_page   =   request()->query( 'per_page' ) ?? 50;
-        $medias     =   Media::orderBy( 'updated_at', 'desc' )->paginate($per_page);
+        $medias     =   Media::with( 'user' )->orderBy( 'updated_at', 'desc' )->paginate($per_page);
         
         /**
          * populating the media
