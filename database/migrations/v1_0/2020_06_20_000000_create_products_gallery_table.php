@@ -19,13 +19,14 @@ class CreateProductsGalleryTable extends Migration
         if ( ! Schema::hasTable( 'nexopos_products_galleries' ) ) {
             Schema::create( 'nexopos_products_galleries', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->string( 'name' );
+                $table->string( 'name' )->nullable();
                 $table->integer( 'product_id' );
-                $table->integer( 'media_id' );
+                $table->integer( 'media_id' )->nullable();
+                $table->string( 'url' )->nullable();
                 $table->integer( 'order' )->default(0);
                 $table->boolean( 'featured' )->default(0);
                 $table->integer( 'author' );
-                $table->string( 'uuid' );
+                $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });
         }

@@ -34,7 +34,6 @@ export class Popup {
     }
 
     open( component ) {
-        console.log( this.parentWrapper );
         this.parentWrapper.style.filter   =   'blur(5px)';
         
         this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );

@@ -103,6 +103,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
         Route::get( '/dashboard/settings/{settings}', 'Dashboard\SettingsController@getSettings' );
         Route::get( '/dashboard/settings/form/{settings}', 'Dashboard\SettingsController@loadSettingsForm' );
 
+        Route::get( '/dashboard/experiments', 'DashboardController@experiments' );
+
         Route::prefix( 'api/nexopos/v4' )->group( function() {
             foreach([ '', '/store/{id}/' ] as $prefix ) {
                 Route::prefix( $prefix )->group( function() {

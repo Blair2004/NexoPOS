@@ -33,6 +33,14 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function experiments()
+    {
+        return view( 'pages.dashboard.experiments', [
+            'menus' =>  $this->menuService,
+            'title' =>  __( 'Experiments' )
+        ]);
+    }
+
     protected function view( $path, $data = [])
     {
         return view( $path, array_merge([

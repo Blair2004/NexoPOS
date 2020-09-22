@@ -25,7 +25,6 @@ var Popup = /** @class */ (function () {
     Popup.prototype.open = function (component) {
         var _this = this;
         var _a, _b, _c;
-        console.log(this.parentWrapper);
         this.parentWrapper.style.filter = 'blur(5px)';
         this.container.setAttribute('class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup');
         /**

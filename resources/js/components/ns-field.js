@@ -28,6 +28,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isSwitch() {
             return [ 'switch' ].includes( this.field.type );
         },
+        isMedia() {
+            return [ 'media' ].includes( this.field.type );
+        },
     },
     props: [ 'field' ],
     methods: {
@@ -65,6 +68,10 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-date>
+        <ns-media-input @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isMedia">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-media-input>
         <ns-select @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

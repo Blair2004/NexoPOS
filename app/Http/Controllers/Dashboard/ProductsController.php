@@ -45,6 +45,7 @@ class ProductsController extends DashboardController
             ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
             ->first();
 
+        $source                                 =   $primary;
         $units                                  =   $primary[ 'units' ];
 
         /**
@@ -54,6 +55,7 @@ class ProductsController extends DashboardController
         unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
         unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
         unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+        unset( $primary[ 'images' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
         $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
@@ -66,6 +68,7 @@ class ProductsController extends DashboardController
         $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
         $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
         $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
+        $primary[ 'images' ]                 =   $source[ 'images' ];
         
         unset( $primary[ '$primary' ] );
 
@@ -99,6 +102,7 @@ class ProductsController extends DashboardController
             ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
             ->first();
 
+        $source                                 =   $primary;
         $units                                  =   $primary[ 'units' ];
         
         /**
@@ -108,6 +112,7 @@ class ProductsController extends DashboardController
         unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
         unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
         unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+        unset( $primary[ 'images' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
         $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
@@ -120,6 +125,7 @@ class ProductsController extends DashboardController
         $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
         $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
         $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
+        $primary[ 'images' ]                 =   $source[ 'images' ];
 
         unset( $primary[ '$primary' ] );
 

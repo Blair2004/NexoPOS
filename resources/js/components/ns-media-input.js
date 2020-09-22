@@ -12,7 +12,16 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
                 </span>
             </div>
             <div class="rounded overflow-hidden flex">
+                <div 
+                    v-if="field.data && field.data.type === 'model'"
+                    class="form-input flex w-full sm:text-sm items-center sm:leading-5 h-10">
+                    <template v-if="field.value && field.value.name">
+                        <img class="w-8 h-8 m-1" :src="field.value.sizes.thumb" :alt="field.value.name">
+                        <span class="text-xs text-gray-600">{{ field.value.name }}</span>
+                    </template>
+                </div>
                 <input 
+                    v-if="! field.data || field.data.type === 'undefined'"
                     v-model="field.value" 
                     @blur="$emit( 'blur', this )" 
                     @change="$emit( 'change', this )" 
@@ -20,7 +29,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
                     :class="inputClass" class="form-input block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
                 <button 
                     @click="toggleMedia( field )"
-                    class="w-12 h-12 flex items-center justify-center border-l-2 border-gray-200 hover:bg-blue-400 hover:text-white outline-none">
+                    class="w-10 h-10 flex items-center justify-center border-l-2 border-gray-200 hover:bg-blue-400 hover:text-white outline-none">
                     <i class="las la-photo-video"></i>
                 </button>
             </div>
@@ -50,12 +59,39 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
             return this.leading ? 'pl-8' : 'px-4';
         }
     },
+    data() {
+        return {
+            mediaInstance: new Media
+        }
+    },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
+    mounted() {
+    },
     methods: {
         toggleMedia() {
-            console.log( Media );
-            const mediaInstance     =   new Media;
-            mediaInstance.open();
+            this.mediaInstance.open();
+            this.mediaInstance.popup.event.subscribe( action => {
+
+                /**
+                 * When the performed action is "use-selected"
+                 * we define the current field value with what has been selected (first entry)
+                 * and we close the popup.
+                 */
+                if ( action.event === 'use-selected' ) {
+                    /**
+                     * a field might choose to use a URL 
+                     * or to link to an existing model
+                     */
+                    if ( ( ! this.field.data || this.field.data.type === 'url' ) ) {
+                        this.field.value    =   action.value[0].sizes.original;
+                    } else if ( ( ! this.field.data || this.field.data.type === 'model' ) ) {
+                        this.field.value    =   action.value[0];
+                    }
+
+                    this.$forceUpdate();
+                    this.mediaInstance.popup.close();
+                }
+            });
         }
     }
 });

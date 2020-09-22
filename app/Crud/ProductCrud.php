@@ -347,6 +347,41 @@ class ProductCrud extends CrudService
                                 ], 
                             ]
                         ],
+                        'images'    =>  [
+                            'label'     =>  __( 'Images' ),
+                            'fields'    =>  [
+                                [
+                                    'type'  =>  'media',
+                                    'name'  =>  'image',
+                                    'label' =>  __( 'Image' ),
+                                    'description'   =>  __( 'Choose an image to add on the product gallery' ),
+                                ], [
+                                    'type'          =>  'switch',
+                                    'name'          =>  'primary',
+                                    'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                    'label'         =>  __( 'Is Primary' ),
+                                    'description'   =>  __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
+                                ]
+                            ],
+                            'groups'    =>  $entry ? $entry->galleries->map( function( $gallery ) {
+                                return [
+                                    [
+                                        'type'          =>  'media',
+                                        'name'          =>  'image',
+                                        'label'         =>  __( 'Image' ),
+                                        'value'         =>  $gallery->url,
+                                        'description'   =>  __( 'Choose an image to add on the product gallery' ),
+                                    ], [
+                                        'type'          =>  'switch',
+                                        'name'          =>  'primary',
+                                        'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                                        'label'         =>  __( 'Is Primary' ),
+                                        'value'         =>  ( int ) $gallery->featured,
+                                        'description'   =>  __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
+                                    ]
+                                ];
+                            }) : [],
+                        ]
                     ]
                 ]
             ]

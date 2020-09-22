@@ -20,6 +20,7 @@ use App\Services\ProductCategoryService;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
+use App\ProductGallery;
 
 class ProductService
 {
@@ -271,6 +272,11 @@ class ProductService
          */
         $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
 
+        /**
+         * save product images
+         */
+        $this->saveGallery( $product, $fields[ 'images' ]);
+
         return [
             'status'    =>      'success',
             'message'   =>      __( 'The product has been saved.' ),
@@ -367,11 +373,61 @@ class ProductService
          */
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
 
+        /**
+         * save product images
+         */
+        $this->saveGallery( $product, $fields[ 'images' ]);
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The product has been udpated' ),
             'data'      =>  compact( 'product' )
         ];
+    }
+
+    public function saveGallery( Product $product, $groups )
+    {
+        $product->galleries()
+            ->get()
+            ->each( function( $image ) {
+                $image->delete();
+            });
+
+        /**
+         * if there are many primary images
+         * let's choose one for the user.
+         * @todo should be tested
+         */
+        $manyPrimary    =   collect( $groups )->map( function( $fields ) {
+            return isset( $fields[ 'primary' ] ) && $fields[ 'primary' ] === 1;
+        })
+            ->filter( fn( $result ) => $result === true )
+            ->count() > 1;
+        
+        if ( $manyPrimary ) {
+            $groups     =   collect( $groups )->map( function( $fields, $index ) {
+                return collect( $fields )->map( function( $field, $fieldName ) use ( $index ) {
+                    if ( $fieldName === 'primary' ) {
+                        if ( $index === 0 ) {
+                            $field      =   1;
+                        } else {
+                            $field      =   0;
+                        }
+                    }
+    
+                    return $field;
+                });
+            });
+        }
+
+        foreach( $groups as $group ) {
+            $image              =   new ProductGallery;
+            $image->featured    =   $group[ 'primary' ] ?? 0;
+            $image->url         =   $group[ 'image' ];
+            $image->author      =   Auth::id();
+            $image->product_id  =   $product->id;
+            $image->save();
+        }
     }
 
     /**

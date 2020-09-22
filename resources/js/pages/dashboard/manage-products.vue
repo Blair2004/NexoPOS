@@ -56,12 +56,30 @@
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="-mx-4 flex flex-wrap">
-                                <template  v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
+                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) !== 'images'">
+                                <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field @change="detectChange( variation_index, $event )" :field="field"></ns-field>
                                     </div>
                                 </template>
+                            </div>
+                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'images'">
+                                <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
+                                    <div class="rounded border flex bg-white justify-between p-2 items-center">
+                                        <span>Add Images</span>
+                                        <button @click="addImage( variation )" class="rounded-full border flex items-center justify-center w-8 h-8 bg-white hover:bg-blue-400 hover:text-white">
+                                            <i class="las la-plus-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div
+                                    :key="index" 
+                                    v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
+                                    class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
+                                    <div class="rounded border flex flex-col bg-white p-2">
+                                        <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -152,6 +170,20 @@ export default {
             }
 
             /**
+             * If there are more than one
+             * primary image, we'll block the process
+             */
+            const images    =   this.form.variations.map( (v,i) => {
+                return v.tabs.images.groups.filter( fields => {
+                    return fields.filter( f => f.name === 'primary' && f.value === 1 ).length > 0;
+                });
+            })
+
+            if ( images[0] && images[0].length > 1 ) {
+                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : 'No error has been provided for the slot "error-multiple-primary"' ).subscribe();
+            }
+
+            /**
              * let's correctly extract 
              * the form before submitting that
              */
@@ -162,13 +194,17 @@ export default {
                     if ( i === 0 ) {
                         data[ '$primary' ]  =   true;
                     }
+
+                    data[ 'images' ]    =   v.tabs.images.groups.map( fields => {
+                        return this.formValidation.extractFields( fields );
+                    });
+
                     return data;
                 })
             }
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {
-                    console.log( data );
                     if ( data.status === 'success' ) {
                         if ( this.returnUrl !== false ) {
                             return document.location   =   this.returnUrl;
@@ -213,6 +249,15 @@ export default {
 
             return false;
         }, 
+        getActiveTabKey( tabs ) {
+            for( let key in tabs ) {
+                if ( tabs[ key ].active ) {
+                    return key;
+                }
+            }
+
+            return false;
+        },
         parseForm( form ) {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
             form.main           =   this.formValidation.createFields([ form.main ])[0];
@@ -229,9 +274,13 @@ export default {
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active    =   true;
                         this._sampleVariation           =   Object.assign({}, variation );
-                        variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );
+                        if ( variation.tabs[ key ].fields ) {
+                            variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );
+                        }
                     } else {
-                        variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields );
+                        if ( variation.tabs[ key ].fields ) {
+                            variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields );
+                        }
                     }
 
                     variation.tabs[ key ].active    =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
@@ -248,6 +297,12 @@ export default {
                 this.form    =   this.parseForm( f.form );
             });
         },
+
+        addImage( variation ) {
+            variation.tabs.images.groups.push(
+                this.formValidation.createFields( JSON.parse( JSON.stringify( variation.tabs.images.fields ) ) )
+            );
+        }
     },
     mounted() {
         this.loadForm();

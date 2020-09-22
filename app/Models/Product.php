@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\ProductGallery;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -48,6 +49,11 @@ class Product extends Model
     public function variations()
     {
         return $this->hasMany( Product::class, 'parent_id' );
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany( ProductGallery::class, 'product_id', 'id' );
     }
 
     public function scopeOnlyVariations( $query )

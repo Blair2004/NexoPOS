@@ -50,7 +50,6 @@ export default {
         }
     },
     mounted() {
-        console.log( ns );
         /**
          * when the media is being opened
          * from a popup
@@ -58,6 +57,10 @@ export default {
         if ( this.popup ) {
             this.popup.event.subscribe( action => {
                 if ( action.event === 'click-overlay' ) {
+                    this.popup.close();
+                }
+
+                if ( action.event === 'press-esc' ) {
                     this.popup.close();
                 }
             });
@@ -97,6 +100,13 @@ export default {
             this.bulkSelect     =   false;
             this.response.data.forEach( v => v.selected = false );
         },
+
+        /**
+         * That trigger a deletion
+         * request to the server
+         * @param {void}
+         * @return {void}
+         */
         deleteSelected() {
             if ( confirm( 'Delete selected resources ?' ) ) {
                 return nsHttpClient.post( '/api/nexopos/v4/medias/bulk-delete', {
@@ -112,6 +122,14 @@ export default {
                     })
             }
         },
+
+        /**
+         * This make sure to select
+         * what is the active page on the media.
+         * By default we have gallery and upload
+         * @param page
+         * @return void
+         */
         select( page ) {
             this.pages.forEach( page => page.selected = false );
             page.selected   =   true;
@@ -120,6 +138,14 @@ export default {
                 this.loadGallery();
             }
         },
+
+        /**
+         * This make sure to load the 
+         * gallery. That means loading images
+         * with a pagination system
+         * @param {interger} page
+         * @return void
+         */
         loadGallery( page = null ) {
             page = page === null ? this.queryPage : page;
             this.queryPage  =   page;
@@ -130,6 +156,26 @@ export default {
                     this.response  =   result;
                 })
         },
+
+        /**
+         * Will event an event with
+         * all the selected resources
+         * @return void
+         */
+        useSelectedEntries() {
+            this.popup.event.next({
+                event: 'use-selected',
+                value: this.response.data.filter( entry => entry.selected )
+            });
+        },
+
+        /** 
+         * this makes sure resources
+         * are correctly select when the bulk selection
+         * is enabled or not
+         * @param {object} resource
+         * @return {void}
+        */
         selectResource( resource ) {
             if ( ! this.bulkSelect ) {
                 this.response.data.forEach( (r, index) => {
@@ -141,45 +187,6 @@ export default {
 
             resource.selected   =   ! resource.selected;
         },
-
-        /**
-         * Has changed
-         * @param  Object|undefined   newFile   Read only
-         * @param  Object|undefined   oldFile   Read only
-         * @return undefined
-         */
-        inputFile: function (newFile, oldFile) {
-            if (newFile && oldFile && !newFile.active && oldFile.active) {
-                // Get response data
-                console.log('response', newFile.response)
-                if (newFile.xhr) {
-                    //  Get the response status code
-                    console.log('status', newFile.xhr.status)
-                }
-            }
-        },
-        /**
-         * Pretreatment
-         * @param  Object|undefined   newFile   Read and write
-         * @param  Object|undefined   oldFile   Read only
-         * @param  Function           prevent   Prevent changing
-         * @return undefined
-         */
-        inputFilter: function (newFile, oldFile, prevent) {
-            if (newFile && !oldFile) {
-                // Filter non-image file
-                if (!/\.(jpeg|jpe|jpg|gif|png|webp)$/i.test(newFile.name)) {
-                    return prevent()
-                }
-            }
-
-            // Create a blob field
-            newFile.blob = ''
-            let URL = window.URL || window.webkitURL
-            if (URL && URL.createObjectURL) {
-                newFile.blob = URL.createObjectURL(newFile.file)
-            }
-        }
     }
 }
 </script>
@@ -216,72 +223,85 @@ export default {
                 </div>
             </vue-upload>
         </div>
-        <div class="content flex w-full" v-if="currentPage.name === 'gallery'">
-            <div id="grid" class="content flex flex-col w-full overflow-hidden">
-                <div class="flex-auto overflow-auto bg-white shadow">
-                    <div class="p-2 flex overflow-x-auto flex-wrap">
-                        <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
-                            <div class="p-2">
-                                <div @click="selectResource( resource )" :class="resource.selected ? 'shadow-outline' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
-                                    <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
+        <div class="content flex-col w-full overflow-hidden flex" v-if="currentPage.name === 'gallery'">
+            <div class="p-2 flex flex-shrink-0 justify-between bg-gray-200" v-if="popup">
+                <div></div>
+                <div>
+                    <button @click="popup.close()" class="rounded-full flex items-center justify-center h-10 w-10 bg-white shadow text-red-400 hover:shadow-md hover:bg-red-400 hover:text-white">
+                        <i class="las la-times-circle text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-auto overflow-hidden">
+                <div id="grid" class="content flex flex-auto flex-col overflow-y-auto">
+                    <div class="flex-auto bg-white shadow">
+                        <div class="p-2 flex overflow-x-auto flex-wrap">
+                            <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
+                                <div class="p-2">
+                                    <div @click="selectResource( resource )" :class="resource.selected ? 'shadow-outline' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
+                                        <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div v-if="response.data.length === 0" class="h-full flex w-full items-center justify-center">
+                            <h3 class="text-3xl text-gray-700 font-bold">Nothing has already been uploaded</h3>
+                        </div>
                     </div>
                 </div>
-                <div class="p-2 flex flex-shrink-0 justify-between">
-                    <div class="flex -mx-2 flex-shrink-0">
-                        <div class="px-2 flex-shrink-0 flex">
-                            <div class="rounded shadow overflow-hidden border-blue-400 flex text-sm text-gray-700">
-                                <button 
-                                    v-if="bulkSelect" 
-                                    @click="cancelBulkSelect()" 
-                                    class="bg-white hover:bg-blue-400 hover:text-white py-2 px-3">
-                                    <i class="las la-times"></i>
-                                </button>
-                                <button 
-                                    v-if="hasOneSelected && ! bulkSelect"
-                                    @click="bulkSelect = true"
-                                    class="bg-white hover:bg-blue-400 hover:text-white py-2 px-3">
-                                    <i class="las la-check-circle"></i>                            
-                                </button>
-                                <button 
-                                    v-if="hasOneSelected"
-                                    @click="deleteSelected()"
-                                    class="bg-red-400 text-white hover:bg-red-500 hover:text-white py-2 px-3">
-                                    <i class="las la-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+                <div id="preview" class="w-64 flex-shrink-0" v-if="! bulkSelect && hasOneSelected">
+                    <div class="h-64 bg-gray-600 flex items-center justify-center">
+                        <img :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
                     </div>
-                    <div class="flex-shrink-0 -mx-2">
-                        <div class="px-2">
-                            <div class="rounded shadow overflow-hidden border-blue-400 flex text-sm text-gray-700">
-                                <button :disabled="response.current_page === 1" @click="loadGallery( response.current_page - 1 )" :class="response.current_page === 1 ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Previous</button>
-                                <hr class="border-r border-gray-700">
-                                <button :disabled="response.current_page === response.last_page" @click="loadGallery( response.current_page + 1 )" :class="response.current_page === response.last_page ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Next</button>
-                            </div>
-                        </div>
-                        <div class="px-2">
-                            <ns-button v-if="popup" type="info">Use Selected</ns-button>
-                        </div>
+                    <div id="details" class="p-4 text-gray-700 text-sm">
+                        <p class="flex flex-col mb-2">
+                            <strong class="font-bold block">File Name: </strong><span>{{ selectedResource.name }}</span>
+                        </p>
+                        <p class="flex flex-col mb-2">
+                            <strong class="font-bold block">Uploaded At:</strong><span>{{ selectedResource.created_at }}</span>
+                        </p>
+                        <p class="flex flex-col mb-2">
+                            <strong class="font-bold block">By :</strong><span>{{ selectedResource.user.username }}</span>
+                        </p>
                     </div>
                 </div>
             </div>
-            <div id="preview" class="w-64 flex-shrink-0" v-if="! bulkSelect && hasOneSelected">
-                <div class="h-64 bg-gray-600 flex items-center justify-center">
-                    <img :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
+            <div class="p-2 flex flex-shrink-0 justify-between bg-gray-200">
+                <div class="flex -mx-2 flex-shrink-0">
+                    <div class="px-2 flex-shrink-0 flex">
+                        <div class="rounded shadow overflow-hidden border-blue-400 flex text-sm text-gray-700">
+                            <button 
+                                v-if="bulkSelect" 
+                                @click="cancelBulkSelect()" 
+                                class="bg-white hover:bg-blue-400 hover:text-white py-2 px-3">
+                                <i class="las la-times"></i>
+                            </button>
+                            <button 
+                                v-if="hasOneSelected && ! bulkSelect"
+                                @click="bulkSelect = true"
+                                class="bg-white hover:bg-blue-400 hover:text-white py-2 px-3">
+                                <i class="las la-check-circle"></i>                            
+                            </button>
+                            <button 
+                                v-if="hasOneSelected"
+                                @click="deleteSelected()"
+                                class="bg-red-400 text-white hover:bg-red-500 hover:text-white py-2 px-3">
+                                <i class="las la-trash"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div id="details" class="p-4 text-gray-700 text-sm">
-                    <p class="flex flex-col mb-2">
-                        <strong class="font-bold block">File Name: </strong><span>{{ selectedResource.name }}</span>
-                    </p>
-                    <p class="flex flex-col mb-2">
-                        <strong class="font-bold block">Uploaded At:</strong><span>{{ selectedResource.created_at }}</span>
-                    </p>
-                    <p class="flex flex-col mb-2">
-                        <strong class="font-bold block">By :</strong><span>{{ selectedResource.user.username }}</span>
-                    </p>
+                <div class="flex-shrink-0 -mx-2 flex">
+                    <div class="px-2">
+                        <div class="rounded shadow overflow-hidden border-blue-400 flex text-sm text-gray-700">
+                            <button :disabled="response.current_page === 1" @click="loadGallery( response.current_page - 1 )" :class="response.current_page === 1 ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Previous</button>
+                            <hr class="border-r border-gray-700">
+                            <button :disabled="response.current_page === response.last_page" @click="loadGallery( response.current_page + 1 )" :class="response.current_page === response.last_page ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Next</button>
+                        </div>
+                    </div>
+                    <div class="px-2" v-if="popup && hasOneSelected">
+                        <button class="rounded shadow p-2 bg-blue-400 text-white text-sm" @click="useSelectedEntries()">Use Selected</button>
+                    </div>
                 </div>
             </div>
         </div>
