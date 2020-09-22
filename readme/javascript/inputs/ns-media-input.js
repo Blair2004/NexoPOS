@@ -48,7 +48,7 @@ export default {
 }
 </script>
 <template>
-  <<ns-media-input :field="field"></<ns-media-input>
+  <ns-media-input :field="field"></ns-media-input>
 <template>
 ```
 
