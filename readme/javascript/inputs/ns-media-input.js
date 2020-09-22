@@ -21,7 +21,7 @@ export default {
 }
 </script>
 <template>
-  <ns-select :field="field"></ns-select>
+  <ns-media-input :field="field"></ns-media-input>
 <template>
 ```
 
@@ -48,7 +48,7 @@ export default {
 }
 </script>
 <template>
-  <ns-select :field="field"></ns-select>
+  <<ns-media-input :field="field"></<ns-media-input>
 <template>
 ```
 
