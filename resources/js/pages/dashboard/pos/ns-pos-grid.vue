@@ -9,10 +9,10 @@
         </div>
         <div id="grid-breadscrumb" class="p-2 border-gray-200">
             <ul class="flex">
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Home > </a></li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Mens > </a></li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Shirts > </a></li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Sport > </a></li>
+                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Home </a> <i class="las la-angle-right"></i> </li>
+                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Mens </a> <i class="las la-angle-right"></i> </li>
+                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Shirts </a> <i class="las la-angle-right"></i> </li>
+                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Sport </a> <i class="las la-angle-right"></i> </li>
             </ul>
         </div>
         <div id="grid-items" class="overflow-hidden flex-auto">

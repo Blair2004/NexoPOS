@@ -75,7 +75,7 @@
                                 <div
                                     :key="index" 
                                     v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
-                                    class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
+                                    class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
                                     <div class="rounded border flex flex-col bg-white p-2">
                                         <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
                                     </div>
