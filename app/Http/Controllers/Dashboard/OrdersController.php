@@ -80,7 +80,21 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
-        return $this->view( 'pages.dashboard.orders.pos' );
+        return $this->view( 'pages.dashboard.orders.pos', [
+            'orderTypes'    =>  [
+                [
+                    'identifier'    =>  'takeaway',
+                    'label'         =>  'Take Away',
+                    'icon'          =>  '/images/groceries.png',
+                    'selected'      =>  false
+                ], [
+                    'identifier'    =>  'delivery',
+                    'label'         =>  'Delivery',
+                    'icon'          =>  '/images/delivery.png',
+                    'selected'      =>  false
+                ]
+            ]
+        ]);
     }
 }
 

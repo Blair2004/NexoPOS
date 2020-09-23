@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,9 @@ class RewardSystemSeeder extends Seeder
      */
     public function run()
     {
-        factory( App\Models\RewardSystem::class, 50 )->create()->each( function( $reward ) {
-            $reward->rules()->saveMany(
-                factory( App\Models\RewardSystemRule::class, 4 )->make()
-            );
-        });
+        return RewardSystem::factory()
+            ->count(20)
+            ->hasRules(4)
+            ->create();
     }
 }

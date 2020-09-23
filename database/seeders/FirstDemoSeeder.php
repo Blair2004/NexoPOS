@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,7 @@ class FirstDemoSeeder extends Seeder
         DB::table( 'nexopos_units' )->truncate();
         DB::table( 'nexopos_medias' )->truncate();
         DB::table( 'nexopos_options' )->truncate();
-        // DB::table( 'nexopos_trucks' )->truncate();
+        DB::table( 'nexopos_trucks' )->truncate();
         
         $this->call( RewardSystemSeeder::class );
         $this->call( CustomerGroupSeeder::class );

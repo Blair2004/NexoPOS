@@ -130,6 +130,13 @@ class ProductCategoryCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
+                            'type'          =>  'media',
+                            'label'         =>  __( 'Preview' ),
+                            'name'          =>  'preview_url',
+                            'description'   =>  __( 'Provide a preview url to the category.' ),
+                            'validation'    =>  'required',
+                            'value'         =>  $entry->preview_url ?? '',
+                        ], [
                             'type'          =>  'switch',
                             'label'         =>  __( 'Displays On POS' ),
                             'name'          =>  'displays_on_pos',

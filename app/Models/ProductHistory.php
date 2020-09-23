@@ -3,9 +3,12 @@ namespace App\Models;
 
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductHistory extends Model
 {
+    use HasFactory;
+    
     protected $table    =   'nexopos_' . 'products_histories';
 
     const ACTION_STOCKED       =   'procured';

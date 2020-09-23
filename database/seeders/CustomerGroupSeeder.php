@@ -1,4 +1,5 @@
 <?php
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +18,9 @@ class CustomerGroupSeeder extends Seeder
      */
     public function run()
     {
-        factory( CustomerGroup::class, 10 )->create()->each( function( $group ) {
-            $group->customers()->saveMany( factory( Customer::class, 10 )->make() );
-        });
+        return CustomerGroup::factory()
+            ->count(10)
+            ->hasCustomers(3)
+            ->create();
     }
 }

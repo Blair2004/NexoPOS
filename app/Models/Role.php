@@ -9,10 +9,12 @@ use App\Models\Permission;
 use App\Models\RolePermission;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Role extends Model
 {
-    protected $table    =   'nexopos_roles';
+    use HasFactory;
+        protected $table    =   'nexopos_roles';
 
     protected $cats     =   [
         'locked'        =>  'boolean'

@@ -9,9 +9,12 @@ use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use App\Models\Provider;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Procurement extends Model
 {
+    use HasFactory;
+    
     protected $table    =   'nexopos_' . 'procurements';
 
     /**

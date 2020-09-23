@@ -1,5 +1,5 @@
 <script>
-import FormValidation from '../../../libraries/form-validation';
+import FormValidation from '../../../../libraries/form-validation';
 export default {
     name: 'ns-pos-payment',
     props: [ 'popup' ],

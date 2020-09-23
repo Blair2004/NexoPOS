@@ -20,7 +20,18 @@
                 
                 <!-- Loop Products Or Categories -->
 
-                <div class="border h-40 border-gray-200">1</div>
+                <template v-if="hasCategories">
+                    <div :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                        <div class="w-24 h-24 bg-red-200"></div>
+                        <h3 class="text-sm py-2 text-gray-700">{{ category.name }}</h3>
+                    </div>
+                </template>
+
+                <!-- Looping Products -->
+
+                <template v-if="! hasCategories">
+                    <div :key="product.id" v-for="product of products" class="border h-40 border-gray-200">1</div>
+                </template>
                 
                 <!-- End Loop -->
 
@@ -29,7 +40,31 @@
     </div>
 </template>
 <script>
+import { nsHttpClient } from '../../../bootstrap'
 export default {
-    name: 'ns-pos-grid'
+    name: 'ns-pos-grid',
+    data() {
+        return {
+            products: [],
+            categories: []
+        }
+    },
+    computed: {
+        hasCategories() {
+            return this.categories.length > 0;
+        }
+    },
+    mounted() {
+        this.loadCategories();
+    },
+    methods: {
+        loadCategories( parent = '' ) {
+            nsHttpClient.get( `/api/nexopos/v4/categories/pos/${parent}` )
+                .subscribe( result => {
+                    this.categories     =   result.categories;
+                    this.products       =   result.products;
+                });
+        }
+    }
 }
 </script>

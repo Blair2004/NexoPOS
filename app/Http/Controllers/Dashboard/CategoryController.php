@@ -30,6 +30,10 @@ class CategoryController extends DashboardController
             return $category;
         }
 
+        if ( request()->query( 'parent' ) === 'true' ) {
+            return ProductCategory::where( 'parent_id', null )->get();
+        }
+
         return ProductCategory::get();
     }
 
@@ -247,6 +251,27 @@ class CategoryController extends DashboardController
             'description'   =>  __( 'Allow you to edit an existing product category.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )
         ]);
+    }
+
+    public function getCategories( $id = '0' )
+    {
+        if ( $id !== '0' ) {
+            $category       =   ProductCategory::where( 'id', $id )
+                ->with( 'subCategories' )
+                ->with( 'products' )
+                ->get();
+
+            return [
+                'products'      =>  $category->products,
+                'categories'    =>  $category->subCategories
+            ];
+        }
+
+        return [
+            'products'      =>  [],
+            'categories'    =>  ProductCategory::where( 'parent_id', 0 )
+                ->get(),
+        ];
     }
 }
 

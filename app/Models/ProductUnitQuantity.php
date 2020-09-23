@@ -5,9 +5,12 @@ use App\Models\Unit;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductUnitQuantity extends Model
 {
+    use HasFactory;
+    
     protected $table    =   'nexopos_' . 'products_unit_quantities';
 
     public function unit()

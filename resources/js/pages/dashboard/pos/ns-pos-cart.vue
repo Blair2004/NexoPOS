@@ -34,12 +34,16 @@
             <div class="flex">
                 <table class="table w-full text-sm text-gray-700">
                     <tr>
-                        <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                        <td width="100" colspan="2" class="border border-gray-400 p-2">
+                            <a class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : $25</a>
+                        </td>
                         <td width="200" class="border border-gray-400 p-2">Sub Total</td>
                         <td width="200" class="border border-gray-400 p-2"></td>
                     </tr>
                     <tr>
-                        <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
+                        <td width="100" colspan="2" class="border border-gray-400 p-2">
+                            <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
+                        </td>
                         <td width="200" class="border border-gray-400 p-2">Discount</td>
                         <td width="200" class="border border-gray-400 p-2"></td>
                     </tr>
@@ -78,17 +82,25 @@
 </template>
 <script>
 import { Popup } from '../../../libraries/popup';
-import PosPayment from './ns-pos-payment';
+import PosPaymentPopup from './popups/ns-pos-payment-popup';
+import PosOrderTypePopup from './popups/ns-pos-order-type-popup';
 
 export default {
     name: 'ns-pos-cart',
     data: () => {
         return {
             popup : null,
+            types: [],
+        }
+    },
+    computed: {
+        selectedType() {
+            const activeType    =   this.types.filter( type => type.selected );
+            return activeType.length > 0 ? activeType[0].label : 'N/A';
         }
     },
     mounted() {
-
+        POS.order.types.subscribe( types => this.types = types );
     },
     methods: {
         payOrder() {
@@ -96,7 +108,15 @@ export default {
                 primarySelector: '#pos-app',
                 popupClass : `shadow-lg h-4/5-screen w-4/5 bg-white`
             });
-            this.popup.open( PosPayment );
+            this.popup.open( PosPaymentPopup );
+        },
+        openOrderType() {
+            this.popup  =   new Popup({
+                primarySelector: '#pos-app',
+                popupClass : 'shadow-lg bg-white w-3/5 md:w-2/3 lg:w-2/5 xl:w-2/4',
+            });
+
+            this.popup.open( PosOrderTypePopup )
         }
     }
 }

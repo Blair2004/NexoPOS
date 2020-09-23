@@ -1,4 +1,5 @@
 <?php
+namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
@@ -6,12 +7,19 @@ use App\Model;
 use App\Models\ProductCategory;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define( ProductCategory::class, function (Faker $faker) {
-    return [
-        'name'              =>  $faker->name,
-        'description'       =>  $faker->sentence,
-        'displays_on_pos'   =>  $faker->randomElement([ true, false ]),
-        'author'            =>  $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-    ];
-});
+class ProductCategoryFactory extends Factory
+{
+    protected $model    =   ProductCategory::class;
+
+    public function definition()
+    {
+        return [
+            'name'              =>  $this->faker->name,
+            'description'       =>  $this->faker->sentence,
+            'displays_on_pos'   =>  $this->faker->randomElement([ true, false ]),
+            'author'            =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+        ];
+    }
+}

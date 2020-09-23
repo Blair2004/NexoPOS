@@ -1,4 +1,5 @@
 <?php
+namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
@@ -8,30 +9,37 @@ use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define( Product::class, function (Faker $faker) {
-    $unitGroup  =   $faker->randomElement( UnitGroup::with( 'units' )->get() );
+class ProductFactory extends Factory
+{
+    protected $model    =   Product::class;
 
-    return [
-        'name'                  =>  $faker->word,
-        'product_type'          =>  'product',
-        'sale_price'            =>  $salePrice = $faker->numberBetween( 20, 100 ),
-        'gross_sale_price'      =>  $faker->numberBetween( 10, $salePrice ),
-        'net_sale_price'        =>  $faker->numberBetween( 20, $salePrice ),
+    public function definition()
+    {
+        $unitGroup  =   $this->faker->randomElement( UnitGroup::with( 'units' )->get() );
 
-        'wholesale_price'            =>  $salePrice = $faker->numberBetween( 20, 100 ),
-        'gross_wholesale_price'      =>  $faker->numberBetween( 10, $salePrice ),
-        'net_wholesale_price'        =>  $faker->numberBetween( 20, $salePrice ),
-
-        'barcode'               =>  $faker->word,
-        'stock_management'      =>  $faker->randomElement([ 'enabled', 'disabled' ]),
-        'barcode_type'          =>  $faker->randomElement([ 'ean8', 'ean13' ]),
-        'sku'                   =>  $faker->word . date( 's' ),
-        'product_type'          =>  $faker->randomElement([ 'materialized', 'dematerialized']),
-        'unit_group'            =>  $unitGroup->id,
-        'purchase_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
-        'selling_unit_ids'      =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
-        'transfer_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
-        'author'                =>  $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
-    ];
-});
+        return [
+            'name'                  =>  $this->faker->word,
+            'product_type'          =>  'product',
+            'sale_price'            =>  $salePrice = $this->faker->numberBetween( 20, 100 ),
+            'gross_sale_price'      =>  $this->faker->numberBetween( 10, $salePrice ),
+            'net_sale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
+    
+            'wholesale_price'            =>  $salePrice = $this->faker->numberBetween( 20, 100 ),
+            'gross_wholesale_price'      =>  $this->faker->numberBetween( 10, $salePrice ),
+            'net_wholesale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
+    
+            'barcode'               =>  $this->faker->word,
+            'stock_management'      =>  $this->faker->randomElement([ 'enabled', 'disabled' ]),
+            'barcode_type'          =>  $this->faker->randomElement([ 'ean8', 'ean13' ]),
+            'sku'                   =>  $this->faker->word . date( 's' ),
+            'product_type'          =>  $this->faker->randomElement([ 'materialized', 'dematerialized']),
+            'unit_group'            =>  $unitGroup->id,
+            'purchase_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
+            'selling_unit_ids'      =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
+            'transfer_unit_ids'     =>  json_encode( $unitGroup->units->map( fn( $unit ) => $unit->id ) ),
+            'author'                =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+        ];
+    }
+}

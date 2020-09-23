@@ -22,6 +22,7 @@ class CreateProductsCategoriesTable extends Migration
                 $table->string( 'name' );
                 $table->integer( 'parent_id' )->default(0)->nullable();
                 $table->integer( 'media_id' )->default(0);
+                $table->string( 'preview_url' )->nullable();
                 $table->boolean( 'displays_on_pos' )->default(true);
                 $table->integer( 'total_items' )->default(0);
                 $table->text( 'description' )->nullable();

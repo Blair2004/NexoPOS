@@ -5,6 +5,7 @@
     "/css/app.css": "/css/app.css",
     "/js/manifest.js": "/js/manifest.js",
     "/js/pos.js": "/js/pos.js",
+    "/js/pos-header.js": "/js/pos-header.js",
     "/js/setup.js": "/js/setup.js",
     "/js/vendor.js": "/js/vendor.js"
 }

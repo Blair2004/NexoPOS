@@ -1,15 +1,23 @@
 <?php
+namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\RewardSystem;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define( RewardSystem::class, function (Faker $faker) {
-    return [
-        'name'      =>      $faker->company,
-        'target'    =>      $faker->numberBetween(500,10000),
-        'author'    =>      $faker->randomElement( User::get()->map( fn( $user ) => $user->id ) )
-    ];
-});
+class RewardSystemFactory extends Factory
+{
+    protected $model    =   RewardSystem::class;
+
+    public function definition()
+    {
+        return [
+            'name'      =>      $this->faker->company,
+            'target'    =>      $this->faker->numberBetween(500,10000),
+            'author'    =>      $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) )
+        ];
+    }
+}

@@ -8,9 +8,12 @@ use App\Events\ProcurementProductBeforeCreateEvent;
 use App\Events\ProcurementProductBeforeDeleteEvent;
 use App\Events\ProcurementProductBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProcurementProduct extends Model
 {
+    use HasFactory;
+    
     protected $table    =   'nexopos_' . 'procurements_products';
 
     protected $dispatchesEvents     =   [
