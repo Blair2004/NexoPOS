@@ -44,7 +44,7 @@ The following installation steps require additionnal skills on using CLI (Comman
 
 As NexoPOS doesn't have a frontend already, you'll end on the default Laravel page. Access `/do-setup/` to launch the installer.
 
-### Must Read For NexoPOS 3.x Users
+## Must Read For NexoPOS 3.x Users
 1 - As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. 
     If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. 
 
