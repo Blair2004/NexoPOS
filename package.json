@@ -30,7 +30,7 @@
         "moment": "^2.28.0",
         "rx": "^4.1.0",
         "rxjs": "^6.6.3",
-        "tailwindcss": "^1.8.9",
+        "tailwindcss": "^1.8.10",
         "vue": "^2.6.12",
         "vue-router": "^3.4.3",
         "vue-upload-component": "^2.8.20"
