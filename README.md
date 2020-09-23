@@ -9,13 +9,6 @@ This version available for free, aims to be more :
 
 Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
 
-### ⚠️ Warning ⚠️
-As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. 
-
-If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. 
-
-If you need support about NexoPOS 4.x (if you have an issue), post an issue here on Github. If you have an issue with NexoPOS 3.x or any of the related extension, please contact the support via contact@nexopos.com. NexoPOS 4.x doesn't have **yet** any representatives, don't let anyone doing the installation for you.
-
 ## Major Additions & Benefits
 Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
 
@@ -50,6 +43,20 @@ The following installation steps require additionnal skills on using CLI (Comman
 - (Optional) Run `php artisan serve` if you don't have your virtual server pointing to your installation. This will run a php server for development purpose only.
 
 As NexoPOS doesn't have a frontend already, you'll end on the default Laravel page. Access `/do-setup/` to launch the installer.
+
+### Must Read For NexoPOS 3.x Users
+1 - As NexoPOS 4.x is built from scratch, none of NexoPOS 3.x extensions are compatible. 
+    If you have purchased any NexoPOS 3.x extensions (Gastro, Self Ordering Kiosk), it won't work with NexoPOS 4.x. 
+
+2 - If you need support about NexoPOS 4.x (if you have an issue), post an issue here on Github. If you have an issue with NexoPOS 3.x or any of the related extension, please contact the support via contact@nexopos.com. 
+
+3 - If you have recently acquired NexoPOS 3.x, you'll still be able to use that version. But we'll offer a migration service to switch to NexoPOS 4.x and that service might be paid.
+
+## Support Terms
+
+1 - The support on NexoPOS 4.x only applies to the informations provided by the users while creating an issue. This means, we won't either do the installation on your server or check an issue on your server. You're thefore invited not to post your server informations while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
+
+2 - The premium support on NexoPOS 4.x is a paid service and is handled on a different channel.
 
 ## Contribution Guidelines
 Do you plan to contribute ? That's awesome. We're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If youjust have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
