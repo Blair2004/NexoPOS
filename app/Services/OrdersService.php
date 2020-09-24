@@ -456,16 +456,16 @@ class OrdersService
             }
 
             $orderProduct->sale_price           =   $product[ 'product' ]->sale_price;
-            $orderProduct->net_price            =   $product[ 'product' ]->net_sale_price;
-            $orderProduct->gross_price          =   $product[ 'product' ]->gross_sale_price;
+            $orderProduct->net_price            =   $product[ 'product' ]->incl_tax_sale_price;
+            $orderProduct->gross_price          =   $product[ 'product' ]->excl_tax_sale_price;
 
-            $orderProduct->total_gross_price    =   $this->currencyService->define( $product[ 'product' ]->gross_sale_price )
+            $orderProduct->total_gross_price    =   $this->currencyService->define( $product[ 'product' ]->excl_tax_sale_price )
                 ->multiplyBy( $product[ 'quantity' ] )
                 ->get();
             $orderProduct->total_price          =   $this->currencyService->define( $product[ 'product' ]->sale_price )
                 ->multiplyBy( $product[ 'quantity' ] )
                 ->get();
-            $orderProduct->total_net_price      =   $this->currencyService->define( $product[ 'product' ]->net_sale_price )
+            $orderProduct->total_net_price      =   $this->currencyService->define( $product[ 'product' ]->incl_tax_sale_price )
                 ->multiplyBy( $product[ 'quantity' ] )
                 ->get();
 

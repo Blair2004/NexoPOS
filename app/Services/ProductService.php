@@ -523,7 +523,7 @@ class ProductService
          */
         extract( $data );
 
-        if ( in_array( $field, [ 'sale_price', 'gross_sale_price', 'net_sale_price', 'tax_value' ] ) ) {
+        if ( in_array( $field, [ 'sale_price', 'excl_tax_sale_price', 'incl_tax_sale_price', 'tax_value' ] ) ) {
             $product->$field    =   $this->currency->define( $value )
                 ->get();
         } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) ) {

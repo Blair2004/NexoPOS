@@ -15,6 +15,7 @@ use App\Models\TaxGroup;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\Helper;
+use App\Services\TaxService;
 
 class ProductCrud extends CrudService
 {
@@ -75,6 +76,12 @@ class ProductCrud extends CrudService
     public $fillable    =   [];
 
     /**
+     * protected tax service
+     * @param TaxService
+     */
+    protected $taxService;
+
+    /**
      * Define Constructor
      * @param  
      */
@@ -83,6 +90,8 @@ class ProductCrud extends CrudService
         parent::__construct();
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+
+        $this->taxService       =   app()->make( TaxService::class );
     }
 
     /**
@@ -415,38 +424,9 @@ class ProductCrud extends CrudService
      */
     private function calculateTaxes( $inputs, Product $product = null )
     {
-        $taxGroup                       =   TaxGroup::find( $inputs[ 'tax_id' ] );
-        $inputs[ 'net_sale_price' ]     =   $inputs[ 'net_sale_price_edit' ];
+        $inputs[ 'incl_tax_sale_price' ]     =   $inputs[ 'sale_price_edit' ];
 
-        /**
-         * calculate the taxes wether they are all
-         * inclusive or exclusive
-         */
-        if ( $taxGroup instanceof TaxGroup ) {
-            $taxValue       =   $taxGroup->taxes
-                ->map( function( $tax ) use ( $inputs, $product ) {
-                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $inputs[ 'net_sale_price_edit' ] ) / 100;
-
-                    ProductTax::create([
-                        'product_id'    =>  $product->id,
-                        'tax_id'        =>  $tax->id,
-                        'rate'          =>  $tax->rate,
-                        'name'          =>  $tax->name,
-                        'author'        =>  Auth::id(),
-                        'value'         =>  $taxValue
-                    ]);
-
-                    return $taxValue;
-                })
-                ->sum();
-
-            if ( $inputs[ 'tax_type' ] === 'inclusive' ) {
-                $inputs[ 'gross_sale_price' ]       =   floatval( $inputs[ 'net_sale_price_edit' ] ) - $taxValue;
-            } else {
-                $inputs[ 'gross_sale_price' ]       =   floatval( $inputs[ 'net_sale_price_edit' ] );
-                $inputs[ 'net_sale_price' ]         =   floatval( $inputs[ 'net_sale_price_edit' ] ) + $taxValue;
-            }
-        }
+        $this->taxService->computeTax( $product, $inputs[ 'tax_id' ] );
 
         return $inputs;
     }
@@ -590,8 +570,8 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'net_sale_price'  =>  [
-                'label'         =>  __( 'Net Sale Price' ),
+            'incl_tax_sale_price'  =>  [
+                'label'         =>  __( 'Sale Price Inc. Tax' ),
                 'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -630,8 +610,8 @@ class ProductCrud extends CrudService
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->sale_price          =   ( string ) ns()->currency->value( $entry->sale_price );
         $entry->wholesale_price     =   ( string ) ns()->currency->value( $entry->wholesale_price );
-        $entry->net_sale_price      =   ( string ) ns()->currency->value( $entry->net_sale_price );
-        $entry->gross_sale_price    =   ( string ) ns()->currency->value( $entry->gross_sale_price );
+        $entry->incl_tax_sale_price      =   ( string ) ns()->currency->value( $entry->incl_tax_sale_price );
+        $entry->excl_tax_sale_price    =   ( string ) ns()->currency->value( $entry->excl_tax_sale_price );
         $entry->tax_value           =   ( string ) ns()->currency->value( $entry->tax_value );
         // you can make changes here
         $entry->{'$actions'}    =   [

@@ -1,15 +1,12 @@
-const { Vue }       =   require( './bootstrap' );
-const components    =   require( './components/components' );
-
+import Vue from 'vue';
+var components = require('./components/components');
 new Vue({
     el: '#dashboard-aside',
-    mounded() {
-    }
 });
-
 new Vue({
     el: '#dashboard-content',
-    mounted() {
-        console.log( 'mounted' );
+    mounted: function () {
+        console.log('mounted');
     }
 });
+//# sourceMappingURL=dashboard.js.map

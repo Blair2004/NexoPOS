@@ -12,8 +12,9 @@ const tailwindcss = require('tailwindcss');
  |
  */
 
-mix.extend( 'vue', new class {
+mix.extend( 'webpackCustomConfig', new class {
     webpackRules() {
+        console.log( 'is effective' );
         return [
             {
                 test: /\.vue$/,
@@ -40,18 +41,47 @@ mix.extend( 'vue', new class {
     }
 
     webpackConfig( webpackConfig ) {
-        webpackConfig.resolve.extensions( '.vue' );
+        webpackConfig.resolve.alias = {
+            'vue$': 'vue/dist/vue.esm.js',
+            '@': __dirname + '/resources/ts'
+        };
     }
 });
+// mix.webpackCustomConfig();
+mix
+    .webpackConfig({
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    loader: "ts-loader",
+                    exclude: /node_modules/
+                }
+            ]
+        },
+        resolve: {
+            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"]
+        }
+    });
+// mix.webpackConfig({
+//     resolve: {
+//         extensions: ['.js', '.vue', '.json'],
+//         alias: {
+//             'vue$': 'vue/dist/vue.esm.js',
+//             '@': __dirname + '/resources/assets/js'
+//         },
+//     },
+// });
+//mix.
 mix.disableNotifications();
 mix.sourceMaps();
 mix
-    .js('resources/js/bootstrap.js', 'public/js')
-    .js('resources/js/app.js', 'public/js')
-    .js('resources/js/pos-init.js', 'public/js')
-    .js('resources/js/pos.js', 'public/js')
-    .js('resources/js/auth.js', 'public/js')
-    .js('resources/js/setup.js', 'public/js')
+    .js('resources/ts/bootstrap.ts', 'public/js')
+    .js('resources/ts/app.ts', 'public/js')
+    .js('resources/ts/pos-init.ts', 'public/js')
+    .js('resources/ts/pos.ts', 'public/js')
+    .js('resources/ts/auth.ts', 'public/js')
+    .js('resources/ts/setup.ts', 'public/js')
     .extract([ 
         'vue', 
         'lodash', 
@@ -63,7 +93,7 @@ mix
         'vue-router', 
         'dayjs' 
     ])
-    .sass('resources/sass/app.scss', 'public/css')
+    // .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],

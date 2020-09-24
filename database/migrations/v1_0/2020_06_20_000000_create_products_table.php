@@ -26,13 +26,13 @@ class CreateProductsTable extends Migration
                 $table->string( 'product_type' )->default( 'product' ); // product, variation, variable
                 $table->string( 'type' )->default( 'tangible' ); // intangible, tangible (or any other extended types)
                 $table->float( 'sale_price' )->default(0); // could be 0 if the product support variations
-                $table->float( 'gross_sale_price' )->default(0); // must be computed automatically
-                $table->float( 'net_sale_price' )->default(0); // must be computed automatically
+                $table->float( 'excl_tax_sale_price' )->default(0); // must be computed automatically
+                $table->float( 'incl_tax_sale_price' )->default(0); // must be computed automatically
                 $table->string( 'sale_price_edit' )->default(0); // to let the system consider the price sent by the client
                 
                 $table->float( 'wholesale_price' )->default(0);
-                $table->float( 'net_wholesale_price' )->default(0);
-                $table->float( 'gross_wholesale_price' )->default(0);
+                $table->float( 'incl_tax_wholesale_price' )->default(0); // include tax whole sale price
+                $table->float( 'excl_tax_wholesale_price' )->default(0); // exclude tax whole sale price
                 $table->float( 'wholesale_price_edit' )->default(0);
 
                 $table->string( 'status' )->default( 'available' ); // available, unavailable

@@ -176,8 +176,8 @@ class TaxService
     {
         $taxGroup                       =   TaxGroup::find( $tax_group_id );
 
-        $product->net_sale_price        =   floatval( $product->sale_price_edit );
-        $product->net_wholesale_price   =   floatval( $product->wholesale_price_edit );
+        $product->incl_tax_sale_price           =   floatval( $product->sale_price_edit );
+        $product->incl_tax_wholesale_price      =   floatval( $product->wholesale_price_edit );
 
         /**
          * calculate the taxes wether they are all
@@ -186,9 +186,23 @@ class TaxService
         if ( $taxGroup instanceof TaxGroup ) {
             $taxValue       =   $taxGroup->taxes
                 ->map( function( $tax ) use ( $product ) {
-                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $product->sale_price_edit ) / 100;
+                    $taxValue           =   $this->getVatValue(
+                        $product->tax_type,
+                        floatval( $tax[ 'rate' ] ),
+                        $product->sale_price_edit
+                    );
 
-                    $productTax                 =   new ProductTax;
+                    $productTax                 =   ProductTax::where( 'tax_id', $tax->id )
+                        ->where( 'product_id', $product->id )
+                        ->first();
+
+                    /**
+                     * if the tax hasn't yet been set, we'll create a new instance
+                     */
+                    if( ! $productTax instanceof ProductTax ) {
+                        $productTax                 =   new ProductTax;
+                    }
+
                     $productTax->product_id     =   $product->id;
                     $productTax->tax_id         =   $tax->id;
                     $productTax->rate           =   $tax->rate;
@@ -201,11 +215,26 @@ class TaxService
                 })
                 ->sum();
 
+            $taxRate        =   $taxGroup->taxes
+                ->map( function( $tax ) {
+                    return floatval( $tax[ 'rate' ] );
+                })
+                ->sum();
+
             if ( $product->tax_type === 'inclusive' ) {
-                $product->gross_sale_price       =   floatval( $product->sale_price_edit ) - $taxValue;
+                $product->excl_tax_sale_price       =   ( floatval( $product->sale_price_edit ) );
+                $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
+                    'inclusive',
+                    $taxRate,
+                    $product->sale_price_edit
+                );
             } else {
-                $product->gross_sale_price       =   floatval( $product->sale_price_edit );
-                $product->net_sale_price         =   floatval( $product->sale_price_edit ) + $taxValue;
+                $product->excl_tax_sale_price       =   floatval( $product->sale_price_edit );
+                $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
+                    'exclusive',
+                    $taxRate,
+                    $product->sale_price_edit
+                );
             }
 
             $product->tax_value                 =   $taxValue;
@@ -233,17 +262,49 @@ class TaxService
                 })
                 ->sum();
 
+            $taxRate        =   $taxGroup->taxes
+                ->map( function( $tax ) {
+                    return floatval( $tax[ 'rate' ] );
+                })
+                ->sum();
+
             if ( $product->tax_type === 'inclusive' ) {
-                $product->gross_wholesale_price       =   floatval( $product->wholesale_price_edit ) - $taxValue;
+                $product->excl_tax_wholesale_price            =   $this->getComputedTaxValue(
+                    'inclusive',
+                    $taxRate,
+                    $product->wholesale_price_edit
+                );
             } else {
-                $product->gross_wholesale_price       =   floatval( $product->wholesale_price_edit );
-                $product->net_wholesale_price         =   floatval( $product->wholesale_price_edit ) + $taxValue;
+                $product->excl_tax_wholesale_price            =   floatval( $product->wholesale_price_edit );
+                $product->incl_tax_wholesale_price            =   $this->getComputedTaxValue(
+                    'exclusive',
+                    $taxRate,
+                    $product->wholesale_price_edit
+                );
             }
 
             $product->tax_value                 =   $taxValue;
         }
 
         $product->save();
+    }
+
+    public function getComputedTaxValue( $type, float $rate, float $value )
+    {
+        if ( $type === 'inclusive' ) {
+            return ( $value / ( $rate + 100 ) ) * 100;
+        } else if ( $type === 'exclusive' ) {
+            return ( $value / 100 ) * ( $rate + 100 );
+        }
+    }
+
+    public function getVatValue( $type, float $rate, float $value )
+    {
+        if ( $type === 'inclusive' ) {
+            return $value - $this->getComputedTaxValue( $type, $rate, $value );
+        } else if ( $type === 'exclusive' ) {
+            return $this->getComputedTaxValue( $type, $rate, $value ) - $value;
+        }
     }
 
     /**

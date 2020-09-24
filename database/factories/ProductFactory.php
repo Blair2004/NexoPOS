@@ -23,12 +23,12 @@ class ProductFactory extends Factory
             'name'                  =>  $this->faker->word,
             'product_type'          =>  'product',
             'sale_price'            =>  $salePrice = $this->faker->numberBetween( 20, 100 ),
-            'gross_sale_price'      =>  $this->faker->numberBetween( 10, $salePrice ),
-            'net_sale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
+            'excl_tax_sale_price'      =>  $this->faker->numberBetween( 10, $salePrice ),
+            'incl_tax_sale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
     
-            'wholesale_price'            =>  $salePrice = $this->faker->numberBetween( 20, 100 ),
-            'gross_wholesale_price'      =>  $this->faker->numberBetween( 10, $salePrice ),
-            'net_wholesale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
+            'wholesale_price'           =>  $salePrice = $this->faker->numberBetween( 20, 100 ),
+            'excl_tax_wholesale_price'        =>  $this->faker->numberBetween( 10, $salePrice ),
+            'incl_tax_wholesale_price'        =>  $this->faker->numberBetween( 20, $salePrice ),
     
             'barcode'               =>  $this->faker->word,
             'stock_management'      =>  $this->faker->randomElement([ 'enabled', 'disabled' ]),

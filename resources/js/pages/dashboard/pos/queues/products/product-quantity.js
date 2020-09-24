@@ -1,10 +1,11 @@
 import { Popup } from "../../../../../libraries/popup";
-// import { ProductQuantity } from "../../popups/product-quantity.vue";
+import Product from "../../popups/product-quantity.vue";
 var ProductQuantityPromise = /** @class */ (function () {
     function ProductQuantityPromise() {
+        console.log(Product);
     }
     ProductQuantityPromise.prototype.run = function () {
-        return new Promise(function (resolve, rejeect) {
+        return new Promise(function (resolve, reject) {
             console.log('foo');
             var popup = new Popup();
             // popup.open()

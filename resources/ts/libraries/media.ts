@@ -2,11 +2,11 @@ import { Popup } from './popup';
 const MediaComponent     =   require( './../../js/pages/dashboard/ns-media' ).default;
 
 export class Media {
-    private popup;
+    private popup: any;
 
     constructor(
-        private field,
-        private primarySelector
+        private field?: string,
+        private primarySelector?: string
     ) {}
 
     open() {

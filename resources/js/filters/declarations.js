@@ -1,3 +1,3 @@
-const nsCurrency    =   require( './currency' );
-
-module.exports  =   { nsCurrency };
+import { nsCurrency } from './currency';
+export { nsCurrency };
+//# sourceMappingURL=declarations.js.map

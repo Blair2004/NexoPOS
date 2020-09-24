@@ -1,6 +1,7 @@
 import { Subject } from "rxjs";
 
 declare const Vue;
+declare const document;
 
 export class Popup {
     private config  =   {
@@ -11,7 +12,7 @@ export class Popup {
     private container   =   document.createElement( 'div' );
     private popupBody   =   document.createElement( 'div' );
     private event: Subject<{ event: string, value: any }>;
-    private instance;
+    private instance: any;
     private parentWrapper: HTMLDivElement | HTMLBodyElement;
 
     constructor( config: {

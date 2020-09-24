@@ -1,53 +1,62 @@
-import * as rx from "rx";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 import * as rxjs from 'rxjs';
-
-export class HttpClient {
-    constructor() {
-        this._subject    =   new rxjs.Subject; 
+var HttpClient = /** @class */ (function () {
+    function HttpClient() {
+        this._subject = new rxjs.Subject;
     }
-
-    defineClient( client ) {
-        this._client    =   client;
-    }
-
-    post( url, data, config = {} ) { 
-        return this._request( 'post', url, data, config );
-    }
-
-    get( url, config = {} ) {
-        return this._request( 'get', url, undefined, config );
-    }
-
-    delete( url, config = {} ) {
-        return this._request( 'delete', url, undefined, config );
-    }
-
-    put( url, data , config = {} ) {
-        return this._request( 'put', url, data, config );
-    }
-
-    _request( type, url, data = {}, config = {} ) {
-        this._subject.next({ identifier: 'async.start', url, data });
-        return new rxjs.Observable( observer => {
-            this._client[ type ]( url, data, { 
-                ...this._client.defaults[ type ],
-                config
-            }).then( result => {
-                observer.next( result.data );
+    HttpClient.prototype.defineClient = function (client) {
+        this._client = client;
+    };
+    HttpClient.prototype.post = function (url, data, config) {
+        if (config === void 0) { config = {}; }
+        return this._request('post', url, data, config);
+    };
+    HttpClient.prototype.get = function (url, config) {
+        if (config === void 0) { config = {}; }
+        return this._request('get', url, undefined, config);
+    };
+    HttpClient.prototype.delete = function (url, config) {
+        if (config === void 0) { config = {}; }
+        return this._request('delete', url, undefined, config);
+    };
+    HttpClient.prototype.put = function (url, data, config) {
+        if (config === void 0) { config = {}; }
+        return this._request('put', url, data, config);
+    };
+    HttpClient.prototype._request = function (type, url, data, config) {
+        var _this = this;
+        if (data === void 0) { data = {}; }
+        if (config === void 0) { config = {}; }
+        this._subject.next({ identifier: 'async.start', url: url, data: data });
+        return new rxjs.Observable(function (observer) {
+            _this._client[type](url, data, __assign(__assign({}, _this._client.defaults[type]), { config: config })).then(function (result) {
+                observer.next(result.data);
                 observer.complete();
-                this._subject.next({ identifier: 'async.stop' });
-            }).catch( error => {
-                observer.error( error.response.data );
-                this._subject.next({ identifier: 'async.stop' });
+                _this._subject.next({ identifier: 'async.stop' });
+            }).catch(function (error) {
+                observer.error(error.response.data);
+                _this._subject.next({ identifier: 'async.stop' });
             });
-        })
-    }
-
-    subject() {
+        });
+    };
+    HttpClient.prototype.subject = function () {
         return this._subject;
-    }
-
-    emit({ identifier, value }) {
-        this._subject.next({ identifier, value });
-    }
-}
+    };
+    HttpClient.prototype.emit = function (_a) {
+        var identifier = _a.identifier, value = _a.value;
+        this._subject.next({ identifier: identifier, value: value });
+    };
+    return HttpClient;
+}());
+export { HttpClient };
+//# sourceMappingURL=http-client.js.map
