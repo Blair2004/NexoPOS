@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "ES2015",
+        "outDir": "./resources/js",
+        "target": "ES5",
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "sourceMap": true
+    },
+    "include": [
+        "resources/ts/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

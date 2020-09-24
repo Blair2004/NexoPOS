@@ -17,3 +17,12 @@ POS.header.buttons.push( NsPosDashboardButton );
 POS.header.buttons.push( NsPosPendingOrderButton );
 POS.header.buttons.push( NsPosOrderTypeButton );
 POS.header.buttons.push( NsPosCustomersButton );
+
+/**
+ * this is resolved when a product is being added to the
+ * cart. That will help to mutate the product before 
+ * it's added the cart.
+ */
+POS.settings.products_queue.push( promiseProductQuantity );
+// POS.settings.products_queue.push( promiseProductUnit );
+// POS.settings.products_queue.push( promiseProductConsolidation );

@@ -1,13 +1,10 @@
-"use strict";
-exports.__esModule = true;
-exports.Popup = void 0;
-var rxjs_1 = require("rxjs");
+import { Subject } from "rxjs";
 var Popup = /** @class */ (function () {
     function Popup(config) {
         if (config === void 0) { config = {}; }
         this.config = {
             primarySelector: undefined,
-            popupClass: 'shadow-lg h-half w-1/2 bg-white'
+            popupClass: 'shadow-lg h-half w-1/2 bg-white',
         };
         this.container = document.createElement('div');
         this.popupBody = document.createElement('div');
@@ -20,7 +17,7 @@ var Popup = /** @class */ (function () {
         else {
             this.parentWrapper = document.querySelector('body').querySelectorAll('div')[0];
         }
-        this.event = new rxjs_1.Subject;
+        this.event = new Subject;
     }
     Popup.prototype.open = function (component) {
         var _this = this;
@@ -101,4 +98,5 @@ var Popup = /** @class */ (function () {
     };
     return Popup;
 }());
-exports.Popup = Popup;
+export { Popup };
+//# sourceMappingURL=popup.js.map

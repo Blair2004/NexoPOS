@@ -16,16 +16,47 @@
     <script>
     const POS               =   new Object;
     POS.order               =   new Object;
+
+    /**
+     * Keeps the products
+     */
     POS.order.products      =   new RxJS.Subject([]);
+
+    /**
+     * Keeps the order types
+     * can be extended via a hook.
+     */
     POS.order.types         =   new RxJS.BehaviorSubject( @json( $orderTypes ) );
+
+    /**
+     * Keeps the selected customer
+     */
     POS.order.customer      =   new Object;
+
+    /**
+     * Has the current POS breadcrumb.
+     */
     POS.breadcrumb          =   [];
-    POS.grid                =   [];
+
+    /**
+     * Keeps the POS settings
+     */
+    POS.options             =   new RxJS.Subject({
+        barcode_search      :   true,
+        text_search         :   false,
+        breadcrumb          :   [],
+        products_queue      :   []
+    });
+
     POS.header              =   new Object;
+
+    /**
+     * This should be used to add new component 
+     * on the header of the POS.
+     */
     POS.header.buttons      =   [];
-    POS.activeCategory      =   new Object;
     </script>
-    <script src="{{ asset( 'js/pos-header.js' ) }}"></script>
+    <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>
 @verbatim
 @endverbatim

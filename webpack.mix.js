@@ -12,12 +12,43 @@ const tailwindcss = require('tailwindcss');
  |
  */
 
+mix.extend( 'vue', new class {
+    webpackRules() {
+        return [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
+                        // the "scss" and "sass" values for the lang attribute to the right configs here.
+                        // other preprocessors should work out of the box, no loader config like this necessary.
+                        'scss': 'vue-style-loader!css-loader!sass-loader',
+                        'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
+                    }
+                    // other vue-loader options go here
+                }
+            }, {
+                test: /\.tsx?$/,
+                loader: 'ts-loader',
+                exclude: /node_modules/,
+                options: {
+                    appendTsSuffixTo: [/\.vue$/],
+                }
+            },
+        ]
+    }
+
+    webpackConfig( webpackConfig ) {
+        webpackConfig.resolve.extensions( '.vue' );
+    }
+});
 mix.disableNotifications();
 mix.sourceMaps();
 mix
     .js('resources/js/bootstrap.js', 'public/js')
     .js('resources/js/app.js', 'public/js')
-    .js('resources/js/pos-header.js', 'public/js')
+    .js('resources/js/pos-init.js', 'public/js')
     .js('resources/js/pos.js', 'public/js')
     .js('resources/js/auth.js', 'public/js')
     .js('resources/js/setup.js', 'public/js')

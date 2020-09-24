@@ -258,18 +258,20 @@ class CategoryController extends DashboardController
         if ( $id !== '0' ) {
             $category       =   ProductCategory::where( 'id', $id )
                 ->with( 'subCategories' )
-                ->with( 'products' )
-                ->get();
+                ->with( 'products.galleries' )
+                ->first();
 
             return [
-                'products'      =>  $category->products,
-                'categories'    =>  $category->subCategories
+                'products'          =>  $category->products,
+                'categories'        =>  $category->subCategories,
+                'previousCategory'  =>  ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
             ];
         }
 
         return [
-            'products'      =>  [],
-            'categories'    =>  ProductCategory::where( 'parent_id', 0 )
+            'products'          =>  [],
+            'previousCategory'  =>  false,
+            'categories'        =>  ProductCategory::where( 'parent_id', 0 )
                 ->get(),
         ];
     }

@@ -23,6 +23,10 @@ const {
     nsMediaInput,
 }   =   require( './components/components' );
 
+const {
+    nsCurrency
+}   =   require( './filters/declarations' );
+
 const NsPos         =   require( './pages/dashboard/pos/ns-pos.vue' ).default;
 const NsPosCart     =   require( './pages/dashboard/pos/ns-pos-cart.vue' ).default;
 const NsPosGrid     =   require( './pages/dashboard/pos/ns-pos-grid.vue' ).default;

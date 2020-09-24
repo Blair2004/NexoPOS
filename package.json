@@ -7,12 +7,13 @@
         "watch-poll": "npm run watch -- --watch-poll",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
         "prod": "npm run production",
-        "watch-libraries": "tsc ./resources/ts/libraries/*.ts --outdir ./resources/js/libraries --watch",
+        "watch-ts": "tsc --watch",
         "webpack": "webpack",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
         "axios": "^0.20",
+        "babel-loader": "^8.1.0",
         "cross-env": "^7.0",
         "laravel-mix": "^5.0.5",
         "lodash": "^4.17.20",
