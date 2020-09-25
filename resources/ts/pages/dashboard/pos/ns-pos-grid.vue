@@ -13,10 +13,8 @@
         </div>
         <div id="grid-breadscrumb" class="p-2 border-gray-200">
             <ul class="flex">
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Home </a> <i class="las la-angle-right"></i> </li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Mens </a> <i class="las la-angle-right"></i> </li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Shirts </a> <i class="las la-angle-right"></i> </li>
-                <li><a href="javascript:void(0)" class="px-3 text-gray-700">Sport </a> <i class="las la-angle-right"></i> </li>
+                <li><a @click="loadCategories()" href="javascript:void(0)" class="px-3 text-gray-700">Home </a> <i class="las la-angle-right"></i> </li>
+                <li><a @click="loadCategories( bread )" v-for="bread of breadcrumb" :key="bread.id" href="javascript:void(0)" class="px-3 text-gray-700">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
             </ul>
         </div>
         <div id="grid-items" class="overflow-hidden flex-auto">
@@ -33,14 +31,14 @@
                 </template>
 
                 <template v-if="hasCategories">
-                    <div @click="browse( category )" :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                    <div @click="loadCategories( category )" :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
                         <div class="h-full w-full p-2 flex items-center justify-center">
                             <img v-if="category.preview_url" :src="category.preview_url" class="object-center" :alt="category.name">
                             <i class="las la-image text-gray-600 text-6xl" v-if="! category.preview_url"></i>
                         </div>
                         <div class="h-0 w-full">
                             <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2" style="background:rgb(255 255 255 / 73%)">
-                                <h3 class="text-sm font-bold text-gray-700 py-2">{{ category.name }}</h3>
+                                <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ category.name }}</h3>
                             </div>
                         </div>
                     </div>
@@ -49,7 +47,7 @@
                 <!-- Looping Products -->
 
                 <template v-if="! hasCategories">
-                    <div @click="addToTheCart( category )" :key="product.id" v-for="product of products"  class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                    <div @click="addToTheCart( product )" :key="product.id" v-for="product of products"  class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
                         <div class="h-full w-full p-2 flex items-center justify-center">
                             <img v-if="product.galleries.filter( i => i.featured === 1 ).length > 0" :src="product.galleries.filter( i => i.featured === 1 )[0].url" class="object-center" :alt="product.name">
                             <i v-if="product.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-gray-600 text-6xl"></i>
@@ -69,15 +67,19 @@
         </div>
     </div>
 </template>
-<script>
+<script >
+import Vue from 'vue';
 import { nsHttpClient } from '../../../bootstrap'
+
 export default {
     name: 'ns-pos-grid',
     data() {
         return {
             products: [],
             categories: [],
+            breadcrumb: [],
             previousCategory: null,
+            currentCategory: null,
         }
     },
     computed: {
@@ -87,19 +89,74 @@ export default {
     },
     mounted() {
         this.loadCategories();
+        POS.breadcrumb.subscribe( ( breadcrumb ) => {
+            this.breadcrumb     =   breadcrumb;
+        })
     },
     methods: {
-        browse( category ) {
-            this.loadCategories( category.id );
-        },
-
-        loadCategories( parent = '' ) {
-            nsHttpClient.get( `/api/nexopos/v4/categories/pos/${parent || ''}` )
-                .subscribe( result => {
+        loadCategories( parent ) {
+            nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
+                .subscribe( (result ) => {
                     this.categories         =   result.categories;
                     this.products           =   result.products;
                     this.previousCategory   =   result.previousCategory;
+                    this.currentCategory    =   result.currentCategory;
+                    this.updateBreadCrumb( this.currentCategory );
                 });
+        },
+
+        updateBreadCrumb( parent ) {
+            if ( parent ) {
+                const index     =   this.breadcrumb.filter( bread => bread.id === parent.id );
+    
+                /**
+                 * this means, we're trying to navigate
+                 * through something that has already been 
+                 * added to the breadcrumb
+                 */
+                if ( index.length > 0 ) {
+                    let allow       =   true;
+                    const prior     =   this.breadcrumb.filter( bread => {
+                        if ( bread.id === index[0].id && allow ) {
+                            allow   =   false;
+                            return true;
+                        }
+
+                        return allow;
+                    });
+                    this.breadcrumb     =   prior;
+                } else {
+                    this.breadcrumb.push( parent );
+                } 
+    
+            } else {
+                this.breadcrumb     =   [];    
+            }
+
+            POS.breadcrumb.next( this.breadcrumb );
+        },
+    
+        async addToTheCart( product ) {
+            for( let index in POS.settings.addToCartQueue ) {
+                /**
+                 * the popup promise receives the product that
+                 * is above to be added. Hopefully as it's passed by reference
+                 * updating the product should mutate that once the queue is handled.
+                 */
+                try {
+                    const promiseInstance   =   new POS.settings.addToCartQueue[ index ]( product );
+                    const result            =   await promiseInstance.run();
+                } catch( brokenPromise ) {
+                    /**
+                     * if a popup resolve "false",
+                     * that means for some reason the Promise has
+                     * been broken, therefore we need to stop the queue.
+                     */
+                    if ( brokenPromise === false ) {
+                        return false;
+                    }
+                }
+            }
         }
     }
 }

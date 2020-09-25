@@ -16,7 +16,7 @@ use App\Http\Requests\UnitRequest;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\UnitService;
-
+use Illuminate\Http\Request;
 
 class UnitsController extends DashboardController
 {
@@ -58,8 +58,13 @@ class UnitsController extends DashboardController
         return $this->unitService->deleteUnit( $id );
     }
 
-    public function get()
+    public function get( Request $request )
     {
+        if ( $request->query( 'ids' ) ) {
+            $ids    =   json_decode( $request->query( 'ids' ) );
+            return Unit::whereIn( 'id', $ids )->get();
+        }
+
         return $this->unitService->get();
     }
 

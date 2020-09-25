@@ -1,8 +1,8 @@
 import { Popup } from './popup';
-const MediaComponent     =   require( './../../js/pages/dashboard/ns-media' ).default;
+const MediaComponent     =   require( './../pages/dashboard/ns-media' ).default;
 
 export class Media {
-    private popup: any;
+    private popup;
 
     constructor(
         private field?: string,

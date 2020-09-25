@@ -34,7 +34,7 @@ export class Popup {
         this.event              =   new Subject;
     }
 
-    open( component ) {
+    open( component, params = {} ) {
         this.parentWrapper.style.filter   =   'blur(5px)';
         
         this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );
@@ -80,7 +80,7 @@ export class Popup {
         const componentClass        =   Vue.extend( component );
         this.instance               =   new componentClass({
             propsData:  {
-                popup   :   this
+                popup   :   this,
             }
         });
 
@@ -88,11 +88,14 @@ export class Popup {
          * Let's intanciaate the component
          * and mount it
          */
-        this.instance.template           =   component?.options?.template || undefined;
-        this.instance.render             =   component.render || undefined;
-        this.instance.methods            =   component?.options?.methods || component?.methods;
-        this.instance.data               =   component?.options?.data || component?.data;
+        this.instance.template          =   component?.options?.template || undefined;
+        this.instance.render            =   component.render || undefined;
+        this.instance.methods           =   component?.options?.methods || component?.methods;
+        this.instance.data              =   component?.options?.data || component?.data;
+        this.instance.$popup            =   this;
+        this.instance.$popupParams      =   params;
         this.instance.$mount( `#${this.container.id} .popup-body` );
+
     }
 
     close() {

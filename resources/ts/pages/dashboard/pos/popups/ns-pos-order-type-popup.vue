@@ -13,16 +13,15 @@
 </template>
 <script>
 export default {
-    props : [ 'popup' ],
     data() {
         return {
             types: []
         }
     },
     mounted() {
-        this.popup.event.subscribe( action => {
+        this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
-                this.popup.close();
+                this.$popup.close();
             }
         });
 
@@ -36,7 +35,7 @@ export default {
             this.types.forEach( type => type.selected = false );
             type.selected   =   true;
             POS.order.types.next( this.types );
-            this.popup.close();
+            this.$popup.close();
         }
     }
 }

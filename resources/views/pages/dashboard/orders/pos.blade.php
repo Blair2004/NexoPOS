@@ -36,7 +36,7 @@
     /**
      * Has the current POS breadcrumb.
      */
-    POS.breadcrumb          =   [];
+    POS.breadcrumb          =   new RxJS.BehaviorSubject([]);
 
     /**
      * Keeps the POS settings
@@ -55,6 +55,10 @@
      * on the header of the POS.
      */
     POS.header.buttons      =   [];
+
+    POS.settings                    =   new Object;
+
+    POS.settings.addToCartQueue     =   new Array;
     </script>
     <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>

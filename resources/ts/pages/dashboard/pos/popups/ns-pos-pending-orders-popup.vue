@@ -3,11 +3,10 @@
 </template>
 <script>
 export default {
-    props : [ 'popup' ],
     mounted() {
-        this.popup.event.subscribe( action => {
+        this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
-                this.popup.close();
+                this.$popup.close();
             }
         });
     }

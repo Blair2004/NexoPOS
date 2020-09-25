@@ -265,12 +265,14 @@ class CategoryController extends DashboardController
                 'products'          =>  $category->products,
                 'categories'        =>  $category->subCategories,
                 'previousCategory'  =>  ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
+                'currentCategory'   =>  $category, // means should return to the root
             ];
         }
 
         return [
             'products'          =>  [],
             'previousCategory'  =>  false,
+            'currentCategory'   =>  false,
             'categories'        =>  ProductCategory::where( 'parent_id', 0 )
                 ->get(),
         ];

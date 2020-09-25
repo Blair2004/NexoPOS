@@ -1,3 +1,6 @@
+import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
+import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
+
 declare const POS;
 
 /**
@@ -24,6 +27,6 @@ POS.header.buttons.push( (<any>window).NsPosCustomersButton );
  * cart. That will help to mutate the product before 
  * it's added the cart.
  */
-// POS.settings.products_queue.push( promiseProductQuantity );
-// POS.settings.products_queue.push( promiseProductUnit );
+POS.settings.addToCartQueue.push( ProductUnitPromise );
+POS.settings.addToCartQueue.push( ProductQuantityPromise );
 // POS.settings.products_queue.push( promiseProductConsolidation );

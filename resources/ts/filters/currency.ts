@@ -1,8 +1,9 @@
 import Vue from 'vue';
 
 declare const ns;
+declare const window;
 
-export const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
+const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
     
     const currency  =   new Intl.NumberFormat( ns.currency.ns_currency_position === 'before' ? 'en-US' : 'fr-FR', {
         currency: ns.currency.ns_currency_iso || 'USD',
@@ -22,3 +23,7 @@ export const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
 
     return currency.format( 0 );
 });
+
+window.nsCurrency   =   nsCurrency;
+
+export { nsCurrency };

@@ -56,7 +56,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue_
 
 /***/ }),
 
-/***/ 4:
+/***/ 5:
 /*!************************************!*\
   !*** multi ./resources/ts/auth.ts ***!
   \************************************/
@@ -68,4 +68,4 @@ module.exports = __webpack_require__(/*! /var/www/html/NexoPOS-v4/resources/ts/a
 
 /***/ })
 
-},[[4,"/js/manifest","/js/vendor"]]]);
+},[[5,"/js/manifest","/js/vendor"]]]);

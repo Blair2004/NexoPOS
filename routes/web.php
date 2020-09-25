@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckMigrationStatus;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware([ 'ns.installed' ])->group( function() {
+Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( function() {
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
@@ -26,6 +27,8 @@ Route::middleware([ 'ns.installed' ])->group( function() {
     Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
     Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
     Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
+    Route::get( '/database-update/', 'UpdateController@updateDatabase' )->withoutMiddleware([ CheckMigrationStatus::class ])
+        ->name( 'ns.database-update' );
 
     Route::middleware([ 'auth' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
@@ -123,9 +126,10 @@ Route::middleware([ 'ns.installed' ])->group( function() {
                     include_once( dirname( __FILE__ ) . '/api/rewards.php' );
                     include_once( dirname( __FILE__ ) . '/api/transfer.php' );
                     include_once( dirname( __FILE__ ) . '/api/taxes.php' );
-                    include_once( dirname( __FILE__ ) . '/api/units.php' );
                     include_once( dirname( __FILE__ ) . '/api/crud.php' );
                     include_once( dirname( __FILE__ ) . '/api/forms.php' );
+                    include_once( dirname( __FILE__ ) . '/api/units.php' );
+                    include_once( dirname( __FILE__ ) . '/api/update.php' );
                     include_once( dirname( __FILE__ ) . '/api/users.php' );
                 });
             }

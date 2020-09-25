@@ -11,10 +11,16 @@ class CoreService
      * @param CurrenService;
      */
     public $currency;
+
+    /**
+     * @param UpdateService
+     */
+    public $update;
     
     public function __construct()
     {
         $this->currency     =   app()->make( CurrencyService::class );
+        $this->update       =   new UpdateService;
     }
 
     public function installed()

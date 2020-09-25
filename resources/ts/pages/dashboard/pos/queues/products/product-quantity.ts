@@ -1,17 +1,18 @@
 import { Popup } from "../../../../../libraries/popup";
 
-import Product from "../../popups/product-quantity.vue";
+const nsPosQuantityPopup    =   require( '../../popups/ns-pos-quantity-popup' ).default;
 
 export class ProductQuantityPromise {
-    constructor() {
-        console.log( Product );
-    }
-    
+    constructor( 
+        protected product 
+    ) {}
+
     run() {
-        return new Promise( ( resolve, reject) => {
-            console.log( 'foo' );
+        return new Promise( ( resolve, reject ) => {
             const popup     =   new Popup();
-            // popup.open()
+            const product   =   this.product;
+            
+            popup.open( nsPosQuantityPopup, { resolve, reject, product });
         });
     }
 }

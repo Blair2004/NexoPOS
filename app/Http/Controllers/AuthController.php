@@ -55,6 +55,13 @@ class AuthController extends Controller
         return redirect( route( 'ns.login' ) );
     }
 
+    public function updateDatabase()
+    {
+        return view( 'pages.database-update', [
+            'title'     =>  __( 'Database Update' )
+        ]);
+    }
+
     public function postSignIn( SignInRequest $request )
     {
         $attempt    =   Auth::attempt([

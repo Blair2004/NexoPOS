@@ -2,7 +2,6 @@
 import FormValidation from '../../../../libraries/form-validation';
 export default {
     name: 'ns-pos-payment',
-    props: [ 'popup' ],
     data() {
         return { 
             foo: 'bar', 
@@ -19,7 +18,7 @@ export default {
             description: 'open media',
         }])[0];
 
-        this.popup.event.subscribe( action => {
+        this.$popup.event.subscribe( action => {
             switch( action.event ) {
                 case 'click-overlay': 
                     this.closePopup();
@@ -29,7 +28,7 @@ export default {
     },
     methods: {
         closePopup() {
-            this.popup.close();
+            this.$popup.close();
         }
     }
 }

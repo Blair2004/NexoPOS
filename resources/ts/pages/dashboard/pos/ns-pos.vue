@@ -35,7 +35,7 @@ export default {
     },
     components: {
         NsPosCart,
-        NsPosGrid
+        NsPosGrid,
     }
 }
 </script>

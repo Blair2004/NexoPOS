@@ -6,5 +6,6 @@
     "/js/pos.js": "/js/pos.js",
     "/js/pos-init.js": "/js/pos-init.js",
     "/js/setup.js": "/js/setup.js",
+    "/js/update.js": "/js/update.js",
     "/js/vendor.js": "/js/vendor.js"
 }
