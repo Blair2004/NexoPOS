@@ -137,6 +137,13 @@ export default {
         },
     
         async addToTheCart( product ) {
+            
+            /**
+             * This is where all the mutation made by the  
+             * queue promises are stored.
+             */
+            let productData   =   new Object;
+
             for( let index in POS.settings.addToCartQueue ) {
                 /**
                  * the popup promise receives the product that
@@ -146,6 +153,13 @@ export default {
                 try {
                     const promiseInstance   =   new POS.settings.addToCartQueue[ index ]( product );
                     const result            =   await promiseInstance.run();
+
+                    /**
+                     * We just mix both to make sure
+                     * the mutated value overwrite previously defined values.
+                     */
+                    productData             =   { ...productData, ...result };
+
                 } catch( brokenPromise ) {
                     /**
                      * if a popup resolve "false",
@@ -157,6 +171,8 @@ export default {
                     }
                 }
             }
+
+            console.log( productData );
         }
     }
 }

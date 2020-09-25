@@ -80,7 +80,7 @@ export class Popup {
         const componentClass        =   Vue.extend( component );
         this.instance               =   new componentClass({
             propsData:  {
-                popup   :   this,
+                popup   :   this, // @deprecated
             }
         });
 
@@ -95,7 +95,6 @@ export class Popup {
         this.instance.$popup            =   this;
         this.instance.$popupParams      =   params;
         this.instance.$mount( `#${this.container.id} .popup-body` );
-
     }
 
     close() {

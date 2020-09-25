@@ -122,7 +122,6 @@ class UnitCrud extends CrudService
                             'name'  =>  'preview_url',
                             'label' =>  __( 'Preview URL' ),
                             'description'   =>  __( 'Preview of the unit.' ),
-                            'validation'    =>  'required',
                             'value' =>  $entry->preview_url ?? '',
                         ], [
                             'type'  =>  'text',

@@ -27,6 +27,6 @@ POS.header.buttons.push( (<any>window).NsPosCustomersButton );
  * cart. That will help to mutate the product before 
  * it's added the cart.
  */
-POS.settings.addToCartQueue.push( ProductUnitPromise );
 POS.settings.addToCartQueue.push( ProductQuantityPromise );
+POS.settings.addToCartQueue.push( ProductUnitPromise );
 // POS.settings.products_queue.push( promiseProductConsolidation );

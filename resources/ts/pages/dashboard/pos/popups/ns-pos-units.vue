@@ -1,12 +1,19 @@
 <template>
-    <div class="h-full w-full">
-        <div id="header" class="h-16 flex justify-center items-center">
+    <div class="h-full w-full overflow-hidden flex flex-col">
+        <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
             <h3 class="font-bold text-gray-700">Choose Selling Unit</h3>
         </div>
-        <div class="grid grid-flow-row grid-cols-4 grid-rows-4">
-            <div @click="selectUnit( unit )" :key="unit.id" v-for="unit of units" :class="unit.selected ? 'bg-blue-100' : ''" class="hover:bg-blue-100 h-56 flex items-center justify-center flex-col cursor-pointer border border-gray-200">
-                <img :src="unit.preview_url" alt="" class="w-32 h-32">
-                <h4 class="font-semibold text-xl my-2 text-gray-700 text-center">{{ unit.name }}</h4>
+        <div class="grid grid-flow-row grid-cols-3 overflow-y-auto">
+            <div @click="selectUnit( unit )" :key="unit.id" v-for="unit of units" class="hover:bg-gray-200 cursor-pointer border flex-shrink-0 border-gray-200 flex flex-col items-center justify-center">
+                <div class="h-full w-full p-2 flex items-center justify-center overflow-hidden">
+                    <img v-if="unit.preview_url" :src="unit.preview_url" class="object-center h-40" :alt="unit.name">
+                    <i class="las la-image text-gray-600 text-6xl" v-if="! unit.preview_url"></i>
+                </div>
+                <div class="h-0 w-full">
+                    <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2" style="background:rgb(255 255 255 / 73%)">
+                        <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ unit.name }}</h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -47,11 +54,20 @@ export default {
                     this.units  =   result;
                 })
         },
+        /**
+         * we'll resolve a value that
+         * will be added to the object
+         * built at the end
+         * @param Unit
+         */
         selectUnit( unit ) {
+            this.$popupParams.resolve({
+                unit_id     :   unit.id
+            });
+            this.$popup.close();
             // this.types.forEach( type => type.selected = false );
             // type.selected   =   true;
             // POS.order.types.next( this.types );
-            // this.$popup.close();
         }
     }
 }
