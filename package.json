@@ -36,7 +36,7 @@
         "tailwindcss": "^1.8.10",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "vue": "^2.6.12",
-        "vue-router": "^3.4.3",
+        "vue-router": "^3.4.4",
         "vue-upload-component": "^2.8.20"
     }
 }
