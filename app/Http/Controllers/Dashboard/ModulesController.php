@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class ModulesController extends DashboardController
@@ -44,6 +46,17 @@ class ModulesController extends DashboardController
             'title'         =>      __( 'Modules List' ),
             'description'   =>  __( 'List all available modules.' ),
         ]);
+    }
+
+    public function downloadModule( $identifier )
+    {
+        ns()->restrict([ 'manage.modules' ]);
+        
+        $module         =   $this->modules->get( $identifier );
+        $download       =   $this->modules->extract( $identifier );
+        $relativePath   =   substr( $download[ 'path' ], strlen( base_path() ) );
+
+        return Storage::disk( 'ns' )->download( $relativePath, Str::slug( $module[ 'name' ] ) . '-' . $module[ 'version' ] . '.zip' );
     }
 
     /**

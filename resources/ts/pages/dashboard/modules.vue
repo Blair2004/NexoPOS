@@ -3,10 +3,16 @@
         <div class="flex justify-between items-center">
             <div class="flex justify-between items-center -mx-2">
                 <span class="px-2">
-                    <a @click="refreshModules()" class="rounded-full text-gray-600 bg-white shadow flex items-center justify-center px-3 py-1 h-10 w-10 hover:bg-blue-400 hover:text-white"><i class="las la-sync"></i></a>
+                    <a @click="refreshModules()" class="items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow flex px-3 py-1 hover:bg-blue-400 hover:text-white">
+                        <i class="las la-sync"></i>
+                        <span class="mx-2">Refresh</span>
+                    </a>
                 </span>
                 <span class="px-2">
-                    <a :href="upload" class="rounded-lg text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white">Upload<i class="las la-angle-right"></i></a>
+                    <a :href="upload" class="flex items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white">
+                        <span>Upload</span>                        
+                        <i class="las la-angle-right"></i>
+                    </a>
                 </span>
             </div>
             <div class="header-tabs flex -mx-4 flex-wrap">
@@ -43,8 +49,15 @@
                                 <ns-button v-if="moduleObject.migrating" disabled><i class="las la-sync text-xl animate-spin"></i></ns-button>
                                 <ns-button v-if="moduleObject.migrated" disabled type="success"><i class="las la-check text-xl"></i></ns-button>
                             </div>
-                            <div class="px-1">
-                                <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
+                            <div class="px-1 flex -mx-1">
+                                <div class="px-1">
+                                    <ns-button @click="download( moduleObject )" type="info">
+                                        <i class="las la-archive"></i>
+                                    </ns-button>
+                                </div>
+                                <div class="px-1">
+                                    <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -80,6 +93,9 @@ export default {
         }
     },
     methods: {
+        download( module ) {
+            document.location   =   '/dashboard/modules/download/' + module.namespace;
+        },
         performMigration: async ( module, migrations ) => {
             const syncRunMigration  =   async ( file, version ) => {
                 return new Promise( ( resolve, reject ) => {

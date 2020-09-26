@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { Popup } from "./libraries/popup";
 import { Media } from "./libraries/media";
 import Vue from "vue";
+import FormValidation from "./libraries/form-validation";
 
 Vue.use( VueRouter );
 
@@ -81,6 +82,7 @@ window.ChartJS          =   ChartJS;
 window.EventEmitter     =   EventEmitter;
 window.Popup            =   Popup;
 window.RxJS             =   RxJS;
-window.Media            =   Media
+window.Media            =   Media;
+window.FormValidation   =   FormValidation;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen };

@@ -51,6 +51,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
         Route::get( '/dashboard/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
         Route::get( '/dashboard/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
+        Route::get( '/dashboard/modules/download/{identifier}', 'Dashboard\ModulesController@downloadModule' )->name( 'ns.dashboard.modules.upload' );
         Route::get( '/dashboard/modules/migrate/{namespace}', 'Dashboard\ModulesController@migrateModule' )->name( 'ns.dashboard.modules.migrate' );
 
         Route::get( '/dashboard/procurements', 'Dashboard\ProcurementController@listProcurements' );

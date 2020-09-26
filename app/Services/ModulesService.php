@@ -336,7 +336,7 @@ class ModulesService
             $files          =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $namespace ) );
 
             /**
-             * get ignored manifest
+             * get excluded manifest
              */
             $manifest           =   false;
             if ( Storage::disk( 'ns-modules' )->exists( ucwords( $namespace ) . DIRECTORY_SEPARATOR . 'manifest.json' ) ) {
@@ -344,12 +344,13 @@ class ModulesService
             }
 
             /**
-             * if a file is within an ignore 
+             * if a file is within an exclude 
              * match the looped file, it's skipped
              */
+
             $files      =   array_values( collect( $files )->filter( function( $file ) use ( $manifest, $namespace ) {
-                if ( is_array( @$manifest[ 'ignore' ] ) ) {
-                    foreach( $manifest[ 'ignore' ] as $check ) {
+                if ( is_array( @$manifest[ 'exclude' ] ) ) {
+                    foreach( $manifest[ 'exclude' ] as $check ) {
                         if ( fnmatch( ucwords( $namespace ) . '/' . $check, $file ) ) {
                             return false;
                         }
