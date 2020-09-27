@@ -18,12 +18,12 @@
             </ul>
         </div>
         <div id="grid-items" class="overflow-hidden flex-auto">
-            <div class="grid grid-cols-6 gap-0 overflow-y-auto">
+            <div class="grid lg:grid-cols-5 gap-0 overflow-y-auto">
                 
                 <!-- Loop Products Or Categories -->
 
                 <template v-if="previousCategory !== false">
-                    <div @click="loadCategories( previousCategory )" class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                    <div @click="loadCategories( previousCategory )" class="hover:bg-gray-200 cursor-pointer border lg:h-40 border-gray-200 flex flex-col items-center justify-center">
                         <div class="h-full w-full p-2 flex items-center justify-center">
                             <i class="las la-undo font-bold text-5xl"></i>
                         </div>
@@ -31,7 +31,7 @@
                 </template>
 
                 <template v-if="hasCategories">
-                    <div @click="loadCategories( category )" :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                    <div @click="loadCategories( category )" :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border lg:h-40 border-gray-200 flex flex-col items-center justify-center">
                         <div class="h-full w-full p-2 flex items-center justify-center">
                             <img v-if="category.preview_url" :src="category.preview_url" class="object-center" :alt="category.name">
                             <i class="las la-image text-gray-600 text-6xl" v-if="! category.preview_url"></i>
@@ -47,7 +47,7 @@
                 <!-- Looping Products -->
 
                 <template v-if="! hasCategories">
-                    <div @click="addToTheCart( product )" :key="product.id" v-for="product of products"  class="hover:bg-gray-200 cursor-pointer border h-40 border-gray-200 flex flex-col items-center justify-center">
+                    <div @click="addToTheCart( product )" :key="product.id" v-for="product of products"  class="hover:bg-gray-200 cursor-pointer border lg:h-40 border-gray-200 flex flex-col items-center justify-center">
                         <div class="h-full w-full p-2 flex items-center justify-center">
                             <img v-if="product.galleries.filter( i => i.featured === 1 ).length > 0" :src="product.galleries.filter( i => i.featured === 1 )[0].url" class="object-center" :alt="product.name">
                             <i v-if="product.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-gray-600 text-6xl"></i>

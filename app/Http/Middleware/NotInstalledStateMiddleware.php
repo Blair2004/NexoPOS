@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Exception;
+use App\Exceptions\NotAllowedException;
 
 class NotInstalledStateMiddleware
 {
@@ -20,6 +21,6 @@ class NotInstalledStateMiddleware
             return $next($request);
         }
         
-        throw new Exception( __( 'You\'re not allowed to see this apge.' ) );
+        throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
     }
 }

@@ -15,6 +15,7 @@
                     </div>
                 </div>
             </div>
+            <ns-spinner v-if="units.length === 0"></ns-spinner>
         </div>
     </div>
 </template>
@@ -51,7 +52,7 @@ export default {
         loadUnits() {
             nsHttpClient.get( `/api/nexopos/v4/units/pos?ids=${this.$popupParams.product.selling_unit_ids}` )
                 .subscribe( result => {
-                    this.units  =   result;
+                    // this.units  =   result;
                 })
         },
         /**

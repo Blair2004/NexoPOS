@@ -3,7 +3,7 @@
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
             <h1 class="text-xl font-bold text-gray-700 text-center">Define Quantity</h1>
         </div>
-        <div id="screen" class="h-24 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
+        <div id="screen" class="h-16 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
@@ -11,7 +11,7 @@
                 @click="inputValue( key )"
                 :key="index" 
                 v-for="(key,index) of keys" 
-                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-32 flex items-center justify-center cursor-pointer">
+                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
             </div>

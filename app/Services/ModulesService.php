@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Services\Helper;
 use Laravie\Parser\Xml\Document;
 use Laravie\Parser\Xml\Reader;
@@ -331,17 +332,37 @@ class ModulesService
             if ( is_file( $zipFile ) ) {
                 unlink( $zipFile );
             }
-
+            
             $moduleDir      =   dirname( $module[ 'index-file' ] );
-            $files          =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $namespace ) );
 
             /**
              * get excluded manifest
              */
             $manifest           =   false;
+
             if ( Storage::disk( 'ns-modules' )->exists( ucwords( $namespace ) . DIRECTORY_SEPARATOR . 'manifest.json' ) ) {
                 $manifest       =   json_decode( Storage::disk( 'ns-modules' )->get( ucwords( $namespace ) . DIRECTORY_SEPARATOR . 'manifest.json' ), true );
             }
+
+            /**
+             * let's move all te file
+             * that are excluded.
+             */
+            $exclusionFolders  =   [];
+
+            if ( $manifest && $manifest[ 'exclude' ] ) {
+                foreach( $manifest[ 'exclude' ] as $file ) {
+                    $hash                                   =   date( 'y' ) . '-' . date( 'm' ) . '-' . date( 'i' ) . '-' . Str::random( 20 );
+                    $path                                   =   base_path( 'storage/app/' . $hash );
+                    $originalPath                           =   $moduleDir . Str::of( $file )->start('/');
+                    $exclusionFolders[ $originalPath ]      =   $path;
+
+                    exec( "mkdir $path" );
+                    exec( "mv $originalPath/* $path" );
+                }
+            }
+
+            $files          =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $namespace ) );
 
             /**
              * if a file is within an exclude 
@@ -380,11 +401,22 @@ class ModulesService
                     strpos( $file, $namespace . '/composer.json' ) ===  false &&
                     strpos( $file, $namespace . '/composer.lock' ) ===  false
                 ) {
-                    $zipArchive->addFile( base_path() . DIRECTORY_SEPARATOR . $file, substr( $file, strlen( 'modules' . DIRECTORY_SEPARATOR ) ) );
+                    $zipArchive->addFile( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file, $file );
                 }
             }
 
             $zipArchive->close();
+
+            /**
+             * restoring the file & folder that are
+             * supposed to be ignored.
+             */
+            if ( ! empty( $exclusionFolders ) ) {
+                foreach( $exclusionFolders as $destination => $source ) {
+                    exec( 'mv ' . $source . '/* ' . $destination );
+                    exec( "rm -rf $source" );
+                }
+            }
 
             return [
                 'path'      =>  $zipFile,
@@ -423,7 +455,14 @@ class ModulesService
          */
         unlink( $fullPath );
 
-        $rawFiles    =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $directory  =   Storage::disk( 'ns-modules' )->directories( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+
+        if ( count( $directory ) > 1 ) {
+            throw new Exception( __( 'Unable to detect the folder from where to perform the installation.' ) );
+        }
+
+        $directoryName  =   pathinfo( $directory[0] )[ 'filename' ];
+        $rawFiles       =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $module         =   [];
 
         /**
@@ -437,7 +476,7 @@ class ModulesService
         if ( in_array( 'config.xml', $files ) ) {
 
             
-            $file   =   '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR .'config.xml';
+            $file   =   '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
             $xml    =   new \SimpleXMLElement( 
                 Storage::disk( 'ns-modules' )->get( $file )
             );
@@ -496,19 +535,21 @@ class ModulesService
              * and create symlink for the assets
              */
 
-                foreach( $rawFiles as $file ) {
+            foreach( $rawFiles as $file ) {
+
+                $replacement    =   str_replace( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR, $moduleNamespace . DIRECTORY_SEPARATOR, $file );
 
                 Storage::disk( 'ns-modules' )->put( 
-                    str_replace( '.temp' . DIRECTORY_SEPARATOR, '', $file ),
+                    $replacement,
                     Storage::disk( 'ns-modules' )->get( $file )
                 );
-
-                /**
-                 * create a symlink directory 
-                 * only if the module has that folder
-                 */
-                $this->createSymLink( $moduleNamespace );
             }
+
+            /**
+             * create a symlink directory 
+             * only if the module has that folder
+             */
+            $this->createSymLink( $moduleNamespace );
 
             /**
              * @step 3 : run migrations

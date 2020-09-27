@@ -9,7 +9,7 @@
     @parent
     <script>
         const Update    =   {
-            returnLink: '{{ url()->previous() !== url( "database-update" ) ? url()->previous() : url( "/dashboard" ) }}',
+            returnLink: '{{ ! in_array( url()->previous(), [ url( "database-update" ), route( "setup" ) ]) ? url()->previous() : url( "/dashboard" ) }}',
             files:  @json( ns()->update->getMigrations()->values() )
         }
     </script>

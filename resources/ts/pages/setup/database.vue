@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded shadow my-2">
+    <div class="bg-white rounded shadow my-4">
         <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
             <ns-input v-for="( field, key ) of fields" v-bind:key="key" :field="field" 
                 @change="form.validateField( field )">

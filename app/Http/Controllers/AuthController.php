@@ -52,6 +52,7 @@ class AuthController extends Controller
     public function signOut()
     {
         Auth::logout();
+
         return redirect( route( 'ns.login' ) );
     }
 
@@ -84,7 +85,7 @@ class AuthController extends Controller
                 return redirect( route( 'ns.login' ) )->withErrors( $validator );
             }
 
-            return redirect( route( 'dashboard.index' ) );
+            return redirect()->intended(); 
         }
 
         $validator      =   Validator::make( $request->all(), []);
