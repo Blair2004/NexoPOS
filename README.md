@@ -58,8 +58,11 @@ As NexoPOS doesn't have a frontend already, you'll end on the default Laravel pa
 
 2 - The premium support on NexoPOS 4.x is a paid service and is handled on a different channel.
 
+## Regarding Release Date
+NexoPOS 4.x is developped actively only by @Blair2004. As this is a complete rebuild of a software that has been made during 3 years, we cannot be accurate on the release date of that version. We've expect that version to be released by the end of September 2020, but might take more time as there are new challenges. That remains however our priority and will make sure to release it as soon as possible. It might be the perfect time to talk about contribution.
+
 ## Contribution Guidelines
-Do you plan to contribute ? That's awesome. We're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If youjust have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
+Do you plan to contribute ? That's awesome. We don't have that much developper on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
 
 ## Documentation
 
