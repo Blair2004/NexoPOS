@@ -7,7 +7,7 @@ export class ProductQuantityPromise {
         protected product 
     ) {}
 
-    run() {
+    run( data ) {
         return new Promise( ( resolve, reject ) => {
             const popup     =   new Popup({
                 popupClass: 'shadow-lg h-1/2-screen w-3/4 md:w-1/2 lg:w-2/5 xl:w-1/4 bg-white'
@@ -15,7 +15,7 @@ export class ProductQuantityPromise {
             
             const product   =   this.product;
             
-            popup.open( nsPosQuantityPopup, { resolve, reject, product });
+            popup.open( nsPosQuantityPopup, { resolve, reject, product, data });
         });
     }
 }

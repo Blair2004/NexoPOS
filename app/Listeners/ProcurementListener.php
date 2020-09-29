@@ -23,8 +23,7 @@ class ProcurementListener
         ProcurementService $procurementService,
         ProductService $productService,
         ProviderService $providerService
-    )
-    {
+    ) {
         $this->procurementService   =   $procurementService;
         $this->providerService      =   $providerService;
         $this->productService       =   $productService;

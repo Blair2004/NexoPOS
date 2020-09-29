@@ -34,6 +34,12 @@ export class Popup {
         this.event              =   new Subject;
     }
 
+    static show( component, params = {}, config = {}) {
+        const popup     =   new Popup( config );
+        popup.open( component, params );
+        return popup;
+    }
+
     open( component, params = {} ) {
         this.parentWrapper.style.filter   =   'blur(5px)';
         

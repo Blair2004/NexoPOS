@@ -24,8 +24,8 @@ export default {
                 this.$popup.close();
             }
         });
-
-        POS.order.types.subscribe( types => {
+        
+        POS.types.subscribe( types => {
             console.log( types );
             this.types  =   types;
         });
@@ -34,7 +34,7 @@ export default {
         select( type ) {
             this.types.forEach( type => type.selected = false );
             type.selected   =   true;
-            POS.order.types.next( this.types );
+            POS.types.next( this.types );
             this.$popup.close();
         }
     }

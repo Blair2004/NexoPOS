@@ -523,9 +523,31 @@ class ProductService
          */
         extract( $data );
 
-        if ( in_array( $field, [ 'sale_price', 'excl_tax_sale_price', 'incl_tax_sale_price', 'tax_value' ] ) ) {
+        if ( in_array( $field, [ 
+            'sale_price', 
+            'sale_price_edit',
+            'excl_tax_sale_price', 
+            'incl_tax_sale_price', 
+            'wholesale_price',
+            'wholesale_price_edit',
+            'incl_tax_wholesale_price', 
+            'excl_tax_wholesale_price', 
+            'tax_value' 
+        ] ) ) {
+
+            if ( in_array( $field, [
+                'sale_price_edit',
+                'wholesale_price_edit'
+            ]) ) {
+                $newLabel               =   substr( $field, 0, strlen( $field ) - strlen( '_edit' ) );
+                $product->$newLabel     =   $this->currency->define( 
+                    $product->$field
+                )->get();
+            } 
+
             $product->$field    =   $this->currency->define( $value )
                 ->get();
+
         } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) ) {
 
             /**
@@ -830,7 +852,7 @@ class ProductService
      */
     public function getUnitQuantities( $product_id )
     {
-        return ProductUnitQuantity::findProduct( $product_id )
+        return ProductUnitQuantity::withProduct( $product_id )
             ->get()
             ->map( function( $productQuantity ) {
                 $productQuantity->unit;
@@ -840,8 +862,8 @@ class ProductService
 
     public function getUnitQuantity( $product_id, $unit_id )
     {
-        return ProductUnitQuantity::findProduct( $product_id )
-            ->where( 'unit_id', $unit_id )
+        return ProductUnitQuantity::withProduct( $product_id )
+            ->withUnit( $unit_id )
             ->first();
     }
 
@@ -852,7 +874,7 @@ class ProductService
      */
     public function getProductHistory( $product_id )
     {
-        return ProductHistory::findProduct( $product_id )->orderBy( 'id' )->get()->map( function( $product ) {
+        return ProductHistory::withProduct( $product_id )->orderBy( 'id' )->get()->map( function( $product ) {
             $product->unit;
             return $product;
         });

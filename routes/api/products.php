@@ -10,6 +10,7 @@ Route::get( 'products/{identifier}/refresh-prices', 'Dashboard\ProductsControlle
 Route::get( 'products/{identifier}/reset', 'Dashboard\ProductsController@reset' );
 Route::get( 'products/{identifier}/history', 'Dashboard\ProductsController@history' );
 Route::get( 'products/{identifier}/units', 'Dashboard\ProductsController@units' );
+Route::get( 'products/{product}/units/{unit}/quantity', 'Dashboard\ProductsController@getUnitQuantity' );
 
 Route::delete( 'products/{identifier}', 'Dashboard\ProductsController@deleteProduct' );
 Route::delete( 'products/all/variations', 'Dashboard\ProductsController@deleteAllVariations' );

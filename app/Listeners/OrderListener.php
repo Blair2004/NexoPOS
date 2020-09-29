@@ -19,22 +19,22 @@ class OrderListener
     {
         $events->listen(
             OrderAfterProductRefundedEvent::class,
-            useThis( OrderListener::class )->method( 'refreshOrder' )
+            [ OrderListener::class, 'refreshOrder' ]
         );
 
         $events->listen(
             OrderBeforeDeleteEvent::class,
-            useThis( OrderListener::class )->method( 'beforeDeleteOrder' )
+            [ OrderListener::class, 'beforeDeleteOrder' ]
         );
 
         $events->listen(
             OrderBeforeDeleteProductEvent::class,
-            useThis( OrderListener::class )->method( 'beforeDeleteProductEvent' )
+            [ OrderListener::class, 'beforeDeleteProductEvent' ]
         );
 
         $event->listen(
             OrderAfterCreatedEvent::class,
-            useThis( OrderListener::class )->method( 'afterOrderCreated' )
+            [ OrderListener::class, 'afterOrderCreated' ]
         );
     }
 

@@ -11,6 +11,8 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use App\Services\OrdersService;
+use App\Events\ProcurementAfterUpdateEvent;
+use App\Models\Procurement;
 
 // use Tendoo\Core\Services\Page;
 
@@ -81,6 +83,7 @@ class OrdersController extends DashboardController
     public function showPOS()
     {
         return $this->view( 'pages.dashboard.orders.pos', [
+            'title'         =>  __( 'Proceeding Order &mdash; NexoPOS' ),
             'orderTypes'    =>  [
                 [
                     'identifier'    =>  'takeaway',

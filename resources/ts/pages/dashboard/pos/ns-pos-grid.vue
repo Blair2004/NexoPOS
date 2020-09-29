@@ -1,5 +1,5 @@
 <template>
-    <div id="pos-grid" class="rounded shadow bg-white overflow-hidden flex-auto">
+    <div id="pos-grid" class="rounded shadow bg-white overflow-hidden flex-auto flex flex-col">
         <div id="grid-header" class="p-2 border-b border-gray-200">
             <div class="border rounded flex border-gray-400 overflow-hidden">
                 <button class="w-10 h-10 bg-gray-200 border-r border-gray-400">
@@ -14,10 +14,10 @@
         <div id="grid-breadscrumb" class="p-2 border-gray-200">
             <ul class="flex">
                 <li><a @click="loadCategories()" href="javascript:void(0)" class="px-3 text-gray-700">Home </a> <i class="las la-angle-right"></i> </li>
-                <li><a @click="loadCategories( bread )" v-for="bread of breadcrumb" :key="bread.id" href="javascript:void(0)" class="px-3 text-gray-700">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
+                <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3 text-gray-700">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
             </ul>
         </div>
-        <div id="grid-items" class="overflow-hidden flex-auto">
+        <div id="grid-items" class="overflow-hidden h-full flex-col flex">
             <div class="grid lg:grid-cols-5 gap-0 overflow-y-auto">
                 
                 <!-- Loop Products Or Categories -->
@@ -55,7 +55,7 @@
                         <div class="h-0 w-full">
                             <div class="relative w-full flex flex-col items-start justify-center -top-10 h-20 p-2" style="background:rgb(255 255 255 / 73%)">
                                 <h3 class="text-sm text-gray-700 text-center w-full">{{ product.name }}</h3>
-                                <h2 class="text-sm text-gray-800 font-bold text-center w-full">{{ product.sale_price | currency }}</h2>
+                                <h2 class="text-sm text-gray-800 font-bold text-center w-full">{{ product.tax_type === 'inclusive' ? product.incl_tax_sale_price : product.excl_tax_sale_price | currency }}</h2>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@ export default {
         return {
             products: [],
             categories: [],
-            breadcrumb: [],
+            breadcrumbs: [],
             previousCategory: null,
             currentCategory: null,
         }
@@ -89,8 +89,8 @@ export default {
     },
     mounted() {
         this.loadCategories();
-        POS.breadcrumb.subscribe( ( breadcrumb ) => {
-            this.breadcrumb     =   breadcrumb;
+        POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
+            this.breadcrumbs     =   breadcrumbs;
         })
     },
     methods: {
@@ -133,46 +133,11 @@ export default {
                 this.breadcrumb     =   [];    
             }
 
-            POS.breadcrumb.next( this.breadcrumb );
+            POS.breadcrumbs.next( this.breadcrumb );
         },
     
-        async addToTheCart( product ) {
-            
-            /**
-             * This is where all the mutation made by the  
-             * queue promises are stored.
-             */
-            let productData   =   new Object;
-
-            for( let index in POS.settings.addToCartQueue ) {
-                /**
-                 * the popup promise receives the product that
-                 * is above to be added. Hopefully as it's passed by reference
-                 * updating the product should mutate that once the queue is handled.
-                 */
-                try {
-                    const promiseInstance   =   new POS.settings.addToCartQueue[ index ]( product );
-                    const result            =   await promiseInstance.run();
-
-                    /**
-                     * We just mix both to make sure
-                     * the mutated value overwrite previously defined values.
-                     */
-                    productData             =   { ...productData, ...result };
-
-                } catch( brokenPromise ) {
-                    /**
-                     * if a popup resolve "false",
-                     * that means for some reason the Promise has
-                     * been broken, therefore we need to stop the queue.
-                     */
-                    if ( brokenPromise === false ) {
-                        return false;
-                    }
-                }
-            }
-
-            console.log( productData );
+        addToTheCart( product ) {
+            POS.addToCart( product );
         }
     }
 }

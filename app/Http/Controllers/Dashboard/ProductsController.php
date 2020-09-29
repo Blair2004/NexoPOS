@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Unit;
+use App\Models\ProductUnitQuantity;
 use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\ProductService;
@@ -392,6 +393,17 @@ class ProductsController extends DashboardController
             'title'     =>      __( 'Stock Adjustment' ),
             'description'   =>  __( 'Adjust stock of existing products.' ),
         ]);
+    }
+
+    public function getUnitQuantity( Product $product, Unit $unit )
+    {
+        $quantity   =   $this->productService->getUnitQuantity( $product->id, $unit->id );
+
+        if ( $quantity instanceof ProductUnitQuantity ) {
+            return $quantity;
+        }
+
+        throw new Exception( __( 'No stock is provided for the requested product.' ) );
     }
 }
 

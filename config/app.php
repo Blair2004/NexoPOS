@@ -180,7 +180,6 @@ return [
         App\Providers\SettingsPageProvider::class,
         App\Providers\FormsProvider::class,
         App\Providers\ModulesServiceProvider::class,
-        App\Providers\EventsProvider::class,
     ],
 
     /*
