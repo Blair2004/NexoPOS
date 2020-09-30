@@ -6,6 +6,7 @@ modules/*
 modules/.temp/*
 !modules/index.html
 public/modules/*
+public/storage
 !public/modules/index.html
 composer-lock.json
 package-lock.json
