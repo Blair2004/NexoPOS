@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full">
+    <div class="h-full w-4/5-screen md:w-2/5-screen xl:w-1/5-screen bg-white shadow-lg">
         <div id="header" class="h-16 flex justify-center items-center">
             <h3 class="font-bold text-gray-700">Define The Order Type</h3>
         </div>
@@ -15,7 +15,8 @@
 export default {
     data() {
         return {
-            types: []
+            types: [],
+            typeSubscription: null,
         }
     },
     mounted() {
@@ -25,10 +26,13 @@ export default {
             }
         });
         
-        POS.types.subscribe( types => {
+        this.typeSubscription   =   POS.types.subscribe( types => {
             console.log( types );
             this.types  =   types;
         });
+    },
+    destroyed() {
+        this.typeSubscription.unsubscribe();
     },
     methods: {
         select( type ) {

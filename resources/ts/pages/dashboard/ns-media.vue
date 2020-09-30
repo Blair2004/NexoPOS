@@ -191,7 +191,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex h-full overflow-hidden">
+    <div class="flex bg-white shadow-xl w-4/5-screen h-4/5-screen overflow-hidden">
         <div class="sidebar w-48 bg-gray-200 h-full flex-shrink-0">
             <h3 class="text-xl font-bold text-gray-800 my-4 text-center">Medias Manager</h3>
             <ul>
@@ -249,7 +249,7 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div id="preview" class="w-64 flex-shrink-0" v-if="! bulkSelect && hasOneSelected">
+                <div id="preview" class="w-64 flex-shrink-0 bg-gray-200" v-if="! bulkSelect && hasOneSelected">
                     <div class="h-64 bg-gray-600 flex items-center justify-center">
                         <img :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
                     </div>

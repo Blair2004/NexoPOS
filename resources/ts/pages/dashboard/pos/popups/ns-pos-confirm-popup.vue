@@ -1,7 +1,7 @@
 <template>
-    <div id="popup" class="flex flex-col h-full w-full">
-        <div class="flex items-center justify-center flex-col flex-auto">
-            <h2 class="text-4xl font-body text-gray-700">{{ title }}</h2>
+    <div id="popup" class="flex flex-col h-full w-full bg-white shadow-lg">
+        <div class="flex items-center justify-center flex-col flex-auto p-4">
+            <h2 class="text-3xl font-body text-gray-700">{{ title }}</h2>
             <p class="py-4 text-gray-600">{{ message }}</p>
         </div>
         <div class="flex border-t border-gray-200 text-gray-700">
@@ -22,6 +22,13 @@ export default {
     mounted() {
         this.title          =   this.$popupParams.title;
         this.message        =   this.$popupParams.message;
+        this.$popup.event.subscribe( action => {
+            console.log( action );
+            if ( action.event === 'click-overlay' ) {
+                this.$popupParams.onAction( false );
+                this.$popup.close();
+            }
+        })
     },
     methods: {
         emitAction( action ) {

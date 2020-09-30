@@ -234,5 +234,14 @@ class CustomersController extends DashboardController
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
+
+    public function searchCustomer( Request $request )
+    {
+        $search     =   $request->input( 'search' );
+        $customers  =   Customer::where( 'name', 'like', '%' . $search . '%' )
+            ->get();
+
+        return $customers;
+    }
 }
 

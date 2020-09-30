@@ -72,8 +72,8 @@ export class Popup {
 
         this.container.style.background     =   'rgb(51 51 51 / 20%)';
         this.container.id                   =   'popup-container-' + document.querySelectorAll( '.is-popup' ).length;
-        this.popupBody.setAttribute( 'class', this.config.popupClass + ' zoom-out-entrance' );
-        this.popupBody.innerHTML            =   '<div class="popup-body"></div>'
+        this.popupBody.setAttribute( 'class', ' zoom-out-entrance' );
+        this.popupBody.innerHTML            =   '<div class="popup-body"></div>';
         this.container.appendChild( this.popupBody );  
 
         document.body.appendChild( this.container );

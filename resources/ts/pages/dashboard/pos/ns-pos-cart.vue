@@ -10,16 +10,25 @@
                 
                 <!-- Loop Procuts On Cart -->
 
+                <div class="text-gray-700 flex" v-if="products.length === 0">
+                    <div class="w-full text-center py-4 border-b border-gray-200">
+                        <h3 class="text-gray-600">No products added...</h3>
+                    </div>
+                </div>
+
                 <div :key="product.barcode" class="text-gray-700 flex" v-for="product of products">
                     <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
-                        <h3 class="font-semibold">{{ product.name }} ({{ product.unit_name }})</h3>
+                        <h3 class="font-semibold">{{ product.name }} &mdash; {{ product.unit_name }}</h3>
                         <div class="flex justify-between">
                             <div class="-mx-1 flex">
                                 <div class="px-1">
-                                    <a class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Price : {{ product.sale_price | currency }}</a>
+                                    <a
+                                        :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                        class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                    >Price : {{ product.sale_price | currency }}</a>
                                 </div>
                                 <div class="px-1"> 
-                                    <a @click="openDiscountPopup( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount_amount | currency }}</a>
+                                    <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount_amount | currency }}</a>
                                 </div>
                             </div>
                             <div class="-mx-1 flex">
@@ -29,7 +38,7 @@
                                     </a>
                                 </div>
                                 <div class="px-1"> 
-                                    <a :class="product.mode === 'wholesale' ? 'text-white bg-blue-400' : ''" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                    <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                         <i class="las la-award text-xl"></i>
                                     </a>
                                 </div>
@@ -49,19 +58,25 @@
                 <table class="table w-full text-sm text-gray-700">
                     <tr>
                         <td width="100" colspan="2" class="border border-gray-400 p-2">
-                            <a class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : $25</a>
+                            <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                         </td>
                         <td width="200" class="border border-gray-400 p-2">Sub Total</td>
-                        <td width="200" class="border border-gray-400 p-2 text-right">{{ subTotal | currency }}</td>
+                        <td width="200" class="border border-gray-400 p-2 text-right">{{ order.subtotal | currency }}</td>
                     </tr>
                     <tr>
                         <td width="100" colspan="2" class="border border-gray-400 p-2">
                             <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
                         </td>
-                        <td width="200" class="border border-gray-400 p-2">Discount</td>
-                        <td width="200" class="border border-gray-400 p-2"></td>
+                        <td width="200" class="border border-gray-400 p-2">
+                            <span>Discount</span>
+                            <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                            <span v-if="order.discount_type === 'flat'">(Flat)</span>
+                        </td>
+                        <td width="200" class="border border-gray-400 p-2 text-right">
+                            <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
+                        </td>
                     </tr>
-                    <tr>
+                    <tr v-if="order.type && order.type.identifier === 'delivery'">
                         <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
                         <td width="200" class="border border-gray-400 p-2">Shipping</td>
                         <td width="200" class="border border-gray-400 p-2"></td>
@@ -69,7 +84,7 @@
                     <tr class="bg-green-200">
                         <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
                         <td width="200" class="border border-gray-400 p-2">Total</td>
-                        <td width="200" class="border border-gray-400 p-2"></td>
+                        <td width="200" class="border border-gray-400 p-2 text-right">{{ order.total | currency }}</td>
                     </tr>
                 </table>
             </div>
@@ -82,7 +97,7 @@
                     <i class="mr-2 text-3xl las la-pause"></i> 
                     <span class="text-2xl">Hold</span>
                 </div>
-                <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
+                <div @click="openDiscountPopup( order, 'cart' )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
                     <i class="mr-2 text-3xl las la-percent"></i> 
                     <span class="text-2xl">Discount</span>
                 </div>
@@ -98,11 +113,13 @@
 
 import { Popup } from '../../../libraries/popup';
 import PosPaymentPopup from './popups/ns-pos-payment-popup';
-import PosOrderTypePopup from './popups/ns-pos-order-type-popup';
 import PosConfirmPopup from './popups/ns-pos-confirm-popup';
 import nsPosQuantityPopupVue from './popups/ns-pos-quantity-popup.vue';
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
 import nsPosDiscountPopupVue from './popups/ns-pos-discount-popup.vue';
+import nsPosOrderTypePopupVue from './popups/ns-pos-order-type-popup.vue';
+import { nsSnackBar } from '../../../bootstrap';
+import nsPosCustomerPopupVue from './popups/ns-pos-customer-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -111,40 +128,46 @@ export default {
             popup : null,
             products: [],
             types: [],
+            order: {},
         }
     },
     computed: {
         selectedType() {
-            const activeType    =   this.types.filter( type => type.selected );
-            return activeType.length > 0 ? activeType[0].label : 'N/A';
+            return this.order.type ? this.order.type.label : 'N/A';
         },
-        subTotal() {
-            const productsTotal     =   this.products.map( p => p.total_price );
-            return productsTotal.length > 0 ? productsTotal
-                .reduce( ( b, a ) => b + a ) : 0;
+        customerName() {
+            return this.order.customer ? this.order.customer.name : 'N/A';
         }
     },
     mounted() {
         POS.types.subscribe( types => this.types = types );
+        POS.order.subscribe( order => {
+            this.order   =   order;
+        });
         POS.products.subscribe( products => {
             this.products = products;
             this.$forceUpdate();
         });
     },
     methods: {
-        openDiscountPopup( product ) {
+        openDiscountPopup( reference, type ) {
             Popup.show( nsPosDiscountPopupVue, { 
-                reference : product,
-                onSubmit( reference ) {
-                    /**
-                     * let's update the product
-                     * using the provided references
-                     */
-                    POS.updateProduct( product, reference );
+                reference,
+                type,
+                onSubmit( response ) {
+                    if ( type === 'product' ) {
+                        POS.updateProduct( reference, response );
+                    } else if ( type === 'cart' ) {
+                        POS.updateCart( reference, response );
+                    }
                 }
             }, {
                 popupClass: 'bg-white h:2/3 shadow-lg xl:w-1/4 lg:w-2/5 md:w-2/3 w-full'
             })
+        },
+
+        selectCustomer() {
+            Popup.show( nsPosCustomerPopupVue );
         },
 
         toggleMode( product ) {
@@ -194,19 +217,18 @@ export default {
         },
 
         payOrder() {
-            this.popup  =   new Popup({
-                primarySelector: '#pos-app',
-                popupClass : `shadow-lg h-4/5-screen w-4/5 bg-white`
-            });
-            this.popup.open( PosPaymentPopup );
+            if ( this.order.products.length === 0 ) {
+                return nsSnackBar.error( 'Unable to pay an order missing products.' ).subscribe();
+            }
+
+            if ( this.order.customer === undefined ) {
+                return nsSnackBar.error( 'Unable to pay an order not assigned to a customer.' ).subscribe();
+            }
+
+            Popup.show( PosPaymentPopup );
         },
         openOrderType() {
-            this.popup  =   new Popup({
-                primarySelector: '#pos-app',
-                popupClass : 'shadow-lg bg-white w-3/5 md:w-2/3 lg:w-2/5 xl:w-2/4',
-            });
-
-            this.popup.open( PosOrderTypePopup )
+            Popup.show( nsPosOrderTypePopupVue );
         }
     }
 }

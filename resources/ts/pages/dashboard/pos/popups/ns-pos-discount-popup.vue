@@ -1,7 +1,8 @@
 <template>
-    <div id="discount-popu">
+    <div id="discount-popu" class="bg-white shadow min-h-2/5-screen w-screen md:w-3/5-screen lg:w-2/5-screen xl:w-1/5-screen relative">
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center">Discount</h1>
+            <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'product'">Product Discount</h1>
+            <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'cart'">Cart Discount</h1>
         </div>
         <div id="screen" class="h-16 bg-blue-600 text-white border-gray-200 flex items-center justify-center">
             <h1 class="font-bold text-3xl">
@@ -33,7 +34,9 @@ export default {
         return {
             finalValue: 1,
             virtualStock: null,
+            popupSubscription: null,
             mode: '',
+            type: '',
             allSelected: true,
             isLoading: false,
             keys: [
@@ -46,6 +49,7 @@ export default {
     },
     mounted() {
         this.mode           =   this.$popupParams.reference.discount_type || 'percentage';
+        this.type           =   this.$popupParams.type;
 
         if ( this.mode === 'percentage' ) {
             this.finalValue     =   this.$popupParams.reference.discount_percentage || 1;

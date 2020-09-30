@@ -9,6 +9,7 @@ Route::get( 'customers/{customer}/orders', 'Dashboard\CustomersController@getOrd
 Route::get( 'customers/{customer}/addresses', 'Dashboard\CustomersController@getAddresses' );
 Route::get( 'customers/schema', 'Dashboard\CustomersController@schema' );
 Route::post( 'customers', 'Dashboard\CustomersController@post' );
+Route::post( 'customers/search', 'Dashboard\CustomersController@searchCustomer' );
 Route::put( 'customers/{customer}', 'Dashboard\CustomersController@put' );
 
 Route::get( 'customers-groups/{id?}', 'Dashboard\CustomersGroupsController@get' );

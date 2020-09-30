@@ -1,5 +1,5 @@
 export interface OrderType { 
-    identifier: string; 
+    identifier: 'takeaway' | 'delivery'; 
     label: string;
     selected: boolean;
     icon: string;

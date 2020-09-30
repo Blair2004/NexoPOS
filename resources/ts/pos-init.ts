@@ -5,6 +5,9 @@ import { Product } from "./interfaces/product";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
 import { POSVirtualStock } from "./interfaces/pos-virual-stock";
+import Vue from 'vue';
+import { Order } from "./interfaces/order";
+import { nsSnackBar } from "./bootstrap";
 
 /**
  * these are dynamic component
@@ -21,23 +24,56 @@ export class POS {
     private _customers: BehaviorSubject<Customer[]>;
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
     private _types: BehaviorSubject<OrderType[]>;
-    private _virtualStock: BehaviorSubject<POSVirtualStock>;
+    private _order: BehaviorSubject<Order>;
 
     constructor() {
         this._products          =   new BehaviorSubject<Product[]>([]);
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
-        this._virtualStock      =   new BehaviorSubject<POSVirtualStock>({});
+        this._order             =   new BehaviorSubject<Order>({
+            discount_type: null,
+            discount_amount: 0,
+            discount_percentage: 0,
+            subtotal: 0,
+            total: 0,
+            total_products: 0,
+            customer: undefined,
+            type: undefined,
+            products: [],
+        });
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
+        
+        /**
+         * Whenever there is a change
+         * on the products, we'll update
+         * the cart.
+         */
+        this.products.subscribe( _ => {
+            this.refreshCart();
+        });
+
+        /**
+         * listen to type for updating
+         * the order accordingly
+         */
+        this.types.subscribe( types => {
+            const selected  =   types.filter( type => type.selected );
+
+            if ( selected.length > 0  ) {
+                const order     =   this.order.getValue();
+                order.type      =   selected[0];
+                this.order.next( order );
+            }
+        });
+    }
+
+    get order() {
+        return this._order;
     }
 
     get types() {
         return this._types;
-    }
-
-    get virtualStock() {
-        return this._virtualStock;
     }
 
     get products() {
@@ -64,6 +100,60 @@ export class POS {
             NsPosOrderTypeButton,
             NsPosCustomersButton,
         }
+    }
+
+    definedCustomer( customer ) {
+        const order     =   this.order.getValue();
+        order.customer  =   customer;
+        this.order.next( order );
+    }
+
+    updateCart( current, update ) {
+        for( let key in update ) {
+            Vue.set( current, key, update[ key ]);
+        }
+
+        this.order.next( current );
+        
+        /**
+         * explicitely here we do manually refresh the cart
+         * as if we listen to cart update by subscribing,
+         * that will create a loop (huge performance issue).
+         */
+        this.refreshCart();
+    }
+
+    refreshCart() {
+        const products      =   this.products.getValue();
+        const order         =   this.order.getValue();
+        const productTotal  =   products
+            .map( product => product.total_price );
+        
+        if ( productTotal.length > 0 ) {
+            order.subtotal  =   productTotal.reduce( ( b, a ) => b + a );
+        } else {
+            order.subtotal  =   0;
+        }
+
+        if ( order.discount_type === 'percentage' ) {
+            order.discount_amount   =   ( order.discount_percentage * order.subtotal ) / 100;
+        }
+
+        /**
+         * if the discount amount is greather
+         * than the subtotal, the discount amount
+         * will be set to the order.subtotal
+         */
+        if ( order.discount_amount > order.subtotal ) {
+            order.discount_amount = order.subtotal;
+            nsSnackBar.info( 'The discount has been set to the cart subtotal' )
+                .subscribe();
+        }
+
+        order.total         =   order.subtotal - order.discount_amount;
+        order.products      =   products;
+
+        this.order.next( order );
     }
 
     /**
@@ -197,7 +287,12 @@ export class POS {
     updateProduct( product, data ) {
         const products                      =   this._products.getValue();
         const index                         =   products.indexOf( product );
-        products[ index ]                   =   { ...product, ...data };
+
+        /**
+         * to ensure Vue updates accordingly.
+         */
+        Vue.set( products, index, { ...product, ...data });
+
         this.refreshProducts( products );
         this._products.next( products );
     }
@@ -241,6 +336,8 @@ export class POS {
         this._breadcrumbs.unsubscribe();
         this._products.unsubscribe();
         this._types.unsubscribe();
+        this._order.unsubscribe();
+        this._settings.unsubscribe();
     }
 }
 

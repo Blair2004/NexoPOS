@@ -34,7 +34,7 @@ export default {
 }
 </script>
 <template>
-    <div class="h-full w-full flex">
+    <div class="flex bg-white shadow-xl w-4/5-screen h-4/5-screen">
         <div class="w-56 bg-gray-300 h-full">
             <h3 class="text-xl text-center my-8 text-gray-700">Payments Gateway</h3>
             <ul>

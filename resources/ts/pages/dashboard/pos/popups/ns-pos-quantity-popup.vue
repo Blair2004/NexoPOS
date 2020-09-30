@@ -1,5 +1,5 @@
 <template>
-    <div class="h-full w-full relative">
+    <div class="bg-white shadow min-h-2/5-screen w-screen md:w-3/5-screen lg:w-2/5-screen xl:w-1/5-screen relative">
         <div id="loading-overlay" v-if="isLoading" style="background:rgb(202 202 202 / 49%)" class="flex w-full h-full absolute top-O left-0 items-center justify-center">
             <ns-spinner></ns-spinner>
         </div>
