@@ -12,12 +12,13 @@
         "lib": [
             "es2019",
             "DOM"
-        ]
-    },
-    "paths": {
-        "@/*": [
-          "resources/ts/*"
-        ]
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "resources/ts/*"
+            ]
+        },
     },
     "files": [
         "./vue-shims.d.ts"

@@ -96,6 +96,19 @@ class OrdersController extends DashboardController
                     'icon'          =>  '/images/delivery.png',
                     'selected'      =>  false
                 ]
+            ],
+            'paymentTypes'  =>  [
+                [
+                    'label'     =>  __( 'Cash' ),
+                    'identifier'    =>  'cash-payment',
+                    'url'       =>  '/js/cash-payment.js',
+                    'selected'  =>  true,
+                ], [
+                    'label'     =>  __( 'Credit Card' ),
+                    'identifier'    =>  'creditcard-payment',
+                    'url'       =>  '/js/creditcard-payment.js',
+                    'selected'  =>  false,
+                ]
             ]
         ]);
     }

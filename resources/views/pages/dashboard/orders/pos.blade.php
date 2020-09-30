@@ -22,6 +22,8 @@
         breadcrumb          :   [],
         products_queue      :   []
     });
+
+    POS.definedPaymentsType( @json( $paymentTypes ) );
     </script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>
 @verbatim

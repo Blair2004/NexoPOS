@@ -10615,6 +10615,50 @@ video {
   height: 100vh !important;
 }
 
+.h-6\/7-screen{
+  height: 85.71vh !important;
+}
+
+.h-5\/7-screen{
+  height: 71.42vh !important;
+}
+
+.h-4\/7-screen{
+  height: 57.14vh !important;
+}
+
+.h-3\/7-screen{
+  height: 42.85vh !important;
+}
+
+.h-2\/7-screen{
+  height: 28.57vh !important;
+}
+
+.h-1\/7-screen{
+  height: 14.28vh !important;
+}
+
+.h-5\/6-screen{
+  height: 83.33vh !important;
+}
+
+.h-4\/6-screen{
+  height: 66.66vh !important;
+}
+
+.h-3\/6-screen{
+  height: 50vh !important;
+}
+
+.h-2\/6-screen{
+  height: 33.33vh !important;
+}
+
+.h-1\/6-screen{
+  height: 16.66vh !important;
+}
+
 .h-4\/5-screen{
   height: 80vh !important;
 }
@@ -12323,6 +12367,50 @@ video {
 
 .min-h-screen{
   min-height: 100vh !important;
+}
+
+.min-h-6\/7-screen{
+  min-height: 85.71vh !important;
+}
+
+.min-h-5\/7-screen{
+  min-height: 71.42vh !important;
+}
+
+.min-h-4\/7-screen{
+  min-height: 57.14vh !important;
+}
+
+.min-h-3\/7-screen{
+  min-height: 42.85vh !important;
+}
+
+.min-h-2\/7-screen{
+  min-height: 28.57vh !important;
+}
+
+.min-h-1\/7-screen{
+  min-height: 14.28vh !important;
+}
+
+.min-h-5\/6-screen{
+  min-height: 83.33vh !important;
+}
+
+.min-h-4\/6-screen{
+  min-height: 66.66vh !important;
+}
+
+.min-h-3\/6-screen{
+  min-height: 50vh !important;
+}
+
+.min-h-2\/6-screen{
+  min-height: 33.33vh !important;
+}
+
+.min-h-1\/6-screen{
+  min-height: 16.66vh !important;
 }
 
 .min-h-4\/5-screen{
@@ -18183,6 +18271,83 @@ video {
   left: -35em !important;
 }
 
+.inset-6\/7-screen{
+  top: 85.71vw !important;
+  right: 85.71vw !important;
+  bottom: 85.71vw !important;
+  left: 85.71vw !important;
+}
+
+.inset-5\/7-screen{
+  top: 71.42vw !important;
+  right: 71.42vw !important;
+  bottom: 71.42vw !important;
+  left: 71.42vw !important;
+}
+
+.inset-4\/7-screen{
+  top: 57.14vw !important;
+  right: 57.14vw !important;
+  bottom: 57.14vw !important;
+  left: 57.14vw !important;
+}
+
+.inset-3\/7-screen{
+  top: 42.85vw !important;
+  right: 42.85vw !important;
+  bottom: 42.85vw !important;
+  left: 42.85vw !important;
+}
+
+.inset-2\/7-screen{
+  top: 28.57vw !important;
+  right: 28.57vw !important;
+  bottom: 28.57vw !important;
+  left: 28.57vw !important;
+}
+
+.inset-1\/7-screen{
+  top: 14.28vw !important;
+  right: 14.28vw !important;
+  bottom: 14.28vw !important;
+  left: 14.28vw !important;
+}
+
+.inset-5\/6-screen{
+  top: 83.33vw !important;
+  right: 83.33vw !important;
+  bottom: 83.33vw !important;
+  left: 83.33vw !important;
+}
+
+.inset-4\/6-screen{
+  top: 66.66vw !important;
+  right: 66.66vw !important;
+  bottom: 66.66vw !important;
+  left: 66.66vw !important;
+}
+
+.inset-3\/6-screen{
+  top: 50vw !important;
+  right: 50vw !important;
+  bottom: 50vw !important;
+  left: 50vw !important;
+}
+
+.inset-2\/6-screen{
+  top: 33.33vw !important;
+  right: 33.33vw !important;
+  bottom: 33.33vw !important;
+  left: 33.33vw !important;
+}
+
+.inset-1\/6-screen{
+  top: 16.66vw !important;
+  right: 16.66vw !important;
+  bottom: 16.66vw !important;
+  left: 16.66vw !important;
+}
+
 .inset-4\/5-screen{
   top: 80vw !important;
   right: 80vw !important;
@@ -18451,6 +18616,116 @@ video {
 .-inset-x-70{
   right: -35em !important;
   left: -35em !important;
+}
+
+.inset-y-6\/7-screen{
+  top: 85.71vw !important;
+  bottom: 85.71vw !important;
+}
+
+.inset-x-6\/7-screen{
+  right: 85.71vw !important;
+  left: 85.71vw !important;
+}
+
+.inset-y-5\/7-screen{
+  top: 71.42vw !important;
+  bottom: 71.42vw !important;
+}
+
+.inset-x-5\/7-screen{
+  right: 71.42vw !important;
+  left: 71.42vw !important;
+}
+
+.inset-y-4\/7-screen{
+  top: 57.14vw !important;
+  bottom: 57.14vw !important;
+}
+
+.inset-x-4\/7-screen{
+  right: 57.14vw !important;
+  left: 57.14vw !important;
+}
+
+.inset-y-3\/7-screen{
+  top: 42.85vw !important;
+  bottom: 42.85vw !important;
+}
+
+.inset-x-3\/7-screen{
+  right: 42.85vw !important;
+  left: 42.85vw !important;
+}
+
+.inset-y-2\/7-screen{
+  top: 28.57vw !important;
+  bottom: 28.57vw !important;
+}
+
+.inset-x-2\/7-screen{
+  right: 28.57vw !important;
+  left: 28.57vw !important;
+}
+
+.inset-y-1\/7-screen{
+  top: 14.28vw !important;
+  bottom: 14.28vw !important;
+}
+
+.inset-x-1\/7-screen{
+  right: 14.28vw !important;
+  left: 14.28vw !important;
+}
+
+.inset-y-5\/6-screen{
+  top: 83.33vw !important;
+  bottom: 83.33vw !important;
+}
+
+.inset-x-5\/6-screen{
+  right: 83.33vw !important;
+  left: 83.33vw !important;
+}
+
+.inset-y-4\/6-screen{
+  top: 66.66vw !important;
+  bottom: 66.66vw !important;
+}
+
+.inset-x-4\/6-screen{
+  right: 66.66vw !important;
+  left: 66.66vw !important;
+}
+
+.inset-y-3\/6-screen{
+  top: 50vw !important;
+  bottom: 50vw !important;
+}
+
+.inset-x-3\/6-screen{
+  right: 50vw !important;
+  left: 50vw !important;
+}
+
+.inset-y-2\/6-screen{
+  top: 33.33vw !important;
+  bottom: 33.33vw !important;
+}
+
+.inset-x-2\/6-screen{
+  right: 33.33vw !important;
+  left: 33.33vw !important;
+}
+
+.inset-y-1\/6-screen{
+  top: 16.66vw !important;
+  bottom: 16.66vw !important;
+}
+
+.inset-x-1\/6-screen{
+  right: 16.66vw !important;
+  left: 16.66vw !important;
 }
 
 .inset-y-4\/5-screen{
@@ -18871,6 +19146,182 @@ video {
 
 .-left-70{
   left: -35em !important;
+}
+
+.top-6\/7-screen{
+  top: 85.71vw !important;
+}
+
+.right-6\/7-screen{
+  right: 85.71vw !important;
+}
+
+.bottom-6\/7-screen{
+  bottom: 85.71vw !important;
+}
+
+.left-6\/7-screen{
+  left: 85.71vw !important;
+}
+
+.top-5\/7-screen{
+  top: 71.42vw !important;
+}
+
+.right-5\/7-screen{
+  right: 71.42vw !important;
+}
+
+.bottom-5\/7-screen{
+  bottom: 71.42vw !important;
+}
+
+.left-5\/7-screen{
+  left: 71.42vw !important;
+}
+
+.top-4\/7-screen{
+  top: 57.14vw !important;
+}
+
+.right-4\/7-screen{
+  right: 57.14vw !important;
+}
+
+.bottom-4\/7-screen{
+  bottom: 57.14vw !important;
+}
+
+.left-4\/7-screen{
+  left: 57.14vw !important;
+}
+
+.top-3\/7-screen{
+  top: 42.85vw !important;
+}
+
+.right-3\/7-screen{
+  right: 42.85vw !important;
+}
+
+.bottom-3\/7-screen{
+  bottom: 42.85vw !important;
+}
+
+.left-3\/7-screen{
+  left: 42.85vw !important;
+}
+
+.top-2\/7-screen{
+  top: 28.57vw !important;
+}
+
+.right-2\/7-screen{
+  right: 28.57vw !important;
+}
+
+.bottom-2\/7-screen{
+  bottom: 28.57vw !important;
+}
+
+.left-2\/7-screen{
+  left: 28.57vw !important;
+}
+
+.top-1\/7-screen{
+  top: 14.28vw !important;
+}
+
+.right-1\/7-screen{
+  right: 14.28vw !important;
+}
+
+.bottom-1\/7-screen{
+  bottom: 14.28vw !important;
+}
+
+.left-1\/7-screen{
+  left: 14.28vw !important;
+}
+
+.top-5\/6-screen{
+  top: 83.33vw !important;
+}
+
+.right-5\/6-screen{
+  right: 83.33vw !important;
+}
+
+.bottom-5\/6-screen{
+  bottom: 83.33vw !important;
+}
+
+.left-5\/6-screen{
+  left: 83.33vw !important;
+}
+
+.top-4\/6-screen{
+  top: 66.66vw !important;
+}
+
+.right-4\/6-screen{
+  right: 66.66vw !important;
+}
+
+.bottom-4\/6-screen{
+  bottom: 66.66vw !important;
+}
+
+.left-4\/6-screen{
+  left: 66.66vw !important;
+}
+
+.top-3\/6-screen{
+  top: 50vw !important;
+}
+
+.right-3\/6-screen{
+  right: 50vw !important;
+}
+
+.bottom-3\/6-screen{
+  bottom: 50vw !important;
+}
+
+.left-3\/6-screen{
+  left: 50vw !important;
+}
+
+.top-2\/6-screen{
+  top: 33.33vw !important;
+}
+
+.right-2\/6-screen{
+  right: 33.33vw !important;
+}
+
+.bottom-2\/6-screen{
+  bottom: 33.33vw !important;
+}
+
+.left-2\/6-screen{
+  left: 33.33vw !important;
+}
+
+.top-1\/6-screen{
+  top: 16.66vw !important;
+}
+
+.right-1\/6-screen{
+  right: 16.66vw !important;
+}
+
+.bottom-1\/6-screen{
+  bottom: 16.66vw !important;
+}
+
+.left-1\/6-screen{
+  left: 16.66vw !important;
 }
 
 .top-4\/5-screen{
@@ -21419,6 +21870,50 @@ video {
 
 .w-screen{
   width: 100vw !important;
+}
+
+.w-6\/7-screen{
+  width: 85.71vw !important;
+}
+
+.w-5\/7-screen{
+  width: 71.42vw !important;
+}
+
+.w-4\/7-screen{
+  width: 57.14vw !important;
+}
+
+.w-3\/7-screen{
+  width: 42.85vw !important;
+}
+
+.w-2\/7-screen{
+  width: 28.57vw !important;
+}
+
+.w-1\/7-screen{
+  width: 14.28vw !important;
+}
+
+.w-5\/6-screen{
+  width: 83.33vw !important;
+}
+
+.w-4\/6-screen{
+  width: 66.66vw !important;
+}
+
+.w-3\/6-screen{
+  width: 50vw !important;
+}
+
+.w-2\/6-screen{
+  width: 33.33vw !important;
+}
+
+.w-1\/6-screen{
+  width: 16.66vw !important;
 }
 
 .w-4\/5-screen{
@@ -40460,6 +40955,50 @@ body {
     height: 100vh !important;
   }
 
+  .sm\:h-6\/7-screen{
+    height: 85.71vh !important;
+  }
+
+  .sm\:h-5\/7-screen{
+    height: 71.42vh !important;
+  }
+
+  .sm\:h-4\/7-screen{
+    height: 57.14vh !important;
+  }
+
+  .sm\:h-3\/7-screen{
+    height: 42.85vh !important;
+  }
+
+  .sm\:h-2\/7-screen{
+    height: 28.57vh !important;
+  }
+
+  .sm\:h-1\/7-screen{
+    height: 14.28vh !important;
+  }
+
+  .sm\:h-5\/6-screen{
+    height: 83.33vh !important;
+  }
+
+  .sm\:h-4\/6-screen{
+    height: 66.66vh !important;
+  }
+
+  .sm\:h-3\/6-screen{
+    height: 50vh !important;
+  }
+
+  .sm\:h-2\/6-screen{
+    height: 33.33vh !important;
+  }
+
+  .sm\:h-1\/6-screen{
+    height: 16.66vh !important;
+  }
+
   .sm\:h-4\/5-screen{
     height: 80vh !important;
   }
@@ -42168,6 +42707,50 @@ body {
 
   .sm\:min-h-screen{
     min-height: 100vh !important;
+  }
+
+  .sm\:min-h-6\/7-screen{
+    min-height: 85.71vh !important;
+  }
+
+  .sm\:min-h-5\/7-screen{
+    min-height: 71.42vh !important;
+  }
+
+  .sm\:min-h-4\/7-screen{
+    min-height: 57.14vh !important;
+  }
+
+  .sm\:min-h-3\/7-screen{
+    min-height: 42.85vh !important;
+  }
+
+  .sm\:min-h-2\/7-screen{
+    min-height: 28.57vh !important;
+  }
+
+  .sm\:min-h-1\/7-screen{
+    min-height: 14.28vh !important;
+  }
+
+  .sm\:min-h-5\/6-screen{
+    min-height: 83.33vh !important;
+  }
+
+  .sm\:min-h-4\/6-screen{
+    min-height: 66.66vh !important;
+  }
+
+  .sm\:min-h-3\/6-screen{
+    min-height: 50vh !important;
+  }
+
+  .sm\:min-h-2\/6-screen{
+    min-height: 33.33vh !important;
+  }
+
+  .sm\:min-h-1\/6-screen{
+    min-height: 16.66vh !important;
   }
 
   .sm\:min-h-4\/5-screen{
@@ -48028,6 +48611,83 @@ body {
     left: -35em !important;
   }
 
+  .sm\:inset-6\/7-screen{
+    top: 85.71vw !important;
+    right: 85.71vw !important;
+    bottom: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .sm\:inset-5\/7-screen{
+    top: 71.42vw !important;
+    right: 71.42vw !important;
+    bottom: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .sm\:inset-4\/7-screen{
+    top: 57.14vw !important;
+    right: 57.14vw !important;
+    bottom: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .sm\:inset-3\/7-screen{
+    top: 42.85vw !important;
+    right: 42.85vw !important;
+    bottom: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .sm\:inset-2\/7-screen{
+    top: 28.57vw !important;
+    right: 28.57vw !important;
+    bottom: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .sm\:inset-1\/7-screen{
+    top: 14.28vw !important;
+    right: 14.28vw !important;
+    bottom: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .sm\:inset-5\/6-screen{
+    top: 83.33vw !important;
+    right: 83.33vw !important;
+    bottom: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .sm\:inset-4\/6-screen{
+    top: 66.66vw !important;
+    right: 66.66vw !important;
+    bottom: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .sm\:inset-3\/6-screen{
+    top: 50vw !important;
+    right: 50vw !important;
+    bottom: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .sm\:inset-2\/6-screen{
+    top: 33.33vw !important;
+    right: 33.33vw !important;
+    bottom: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .sm\:inset-1\/6-screen{
+    top: 16.66vw !important;
+    right: 16.66vw !important;
+    bottom: 16.66vw !important;
+    left: 16.66vw !important;
+  }
+
   .sm\:inset-4\/5-screen{
     top: 80vw !important;
     right: 80vw !important;
@@ -48296,6 +48956,116 @@ body {
   .sm\:-inset-x-70{
     right: -35em !important;
     left: -35em !important;
+  }
+
+  .sm\:inset-y-6\/7-screen{
+    top: 85.71vw !important;
+    bottom: 85.71vw !important;
+  }
+
+  .sm\:inset-x-6\/7-screen{
+    right: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .sm\:inset-y-5\/7-screen{
+    top: 71.42vw !important;
+    bottom: 71.42vw !important;
+  }
+
+  .sm\:inset-x-5\/7-screen{
+    right: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .sm\:inset-y-4\/7-screen{
+    top: 57.14vw !important;
+    bottom: 57.14vw !important;
+  }
+
+  .sm\:inset-x-4\/7-screen{
+    right: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .sm\:inset-y-3\/7-screen{
+    top: 42.85vw !important;
+    bottom: 42.85vw !important;
+  }
+
+  .sm\:inset-x-3\/7-screen{
+    right: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .sm\:inset-y-2\/7-screen{
+    top: 28.57vw !important;
+    bottom: 28.57vw !important;
+  }
+
+  .sm\:inset-x-2\/7-screen{
+    right: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .sm\:inset-y-1\/7-screen{
+    top: 14.28vw !important;
+    bottom: 14.28vw !important;
+  }
+
+  .sm\:inset-x-1\/7-screen{
+    right: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .sm\:inset-y-5\/6-screen{
+    top: 83.33vw !important;
+    bottom: 83.33vw !important;
+  }
+
+  .sm\:inset-x-5\/6-screen{
+    right: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .sm\:inset-y-4\/6-screen{
+    top: 66.66vw !important;
+    bottom: 66.66vw !important;
+  }
+
+  .sm\:inset-x-4\/6-screen{
+    right: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .sm\:inset-y-3\/6-screen{
+    top: 50vw !important;
+    bottom: 50vw !important;
+  }
+
+  .sm\:inset-x-3\/6-screen{
+    right: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .sm\:inset-y-2\/6-screen{
+    top: 33.33vw !important;
+    bottom: 33.33vw !important;
+  }
+
+  .sm\:inset-x-2\/6-screen{
+    right: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .sm\:inset-y-1\/6-screen{
+    top: 16.66vw !important;
+    bottom: 16.66vw !important;
+  }
+
+  .sm\:inset-x-1\/6-screen{
+    right: 16.66vw !important;
+    left: 16.66vw !important;
   }
 
   .sm\:inset-y-4\/5-screen{
@@ -48716,6 +49486,182 @@ body {
 
   .sm\:-left-70{
     left: -35em !important;
+  }
+
+  .sm\:top-6\/7-screen{
+    top: 85.71vw !important;
+  }
+
+  .sm\:right-6\/7-screen{
+    right: 85.71vw !important;
+  }
+
+  .sm\:bottom-6\/7-screen{
+    bottom: 85.71vw !important;
+  }
+
+  .sm\:left-6\/7-screen{
+    left: 85.71vw !important;
+  }
+
+  .sm\:top-5\/7-screen{
+    top: 71.42vw !important;
+  }
+
+  .sm\:right-5\/7-screen{
+    right: 71.42vw !important;
+  }
+
+  .sm\:bottom-5\/7-screen{
+    bottom: 71.42vw !important;
+  }
+
+  .sm\:left-5\/7-screen{
+    left: 71.42vw !important;
+  }
+
+  .sm\:top-4\/7-screen{
+    top: 57.14vw !important;
+  }
+
+  .sm\:right-4\/7-screen{
+    right: 57.14vw !important;
+  }
+
+  .sm\:bottom-4\/7-screen{
+    bottom: 57.14vw !important;
+  }
+
+  .sm\:left-4\/7-screen{
+    left: 57.14vw !important;
+  }
+
+  .sm\:top-3\/7-screen{
+    top: 42.85vw !important;
+  }
+
+  .sm\:right-3\/7-screen{
+    right: 42.85vw !important;
+  }
+
+  .sm\:bottom-3\/7-screen{
+    bottom: 42.85vw !important;
+  }
+
+  .sm\:left-3\/7-screen{
+    left: 42.85vw !important;
+  }
+
+  .sm\:top-2\/7-screen{
+    top: 28.57vw !important;
+  }
+
+  .sm\:right-2\/7-screen{
+    right: 28.57vw !important;
+  }
+
+  .sm\:bottom-2\/7-screen{
+    bottom: 28.57vw !important;
+  }
+
+  .sm\:left-2\/7-screen{
+    left: 28.57vw !important;
+  }
+
+  .sm\:top-1\/7-screen{
+    top: 14.28vw !important;
+  }
+
+  .sm\:right-1\/7-screen{
+    right: 14.28vw !important;
+  }
+
+  .sm\:bottom-1\/7-screen{
+    bottom: 14.28vw !important;
+  }
+
+  .sm\:left-1\/7-screen{
+    left: 14.28vw !important;
+  }
+
+  .sm\:top-5\/6-screen{
+    top: 83.33vw !important;
+  }
+
+  .sm\:right-5\/6-screen{
+    right: 83.33vw !important;
+  }
+
+  .sm\:bottom-5\/6-screen{
+    bottom: 83.33vw !important;
+  }
+
+  .sm\:left-5\/6-screen{
+    left: 83.33vw !important;
+  }
+
+  .sm\:top-4\/6-screen{
+    top: 66.66vw !important;
+  }
+
+  .sm\:right-4\/6-screen{
+    right: 66.66vw !important;
+  }
+
+  .sm\:bottom-4\/6-screen{
+    bottom: 66.66vw !important;
+  }
+
+  .sm\:left-4\/6-screen{
+    left: 66.66vw !important;
+  }
+
+  .sm\:top-3\/6-screen{
+    top: 50vw !important;
+  }
+
+  .sm\:right-3\/6-screen{
+    right: 50vw !important;
+  }
+
+  .sm\:bottom-3\/6-screen{
+    bottom: 50vw !important;
+  }
+
+  .sm\:left-3\/6-screen{
+    left: 50vw !important;
+  }
+
+  .sm\:top-2\/6-screen{
+    top: 33.33vw !important;
+  }
+
+  .sm\:right-2\/6-screen{
+    right: 33.33vw !important;
+  }
+
+  .sm\:bottom-2\/6-screen{
+    bottom: 33.33vw !important;
+  }
+
+  .sm\:left-2\/6-screen{
+    left: 33.33vw !important;
+  }
+
+  .sm\:top-1\/6-screen{
+    top: 16.66vw !important;
+  }
+
+  .sm\:right-1\/6-screen{
+    right: 16.66vw !important;
+  }
+
+  .sm\:bottom-1\/6-screen{
+    bottom: 16.66vw !important;
+  }
+
+  .sm\:left-1\/6-screen{
+    left: 16.66vw !important;
   }
 
   .sm\:top-4\/5-screen{
@@ -51264,6 +52210,50 @@ body {
 
   .sm\:w-screen{
     width: 100vw !important;
+  }
+
+  .sm\:w-6\/7-screen{
+    width: 85.71vw !important;
+  }
+
+  .sm\:w-5\/7-screen{
+    width: 71.42vw !important;
+  }
+
+  .sm\:w-4\/7-screen{
+    width: 57.14vw !important;
+  }
+
+  .sm\:w-3\/7-screen{
+    width: 42.85vw !important;
+  }
+
+  .sm\:w-2\/7-screen{
+    width: 28.57vw !important;
+  }
+
+  .sm\:w-1\/7-screen{
+    width: 14.28vw !important;
+  }
+
+  .sm\:w-5\/6-screen{
+    width: 83.33vw !important;
+  }
+
+  .sm\:w-4\/6-screen{
+    width: 66.66vw !important;
+  }
+
+  .sm\:w-3\/6-screen{
+    width: 50vw !important;
+  }
+
+  .sm\:w-2\/6-screen{
+    width: 33.33vw !important;
+  }
+
+  .sm\:w-1\/6-screen{
+    width: 16.66vw !important;
   }
 
   .sm\:w-4\/5-screen{
@@ -64145,6 +65135,50 @@ body {
     height: 100vh !important;
   }
 
+  .md\:h-6\/7-screen{
+    height: 85.71vh !important;
+  }
+
+  .md\:h-5\/7-screen{
+    height: 71.42vh !important;
+  }
+
+  .md\:h-4\/7-screen{
+    height: 57.14vh !important;
+  }
+
+  .md\:h-3\/7-screen{
+    height: 42.85vh !important;
+  }
+
+  .md\:h-2\/7-screen{
+    height: 28.57vh !important;
+  }
+
+  .md\:h-1\/7-screen{
+    height: 14.28vh !important;
+  }
+
+  .md\:h-5\/6-screen{
+    height: 83.33vh !important;
+  }
+
+  .md\:h-4\/6-screen{
+    height: 66.66vh !important;
+  }
+
+  .md\:h-3\/6-screen{
+    height: 50vh !important;
+  }
+
+  .md\:h-2\/6-screen{
+    height: 33.33vh !important;
+  }
+
+  .md\:h-1\/6-screen{
+    height: 16.66vh !important;
+  }
+
   .md\:h-4\/5-screen{
     height: 80vh !important;
   }
@@ -65853,6 +66887,50 @@ body {
 
   .md\:min-h-screen{
     min-height: 100vh !important;
+  }
+
+  .md\:min-h-6\/7-screen{
+    min-height: 85.71vh !important;
+  }
+
+  .md\:min-h-5\/7-screen{
+    min-height: 71.42vh !important;
+  }
+
+  .md\:min-h-4\/7-screen{
+    min-height: 57.14vh !important;
+  }
+
+  .md\:min-h-3\/7-screen{
+    min-height: 42.85vh !important;
+  }
+
+  .md\:min-h-2\/7-screen{
+    min-height: 28.57vh !important;
+  }
+
+  .md\:min-h-1\/7-screen{
+    min-height: 14.28vh !important;
+  }
+
+  .md\:min-h-5\/6-screen{
+    min-height: 83.33vh !important;
+  }
+
+  .md\:min-h-4\/6-screen{
+    min-height: 66.66vh !important;
+  }
+
+  .md\:min-h-3\/6-screen{
+    min-height: 50vh !important;
+  }
+
+  .md\:min-h-2\/6-screen{
+    min-height: 33.33vh !important;
+  }
+
+  .md\:min-h-1\/6-screen{
+    min-height: 16.66vh !important;
   }
 
   .md\:min-h-4\/5-screen{
@@ -71713,6 +72791,83 @@ body {
     left: -35em !important;
   }
 
+  .md\:inset-6\/7-screen{
+    top: 85.71vw !important;
+    right: 85.71vw !important;
+    bottom: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .md\:inset-5\/7-screen{
+    top: 71.42vw !important;
+    right: 71.42vw !important;
+    bottom: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .md\:inset-4\/7-screen{
+    top: 57.14vw !important;
+    right: 57.14vw !important;
+    bottom: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .md\:inset-3\/7-screen{
+    top: 42.85vw !important;
+    right: 42.85vw !important;
+    bottom: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .md\:inset-2\/7-screen{
+    top: 28.57vw !important;
+    right: 28.57vw !important;
+    bottom: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .md\:inset-1\/7-screen{
+    top: 14.28vw !important;
+    right: 14.28vw !important;
+    bottom: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .md\:inset-5\/6-screen{
+    top: 83.33vw !important;
+    right: 83.33vw !important;
+    bottom: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .md\:inset-4\/6-screen{
+    top: 66.66vw !important;
+    right: 66.66vw !important;
+    bottom: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .md\:inset-3\/6-screen{
+    top: 50vw !important;
+    right: 50vw !important;
+    bottom: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .md\:inset-2\/6-screen{
+    top: 33.33vw !important;
+    right: 33.33vw !important;
+    bottom: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .md\:inset-1\/6-screen{
+    top: 16.66vw !important;
+    right: 16.66vw !important;
+    bottom: 16.66vw !important;
+    left: 16.66vw !important;
+  }
+
   .md\:inset-4\/5-screen{
     top: 80vw !important;
     right: 80vw !important;
@@ -71981,6 +73136,116 @@ body {
   .md\:-inset-x-70{
     right: -35em !important;
     left: -35em !important;
+  }
+
+  .md\:inset-y-6\/7-screen{
+    top: 85.71vw !important;
+    bottom: 85.71vw !important;
+  }
+
+  .md\:inset-x-6\/7-screen{
+    right: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .md\:inset-y-5\/7-screen{
+    top: 71.42vw !important;
+    bottom: 71.42vw !important;
+  }
+
+  .md\:inset-x-5\/7-screen{
+    right: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .md\:inset-y-4\/7-screen{
+    top: 57.14vw !important;
+    bottom: 57.14vw !important;
+  }
+
+  .md\:inset-x-4\/7-screen{
+    right: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .md\:inset-y-3\/7-screen{
+    top: 42.85vw !important;
+    bottom: 42.85vw !important;
+  }
+
+  .md\:inset-x-3\/7-screen{
+    right: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .md\:inset-y-2\/7-screen{
+    top: 28.57vw !important;
+    bottom: 28.57vw !important;
+  }
+
+  .md\:inset-x-2\/7-screen{
+    right: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .md\:inset-y-1\/7-screen{
+    top: 14.28vw !important;
+    bottom: 14.28vw !important;
+  }
+
+  .md\:inset-x-1\/7-screen{
+    right: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .md\:inset-y-5\/6-screen{
+    top: 83.33vw !important;
+    bottom: 83.33vw !important;
+  }
+
+  .md\:inset-x-5\/6-screen{
+    right: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .md\:inset-y-4\/6-screen{
+    top: 66.66vw !important;
+    bottom: 66.66vw !important;
+  }
+
+  .md\:inset-x-4\/6-screen{
+    right: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .md\:inset-y-3\/6-screen{
+    top: 50vw !important;
+    bottom: 50vw !important;
+  }
+
+  .md\:inset-x-3\/6-screen{
+    right: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .md\:inset-y-2\/6-screen{
+    top: 33.33vw !important;
+    bottom: 33.33vw !important;
+  }
+
+  .md\:inset-x-2\/6-screen{
+    right: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .md\:inset-y-1\/6-screen{
+    top: 16.66vw !important;
+    bottom: 16.66vw !important;
+  }
+
+  .md\:inset-x-1\/6-screen{
+    right: 16.66vw !important;
+    left: 16.66vw !important;
   }
 
   .md\:inset-y-4\/5-screen{
@@ -72401,6 +73666,182 @@ body {
 
   .md\:-left-70{
     left: -35em !important;
+  }
+
+  .md\:top-6\/7-screen{
+    top: 85.71vw !important;
+  }
+
+  .md\:right-6\/7-screen{
+    right: 85.71vw !important;
+  }
+
+  .md\:bottom-6\/7-screen{
+    bottom: 85.71vw !important;
+  }
+
+  .md\:left-6\/7-screen{
+    left: 85.71vw !important;
+  }
+
+  .md\:top-5\/7-screen{
+    top: 71.42vw !important;
+  }
+
+  .md\:right-5\/7-screen{
+    right: 71.42vw !important;
+  }
+
+  .md\:bottom-5\/7-screen{
+    bottom: 71.42vw !important;
+  }
+
+  .md\:left-5\/7-screen{
+    left: 71.42vw !important;
+  }
+
+  .md\:top-4\/7-screen{
+    top: 57.14vw !important;
+  }
+
+  .md\:right-4\/7-screen{
+    right: 57.14vw !important;
+  }
+
+  .md\:bottom-4\/7-screen{
+    bottom: 57.14vw !important;
+  }
+
+  .md\:left-4\/7-screen{
+    left: 57.14vw !important;
+  }
+
+  .md\:top-3\/7-screen{
+    top: 42.85vw !important;
+  }
+
+  .md\:right-3\/7-screen{
+    right: 42.85vw !important;
+  }
+
+  .md\:bottom-3\/7-screen{
+    bottom: 42.85vw !important;
+  }
+
+  .md\:left-3\/7-screen{
+    left: 42.85vw !important;
+  }
+
+  .md\:top-2\/7-screen{
+    top: 28.57vw !important;
+  }
+
+  .md\:right-2\/7-screen{
+    right: 28.57vw !important;
+  }
+
+  .md\:bottom-2\/7-screen{
+    bottom: 28.57vw !important;
+  }
+
+  .md\:left-2\/7-screen{
+    left: 28.57vw !important;
+  }
+
+  .md\:top-1\/7-screen{
+    top: 14.28vw !important;
+  }
+
+  .md\:right-1\/7-screen{
+    right: 14.28vw !important;
+  }
+
+  .md\:bottom-1\/7-screen{
+    bottom: 14.28vw !important;
+  }
+
+  .md\:left-1\/7-screen{
+    left: 14.28vw !important;
+  }
+
+  .md\:top-5\/6-screen{
+    top: 83.33vw !important;
+  }
+
+  .md\:right-5\/6-screen{
+    right: 83.33vw !important;
+  }
+
+  .md\:bottom-5\/6-screen{
+    bottom: 83.33vw !important;
+  }
+
+  .md\:left-5\/6-screen{
+    left: 83.33vw !important;
+  }
+
+  .md\:top-4\/6-screen{
+    top: 66.66vw !important;
+  }
+
+  .md\:right-4\/6-screen{
+    right: 66.66vw !important;
+  }
+
+  .md\:bottom-4\/6-screen{
+    bottom: 66.66vw !important;
+  }
+
+  .md\:left-4\/6-screen{
+    left: 66.66vw !important;
+  }
+
+  .md\:top-3\/6-screen{
+    top: 50vw !important;
+  }
+
+  .md\:right-3\/6-screen{
+    right: 50vw !important;
+  }
+
+  .md\:bottom-3\/6-screen{
+    bottom: 50vw !important;
+  }
+
+  .md\:left-3\/6-screen{
+    left: 50vw !important;
+  }
+
+  .md\:top-2\/6-screen{
+    top: 33.33vw !important;
+  }
+
+  .md\:right-2\/6-screen{
+    right: 33.33vw !important;
+  }
+
+  .md\:bottom-2\/6-screen{
+    bottom: 33.33vw !important;
+  }
+
+  .md\:left-2\/6-screen{
+    left: 33.33vw !important;
+  }
+
+  .md\:top-1\/6-screen{
+    top: 16.66vw !important;
+  }
+
+  .md\:right-1\/6-screen{
+    right: 16.66vw !important;
+  }
+
+  .md\:bottom-1\/6-screen{
+    bottom: 16.66vw !important;
+  }
+
+  .md\:left-1\/6-screen{
+    left: 16.66vw !important;
   }
 
   .md\:top-4\/5-screen{
@@ -74949,6 +76390,50 @@ body {
 
   .md\:w-screen{
     width: 100vw !important;
+  }
+
+  .md\:w-6\/7-screen{
+    width: 85.71vw !important;
+  }
+
+  .md\:w-5\/7-screen{
+    width: 71.42vw !important;
+  }
+
+  .md\:w-4\/7-screen{
+    width: 57.14vw !important;
+  }
+
+  .md\:w-3\/7-screen{
+    width: 42.85vw !important;
+  }
+
+  .md\:w-2\/7-screen{
+    width: 28.57vw !important;
+  }
+
+  .md\:w-1\/7-screen{
+    width: 14.28vw !important;
+  }
+
+  .md\:w-5\/6-screen{
+    width: 83.33vw !important;
+  }
+
+  .md\:w-4\/6-screen{
+    width: 66.66vw !important;
+  }
+
+  .md\:w-3\/6-screen{
+    width: 50vw !important;
+  }
+
+  .md\:w-2\/6-screen{
+    width: 33.33vw !important;
+  }
+
+  .md\:w-1\/6-screen{
+    width: 16.66vw !important;
   }
 
   .md\:w-4\/5-screen{
@@ -87830,6 +89315,50 @@ body {
     height: 100vh !important;
   }
 
+  .lg\:h-6\/7-screen{
+    height: 85.71vh !important;
+  }
+
+  .lg\:h-5\/7-screen{
+    height: 71.42vh !important;
+  }
+
+  .lg\:h-4\/7-screen{
+    height: 57.14vh !important;
+  }
+
+  .lg\:h-3\/7-screen{
+    height: 42.85vh !important;
+  }
+
+  .lg\:h-2\/7-screen{
+    height: 28.57vh !important;
+  }
+
+  .lg\:h-1\/7-screen{
+    height: 14.28vh !important;
+  }
+
+  .lg\:h-5\/6-screen{
+    height: 83.33vh !important;
+  }
+
+  .lg\:h-4\/6-screen{
+    height: 66.66vh !important;
+  }
+
+  .lg\:h-3\/6-screen{
+    height: 50vh !important;
+  }
+
+  .lg\:h-2\/6-screen{
+    height: 33.33vh !important;
+  }
+
+  .lg\:h-1\/6-screen{
+    height: 16.66vh !important;
+  }
+
   .lg\:h-4\/5-screen{
     height: 80vh !important;
   }
@@ -89538,6 +91067,50 @@ body {
 
   .lg\:min-h-screen{
     min-height: 100vh !important;
+  }
+
+  .lg\:min-h-6\/7-screen{
+    min-height: 85.71vh !important;
+  }
+
+  .lg\:min-h-5\/7-screen{
+    min-height: 71.42vh !important;
+  }
+
+  .lg\:min-h-4\/7-screen{
+    min-height: 57.14vh !important;
+  }
+
+  .lg\:min-h-3\/7-screen{
+    min-height: 42.85vh !important;
+  }
+
+  .lg\:min-h-2\/7-screen{
+    min-height: 28.57vh !important;
+  }
+
+  .lg\:min-h-1\/7-screen{
+    min-height: 14.28vh !important;
+  }
+
+  .lg\:min-h-5\/6-screen{
+    min-height: 83.33vh !important;
+  }
+
+  .lg\:min-h-4\/6-screen{
+    min-height: 66.66vh !important;
+  }
+
+  .lg\:min-h-3\/6-screen{
+    min-height: 50vh !important;
+  }
+
+  .lg\:min-h-2\/6-screen{
+    min-height: 33.33vh !important;
+  }
+
+  .lg\:min-h-1\/6-screen{
+    min-height: 16.66vh !important;
   }
 
   .lg\:min-h-4\/5-screen{
@@ -95398,6 +96971,83 @@ body {
     left: -35em !important;
   }
 
+  .lg\:inset-6\/7-screen{
+    top: 85.71vw !important;
+    right: 85.71vw !important;
+    bottom: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .lg\:inset-5\/7-screen{
+    top: 71.42vw !important;
+    right: 71.42vw !important;
+    bottom: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .lg\:inset-4\/7-screen{
+    top: 57.14vw !important;
+    right: 57.14vw !important;
+    bottom: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .lg\:inset-3\/7-screen{
+    top: 42.85vw !important;
+    right: 42.85vw !important;
+    bottom: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .lg\:inset-2\/7-screen{
+    top: 28.57vw !important;
+    right: 28.57vw !important;
+    bottom: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .lg\:inset-1\/7-screen{
+    top: 14.28vw !important;
+    right: 14.28vw !important;
+    bottom: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .lg\:inset-5\/6-screen{
+    top: 83.33vw !important;
+    right: 83.33vw !important;
+    bottom: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .lg\:inset-4\/6-screen{
+    top: 66.66vw !important;
+    right: 66.66vw !important;
+    bottom: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .lg\:inset-3\/6-screen{
+    top: 50vw !important;
+    right: 50vw !important;
+    bottom: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .lg\:inset-2\/6-screen{
+    top: 33.33vw !important;
+    right: 33.33vw !important;
+    bottom: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .lg\:inset-1\/6-screen{
+    top: 16.66vw !important;
+    right: 16.66vw !important;
+    bottom: 16.66vw !important;
+    left: 16.66vw !important;
+  }
+
   .lg\:inset-4\/5-screen{
     top: 80vw !important;
     right: 80vw !important;
@@ -95666,6 +97316,116 @@ body {
   .lg\:-inset-x-70{
     right: -35em !important;
     left: -35em !important;
+  }
+
+  .lg\:inset-y-6\/7-screen{
+    top: 85.71vw !important;
+    bottom: 85.71vw !important;
+  }
+
+  .lg\:inset-x-6\/7-screen{
+    right: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .lg\:inset-y-5\/7-screen{
+    top: 71.42vw !important;
+    bottom: 71.42vw !important;
+  }
+
+  .lg\:inset-x-5\/7-screen{
+    right: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .lg\:inset-y-4\/7-screen{
+    top: 57.14vw !important;
+    bottom: 57.14vw !important;
+  }
+
+  .lg\:inset-x-4\/7-screen{
+    right: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .lg\:inset-y-3\/7-screen{
+    top: 42.85vw !important;
+    bottom: 42.85vw !important;
+  }
+
+  .lg\:inset-x-3\/7-screen{
+    right: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .lg\:inset-y-2\/7-screen{
+    top: 28.57vw !important;
+    bottom: 28.57vw !important;
+  }
+
+  .lg\:inset-x-2\/7-screen{
+    right: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .lg\:inset-y-1\/7-screen{
+    top: 14.28vw !important;
+    bottom: 14.28vw !important;
+  }
+
+  .lg\:inset-x-1\/7-screen{
+    right: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .lg\:inset-y-5\/6-screen{
+    top: 83.33vw !important;
+    bottom: 83.33vw !important;
+  }
+
+  .lg\:inset-x-5\/6-screen{
+    right: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .lg\:inset-y-4\/6-screen{
+    top: 66.66vw !important;
+    bottom: 66.66vw !important;
+  }
+
+  .lg\:inset-x-4\/6-screen{
+    right: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .lg\:inset-y-3\/6-screen{
+    top: 50vw !important;
+    bottom: 50vw !important;
+  }
+
+  .lg\:inset-x-3\/6-screen{
+    right: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .lg\:inset-y-2\/6-screen{
+    top: 33.33vw !important;
+    bottom: 33.33vw !important;
+  }
+
+  .lg\:inset-x-2\/6-screen{
+    right: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .lg\:inset-y-1\/6-screen{
+    top: 16.66vw !important;
+    bottom: 16.66vw !important;
+  }
+
+  .lg\:inset-x-1\/6-screen{
+    right: 16.66vw !important;
+    left: 16.66vw !important;
   }
 
   .lg\:inset-y-4\/5-screen{
@@ -96086,6 +97846,182 @@ body {
 
   .lg\:-left-70{
     left: -35em !important;
+  }
+
+  .lg\:top-6\/7-screen{
+    top: 85.71vw !important;
+  }
+
+  .lg\:right-6\/7-screen{
+    right: 85.71vw !important;
+  }
+
+  .lg\:bottom-6\/7-screen{
+    bottom: 85.71vw !important;
+  }
+
+  .lg\:left-6\/7-screen{
+    left: 85.71vw !important;
+  }
+
+  .lg\:top-5\/7-screen{
+    top: 71.42vw !important;
+  }
+
+  .lg\:right-5\/7-screen{
+    right: 71.42vw !important;
+  }
+
+  .lg\:bottom-5\/7-screen{
+    bottom: 71.42vw !important;
+  }
+
+  .lg\:left-5\/7-screen{
+    left: 71.42vw !important;
+  }
+
+  .lg\:top-4\/7-screen{
+    top: 57.14vw !important;
+  }
+
+  .lg\:right-4\/7-screen{
+    right: 57.14vw !important;
+  }
+
+  .lg\:bottom-4\/7-screen{
+    bottom: 57.14vw !important;
+  }
+
+  .lg\:left-4\/7-screen{
+    left: 57.14vw !important;
+  }
+
+  .lg\:top-3\/7-screen{
+    top: 42.85vw !important;
+  }
+
+  .lg\:right-3\/7-screen{
+    right: 42.85vw !important;
+  }
+
+  .lg\:bottom-3\/7-screen{
+    bottom: 42.85vw !important;
+  }
+
+  .lg\:left-3\/7-screen{
+    left: 42.85vw !important;
+  }
+
+  .lg\:top-2\/7-screen{
+    top: 28.57vw !important;
+  }
+
+  .lg\:right-2\/7-screen{
+    right: 28.57vw !important;
+  }
+
+  .lg\:bottom-2\/7-screen{
+    bottom: 28.57vw !important;
+  }
+
+  .lg\:left-2\/7-screen{
+    left: 28.57vw !important;
+  }
+
+  .lg\:top-1\/7-screen{
+    top: 14.28vw !important;
+  }
+
+  .lg\:right-1\/7-screen{
+    right: 14.28vw !important;
+  }
+
+  .lg\:bottom-1\/7-screen{
+    bottom: 14.28vw !important;
+  }
+
+  .lg\:left-1\/7-screen{
+    left: 14.28vw !important;
+  }
+
+  .lg\:top-5\/6-screen{
+    top: 83.33vw !important;
+  }
+
+  .lg\:right-5\/6-screen{
+    right: 83.33vw !important;
+  }
+
+  .lg\:bottom-5\/6-screen{
+    bottom: 83.33vw !important;
+  }
+
+  .lg\:left-5\/6-screen{
+    left: 83.33vw !important;
+  }
+
+  .lg\:top-4\/6-screen{
+    top: 66.66vw !important;
+  }
+
+  .lg\:right-4\/6-screen{
+    right: 66.66vw !important;
+  }
+
+  .lg\:bottom-4\/6-screen{
+    bottom: 66.66vw !important;
+  }
+
+  .lg\:left-4\/6-screen{
+    left: 66.66vw !important;
+  }
+
+  .lg\:top-3\/6-screen{
+    top: 50vw !important;
+  }
+
+  .lg\:right-3\/6-screen{
+    right: 50vw !important;
+  }
+
+  .lg\:bottom-3\/6-screen{
+    bottom: 50vw !important;
+  }
+
+  .lg\:left-3\/6-screen{
+    left: 50vw !important;
+  }
+
+  .lg\:top-2\/6-screen{
+    top: 33.33vw !important;
+  }
+
+  .lg\:right-2\/6-screen{
+    right: 33.33vw !important;
+  }
+
+  .lg\:bottom-2\/6-screen{
+    bottom: 33.33vw !important;
+  }
+
+  .lg\:left-2\/6-screen{
+    left: 33.33vw !important;
+  }
+
+  .lg\:top-1\/6-screen{
+    top: 16.66vw !important;
+  }
+
+  .lg\:right-1\/6-screen{
+    right: 16.66vw !important;
+  }
+
+  .lg\:bottom-1\/6-screen{
+    bottom: 16.66vw !important;
+  }
+
+  .lg\:left-1\/6-screen{
+    left: 16.66vw !important;
   }
 
   .lg\:top-4\/5-screen{
@@ -98634,6 +100570,50 @@ body {
 
   .lg\:w-screen{
     width: 100vw !important;
+  }
+
+  .lg\:w-6\/7-screen{
+    width: 85.71vw !important;
+  }
+
+  .lg\:w-5\/7-screen{
+    width: 71.42vw !important;
+  }
+
+  .lg\:w-4\/7-screen{
+    width: 57.14vw !important;
+  }
+
+  .lg\:w-3\/7-screen{
+    width: 42.85vw !important;
+  }
+
+  .lg\:w-2\/7-screen{
+    width: 28.57vw !important;
+  }
+
+  .lg\:w-1\/7-screen{
+    width: 14.28vw !important;
+  }
+
+  .lg\:w-5\/6-screen{
+    width: 83.33vw !important;
+  }
+
+  .lg\:w-4\/6-screen{
+    width: 66.66vw !important;
+  }
+
+  .lg\:w-3\/6-screen{
+    width: 50vw !important;
+  }
+
+  .lg\:w-2\/6-screen{
+    width: 33.33vw !important;
+  }
+
+  .lg\:w-1\/6-screen{
+    width: 16.66vw !important;
   }
 
   .lg\:w-4\/5-screen{
@@ -111515,6 +113495,50 @@ body {
     height: 100vh !important;
   }
 
+  .xl\:h-6\/7-screen{
+    height: 85.71vh !important;
+  }
+
+  .xl\:h-5\/7-screen{
+    height: 71.42vh !important;
+  }
+
+  .xl\:h-4\/7-screen{
+    height: 57.14vh !important;
+  }
+
+  .xl\:h-3\/7-screen{
+    height: 42.85vh !important;
+  }
+
+  .xl\:h-2\/7-screen{
+    height: 28.57vh !important;
+  }
+
+  .xl\:h-1\/7-screen{
+    height: 14.28vh !important;
+  }
+
+  .xl\:h-5\/6-screen{
+    height: 83.33vh !important;
+  }
+
+  .xl\:h-4\/6-screen{
+    height: 66.66vh !important;
+  }
+
+  .xl\:h-3\/6-screen{
+    height: 50vh !important;
+  }
+
+  .xl\:h-2\/6-screen{
+    height: 33.33vh !important;
+  }
+
+  .xl\:h-1\/6-screen{
+    height: 16.66vh !important;
+  }
+
   .xl\:h-4\/5-screen{
     height: 80vh !important;
   }
@@ -113223,6 +115247,50 @@ body {
 
   .xl\:min-h-screen{
     min-height: 100vh !important;
+  }
+
+  .xl\:min-h-6\/7-screen{
+    min-height: 85.71vh !important;
+  }
+
+  .xl\:min-h-5\/7-screen{
+    min-height: 71.42vh !important;
+  }
+
+  .xl\:min-h-4\/7-screen{
+    min-height: 57.14vh !important;
+  }
+
+  .xl\:min-h-3\/7-screen{
+    min-height: 42.85vh !important;
+  }
+
+  .xl\:min-h-2\/7-screen{
+    min-height: 28.57vh !important;
+  }
+
+  .xl\:min-h-1\/7-screen{
+    min-height: 14.28vh !important;
+  }
+
+  .xl\:min-h-5\/6-screen{
+    min-height: 83.33vh !important;
+  }
+
+  .xl\:min-h-4\/6-screen{
+    min-height: 66.66vh !important;
+  }
+
+  .xl\:min-h-3\/6-screen{
+    min-height: 50vh !important;
+  }
+
+  .xl\:min-h-2\/6-screen{
+    min-height: 33.33vh !important;
+  }
+
+  .xl\:min-h-1\/6-screen{
+    min-height: 16.66vh !important;
   }
 
   .xl\:min-h-4\/5-screen{
@@ -119083,6 +121151,83 @@ body {
     left: -35em !important;
   }
 
+  .xl\:inset-6\/7-screen{
+    top: 85.71vw !important;
+    right: 85.71vw !important;
+    bottom: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .xl\:inset-5\/7-screen{
+    top: 71.42vw !important;
+    right: 71.42vw !important;
+    bottom: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .xl\:inset-4\/7-screen{
+    top: 57.14vw !important;
+    right: 57.14vw !important;
+    bottom: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .xl\:inset-3\/7-screen{
+    top: 42.85vw !important;
+    right: 42.85vw !important;
+    bottom: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .xl\:inset-2\/7-screen{
+    top: 28.57vw !important;
+    right: 28.57vw !important;
+    bottom: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .xl\:inset-1\/7-screen{
+    top: 14.28vw !important;
+    right: 14.28vw !important;
+    bottom: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .xl\:inset-5\/6-screen{
+    top: 83.33vw !important;
+    right: 83.33vw !important;
+    bottom: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .xl\:inset-4\/6-screen{
+    top: 66.66vw !important;
+    right: 66.66vw !important;
+    bottom: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .xl\:inset-3\/6-screen{
+    top: 50vw !important;
+    right: 50vw !important;
+    bottom: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .xl\:inset-2\/6-screen{
+    top: 33.33vw !important;
+    right: 33.33vw !important;
+    bottom: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .xl\:inset-1\/6-screen{
+    top: 16.66vw !important;
+    right: 16.66vw !important;
+    bottom: 16.66vw !important;
+    left: 16.66vw !important;
+  }
+
   .xl\:inset-4\/5-screen{
     top: 80vw !important;
     right: 80vw !important;
@@ -119351,6 +121496,116 @@ body {
   .xl\:-inset-x-70{
     right: -35em !important;
     left: -35em !important;
+  }
+
+  .xl\:inset-y-6\/7-screen{
+    top: 85.71vw !important;
+    bottom: 85.71vw !important;
+  }
+
+  .xl\:inset-x-6\/7-screen{
+    right: 85.71vw !important;
+    left: 85.71vw !important;
+  }
+
+  .xl\:inset-y-5\/7-screen{
+    top: 71.42vw !important;
+    bottom: 71.42vw !important;
+  }
+
+  .xl\:inset-x-5\/7-screen{
+    right: 71.42vw !important;
+    left: 71.42vw !important;
+  }
+
+  .xl\:inset-y-4\/7-screen{
+    top: 57.14vw !important;
+    bottom: 57.14vw !important;
+  }
+
+  .xl\:inset-x-4\/7-screen{
+    right: 57.14vw !important;
+    left: 57.14vw !important;
+  }
+
+  .xl\:inset-y-3\/7-screen{
+    top: 42.85vw !important;
+    bottom: 42.85vw !important;
+  }
+
+  .xl\:inset-x-3\/7-screen{
+    right: 42.85vw !important;
+    left: 42.85vw !important;
+  }
+
+  .xl\:inset-y-2\/7-screen{
+    top: 28.57vw !important;
+    bottom: 28.57vw !important;
+  }
+
+  .xl\:inset-x-2\/7-screen{
+    right: 28.57vw !important;
+    left: 28.57vw !important;
+  }
+
+  .xl\:inset-y-1\/7-screen{
+    top: 14.28vw !important;
+    bottom: 14.28vw !important;
+  }
+
+  .xl\:inset-x-1\/7-screen{
+    right: 14.28vw !important;
+    left: 14.28vw !important;
+  }
+
+  .xl\:inset-y-5\/6-screen{
+    top: 83.33vw !important;
+    bottom: 83.33vw !important;
+  }
+
+  .xl\:inset-x-5\/6-screen{
+    right: 83.33vw !important;
+    left: 83.33vw !important;
+  }
+
+  .xl\:inset-y-4\/6-screen{
+    top: 66.66vw !important;
+    bottom: 66.66vw !important;
+  }
+
+  .xl\:inset-x-4\/6-screen{
+    right: 66.66vw !important;
+    left: 66.66vw !important;
+  }
+
+  .xl\:inset-y-3\/6-screen{
+    top: 50vw !important;
+    bottom: 50vw !important;
+  }
+
+  .xl\:inset-x-3\/6-screen{
+    right: 50vw !important;
+    left: 50vw !important;
+  }
+
+  .xl\:inset-y-2\/6-screen{
+    top: 33.33vw !important;
+    bottom: 33.33vw !important;
+  }
+
+  .xl\:inset-x-2\/6-screen{
+    right: 33.33vw !important;
+    left: 33.33vw !important;
+  }
+
+  .xl\:inset-y-1\/6-screen{
+    top: 16.66vw !important;
+    bottom: 16.66vw !important;
+  }
+
+  .xl\:inset-x-1\/6-screen{
+    right: 16.66vw !important;
+    left: 16.66vw !important;
   }
 
   .xl\:inset-y-4\/5-screen{
@@ -119771,6 +122026,182 @@ body {
 
   .xl\:-left-70{
     left: -35em !important;
+  }
+
+  .xl\:top-6\/7-screen{
+    top: 85.71vw !important;
+  }
+
+  .xl\:right-6\/7-screen{
+    right: 85.71vw !important;
+  }
+
+  .xl\:bottom-6\/7-screen{
+    bottom: 85.71vw !important;
+  }
+
+  .xl\:left-6\/7-screen{
+    left: 85.71vw !important;
+  }
+
+  .xl\:top-5\/7-screen{
+    top: 71.42vw !important;
+  }
+
+  .xl\:right-5\/7-screen{
+    right: 71.42vw !important;
+  }
+
+  .xl\:bottom-5\/7-screen{
+    bottom: 71.42vw !important;
+  }
+
+  .xl\:left-5\/7-screen{
+    left: 71.42vw !important;
+  }
+
+  .xl\:top-4\/7-screen{
+    top: 57.14vw !important;
+  }
+
+  .xl\:right-4\/7-screen{
+    right: 57.14vw !important;
+  }
+
+  .xl\:bottom-4\/7-screen{
+    bottom: 57.14vw !important;
+  }
+
+  .xl\:left-4\/7-screen{
+    left: 57.14vw !important;
+  }
+
+  .xl\:top-3\/7-screen{
+    top: 42.85vw !important;
+  }
+
+  .xl\:right-3\/7-screen{
+    right: 42.85vw !important;
+  }
+
+  .xl\:bottom-3\/7-screen{
+    bottom: 42.85vw !important;
+  }
+
+  .xl\:left-3\/7-screen{
+    left: 42.85vw !important;
+  }
+
+  .xl\:top-2\/7-screen{
+    top: 28.57vw !important;
+  }
+
+  .xl\:right-2\/7-screen{
+    right: 28.57vw !important;
+  }
+
+  .xl\:bottom-2\/7-screen{
+    bottom: 28.57vw !important;
+  }
+
+  .xl\:left-2\/7-screen{
+    left: 28.57vw !important;
+  }
+
+  .xl\:top-1\/7-screen{
+    top: 14.28vw !important;
+  }
+
+  .xl\:right-1\/7-screen{
+    right: 14.28vw !important;
+  }
+
+  .xl\:bottom-1\/7-screen{
+    bottom: 14.28vw !important;
+  }
+
+  .xl\:left-1\/7-screen{
+    left: 14.28vw !important;
+  }
+
+  .xl\:top-5\/6-screen{
+    top: 83.33vw !important;
+  }
+
+  .xl\:right-5\/6-screen{
+    right: 83.33vw !important;
+  }
+
+  .xl\:bottom-5\/6-screen{
+    bottom: 83.33vw !important;
+  }
+
+  .xl\:left-5\/6-screen{
+    left: 83.33vw !important;
+  }
+
+  .xl\:top-4\/6-screen{
+    top: 66.66vw !important;
+  }
+
+  .xl\:right-4\/6-screen{
+    right: 66.66vw !important;
+  }
+
+  .xl\:bottom-4\/6-screen{
+    bottom: 66.66vw !important;
+  }
+
+  .xl\:left-4\/6-screen{
+    left: 66.66vw !important;
+  }
+
+  .xl\:top-3\/6-screen{
+    top: 50vw !important;
+  }
+
+  .xl\:right-3\/6-screen{
+    right: 50vw !important;
+  }
+
+  .xl\:bottom-3\/6-screen{
+    bottom: 50vw !important;
+  }
+
+  .xl\:left-3\/6-screen{
+    left: 50vw !important;
+  }
+
+  .xl\:top-2\/6-screen{
+    top: 33.33vw !important;
+  }
+
+  .xl\:right-2\/6-screen{
+    right: 33.33vw !important;
+  }
+
+  .xl\:bottom-2\/6-screen{
+    bottom: 33.33vw !important;
+  }
+
+  .xl\:left-2\/6-screen{
+    left: 33.33vw !important;
+  }
+
+  .xl\:top-1\/6-screen{
+    top: 16.66vw !important;
+  }
+
+  .xl\:right-1\/6-screen{
+    right: 16.66vw !important;
+  }
+
+  .xl\:bottom-1\/6-screen{
+    bottom: 16.66vw !important;
+  }
+
+  .xl\:left-1\/6-screen{
+    left: 16.66vw !important;
   }
 
   .xl\:top-4\/5-screen{
@@ -122319,6 +124750,50 @@ body {
 
   .xl\:w-screen{
     width: 100vw !important;
+  }
+
+  .xl\:w-6\/7-screen{
+    width: 85.71vw !important;
+  }
+
+  .xl\:w-5\/7-screen{
+    width: 71.42vw !important;
+  }
+
+  .xl\:w-4\/7-screen{
+    width: 57.14vw !important;
+  }
+
+  .xl\:w-3\/7-screen{
+    width: 42.85vw !important;
+  }
+
+  .xl\:w-2\/7-screen{
+    width: 28.57vw !important;
+  }
+
+  .xl\:w-1\/7-screen{
+    width: 14.28vw !important;
+  }
+
+  .xl\:w-5\/6-screen{
+    width: 83.33vw !important;
+  }
+
+  .xl\:w-4\/6-screen{
+    width: 66.66vw !important;
+  }
+
+  .xl\:w-3\/6-screen{
+    width: 50vw !important;
+  }
+
+  .xl\:w-2\/6-screen{
+    width: 33.33vw !important;
+  }
+
+  .xl\:w-1\/6-screen{
+    width: 16.66vw !important;
   }
 
   .xl\:w-4\/5-screen{

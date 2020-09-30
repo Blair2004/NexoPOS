@@ -2,6 +2,7 @@
     "/js/app.js": "/js/app.js",
     "/js/auth.js": "/js/auth.js",
     "/js/bootstrap.js": "/js/bootstrap.js",
+    "/css/app.css": "/css/app.css",
     "/js/manifest.js": "/js/manifest.js",
     "/js/pos.js": "/js/pos.js",
     "/js/pos-init.js": "/js/pos-init.js",

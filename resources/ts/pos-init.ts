@@ -8,6 +8,7 @@ import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
 import { nsSnackBar } from "./bootstrap";
+import { Payment } from "./interfaces/payment";
 
 /**
  * these are dynamic component
@@ -24,6 +25,7 @@ export class POS {
     private _customers: BehaviorSubject<Customer[]>;
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
     private _types: BehaviorSubject<OrderType[]>;
+    private _paymentsType: BehaviorSubject<Payment[]>;
     private _order: BehaviorSubject<Order>;
 
     constructor() {
@@ -31,6 +33,7 @@ export class POS {
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
+        this._paymentsType      =   new BehaviorSubject<Payment[]>([]);          
         this._order             =   new BehaviorSubject<Order>({
             discount_type: null,
             discount_amount: 0,
@@ -68,6 +71,10 @@ export class POS {
         });
     }
 
+    get paymentsType() {
+        return this._paymentsType;
+    }
+
     get order() {
         return this._order;
     }
@@ -100,6 +107,18 @@ export class POS {
             NsPosOrderTypeButton,
             NsPosCustomersButton,
         }
+    }
+
+    setPaymentActive( payment ) {
+        const payments  =   this._paymentsType.getValue();
+        const index     =   payments.indexOf( payment );
+        payments.forEach( p => p.selected = false );
+        payments[ index ].selected  =   true;
+        this._paymentsType.next( payments );
+    }
+
+    definedPaymentsType( payments ) {
+        this._paymentsType.next( payments );
     }
 
     definedCustomer( customer ) {
@@ -338,6 +357,7 @@ export class POS {
         this._types.unsubscribe();
         this._order.unsubscribe();
         this._settings.unsubscribe();
+        this._paymentsType.unsubscribe();
     }
 }
 

@@ -239,6 +239,7 @@ class CustomersController extends DashboardController
     {
         $search     =   $request->input( 'search' );
         $customers  =   Customer::where( 'name', 'like', '%' . $search . '%' )
+            ->orWhere( 'email', 'like', '%' . $search . '%' )
             ->get();
 
         return $customers;

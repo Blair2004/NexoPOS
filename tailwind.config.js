@@ -1,4 +1,15 @@
 const heightDims = {
+  '6/7-screen': '85.71vh',
+  '5/7-screen': '71.42vh',
+  '4/7-screen': '57.14vh',
+  '3/7-screen': '42.85vh',
+  '2/7-screen': '28.57vh',
+  '1/7-screen': '14.28vh',
+  '5/6-screen': '83.33vh',
+  '4/6-screen': '66.66vh',
+  '3/6-screen': '50vh',
+  '2/6-screen': '33.33vh',
+  '1/6-screen': '16.66vh',
   '4/5-screen': '80vh',
   '3/5-screen': '60vh',
   '2/5-screen': '40vh',
@@ -12,6 +23,17 @@ const heightDims = {
 };
 
 const widthDims = {
+  '6/7-screen': '85.71vw',
+  '5/7-screen': '71.42vw',
+  '4/7-screen': '57.14vw',
+  '3/7-screen': '42.85vw',
+  '2/7-screen': '28.57vw',
+  '1/7-screen': '14.28vw',
+  '5/6-screen': '83.33vw',
+  '4/6-screen': '66.66vw',
+  '3/6-screen': '50vw',
+  '2/6-screen': '33.33vw',
+  '1/6-screen': '16.66vw',
   '4/5-screen': '80vw',
   '3/5-screen': '60vw',
   '2/5-screen': '40vw',

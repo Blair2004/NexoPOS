@@ -55,24 +55,21 @@ mix
                 {
                     test: /\.tsx?$/,
                     loader: "ts-loader",
-                    exclude: /node_modules/
+                    exclude: /node_modules/,
+                    // options: {
+                    //     appendTsSuffixTo: [/\.vue$/]
+                    // }
                 }
             ]
         },
         resolve: {
-            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"]
+            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
+            alias: {
+                '@': path.resolve(__dirname, 'resources/ts/')
+            }
         }
     });
-// mix.webpackConfig({
-//     resolve: {
-//         extensions: ['.js', '.vue', '.json'],
-//         alias: {
-//             'vue$': 'vue/dist/vue.esm.js',
-//             '@': __dirname + '/resources/assets/js'
-//         },
-//     },
-// });
-//mix.
+
 mix.disableNotifications();
 mix.sourceMaps();
 mix
@@ -94,7 +91,7 @@ mix
         'vue-router', 
         'dayjs' 
     ])
-    // .sass('resources/sass/app.scss', 'public/css')
+    .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],

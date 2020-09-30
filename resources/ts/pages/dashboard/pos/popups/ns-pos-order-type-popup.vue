@@ -12,6 +12,8 @@
     </div>
 </template>
 <script>
+import resolveIfQueued from "./../../../../libraries/popup-resolver";
+
 export default {
     data() {
         return {
@@ -22,12 +24,11 @@ export default {
     mounted() {
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
+                this.resolveIfQueued( false );
             }
         });
         
         this.typeSubscription   =   POS.types.subscribe( types => {
-            console.log( types );
             this.types  =   types;
         });
     },
@@ -35,11 +36,13 @@ export default {
         this.typeSubscription.unsubscribe();
     },
     methods: {
+        resolveIfQueued,
+
         select( type ) {
             this.types.forEach( type => type.selected = false );
             type.selected   =   true;
             POS.types.next( this.types );
-            this.$popup.close();
+            this.resolveIfQueued( this.types );
         }
     }
 }

@@ -17,17 +17,14 @@ class CustomerService
     public function get( $id = null )
     {
         if ( $id === null ) {
-            return Customer::get();
+            return Customer::orderBy( 'created_at', 'desc' )->get();
         } else {
             try {
                 $customer   =   Customer::find( $id );
                 $customer->address;
                 return $customer;
             } catch( Exception $exception ) {
-                throw new NotFoundException([
-                    'status'    =>      'failed',
-                    'message'   =>      __( 'Unable to find the customer using the provided id.' )
-                ]);
+                throw new Exception( __( 'Unable to find the customer using the provided id.' ) );
             }
         }
     }

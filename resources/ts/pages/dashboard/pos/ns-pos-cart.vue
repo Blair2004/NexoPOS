@@ -120,6 +120,9 @@ import nsPosDiscountPopupVue from './popups/ns-pos-discount-popup.vue';
 import nsPosOrderTypePopupVue from './popups/ns-pos-order-type-popup.vue';
 import { nsSnackBar } from '../../../bootstrap';
 import nsPosCustomerPopupVue from './popups/ns-pos-customer-popup.vue';
+import { ProductsQueue } from "./queues/order/products-queue";
+import { CustomerQueue } from "./queues/order/customer-queue";
+import { PaymentQueue } from "./queues/order/payment-queue";
 
 export default {
     name: 'ns-pos-cart',
@@ -216,16 +219,25 @@ export default {
             })
         },
 
-        payOrder() {
-            if ( this.order.products.length === 0 ) {
-                return nsSnackBar.error( 'Unable to pay an order missing products.' ).subscribe();
-            }
+        async payOrder() {
+            const queues    =   [
+                ProductsQueue,
+                CustomerQueue,
+                PaymentQueue
+            ];
 
-            if ( this.order.customer === undefined ) {
-                return nsSnackBar.error( 'Unable to pay an order not assigned to a customer.' ).subscribe();
+            for( let index in queues ) {
+                try {
+                    const promise   =   new queues[ index ]( this.order );
+                    const response  =   await promise.run();
+                } catch( exception ) {
+                    /**
+                     * in case there is something broken
+                     * on the promise, we just stop the queue.
+                     */
+                    return false;    
+                }
             }
-
-            Popup.show( PosPaymentPopup );
         },
         openOrderType() {
             Popup.show( nsPosOrderTypePopupVue );
