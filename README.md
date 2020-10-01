@@ -54,15 +54,26 @@ As NexoPOS doesn't have a frontend already, you'll end on the default Laravel pa
 
 ## Support Terms
 
-1 - The support on NexoPOS 4.x only applies to the informations provided by the users while creating an issue. This means, we won't either do the installation on your server or check an issue on your server. You're thefore invited not to post your server informations while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
+1 - The support on NexoPOS 4.x only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
 
 2 - The premium support on NexoPOS 4.x is a paid service and is handled on a different channel.
 
 ## Regarding Release Date
-NexoPOS 4.x is developped actively only by @Blair2004. As this is a complete rebuild of a software that has been made during 3 years, we cannot be accurate on the release date of that version. We've expect that version to be released by the end of September 2020, but might take more time as there are new challenges. That remains however our priority and will make sure to release it as soon as possible. It might be the perfect time to talk about contribution.
+NexoPOS 4.x is developped actively only by @Blair2004. As this is a complete rebuild of software that has been made for 3 years, we cannot be accurate on the release date of that version. We've expect that version to be released by the end of September 2020 but might take more time as there are new challenges. That remains however our priority and will make sure to release it as soon as possible. It might be the perfect time to talk about contribution.
+
+## Troubleshooting
+Here we list the knowns issues and the way around. Not everyone is likely to face these issues as it depends on the used enviroment.
+
+- Error After Database Details (using `php artisan serve`)
+If you're serving the project using `php artisan serve`, after setting up the database credentails and having them validated, you migth stop on an infinite
+loading page. 
+
+![screenshot-127 0 0 1_8000-2020 10 01-00_33_17](https://user-images.githubusercontent.com/5265663/94781001-17809f00-037e-11eb-9f14-3bf4427054bf.png)
+
+This is caused because during the database setup, the ".env" is updated which cause Laravel to restart the development server and therefore invalidate your session. The way around, is just to refresh the page and you'll end up on the application details section.
 
 ## Contribution Guidelines
-Do you plan to contribute ? That's awesome. We don't have that much developper on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
+Do you plan to contribute? That's awesome. We don't have that much developer on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
 
 ## Documentation
 
