@@ -17,6 +17,7 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
+                        /usr/bin/php /var/www/html/${{ secrets.DEPLOYHOST }}/artisan ns:reset
                         rm -rf /var/www/html/${{ secrets.DEPLOYHOST }}; 
                         mkdir /var/www/html/${{ secrets.DEPLOYHOST }}; 
                         cd /var/www/html/${{ secrets.DEPLOYHOST }}; 
@@ -27,3 +28,4 @@ jobs:
                         npm i;
                         npm run prod;                   
                         chown php-fpm /var/www/html/${{ secrets.DEPLOYHOST }}/ -R;
+                        /usr/bin/php storage:link
