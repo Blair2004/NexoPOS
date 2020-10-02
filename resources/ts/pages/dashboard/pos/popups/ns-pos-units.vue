@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white w-full overflow-hidden flex flex-col">
+    <div class="bg-white w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col">
         <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
             <h3 class="font-bold text-gray-700">Choose Selling Unit</h3>
         </div>

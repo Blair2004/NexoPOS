@@ -8,6 +8,8 @@ export interface Order {
     discount_percentage: number;
     subtotal: number;
     total: number;
+    paid: number;
+    change: number;
     total_products: number;
     customer: Customer | undefined;
     type: OrderType,

@@ -1,109 +1,162 @@
 <template>
-    <div id="pos-cart" class="rounded shadow bg-white flex-auto flex overflow-hidden">
-        <div class="cart-table flex flex-auto flex-col overflow-hidden">
-            <div class="w-full text-gray-700 font-semibold flex">
-                <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
-                <div class="w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
-                <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
+    <div id="pos-cart" class="flex-auto flex flex-col">
+        <div id="tools" class="flex pl-2" v-if="visibleSection === 'cart'">
+            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-white font-semibold text-gray-700">
+                <span>Cart</span>
+                <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
-            <div class="flex flex-auto flex-col overflow-auto">
-                
-                <!-- Loop Procuts On Cart -->
-
-                <div class="text-gray-700 flex" v-if="products.length === 0">
-                    <div class="w-full text-center py-4 border-b border-gray-200">
-                        <h3 class="text-gray-600">No products added...</h3>
-                    </div>
+            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-400 text-gray-600">
+                Products
+            </div>
+        </div>
+        <div class="rounded shadow bg-white flex-auto flex overflow-hidden">
+            <div class="cart-table flex flex-auto flex-col overflow-hidden">
+                <div class="w-full text-gray-700 font-semibold flex">
+                    <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
+                    <div class="w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
+                    <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
                 </div>
+                <div class="flex flex-auto flex-col overflow-auto">
+                    
+                    <!-- Loop Procuts On Cart -->
 
-                <div :key="product.barcode" class="text-gray-700 flex" v-for="product of products">
-                    <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
-                        <h3 class="font-semibold">{{ product.name }} &mdash; {{ product.unit_name }}</h3>
-                        <div class="flex justify-between">
-                            <div class="-mx-1 flex">
-                                <div class="px-1">
-                                    <a
-                                        :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
-                                        class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
-                                    >Price : {{ product.sale_price | currency }}</a>
+                    <div class="text-gray-700 flex" v-if="products.length === 0">
+                        <div class="w-full text-center py-4 border-b border-gray-200">
+                            <h3 class="text-gray-600">No products added...</h3>
+                        </div>
+                    </div>
+
+                    <div :key="product.barcode" class="text-gray-700 flex" v-for="product of products">
+                        <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                            <h3 class="font-semibold">{{ product.name }} &mdash; {{ product.unit_name }}</h3>
+                            <div class="flex justify-between">
+                                <div class="-mx-1 flex">
+                                    <div class="px-1">
+                                        <a
+                                            :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                            class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                        >Price : {{ product.sale_price | currency }}</a>
+                                    </div>
+                                    <div class="px-1"> 
+                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount_amount | currency }}</a>
+                                    </div>
                                 </div>
-                                <div class="px-1"> 
-                                    <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount_amount | currency }}</a>
-                                </div>
-                            </div>
-                            <div class="-mx-1 flex">
-                                <div class="px-1"> 
-                                    <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
-                                        <i class="las la-trash text-xl"></i>
-                                    </a>
-                                </div>
-                                <div class="px-1"> 
-                                    <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
-                                        <i class="las la-award text-xl"></i>
-                                    </a>
+                                <div class="-mx-1 flex">
+                                    <div class="px-1"> 
+                                        <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                            <i class="las la-trash text-xl"></i>
+                                        </a>
+                                    </div>
+                                    <div class="px-1"> 
+                                        <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                            <i class="las la-award text-xl"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div @click="changeQuantity( product )" class="w-1/6 p-2 border-b border-gray-200 flex items-center justify-center cursor-pointer hover:bg-blue-100">
+                            <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
+                        </div>
+                        <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 flex items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
-                    <div @click="changeQuantity( product )" class="w-1/6 p-2 border-b border-gray-200 flex items-center justify-center cursor-pointer hover:bg-blue-100">
-                        <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
-                    </div>
-                    <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 flex items-center justify-center">{{ product.total_price | currency }}</div>
-                </div>
-                
-                <!-- End Loop -->
+                    
+                    <!-- End Loop -->
 
-            </div>
-            <div class="flex">
-                <table class="table w-full text-sm text-gray-700">
-                    <tr>
-                        <td width="100" colspan="2" class="border border-gray-400 p-2">
-                            <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
-                        </td>
-                        <td width="200" class="border border-gray-400 p-2">Sub Total</td>
-                        <td width="200" class="border border-gray-400 p-2 text-right">{{ order.subtotal | currency }}</td>
-                    </tr>
-                    <tr>
-                        <td width="100" colspan="2" class="border border-gray-400 p-2">
-                            <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
-                        </td>
-                        <td width="200" class="border border-gray-400 p-2">
-                            <span>Discount</span>
-                            <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                            <span v-if="order.discount_type === 'flat'">(Flat)</span>
-                        </td>
-                        <td width="200" class="border border-gray-400 p-2 text-right">
-                            <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
-                        </td>
-                    </tr>
-                    <tr v-if="order.type && order.type.identifier === 'delivery'">
-                        <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
-                        <td width="200" class="border border-gray-400 p-2">Shipping</td>
-                        <td width="200" class="border border-gray-400 p-2"></td>
-                    </tr>
-                    <tr class="bg-green-200">
-                        <td width="100" colspan="2" class="border border-gray-400 p-2"></td>
-                        <td width="200" class="border border-gray-400 p-2">Total</td>
-                        <td width="200" class="border border-gray-400 p-2 text-right">{{ order.total | currency }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="h-16 flex flex-shrink-0 border-t border-gray-200">
-                <div @click="payOrder()" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
-                    <i class="mr-2 text-3xl las la-cash-register"></i> 
-                    <span class="text-2xl">Pay</span>
                 </div>
-                <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
-                    <i class="mr-2 text-3xl las la-pause"></i> 
-                    <span class="text-2xl">Hold</span>
+                <div class="flex">
+                    <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'both'">
+                        <tr>
+                            <td width="400" colspan="3" class="border border-gray-400 p-2">
+                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2">Sub Total</td>
+                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.subtotal | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td width="400" colspan="3" class="border border-gray-400 p-2">
+                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <span>Discount</span>
+                                <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                                <span v-if="order.discount_type === 'flat'">(Flat)</span>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2 text-right">
+                                <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
+                            </td>
+                        </tr>
+                        <tr v-if="order.type && order.type.identifier === 'delivery'">
+                            <td width="400" colspan="3" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2">Shipping</td>
+                            <td width="200" class="border border-gray-400 p-2"></td>
+                        </tr>
+                        <tr class="bg-green-200">
+                            <td width="400" colspan="3" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2">Total</td>
+                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.total | currency }}</td>
+                        </tr>
+                    </table>
+                    <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'cart'">
+                        <tr>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <div class="flex justify-between">
+                                    <span>Sub Total</span>
+                                    <span>{{ order.subtotal | currency }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <div class="flex justify-between items-center">
+                                    <p>
+                                        <span>Discount</span>
+                                        <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
+                                        <span v-if="order.discount_type === 'flat'">(Flat)</span>
+                                    </p>
+                                    <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="order.type && order.type.identifier === 'delivery'">
+                            <td width="200" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <span>Shipping</span>      
+                                <span></span>                          
+                            </td>
+                        </tr>
+                        <tr class="bg-green-200">
+                            <td width="200" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <span>Total</span>
+                                <span>{{ order.total | currency }}</span>    
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <div @click="openDiscountPopup( order, 'cart' )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
-                    <i class="mr-2 text-3xl las la-percent"></i> 
-                    <span class="text-2xl">Discount</span>
-                </div>
-                <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
-                    <i class="mr-2 text-3xl las la-trash"></i> 
-                    <span class="text-2xl">Void</span>
+                <div class="h-16 flex flex-shrink-0 border-t border-gray-200">
+                    <div @click="payOrder()" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
+                        <i class="mr-2 text-xl lg:text-3xl las la-cash-register"></i> 
+                        <span class="text-lg lg:text-2xl">Pay</span>
+                    </div>
+                    <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
+                        <i class="mr-2 text-xl lg:text-3xl las la-pause"></i> 
+                        <span class="text-lg lg:text-2xl">Hold</span>
+                    </div>
+                    <div @click="openDiscountPopup( order, 'cart' )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
+                        <i class="mr-2 text-xl lg:text-3xl las la-percent"></i> 
+                        <span class="text-lg lg:text-2xl">Discount</span>
+                    </div>
+                    <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
+                        <i class="mr-2 text-xl lg:text-3xl las la-trash"></i> 
+                        <span class="text-lg lg:text-2xl">Void</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -123,6 +176,7 @@ import nsPosCustomerPopupVue from './popups/ns-pos-customer-popup.vue';
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
+import switchTo from "@/libraries/pos-section-switch";
 
 export default {
     name: 'ns-pos-cart',
@@ -130,6 +184,11 @@ export default {
         return {
             popup : null,
             products: [],
+            visibleSection: null,
+            visibleSectionSubscriber: null,
+            typeSubscribe: null,
+            orderSubscribe: null,
+            productSubscribe: null,
             types: [],
             order: {},
         }
@@ -138,21 +197,39 @@ export default {
         selectedType() {
             return this.order.type ? this.order.type.label : 'N/A';
         },
+        isVisible() {
+            return this.visibleSection === 'cart';
+        },
         customerName() {
             return this.order.customer ? this.order.customer.name : 'N/A';
         }
     },
     mounted() {
-        POS.types.subscribe( types => this.types = types );
-        POS.order.subscribe( order => {
+        this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
+        this.orderSubscribe  =   POS.order.subscribe( order => {
+            console.log( 'has subscribed orders' );
             this.order   =   order;
         });
-        POS.products.subscribe( products => {
+        this.productSubscribe  =   POS.products.subscribe( products => {
             this.products = products;
             this.$forceUpdate();
         });
+
+        this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
+            this.visibleSection     =   section;
+        });
+
+        // this.payOrder();
+    },
+    destroyed() {
+        this.visibleSectionSubscriber.unsubscribe();
+        this.typeSubscribe.unsubscribe();
+        this.orderSubscribe.unsubscribe();
+        this.productSubscribe.unsubscribe();
     },
     methods: {
+        switchTo,
+
         openDiscountPopup( reference, type ) {
             Popup.show( nsPosDiscountPopupVue, { 
                 reference,

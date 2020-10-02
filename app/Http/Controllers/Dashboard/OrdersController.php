@@ -101,14 +101,12 @@ class OrdersController extends DashboardController
                 [
                     'label'     =>  __( 'Cash' ),
                     'identifier'    =>  'cash-payment',
-                    'url'       =>  '/js/cash-payment.js',
                     'selected'  =>  true,
                 ], [
                     'label'     =>  __( 'Credit Card' ),
                     'identifier'    =>  'creditcard-payment',
-                    'url'       =>  '/js/creditcard-payment.js',
                     'selected'  =>  false,
-                ]
+                ], 
             ]
         ]);
     }

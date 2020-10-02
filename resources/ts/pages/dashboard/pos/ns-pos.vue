@@ -9,10 +9,10 @@
         </div>
         <div class="flex-auto overflow-hidden flex p-2">
             <div class="flex flex-auto overflow-hidden -m-2">
-                <div class="w-1/2 flex overflow-hidden p-2">
+                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="flex overflow-hidden p-2" v-if="[ 'both', 'cart' ].includes( visibleSection )">
                     <ns-pos-cart></ns-pos-cart>
                 </div>
-                <div class="w-1/2 p-2 flex overflow-hidden">
+                <div :class="visibleSection === 'both' ? 'w-1/2' : 'w-full'" class="p-2 flex overflow-hidden" v-if="[ 'both', 'grid' ].includes( visibleSection )">
                     <ns-pos-grid></ns-pos-grid>
                 </div>
             </div>
@@ -30,8 +30,19 @@ export default {
             return POS.header.buttons;
         }
     },
+    mounted() {
+        this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
+            this.visibleSection    =   section;
+        });
+    },
+    destroyed() {
+        this.visibleSectionSubscriber.unsubscribe();
+    },
     data() {
-        return {}
+        return {
+            visibleSection: null,
+            visibleSectionSubscriber: null,
+        }
     },
     components: {
         NsPosCart,

@@ -8,7 +8,10 @@ import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
 import { nsSnackBar } from "./bootstrap";
+import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
+import { timeStamp } from "console";
+import { Responsive } from "./libraries/responsive";
 
 /**
  * these are dynamic component
@@ -25,21 +28,30 @@ export class POS {
     private _customers: BehaviorSubject<Customer[]>;
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
     private _types: BehaviorSubject<OrderType[]>;
-    private _paymentsType: BehaviorSubject<Payment[]>;
+    private _paymentsType: BehaviorSubject<PaymentType[]>;
+    private _payments: BehaviorSubject<Payment[]>;
     private _order: BehaviorSubject<Order>;
+    private _screen: BehaviorSubject<string>;
+    private _responsive     =   new Responsive;
+    private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
 
     constructor() {
         this._products          =   new BehaviorSubject<Product[]>([]);
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
-        this._paymentsType      =   new BehaviorSubject<Payment[]>([]);          
+        this._payments          =   new BehaviorSubject<Payment[]>([]);
+        this._screen            =   new BehaviorSubject<string>('');
+        this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
+        this._visibleSection    =   new BehaviorSubject( 'both' );       
         this._order             =   new BehaviorSubject<Order>({
             discount_type: null,
             discount_amount: 0,
             discount_percentage: 0,
             subtotal: 0,
             total: 0,
+            paid: 0,
+            change: 0,
             total_products: 0,
             customer: undefined,
             type: undefined,
@@ -69,6 +81,25 @@ export class POS {
                 this.order.next( order );
             }
         });
+
+        /**
+         * We're handling here the responsive aspect
+         * of the POS.
+         */
+        window.addEventListener( 'resize', () => {
+            this._responsive.detect();
+            this.defineCurrentScreen();
+        });
+
+        this.defineCurrentScreen();
+    }
+
+    get screen() {
+        return this._screen;
+    }
+
+    get visibleSection() {
+        return this._visibleSection;
     }
 
     get paymentsType() {
@@ -81,6 +112,10 @@ export class POS {
 
     get types() {
         return this._types;
+    }
+
+    get payments() {
+        return this._payments;
     }
 
     get products() {
@@ -109,6 +144,46 @@ export class POS {
         }
     }
 
+    defineCurrentScreen() {
+        this._visibleSection.next([ 'xs', 'sm' ].includes( <string>this._responsive.is() ) ? 'grid' : 'both' );
+        this._screen.next( <string>this._responsive.is() );
+    }
+
+    changeVisibleSection( section ) {
+        if ([ 'both', 'cart', 'grid' ].includes( section ) ) {
+            this._visibleSection.next( section );
+        }
+    }
+
+    addPayment( payment ) {
+        const payments  =   this._payments.getValue();
+        payments.push( payment );
+        this._payments.next( payments );
+        this.computePaid();
+    }
+
+    removePayment( payment: Payment ) {
+        const payments  =   this._payments.getValue();
+        const index     =   payments.indexOf( payment );
+        payments.splice( index, 1 );
+        this._payments.next( payments );
+        this.computePaid();
+    }
+
+    computePaid() {
+        const payments  =   this._payments.getValue();
+        const order     =   this._order.getValue();   
+        order.paid      =   0;
+
+        if ( payments.length > 0 ) {
+            order.paid      =   payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
+        }
+
+        order.change    =   order.total - order.paid;
+
+        this._order.next( order );
+    }
+
     setPaymentActive( payment ) {
         const payments  =   this._paymentsType.getValue();
         const index     =   payments.indexOf( payment );
@@ -129,7 +204,9 @@ export class POS {
 
     updateCart( current, update ) {
         for( let key in update ) {
-            Vue.set( current, key, update[ key ]);
+            if ( update[ key ] !== undefined ) {
+                Vue.set( current, key, update[ key ]);
+            }
         }
 
         this.order.next( current );

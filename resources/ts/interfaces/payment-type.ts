@@ -1,7 +1,5 @@
-export class Payment {
+export interface PaymentType {
     label: string;
     identifier: string;
     selected: boolean;
-    readonly: boolean;
-    amount: number;
 }
