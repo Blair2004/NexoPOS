@@ -321,12 +321,12 @@ class OrdersService
             return $product[ 'product' ]->sale_price;
         })->sum();
 
-        $allowedPaymentsGateways    =   config( 'NexoPOS.POS.payments' );
+        $allowedPaymentsGateways    =   config( 'nexopos.pos.payments' );
 
         foreach( $fields[ 'payments' ] as $payment ) {
-            if ( in_array( $payment[ 'namespace' ], array_keys( $allowedPaymentsGateways ) ) ) {
+            if ( in_array( $payment[ 'identifier' ], array_keys( $allowedPaymentsGateways ) ) ) {
                 $totalPayments  =   $this->currencyService->define( $totalPayments )
-                    ->additionateBy( $payment[ 'value' ] )
+                    ->additionateBy( $payment[ 'amount' ] )
                     ->get();
             } else {
                 throw new NotAllowedException([
@@ -545,107 +545,111 @@ class OrdersService
                 }); 
 
             /**
-             * What we're doing here
-             * 1 - Get the unit assigned to the products being sold
-             * 2 - check if the units assigned is what has been stored on the product 
-             * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
+             * doest the unit is already stored ?
+             * if yes, don't retreive from the DB
              */
-            try {
+            $unit           =   $collectedUnits->retreive( $orderProduct[ 'unit_id' ] )
+                ->orReturn( function() use ( $orderProduct ) {
+                    return $this->unitService->get( $orderProduct[ 'unit_id' ] );
+                });
 
+            if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
+                
                 /**
-                 * doest the unit is already stored ?
-                 * if yes, don't retreive from the DB
+                 * What we're doing here
+                 * 1 - Get the unit assigned to the products being sold
+                 * 2 - check if the units assigned is what has been stored on the product 
+                 * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
                  */
-                $unit           =   $collectedUnits->retreive( $orderProduct[ 'unit_id' ] )
-                    ->orReturn( function() use ( $orderProduct ) {
-                        return $this->unitService->get( $orderProduct[ 'unit_id' ] );
-                    });
-
-                /**
-                 * we need to check if the 
-                 * unit provided on the order match the unit 
-                 * saved either as a unit group or just a unit
-                 */
-                if ( $product->selling_unit_type === 'unit' && $product->selling_unit_id !== $orderProduct[ 'unit_id' ] ) {
-                    throw new \Exception(
-                        sprintf(
-                            __( 'Unable to proceed. There is a mismatch between the unit provided and the unit assigned to the product %s' ),
+                try {
+    
+                    /**
+                     * we need to check if the 
+                     * unit provided on the order match the unit 
+                     * saved either as a unit group or just a unit
+                     */
+                    if ( $product->selling_unit_type === 'unit' && $product->selling_unit_id !== $orderProduct[ 'unit_id' ] ) {
+                        throw new \Exception(
+                            sprintf(
+                                __( 'Unable to proceed. There is a mismatch between the unit provided and the unit assigned to the product %s' ),
+                                $product->name
+                            )
+                        );
+                    } else if ( $product->selling_unit_type === 'unit-group' ) {
+                        $group  =   $unit->group()->first();
+                        if ( $group->id !== $product->selling_unit_id ) {
+                            throw new \Exception(
+                                sprintf(
+                                    __( 'Unable to proceed. The unit provided for the item "%s" doesn\'t belong to the unit group "%s"' ),
+                                    $product->name,
+                                    $group->name
+                                )
+                            );
+                        }
+                    }
+    
+                } catch( NotFoundException $exception ) {
+                    throw new \Exception( 
+                        sprintf( 
+                            __( 'Unable to proceed, the product "%s" has a unit which is cannot be retreived. It might have been deleted.' ),
                             $product->name
                         )
                     );
-                } else if ( $product->selling_unit_type === 'unit-group' ) {
-                    $group  =   $unit->group()->first();
-                    if ( $group->id !== $product->selling_unit_id ) {
-                        throw new \Exception(
-                            sprintf(
-                                __( 'Unable to proceed. The unit provided for the item "%s" doesn\'t belong to the unit group "%s"' ),
-                                $product->name,
-                                $group->name
-                            )
-                        );
-                    }
                 }
-
-            } catch( NotFoundException $exception ) {
-                throw new \Exception( 
-                    sprintf( 
-                        __( 'Unable to proceed, the product "%s" has a unit which is cannot be retreived. It might have been deleted.' ),
-                        $product->name
-                    )
-                );
-            }
-
-            /**
-             * have we ever fetched this unit quantity ?
-             * if yes, then let's cache it. Specially if 
-             * the item has already been saved.
-             */
-            $label              =   $unit->id . '-' . $product->id;
-            $productQuantity    =   $storedUnitForProduct->retreive( $label )
-                ->orReturn( function() use ( $orderProduct, $product ) {
-                    $return     =   $this->productService->getUnitQuantity( $product->id, $orderProduct[ 'unit_id' ] );;
-                    return $return;
-                });   
-
-            if ( ! $productQuantity instanceof ProductUnitQuantity ) {                
-                throw new \Exception(
-                    sprintf( 
-                        __( 'The Product "%s" doens\'t have any stock available' ),
-                        $product->name
-                    )
-                );
-            }
-            
-            $isStoredOnFakeStorage  =   false;
-            $fakeStorage->each( 
-                function( &$product )
-                use ( $productQuantity,  &$isStoredOnFakeStorage, $orderProduct ) {
-                
+    
                 /**
-                 * let's search to see if a similar product has
-                 * been stored on the fake storage
+                 * have we ever fetched this unit quantity ?
+                 * if yes, then let's cache it. Specially if 
+                 * the item has already been saved.
                  */
-                if ( $product->label === $productQuantity->product_id . '-' . $productQuantity->unit_id ) {
-                    /**
-                     * the product as been found
-                     */
-                    $isStoredOnFakeStorage = true;
-
-                    $product->quantity_count    =  $this->currencyService->define( $product->quantity_count )
-                        ->additionateBy( $orderProduct[ 'quantity' ] )
-                        ->get();
+                $label              =   $unit->id . '-' . $product->id;
+                $productQuantity    =   $storedUnitForProduct->retreive( $label )
+                    ->orReturn( function() use ( $orderProduct, $product ) {
+                        $return     =   $this->productService->getUnitQuantity( $product->id, $orderProduct[ 'unit_id' ] );;
+                        return $return;
+                    });   
+    
+                if ( ! $productQuantity instanceof ProductUnitQuantity ) {                
+                    throw new \Exception(
+                        sprintf( 
+                            __( 'The Product "%s" doens\'t have any stock available' ),
+                            $product->name
+                        )
+                    );
                 }
-            });
+                
+                $isStoredOnFakeStorage  =   false;
 
-            if ( ! $isStoredOnFakeStorage ) {
-                $newProduct                     =   ( object ) $productQuantity->toArray();
-                $newProduct->label              =   $productQuantity->product_id . '-' . $productQuantity->unit_id;
-                $newProduct->quantity_count     =   $orderProduct[ 'quantity' ];
-                $newProduct->product            =   $product;
-                $newProduct->unit               =   $unit;
-                $fakeStorage->push( $newProduct );
-            }  
-            
+                $fakeStorage->each( 
+                    function( &$product )
+                    use ( $productQuantity,  &$isStoredOnFakeStorage, $orderProduct ) {
+                    
+                    /**
+                     * let's search to see if a similar product has
+                     * been stored on the fake storage
+                     */
+                    if ( $product->label === $productQuantity->product_id . '-' . $productQuantity->unit_id ) {
+                        /**
+                         * the product as been found
+                         */
+                        $isStoredOnFakeStorage = true;
+    
+                        $product->quantity_count    =  $this->currencyService->define( $product->quantity_count )
+                            ->additionateBy( $orderProduct[ 'quantity' ] )
+                            ->get();
+                    }
+                });
+    
+                if ( ! $isStoredOnFakeStorage ) {
+                    $newProduct                     =   ( object ) $productQuantity->toArray();
+                    $newProduct->label              =   $productQuantity->product_id . '-' . $productQuantity->unit_id;
+                    $newProduct->quantity_count     =   $orderProduct[ 'quantity' ];
+                    $newProduct->product            =   $product;
+                    $newProduct->unit               =   $unit;
+                    $fakeStorage->push( $newProduct );
+                }  
+            }
+
             $orderProduct[ 'unit' ]     =   $unit;
             $orderProduct[ 'product' ]  =   $product;
             
@@ -653,7 +657,7 @@ class OrdersService
         });
 
         $fakeStorage->each( function( $storage ) {
-            if ( $storage->quantity_count > $storage->quantity ) {
+            if ( $storage->quantity_count > $storage->quantity && $storage->product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
                 throw new \Exception(
                     sprintf(
                         __( 'The stock of the product "%s" is not enough to save the order. "%s" quantity(ies) for the unit "%s" is remaining' ),

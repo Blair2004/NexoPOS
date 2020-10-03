@@ -51,6 +51,7 @@ export class POS {
             subtotal: 0,
             total: 0,
             paid: 0,
+            customer_id: undefined,
             change: 0,
             total_products: 0,
             customer: undefined,
@@ -175,12 +176,17 @@ export class POS {
 
     submitOrder() {
         return new Promise( ( resolve, reject ) => {
+            if ( this.order.getValue().payments.length  === 0 ) {
+                const message   =   'Please provide a payment before proceeding.';
+                return reject({ status: 'failed', message  });
+            }
+
             if ( ! this._isSubmitting ) {
                 return nsHttpClient.post( '/api/nexopos/v4/orders', this.order.getValue() )
                     .subscribe( result => {
                         this._isSubmitting  =   true;
                         resolve( result );
-                    })
+                    }, error => reject( error ) )
             }
 
             return reject({ status: 'failed', message: 'Order ongoing...' });
@@ -213,8 +219,9 @@ export class POS {
     }
 
     definedCustomer( customer ) {
-        const order     =   this.order.getValue();
-        order.customer  =   customer;
+        const order         =   this.order.getValue();
+        order.customer      =   customer;
+        order.customer_id   =   customer.id
         this.order.next( order );
     }
 

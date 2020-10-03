@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Product extends Model
 {
     use HasFactory;
+
+    const STOCK_MANAGEMENT_ENABLED      =   'enabled';
+    const STOCK_MANAGEMENT_DISABLED     =   'disabled';
     
     protected $table    =   'nexopos_' . 'products';
 

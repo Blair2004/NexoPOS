@@ -219,8 +219,6 @@ export default {
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection     =   section;
         });
-
-        // this.payOrder();
     },
     destroyed() {
         this.visibleSectionSubscriber.unsubscribe();

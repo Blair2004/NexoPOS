@@ -14,6 +14,7 @@ export interface Order {
     total_products: number;
     customer: Customer | undefined;
     type: OrderType,
+    customer_id: number;
     products: Product[], 
     payments: Payment[],
 }

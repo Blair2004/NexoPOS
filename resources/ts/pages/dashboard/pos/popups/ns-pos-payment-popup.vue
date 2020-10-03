@@ -79,19 +79,26 @@ export default {
         submitOrder() {
             const popup     =   Popup.show( nsPosLoadingPopupVue );
             
-            POS.submitOrder().then( result => {
-                // close spinner
-                // popup.close();
-
-                // close payment popup
-                this.$popup.close();
-            }, ( error ) => {
-                // close loading popup
-                // popup.close();
-
+            try {
+                POS.submitOrder().then( result => {
+                    // close spinner
+                    popup.close();
+    
+                    // close payment popup
+                    this.$popup.close();
+                }, ( error ) => {
+                    // close loading popup
+                    popup.close();
+    
+                    // show error message
+                    nsSnackBar.error( error.message ).subscribe();
+                });
+            } catch( exception ) {
+                popup.close();
+    
                 // show error message
                 nsSnackBar.error( error.message ).subscribe();
-            });
+            }
         }
     }
 }

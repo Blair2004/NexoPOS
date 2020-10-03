@@ -82,6 +82,12 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
+        $paymentTypes   =   collect( config( 'nexopos.pos.payments' ) )->map( function( $payment, $index ) {
+            return array_merge([
+                'selected'  =>  $index === 0,
+            ], $payment );
+        });
+
         return $this->view( 'pages.dashboard.orders.pos', [
             'title'         =>  __( 'Proceeding Order &mdash; NexoPOS' ),
             'orderTypes'    =>  [
@@ -97,17 +103,7 @@ class OrdersController extends DashboardController
                     'selected'      =>  false
                 ]
             ],
-            'paymentTypes'  =>  [
-                [
-                    'label'     =>  __( 'Cash' ),
-                    'identifier'    =>  'cash-payment',
-                    'selected'  =>  true,
-                ], [
-                    'label'     =>  __( 'Bank Payment' ),
-                    'identifier'    =>  'bank-payment',
-                    'selected'  =>  false,
-                ], 
-            ]
+            'paymentTypes'  =>  $paymentTypes
         ]);
     }
 }
