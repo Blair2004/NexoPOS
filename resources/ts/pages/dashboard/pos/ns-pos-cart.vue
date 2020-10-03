@@ -67,14 +67,14 @@
                 <div class="flex">
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'both'">
                         <tr>
-                            <td width="400" colspan="3" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-400 p-2">
                                 <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                             </td>
                             <td width="200" class="border border-gray-400 p-2">Sub Total</td>
                             <td width="200" class="border border-gray-400 p-2 text-right">{{ order.subtotal | currency }}</td>
                         </tr>
                         <tr>
-                            <td width="400" colspan="3" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-400 p-2">
                                 <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
                             </td>
                             <td width="200" class="border border-gray-400 p-2">
@@ -87,12 +87,12 @@
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="400" colspan="3" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2"></td>
                             <td width="200" class="border border-gray-400 p-2">Shipping</td>
                             <td width="200" class="border border-gray-400 p-2"></td>
                         </tr>
                         <tr class="bg-green-200">
-                            <td width="400" colspan="3" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2"></td>
                             <td width="200" class="border border-gray-400 p-2">Total</td>
                             <td width="200" class="border border-gray-400 p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
@@ -294,7 +294,7 @@ export default {
             const quantityPromise   =   new ProductQuantityPromise( product );
             quantityPromise.run({ unit_id : product.unit_id }).then( result => {
                 POS.updateProduct( product, result );
-            })
+            });
         },
 
         async payOrder() {
