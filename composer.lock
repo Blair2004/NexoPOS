@@ -941,16 +941,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.7.1",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "3fb29e904a152b3e1fe49581f66ba5e02fe991f2"
+                "reference": "0bdd5c6f12cb7cb6644e484169656245af417735"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/3fb29e904a152b3e1fe49581f66ba5e02fe991f2",
-                "reference": "3fb29e904a152b3e1fe49581f66ba5e02fe991f2",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0bdd5c6f12cb7cb6644e484169656245af417735",
+                "reference": "0bdd5c6f12cb7cb6644e484169656245af417735",
                 "shasum": ""
             },
             "require": {
@@ -1100,7 +1100,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-09-29T15:39:07+00:00"
+            "time": "2020-10-02T14:33:08+00:00"
         },
         {
             "name": "laravel/telescope",
