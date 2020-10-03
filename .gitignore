@@ -10,3 +10,4 @@ public/storage
 !public/modules/index.html
 composer-lock.json
 package-lock.json
+composer.lock
