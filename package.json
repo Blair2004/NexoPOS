@@ -30,7 +30,7 @@
         "chart.js": "^2.9.3",
         "dayjs": "^1.8.36",
         "mini-css-extract-plugin": "^0.11.3",
-        "moment": "^2.28.0",
+        "moment": "^2.29.0",
         "rx": "^4.1.0",
         "rxjs": "^6.6.3",
         "tailwindcss": "^1.8.10",
