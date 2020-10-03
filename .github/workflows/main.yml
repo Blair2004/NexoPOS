@@ -25,7 +25,7 @@ jobs:
                         composer install;
                         cp /var/www/html/backup.env /var/www/html/${{ secrets.DEPLOYHOST }}/.env;
                         /usr/bin/php artisan key:generate;
+                        /usr/bin/php artisan storage:link;  
                         npm i;
                         npm run prod;                   
                         chown php-fpm /var/www/html/${{ secrets.DEPLOYHOST }}/ -R;
-                        /usr/bin/php artisan storage:link
