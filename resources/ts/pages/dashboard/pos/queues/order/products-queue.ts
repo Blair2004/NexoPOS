@@ -1,6 +1,6 @@
 import { nsSnackBar } from "../../../../../bootstrap";
 import { Queue } from "../../../../../contracts/queue";
-import { Order } from "../../../../../interfaces/order"
+import { Order } from "@/interfaces/order"
 
 export class ProductsQueue implements Queue {
     constructor( private order: Order ) {}

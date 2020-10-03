@@ -176,6 +176,7 @@ import nsPosCustomerPopupVue from './popups/ns-pos-customer-popup.vue';
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
+import { TypeQueue } from "./queues/order/type-queue";
 import switchTo from "@/libraries/pos-section-switch";
 
 export default {
@@ -299,6 +300,7 @@ export default {
         async payOrder() {
             const queues    =   [
                 ProductsQueue,
+                TypeQueue,
                 CustomerQueue,
                 PaymentQueue
             ];

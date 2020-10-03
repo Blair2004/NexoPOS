@@ -106,6 +106,10 @@ class OrdersController extends DashboardController
                     'label'     =>  __( 'Credit Card' ),
                     'identifier'    =>  'creditcard-payment',
                     'selected'  =>  false,
+                ],  [
+                    'label'     =>  __( 'Bank Payment' ),
+                    'identifier'    =>  'bank-payment',
+                    'selected'  =>  false,
                 ], 
             ]
         ]);

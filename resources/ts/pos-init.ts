@@ -29,7 +29,6 @@ export class POS {
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
     private _types: BehaviorSubject<OrderType[]>;
     private _paymentsType: BehaviorSubject<PaymentType[]>;
-    private _payments: BehaviorSubject<Payment[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
     private _responsive     =   new Responsive;
@@ -40,7 +39,6 @@ export class POS {
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
-        this._payments          =   new BehaviorSubject<Payment[]>([]);
         this._screen            =   new BehaviorSubject<string>('');
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );       
@@ -56,6 +54,7 @@ export class POS {
             customer: undefined,
             type: undefined,
             products: [],
+            payments: [],
         });
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         
@@ -114,10 +113,6 @@ export class POS {
         return this._types;
     }
 
-    get payments() {
-        return this._payments;
-    }
-
     get products() {
         return this._products;
     }
@@ -155,31 +150,36 @@ export class POS {
         }
     }
 
-    addPayment( payment ) {
-        const payments  =   this._payments.getValue();
-        payments.push( payment );
-        this._payments.next( payments );
-        this.computePaid();
+    addPayment( payment: Payment ) {
+        if ( payment.amount > 0 ) {
+            const order  =   this._order.getValue();
+            order.payments.push( payment );
+            this._order.next( order );
+            
+            return this.computePaid();
+        }
+
+        return nsSnackBar.error( 'Invalid amount.' ).subscribe();
     }
 
     removePayment( payment: Payment ) {
-        const payments  =   this._payments.getValue();
-        const index     =   payments.indexOf( payment );
-        payments.splice( index, 1 );
-        this._payments.next( payments );
+        const order     =   this._order.getValue();
+        const index     =   order.payments.indexOf( payment );
+        order.payments.splice( index, 1 );
+        this._order.next( order );
+        
         this.computePaid();
     }
 
     computePaid() {
-        const payments  =   this._payments.getValue();
         const order     =   this._order.getValue();   
         order.paid      =   0;
 
-        if ( payments.length > 0 ) {
-            order.paid      =   payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
+        if ( order.payments.length > 0 ) {
+            order.paid      =   order.payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
         }
 
-        order.change    =   order.total - order.paid;
+        order.change    =   order.paid - order.total;
 
         this._order.next( order );
     }
