@@ -7,11 +7,12 @@ import { OrderType } from "./interfaces/order-type";
 import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
-import { nsSnackBar } from "./bootstrap";
+import { nsHttpClient, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { timeStamp } from "console";
 import { Responsive } from "./libraries/responsive";
+import { Popup } from "./libraries/popup";
 
 /**
  * these are dynamic component
@@ -33,6 +34,7 @@ export class POS {
     private _screen: BehaviorSubject<string>;
     private _responsive     =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
+    private _isSubmitting       =   false;
 
     constructor() {
         this._products          =   new BehaviorSubject<Product[]>([]);
@@ -171,6 +173,20 @@ export class POS {
         this.computePaid();
     }
 
+    submitOrder() {
+        return new Promise( ( resolve, reject ) => {
+            if ( ! this._isSubmitting ) {
+                return nsHttpClient.post( '/api/nexopos/v4/orders', this.order.getValue() )
+                    .subscribe( result => {
+                        this._isSubmitting  =   true;
+                        resolve( result );
+                    })
+            }
+
+            return reject({ status: 'failed', message: 'Order ongoing...' });
+        });
+    }
+
     computePaid() {
         const order     =   this._order.getValue();   
         order.paid      =   0;
@@ -246,8 +262,9 @@ export class POS {
                 .subscribe();
         }
 
-        order.total         =   order.subtotal - order.discount_amount;
-        order.products      =   products;
+        order.total             =   order.subtotal - order.discount_amount;
+        order.products          =   products;
+        order.total_products    =   products.length
 
         this.order.next( order );
     }
