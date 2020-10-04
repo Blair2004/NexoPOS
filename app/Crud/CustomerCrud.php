@@ -8,7 +8,10 @@ use App\Services\Helper;
 use App\Services\Options;
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\CustomerAddress;
+use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
+use App\Models\CustomerShippingAddress;
 use Exception;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -41,6 +44,15 @@ class CustomerCrud extends CrudService
     public $relations   =  [
         [ 'nexopos_customers_groups', 'nexopos_customers.group_id', '=', 'nexopos_customers_groups.id' ],
         [ 'nexopos_users', 'nexopos_customers.author', '=', 'nexopos_users.id' ],
+    ];
+
+    /**
+     * all tabs mentionned on the tabs relation
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        'shipping'      =>      [ CustomerShippingAddress::class, 'customer_id', 'id' ],
+        'billing'       =>      [ CustomerBillingAddress::class, 'customer_id', 'id' ],
     ];
 
     /**
@@ -170,7 +182,140 @@ class CustomerCrud extends CrudService
                             'description'   =>  __( 'Provide the customer PO.Box' )
                         ]
                     ]
-                ]
+                ],
+                'billing'  =>  [
+                    'label'     =>  __( 'Billing Address' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'name',
+                            'value' =>  $entry->billing->name ?? '',
+                            'label' =>  __( 'Name' ),
+                            'description'   =>  __( 'Provide the billing name.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'surname',
+                            'value' =>  $entry->billing->surname ?? '',
+                            'label' =>  __( 'Surname' ),
+                            'description'   =>  __( 'Provide the billing surname.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'phone',
+                            'value' =>  $entry->billing->phone ?? '',
+                            'label' =>  __( 'Phone' ),
+                            'description'   =>  __( 'Billing phone number.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'address_1',
+                            'value' =>  $entry->billing->address_1 ?? '',
+                            'label' =>  __( 'Address 1' ),
+                            'description'   =>  __( 'Billing First Address.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'address_2',
+                            'value' =>  $entry->billing->address_2 ?? '',
+                            'label' =>  __( 'Address 2' ),
+                            'description'   =>  __( 'Billing Second Address.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'country',
+                            'value' =>  $entry->billing->country ?? '',
+                            'label' =>  __( 'Country' ),
+                            'description'   =>  __( 'Billing Country.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'city',
+                            'value' =>  $entry->billing->city ?? '',
+                            'label' =>  __( 'City' ),
+                            'description'   =>  __( 'City' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'pobox',
+                            'value' =>  $entry->billing->pobox ?? '',
+                            'label' =>  __( 'PO.Box' ),
+                            'description'   =>  __( 'Postal Address' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'company',
+                            'value' =>  $entry->billing->company ?? '',
+                            'label' =>  __( 'Company' ),
+                            'description'   =>  __( 'Company' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'email',
+                            'value' =>  $entry->billing->email ?? '',
+                            'label' =>  __( 'Email' ),
+                            'description'   =>  __( 'Email' )
+                        ], 
+                    ]
+                ],
+                'shipping'  =>  [
+                    'label'     =>  __( 'Shipping Address' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'text',
+                            'name'  =>  'name',
+                            'value' =>  $entry->shipping->name ?? '',
+                            'label' =>  __( 'Name' ),
+                            'description'   =>  __( 'Provide the shipping name.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'surname',
+                            'value' =>  $entry->shipping->surname ?? '',
+                            'label' =>  __( 'Surname' ),
+                            'description'   =>  __( 'Provide the shipping surname.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'phone',
+                            'value' =>  $entry->shipping->phone ?? '',
+                            'label' =>  __( 'Phone' ),
+                            'description'   =>  __( 'Shipping phone number.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'address_1',
+                            'value' =>  $entry->shipping->address_1 ?? '',
+                            'label' =>  __( 'Address 1' ),
+                            'description'   =>  __( 'Shipping First Address.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'address_2',
+                            'value' =>  $entry->shipping->address_2 ?? '',
+                            'label' =>  __( 'Address 2' ),
+                            'description'   =>  __( 'Shipping Second Address.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'country',
+                            'value' =>  $entry->shipping->country ?? '',
+                            'label' =>  __( 'Country' ),
+                            'description'   =>  __( 'Shipping Country.' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'city',
+                            'value' =>  $entry->shipping->city ?? '',
+                            'label' =>  __( 'City' ),
+                            'description'   =>  __( 'City' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'pobox',
+                            'value' =>  $entry->shipping->pobox ?? '',
+                            'label' =>  __( 'PO.Box' ),
+                            'description'   =>  __( 'Postal Address' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'company',
+                            'value' =>  $entry->shipping->company ?? '',
+                            'label' =>  __( 'Company' ),
+                            'description'   =>  __( 'Company' )
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'email',
+                            'value' =>  $entry->shipping->email ?? '',
+                            'label' =>  __( 'Email' ),
+                            'description'   =>  __( 'Email' )
+                        ], 
+                    ]
+                ],
+
             ]
         ];
     }

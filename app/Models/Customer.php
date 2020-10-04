@@ -33,6 +33,16 @@ class Customer extends Model
         return $this->hasMany( CustomerAddress::class, 'customer_id' );
     }
 
+    public function billing()
+    {
+        return $this->hasOne( CustomerBillingAddress::class, 'customer_id' );
+    }
+
+    public function shipping()
+    {
+        return $this->hasOne( CustomerShippingAddress::class, 'customer_id' );
+    }
+
     /**
      * Get customer using email
      * @param Query

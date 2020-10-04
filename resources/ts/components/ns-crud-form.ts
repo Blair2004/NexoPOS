@@ -138,7 +138,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                 <div class="header flex" style="margin-bottom: -1px;">
                     <div v-for="( tab , identifier ) of form.tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
-                <div v-for="tab of form.tabs" class="border border-gray-400 p-4 bg-white">
+                <div class="border border-gray-400 p-4 bg-white">
                     <div class="-mx-4 flex flex-wrap">
                         <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
                             <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>

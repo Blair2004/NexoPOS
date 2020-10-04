@@ -111,6 +111,41 @@ class CrudController extends DashboardController
         $entry->save();
 
         /**
+         * loop the tabs relations
+         * and store it
+         */
+        foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
+            $fields         =   $request->input( $tab );
+            $class          =   $relationParams[0];
+            $localKey       =   $relationParams[1];
+            $foreighKey     =   $relationParams[2];
+            
+            if ( ! empty( $fields ) ) {
+                $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+
+                /**
+                 * no relation has been found
+                 * so we'll store that.
+                 */
+                if ( ! $model instanceof $class ) {
+                    $model  =   new $relationParams[0]; // should be the class;
+                }
+
+                /**
+                 * We're saving here all the fields for 
+                 * the related model
+                 */
+                foreach( $fields as $name => $value ) {
+                    $model->$name   =   $value;
+                }
+
+                $model->$localKey   =   $entry->$foreighKey;
+                $model->author      =   Auth::id();
+                $model->save();
+            }
+        }
+
+        /**
          * Create an event after crud POST
          */
         if ( method_exists( $resource, 'afterPost' ) ) {
@@ -174,9 +209,44 @@ class CrudController extends DashboardController
                 }
             }
         }
-
+        
         $entry->author      =   Auth::id();
         $entry->save();
+
+        /**
+         * loop the tabs relations
+         * and store it
+         */
+        foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
+            $fields         =   $request->input( $tab );
+            $class          =   $relationParams[0];
+            $localKey       =   $relationParams[1];
+            $foreighKey     =   $relationParams[2];
+            
+            if ( ! empty( $fields ) ) {
+                $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+
+                /**
+                 * no relation has been found
+                 * so we'll store that.
+                 */
+                if ( ! $model instanceof $class ) {
+                    $model  =   new $relationParams[0]; // should be the class;
+                }
+
+                /**
+                 * We're saving here all the fields for 
+                 * the related model
+                 */
+                foreach( $fields as $name => $value ) {
+                    $model->$name   =   $value;
+                }
+
+                $model->$localKey   =   $entry->$foreighKey;
+                $model->author      =   Auth::id();
+                $model->save();
+            }
+        }
 
         /**
          * Create an event after crud POST

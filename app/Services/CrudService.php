@@ -63,6 +63,11 @@ class CrudService
     protected $whereIn      =   [];
 
     /**
+     * define tabs relations
+     */
+    protected $tabsRelations    =   [];
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -439,12 +444,29 @@ class CrudService
         }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
-            foreach( $tab[ 'fields' ] as $field ) {
-                $data[ $field[ 'name' ] ]   =   $request->input( $tabKey . '.' . $field[ 'name' ] ); 
+            $keys   =   array_keys( $resource->getTabsRelations() );
+
+            /**
+             * We're ignoring the tabs
+             * that are linked to a model.
+             */
+            if ( ! in_array( $tabKey, $keys ) ) {
+                foreach( $tab[ 'fields' ] as $field ) {
+                    $data[ $field[ 'name' ] ]   =   $request->input( $tabKey . '.' . $field[ 'name' ] ); 
+                }
             }
         }
 
         return $data;
+    }
+
+    /**
+     * To pull out the tabs relations
+     * @return array
+     */
+    public function getTabsRelations(): array
+    {
+        return $this->tabsRelations;
     }
 
     /**

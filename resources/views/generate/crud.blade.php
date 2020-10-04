@@ -65,6 +65,14 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     ];
 
     /**
+     * all tabs mentionned on the tabs relations
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
+    ];
+
+    /**
      * Pick
      * Restrict columns you retreive from relation.
      * Should be an array of associative keys, where 
