@@ -156,3 +156,46 @@ As the form should be multilingual, translated labels should be provided as a sl
 | save | Used as label of the save button | `<template v-slot:title>{{ __( 'Save Group' ) }}</template>` |
 | error-required | Is used when an input throw a required error during the validation | `<template v-slot:required>{{ __( 'This field is required' ) }}</template>` |
 | error-invalid-form | Is the error used when the form is not valid | `<template v-slot:error-invalid-form>{{ __( 'Unable to save the group. The form is not valid.' ) }}</template>` |
+
+## Advanced Crud Configuration
+A CRUD class that is generated comes with a bunch of options that can be changed to match a specific needs. We'll here points the possibles modifications
+on the crud instance.
+
+### Model Global & Local Scopes
+As a CRUD class is attached to a model, all model events are then fired while creating, editing and deleting. You can also apply global and local scopes to your model and it will apply to the CRUD class. For example, if you have a list of users where there are Administrators and Simple users, you might want to create a crud interface that only displays Administrators, in that case, you'll to create a custom class that extends the user class and provide either a global or a local scope to it.
+
+```php
+class SimpleUser extends User
+{
+    public function booted()
+    {
+        static::addGlobalScopes( 'role_id', function( Builder $builder ) {
+            $role   = Role::namespace( 'user' )->first();
+            $builder->where( 'role_id', $role->id );
+        });
+    }
+}
+```
+
+Then while linking the model to your CRUD instance, you just have to use the `SimpleUser::class` instead of the user class.
+
+### Tabs and Relationships
+You might have a CRUD forms that has a general that with information stored on a specific model and other tabs with informations stored on different related model. We've used this approach to store customer general informatioons on "nexopos_customers" table and customer shipping & billing informations to store them on "nexopos_customers_addresses", but visually all that are displayed on the same UI.
+
+![Uploading screenshot-nexopos-v4.std-2020.10.04-10_47_33.jpg…]()
+
+In order to make this possible, you need to define a `tabsRelations` on your CRUD class.
+
+```php
+proteceted $tabsRelations   = [
+  'billing'   =>  [ CustomerBillingAddress::class, 'customer_id', 'id' ]
+];
+```
+
+Here, the "billing" should match an existing tabs on the defined form (fetched using `getForms()`). That tabs identifier has as value an array which contains : 
+
+- The related model class name
+- The local key on the related model class name that point to the crud model. 
+- The foreign key usually this is the "id" of the crud model.
+
+Once defined, while editing and creating, the informations defined on the tabs that are linked to a related model will be stored and updated separately from the Crud model.
