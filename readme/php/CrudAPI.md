@@ -182,7 +182,7 @@ Then while linking the model to your CRUD instance, you just have to use the `Si
 ### Tabs and Relationships
 You might have a CRUD forms that has a general that with information stored on a specific model and other tabs with informations stored on different related model. We've used this approach to store customer general informatioons on "nexopos_customers" table and customer shipping & billing informations to store them on "nexopos_customers_addresses", but visually all that are displayed on the same UI.
 
-![Uploading screenshot-nexopos-v4.std-2020.10.04-10_47_33.jpg…]()
+<img src="https://user-images.githubusercontent.com/5265663/95012272-3b1e4080-062f-11eb-855e-86a5fd453bf2.jpg"/>
 
 In order to make this possible, you need to define a `tabsRelations` on your CRUD class.
 
