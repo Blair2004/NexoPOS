@@ -162,7 +162,7 @@ A CRUD class that is generated comes with a bunch of options that can be changed
 on the crud instance.
 
 ### Model Global & Local Scopes
-As a CRUD class is attached to a model, all model events are then fired while creating, editing and deleting. You can also apply global and local scopes to your model and it will apply to the CRUD class. For example, if you have a list of users where there are Administrators and Simple users, you might want to create a crud interface that only displays Administrators, in that case, you'll to create a custom class that extends the user class and provide either a global or a local scope to it.
+As a CRUD class is attached to a model, all model events are then fired while creating, editing and deleting. You can also apply [global and local scopes](https://laravel.com/docs/8.x/eloquent#query-scopes) to your model and it will apply to the CRUD class. For example, if you have a list of users where there are Administrators and Simple users, you might want to create a crud interface that only displays Administrators, in that case, you'll to create a custom class that extends the user class and provide either a global or a local scope to it.
 
 ```php
 class SimpleUser extends User
@@ -180,7 +180,7 @@ class SimpleUser extends User
 Then while linking the model to your CRUD instance, you just have to use the `SimpleUser::class` instead of the user class.
 
 ### Tabs and Relationships
-You might have a CRUD forms that has a general that with information stored on a specific model and other tabs with informations stored on different related model. We've used this approach to store customer general informatioons on "nexopos_customers" table and customer shipping & billing informations to store them on "nexopos_customers_addresses", but visually all that are displayed on the same UI.
+You might have a CRUD form that has general information stored on a specific model and other tabs with informations stored on different related model. We've used this approach to store customer general informations on "nexopos_customers" table and customer shipping & billing informations to store them on "nexopos_customers_addresses" (using custom CustomerAddress model with different scopes), but visually all that are displayed on the same UI.
 
 <img src="https://user-images.githubusercontent.com/5265663/95012272-3b1e4080-062f-11eb-855e-86a5fd453bf2.jpg"/>
 
