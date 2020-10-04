@@ -195,7 +195,7 @@ proteceted $tabsRelations   = [
 Here, the "billing" should match an existing tabs on the defined form (fetched using `getForms()`). That tabs identifier has as value an array which contains : 
 
 - The related model class name
-- The local key on the related model class name that point to the crud model. 
-- The foreign key usually this is the "id" of the crud model.
+- The local key : On the related model class name, that point to the crud model. 
+- The foreign key : Usually this is the "id" of the crud model.
 
 Once defined, while editing and creating, the informations defined on the tabs that are linked to a related model will be stored and updated separately from the Crud model.
