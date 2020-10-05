@@ -187,7 +187,7 @@ You might have a CRUD form that has general information stored on a specific mod
 In order to make this possible, you need to define a `tabsRelations` on your CRUD class.
 
 ```php
-proteceted $tabsRelations   = [
+protected $tabsRelations   = [
   'billing'   =>  [ CustomerBillingAddress::class, 'customer_id', 'id' ]
 ];
 ```
