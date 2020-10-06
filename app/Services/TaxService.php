@@ -223,6 +223,7 @@ class TaxService
 
             if ( $product->tax_type === 'inclusive' ) {
                 $product->excl_tax_sale_price       =   ( floatval( $product->sale_price_edit ) );
+                $product->sale_tax_value            =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
                     'inclusive',
                     $taxRate,
@@ -230,6 +231,7 @@ class TaxService
                 );
             } else {
                 $product->excl_tax_sale_price       =   floatval( $product->sale_price_edit );
+                $product->sale_tax_value            =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
                     'exclusive',
                     $taxRate,
@@ -269,12 +271,14 @@ class TaxService
                 ->sum();
 
             if ( $product->tax_type === 'inclusive' ) {
+                $product->wholesale_tax_value               =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit    ) ) );
                 $product->excl_tax_wholesale_price            =   $this->getComputedTaxValue(
                     'inclusive',
                     $taxRate,
                     $product->wholesale_price_edit
                 );
             } else {
+                $product->wholesale_tax_value               =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit    ) ) );
                 $product->excl_tax_wholesale_price            =   floatval( $product->wholesale_price_edit );
                 $product->incl_tax_wholesale_price            =   $this->getComputedTaxValue(
                     'exclusive',

@@ -914,6 +914,13 @@ class ProductService
     public function stockAdjustment( $action, $data )
     {
         extract( $data, EXTR_REFS );
+        /**
+         * @param int product_id
+         * @param float unit_price
+         * @param float total_price
+         * @param float quantity
+         */
+        $product    =   Product::findOrFail( $product_id );
 
         /**
          * let's check the different 
@@ -953,35 +960,43 @@ class ProductService
             ->subtractBy( $quantity )
             ->get();
 
-        if ( in_array( $action, [ 
-            ProductHistory::ACTION_REMOVED,
-            ProductHistory::ACTION_SOLD,
-            ProductHistory::ACTION_DELETED,
-            ProductHistory::ACTION_DEFECTIVE 
-        ] ) ) {
+        /**
+         * the change on the stock is only performed
+         * if the Product has the stock management enabled.
+         */
+        if ( $product->stock_management_enabled === Product::STOCK_MANAGEMENT_ENABLED ) {
 
-            /**
-             * this should prevent negative 
-             * stock on the current item
-             */
-            if ( $diffQuantity < 0 ) {
-                throw new NotAllowedException( __( 'Unable to proceed, this action will cause negative stock.' ) );
+            if ( in_array( $action, [ 
+                ProductHistory::ACTION_REMOVED,
+                ProductHistory::ACTION_SOLD,
+                ProductHistory::ACTION_DELETED,
+                ProductHistory::ACTION_DEFECTIVE 
+            ] ) ) {
+    
+                /**
+                 * this should prevent negative 
+                 * stock on the current item
+                 */
+                if ( $diffQuantity < 0 ) {
+                    throw new NotAllowedException( __( 'Unable to proceed, this action will cause negative stock.' ) );
+                }
+    
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result             =   $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+            } else {
+    
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
             }
 
-            /**
-             * @var string status
-             * @var string message
-             * @var array [ 'oldQuantity', 'newQuantity' ]
-             */
-            $result             =   $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-        } else {
-
-            /**
-             * @var string status
-             * @var string message
-             * @var array [ 'oldQuantity', 'newQuantity' ]
-             */
-            $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
         }
 
         $history                                =   new ProductHistory;
@@ -993,9 +1008,9 @@ class ProductService
         $history->operation_type                =   $action;
         $history->unit_price                    =   $unit_price;
         $history->total_price                   =   $total_price;
-        $history->before_quantity               =   $result[ 'data' ][ 'oldQuantity' ];
+        $history->before_quantity               =   $result[ 'data' ][ 'oldQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
         $history->quantity                      =   abs( $quantity );
-        $history->after_quantity                =   $result[ 'data' ][ 'newQuantity' ];
+        $history->after_quantity                =   $result[ 'data' ][ 'newQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
         $history->author                        =   Auth::id();
         $history->save();
 

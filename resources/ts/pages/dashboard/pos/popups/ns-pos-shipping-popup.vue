@@ -1,0 +1,166 @@
+<template>
+    <div class="bg-white w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col">
+        <div class="p-2 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="font-bold text-gray-700">Shipping & Billing</h3>
+            <div class="tools">
+                <button @click="closePopup()" class="hover:bg-red-400 hover:text-white hover:border-red-600 rounded-full h-8 w-8 border items-center justify-center">
+                    <i class="las la-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="flex-auto bg-gray-200 p-4">
+            <div id="tabs-container" class="my-5">
+                <div class="header flex" style="margin-bottom: -1px;">
+                    <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                </div>
+                <div class="border border-gray-400 p-4 bg-white">
+                    <div class="-mx-4 flex flex-wrap">
+                        <div :key="index" :class="'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,index) of activeTabFields">
+                            <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" p-2 flex justify-between border-t border-gray-300">
+            <div></div>
+            <div>
+                <ns-button @click="submitInformations()" type="info">Save</ns-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import { nsHttpClient } from '@/bootstrap';
+import resolveIfQueued from "@/libraries/popup-resolver";
+import FormValidation from '@/libraries/form-validation';
+export default {
+    name: 'ns-pos-shipping-popup',
+    computed: {
+        activeTabFields() {
+            if ( this.tabs !== null ) {
+                for( let index in this.tabs ) {
+                    if ( this.tabs[ index ].active ) {
+                        return this.tabs[ index ].fields;
+                    }
+                }
+            }
+            return [];
+        },
+        useBillingInfo() {
+            return this.tabs !== null ? this.tabs.billing.fields[0].value : new Object;
+        },
+        useShippingInfo() {
+            return this.tabs !== null ? this.tabs.shipping.fields[0].value : new Object;
+        }
+    },
+    destroyed() {
+        this.orderSubscription.unsubscribe();
+    },
+    mounted() {
+        this.$popup.event.subscribe( action => {
+            if ( action.event === 'click-overlay' ) {
+                this.resolveIfQueued( false );
+            }
+        });
+
+        this.orderSubscription  =   POS.order.subscribe( order => this.order = order ); 
+
+        this.loadForm();
+    },
+    data() {
+        return {
+            tabs : null,
+            orderSubscription: null,
+            order: null,
+            formValidation: new FormValidation
+        }
+    },
+    watch: {
+        useBillingInfo( value ) {
+            if ( value === 1 ) {
+                this.tabs.billing.fields.forEach( field => {
+                    if ( field.name !== '_use_customer_billing' ) {
+                        field.value     =   this.order.customer.billing ? this.order.customer.billing[ field.name ] : field.value;
+                    }
+                });
+            }
+        },
+        useShippingInfo( value ) {
+            if ( value === 1 ) {
+                this.tabs.shipping.fields.forEach( field => {
+                    if ( field.name !== '_use_customer_shipping' ) {
+                        field.value     =   this.order.customer.shipping ? this.order.customer.shipping[ field.name ] : field.value;
+                    }
+                });
+            }
+        }
+    },
+    methods: {
+        resolveIfQueued,
+
+        submitInformations() {
+            const form  =   this.formValidation.extractForm({ tabs : this.tabs });
+
+            /**
+             * That should only update
+             * the shipping type and shipping (fees)
+             */
+            for( let index in form.general ) {
+                if ([ 'shipping', 'shipping_rate' ].includes( index ) ) {
+                    form.general[ index ]   =   parseFloat( form.general[ index ] );
+                }
+            }
+            
+            this.order  =   { ...this.order, ...form.general };
+            
+            /**
+             * delete the information as we don't want 
+             * to add it to the addresses
+             */
+            delete form.general;
+            delete form.shipping._use_customer_shipping;
+            delete form.billing._use_customer_billing;
+
+            this.order.addresses    =   form;
+            
+            POS.order.next( this.order );
+
+            this.resolveIfQueued( true );
+        },
+
+        closePopup() {
+            this.resolveIfQueued( false );
+        },
+
+        toggle( identifier ) {
+            for( let key in this.tabs ) {
+                this.tabs[ key ].active    =   false;
+            }
+            this.tabs[ identifier ].active     =   true;
+        },
+        loadForm() {
+            nsHttpClient.get( '/api/nexopos/v4/forms/ns.pos-addresses' )
+                .subscribe( ({tabs}) => {
+                    /**
+                     * let's populate back the fields
+                     * with what might have been set previously.
+                     */
+                    for( let index in tabs ) {
+                        if ( index === 'general' ) {
+                            tabs[ index ].fields.forEach( field => {
+                                field.value     =   this.order[ field.name ] || '';
+                            });
+                        } else {
+                            tabs[ index ].fields.forEach( field => {
+                                field.value     =   this.order.addresses[ index ] ? this.order.addresses[ index ][ field.name ] : '';
+                            });
+                        }
+                    }
+
+                    this.tabs   =   this.formValidation.initializeTabs( tabs );
+                });
+        }
+    }
+}
+</script>

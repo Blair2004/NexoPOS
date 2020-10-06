@@ -9,7 +9,6 @@ export class TypeQueue implements Queue {
 
     run() {
         return new Promise( ( resolve, reject ) => {
-            console.log( this.order.type );
             if ( this.order.type === undefined ) {
                 return Popup.show( orderTypePopup, { resolve, reject });
             }

@@ -88,8 +88,10 @@
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
                             <td width="200" class="border border-gray-400 p-2"></td>
-                            <td width="200" class="border border-gray-400 p-2">Shipping</td>
-                            <td width="200" class="border border-gray-400 p-2"></td>
+                            <td width="200" class="border border-gray-400 p-2">
+                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
+                            </td>
+                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
                         <tr class="bg-green-200">
                             <td width="200" class="border border-gray-400 p-2"></td>
@@ -127,7 +129,7 @@
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
                             <td width="200" class="border border-gray-400 p-2"></td>
                             <td width="200" class="border border-gray-400 p-2">
-                                <span>Shipping</span>      
+                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
                                 <span></span>                          
                             </td>
                         </tr>
@@ -178,6 +180,7 @@ import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
 import { TypeQueue } from "./queues/order/type-queue";
 import switchTo from "@/libraries/pos-section-switch";
+import nsPosShippingPopupVue from './popups/ns-pos-shipping-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -298,8 +301,8 @@ export default {
         async payOrder() {
             const queues    =   [
                 ProductsQueue,
-                TypeQueue,
                 CustomerQueue,
+                TypeQueue,
                 PaymentQueue
             ];
 
@@ -316,8 +319,13 @@ export default {
                 }
             }
         },
+
         openOrderType() {
             Popup.show( nsPosOrderTypePopupVue );
+        },
+
+        openShippingPopup() {
+            Popup.show( nsPosShippingPopupVue );
         }
     }
 }

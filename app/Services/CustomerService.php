@@ -17,7 +17,9 @@ class CustomerService
     public function get( $id = null )
     {
         if ( $id === null ) {
-            return Customer::orderBy( 'created_at', 'desc' )->get();
+            return Customer::with( 'billing' )
+                ->with( 'shipping' )
+                ->orderBy( 'created_at', 'desc' )->get();
         } else {
             try {
                 $customer   =   Customer::find( $id );
@@ -75,10 +77,7 @@ class CustomerService
         $customer   =   Customer::byEmail( $fields[ 'email' ] )->first();
 
         if ( $customer instanceof Customer ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] )
-            ]);
+            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
         }
 
         /**

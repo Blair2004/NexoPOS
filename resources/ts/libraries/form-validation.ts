@@ -37,6 +37,23 @@ export default class FormValidation {
         return globalErrors.flat().filter( error => error !== undefined );
     }
 
+    initializeTabs( tabs ) {
+        let index           =   0;
+
+        for( let key in tabs ) {
+            if ( index === 0 ) {
+                tabs[ key ].active  =   true;
+            }
+
+            tabs[ key ].active     =   tabs[ key ].active === undefined ? false : tabs[ key ].active;
+            tabs[ key ].fields     =   this.createFields( tabs[ key ].fields );
+
+            index++;
+        }
+
+        return tabs;
+    }
+
     validateField( field ) {
         return this.checkField( field );
     }

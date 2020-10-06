@@ -13,6 +13,7 @@ import { Payment } from "./interfaces/payment";
 import { timeStamp } from "console";
 import { Responsive } from "./libraries/responsive";
 import { Popup } from "./libraries/popup";
+import { OrderProduct } from "./interfaces/order-product";
 
 /**
  * these are dynamic component
@@ -54,10 +55,17 @@ export class POS {
             customer_id: undefined,
             change: 0,
             total_products: 0,
+            shipping: 0,
+            shipping_rate: 0,
+            shipping_type: undefined,
             customer: undefined,
             type: undefined,
             products: [],
             payments: [],
+            addresses: {
+                shipping: undefined,
+                billing: undefined
+            }
         });
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         
@@ -269,7 +277,7 @@ export class POS {
                 .subscribe();
         }
 
-        order.total             =   order.subtotal - order.discount_amount;
+        order.total             =   ( order.subtotal + order.shipping ) - order.discount_amount;
         order.products          =   products;
         order.total_products    =   products.length
 
@@ -320,17 +328,19 @@ export class POS {
          * Let's combien the built product
          * with the data resolved by the promises
          */
-        let cartProduct: Product   =  {
-            product_id: product.id,
-            name: product.name,
-            discount_type: 'percentage',
-            discount_amount: 0,
-            discount_percentage: 0,
-            quantity : 0,
-            sale_price : product.sale_price,
-            total_price : 0,
-            mode: 'normal',
-            $original  : () => product
+        let cartProduct: OrderProduct   =  {
+            product_id          : product.id,
+            name                : product.name,
+            discount_type       : 'percentage',
+            discount_amount     : 0,
+            discount_percentage : 0,
+            quantity            : 0,
+            tax_group_id        : product.tax_group_id,
+            tax_value           : 0, // is computed automatically using $original()
+            sale_price          : product.sale_price,
+            total_price         : 0,
+            mode                : 'normal',
+            $original           : () => product
         };
 
         for( let index in this.addToCartQueue ) {
@@ -423,15 +433,17 @@ export class POS {
         });
     }
 
-    computeProduct( product: Product ) {
+    computeProduct( product: OrderProduct ) {
         /**
          * determining what is the 
          * real sale price
          */
         if ( product.mode === 'normal' ) {
-            product.sale_price      =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_sale_price : product.$original().excl_tax_sale_price;
+            product.sale_price          =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_sale_price : product.$original().excl_tax_sale_price;
+            product.tax_value           =       product.$original().sale_tax_value * product.quantity;
         } else {
-            product.sale_price      =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_wholesale_price : product.$original().excl_tax_wholesale_price;
+            product.sale_price          =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_wholesale_price : product.$original().excl_tax_wholesale_price;
+            product.tax_value           =       product.$original().wholesale_tax_value * product.quantity;
         }
 
         /**

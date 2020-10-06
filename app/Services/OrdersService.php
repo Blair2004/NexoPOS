@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Events\OrderAfterCreatedEvent;
 use App\Models\Order;
 use App\Services\Options;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,6 @@ use App\Services\DateService;
 use App\Models\OrderAddress;
 use App\Models\OrderPayment;
 use App\Models\OrderProduct;
-use App\OrderAfterCreatedEvent;
 use App\OrderBeforeDeleteEvent;
 use App\Services\MapperService;
 use App\Services\ProductService;
@@ -75,7 +75,7 @@ class OrdersService
          *      'discount_type'     =>  // either "flat" or "percentage"
          *      'unit_price'        =>  // base sale price
          *      'total_price'       =>  // total price
-         *      'tax_id'            =>  // the tax that applies to the item
+         *      'tax_group_id'      =>  // the tax that applies to the item
          *      'tax_value'         =>  // the total price of the tax
          *      'net_unit_price'    =>  // unit price with taxe over
          *      'gross_unit_price'  =>  // unit price without taxe over
@@ -84,6 +84,12 @@ class OrdersService
          * }
          */
         $items      =   $this->__checkProductStock( $fields[ 'products' ] );
+
+        /**
+         * check discount validity and throw an
+         * error is something is not set correctly.
+         */
+        $this->__checkDiscountVality( $fields, $items );
 
         /**
          * determine the value of the product 
@@ -103,12 +109,6 @@ class OrdersService
         $this->__checkAddressesInformations( $fields );
 
         /**
-         * check discount validity and throw an
-         * error is something is not set correctly.
-         */
-        $this->__checkDiscountVality( $fields, $items );
-
-        /**
          * ------------------------------------------
          *                  WARNING
          * ------------------------------------------
@@ -118,7 +118,7 @@ class OrdersService
          */
         $order      =   $this->__initOrder( $fields );
 
-        $this->__saveAddressInformations( $order, $fields );
+        $this->__saveAddressInformations( $order, $fields[ 'addresses' ] );
         $this->__saveOrderPayments( $order, $payments );
 
         /**
@@ -148,19 +148,13 @@ class OrdersService
 
     private function __saveOrderDiscount( $order, $fields )
     {
-        /**
-         * we assume this already exists
-         * since it has been checked
-         */
-        extract( $fields[ 'discount' ] );
-
-        if ( in_array( $type, [ 'flat', 'percentage' ] ) ) {
-            $order->discount_type   =   $type;
+        if ( in_array( $fields[ 'discount_type' ], [ 'flat', 'percentage' ] ) ) {
+            $order->discount_type   =   $fields[ 'discount_type' ];
         }
 
-        switch( $type ) {
+        switch( $fields[ 'discount_type' ] ) {
             case 'flat':
-                $order->discount        =   $this->currencyService->define( $value )->get();
+                $order->discount        =   $this->currencyService->define( $fields[ 'discount_amount' ] )->get();
                 $order->total           =   $this->currencyService->define( $order->total )
                     ->subtractBy( $order->discount )
                     ->get();
@@ -170,7 +164,7 @@ class OrdersService
             break;
             case 'percentage':
                 $discountValue      =   $this->currencyService->define( $order->total )
-                    ->multipliedBy( $value )
+                    ->multipliedBy( $fields[ 'discount_amount' ] )
                     ->dividedBy( 100 )
                     ->get();
                 $order->discount    =   $discountValue;
@@ -208,25 +202,25 @@ class OrdersService
      */
     public function __checkDiscountVality( $fields, $products )
     {
-        if ( ! empty( @$fields[ 'discount' ] ) ) {
-            extract( $fields[ 'discount' ]);
+        if ( ! empty( @$fields[ 'discount_type' ] ) ) {
+            extract( $fields[ 'discount_type' ]);
 
-            if ( $type === 'percentage' && ( floatval( $value ) < 0 ) || ( floatval( $value ) > 100 )  ) {
+            if ( $fields[ 'discount_type' ] === 'percentage' && ( floatval( $fields[ 'discount_amount' ] ) < 0 ) || ( floatval( $fields[ 'discount_amount' ] ) > 100 )  ) {
                 throw new NotAllowedException([
                     'status'    =>  'failed',
                     'message'   =>  __( 'The percentage discount provided is not valid.' )
                 ]);
-            } else if ( $type === 'flat' ) {
+            } else if ( $fields[ 'discount_type' ] === 'flat' ) {
                 
                 $productsTotal    =   $products->map( function( $product ) {
-                    return $product[ 'quantity' ] * $product[ 'product' ]->sale_price;
+                    return floatval( $product[ 'quantity' ] ) * floatval( $product[ 'product' ]->sale_price );
                 })->reduce( function( $before, $after ) {
                     return $before + $after;
                 });
 
                 $shippingFees       =   $this->__getShippingFee( $fields );
 
-                if ( $value > $productTotal + $shippingFees ) {
+                if ( $fields[ 'discount_amount' ] > $productsTotal + $shippingFees ) {
                     throw new NotAllowedException([
                         'status'    =>  'failed',
                         'message'   =>  __( 'A discount cannot exceed the total value of an order.' )
@@ -261,10 +255,7 @@ class OrdersService
             $keys   =   array_keys( $fields[ 'addresses' ][ $type ] );
             foreach( $keys as $key ) {
                 if ( ! in_array( $key, $allowedKeys ) ) {
-                    throw new NotAllowedException([
-                        'status'    =>  'failed',
-                        'message'   =>  sprintf( __( 'Unable to proceed because the "%s" field is an unsupported attribute.' ), $key )
-                    ]);
+                    throw new NotAllowedException( sprintf( __( 'Unable to proceed because the "%s" field is an unsupported attribute.' ), $key ) );
                 }
             }
         }
@@ -300,8 +291,8 @@ class OrdersService
         foreach( $payments as $payment ) {
             $orderPayment               =   new OrderPayment;
             $orderPayment->order_id     =   $order->id;
-            $orderPayment->namespace    =   $payment[ 'namespace' ];
-            $orderPayment->value        =   $payment[ 'value' ];
+            $orderPayment->namespace    =   $payment[ 'identifier' ];
+            $orderPayment->value        =   $payment[ 'amount' ];
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
         }
@@ -317,9 +308,10 @@ class OrdersService
     private function __checkOrderPayments( $products, $fields )
     {
         $totalPayments  =   0;
+        
         $total          =   $products->map( function( $product ) {
-            return $product[ 'product' ]->sale_price;
-        })->sum();
+            return $product->sale_price;
+        })->sum() + $this->__getShippingFee( $fields );
 
         $allowedPaymentsGateways    =   config( 'nexopos.pos.payments' );
 
@@ -413,7 +405,7 @@ class OrdersService
     /**
      * @param Order order instance
      * @param array<OrderProduct> array of products
-     * @return array[order,total,taxes]
+     * @return array [$total, $taxes, $order]
      */
     private function __saveOrderProducts( $order, $products )
     {
@@ -448,7 +440,7 @@ class OrdersService
              * on how we do compute the taxes
              */
             if ( $product[ 'product' ][ 'tax_type' ] !== 'disabled' ) {
-                $orderProduct->tax_id               =   $product[ 'product' ]->tax_id;
+                $orderProduct->tax_group_id         =   $product[ 'product' ]->tax_group_id;
                 $orderProduct->tax_type             =   $product[ 'product' ]->tax_type;
                 $orderProduct->tax_value            =   $this->currencyService->define( $product[ 'product' ]->tax_value )
                     ->multiplyBy( $product[ 'quantity' ] )

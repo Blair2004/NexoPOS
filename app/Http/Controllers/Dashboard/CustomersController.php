@@ -7,21 +7,13 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Order;
 use App\Models\Customer;
 
 use Illuminate\Http\Request;
-use App\Models\CustomerGroup;
-use App\Models\CustomerAddress;
 use App\Services\CustomerService;
-
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
 
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\NotAllowedException;
 
 class CustomersController extends DashboardController
 {
@@ -119,6 +111,7 @@ class CustomersController extends DashboardController
      * which describe the field expected on post/put
      * requests
      * @return json
+     * @deprecated
      */
     public function schema()
     {
@@ -238,7 +231,9 @@ class CustomersController extends DashboardController
     public function searchCustomer( Request $request )
     {
         $search     =   $request->input( 'search' );
-        $customers  =   Customer::where( 'name', 'like', '%' . $search . '%' )
+        $customers  =   Customer::with( 'billing' )
+            ->with( 'shipping' )
+            ->where( 'name', 'like', '%' . $search . '%' )
             ->orWhere( 'email', 'like', '%' . $search . '%' )
             ->get();
 

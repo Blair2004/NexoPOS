@@ -5,8 +5,8 @@
         </div>
         <div v-if="units.length > 0" class="grid grid-flow-row grid-cols-2 overflow-y-auto">
             <div @click="selectUnit( unit )" :key="unit.id" v-for="unit of units" class="hover:bg-gray-200 cursor-pointer border flex-shrink-0 border-gray-200 flex flex-col items-center justify-center">
-                <div class="h-full w-full p-2 flex items-center justify-center overflow-hidden">
-                    <img v-if="unit.preview_url" :src="unit.preview_url" class="object-center h-40" :alt="unit.name">
+                <div class="h-40 w-full flex items-center justify-center overflow-hidden">
+                    <img v-if="unit.preview_url" :src="unit.preview_url" class="object-cover h-full" :alt="unit.name">
                     <div class="h-40 flex items-center justify-center" v-if="! unit.preview_url">
                         <i class="las la-image text-gray-600 text-6xl"></i>
                     </div>

@@ -115,9 +115,12 @@ export default {
                         <span class="px-2 rounded-full h-8 w-8 flex items-center justify-center bg-green-500 text-white">{{ order.payments.length }}</span>
                     </li> 
                 </ul>
-                <button @click="closePopup()" class="cursor-pointer md:hidden rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
+                <button @click="closePopup()" class="cursor-pointer md:hidden hover:bg-red-400 hover:text-white hover:border-red-600 rounded-full h-8 w-8 border items-center justify-center">
                     <i class="las la-times"></i>
                 </button>
+                <!-- <button @click="closePopup()" class="cursor-pointer md:hidden rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
+                    <i class="las la-times"></i>
+                </button> -->
             </div>
             <div class="overflow-hidden flex flex-col flex-auto">
                 <div class="flex flex-col flex-auto overflow-hidden">

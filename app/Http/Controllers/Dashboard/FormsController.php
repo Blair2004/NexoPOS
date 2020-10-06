@@ -9,15 +9,6 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\FormsRequest;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-
-use App\Models\ProductCategory;
-use App\Models\User;
 use App\Services\SettingsPage;
 use Exception;
 use TorMorten\Eventy\Facades\Events as Hook;

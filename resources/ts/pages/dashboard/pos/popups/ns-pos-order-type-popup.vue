@@ -13,6 +13,7 @@
 </template>
 <script>
 import resolveIfQueued from '@/libraries/popup-resolver';
+import nsPosShippingPopupVue from './ns-pos-shipping-popup.vue';
 
 export default {
     data() {
@@ -39,10 +40,29 @@ export default {
         resolveIfQueued,
 
         select( type ) {
+            const index     =   this.types.indexOf( type );
             this.types.forEach( type => type.selected = false );
-            type.selected   =   true;
+            this.types[ index ].selected    =   true;
+
+            /**
+             * that's hardcoded
+             */
             POS.types.next( this.types );
-            this.resolveIfQueued( this.types );
+
+            if ( type.identifier === 'delivery' ) {
+                this.$popup.close();
+                new Promise( ( resolve, reject ) => {
+                    Popup.show( 
+                        nsPosShippingPopupVue, { 
+                            resolve : this.$popupParams.resolve, 
+                            reject : this.$popupParams.reject 
+                        }
+                    );
+                });
+            } else {
+                this.resolveIfQueued( this.types );
+            }
+
         }
     }
 }

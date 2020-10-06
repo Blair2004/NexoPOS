@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -33,6 +34,9 @@ class FormsProvider extends ServiceProvider
                 break;
                 case 'ns.procurement':
                     return new ProcurementForm;
+                break;
+                case 'ns.pos-addresses':
+                    return new POSAddressesForm;
                 break;
             }
             return $class;

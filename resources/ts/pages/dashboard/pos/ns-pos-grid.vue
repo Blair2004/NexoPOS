@@ -42,8 +42,8 @@
 
                     <template v-if="hasCategories">
                         <div @click="loadCategories( category )" :key="category.id" v-for="category of categories" class="hover:bg-gray-200 cursor-pointer border h-32 lg:h-40 border-gray-200 flex flex-col items-center justify-center overflow-hidden">
-                            <div class="h-full w-full p-2 flex items-center justify-center">
-                                <img v-if="category.preview_url" :src="category.preview_url" class="object-center" :alt="category.name">
+                            <div class="h-full w-full flex items-center justify-center">
+                                <img v-if="category.preview_url" :src="category.preview_url" class="object-cover h-full" :alt="category.name">
                                 <i class="las la-image text-gray-600 text-6xl" v-if="! category.preview_url"></i>
                             </div>
                             <div class="h-0 w-full">
@@ -58,8 +58,8 @@
 
                     <template v-if="! hasCategories">
                         <div @click="addToTheCart( product )" :key="product.id" v-for="product of products"  class="hover:bg-gray-200 cursor-pointer border h-32 lg:h-40 border-gray-200 flex flex-col items-center justify-center">
-                            <div class="h-full w-full p-2 flex items-center justify-center overflow-hidden">
-                                <img v-if="product.galleries.filter( i => i.featured === 1 ).length > 0" :src="product.galleries.filter( i => i.featured === 1 )[0].url" class="object-center" :alt="product.name">
+                            <div class="h-full w-full flex items-center justify-center overflow-hidden">
+                                <img v-if="product.galleries.filter( i => i.featured === 1 ).length > 0" :src="product.galleries.filter( i => i.featured === 1 )[0].url" class="object-cover h-full" :alt="product.name">
                                 <i v-if="product.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-gray-600 text-6xl"></i>
                             </div>
                             <div class="h-0 w-full">

@@ -10,6 +10,7 @@
         <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
             <input
                 ref="searchField" 
+                @keydown.enter="attemptToChoose()"
                 v-model="searchCustomerValue"
                 placeholder="Search Customer" 
                 type="text" 
@@ -36,7 +37,7 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '../../../../bootstrap';
+import { nsHttpClient, nsSnackBar } from '../../../../bootstrap';
 import resolveIfQueued from "./../../../../libraries/popup-resolver";
 
 export default {
@@ -87,6 +88,13 @@ export default {
          * could help being notified when it's closed.
          */
         resolveIfQueued,
+
+        attemptToChoose() {
+            if ( this.customers.length === 1 ) {
+                return this.selectCustomer( this.customers[0] );
+            }
+            nsSnackBar.info( 'Too many result.' ).subscribe();
+        },
 
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
