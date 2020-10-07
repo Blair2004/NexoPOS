@@ -199,3 +199,38 @@ Here, the "billing" should match an existing tabs on the defined form (fetched u
 - The foreign key : Usually this is the "id" of the crud model.
 
 Once defined, while editing and creating, the informations defined on the tabs that are linked to a related model will be stored and updated separately from the Crud model.
+
+### Coloring Crud Rows
+Sometime, you might want to give a different colors to a row that is rended on the table. You're not able to inject CSS classes that will overwrite the default css class that applies to each row. You only have to set a "$cssClass" property to the row available as "$entry" on the method `setActions`.
+
+```php
+  // instance of crud
+  public function setActions( $entry, $namespace )
+  {
+      // will only add a class if the status of the $entry is "paid".
+      if ( $entry->status === 'paid' ) {
+          $entry->{ '$cssClass' }   = 'bg-green-100 border-green-200 border text-sm';
+      }
+      
+      // you can make changes here
+      $entry->{'$actions'}    =   [
+          [
+              'label'         =>      __( 'Edit' ),
+              'namespace'     =>      'edit',
+              'type'          =>      'GOTO',
+              'index'         =>      'id',
+              'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+          ], [
+              'label'     =>  __( 'Delete' ),
+              'namespace' =>  'delete',
+              'type'      =>  'DELETE',
+              'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+              'confirm'   =>  [
+                  'message'  =>  __( 'Would you like to delete this ?' ),
+              ]
+          ]
+      ];
+
+      return $entry;
+  }
+```
