@@ -8,7 +8,7 @@
                 </div>
                 <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-3xl p-2">
                     <span>Discount : </span>
-                    <span>{{ order.discount_amount | currency }}</span>
+                    <span>{{ order.discount | currency }}</span>
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-3xl p-2">
                     <span>Paid : </span>

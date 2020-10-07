@@ -44,6 +44,8 @@ export default {
             this.types.forEach( type => type.selected = false );
             this.types[ index ].selected    =   true;
 
+            console.log( this.types );
+
             /**
              * that's hardcoded
              */

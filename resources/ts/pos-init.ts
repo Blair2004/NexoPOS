@@ -36,8 +36,78 @@ export class POS {
     private _responsive     =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting       =   false;
+    private defaultOrder    =   {
+        discount_type: null,
+        discount: 0,
+        discount_percentage: 0,
+        subtotal: 0,
+        total: 0,
+        paid: 0,
+        customer_id: undefined,
+        change: 0,
+        total_products: 0,
+        shipping: 0,
+        tax_value: 0,
+        shipping_rate: 0,
+        shipping_type: undefined,
+        customer: undefined,
+        type: undefined,
+        products: [],
+        payments: [],
+        addresses: {
+            shipping: undefined,
+            billing: undefined
+        }
+    }
 
     constructor() {
+        this.initialize();
+    }
+
+    get screen() {
+        return this._screen;
+    }
+
+    get visibleSection() {
+        return this._visibleSection;
+    }
+
+    get paymentsType() {
+        return this._paymentsType;
+    }
+
+    get order() {
+        return this._order;
+    }
+
+    get types() {
+        return this._types;
+    }
+
+    get products() {
+        return this._products;
+    }
+
+    get customers() {
+        return this._customers;
+    }
+
+    get breadcrumbs() {
+        return this._breadcrumbs;
+    }
+
+    reset() {
+        this._products.next([]);
+        this._customers.next([]);
+        this._types.next([]);
+        this._breadcrumbs.next([]);
+        this._paymentsType.next([]);
+        this._visibleSection.next( 'both' );
+        this.order.
+    }
+
+    public initialize()
+    {
         this._products          =   new BehaviorSubject<Product[]>([]);
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
@@ -45,28 +115,7 @@ export class POS {
         this._screen            =   new BehaviorSubject<string>('');
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );       
-        this._order             =   new BehaviorSubject<Order>({
-            discount_type: null,
-            discount_amount: 0,
-            discount_percentage: 0,
-            subtotal: 0,
-            total: 0,
-            paid: 0,
-            customer_id: undefined,
-            change: 0,
-            total_products: 0,
-            shipping: 0,
-            shipping_rate: 0,
-            shipping_type: undefined,
-            customer: undefined,
-            type: undefined,
-            products: [],
-            payments: [],
-            addresses: {
-                shipping: undefined,
-                billing: undefined
-            }
-        });
+        this._order             =   new BehaviorSubject<Order>( this.defaultOrder );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         
         /**
@@ -102,38 +151,6 @@ export class POS {
         });
 
         this.defineCurrentScreen();
-    }
-
-    get screen() {
-        return this._screen;
-    }
-
-    get visibleSection() {
-        return this._visibleSection;
-    }
-
-    get paymentsType() {
-        return this._paymentsType;
-    }
-
-    get order() {
-        return this._order;
-    }
-
-    get types() {
-        return this._types;
-    }
-
-    get products() {
-        return this._products;
-    }
-
-    get customers() {
-        return this._customers;
-    }
-
-    get breadcrumbs() {
-        return this._breadcrumbs;
     }
     
     public header   =   {
@@ -194,6 +211,9 @@ export class POS {
                     .subscribe( result => {
                         this._isSubmitting  =   true;
                         resolve( result );
+
+                        this.reset();
+
                     }, error => reject( error ) )
             }
 
@@ -263,7 +283,7 @@ export class POS {
         }
 
         if ( order.discount_type === 'percentage' ) {
-            order.discount_amount   =   ( order.discount_percentage * order.subtotal ) / 100;
+            order.discount   =   ( order.discount_percentage * order.subtotal ) / 100;
         }
 
         /**
@@ -271,13 +291,25 @@ export class POS {
          * than the subtotal, the discount amount
          * will be set to the order.subtotal
          */
-        if ( order.discount_amount > order.subtotal ) {
-            order.discount_amount = order.subtotal;
+        if ( order.discount > order.subtotal ) {
+            order.discount = order.subtotal;
             nsSnackBar.info( 'The discount has been set to the cart subtotal' )
                 .subscribe();
         }
 
-        order.total             =   ( order.subtotal + order.shipping ) - order.discount_amount;
+        const totalTaxes        =   products.map( ( product: OrderProduct ) => product.tax_value );
+
+        /**
+         * tax might be computed above the tax that currently
+         * applie to the items.
+         */
+        order.tax_value         =   0;
+
+        if ( totalTaxes.length > 0 ) {
+            order.tax_value     =   totalTaxes.reduce( ( b, a ) => b + a );
+        }
+
+        order.total             =   ( order.subtotal + order.shipping ) - order.discount;
         order.products          =   products;
         order.total_products    =   products.length
 
@@ -332,7 +364,7 @@ export class POS {
             product_id          : product.id,
             name                : product.name,
             discount_type       : 'percentage',
-            discount_amount     : 0,
+            discount            : 0,
             discount_percentage : 0,
             quantity            : 0,
             tax_group_id        : product.tax_group_id,
@@ -452,11 +484,11 @@ export class POS {
          */
         if ([ 'flat', 'percentage' ].includes( product.discount_type ) ) {
             if ( product.discount_type === 'percentage' ) {
-                product.discount_amount  =   ( ( product.sale_price * product.discount_percentage ) / 100 ) * product.quantity;
+                product.discount  =   ( ( product.sale_price * product.discount_percentage ) / 100 ) * product.quantity;
             }
         }
 
-        product.total_price         =   ( product.sale_price * product.quantity ) - product.discount_amount;
+        product.total_price         =   ( product.sale_price * product.quantity ) - product.discount;
     }
 
     defineSettings( settings ) {
@@ -464,13 +496,14 @@ export class POS {
     }
 
     destroy() {
-        this._customers.unsubscribe();
-        this._breadcrumbs.unsubscribe();
         this._products.unsubscribe();
+        this._customers.unsubscribe();
         this._types.unsubscribe();
+        this._breadcrumbs.unsubscribe();
+        this._paymentsType.unsubscribe();
+        this._screen.unsubscribe();
         this._order.unsubscribe();
         this._settings.unsubscribe();
-        this._paymentsType.unsubscribe();
     }
 }
 

@@ -6,7 +6,7 @@ import { Product } from "./product";
 
 export interface Order {
     discount_type: 'flat' | 'percentage';
-    discount_amount: number;
+    discount: number;
     discount_percentage: number;
     subtotal: number;
     total: number;
@@ -16,6 +16,7 @@ export interface Order {
     customer: Customer | undefined;
     type: OrderType,
     customer_id: number;
+    tax_value: number;
     shipping: number;
     shipping_rate: number;
     shipping_type: 'flat' | 'percentage';

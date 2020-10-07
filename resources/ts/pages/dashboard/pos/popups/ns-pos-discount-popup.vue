@@ -54,7 +54,7 @@ export default {
         if ( this.mode === 'percentage' ) {
             this.finalValue     =   this.$popupParams.reference.discount_percentage || 1;
         } else {
-            this.finalValue     =   this.$popupParams.reference.discount_amount || 1;
+            this.finalValue     =   this.$popupParams.reference.discount || 1;
         }
 
         this.$popup.event.subscribe( (action ) =>  {
@@ -72,7 +72,7 @@ export default {
                 this.$popupParams.onSubmit({
                     discount_type           :   this.mode,
                     discount_percentage     :   this.mode === 'percentage' ? this.finalValue : undefined,
-                    discount_amount         :   this.mode === 'flat' ? this.finalValue : undefined
+                    discount                :   this.mode === 'flat' ? this.finalValue : undefined
                 });
                 this.$popup.close();
             } else if ( key.identifier === 'backspace' ) {

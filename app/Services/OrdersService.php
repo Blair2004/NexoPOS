@@ -118,7 +118,7 @@ class OrdersService
          */
         $order      =   $this->__initOrder( $fields );
 
-        $this->__saveAddressInformations( $order, $fields[ 'addresses' ] );
+        $this->__saveAddressInformations( $order, $fields );
         $this->__saveOrderPayments( $order, $payments );
 
         /**
@@ -154,7 +154,7 @@ class OrdersService
 
         switch( $fields[ 'discount_type' ] ) {
             case 'flat':
-                $order->discount        =   $this->currencyService->define( $fields[ 'discount_amount' ] )->get();
+                $order->discount        =   $this->currencyService->define( $fields[ 'discount' ] )->get();
                 $order->total           =   $this->currencyService->define( $order->total )
                     ->subtractBy( $order->discount )
                     ->get();
@@ -164,7 +164,7 @@ class OrdersService
             break;
             case 'percentage':
                 $discountValue      =   $this->currencyService->define( $order->total )
-                    ->multipliedBy( $fields[ 'discount_amount' ] )
+                    ->multipliedBy( $fields[ 'discount' ] )
                     ->dividedBy( 100 )
                     ->get();
                 $order->discount    =   $discountValue;
@@ -186,12 +186,7 @@ class OrdersService
      */
     private function __getShippingFee( $fields )
     {
-        if ( ! empty( @$fields[ 'shipping' ] ) ) {
-            $value      =   0;
-            extract( $fields[ 'shipping' ] );
-            
-            return $value;
-        }
+        return $fields[ 'shipping' ] ?? 0;
     }
 
     /**
@@ -205,7 +200,7 @@ class OrdersService
         if ( ! empty( @$fields[ 'discount_type' ] ) ) {
             extract( $fields[ 'discount_type' ]);
 
-            if ( $fields[ 'discount_type' ] === 'percentage' && ( floatval( $fields[ 'discount_amount' ] ) < 0 ) || ( floatval( $fields[ 'discount_amount' ] ) > 100 )  ) {
+            if ( $fields[ 'discount_type' ] === 'percentage' && ( floatval( $fields[ 'discount' ] ) < 0 ) || ( floatval( $fields[ 'discount' ] ) > 100 )  ) {
                 throw new NotAllowedException([
                     'status'    =>  'failed',
                     'message'   =>  __( 'The percentage discount provided is not valid.' )
@@ -213,14 +208,14 @@ class OrdersService
             } else if ( $fields[ 'discount_type' ] === 'flat' ) {
                 
                 $productsTotal    =   $products->map( function( $product ) {
-                    return floatval( $product[ 'quantity' ] ) * floatval( $product[ 'product' ]->sale_price );
+                    return floatval( $product[ 'quantity' ] ) * floatval( $product[ 'sale_price' ] );
                 })->reduce( function( $before, $after ) {
                     return $before + $after;
                 });
 
                 $shippingFees       =   $this->__getShippingFee( $fields );
 
-                if ( $fields[ 'discount_amount' ] > $productsTotal + $shippingFees ) {
+                if ( $fields[ 'discount' ] > $productsTotal + $shippingFees ) {
                     throw new NotAllowedException([
                         'status'    =>  'failed',
                         'message'   =>  __( 'A discount cannot exceed the total value of an order.' )
@@ -310,7 +305,7 @@ class OrdersService
         $totalPayments  =   0;
         
         $total          =   $products->map( function( $product ) {
-            return $product->sale_price;
+            return floatval( $product[ 'total_price' ] );
         })->sum() + $this->__getShippingFee( $fields );
 
         $allowedPaymentsGateways    =   config( 'nexopos.pos.payments' );
@@ -423,8 +418,8 @@ class OrdersService
                 'unit_id'       =>  $product[ 'unit_id' ],
                 'product_id'    =>  $product[ 'product' ]->id,
                 'quantity'      =>  $product[ 'quantity' ],
-                'unit_price'    =>  $product[ 'product' ]->sale_price,
-                'total_price'   =>  $this->currencyService->define( $product[ 'product' ]->sale_price )
+                'unit_price'    =>  $product[ 'sale_price' ],
+                'total_price'   =>  $this->currencyService->define( $product[ 'sale_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
                     ->get()
             ];
@@ -447,14 +442,14 @@ class OrdersService
                     ->get();
             }
 
-            $orderProduct->sale_price           =   $product[ 'product' ]->sale_price;
+            $orderProduct->sale_price           =   $product[ 'sale_price' ];
             $orderProduct->net_price            =   $product[ 'product' ]->incl_tax_sale_price;
             $orderProduct->gross_price          =   $product[ 'product' ]->excl_tax_sale_price;
 
             $orderProduct->total_gross_price    =   $this->currencyService->define( $product[ 'product' ]->excl_tax_sale_price )
                 ->multiplyBy( $product[ 'quantity' ] )
                 ->get();
-            $orderProduct->total_price          =   $this->currencyService->define( $product[ 'product' ]->sale_price )
+            $orderProduct->total_price          =   $this->currencyService->define( $product[ 'sale_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
                 ->get();
             $orderProduct->total_net_price      =   $this->currencyService->define( $product[ 'product' ]->incl_tax_sale_price )
@@ -470,7 +465,7 @@ class OrdersService
                 ->additionateBy( $orderProduct->total_price )
                 ->get();
 
-            $productTax     =   $this->currencyService->define( $product[ 'product' ]->tax_value )
+            $productTax     =   $this->currencyService->define( $product[ 'tax_value' ] )
                 ->multiplyBy( $orderProduct[ 'quantity' ])
                 ->get();
 
@@ -701,15 +696,18 @@ class OrdersService
          */
         $order                      =   new Order;
         $order->customer_id         =   $fields[ 'customer_id' ];
-        $order->total               =   0;
-        $order->gross_total         =   0;
-        $order->discount            =   0;
-        $order->type                =   'in_store';
+        $order->total               =   $fields[ 'total' ];
+        $order->shipping            =   $fields[ 'shipping' ];
+        $order->discount            =   $fields[ 'discount' ];
+        $order->discount_type       =   $fields[ 'discount_type' ];
+        $order->discount_percentage =   $fields[ 'discount_percentage' ];
+        // $order->gross_total         =   0;
+        $order->type                =   $fields[ 'type' ][ 'identifier' ];
         $order->payment_status      =   'unpaid';
         $order->delivery_status     =   'pending';
         $order->process_status      =   'pending';
         $order->author              =   Auth::id();
-        $order->tax_value           =   0;
+        $order->tax_value           =   $fields[ 'tax_value' ];
         $order->code                =   $this->generateOrderCode();
         $order->save();
 

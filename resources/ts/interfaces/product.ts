@@ -14,7 +14,7 @@ export interface Product {
     unit_id?: number;
     product_id?: number;
     discount_type?: string;
-    discount_amount?: number;
+    discount?: number;
     discount_percentage?: number;
     total_price?: number;
     mode: 'normal' | 'wholesale';

@@ -38,7 +38,7 @@
                                         >Price : {{ product.sale_price | currency }}</a>
                                     </div>
                                     <div class="px-1"> 
-                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount_amount | currency }}</a>
+                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                 </div>
                                 <div class="-mx-1 flex">
@@ -83,7 +83,7 @@
                                 <span v-if="order.discount_type === 'flat'">(Flat)</span>
                             </td>
                             <td width="200" class="border border-gray-400 p-2 text-right">
-                                <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
+                                <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
@@ -122,7 +122,7 @@
                                         <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
                                         <span v-if="order.discount_type === 'flat'">(Flat)</span>
                                     </p>
-                                    <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount_amount | currency }}</a>
+                                    <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
                                 </div>
                             </td>
                         </tr>

@@ -125,7 +125,8 @@ export default {
             this.order.addresses    =   form;
             
             POS.order.next( this.order );
-
+            POS.refreshCart();
+            
             this.resolveIfQueued( true );
         },
 

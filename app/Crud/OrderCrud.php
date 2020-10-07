@@ -375,11 +375,6 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'net_total'  =>  [
-                'label'  =>  __( 'Net Total' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'delivery_status'  =>  [
                 'label'  =>  __( 'Delivery Status' ),
                 '$direction'    =>  '',
@@ -395,8 +390,8 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'title'  =>  [
-                'label'  =>  __( 'Title' ),
+            'net_total'  =>  [
+                'label'  =>  __( 'Net Total' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -410,7 +405,7 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'author'  =>  [
+            'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -432,6 +427,36 @@ class OrderCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
+
+        $entry->total           =   ns()->currency->define( $entry->total )
+            ->format( $entry->total );
+        $entry->discount           =   ns()->currency->define( $entry->discount )
+            ->format( $entry->discount );
+
+        switch( $entry->type ) {
+            case 'delivery' : $entry->type = __( 'Delivery' ); break;
+            case 'takeaway' : $entry->type = __( 'Take Away' ); break;
+        }
+
+        switch( $entry->delivery_status ) {
+            case 'pending' : $entry->delivery_status       = __( 'Pending' ); break;
+            case 'ongoing' : $entry->delivery_status       = __( 'Ongoing' ); break;
+            case 'delivered' : $entry->delivery_status     = __( 'Delivered' ); break;
+            case 'failed' : $entry->delivery_status        = __( 'Failed' ); break;
+        }
+
+        switch( $entry->process_status ) {
+            case 'pending' : $entry->process_status       = __( 'Pending' ); break;
+            case 'ongoing' : $entry->process_status       = __( 'Ongoing' ); break;
+            case 'delivered' : $entry->process_status     = __( 'Delivered' ); break;
+            case 'failed' : $entry->process_status        = __( 'Failed' ); break;
+        }
+
+        switch( $entry->payment_status ) {
+            case 'paid' : $entry->payment_status              = __( 'Paid' ); break;
+            case 'unpaid' : $entry->payment_status            = __( 'Unpaid' ); break;
+            case 'partially_paid' : $entry->payment_status    = __( 'Partially paid' ); break;
+        }
 
         // you can make changes here
         $entry->{'$actions'}    =   [
