@@ -211,26 +211,9 @@ Sometime, you might want to give a different colors to a row that is rended on t
       if ( $entry->status === 'paid' ) {
           $entry->{ '$cssClass' }   = 'bg-green-100 border-green-200 border text-sm';
       }
-      
-      // you can make changes here
-      $entry->{'$actions'}    =   [
-          [
-              'label'         =>      __( 'Edit' ),
-              'namespace'     =>      'edit',
-              'type'          =>      'GOTO',
-              'index'         =>      'id',
-              'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
-          ], [
-              'label'     =>  __( 'Delete' ),
-              'namespace' =>  'delete',
-              'type'      =>  'DELETE',
-              'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
-              'confirm'   =>  [
-                  'message'  =>  __( 'Would you like to delete this ?' ),
-              ]
-          ]
-      ];
 
       return $entry;
   }
 ```
+
+You might need to understand how TailwindCSS works to apply [color utilities classes](https://tailwindcss.com/docs/customizing-colors#default-color-palette).
