@@ -115,7 +115,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
         Route::get( '/dashboard/experiments', 'DashboardController@experiments' );
 
-        Route::prefix( 'api/nexopos/v4' )->group( function() {
+        Route::prefix( '/api/nexopos/v4' )->group( function() {
             foreach([ '', '/store/{id}/' ] as $prefix ) {
                 Route::prefix( $prefix )->group( function() {
                     include_once( dirname( __FILE__ ) . '/api/categories.php' );    
