@@ -198,7 +198,6 @@ class OrdersService
     public function __checkDiscountVality($fields, $products)
     {
         if (!empty(@$fields['discount_type'])) {
-            extract($fields['discount_type']);
 
             if ($fields['discount_type'] === 'percentage' && (floatval($fields['discount']) < 0) || (floatval($fields['discount']) > 100)) {
                 throw new NotAllowedException([
@@ -246,11 +245,13 @@ class OrdersService
             'email'
         ];
 
-        foreach (['shipping', 'billing'] as $type) {
-            $keys   =   array_keys($fields['addresses'][$type]);
-            foreach ($keys as $key) {
-                if (!in_array($key, $allowedKeys)) {
-                    throw new NotAllowedException(sprintf(__('Unable to proceed because the "%s" field is an unsupported attribute.'), $key));
+        if ( ! empty( $fields[ 'addresses' ] ) ) {
+            foreach (['shipping', 'billing'] as $type) {
+                $keys   =   array_keys($fields['addresses'][$type]);
+                foreach ($keys as $key) {
+                    if (!in_array($key, $allowedKeys)) {
+                        throw new NotAllowedException(sprintf(__('Unable to proceed because the "%s" field is an unsupported attribute.'), $key));
+                    }
                 }
             }
         }
@@ -272,11 +273,11 @@ class OrdersService
                 foreach ($fields['addresses'][$type] as $key => $value) {
                     $orderShipping->$key    =   $value;
                 }
-
-                $orderShipping->author      =   Auth::id();
-                $orderShipping->order_id    =   $order->id;
-                $orderShipping->save();
             }
+            
+            $orderShipping->author      =   Auth::id();
+            $orderShipping->order_id    =   $order->id;
+            $orderShipping->save();
         }
     }
 
@@ -836,6 +837,8 @@ class OrdersService
     {
         if (in_array($as, ['id', 'code'])) {
             $order  =   Order::where($as, $identifier)
+                ->with( 'products' )
+                ->with( 'customer' )
                 ->first();
 
             if (!$order instanceof Order) {
@@ -1035,5 +1038,52 @@ class OrdersService
     {
         $order  =   $this->getOrder($orderID);
         return $order->payments;
+    }
+
+    /**
+     * It only returns what is the type of
+     * the orders
+     * @param string
+     * @return string
+     */
+    public function getTypeLabel( $type ) 
+    {
+        switch( $type ) {
+            case 'delivery': return __( 'Delivery' ); break;
+            case 'takeaway': return __( 'Take Away' ); break;
+        }
+    }
+
+    /**
+     * It only returns what is the type of
+     * the orders
+     * @param string
+     * @return string
+     */
+    public function getPaymentLabel( $type ) 
+    {
+        switch( $type ) {
+            case 'paid': return __( 'Paid' ); break;
+            case 'unpaid': return __( 'Unpaid' ); break;
+            case 'partially_paid': return __( 'Partially Paid' ); break;
+            default : return sprintf( __( 'Unknown Status (%s)' ), $type ); break;
+        }
+    }
+
+    /**
+     * It only returns what is the type of
+     * the orders
+     * @param string
+     * @return string
+     */
+    public function getShippingLabel( $type ) 
+    {
+        switch( $type ) {
+            case 'pending': return __( 'Pending' ); break;
+            case 'ongoing': return __( 'Ongoing' ); break;
+            case 'delivered': return __( 'Delivered' ); break;
+            case 'failed': return __( 'Shipping Failed' ); break;
+            default : return sprintf( _( 'Unknown Status (%s)' ), $type ); break;
+        }
     }
 }

@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CustomerCrud;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
@@ -83,10 +84,12 @@ class OrdersController extends DashboardController
 
     public function getOrders( Order $id = null ) {
         if ( $id instanceof Order ) {
+            // to autoload customer related model
+            $id->customer;
             return $id;
         }
 
-        return Order::get();
+        return Order::with( 'customer' )->get();
     }
 
     public function showPOS()
@@ -117,6 +120,22 @@ class OrdersController extends DashboardController
     }
 
     public function orderInvoice( Order $order )
+    {
+        $order->load( 'customer' );
+        $order->load( 'products' );
+        $order->load( 'shipping_address' );
+        $order->load( 'billing_address' );
+        $order->load( 'user' );
+
+        return $this->view( 'pages.dashboard.orders.templates.invoice', [
+            'order'     =>  $order,
+            'billing'   =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping'  =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title'     =>  sprintf( __( 'Order Invoice &mdash; %s' ), $order->code )
+        ]);
+    }
+
+    public function orderReceipt( Order $order )
     {
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order'     =>  $order

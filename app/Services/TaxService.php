@@ -174,8 +174,9 @@ class TaxService
      */
     public function computeTax( Product $product, $tax_group_id )
     {
-        $taxGroup                       =   TaxGroup::find( $tax_group_id );
+        $taxGroup                               =   TaxGroup::find( $tax_group_id );
 
+        $product->sale_price                    =   floatval( $product->sale_price_edit );
         $product->incl_tax_sale_price           =   floatval( $product->sale_price_edit );
         $product->incl_tax_wholesale_price      =   floatval( $product->wholesale_price_edit );
 

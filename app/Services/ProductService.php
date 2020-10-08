@@ -270,7 +270,7 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ]);
+        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ] ?? null );
 
         /**
          * save product images

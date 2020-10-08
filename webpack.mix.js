@@ -92,7 +92,7 @@ mix
         'vue-router', 
         'dayjs' 
     ])
-    // .sass('resources/sass/app.scss', 'public/css')
+    .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],

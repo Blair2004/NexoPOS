@@ -9,6 +9,28 @@
     }
 }
 
+@keyframes ZoomInEntrance {
+    0% {
+        transform: scale(0.9,0.9);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}
+
+@keyframes ZoomOutExit {
+    0% {
+        transform: scale(1,1);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(0.9,0.9);
+        opacity: 1;
+    }
+}
+
 @keyframes ZoomInExit {
     0% {
         transform: scale(1,1);
@@ -26,4 +48,22 @@
 
 .zoom-in-exit {
     animation: ZoomInExit 300ms;
+}
+
+.zoom-in-entrance {
+    animation: ZoomInEntrance;
+}
+
+.zoom-out-exit {
+    animation: ZoomOutExit;
+}
+
+.duration-500 {
+    animation-duration: 500ms;
+}
+.duration-250 {
+    animation-duration: 250ms;
+}
+.duration-125 {
+    animation-duration: 125ms;
 }

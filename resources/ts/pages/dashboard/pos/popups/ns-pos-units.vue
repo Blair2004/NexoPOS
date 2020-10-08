@@ -24,7 +24,7 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '../../../../bootstrap';
+import { nsHttpClient, nsSnackBar } from '../../../../bootstrap';
 export default {
     data() {
         return {
@@ -56,6 +56,11 @@ export default {
         loadUnits() {
             nsHttpClient.get( `/api/nexopos/v4/units/pos?ids=${this.$popupParams.product.$original().selling_unit_ids}` )
                 .subscribe( result => {
+                    if ( result.length === 0 ) {
+                        this.$popup.close();
+                        return nsSnackBar.error( 'This product doesn\'t has any unit defined for selling.' ).subscribe();
+                    }
+
                     this.units  =   result;
                 })
         },

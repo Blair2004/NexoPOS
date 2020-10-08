@@ -97,9 +97,9 @@ export class POS {
     }
 
     reset() {
+        this._isSubmitting  =   false;
         this._products.next([]);
         this._customers.next([]);
-        this._types.next([]);
         this._breadcrumbs.next([]);
         this._visibleSection.next( 'both' );
 
@@ -225,7 +225,10 @@ export class POS {
 
                         this.reset();
 
-                    }, error => reject( error ) )
+                    }, error => {
+                        this._isSubmitting  =   false;
+                        reject( error );
+                    })
             }
 
             return reject({ status: 'failed', message: 'Order ongoing...' });

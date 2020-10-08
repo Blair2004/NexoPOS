@@ -23,6 +23,4 @@ const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
     }).join('');
 });
 
-window.nsCurrency   =   nsCurrency;
-
 export { nsCurrency };

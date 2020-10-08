@@ -21,6 +21,8 @@ class CoreService
     {
         $this->currency     =   app()->make( CurrencyService::class );
         $this->update       =   new UpdateService;
+        $this->date         =   app()->make( DateService::class );
+        $this->order        =   app()->make( OrdersService::class );
     }
 
     public function installed()

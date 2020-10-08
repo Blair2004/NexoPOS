@@ -24860,6 +24860,54 @@ video {
   }
 }
 
+@-webkit-keyframes ZoomInEntrance {
+  0% {
+    transform: scale(0.9, 0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes ZoomInEntrance {
+  0% {
+    transform: scale(0.9, 0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes ZoomOutExit {
+  0% {
+    transform: scale(1, 1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(0.9, 0.9);
+    opacity: 1;
+  }
+}
+
+@keyframes ZoomOutExit {
+  0% {
+    transform: scale(1, 1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(0.9, 0.9);
+    opacity: 1;
+  }
+}
+
 @-webkit-keyframes ZoomInExit {
   0% {
     transform: scale(1, 1);
@@ -24892,6 +24940,31 @@ video {
 .zoom-in-exit {
   -webkit-animation: ZoomInExit 300ms;
           animation: ZoomInExit 300ms;
+}
+
+.zoom-in-entrance {
+  -webkit-animation: ZoomInEntrance;
+          animation: ZoomInEntrance;
+}
+
+.zoom-out-exit {
+  -webkit-animation: ZoomOutExit;
+          animation: ZoomOutExit;
+}
+
+.duration-500 {
+  -webkit-animation-duration: 500ms;
+          animation-duration: 500ms;
+}
+
+.duration-250 {
+  -webkit-animation-duration: 250ms;
+          animation-duration: 250ms;
+}
+
+.duration-125 {
+  -webkit-animation-duration: 125ms;
+          animation-duration: 125ms;
 }
 
 .lar,

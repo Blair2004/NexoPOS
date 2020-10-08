@@ -10,6 +10,7 @@ import { Popup } from "./libraries/popup";
 import { Media } from "./libraries/media";
 import Vue from "vue";
 import FormValidation from "./libraries/form-validation";
+import { nsCurrency } from "./filters/currency";
 
 Vue.use( VueRouter );
 
@@ -76,6 +77,7 @@ nsHttpClient.defineClient( Axios );
 window.nsEvent          =   nsEvent;
 window.nsHttpClient     =   nsHttpClient;
 window.nsSnackBar       =   nsSnackBar;
+window.nsCurrency       =   nsCurrency;
 window.nsState          =   nsState;
 window.nsScreen         =   nsScreen;
 window.ChartJS          =   ChartJS;
