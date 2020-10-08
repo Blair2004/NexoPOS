@@ -3,10 +3,6 @@ The CRUD feature helps to manage components easilly by providing UI to create, r
 This is usually created to help managing orders list, customers or anything that will requires to be created, read, updated and deleted.
 The current documentation explains how the CRUD feature works on NexoPOS 4.x.
 
-[
-![screenshot-www youtube com-2020 10 08-11_24_13](https://user-images.githubusercontent.com/5265663/95446877-d62d5800-0958-11eb-822d-9f5997c0805b.jpg)
-](https://www.youtube.com/watch?v=-eXapKZrcBc&t=1149s)
-
 ## Working Principle
 The CRUD use backend and frontend functionnalities to works. We rely on Vue.js to create the frontend table and forms and on the backend to ensure
 configuration, data validation & data saving. The feature has a built-in command that helps to create a CRUD components quickly from the CLI using the command : 
