@@ -80,6 +80,7 @@ mix
     .js('resources/ts/pos.ts', 'public/js')
     .js('resources/ts/auth.ts', 'public/js')
     .js('resources/ts/setup.ts', 'public/js')
+    .js( 'resources/ts/pages/dashboard/orders/ns-order-preview-popup.vue', 'public/js' )
     .extract([ 
         'vue', 
         'lodash', 
@@ -91,7 +92,7 @@ mix
         'vue-router', 
         'dayjs' 
     ])
-    .sass('resources/sass/app.scss', 'public/css')
+    // .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 
-const { nsEvent, nsHttpClient, nsSnackBar }   =   require( './../bootstrap' );
+import { nsEvent, nsHttpClient, nsSnackBar } from "@/bootstrap";
 
 const nsTableRow    =   Vue.component( 'ns-table-row', {
     props: [
@@ -52,11 +52,17 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                             nsSnackBar.error( response.message ).subscribe();
                         })
                 }
+            } else {
+                nsEvent.emit({
+                    identifier: 'ns-table-row-action',
+                    value: { action, row: this.row }
+                });
+                this.toggleMenu();
             }
         }
     },
     template: `
-    <tr class="border-gray-200 border text-sm">
+    <tr :class="row.$cssClass ? row.$cssClass : 'border-gray-200 border text-sm'">
         <td class="text-gray-700 font-sans border-gray-200 p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
@@ -70,7 +76,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             <template v-for="action of row.$actions">
                                 <a :href="action.url" v-if="action.type === 'GOTO'" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">{{ action.label }}</a>
-                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE' ].includes( action.type )" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">{{ action.label }}</a>
+                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem">{{ action.label }}</a>
                             </template>
                         </div>
                     </div>

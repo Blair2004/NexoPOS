@@ -9,4 +9,9 @@ class OrderProduct extends Model
     use HasFactory;
     
     protected $table    =   'nexopos_' . 'orders_products';
+
+    public function unit()
+    {
+        return $this->hasOne( Unit::class, 'id', 'unit_id' );
+    }
 }

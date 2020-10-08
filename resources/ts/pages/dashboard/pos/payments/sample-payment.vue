@@ -75,9 +75,9 @@ export default {
             orderSubscription: null,
             allSelected: true,
             keys: [
-                ...([1,2,3].map( key => ({ identifier: key, value: key }))),
-                ...([4,5,6].map( key => ({ identifier: key, value: key }))),
                 ...([7,8,9].map( key => ({ identifier: key, value: key }))),
+                ...([4,5,6].map( key => ({ identifier: key, value: key }))),
+                ...([1,2,3].map( key => ({ identifier: key, value: key }))),
                 ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
             ]
         }

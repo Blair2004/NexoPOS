@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use App\Services\OrdersService;
 use App\Events\ProcurementAfterUpdateEvent;
+use App\Models\Order;
 use App\Models\Procurement;
 
 // use Tendoo\Core\Services\Page;
@@ -54,7 +55,7 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        return $this->view( 'pages.dashboard.orders', [
+        return $this->view( 'pages.dashboard.orders.list', [
             'title' =>  __( 'Orders' )
         ]);
     }
@@ -78,6 +79,14 @@ class OrdersController extends DashboardController
     {
         $order  =   $this->ordersService->getOrder( $orderId );
         return $this->ordersService->deleteOrderProduct( $order, $productId );
+    }
+
+    public function getOrders( Order $id = null ) {
+        if ( $id instanceof Order ) {
+            return $id;
+        }
+
+        return Order::get();
     }
 
     public function showPOS()
@@ -104,6 +113,13 @@ class OrdersController extends DashboardController
                 ]
             ],
             'paymentTypes'  =>  $paymentTypes
+        ]);
+    }
+
+    public function orderInvoice( Order $order )
+    {
+        return $this->view( 'pages.dashboard.orders.templates.invoice', [
+            'order'     =>  $order
         ]);
     }
 }

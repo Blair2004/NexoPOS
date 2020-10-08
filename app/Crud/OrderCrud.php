@@ -390,11 +390,6 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'net_total'  =>  [
-                'label'  =>  __( 'Net Total' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'total'  =>  [
                 'label'  =>  __( 'Total' ),
                 '$direction'    =>  '',
@@ -416,6 +411,13 @@ class OrderCrud extends CrudService
                 '$sort'         =>  false
             ],
         ];
+    }
+
+    public function hook( $query )
+    {
+        if ( empty( request()->query( 'direction' ) ) ) {
+            $query->orderBy( 'id', 'desc' );
+        }
     }
 
     /**
@@ -453,9 +455,18 @@ class OrderCrud extends CrudService
         }
 
         switch( $entry->payment_status ) {
-            case 'paid' : $entry->payment_status              = __( 'Paid' ); break;
-            case 'unpaid' : $entry->payment_status            = __( 'Unpaid' ); break;
-            case 'partially_paid' : $entry->payment_status    = __( 'Partially paid' ); break;
+            case 'paid' : 
+                $entry->payment_status              = __( 'Paid' ); 
+                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+            break;
+            case 'unpaid' : 
+                $entry->payment_status            = __( 'Unpaid' ); 
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+            break;
+            case 'partially_paid' : 
+                $entry->payment_status    = __( 'Partially paid' ); 
+                $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
+            break;
         }
 
         // you can make changes here
@@ -464,8 +475,12 @@ class OrderCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
+            ], [
+                'label'         =>      __( 'Options' ),
+                'namespace'     =>      'ns.order-options',
+                'type'          =>      'POPUP',
+                'url'           =>      url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

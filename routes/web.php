@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Dashboard\OrdersController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +34,11 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
     Route::middleware([ 'auth' ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
-        Route::get( '/dashboard/orders', 'Dashboard\OrdersController@listOrders' );
-        Route::get( '/dashboard/pos', 'Dashboard\OrdersController@showPOS' );
+
+        Route::get( '/dashboard/orders', [ OrdersController::class, 'listOrders' ]);
+        Route::get( '/dashboard/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
+        Route::get( '/dashboard/pos', [ OrdersController::class, 'showPOS' ]);
+
         Route::get( '/dashboard/customers', 'Dashboard\CustomersController@listCustomers' );
         Route::get( '/dashboard/customers/create', 'Dashboard\CustomersController@createCustomer' );
         Route::get( '/dashboard/customers/edit/{customer}', 'Dashboard\CustomersController@editCustomer' );

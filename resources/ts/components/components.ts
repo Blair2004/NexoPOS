@@ -15,6 +15,8 @@ import { nsMultiselect }        from  './ns-multiselect';
 import { nsSwitch }             from  './ns-switch';
 import { nsDate }               from  './ns-date';
 import { nsMediaInput }         from  './ns-media-input';
+import { nsCloseButton }        from  './ns-close-button';
+import { nsTabs, nsTabsItem }   from  './ns-tabs';
 
 export { nsMenu };
 export { nsSubmenu };
@@ -33,3 +35,5 @@ export { nsMultiselect };
 export { nsSwitch };
 export { nsDate };
 export { nsMediaInput };
+export { nsCloseButton };
+export { nsTabs, nsTabsItem };

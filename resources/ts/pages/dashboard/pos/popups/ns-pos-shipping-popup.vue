@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class=" p-2 flex justify-between border-t border-gray-300">
+        <div class="p-2 flex justify-between border-t border-gray-300">
             <div></div>
             <div>
                 <ns-button @click="submitInformations()" type="info">Save</ns-button>

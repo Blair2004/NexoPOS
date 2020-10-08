@@ -33,10 +33,10 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
-    private _responsive     =   new Responsive;
+    private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting       =   false;
-    private defaultOrder    =   {
+    private defaultOrder        =   () => ({
         discount_type: null,
         discount: 0,
         discount_percentage: 0,
@@ -58,7 +58,7 @@ export class POS {
             shipping: undefined,
             billing: undefined
         }
-    }
+    })
 
     constructor() {
         this.initialize();
@@ -101,9 +101,20 @@ export class POS {
         this._customers.next([]);
         this._types.next([]);
         this._breadcrumbs.next([]);
-        this._paymentsType.next([]);
         this._visibleSection.next( 'both' );
-        this.order.
+
+        /**
+         * to cancel selected payment
+         */
+        this._paymentsType.next( this.paymentsType.getValue().map( payment => {
+            payment.selected    =   false;
+            return payment;
+        }) );
+
+        /**
+         * to reset order details
+         */
+        this.order.next( this.defaultOrder() );
     }
 
     public initialize()
@@ -115,7 +126,7 @@ export class POS {
         this._screen            =   new BehaviorSubject<string>('');
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );       
-        this._order             =   new BehaviorSubject<Order>( this.defaultOrder );
+        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         
         /**
