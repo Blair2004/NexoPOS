@@ -446,14 +446,15 @@ class OrdersService
             if ($product['product']['tax_type'] !== 'disabled') {
                 $orderProduct->tax_group_id         =   $product['product']->tax_group_id;
                 $orderProduct->tax_type             =   $product['product']->tax_type;
-                $orderProduct->tax_value            =   $this->currencyService->define($product['product']->tax_value)
-                    ->multiplyBy($product['quantity'])
-                    ->get();
+                $orderProduct->tax_value            =   $product[ 'tax_value' ];
             }
 
             $orderProduct->sale_price           =   $product['sale_price'];
             $orderProduct->net_price            =   $product['product']->incl_tax_sale_price;
             $orderProduct->gross_price          =   $product['product']->excl_tax_sale_price;
+            $orderProduct->discount_type        =   $product['product']->excl_tax_sale_price;
+            $orderProduct->discount             =   $product[ 'discount' ];
+            $orderProduct->discount_percentage  =   $product['discount_percentage'];
 
             $orderProduct->total_gross_price    =   $this->currencyService->define($product['product']->excl_tax_sale_price)
                 ->multiplyBy($product['quantity'])
@@ -474,12 +475,8 @@ class OrdersService
                 ->additionateBy($orderProduct->total_price)
                 ->get();
 
-            $productTax     =   $this->currencyService->define($product['tax_value'])
-                ->multiplyBy($orderProduct['quantity'])
-                ->get();
-
             $taxes  =   $this->currencyService->define($taxes)
-                ->additionateBy($productTax)
+                ->additionateBy($product[ 'tax_value' ])
                 ->get();
 
             $this->productService->stockAdjustment('sold', $history);

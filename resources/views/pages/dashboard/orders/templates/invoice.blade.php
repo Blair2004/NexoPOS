@@ -65,7 +65,7 @@ use App\Models\Order;
                                         @if( $order->type === Order::TYPE_DELIVERY )
                                         <li class="flex justify-between text-gray-600 text-sm mb-1">
                                             <span class="font-semibold">{{ __( 'Delivery Status' ) }}</span>
-                                            <span>{{ ns()->order->getDeliveryLabel( $order->delivery_status ) }}</span>
+                                            <span>{{ ns()->order->getShippingLabel( $order->delivery_status ) }}</span>
                                         </li>
                                         @endif
                                     </ul>
