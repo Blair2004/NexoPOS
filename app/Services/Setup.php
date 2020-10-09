@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -166,6 +168,10 @@ class Setup
         /**
          * Set version to close setup
          */
+        $domain     =   Str::replaceFirst( 'http://', '', url( '/' ) );
+        $domain     =   Str::replaceFirst( 'https://', '', $domain );
+        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain );
+
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::save();
 

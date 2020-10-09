@@ -4,6 +4,7 @@ import * as rxjs from 'rxjs';
 export class HttpClient {
     _subject: rxjs.Subject<{}>;
     _client;
+    private _lastRequestData;
 
     constructor() {
         this._subject    =   new rxjs.Subject; 
@@ -29,13 +30,18 @@ export class HttpClient {
         return this._request( 'put', url, data, config );
     }
 
+    get response() {
+        return this._lastRequestData;
+    }
+
     _request( type, url, data = {}, config = {} ) {
         this._subject.next({ identifier: 'async.start', url, data });
         return new rxjs.Observable( observer => {
             this._client[ type ]( url, data, { 
                 ...this._client.defaults[ type ],
-                config
+                ...config
             }).then( result => {
+                this._lastRequestData   =   result;
                 observer.next( result.data );
                 observer.complete();
                 this._subject.next({ identifier: 'async.stop' });

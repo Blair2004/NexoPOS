@@ -19,6 +19,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "jackiedo/dotenv-editor": "^1.1",
         "laravel/framework": "^8.0",
+        "laravel/sanctum": "^2.6",
         "laravel/telescope": "^4.0",
         "laravel/tinker": "^2.0",
         "laravie/parser": "^2.1",

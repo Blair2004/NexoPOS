@@ -14,9 +14,6 @@ const nsLink      =   Vue.component( 'ns-link', {
         <a v-if="href" :href="href" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
     </div>
     `,
-    mounted() {
-        console.log( this );
-    },
     computed: {
         buttonclass() {
             switch( this.type ) {
