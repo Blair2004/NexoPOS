@@ -15,18 +15,53 @@ class OrderTest extends TestCase
      */
     public function testPostingOrder()
     {
-
-        $response = $this->withCookies([
-            'XSRF-TOKEN'        =>  'eyJpdiI6IkMxQmd4YjZoZDhURG1mN05RbFlROGc9PSIsInZhbHVlIjoidTdyWnQwQW5JZ2lDOXE1UWc2b3pIRHErRm52ek5WY2pMNkx6eTl6ZlczYlZsdHJtMFZWTzg3QnRIVFdPWU9Pc1V6Z00rTnRBVWpxaUlQU1FLRW41cXNMTm5uT0hoN1RrZVNlT1IwRHRqeGZFcjBXSWtKMnJNdXFuRnhkOHpYMVMiLCJtYWMiOiI0NjU4ZmY2NjBkYWExZjI5NzY0MTM3YTk4YmFlZWZlMjc0M2NiOGNhMTMzZGQ4MTlkMmI0NWVkNzAxZjczOWNmIn0%3D',
-            'laravel_session'   =>  'eyJpdiI6Ik94dE1Ycmx3WkdDR21JWmRuREhvalE9PSIsInZhbHVlIjoiSEpSdVpqeU80c2ZHT2hLWldTRXRReGNWUmZhOElsUXdnVThYWVFlN3BhVklTK01jYTVHdU9zNDV1ekhaSHR2akxBMFN2NDhnODFZdzRSWmtROUFtbWN2NzZzVGxDL2UxRlRaYmJvSlorVzBMcm4wVHZLaitHSXRCUzN1TURSN2IiLCJtYWMiOiJiN2NhMWNlYzRhYTY0MWMyY2U3OWNlMDcwOWEyNmZhM2RjMDI3NmM4YTc5ZGJhMGE5NGYxMmIxMWViYmQ3YjU0In0%3D',
-        ])->json( 'GET', 'api/nexopos/v4/medias', [
-
+        $this->json( 'POST', 'auth/sign-in', [
+            'username'  =>  env( 'TEST_USERNAME' ),
+            'password'  =>  env( 'TEST_PASSWORD' )
         ]);
 
-        $response->dump();
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', [
+                'customer_id'           =>  1,
+                'type'                  =>  [ 'identifier' => 'cash' ],
+                'discount_type'         =>  'percentage',
+                'discount_percentage'   =>  2.5,
+                'addresses'             =>  [
+                    'shipping'          =>  [
+                        'name'          =>  'First Name Delivery',
+                        'surname'       =>  'Surname',
+                        'country'       =>  'Cameroon',
+                    ],
+                    'billing'          =>  [
+                        'name'          =>  'EBENE Voundi',
+                        'surname'       =>  'Antony Hervé',
+                        'country'       =>  'United State Seattle',
+                    ]
+                ],
+                'shipping'              =>  150,
+                'products'              =>  [
+                    [
+                        'product_id'    =>  1,
+                        'quantity'      =>  5,
+                        'sale_price'    =>  12,
+                        'unit_id'       =>  1, // 'piece'
+                    ]
+                ],
+                'payments'              =>  [
+                    [
+                        'identifier'    =>  'cash',
+                        'amount'        =>  60 + 150
+                    ]
+                ]
+            ]);
         
-        // $response->assertRedirect( '/sign-in' );
+        $response->assertJson([
+            'status'    =>  'success'
+        ]);
 
-        $response->assertStatus(200);
+        $response->assertJsonPath(
+            'data.order.total', 58.5 + 150,
+            'data.order.change', ( 60 + 150 ) - 58.5,
+        );
     }
 }

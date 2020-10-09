@@ -168,6 +168,28 @@ class TaxService
         return $tax;
     }
 
+    public function getComputedTaxGroupValue( $tax_type, $tax_group_id, $price )
+    {
+        $taxGroup       =   TaxGroup::find( $tax_group_id );
+        $taxValue       =   0;  
+
+        if ( $taxGroup instanceof TaxGroup ) {
+            $taxValue       =   $taxGroup->taxes
+                ->map( function( $tax ) use ( $tax_type, $price ) {
+                    $taxValue           =   $this->getVatValue(
+                        $tax_type,
+                        floatval( $tax[ 'rate' ] ),
+                        $price
+                    );
+
+                    return $taxValue;
+                })
+                ->sum();
+        }
+
+        return $taxValue;
+    }
+
     /**
      * compute the tax added to a 
      * product
@@ -185,37 +207,6 @@ class TaxService
          * inclusive or exclusive for the sale_price
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            $taxValue       =   $taxGroup->taxes
-                ->map( function( $tax ) use ( $product ) {
-                    $taxValue           =   $this->getVatValue(
-                        $product->tax_type,
-                        floatval( $tax[ 'rate' ] ),
-                        $product->sale_price_edit
-                    );
-
-                    $productTax                 =   ProductTax::where( 'tax_id', $tax->id )
-                        ->where( 'product_id', $product->id )
-                        ->first();
-
-                    /**
-                     * if the tax hasn't yet been set, we'll create a new instance
-                     */
-                    if( ! $productTax instanceof ProductTax ) {
-                        $productTax                 =   new ProductTax;
-                    }
-
-                    $productTax->product_id     =   $product->id;
-                    $productTax->tax_id         =   $tax->id;
-                    $productTax->rate           =   $tax->rate;
-                    $productTax->name           =   $tax->name;
-                    $productTax->author         =   Auth::id();
-                    $productTax->value          =   $taxValue;
-                    $productTax->save();
-
-                    return $taxValue;
-                })
-                ->sum();
-
             $taxRate        =   $taxGroup->taxes
                 ->map( function( $tax ) {
                     return floatval( $tax[ 'rate' ] );
@@ -240,7 +231,11 @@ class TaxService
                 );
             }
 
-            $product->tax_value                 =   $taxValue;
+            $product->tax_value                 =   $this->getComputedTaxGroupValue( 
+                $product->tax_type, 
+                $tax_group_id, 
+                $product->sale_price_edit 
+            );
         }
 
         /**
@@ -248,23 +243,6 @@ class TaxService
          * inclusive or exclusive for the wholesale price
          */
         if ( $taxGroup instanceof TaxGroup ) {
-            $taxValue       =   $taxGroup->taxes
-                ->map( function( $tax ) use ( $product ) {
-                    $taxValue           =   ( floatval( $tax[ 'rate' ] ) * $product->wholesale_price_edit ) / 100;
-
-                    $productTax                 =   new ProductTax;
-                    $productTax->product_id     =   $product->id;
-                    $productTax->tax_id         =   $tax->id;
-                    $productTax->rate           =   $tax->rate;
-                    $productTax->name           =   $tax->name;
-                    $productTax->author         =   Auth::id();
-                    $productTax->value          =   $taxValue;
-                    $productTax->save();
-
-                    return $taxValue;
-                })
-                ->sum();
-
             $taxRate        =   $taxGroup->taxes
                 ->map( function( $tax ) {
                     return floatval( $tax[ 'rate' ] );
@@ -288,7 +266,15 @@ class TaxService
                 );
             }
 
-            $product->tax_value                 =   $taxValue;
+            /**
+             * Let's simplify tax
+             * calculation for a group
+             */
+            $product->tax_value                 =   $this->getComputedTaxGroupValue( 
+                $product->tax_type, 
+                $tax_group_id, 
+                $product->wholesale_price_edit 
+            );
         }
 
         $product->save();

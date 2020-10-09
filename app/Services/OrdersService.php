@@ -43,13 +43,17 @@ class OrdersService
     /** @var Options */
     protected $optionsService;
 
+    /** @var TaxService */
+    protected $taxService;
+
     public function __construct(
         CustomerService $customerService,
         ProductService $productService,
         UnitService $unitService,
         DateService $dateService,
         CurrencyService $currencyService,
-        Options $optionsService
+        Options $optionsService,
+        TaxService $taxService
     ) {
         $this->customerService  =   $customerService;
         $this->productService   =   $productService;
@@ -57,6 +61,7 @@ class OrdersService
         $this->unitService      =   $unitService;
         $this->currencyService  =   $currencyService;
         $this->options          =   $optionsService;
+        $this->taxService       =   $taxService;
     }
 
     public function create($fields)
@@ -83,13 +88,13 @@ class OrdersService
          *      'gross_total_price' =>  // total unit price without taxe over
          * }
          */
-        $items      =   $this->__checkProductStock($fields['products']);
+        $fields[ 'products' ]      =   $this->__checkProductStock($fields['products']);
 
         /**
          * check discount validity and throw an
          * error is something is not set correctly.
          */
-        $this->__checkDiscountVality($fields, $items);
+        $this->__checkDiscountVality( $fields );
 
         /**
          * determine the value of the product 
@@ -100,13 +105,13 @@ class OrdersService
          * @param array $payments
          * @param string $paymentStatus
          */
-        extract($this->__checkOrderPayments($items, $fields));
+        extract($this->__checkOrderPayments( $fields ) );
 
         /**
          * check delivery informations before
          * proceeding
          */
-        $this->__checkAddressesInformations($fields);
+        $this->__checkAddressesInformations( $fields );
 
         /**
          * ------------------------------------------
@@ -126,14 +131,12 @@ class OrdersService
          * @var float $taxes
          * @var float $subTotal
          */
-        extract($this->__saveOrderProducts($order, $items));
+        extract($this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
 
         /**
          * compute order total
          */
         $this->__computeOrderTotal( compact( 'order', 'subTotal', 'taxes', 'paymentStatus', 'totalPayments') );
-
-        $this->__saveOrderDiscount($order, $fields);
 
         $order->save();
 
@@ -143,7 +146,11 @@ class OrdersService
          */
         event(new OrderAfterCreatedEvent($order));
 
-        return $order;
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The order has been placed.' ),
+            'data'      =>  compact( 'order' )
+        ];
     }
 
     private function __saveOrderDiscount($order, $fields)
@@ -155,23 +162,23 @@ class OrdersService
         switch ($fields['discount_type']) {
             case 'flat':
                 $order->discount        =   $this->currencyService->define($fields['discount'])->get();
-                $order->total           =   $this->currencyService->define($order->total)
+                $order->total           =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($order->discount)
                     ->get();
-                $order->gross_total     =   $this->currencyService->define($order->total)
+                $order->gross_total     =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($order->discount)
                     ->get();
                 break;
             case 'percentage':
-                $discountValue      =   $this->currencyService->define($order->total)
-                    ->multipliedBy($fields['discount'])
+                $discountValue      =   $this->currencyService->define($order->subtotal)
+                    ->multipliedBy( $fields['discount_percentage'] )
                     ->dividedBy(100)
                     ->get();
                 $order->discount    =   $discountValue;
-                $order->total       =   $this->currencyService->define($order->total)
+                $order->total       =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($discountValue)
                     ->get();
-                $order->gross_total =   $this->currencyService->define($order->total)
+                $order->gross_total =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($discountValue)
                     ->get();
                 break;
@@ -195,18 +202,18 @@ class OrdersService
      * @param array fields
      * @return void|Exception
      */
-    public function __checkDiscountVality($fields, $products)
+    public function __checkDiscountVality( $fields )
     {
         if (!empty(@$fields['discount_type'])) {
 
-            if ($fields['discount_type'] === 'percentage' && (floatval($fields['discount']) < 0) || (floatval($fields['discount']) > 100)) {
+            if ($fields['discount_type'] === 'percentage' && (floatval($fields['discount_percentage']) < 0) || (floatval($fields['discount_percentage']) > 100)) {
                 throw new NotAllowedException([
                     'status'    =>  'failed',
                     'message'   =>  __('The percentage discount provided is not valid.')
                 ]);
             } else if ($fields['discount_type'] === 'flat') {
 
-                $productsTotal    =   $products->map(function ($product) {
+                $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
                     return floatval($product['quantity']) * floatval($product['sale_price']);
                 })->reduce(function ($before, $after) {
                     return $before + $after;
@@ -291,6 +298,8 @@ class OrdersService
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
         }
+
+        $order->tendered    =   collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'amount' ] ) )->sum();
     }
 
     /**
@@ -300,17 +309,17 @@ class OrdersService
      * @param Collection $products
      * @param array field
      */
-    private function __checkOrderPayments($products, $fields)
+    private function __checkOrderPayments( $fields)
     {
         $totalPayments  =   0;
 
-        $total          =   $products->map(function ($product) {
+        $total          =   $fields[ 'products' ]->map(function ($product) {
             return floatval($product['total_price']);
         })->sum() + $this->__getShippingFee($fields);
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
-        foreach ($fields['payments'] as $payment) {
+        foreach ( $fields['payments'] as $payment) {
             if (in_array($payment['identifier'], array_keys($allowedPaymentsGateways))) {
                 $totalPayments  =   $this->currencyService->define($totalPayments)
                     ->additionateBy($payment['amount'])
@@ -378,7 +387,7 @@ class OrdersService
          * increase the total with the
          * shipping fees and subtract the discounts
          */
-        $order->total           =   $this->currencyService->define( $subTotal )
+        $order->total           =   $this->currencyService->define( $order->subtotal )
             ->additionateBy( $order->shipping )
             ->subtractBy( $order->discount )
             ->get();
@@ -389,18 +398,16 @@ class OrdersService
         /**
          * compute change
          */
-        $order->change          =   $this->currencyService->define($totalPayments)
-            ->subtractBy( $subTotal )
+        $order->change          =   $this->currencyService->define( $order->tendered )
+            ->subtractBy( $order->total )
             ->get();
 
         /**
          * compute gross total
          */
-        $order->gross_total     =   $this->currencyService->define( $subTotal )
+        $order->gross_total     =   $this->currencyService->define( $order->subtotal )
             ->subtractBy($taxes)
             ->get();
-
-        $order->tendered        =   $totalPayments;
 
         return $order;
     }
@@ -443,7 +450,7 @@ class OrdersService
              * We might need to have another consideration
              * on how we do compute the taxes
              */
-            if ($product['product']['tax_type'] !== 'disabled') {
+            if ( $product['product']['tax_type'] !== 'disabled' && ! empty( $product['product']->tax_group_id )) {
                 $orderProduct->tax_group_id         =   $product['product']->tax_group_id;
                 $orderProduct->tax_type             =   $product['product']->tax_type;
                 $orderProduct->tax_value            =   $product[ 'tax_value' ];
@@ -452,9 +459,9 @@ class OrdersService
             $orderProduct->sale_price           =   $product['sale_price'];
             $orderProduct->net_price            =   $product['product']->incl_tax_sale_price;
             $orderProduct->gross_price          =   $product['product']->excl_tax_sale_price;
-            $orderProduct->discount_type        =   $product['product']->excl_tax_sale_price;
-            $orderProduct->discount             =   $product[ 'discount' ];
-            $orderProduct->discount_percentage  =   $product['discount_percentage'];
+            $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
+            $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
+            $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
 
             $orderProduct->total_gross_price    =   $this->currencyService->define($product['product']->excl_tax_sale_price)
                 ->multiplyBy($product['quantity'])
@@ -524,7 +531,6 @@ class OrdersService
             &$productCollection,
             &$fakeStorage
         ) {
-
             /**
              * Get the product if it's not yet 
              * defined
@@ -537,6 +543,12 @@ class OrdersService
                         return $this->productService->getProductUsingSKUOrFail($orderProduct['sku']);
                     }
                 });
+            
+            /**
+             * This will calculate the product default field
+             * when they aren't provided. 
+             */
+            $orderProduct   =   $this->computeProduct( $orderProduct, $product );
 
             /**
              * doest the unit is already stored ?
@@ -644,8 +656,9 @@ class OrdersService
                 }
             }
 
-            $orderProduct['unit']     =   $unit;
-            $orderProduct['product']  =   $product;
+            $orderProduct[ 'unit' ]             =   $unit;
+            $orderProduct[ 'total_price' ]      =   $orderProduct[ 'total_price' ];
+            $orderProduct[ 'product' ]          =   $product;
 
             return $orderProduct;
         });
@@ -664,6 +677,52 @@ class OrdersService
         });
 
         return $items;
+    }
+
+    public function computeProduct( $fields, Product $product )
+    {
+        $sale_price     =   ( $fields[ 'sale_price' ] ?? $product->sale_price );
+        
+        /**
+         * if the discount value wasn't provided, it would have
+         * been calculated based on the "discount_percentage" & "discount_type"
+         * informations.
+         */
+        if ( 
+            isset( $fields[ 'discount_percentage' ] ) && 
+            isset( $fields[ 'discount_type' ] ) && 
+            $fields[ 'discount_type' ] === 'percentage' &&
+            empty( $fields[ 'discount' ] ) ) {
+            $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 );
+        } else {
+            $fields[ 'discount' ]       =   $fields[ 'discount' ] ?? 0;
+        }
+
+        /**
+         * if the item is assigned to a tax group
+         * it should compute the tax otherwise
+         * the value is "0".
+         */
+        if ( empty( $fields[ 'tax_value' ] ) ) {
+            $fields[ 'tax_value' ]      =   $this->taxService->getComputedTaxGroupValue(
+                $product->tax_type,
+                $product->tax_group_id,
+                $sale_price
+            ) * floatval( $fields[ 'quantity' ] );        
+        }
+
+        /**
+         * If the total_price is not defined
+         * let's compute that
+         */
+        if ( empty( $fields[ 'total_price' ] ) ) {
+            $fields[ 'total_price' ]    =   ( 
+                $sale_price - 
+                $fields[ 'discount' ]
+            ) * floatval( $fields[ 'quantity' ] );
+        }
+
+        return $fields;
     }
 
     /**
@@ -703,23 +762,53 @@ class OrdersService
          */
         $order                      =   new Order;
         $order->customer_id         =   $fields['customer_id'];
-        $order->total               =   $fields['total'];
-        $order->shipping            =   $fields['shipping'];
-        $order->discount            =   $fields['discount'];
-        $order->discount_type       =   $fields['discount_type'];
-        $order->subtotal            =   $fields[ 'subtotal' ];
-        $order->discount_percentage =   $fields['discount_percentage'];
-        // $order->gross_total         =   0;
+        $order->shipping            =   $fields[ 'shipping' ] ?? 0; // if shipping is not provided, we assume it's free
+        $order->subtotal            =   $fields[ 'subtotal' ] ?? $this->computeSubTotal( $fields, $order );
+        $order->discount_type       =   $fields['discount_type'] ?? null;
+        $order->discount_percentage =   $fields['discount_percentage'] ?? 0;
+        $order->discount            =   $fields['discount'] ?? $this->computeDiscount( $fields, $order );
+        $order->total               =   $fields[ 'total' ] ?? $this->computeTotal( $fields, $order );
         $order->type                =   $fields['type']['identifier'];
         $order->payment_status      =   'unpaid';
         $order->delivery_status     =   'pending';
         $order->process_status      =   'pending';
         $order->author              =   Auth::id();
-        $order->tax_value           =   $fields['tax_value'];
+        $order->tax_value           =   $fields[ 'tax_value' ] ?? $this->computeOrderTaxValue( $fields, $order );
         $order->code                =   $this->generateOrderCode();
         $order->save();
 
         return $order;
+    }
+
+    /**
+     * Compute the discount data
+     * @param array $fields
+     * @return int $discount
+     */
+    public function computeDiscount( $fields, $order )
+    {
+        if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
+            return ( floatval( $fields[ 'subtotal' ] ?? $order->subtotal ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100;
+        } else {
+            return $fields[ 'discount' ] ?? 0;
+        }
+    }
+
+    public function computeOrderTaxValue( $fields, $order )
+    {
+        return $fields[ 'products' ]->map( fn( $product ) => $product[ 'tax_value' ] )->sum();
+    }
+
+    public function computeTotal( $fields, $order )
+    {
+        return ( $order->subtotal - $order->discount ) + $order->shipping;
+    }
+
+    public function computeSubTotal( $fields, $order )
+    {
+        return collect( $fields[ 'products' ] )
+            ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
+            ->sum();
     }
 
     private function __customerIsDefined($fields)
