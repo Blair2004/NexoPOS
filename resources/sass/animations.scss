@@ -42,28 +42,30 @@
     }
 }
 
+@keyframes FadeInEntrance {
+    0% {
+        opacity: 0;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 .zoom-out-entrance {
     animation: ZoomOutEntrance 500ms;
 }
-
-.zoom-in-exit {
-    animation: ZoomInExit 300ms;
-}
-
 .zoom-in-entrance {
     animation: ZoomInEntrance;
 }
-
+.zoom-in-exit {
+    animation: ZoomInExit 300ms;
+}
 .zoom-out-exit {
     animation: ZoomOutExit;
 }
-
-.duration-500 {
-    animation-duration: 500ms;
-}
-.duration-250 {
-    animation-duration: 250ms;
-}
-.duration-125 {
-    animation-duration: 125ms;
+.fade-in-entrance {
+    animation: FadeInEntrance;
 }

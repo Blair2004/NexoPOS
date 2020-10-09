@@ -21,6 +21,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix( 'nexopos/v4' )->group( function() {
     
+    include( dirname( __FILE__ ) . '/api/fields.php' );
+
     Route::middleware([ 'auth:sanctum', 'ns.installed' ])->group( function() {
         foreach([ '' ] as $prefix ) {  // '/store/{store_id}/'
             Route::prefix( $prefix )->group( function() {

@@ -1,4 +1,5 @@
 import { timeStamp } from 'console';
+import { forkJoin } from 'rxjs';
 import Vue from 'vue';
 import { nsHttpClient, nsSnackBar } from './bootstrap';
 import * as components from './components/components';
@@ -17,26 +18,14 @@ new Vue({
         }
     },
     mounted() {
-        nsHttpClient.get( '/sanctum/csrf-cookie' )
-            .subscribe( result => {
-                this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
-            });
-        
-        this.fields     =   this.validation.createFields([
-            {
-                'label'         :   'Username',
-                'type'          :   'text',
-                'name'          :   'username',
-                'description'   :   'Provide your actual username',
-                'validation'    :   'required'
-            }, {
-                'label'         :   'Password',
-                'type'          :   'password',
-                'name'          :   'password',
-                'description'   :   'Provide your secured password.',
-                'validation'    :   'required'
-            }
-        ]);
+        forkJoin([
+            nsHttpClient.get( '/api/nexopos/v4/fields/ns.auth' ),
+            nsHttpClient.get( '/sanctum/csrf-cookie' ),
+        ])
+        .subscribe( result => {
+            this.fields         =   this.validation.createFields( result[0] );
+            this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+        });
     },
     methods: {
         signIn() {

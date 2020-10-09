@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Fields\AuthLoginFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -40,6 +41,14 @@ class FormsProvider extends ServiceProvider
                 break;
             }
             return $class;
+        }, 10, 2 );
+
+        Hook::addFilter( 'ns.fields', function( $class, $identifier ) {
+            switch( $class ) {
+                case 'ns.auth' :
+                    return new AuthLoginFields;
+                break;
+            }
         }, 10, 2 );
     }
 }

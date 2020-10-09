@@ -11,7 +11,7 @@
                     </div>
                     <div class="bg-white rounded shadow overflow-hidden">
                         <div class="p-3 -my-2">
-                            <div class="py-2">
+                            <div class="py-2 fade-in-entrance duration-300" v-if="fields.length > 0">
                                 <ns-field v-for="field of fields" :field="field"></ns-field>
                             </div>
                         </div>
