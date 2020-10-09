@@ -101,7 +101,7 @@ export class POS {
         this._products.next([]);
         this._customers.next([]);
         this._breadcrumbs.next([]);
-        this._visibleSection.next( 'both' );
+        this.defineCurrentScreen();
 
         /**
          * to cancel selected payment
