@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col">
+    <div class="bg-white w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
             <h3 class="font-bold text-gray-700">Shipping & Billing</h3>
             <div class="tools">
@@ -8,7 +8,7 @@
                 </button>
             </div>
         </div>
-        <div class="flex-auto bg-gray-200 p-4">
+        <div class="flex-auto bg-gray-200 p-4 overflow-y-auto">
             <div id="tabs-container" class="my-5">
                 <div class="header flex" style="margin-bottom: -1px;">
                     <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>

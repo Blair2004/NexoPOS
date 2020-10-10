@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
 use Illuminate\Support\Facades\View;
@@ -22,6 +23,7 @@ use Exception;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 
 class AuthController extends Controller
 {
@@ -70,8 +72,16 @@ class AuthController extends Controller
             'password'  =>  $request->input( 'password' )
         ]);
 
-        if ( $attempt ) {
+        if ( request()->expectsJson() ) {
+            return $this->handleJsonRequests( $request, $attempt );
+        } else {
+            return $this->handleNormalRequests( $request, $attempt );
+        }
+    }
 
+    public function handleNormalRequests( $request, $attempt )
+    {
+        if ( $attempt ) {
             /**
              * check if the account is authorized to 
              * login
@@ -93,6 +103,26 @@ class AuthController extends Controller
         $validator->errors()->add( 'password', __( 'Unable to find record having that password.' ) );
 
         return redirect( route( 'ns.login' ) )->withErrors( $validator );
+    }
+
+    public function handleJsonRequests( $request, $attempt )
+    {
+        if ( ! $attempt ) {
+            throw new NotAllowedException( __( 'Invalid username or password.' ) );
+        }
+
+        if ( ! Auth::user()->active ) {
+            Auth::logout();                    
+            throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
+        }
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'You have been successfully connected.' ),
+            'data'      =>  [
+                'redirectTo'    =>  redirect()->intended()->getTargetUrl() ?? url( '/dashboard' )
+            ]
+        ];
     }
 
     /**

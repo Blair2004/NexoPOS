@@ -151,7 +151,8 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( UnitService::class ),
                 $app->make( DateService::class ),
                 $app->make( CurrencyService::class ),
-                $app->make( Options::class )
+                $app->make( Options::class ),
+                $app->make( TaxService::class ),
             );
         });
 

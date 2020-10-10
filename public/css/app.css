@@ -24932,14 +24932,37 @@ video {
   }
 }
 
+@-webkit-keyframes FadeInEntrance {
+  0% {
+    opacity: 0;
+  }
+
+  70% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes FadeInEntrance {
+  0% {
+    opacity: 0;
+  }
+
+  70% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 .zoom-out-entrance {
   -webkit-animation: ZoomOutEntrance 500ms;
           animation: ZoomOutEntrance 500ms;
-}
-
-.zoom-in-exit {
-  -webkit-animation: ZoomInExit 300ms;
-          animation: ZoomInExit 300ms;
 }
 
 .zoom-in-entrance {
@@ -24947,24 +24970,19 @@ video {
           animation: ZoomInEntrance;
 }
 
+.zoom-in-exit {
+  -webkit-animation: ZoomInExit 300ms;
+          animation: ZoomInExit 300ms;
+}
+
 .zoom-out-exit {
   -webkit-animation: ZoomOutExit;
           animation: ZoomOutExit;
 }
 
-.duration-500 {
-  -webkit-animation-duration: 500ms;
-          animation-duration: 500ms;
-}
-
-.duration-250 {
-  -webkit-animation-duration: 250ms;
-          animation-duration: 250ms;
-}
-
-.duration-125 {
-  -webkit-animation-duration: 125ms;
-          animation-duration: 125ms;
+.fade-in-entrance {
+  -webkit-animation: FadeInEntrance;
+          animation: FadeInEntrance;
 }
 
 .lar,
