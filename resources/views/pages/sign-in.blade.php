@@ -9,11 +9,14 @@
                     <div class="flex justify-center items-center py-6">
                         <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                     </div>
-                    <div class="bg-white rounded shadow overflow-hidden">
+                    <div class="bg-white rounded shadow overflow-hidden transition-all duration-100">
                         <div class="p-3 -my-2">
-                            <div class="py-2 fade-in-entrance duration-300" v-if="fields.length > 0">
+                            <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
                                 <ns-field v-for="field of fields" :field="field"></ns-field>
                             </div>
+                        </div>
+                        <div class="flex items-center justify-center" v-if="fields.length === 0">
+                            <ns-spinner></ns-spinner>
                         </div>
                         <div class="flex w-full items-center justify-center py-4">
                             <a href="{{ url( '/password-lost' )}}" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
