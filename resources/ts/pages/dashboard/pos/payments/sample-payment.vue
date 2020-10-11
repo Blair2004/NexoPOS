@@ -128,19 +128,24 @@ export default {
                         this.cursor++;
                     }
 
-                    if ( this.finalValue.toString().substr(0,1) === '.' ) {
-                        this.finalValue     =   parseFloat( this.finalValue ).toFixed( ns.currency.ns_currency_precision );
-                        let length          =   this.finalValue.length - 2;
+                    if ( this.finalValue.toString().substr(0,1) === '.' || this.finalValue.toString().substr(0,2) === '0.' ) {
+                        
+                        if ( this.finalValue.toString().substr(0,2) === '0.' ) {
+                            this.cursor++;
+                        }
+                        
+                        // .21
+                        let length          =   parseFloat( this.finalValue ).toFixed( ns.currency.ns_currency_precision ).length - 2; // 2
                         let number    =   parseInt( 
                             1 + ( new Array( length ) )
                             .fill('')
                             .map( _ => 0 )
                             .join('') 
-                        );
+                        ); // 100
 
-                        this.finalValue     =   this.finalValue.substr( this.cursor + 1 ) || 0;
-                        this.finalValue     =   (parseFloat( this.finalValue ) / number);
-                        this.finalValue     =   this.finalValue.toString().substr( 1 ) || 0;
+                        this.finalValue     =   this.finalValue.toString().substr( this.cursor + 1 ) || 0; // 1 => 1
+                        this.finalValue     =   (parseFloat( this.finalValue ) / number) || 0; // 1/100 = 0.01
+                        this.finalValue     =   this.finalValue.toString().substr( 1, this.finalValue.length ) || 0; // .01
                     } else {
                         this.finalValue     =   this.finalValue.toString();
                         this.finalValue     =   this.finalValue.substr(1, this.finalValue.length ) || 0;
@@ -167,10 +172,10 @@ export default {
 
                 if ( this.allSelected ) {
                     this.finalValue     =   key.value;
-                    this.finalValue     =   this.cursor >= 0 ? parseFloat( this.finalValue ) / number : parseFloat( this.finalValue ) * number;
+                    this.finalValue     =   parseFloat( key.value ) === 0 ? 0 : this.cursor >= 0 ? parseFloat( this.finalValue ) / number : parseFloat( this.finalValue ) * number;
                     this.allSelected    =   false;
                 } else {
-                    this.finalValue     +=  this.cursor >= 0 ? ( parseFloat( key.value ) / number ) : parseFloat( key.value ) * number;
+                    this.finalValue     +=  parseFloat( key.value ) === 0 ? 0 : this.cursor >= 0 ? ( parseFloat( key.value ) / number ) : parseFloat( key.value ) * number;
                     this.finalValue     =   parseFloat( this.finalValue );
 
                     if ( this.mode === 'percentage' ) {
@@ -179,6 +184,7 @@ export default {
                 }
 
                 this.cursor--;
+                console.log( this.cursor );
             } 
         }
     }
