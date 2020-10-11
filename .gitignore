@@ -13,3 +13,4 @@ package-lock.json
 composer.lock
 .env.testing
 .phpunit.result.cache
+worker.log

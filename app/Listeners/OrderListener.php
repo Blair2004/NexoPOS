@@ -5,6 +5,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
+use App\Jobs\ComputeDayReportJob;
 use App\Services\OrdersService;
 use App\Services\ProductService;
 
@@ -59,7 +60,8 @@ class OrderListener
      */
     public function beforeDeleteOrder( OrderBeforeDeleteEvent $event )
     {
-        // 
+        ComputeDayReportJob::dispatch()
+            ->delay( now()->addMinute() );
     }
 
     /**
@@ -68,7 +70,8 @@ class OrderListener
      */
     public function afterOrderCreated( OrderAfterCreatedEvent $event )
     {
-        $this->ordersService->computeDayReport( $event->order );
+        ComputeDayReportJob::dispatch()
+            ->delay( now()->addMinute() );
     }
 
     /**

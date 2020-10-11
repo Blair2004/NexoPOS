@@ -8,9 +8,7 @@
     </div>
     <div class="top-tools-side flex items-center -mx-2">
         <div clss="px-2">
-            <div class="hover:bg-white hover:text-gray-700 hover:shadow-lg hover:border-opacity-0 border border-gray-400 rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800">
-                <i class="las la-bell"></i>
-            </div>
+            <ns-notifications></ns-notifications>
         </div>
         <div class="px-2">
             <div @click="toggleMenu()" :class="menuToggled ? 'bg-white border-transparent shadow-lg rounded-t-lg' : 'border-gray-400 rounded-lg'" class="w-56 flex flex-col border py-2 justify-center hover:border-opacity-0 cursor-pointer hover:shadow-lg hover:bg-white">

@@ -72,6 +72,7 @@ export default {
         return {
             finalValue: 0,
             order: null,
+            cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
             allSelected: true,
             keys: [
@@ -117,26 +118,67 @@ export default {
                 });
                 this.finalValue     =   0;
             } else if ( key.identifier === 'backspace' ) {
+
                 if ( this.allSelected ) {
+                    this.cursor         =   parseInt( ns.currency.ns_currency_precision );
                     this.finalValue     =   0;
                     this.allSelected    =   false;
                 } else {
-                    this.finalValue     =   this.finalValue.toString();
-                    this.finalValue     =   this.finalValue.substr(0, this.finalValue.length - 1 ) || 0;
+                    if( this.cursor < parseInt( ns.currency.ns_currency_precision ) ) {
+                        this.cursor++;
+                    }
+
+                    if ( this.finalValue.toString().substr(0,1) === '.' ) {
+                        this.finalValue     =   parseFloat( this.finalValue ).toFixed( ns.currency.ns_currency_precision );
+                        let length          =   this.finalValue.length - 2;
+                        let number    =   parseInt( 
+                            1 + ( new Array( length ) )
+                            .fill('')
+                            .map( _ => 0 )
+                            .join('') 
+                        );
+
+                        this.finalValue     =   this.finalValue.substr( this.cursor + 1 ) || 0;
+                        this.finalValue     =   (parseFloat( this.finalValue ) / number);
+                        this.finalValue     =   this.finalValue.toString().substr( 1 ) || 0;
+                    } else {
+                        this.finalValue     =   this.finalValue.toString();
+                        this.finalValue     =   this.finalValue.substr(1, this.finalValue.length ) || 0;
+                    }
+                    console.log( this.cursor, this.finalValue );
                 }
             } else {
+                let number;
+                if ( this.cursor >= 0 ) {
+                    number    =   parseInt( 
+                        1 + ( new Array( this.cursor ) )
+                        .fill('')
+                        .map( _ => 0 )
+                        .join('') 
+                    );
+                } else {
+                    number     =    parseInt( 
+                        1 + ( new Array( Math.abs( this.cursor ) ) )
+                        .fill('')
+                        .map( _ => 0 )
+                        .join('') 
+                    );
+                }
+
                 if ( this.allSelected ) {
                     this.finalValue     =   key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
+                    this.finalValue     =   this.cursor >= 0 ? parseFloat( this.finalValue ) / number : parseFloat( this.finalValue ) * number;
                     this.allSelected    =   false;
                 } else {
-                    this.finalValue     +=  '' + key.value;
+                    this.finalValue     +=  this.cursor >= 0 ? ( parseFloat( key.value ) / number ) : parseFloat( key.value ) * number;
                     this.finalValue     =   parseFloat( this.finalValue );
 
                     if ( this.mode === 'percentage' ) {
                         this.finalValue = this.finalValue > 100 ? 100 : this.finalValue;
                     }
                 }
+
+                this.cursor--;
             } 
         }
     }

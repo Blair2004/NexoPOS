@@ -22,6 +22,18 @@ class CreateDashboardTable extends Migration
             $table->float( 'total_unpaid_orders_count' )->default(0);
             $table->float( 'day_unpaid_orders_count' )->default(0);
 
+            $table->float( 'total_paid_orders' )->default(0);
+            $table->float( 'day_paid_orders' )->default(0);
+
+            $table->float( 'total_paid_orders_count' )->default(0);
+            $table->float( 'day_paid_orders_count' )->default(0);
+
+            $table->float( 'total_partially_paid_orders' )->default(0);
+            $table->float( 'day_partially_paid_orders' )->default(0);
+
+            $table->float( 'total_partially_paid_orders_count' )->default(0);
+            $table->float( 'day_partially_paid_orders_count' )->default(0);
+
             $table->float( 'total_income' )->default(0);
             $table->float( 'day_income' )->default(0);
 
@@ -37,7 +49,7 @@ class CreateDashboardTable extends Migration
             $table->float( 'total_expenses' )->default(0);
             $table->float( 'day_expenses' )->default(0);
 
-            $table->integer( 'day_on_year' )->default(0);
+            $table->integer( 'day_of_year' )->default(0);
 
             $table->datetime( 'range_starts' );
             $table->datetime( 'range_ends' );

@@ -19,6 +19,7 @@ import NsReset           from './pages/dashboard/reset.vue';
 import NsModules         from './pages/dashboard/modules.vue';
 import NsPermissions     from './pages/dashboard/ns-permissions.vue';
 import NsProcurement     from './pages/dashboard/ns-procurement.vue';
+import NsNotifications   from './pages/dashboard/ns-notifications.vue';
 import NsMedia           from './pages/dashboard/ns-media.vue';
 import NsDashboardCards  from './pages/dashboard/home/ns-dashboard-cards.vue';
 
@@ -68,7 +69,10 @@ declare const nsExtraComponents;
     data: {
         menuToggled: false,
     },
-    components: {...baseComponents},
+    components: {
+        ...baseComponents,
+        NsNotifications,
+    },
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;

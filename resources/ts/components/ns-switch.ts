@@ -23,8 +23,11 @@ const nsSwitch      =   Vue.component( 'ns-switch', {
         disabledClass() {
             return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : '';
         },
+        sizeClass() {
+            return ` w-1/${this._options.length <= 4 ? this._options.length : 4}`;
+        },
         inputClass() {
-            return this.disabledClass + ' ' + this.leadClass
+            return this.disabledClass + ' ' + this.leadClass;
         },
         leadClass() {
             return this.leading ? 'pl-8' : 'px-4';
@@ -43,13 +46,13 @@ const nsSwitch      =   Vue.component( 'ns-switch', {
     template: `
     <div class="flex flex-col mb-2">
         <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
-        <div class="rounded-lg flex overflow-hidden shadow w-32 my-2" :class="hasError ? 'border border-red-400' : ''">
+        <div class="rounded-lg flex overflow-hidden w-96 shadow my-2" :class="hasError ? 'border border-red-400' : ''">
             <button 
-                :disabled="field.disabled" 
+                :disabled="option.disabled" 
                 v-for="option of _options" 
                 @click="setSelected( option )" 
-                :class="option.selected ? 'bg-blue-400 text-white' : 'bg-gray-100 text-gray-800' + ' ' + inputClass" 
-                class="px-3 py-2 w-1/2 flex-no-wrap outline-none">{{ option.label }}</button>
+                :class="option.selected ? 'bg-blue-400 text-white ' + sizeClass : 'bg-gray-100 text-gray-800' + ' ' + inputClass + ' ' + sizeClass" 
+                class="px-3 py-2 flex-no-wrap outline-none">{{ option.label }}</button>
         </div>
         <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">

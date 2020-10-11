@@ -10,7 +10,7 @@ import { Popup } from "./libraries/popup";
 import { Media } from "./libraries/media";
 import Vue from "vue";
 import FormValidation from "./libraries/form-validation";
-import { nsCurrency } from "./filters/currency";
+import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 
 Vue.use( VueRouter );
 
@@ -78,6 +78,7 @@ window.nsEvent          =   nsEvent;
 window.nsHttpClient     =   nsHttpClient;
 window.nsSnackBar       =   nsSnackBar;
 window.nsCurrency       =   nsCurrency;
+window.nsAbbreviate     =   nsAbbreviate;
 window.nsState          =   nsState;
 window.nsScreen         =   nsScreen;
 window.ChartJS          =   ChartJS;

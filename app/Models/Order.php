@@ -45,4 +45,19 @@ class Order extends Model
     {
         return $this->hasOne( OrderBillingAddress::class );
     }
+
+    public function scopeFrom( $query, $range_starts )
+    {
+        return $query->where( 'created_at', '>=', $range_starts );
+    }
+
+    public function scopeTo( $query, $range_ends )
+    {
+        return $query->where( 'created_at', '<=', $range_ends );
+    }
+
+    public function paymentStatus( $query, $status )
+    {
+        return $query->where( 'payment_status', $status );
+    }
 }

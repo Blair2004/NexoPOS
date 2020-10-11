@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Events\SettingsSavedEvent;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
@@ -74,6 +75,8 @@ class SettingsPage
                 $options->set( $key, $value );
             }
         }
+
+        event( new SettingsSavedEvent( $options->get() ) );
 
         return [
             'status'    =>  'success',
