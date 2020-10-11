@@ -251,6 +251,37 @@ export default class FormValidation {
         }
     }
 
+    triggerFielsErrors( fields, data ) {
+        console.log( data );
+        if ( data.errors ) {
+            for( let index in data.errors ) {
+                let path    =   index.split( '.' ).filter( exp => {
+                    return ! /^\d+$/.test( exp );
+                });
+
+                /**
+                 * if the validation path
+                 * has 2 entries we believe it's a 
+                 * an error on a field within a tab
+                 */
+                fields.forEach( field => {
+                    if ( field.name === path[0] ) {
+                        data.errors[ index ].forEach( errorMessage => {
+                            const error     =   {
+                                identifier: 'invalid',
+                                invalid: true,
+                                message: errorMessage,
+                                name: field.name
+                            };
+
+                            field.errors.push( error );
+                        });
+                    }
+                });
+            }
+        }
+    }
+
     fieldPassCheck( field, rule ) {
 
         if ( rule.identifier === 'required' ) {

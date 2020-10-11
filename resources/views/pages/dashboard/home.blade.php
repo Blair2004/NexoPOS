@@ -4,44 +4,7 @@
     <div>
         @include( '../common/dashboard-header' )
         <div id="dashboard-content" class="px-4">
-            <div class="-m-4 flex flex-wrap">
-                <div class="p-4 w-full md:w-1/2 lg:w-1/4">
-                    <div class="flex flex-auto rounded-lg shadow-lg bg-gradient-to-br from-red-400 to-red-600 text-white px-3 py-5">
-                        <div class="text-4xl font-black w-1/2 flex items-center justify-center">1542</div>
-                        <div class="flex flex-col px-2 w-1/2 justify-center">
-                            <h3 class="font-bold">Unpaid Orders</h3>
-                            <h4 class="text-xs font-semibold">+4 Today</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4 w-full md:w-1/2 lg:w-1/4">
-                    <div class="flex flex-auto rounded-lg shadow-lg bg-gradient-to-br from-green-400 to-green-600 text-white px-3 py-5">
-                        <div class="text-4xl font-black w-1/2 flex items-center justify-center">$10k</div>
-                        <div class="flex flex-col px-2 w-1/2 justify-center">
-                            <h3 class="font-bold">Total Incomes</h3>
-                            <h4 class="text-xs font-semibold">+$600 Today</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4 w-full md:w-1/2 lg:w-1/4">
-                    <div class="flex flex-auto rounded-lg shadow-lg bg-gradient-to-br from-teal-400 to-teal-600 text-white px-3 py-5">
-                        <div class="text-4xl font-black w-1/2 flex items-center justify-center">$435</div>
-                        <div class="flex flex-col px-2 w-1/2 justify-center">
-                            <h3 class="font-bold">Wasted Goods</h3>
-                            <h4 class="text-xs font-semibold">+$10 Today</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4 w-full md:w-1/2 lg:w-1/4">
-                    <div class="flex flex-auto rounded-lg shadow-lg bg-gradient-to-br from-indigo-400 to-indigo-600 text-white px-3 py-5">
-                        <div class="text-4xl font-black w-1/2 flex items-center justify-center">$600</div>
-                        <div class="flex flex-col px-2 w-1/2 justify-center">
-                            <h3 class="font-bold">Expenses</h3>
-                            <h4 class="text-xs font-semibold">$580 Last Month</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ns-dashboard-cards></ns-dashboard-cards>
             <div class="-m-4 flex flex-wrap">
                 <div class="p-4 w-full lg:w-1/2">
                     <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">

@@ -27,6 +27,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
         foreach([ '' ] as $prefix ) {  // '/store/{store_id}/'
             Route::prefix( $prefix )->group( function() {
                 Route::get( '', fn() => 'Hello World' );
+                include( dirname( __FILE__ ) . '/api/dashboard.php' );    
                 include( dirname( __FILE__ ) . '/api/categories.php' );    
                 include( dirname( __FILE__ ) . '/api/customers.php' );
                 include( dirname( __FILE__ ) . '/api/expenses.php' );

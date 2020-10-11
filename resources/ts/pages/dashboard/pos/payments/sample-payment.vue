@@ -42,19 +42,19 @@
                             Full Payment</div>
                     </div>
                 </div>
-                <div class="w-72 pr-2 pl-1">
+                <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ 100 | currency }}</span>
+                            <span @click="increaseBy({ value : 100 })">{{ 100 | currency }}</span>
                         </div>
                         <div 
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ 500 | currency }}</span>
+                            <span @click="increaseBy({ value : 500 })">{{ 500 | currency }}</span>
                         </div>
                         <div 
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ 1000 | currency }}</span>
+                            <span @click="increaseBy({ value : 1000 })">{{ 1000 | currency }}</span>
                         </div>
                     </div>
                 </div>
@@ -100,6 +100,12 @@ export default {
                 }
             });
         },
+        increaseBy( key ) {
+            const total     =   parseFloat( key.value ) + parseFloat( this.finalValue );
+            console.log( total );
+            this.inputValue({ value: total });
+        },
+
         inputValue( key ) {
             if ( key.identifier === 'next' ) {
                 POS.addPayment({

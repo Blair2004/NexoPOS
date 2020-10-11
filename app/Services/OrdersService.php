@@ -22,6 +22,7 @@ use App\Models\ProductUnitQuantity;
 use App\Exceptions\NotAllowedException;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
+use App\Models\DashboardDay;
 
 class OrdersService
 {
@@ -144,7 +145,7 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        event(new OrderAfterCreatedEvent($order));
+        event( new OrderAfterCreatedEvent( $order ) );
 
         return [
             'status'    =>  'success',
@@ -1171,5 +1172,31 @@ class OrdersService
             case 'failed': return __( 'Shipping Failed' ); break;
             default : return sprintf( _( 'Unknown Status (%s)' ), $type ); break;
         }
+    }
+
+    /**
+     * Will compute the report for the current day
+     */
+    public function computeDayReport( Order $order )
+    {
+        $lastDay        =   $this->dateService->copy()->sub( 1, 'day' );
+        $lastDayStarts  =   $lastDay->startOfDay()->toDateTimeString();
+        $lastDayEnds    =   $lastDay->startOfDay()->toDateTimeString();
+
+        $previewReport  =   DashboardDay::from( $lastDayStarts )
+            ->to( $lastDayEnds )
+            ->first();
+
+        $todayReport    =   DashboardDay::from( 
+            $this->dateService->copy()->startOfDay()->toDateTimeString()
+        )->to(
+            $this->dateService->copy()->endOfDay()->toDateTimeString()
+        )->first();
+
+        if ( ! $todayReport instanceof DashboardDay ) {
+            $todayReport    =   new DashboardDay;
+        }
+
+        in_array( $order->payment_type, [ 'unpaid' ] ) ?? $todayReport->total_unpaid_orders_count++;
     }
 }

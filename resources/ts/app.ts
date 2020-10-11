@@ -20,6 +20,7 @@ import NsModules         from './pages/dashboard/modules.vue';
 import NsPermissions     from './pages/dashboard/ns-permissions.vue';
 import NsProcurement     from './pages/dashboard/ns-procurement.vue';
 import NsMedia           from './pages/dashboard/ns-media.vue';
+import NsDashboardCards  from './pages/dashboard/home/ns-dashboard-cards.vue';
 
 declare const nsState;
 declare const nsScreen;
@@ -97,6 +98,7 @@ const components    =   {
     NsPermissions,
     NsProcurement,
     NsMedia,
+    NsDashboardCards,
     ...nsExtraComponents, // add extra components provided by plugins.
 };
 

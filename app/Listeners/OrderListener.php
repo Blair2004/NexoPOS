@@ -1,15 +1,21 @@
 <?php
 namespace App\Listeners;
 
-use App\OrderAfterCreatedEvent;
-use App\Events\OrderBeforeDeleteProductEvent;
+use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
+use App\Events\OrderBeforeDeleteEvent;
+use App\Events\OrderBeforeDeleteProductEvent;
+use App\Services\OrdersService;
+use App\Services\ProductService;
 
 class OrderListener 
 {
+    private $ordersService;
+    private $productsService;
+
     public function __construct(
         OrdersService $ordersService,
-        ProductsService $productsService
+        ProductService $productsService
     ) {
         $this->ordersService    =   $ordersService;
         $this->productsService  =   $productsService;
@@ -32,7 +38,7 @@ class OrderListener
             [ OrderListener::class, 'beforeDeleteProductEvent' ]
         );
 
-        $event->listen(
+        $events->listen(
             OrderAfterCreatedEvent::class,
             [ OrderListener::class, 'afterOrderCreated' ]
         );
@@ -62,7 +68,7 @@ class OrderListener
      */
     public function afterOrderCreated( OrderAfterCreatedEvent $event )
     {
-        //
+        $this->ordersService->computeDayReport( $event->order );
     }
 
     /**

@@ -430,10 +430,8 @@ class OrderCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
-        $entry->total           =   ns()->currency->define( $entry->total )
-            ->format( $entry->total );
-        $entry->discount           =   ns()->currency->define( $entry->discount )
-            ->format( $entry->discount );
+        $entry->total           =   ( string ) ns()->currency->define( $entry->total );
+        $entry->discount        =   ( string ) ns()->currency->define( $entry->discount );
 
         switch( $entry->type ) {
             case 'delivery' : $entry->type = __( 'Delivery' ); break;
@@ -472,22 +470,22 @@ class OrderCrud extends CrudService
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      '<i class="las la-cogs"></i> ' . __( 'Options' ),
+                'label'         =>      '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
                 'namespace'     =>      'ns.order-options',
                 'type'          =>      'POPUP',
                 'url'           =>      url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
             ], [
-                'label'         =>      '<i class="las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
+                'label'         =>      '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'url'           =>      url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
             ], [
-                'label'         =>      '<i class="las la-receipt"></i> ' . __( 'Receipt' ),
+                'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'url'           =>      url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
             ], [
-                'label'     =>  '<i class="las la-trash"></i> ' . __( 'Delete' ),
+                'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),

@@ -22,6 +22,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 
@@ -51,11 +52,14 @@ class AuthController extends Controller
         return view( 'pages.new-password' );
     }
 
-    public function signOut()
+    public function signOut( Request $request )
     {
         Auth::logout();
 
-        return redirect( route( 'ns.login' ) );
+        $request->session()->regenerate();
+        $request->session()->flush();
+
+        return redirect( route( 'ns.dashboard.home' ) );
     }
 
     public function updateDatabase()
@@ -115,6 +119,8 @@ class AuthController extends Controller
             Auth::logout();                    
             throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
         }
+
+        // dd( Session::all() );
         
         return [
             'status'    =>  'success',
@@ -133,7 +139,7 @@ class AuthController extends Controller
     {
         $options                    =   app()->make( Options::class );
         $role                       =   $options->get( 'ns_registration_role' );
-        $registration_validated     =   $options->get( 'ns_registration_validated', 'no' );
+        $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );
 
         if ( empty( $role ) ) {
             throw new Exception( __( 'No role has been define for registration. Please contact the administrators.' ) );
@@ -151,12 +157,24 @@ class AuthController extends Controller
 
         $user->save();
 
-        return redirect()->route( 'ns.login', [
-            'status'    =>  'success',
-            'message'   =>  $registration_validated === 'no' ? 
-                __( 'Your Account has been successfully creaetd.' ) :
-                __( 'Your Account has been created but requires email validation.' )
-        ]);
+        if ( $request->expectsJson() ) {
+            return [
+                'status'    =>  'success',
+                'message'   =>  $registration_validated === 'no' ? 
+                    __( 'Your Account has been successfully creaetd.' ) :
+                    __( 'Your Account has been created but requires email validation.' ),
+                'data'      =>  [
+                    'redirectTo'    =>  route( 'ns.login' )
+                ]
+            ];
+        } else {
+            return redirect()->route( 'ns.login', [
+                'status'    =>  'success',
+                'message'   =>  $registration_validated === 'no' ? 
+                    __( 'Your Account has been successfully creaetd.' ) :
+                    __( 'Your Account has been created but requires email validation.' )
+            ]);
+        }
     }
 }
 

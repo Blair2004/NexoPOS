@@ -1,0 +1,71 @@
+<template>
+    <div class="bg-white rounded shadow overflow-hidden transition-all duration-100">
+        <div class="p-3 -my-2">
+            <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
+                <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
+            </div>
+        </div>
+        <div class="flex items-center justify-center" v-if="fields.length === 0">
+            <ns-spinner></ns-spinner>
+        </div>
+        <div class="flex w-full items-center justify-center py-4">
+            <a href="/password-lost" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
+        </div>
+        <div class="flex justify-between items-center bg-gray-200 p-3">
+            <div>
+                <ns-button @click="signIn()" type="info">Sign In</ns-button>
+            </div>
+            <div>
+                <ns-link :href="'/sign-up'" type="success">Register</ns-link>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import { forkJoin } from 'rxjs';
+import FormValidation from '@/libraries/form-validation';
+import { nsHttpClient } from '@/bootstrap';
+
+export default {
+    name: 'ns-login',
+    data() {
+        return {
+            fields: [],
+            xXsrfToken: null,
+            validation: new FormValidation
+        }
+    },
+    mounted() {
+        forkJoin([
+            nsHttpClient.get( '/api/nexopos/v4/fields/ns.login' ),
+            nsHttpClient.get( '/sanctum/csrf-cookie' ),
+        ])
+        .subscribe( result => {
+            this.fields         =   this.validation.createFields( result[0] );
+            this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+        });
+    },
+    methods: {
+        signIn() {
+            const isValid   =   this.validation.validateFields( this.fields );            
+
+            if ( ! isValid ) {
+                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+            }
+
+            this.validation.disableFields( this.fields );
+
+            nsHttpClient.post( '/auth/sign-in', this.validation.getValue( this.fields ), {
+                headers: {
+                    'X-XSRF-TOKEN'  : this.xXsrfToken
+                }
+            }).subscribe( (result) => {
+                document.location   =   result.data.redirectTo;
+            }, ( error ) => {
+                this.validation.enableFields( this.fields );
+                nsSnackBar.error( error.message ).subscribe();
+            })
+        }
+    }
+}
+</script>

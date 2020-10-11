@@ -444,7 +444,15 @@ class CrudService
         }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
-            $keys   =   array_keys( $resource->getTabsRelations() );
+            /**
+             * if the object bein used is not an instance
+             * of a Crud and include the method, let's skip
+             * this.
+             */
+            $keys       =   [];
+            if ( method_exists( $resource, 'getTabsRelations' ) ) {
+                $keys   =   array_keys( $resource->getTabsRelations() );
+            }
 
             /**
              * We're ignoring the tabs

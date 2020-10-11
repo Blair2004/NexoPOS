@@ -33,7 +33,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
         ->name( 'ns.database-update' );
 
     Route::middleware([ 'auth' ])->group( function() {
-        Route::get( '/dashboard', 'DashboardController@home' )->name( 'dashboard.index' );
+        Route::get( '/dashboard', 'DashboardController@home' )->name( 'ns.dashboard.home' );
 
         Route::get( '/dashboard/orders', [ OrdersController::class, 'listOrders' ]);
         Route::get( '/dashboard/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);

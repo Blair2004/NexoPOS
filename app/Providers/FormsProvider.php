@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Fields\AuthLoginFields;
+use App\Fields\AuthRegisterFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -45,8 +46,11 @@ class FormsProvider extends ServiceProvider
 
         Hook::addFilter( 'ns.fields', function( $class, $identifier ) {
             switch( $class ) {
-                case 'ns.auth' :
+                case 'ns.login' :
                     return new AuthLoginFields;
+                break;
+                case 'ns.register' :
+                    return new AuthRegisterFields;
                 break;
             }
         }, 10, 2 );

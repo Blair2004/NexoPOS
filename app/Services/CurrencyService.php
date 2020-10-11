@@ -7,17 +7,21 @@ class CurrencyService
 {
     private $value;
 
-    private $currency;
+    private $currency_iso;
+    private $prefered_currency;
+    private $currency_symbol;
     private $format;
     private $decimal_precision;
     private $thousand_separator;
     private $decimal_separator;
 
-    private static $_currency               =   'USD';
+    private static $_currency_iso           =   'USD';
+    private static $_currency_symbol        =   '$';
     private static $_decimal_precision      =   2;
     private static $_thousand_separator     =   ',';
     private static $_decimal_separator      =   '.';
     private static $_currency_position      =   'before';
+    private static $_prefered_currency      =   'iso';
 
     public function __construct( $value, $config = [])
     {
@@ -25,23 +29,18 @@ class CurrencyService
 
         extract( $config );
 
-        $this->decimal_precision    =   $decimal_precision ?? self::$_decimal_precision;
-        $this->currency             =   $currency ?? self::$_currency;
-        $this->decimal_separator    =   $decimal_separator ?? self::$_decimal_separator;
-        $this->thousand_separator   =   $thousand_separator ?? self::$_thousand_separator;
+        $this->currency_iso         =   $currency_iso ?? self::$_currency_iso;
+        $this->currency_symbol      =   $currency_symbol ?? self::$_currency_symbol;
         $this->currency_position    =   $currency_position ?? self::$_currency_position;
+        $this->decimal_precision    =   $decimal_precision ?? self::$_decimal_precision;
+        $this->decimal_separator    =   $decimal_separator ?? self::$_decimal_separator;
+        $this->prefered_currency    =   $prefered_currency ?? self::$_prefered_currency;
+        $this->thousand_separator   =   $thousand_separator ?? self::$_thousand_separator;
     }
 
     private static function __defineAmount( $amount )
     {
-        return new CurrencyService( $amount, [
-            'decimal_precision'     =>  self::$_decimal_precision,
-            'thousand_separator'    =>  self::$_thousand_separator,
-            'decimal_separator'     =>  self::$_decimal_separator,
-            'decimal_separator'     =>  self::$_decimal_separator,
-            'currency'              =>  self::$_currency,
-            'currency_position'     =>  self::$_currency_position,
-        ]);
+        return app()->make( CurrencyService::class )->value( $amount );
     }
 
     /**
@@ -139,15 +138,18 @@ class CurrencyService
      */
     public function format()
     {
-        return sprintf( '%s ' . number_format( 
+        $currency   =   $this->prefered_currency === 'iso' ? $this->currency_iso : $this->currency_symbol;
+        $final      =   sprintf( '%s ' . number_format( 
             $this->value, 
             $this->decimal_precision, 
             $this->decimal_separator, 
             $this->thousand_separator 
         ) . ' %s', 
-            $this->currency_position === 'before' ? $this->currency : '',
-            $this->currency_position === 'after' ? $this->currency : ''
+            $this->currency_position === 'before' ? $currency  : '',
+            $this->currency_position === 'after' ? $currency : ''
         );
+
+        return $final;
     }
 
     /**

@@ -12,11 +12,13 @@ class AuthLoginFields extends FieldsService
                 'label'         =>  __( 'Username' ),
                 'description'   =>  __( 'Provide your username.' ),
                 'validation'    =>  'required',
+                'name'          =>  'username',
                 'type'          =>  'text',
             ], [
                 'label'         =>  __( 'Password' ),
                 'description'   =>  __( 'Provide your password.' ),
                 'validation'    =>  'required',
+                'name'          =>  'password',
                 'type'          =>  'password',
             ]
         ];

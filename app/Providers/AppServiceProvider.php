@@ -107,8 +107,10 @@ class AppServiceProvider extends ServiceProvider
                     'decimal_precision'     =>  $options->get( 'ns_currency_precision', 2 ),
                     'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
                     'thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', '.' ),
-                    'ns_currency_position'  =>  $options->get( 'ns_currency_ns_currency_position', '.' ),
-                    'currency'              =>  $options->get( 'ns_currency_symbol' ),
+                    'currency_position'     =>  $options->get( 'ns_currency_position', 'before' ),
+                    'currency_symbol'       =>  $options->get( 'ns_currency_symbol' ),
+                    'currency_iso'          =>  $options->get( 'ns_currency_iso' ),
+                    'prefered_currency'     =>  $options->get( 'ns_currency_prefered' ),
                 ]                
             );
         });

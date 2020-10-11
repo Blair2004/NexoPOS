@@ -115,6 +115,21 @@ class GeneralSettings extends SettingsPage
                             ],
                             'description'   =>  __( 'Define where the currency should be located.' ),
                         ], [
+                            'name'  =>  'ns_currency_prefered',
+                            'value'          =>  $options->get( 'ns_currency_prefered' ),
+                            'label' =>  __( 'Prefered Currency' ), 
+                            'type'          =>  'select',
+                            'options'       =>  [
+                                [
+                                    'label' =>  __( 'ISO Currency' ),
+                                    'value' =>  'iso',
+                                ], [
+                                    'label' =>  __( 'Symbol' ),
+                                    'value' =>  'symbol',
+                                ]
+                            ],
+                            'description'   =>  __( 'Determine what is the currency indicator that should be used.' ),
+                        ], [
                             'name'  =>  'ns_currency_thousand_separator',
                             'value'          =>  $options->get( 'ns_currency_thousand_separator' ),
                             'label' =>  __( 'Currency Thousand Separator' ), 

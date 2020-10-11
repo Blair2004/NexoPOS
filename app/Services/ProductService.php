@@ -371,7 +371,7 @@ class ProductService
          * compute product tax for either the wholesale_price
          * and the sale price
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null);
 
         /**
          * save product images
@@ -583,7 +583,7 @@ class ProductService
      */
     public function refreshPrices( Product $product )
     {
-        return $this->taxService->computeTax( $product, $product->tax_group_id );
+        return $this->taxService->computeTax( $product, $product->tax_group_id ?? null );
     }
 
     /**
@@ -1235,7 +1235,7 @@ class ProductService
         /**
          * compute product tax
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status'    =>  'success',
@@ -1269,7 +1269,7 @@ class ProductService
          * for the meantime we assume the tax applies on the 
          * main product
          */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ]);
+        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
             'status'    =>  'success',

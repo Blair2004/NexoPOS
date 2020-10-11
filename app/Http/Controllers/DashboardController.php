@@ -7,11 +7,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DashboardDay;
 use Illuminate\Http\Request;
 use App\Services\MenuService;
 use App\Models\ProductCategory;
-
-
+use App\Services\DateService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\View;
@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\View;
 class DashboardController extends Controller
 {
     protected $menuService;
+    protected $dateService;
 
     public function __construct()
     {
-        $this->menuService    =   app()->make( MenuService::class );
+        $this->dateService      =   app()->make( DateService::class );
+        $this->menuService      =   app()->make( MenuService::class );
     }
     
     public function home()
@@ -46,6 +48,15 @@ class DashboardController extends Controller
         return view( $path, array_merge([
             'menus'     =>   $this->menuService
         ], $data ));
+    }
+
+    public function getCards()
+    {
+        $todayStarts    =   $this->dateService->copy()->startOfDay()->toDateTimeString();
+        $todayEnds      =   $this->dateService->copy()->endOfDay()->toDateTimeString();
+        return DashboardDay::from( $todayStarts )
+            ->to( $todayEnds )
+            ->first();
     }
 }
 
