@@ -17,15 +17,4 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        /usr/bin/php /var/www/html/${{ secrets.DEPLOYHOST }}/artisan ns:reset
-                        rm -rf /var/www/html/${{ secrets.DEPLOYHOST }}; 
-                        mkdir /var/www/html/${{ secrets.DEPLOYHOST }}; 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}; 
-                        git clone https://github.com/blair2004/NexoPOS-4x .;
-                        composer install;
-                        cp /var/www/html/backup.env /var/www/html/${{ secrets.DEPLOYHOST }}/.env;
-                        /usr/bin/php artisan key:generate;
-                        /usr/bin/php artisan storage:link;  
-                        npm i;
-                        npm run prod;                   
-                        chown www-data /var/www/html/${{ secrets.DEPLOYHOST }}/ -R;
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update && npm i && npm run prod;
