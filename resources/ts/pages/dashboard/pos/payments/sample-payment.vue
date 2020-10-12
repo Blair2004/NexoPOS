@@ -71,6 +71,7 @@ export default {
     data() {
         return {
             finalValue: 0,
+            backValue: '0',
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -108,6 +109,13 @@ export default {
         },
 
         inputValue( key ) {
+            let number    =   parseInt( 
+                1 + ( new Array( this.cursor ) )
+                .fill('')
+                .map( _ => 0 )
+                .join('') 
+            );
+
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
                     amount: parseFloat( this.finalValue ),
@@ -118,74 +126,26 @@ export default {
                 });
                 this.finalValue     =   0;
             } else if ( key.identifier === 'backspace' ) {
-
                 if ( this.allSelected ) {
-                    this.cursor         =   parseInt( ns.currency.ns_currency_precision );
-                    this.finalValue     =   0;
+                    this.backValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    if( this.cursor < parseInt( ns.currency.ns_currency_precision ) ) {
-                        this.cursor++;
-                    }
-
-                    if ( this.finalValue.toString().substr(0,1) === '.' || this.finalValue.toString().substr(0,2) === '0.' ) {
-                        
-                        if ( this.finalValue.toString().substr(0,2) === '0.' ) {
-                            this.cursor++;
-                        }
-                        
-                        // .21
-                        let length          =   parseFloat( this.finalValue ).toFixed( ns.currency.ns_currency_precision ).length - 2; // 2
-                        let number    =   parseInt( 
-                            1 + ( new Array( length ) )
-                            .fill('')
-                            .map( _ => 0 )
-                            .join('') 
-                        ); // 100
-
-                        this.finalValue     =   this.finalValue.toString().substr( this.cursor + 1 ) || 0; // 1 => 1
-                        this.finalValue     =   (parseFloat( this.finalValue ) / number) || 0; // 1/100 = 0.01
-                        this.finalValue     =   this.finalValue.toString().substr( 1, this.finalValue.length ) || 0; // .01
-                    } else {
-                        this.finalValue     =   this.finalValue.toString();
-                        this.finalValue     =   this.finalValue.substr(1, this.finalValue.length ) || 0;
-                    }
-                    console.log( this.cursor, this.finalValue );
+                    this.backValue      =   this.backValue.substr( 1, this.finalValue.length )
                 }
-            } else {
-                let number;
-                if ( this.cursor >= 0 ) {
-                    number    =   parseInt( 
-                        1 + ( new Array( this.cursor ) )
-                        .fill('')
-                        .map( _ => 0 )
-                        .join('') 
-                    );
-                } else {
-                    number     =    parseInt( 
-                        1 + ( new Array( Math.abs( this.cursor ) ) )
-                        .fill('')
-                        .map( _ => 0 )
-                        .join('') 
-                    );
-                }
-
+            } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.allSelected ) {
-                    this.finalValue     =   key.value;
-                    this.finalValue     =   parseFloat( key.value ) === 0 ? 0 : this.cursor >= 0 ? parseFloat( this.finalValue ) / number : parseFloat( this.finalValue ) * number;
+                    this.backValue      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    this.finalValue     +=  parseFloat( key.value ) === 0 ? 0 : this.cursor >= 0 ? ( parseFloat( key.value ) / number ) : parseFloat( key.value ) * number;
-                    this.finalValue     =   parseFloat( this.finalValue );
+                    this.backValue      +=  key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
                         this.finalValue = this.finalValue > 100 ? 100 : this.finalValue;
                     }
                 }
-
-                this.cursor--;
-                console.log( this.cursor );
             } 
+
+            this.finalValue     =   parseFloat( this.backValue ) / number || 0;
         }
     }
 }
