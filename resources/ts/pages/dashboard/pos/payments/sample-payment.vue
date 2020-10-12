@@ -20,7 +20,7 @@
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-3xl p-2">
                     <span>Screen : </span>
-                    <span>{{ finalValue | currency }}</span>
+                    <span>{{ backValue / number | currency }}</span>
                 </div>
             </div>
         </div>
@@ -45,16 +45,19 @@
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
+                            @click="increaseBy({ value : 100 })"
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span @click="increaseBy({ value : 100 })">{{ 100 | currency }}</span>
+                            <span>{{ 100 | currency }}</span>
                         </div>
                         <div 
+                            @click="increaseBy({ value : 500 })"
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span @click="increaseBy({ value : 500 })">{{ 500 | currency }}</span>
+                            <span >{{ 500 | currency }}</span>
                         </div>
                         <div 
+                            @click="increaseBy({ value : 1000 })"
                             class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
-                            <span @click="increaseBy({ value : 1000 })">{{ 1000 | currency }}</span>
+                            <span >{{ 1000 | currency }}</span>
                         </div>
                     </div>
                 </div>
@@ -70,8 +73,13 @@ export default {
     props: [ 'label', 'identifier' ],
     data() {
         return {
-            finalValue: 0,
             backValue: '0',
+            number: parseInt( 
+                1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
+                .fill('')
+                .map( _ => 0 )
+                .join('') 
+            ),
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -103,9 +111,15 @@ export default {
             });
         },
         increaseBy( key ) {
-            const total     =   parseFloat( key.value ) + parseFloat( this.finalValue );
-            console.log( total );
-            this.inputValue({ value: total });
+            let number    =   parseInt( 
+                1 + ( new Array( this.cursor ) )
+                .fill('')
+                .map( _ => 0 )
+                .join('') 
+            );
+
+            this.backValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.backValue ) || 0 ) ).toString();
+            this.allSelected    =   false;
         },
 
         inputValue( key ) {
@@ -118,19 +132,19 @@ export default {
 
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
-                    amount: parseFloat( this.finalValue ),
+                    amount: parseFloat( this.backValue / this.number ),
                     identifier: this.identifier,
                     selected: false,
                     label: this.label,
                     readonly: false,
                 });
-                this.finalValue     =   0;
+                this.backValue     =   '0';
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
                     this.backValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.backValue      =   this.backValue.substr( 1, this.finalValue.length )
+                    this.backValue      =   this.backValue.substr( 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.allSelected ) {
@@ -140,12 +154,18 @@ export default {
                     this.backValue      +=  key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        this.finalValue = this.finalValue > 100 ? 100 : this.finalValue;
+                        this.backValue = this.backValue > 100 ? 100 : this.backValue;
                     }
                 }
             } 
 
-            this.finalValue     =   parseFloat( this.backValue ) / number || 0;
+            // this.finalValue     =   parseFloat( this.backValue ) / number || 0;
+
+            // console.log( this.finalValue, this.backValue );
+
+            if ( ( this.backValue ) === "0" ) {
+                this.backValue      =   '';
+            }
         }
     }
 }
