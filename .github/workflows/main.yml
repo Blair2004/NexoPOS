@@ -28,4 +28,4 @@ jobs:
                         /usr/bin/php artisan storage:link;  
                         npm i;
                         npm run prod;                   
-                        chown php-fpm /var/www/html/${{ secrets.DEPLOYHOST }}/ -R;
+                        chown www-data /var/www/html/${{ secrets.DEPLOYHOST }}/ -R;
