@@ -118,7 +118,10 @@ class Setup
          * Let's create the tables. The DB is supposed to be set
          */
         Artisan::call( 'config:cache' );
-        Artisan::call( 'migrate:fresh --path=/database/migrations/v1_0' );
+        Artisan::call( 'migrate --path=/database/migrations/v1_0' );
+        Artisan::call( 'migrate --path=/database/migrations/v1_1' );
+        Artisan::call( 'migrate --path=/database/migrations/v1_2' );
+        Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
         
         /**
          * We assume so far the application is installed

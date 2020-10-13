@@ -71,4 +71,14 @@ class Product extends Model
     {
         return $query->where( 'product_type', '!=', 'variation' );
     }
+
+    public function scopeWithStockEnabled( $query )
+    {
+        return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
+    }
+
+    public function scopeWithStockDisabled( $query )
+    {
+        return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+    }
 }

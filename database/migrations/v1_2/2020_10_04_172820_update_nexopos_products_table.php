@@ -27,8 +27,13 @@ class UpdateNexoposProductsTable extends Migration
     public function down()
     {
         Schema::table( 'nexopos_products', function( Blueprint $table ) {
-            $table->dropColumn( 'wholesale_tax_value' );
-            $table->dropColumn( 'sale_tax_value' );
+            if ( Schema::hasColumn( 'nexopos_products', 'wholesale_tax_value' ) ) {
+                $table->dropColumn( 'wholesale_tax_value' );
+            }
+
+            if ( Schema::hasColumn( 'nexopos_products', 'sale_tax_value' ) ) {
+                $table->dropColumn( 'sale_tax_value' );
+            }            
         });
     }
 }

@@ -26,6 +26,14 @@ class UpdateNexoPOSCustomersTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table( 'nexopos_customers', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_customers', 'purchases_amount' ) ) {
+                $table->dropColumn( 'purchases_amount' );
+            }
+
+            if ( Schema::hasColumn( 'nexopos_customers', 'owe_amount' ) ) {
+                $table->dropColumn( 'owe_amount' );
+            }
+        });
     }
 }

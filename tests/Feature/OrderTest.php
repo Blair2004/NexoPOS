@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Product;
 use Tests\TestCase;
 
 class OrderTest extends TestCase
@@ -19,6 +20,8 @@ class OrderTest extends TestCase
             'username'  =>  env( 'TEST_USERNAME' ),
             'password'  =>  env( 'TEST_PASSWORD' )
         ]);
+
+        $product    =   Product::withStockEnabled()->firstOrfail();
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -41,10 +44,10 @@ class OrderTest extends TestCase
                 'shipping'              =>  150,
                 'products'              =>  [
                     [
-                        'product_id'    =>  1,
+                        'product_id'    =>  $product->id,
                         'quantity'      =>  5,
                         'sale_price'    =>  12,
-                        'unit_id'       =>  1, // 'piece'
+                        'unit_id'       =>  json_decode( $product->selling_unit_ids )[0],
                     ]
                 ],
                 'payments'              =>  [

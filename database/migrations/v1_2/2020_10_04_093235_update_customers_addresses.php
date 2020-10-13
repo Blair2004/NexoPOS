@@ -26,7 +26,9 @@ class UpdateCustomersAddresses extends Migration
     public function down()
     {
         Schema::table( 'nexopos_customers_addresses', function( Blueprint $table ) {
-            $table->dropColumn( 'email' );
+            if ( Schema::hasColumn( 'nxopos_customers_addresses', 'email' ) ) {
+                $table->dropColumn( 'email' );
+            }
         });
     }
 }

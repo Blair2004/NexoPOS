@@ -26,7 +26,9 @@ class AddPreviewUrlsToUnitsTable extends Migration
     public function down()
     {
         Schema::table('nexopos_units', function (Blueprint $table) {
-            $table->delete( 'preview_url' );
+            if ( Schema::hasColumn( 'nexopos_units', 'preview_url' ) ) {
+                $table->dropColumn( 'preview_url' );
+            }
         });
     }
 }

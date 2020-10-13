@@ -93,6 +93,7 @@ return [
 
     'ignore_paths' => [
         'nova-api*',
+        'api/nexopos/v4/notifications',
     ],
 
     'ignore_commands' => [

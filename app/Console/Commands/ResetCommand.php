@@ -38,11 +38,18 @@ class ResetCommand extends Command
      * @return mixed
      */
     public function handle()
-    {
-        DotenvEditor::deleteKey( 'NS_VERSION' );
-        DotenvEditor::save();
+    {    
         Artisan::call( 'migrate:reset --path=/database/migrations/v1_0' );
+        Artisan::call( 'migrate:reset --path=/database/migrations/v1_1' );
+        Artisan::call( 'migrate:reset --path=/database/migrations/v1_2' );
+
+        DotenvEditor::deleteKey( 'NS_VERSION' );
+        DotenvEditor::deleteKey( 'SANCTUM_STATEFUL_DOMAINS' );
+        DotenvEditor::deleteKey( 'SESSION_DOMAIN' );
+        DotenvEditor::save();
+
         exec( 'rm -rf public/storage' );
+
         $this->info( 'The database has been cleared' );
     }
 }

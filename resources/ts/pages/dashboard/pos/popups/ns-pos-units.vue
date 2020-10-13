@@ -13,7 +13,7 @@
                 </div>
                 <div class="h-0 w-full">
                     <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2" style="background:rgb(255 255 255 / 73%)">
-                        <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ unit.name }} ({{ unit.quantities === null ? 0 : unit.quantities }})</h3>
+                        <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ unit.name }} ({{ unit.quantities === null ? 0 : unit.quantities.quantity }})</h3>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         loadUnits() {
-            nsHttpClient.get( `/api/nexopos/v4/units/pos?ids=${this.$popupParams.product.$original().selling_unit_ids}&product=${this.$popupParams.product.$original().id}` )
+            nsHttpClient.get( `/api/nexopos/v4/units/pos?ids=${this.$popupParams.product.$original().selling_unit_ids}&product_id=${this.$popupParams.product.$original().id}` )
                 .subscribe( result => {
                     if ( result.length === 0 ) {
                         this.$popup.close();
