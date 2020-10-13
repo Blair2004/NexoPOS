@@ -13,6 +13,11 @@ This version available for free, aims to be more :
 
 Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
 
+## Demo
+- Address : https://v4.nexopos.com
+- Username : demouser
+- Password : 123456
+
 ## Major Additions & Benefits
 Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
 
