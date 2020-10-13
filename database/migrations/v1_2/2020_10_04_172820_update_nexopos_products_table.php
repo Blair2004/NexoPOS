@@ -14,8 +14,13 @@ class UpdateNexoposProductsTable extends Migration
     public function up()
     {
         Schema::table( 'nexopos_products', function( Blueprint $table ) {
-            $table->float( 'wholesale_tax_value' )->default(0);
-            $table->float( 'sale_tax_value' )->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_products', 'wholesale_tax_value' ) ) {
+                $table->float( 'wholesale_tax_value' )->default(0);
+            }
+
+            if ( ! Schema::hasColumn( 'nexopos_products', 'sale_tax_value' ) ) {
+                $table->float( 'sale_tax_value' )->default(0);
+            }            
         });
     }
 

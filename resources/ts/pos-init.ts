@@ -33,6 +33,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting       =   false;
@@ -92,6 +93,14 @@ export class POS {
         return this._customers;
     }
 
+    get options() {
+        return this._options;
+    }
+
+    get settings() {
+        return this._settings;
+    }
+
     get breadcrumbs() {
         return this._breadcrumbs;
     }
@@ -125,7 +134,8 @@ export class POS {
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
         this._screen            =   new BehaviorSubject<string>('');
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
-        this._visibleSection    =   new BehaviorSubject( 'both' );       
+        this._visibleSection    =   new BehaviorSubject( 'both' );     
+        this._options           =   new BehaviorSubject({});
         this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         
@@ -178,6 +188,10 @@ export class POS {
         }
     }
 
+    defineOptions( options ) {
+        this._options;
+    }
+
     defineCurrentScreen() {
         this._visibleSection.next([ 'xs', 'sm' ].includes( <string>this._responsive.is() ) ? 'grid' : 'both' );
         this._screen.next( <string>this._responsive.is() );
@@ -222,9 +236,7 @@ export class POS {
                     .subscribe( result => {
                         this._isSubmitting  =   true;
                         resolve( result );
-
                         this.reset();
-
                     }, error => {
                         this._isSubmitting  =   false;
                         reject( error );
@@ -233,6 +245,15 @@ export class POS {
 
             return reject({ status: 'failed', message: 'Order ongoing...' });
         });
+    }
+
+    printOrder( order_id ) {
+        const printSection      =   document.createElement( 'iframe' );
+        printSection.id         =   'printing-section';
+        printSection.className  =   'hidden';
+        printSection.src        =   this.settings.getValue()[ 'urls' ][ 'printing_url' ].replace( '{id}', order_id );
+
+        document.body.appendChild( printSection );
     }
 
     computePaid() {

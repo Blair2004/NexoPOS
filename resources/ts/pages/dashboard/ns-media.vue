@@ -191,18 +191,18 @@ export default {
 }
 </script>
 <template>
-    <div class="flex bg-white shadow-xl w-4/5-screen h-4/5-screen overflow-hidden">
+    <div class="flex bg-white shadow-xl overflow-hidden" :class="$popup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
         <div class="sidebar w-48 bg-gray-200 h-full flex-shrink-0">
             <h3 class="text-xl font-bold text-gray-800 my-4 text-center">Medias Manager</h3>
             <ul>
                 <li @click="select( page )" v-for="(page,index) of pages" class="hover:bg-white py-2 px-3 text-gray-700 border-l-8 cursor-pointer" :class="page.selected ? 'bg-white border-blue-400' : 'border-transparent'" :key="index">{{ page.label }}</li>
             </ul>
         </div>
-        <div class="content w-full overflow-hidden" v-if="currentPage.name === 'upload'">
+        <div class="content w-full overflow-hidden flex" v-if="currentPage.name === 'upload'">
             <vue-upload
                 ref="upload"
                 :drop="true"
-                class="w-full h-full flex bg-white shadow"
+                class=" flex-auto flex bg-white shadow"
                 v-model="files"
                 :multiple="true"
                 :headers="{ 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN' : csrf }"
@@ -234,7 +234,7 @@ export default {
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div id="grid" class="content flex flex-auto flex-col overflow-y-auto">
-                    <div class="flex-auto bg-white shadow">
+                    <div class="flex flex-auto bg-white shadow">
                         <div class="p-2 flex overflow-x-auto flex-wrap">
                             <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
                                 <div class="p-2">
@@ -244,7 +244,7 @@ export default {
                                 </div>
                             </div>
                         </div>
-                        <div v-if="response.data.length === 0" class="h-full flex w-full items-center justify-center">
+                        <div v-if="response.data.length === 0" class="flex flex-auto items-center justify-center">
                             <h3 class="text-3xl text-gray-700 font-bold">Nothing has already been uploaded</h3>
                         </div>
                     </div>

@@ -12,24 +12,38 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 use App\Services\OrdersService;
+use App\Services\Options;
 use App\Events\ProcurementAfterUpdateEvent;
 use App\Models\Order;
+use App\Models\Option;
 use App\Models\Procurement;
-
-// use Tendoo\Core\Services\Page;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class OrdersController extends DashboardController
 {
     /** @var OrdersService */
     private $ordersService;
 
+    /** @var OptionsService */
+    private $optionsService;
+
+    private $paymentTypes;
+
     public function __construct(
-        OrdersService $ordersService
+        OrdersService $ordersService,
+        Options $options
     )
     {
         parent::__construct();
 
-        $this->ordersService     =   $ordersService;
+        $this->optionsService       =   $options;
+        $this->ordersService        =   $ordersService;
+
+        $this->paymentTypes         =   collect( config( 'nexopos.pos.payments' ) )->map( function( $payment, $index ) {
+            return array_merge([
+                'selected'  =>  $index === 0,
+            ], $payment );
+        });
     }
 
     public function create( Request $request )
@@ -94,12 +108,6 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
-        $paymentTypes   =   collect( config( 'nexopos.pos.payments' ) )->map( function( $payment, $index ) {
-            return array_merge([
-                'selected'  =>  $index === 0,
-            ], $payment );
-        });
-
         return $this->view( 'pages.dashboard.orders.pos', [
             'title'         =>  __( 'Proceeding Order &mdash; NexoPOS' ),
             'orderTypes'    =>  [
@@ -115,7 +123,14 @@ class OrdersController extends DashboardController
                     'selected'      =>  false
                 ]
             ],
-            'paymentTypes'  =>  $paymentTypes
+            'options'           =>  [
+                'ns_pos_printing_document'      =>  $this->optionsService->get( 'ns_pos_printing_document', 'receipt' ),
+                'ns_pos_printing_enabled_for'   =>  $this->optionsService->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
+            ],
+            'urls'              =>  [
+                'printing_url'  =>      Hook::filter( 'ns_pos_printing_url', url( '/api/nexopos/v4/orders/print/{id}' ) )
+            ],
+            'paymentTypes'  =>  $this->paymentTypes
         ]);
     }
 
@@ -137,8 +152,18 @@ class OrdersController extends DashboardController
 
     public function orderReceipt( Order $order )
     {
-        return $this->view( 'pages.dashboard.orders.templates.invoice', [
-            'order'     =>  $order
+        $order->load( 'customer' );
+        $order->load( 'products' );
+        $order->load( 'shipping_address' );
+        $order->load( 'billing_address' );
+        $order->load( 'user' );
+
+        return $this->view( 'pages.dashboard.orders.templates.receipt', [
+            'order'             =>  $order,
+            'optionsService'    =>  $this->optionsService,
+            'paymentTypes'      =>  collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+                return [ $payment->identifier => $payment->label ];
+            })
         ]);
     }
 }

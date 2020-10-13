@@ -15,6 +15,7 @@ class PosSettings extends SettingsPage
         $this->form    =   [
             'tabs'  =>  [
                 'layout'    =>  include( dirname( __FILE__ ) . '/pos/layout.php' ),
+                'printing'  =>  include( dirname( __FILE__ ) . '/pos/printing.php' ),
                 'registers' =>  include( dirname( __FILE__ ) . '/pos/registers.php' ),
                 'vat'       =>  include( dirname( __FILE__ ) . '/pos/vat.php' ),
                 'shortcuts' =>  include( dirname( __FILE__ ) . '/pos/shortcuts.php' ),

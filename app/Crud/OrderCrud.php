@@ -484,7 +484,7 @@ class OrderCrud extends CrudService
                 'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id )
             ], [
                 'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
                 'namespace' =>  'delete',

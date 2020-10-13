@@ -38,6 +38,7 @@
                             <i v-if="key.icon" class="las" :class="key.icon"></i>
                         </div>
                         <div
+                            @click="makeFullPayment()"
                             class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
                             Full Payment</div>
                     </div>
@@ -68,6 +69,7 @@
 <script>
 import { Popup } from '@/libraries/popup';
 import nsPosDiscountPopupVue from '../popups/ns-pos-discount-popup.vue';
+import nsPosConfirmPopupVue from '../popups/ns-pos-confirm-popup.vue';
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
@@ -109,6 +111,25 @@ export default {
                     POS.updateCart( this.order, response );
                 }
             });
+        },
+        makeFullPayment() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Full Payment',
+                message: 'A full payment will be made using {paymentType} for {total}'
+                    .replace( '{paymentType}', this.label )
+                    .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
+                onAction: ( action ) => {
+                    POS.addPayment({
+                        amount: this.order.total,
+                        identifier: this.identifier,
+                        selected: false,
+                        label: this.label,
+                        readonly: false,
+                    });
+                    this.$emit( 'submit' );
+                    this.backValue     =   '0';
+                }
+            })
         },
         increaseBy( key ) {
             let number    =   parseInt( 

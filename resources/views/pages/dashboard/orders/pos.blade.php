@@ -16,11 +16,13 @@
     <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
     <script>
     POS.defineTypes( @json( $orderTypes ) );
+    POS.defineOptions( @json( $options ) );
     POS.defineSettings({
         barcode_search      :   true,
         text_search         :   false,
         breadcrumb          :   [],
-        products_queue      :   []
+        products_queue      :   [],
+        urls                :   @json( $urls )
     });
 
     POS.definedPaymentsType( @json( $paymentTypes ) );

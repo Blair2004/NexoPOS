@@ -83,6 +83,8 @@ export default {
                 POS.submitOrder().then( result => {
                     // close spinner
                     popup.close();
+
+                    POS.printOrder( result.data.id );
     
                     // close payment popup
                     this.$popup.close();
@@ -133,7 +135,7 @@ export default {
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-y-auto" v-if="! showPayment">
-                        <component v-bind:is="currentPaymentComponent"></component>
+                        <component @submit="submitOrder()" v-bind:is="currentPaymentComponent"></component>
                     </div>
                     <div class="flex flex-auto overflow-y-auto p-2 flex-col" v-if="showPayment">
                         <h3 class="text-center font-bold py-2 text-gray-700">List Of Payments</h3>
