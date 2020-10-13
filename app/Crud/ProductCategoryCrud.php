@@ -48,6 +48,13 @@ class ProductCategoryCrud extends CrudService
         'parent'    =>  [ 'name' ],
     ];
 
+    protected $permissions  =   [
+        'create'    =>  'nexopos.create.categories',
+        'read'    =>  'nexopos.read.categories',
+        'update'    =>  'nexopos.update.categories',
+        'delete'    =>  'nexopos.delete.categories',
+    ];
+
     /**
      * Define where statement
      * @var  array
@@ -189,6 +196,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
         return $request;
     }
 
@@ -224,6 +232,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'delete' );
         return $request;
     }
 
@@ -263,15 +272,7 @@ class ProductCategoryCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.products-categories' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
     }
 

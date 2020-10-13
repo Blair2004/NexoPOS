@@ -40,7 +40,7 @@ class ProductHistoryCrud extends CrudService
      */
     protected $permissions  =   [
         'create'    =>  false,
-        'read'      =>  'manage.profile',
+        'read'      =>  'nexopos.read.product-history',
         'update'    =>  false,
         'delete'    =>  false,
     ];

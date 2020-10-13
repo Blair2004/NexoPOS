@@ -58,6 +58,13 @@ class RewardSystemCrud extends CrudService
      */
     public $fillable    =   [];
 
+    protected $permissions = [
+        'create' => 'nexopos.create.rewards',
+        'read' => 'nexopos.read.rewards',
+        'update' => 'nexopos.update.rewards',
+        'delete' => 'nexopos.delete.rewards',
+    ];
+
     /**
      * Define Constructor
      * @param  
@@ -302,16 +309,24 @@ class RewardSystemCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id ) {
         if ( $namespace == 'ns.rewards_system' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
+    }
+
+    /**
+     * Before Delete
+     * @return  void
+     */
+    public function beforePost( $request ) {
+        $this->allowedTo( 'create' );
+    }
+
+    /**
+     * Before Delete
+     * @return  void
+     */
+    public function beforePut( $request, $rewardSystem ) {
+        $this->allowedTo( 'update' );
     }
 
     /**

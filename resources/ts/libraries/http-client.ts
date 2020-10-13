@@ -36,12 +36,15 @@ export class HttpClient {
     }
 
     _request( type, url, data = {}, config = {} ) {
-        const newUrl   =   nsUrl.get( url );
-        console.log( newUrl );
-        this._client[ type ]( newUrl );
-        this._subject.next({ identifier: 'async.start', newUrl, data });
+        /**
+         * for an unknown reason
+         * trailing slash is buggy on https.
+         */
+        url     =   url.replace( /\/$/, '' );
+        
+        this._subject.next({ identifier: 'async.start', url, data });
         return new rxjs.Observable( observer => {
-            this._client[ type ]( newUrl, data, { 
+            this._client[ type ]( url, data, { 
                 ...this._client.defaults[ type ],
                 ...config
             }).then( result => {

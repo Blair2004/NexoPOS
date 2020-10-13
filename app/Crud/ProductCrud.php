@@ -59,6 +59,17 @@ class ProductCrud extends CrudService
     ];
 
     /**
+     * Define permissions
+     * @param  array
+     */
+    protected $permissions  =   [
+        'create'    =>  'nexopos.create.products',
+        'read'      =>  'nexopos.read.products',
+        'update'    =>  'nexopos.update.products',
+        'delete'    =>  'nexopos.delete.products',
+    ];
+
+    /**
      * Define where statement
      * @var  array
     **/
@@ -444,6 +455,8 @@ class ProductCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -481,6 +494,8 @@ class ProductCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -499,8 +514,6 @@ class ProductCrud extends CrudService
         if ( $product instanceof Product ) {
             $product->taxes()->delete();
         }
-
-        // $this->calculateTaxes( $request->all(), $product );
 
         return $request;
     }
@@ -530,15 +543,7 @@ class ProductCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.products' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'create' );
         }
     }
 

@@ -37,7 +37,7 @@ class RegisterCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users', 'nexopos_registers.author', '=', 'nexopos_users.id' ],
-                    ];
+    ];
 
     /**
      * Define where statement
@@ -50,6 +50,13 @@ class RegisterCrud extends CrudService
      * @var  array
      */
     protected $whereIn      =   [];
+
+    protected $permissions = [
+        'create' => 'nexopos.create.registers',
+        'read' => 'nexopos.read.registers',
+        'update' => 'nexopos.update.registers',
+        'delete' => 'nexopos.delete.registers',
+    ];
 
     /**
      * Fields which will be filled during post/put
@@ -192,6 +199,8 @@ class RegisterCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -227,6 +236,8 @@ class RegisterCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -266,15 +277,7 @@ class RegisterCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.registers' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
     }
 

@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Exceptions\NotAllowedException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -54,7 +56,18 @@ class ProviderCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
+
+    /**
+     * Define permissions
+     * @param  array
+     */
+    protected $permissions  =   [
+        'create'    =>  'nexopos.create.providers',
+        'read'      =>  'nexopos.read.providers',
+        'update'    =>  'nexopos.update.providers',
+        'delete'    =>  'nexopos.delete.providers',
+    ];
 
     /**
      * Define Constructor
@@ -178,6 +191,8 @@ class ProviderCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -213,6 +228,8 @@ class ProviderCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -252,15 +269,7 @@ class ProviderCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.providers' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
     }
 

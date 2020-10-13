@@ -5,8 +5,8 @@
                 <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
             </div>
         </div>
-        <div class="flex items-center justify-center" v-if="fields.length === 0">
-            <ns-spinner></ns-spinner>
+        <div class="flex items-center justify-center py-10" v-if="fields.length === 0">
+            <ns-spinner border="4" size="16"></ns-spinner>
         </div>
         <div class="flex w-full items-center justify-center py-4">
             <a href="/password-lost" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>

@@ -614,6 +614,19 @@ class CrudService
     }
 
     /**
+     * perform a quick check over
+     * the permissions array provided on the instance
+     */
+    public function allowedTo( $permission ) 
+    {
+        if ( isset( $this->permissions ) && $this->permissions[ $permission ] !== false ) {
+            ns()->restrict( $this->permissions[ $permission ] );
+        } else {
+            throw new NotAllowedException();
+        }
+    }
+
+    /**
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
      * @param string $name

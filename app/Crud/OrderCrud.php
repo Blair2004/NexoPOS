@@ -55,7 +55,14 @@ class OrderCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
+
+    protected $permissions = [
+        'create' => 'nexopos.create.orders',
+        'read' => 'nexopos.read.orders',
+        'update' => 'nexopos.update.orders',
+        'delete' => 'nexopos.delete.orders',
+    ];
 
     /**
      * Define Constructor
@@ -268,6 +275,7 @@ class OrderCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
         return $request;
     }
 
@@ -303,6 +311,7 @@ class OrderCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
         return $request;
     }
 
@@ -342,15 +351,7 @@ class OrderCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.orders' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
     }
 

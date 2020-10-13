@@ -37,7 +37,7 @@ class RolesCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-            ];
+    ];
 
     /**
      * Pick
@@ -65,7 +65,14 @@ class RolesCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
+
+    protected $permissions = [
+        'create' => 'create.roles',
+        'read' => 'read.roles',
+        'update' => 'update.roles',
+        'delete' => 'delete.roles',
+    ];
 
     /**
      * Define Constructor
@@ -176,10 +183,7 @@ class RolesCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        ns()->restrict(
-            [ 'create.roles' ],
-            __( 'You do not have enough permissions to perform this action.' )
-        );
+        $this->allowedTo( 'create' );
 
         return $request;
     }
@@ -216,10 +220,7 @@ class RolesCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        ns()->restrict(
-            [ 'update.roles' ],
-            __( 'You do not have enough permissions to perform this action.' )
-        );
+        $this->allowedTo( 'update' );
 
         return $request;
     }
@@ -260,10 +261,7 @@ class RolesCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.roles' ) {
-            ns()->restrict(
-                [ 'deletee.roles' ],
-                __( 'You do not have enough permissions to perform this action.' )
-            );
+            $this->allowedTo( 'delete' );
 
             if ( $model->locked ) {
                 throw new Exception( __( 'Unable to delete a system role.' ) );

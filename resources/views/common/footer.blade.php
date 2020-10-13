@@ -22,7 +22,7 @@ $json               =   [
 <script type="text/javascript">
 ns.currency         =   @json( $json );
 ns.authentication   =   @json( $authentication );
-ns.base_url         =   '{{ request()->header( "x-forwarded-proto" ) === "https" ? secure_url( "/" ) : url( "/" ) }}';
+ns.base_url         =   '{{ url( "/" ) }}';
 </script>
 <script src="{{ asset( 'js/manifest.js' ) }}"></script>
 <script src="{{ asset( 'js/vendor.js' ) }}"></script>

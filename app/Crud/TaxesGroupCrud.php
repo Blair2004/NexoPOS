@@ -67,6 +67,13 @@ class TaxesGroupCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
+    protected $permissions = [
+        'create' => 'nexopos.create.tax-groups',
+        'read' => 'nexopos.read.tax-groups',
+        'update' => 'nexopos.update.tax-groups',
+        'delete' => 'nexopos.delete.tax-groups',
+    ];
+
     /**
      * Return the label used for the crud 
      * instance
@@ -153,6 +160,8 @@ class TaxesGroupCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -188,6 +197,8 @@ class TaxesGroupCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -227,15 +238,7 @@ class TaxesGroupCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.taxes-groups' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
     }
 

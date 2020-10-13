@@ -68,6 +68,13 @@ class CustomerGroupCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
+    protected $permissions = [
+        'create' => 'nexopos.create.customers-groups',
+        'read' => 'nexopos.read.customers-groups',
+        'update' => 'nexopos.update.customers-groups',
+        'delete' => 'nexopos.delete.customers-groups',
+    ];
+
     /**
      * Return the label used for the crud 
      * instance
@@ -222,16 +229,22 @@ class CustomerGroupCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id ) {
         if ( $namespace == 'ns.customers-group' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );
         }
+    }
+    /**
+     * Before Delete
+     * @return  void
+     */
+    public function beforePost( $request ) {
+        $this->allowedTo( 'create' );
+    }
+    /**
+     * Before Delete
+     * @return  void
+     */
+    public function beforePut( $request, $id ) {
+        $this->allowedTo( 'delete' );
     }
 
     /**

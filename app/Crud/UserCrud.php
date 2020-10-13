@@ -49,6 +49,13 @@ class UserCrud extends CrudService
         'role'          =>  [ 'name' ]
     ];
 
+    protected $permissions = [
+        'create' => 'create.users',
+        'read' => 'read.users',
+        'update' => 'update.users',
+        'delete' => 'delete.users',
+    ];
+
     /**
      * Define where statement
      * @var  array
@@ -219,6 +226,8 @@ class UserCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -254,6 +263,8 @@ class UserCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -293,21 +304,7 @@ class UserCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.users' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
-            /**
-             * @temp
-             */
-            if ( Auth::user()->role->namespace !== 'admin' ) {
-                throw new Exception( __( 'Access Denied' ) );
-            }
+            $this->allowedTo( 'delete' );
         }
     }
 

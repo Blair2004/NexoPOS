@@ -228,6 +228,8 @@ class CouponCrud extends CrudService
 
     public function beforePost( Request $request )
     {
+        $this->allowedTo( 'create' );
+
         foreach( $request->input( 'selected_products.products' ) as $product_id ) {
             $product    =   Product::find( $product_id );
             if ( ! $product instanceof Product ) {
@@ -245,6 +247,8 @@ class CouponCrud extends CrudService
 
     public function beforePut( Request $request )
     {
+        $this->allowedTo( 'update' );
+        
         foreach( $request->input( 'selected_products.products' ) as $product_id ) {
             $product    =   Product::find( $product_id );
             if ( ! $product instanceof Product ) {
@@ -383,6 +387,8 @@ class CouponCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, Coupon $coupon ) {
+        $this->allowedTo( 'delete' );
+
         if ( $namespace == 'ns.coupons' ) {
             $coupon->categories()->delete();
             $coupon->products()->delete();

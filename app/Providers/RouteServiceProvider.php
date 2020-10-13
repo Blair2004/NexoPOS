@@ -6,6 +6,7 @@ use App\Services\ModulesService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -32,7 +33,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        if ( request()->header( 'x-forwarded-proto' ) === 'https' ) {
+            URL::forceScheme( 'https' );
+        }
 
         parent::boot();
     }

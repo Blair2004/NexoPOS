@@ -57,7 +57,14 @@ class UnitCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [];
+
+    protected $permissions = [
+        'create' => 'nexopos.create.units',
+        'read' => 'nexopos.read.units',
+        'update' => 'nexopos.update.units',
+        'delete' => 'nexopos.delete.units',
+    ];
 
     /**
      * Define Constructor
@@ -186,6 +193,8 @@ class UnitCrud extends CrudService
      */
     public function beforePost( $request )
     {
+        $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -221,6 +230,8 @@ class UnitCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
+        $this->allowedTo( 'update' );
+
         return $request;
     }
 
@@ -260,15 +271,7 @@ class UnitCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.units' ) {
-            /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
+            $this->allowedTo( 'delete' );        
         }
     }
 
