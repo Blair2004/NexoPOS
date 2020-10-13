@@ -15,6 +15,8 @@ class UpdateCustomersAddresses extends Migration
     {
         Schema::table( 'nexopos_customers_addresses', function( Blueprint $table ) {
             $table->string( 'email' )->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_customers_addresses', 'email' ) ) {
+            }
         });
     }
 

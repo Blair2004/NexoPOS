@@ -58,9 +58,9 @@ export default {
         nsHttpClient.get( '/sanctum/csrf-cookie' )
             .subscribe( _ => {
                 try {
+                    this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
                     this.proceedUpdate()
                 } catch( e ) {
-                    this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
                     nsSnackBar.error( e.message ).subscribe();
                 }
             })
@@ -72,7 +72,6 @@ export default {
             for( let index in this.files ) {
                 try {
                     const response  =   await new Promise( ( resolve, reject ) => {
-                        console.log( this.files, index );
                         nsHttpClient.post( '/api/nexopos/v4/update', {
                             file: this.files[ index ]
                         }, {
