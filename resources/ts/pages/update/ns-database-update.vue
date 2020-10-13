@@ -49,16 +49,21 @@ export default {
             files: Update.files,
             returnLink: Update.returnLink,
             updating: false,
+            xXsrfToken: null,
             error: false,
             lastErrorMessage: '',
         }
     },
     mounted() {
-        try {
-            this.proceedUpdate()
-        } catch( e ) {
-            nsSnackBar.error( e.message ).subscribe();
-        }
+        nsHttpClient.get( '/sanctum/csrf-cookie' )
+            .subscribe( _ => {
+                try {
+                    this.proceedUpdate()
+                } catch( e ) {
+                    this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+                    nsSnackBar.error( e.message ).subscribe();
+                }
+            })
     },
     methods: {
         async proceedUpdate() {
@@ -70,6 +75,10 @@ export default {
                         console.log( this.files, index );
                         nsHttpClient.post( '/api/nexopos/v4/update', {
                             file: this.files[ index ]
+                        }, {
+                            headers: {
+                                'X-XSRF-TOKEN'  : this.xXsrfToken
+                            }
                         }).subscribe( resolve, reject );
                     });
                 } catch( exception ) {

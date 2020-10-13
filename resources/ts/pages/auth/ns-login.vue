@@ -43,7 +43,6 @@ export default {
         .subscribe( result => {
             this.fields         =   this.validation.createFields( result[0] );
             this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
-            console.log( this.xXsrfToken );
         });
     },
     methods: {

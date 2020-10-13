@@ -13,17 +13,19 @@ class CreateNexoposNotificationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_notifications', function (Blueprint $table) {
-            $table->id();
-            $table->integer( 'user_id' );
-            $table->string( 'identifier' );
-            $table->string( 'title' );
-            $table->string( 'description' );
-            $table->string( 'url' )->default( '#' );
-            $table->string( 'source' )->default( 'system' );
-            $table->boolean( 'dismissable' )->default( true );
-            $table->timestamps();
-        });
+        if ( ! Schema::hasTable( 'nexopos_notifications' ) ) {
+            Schema::create('nexopos_notifications', function (Blueprint $table) {
+                $table->id();
+                $table->integer( 'user_id' );
+                $table->string( 'identifier' );
+                $table->string( 'title' );
+                $table->string( 'description' );
+                $table->string( 'url' )->default( '#' );
+                $table->string( 'source' )->default( 'system' );
+                $table->boolean( 'dismissable' )->default( true );
+                $table->timestamps();
+            });
+        }
     }
 
     /**
