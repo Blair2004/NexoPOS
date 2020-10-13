@@ -7,7 +7,11 @@
                 <div class="flex justify-center items-center py-6">
                     <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                 </div>
-                <ns-login></ns-login>
+                <ns-login>
+                    <div class="w-full flex items-center justify-center">
+                        <h3 class="font-thin text-sm">{{ __( 'Loading...' ) }}</h3>
+                    </div>
+                </ns-login>
             </div>
         </div>
     </div>

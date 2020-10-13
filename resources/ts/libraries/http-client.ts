@@ -1,5 +1,6 @@
 import * as rx from "rx";
 import * as rxjs from 'rxjs';
+import { nsUrl } from '@/bootstrap'
 
 export class HttpClient {
     _subject: rxjs.Subject<{}>;
@@ -35,9 +36,12 @@ export class HttpClient {
     }
 
     _request( type, url, data = {}, config = {} ) {
-        this._subject.next({ identifier: 'async.start', url, data });
+        const newUrl   =   nsUrl.get( url );
+        console.log( newUrl );
+        this._client[ type ]( newUrl );
+        this._subject.next({ identifier: 'async.start', newUrl, data });
         return new rxjs.Observable( observer => {
-            this._client[ type ]( url, data, { 
+            this._client[ type ]( newUrl, data, { 
                 ...this._client.defaults[ type ],
                 ...config
             }).then( result => {

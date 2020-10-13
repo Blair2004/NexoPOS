@@ -54,7 +54,11 @@ export default {
         }
     },
     mounted() {
-        this.proceedUpdate()
+        try {
+            this.proceedUpdate()
+        } catch( e ) {
+            nsSnackBar.error( e.message ).subscribe();
+        }
     },
     methods: {
         async proceedUpdate() {

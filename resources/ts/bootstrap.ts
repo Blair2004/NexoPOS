@@ -10,6 +10,7 @@ import { Popup } from "./libraries/popup";
 import { Media } from "./libraries/media";
 import Vue from "vue";
 import FormValidation from "./libraries/form-validation";
+import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 
 Vue.use( VueRouter );
@@ -24,12 +25,13 @@ window.moment           =   moment;
 window.Axios            =   Axios;
 window.VueRouter        =   VueRouter;
 window.SnackBar         =   SnackBar;
-window.Axios.defaults.headers.common['X-Requested-With']    =   'XMLHttpRequest';
+window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
 const nsSnackBar        =   new SnackBar;
+const nsUrl             =   new Url;
 
 /**
  * create a screen class
@@ -80,6 +82,7 @@ window.nsSnackBar       =   nsSnackBar;
 window.nsCurrency       =   nsCurrency;
 window.nsAbbreviate     =   nsAbbreviate;
 window.nsState          =   nsState;
+window.nsUrl            =   nsUrl;
 window.nsScreen         =   nsScreen;
 window.ChartJS          =   ChartJS;
 window.EventEmitter     =   EventEmitter;
@@ -88,4 +91,4 @@ window.RxJS             =   RxJS;
 window.Media            =   Media;
 window.FormValidation   =   FormValidation;
 
-export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen };
+export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl };
