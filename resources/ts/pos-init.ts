@@ -113,14 +113,6 @@ export class POS {
         this.defineCurrentScreen();
 
         /**
-         * to cancel selected payment
-         */
-        this._paymentsType.next( this.paymentsType.getValue().map( payment => {
-            payment.selected    =   false;
-            return payment;
-        }) );
-
-        /**
          * to reset order details
          */
         this.order.next( this.defaultOrder() );

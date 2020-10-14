@@ -76,6 +76,9 @@ export default {
         deletePayment( payment ) {
             POS.removePayment( payment );
         },
+        selectPaymentAsActive( event ) {
+            this.select( this.paymentsType.filter( payment => payment.identifier === event.target.value )[0] );
+        },
         submitOrder() {
             const popup     =   Popup.show( nsPosLoadingPopupVue );
             
@@ -84,7 +87,9 @@ export default {
                     // close spinner
                     popup.close();
 
-                    POS.printOrder( result.data.id );
+                    nsSnackBar.success( result.message ).subscribe();
+
+                    POS.printOrder( result.data.order.id );
     
                     // close payment popup
                     this.$popup.close();
@@ -117,10 +122,8 @@ export default {
                         <span class="px-2 rounded-full h-8 w-8 flex items-center justify-center bg-green-500 text-white">{{ order.payments.length }}</span>
                     </li> 
                 </ul>
-                <button @click="closePopup()" class="cursor-pointer md:hidden hover:bg-red-400 hover:text-white hover:border-red-600 rounded-full h-8 w-8 border items-center justify-center">
-                    <i class="las la-times"></i>
-                </button>
-                <!-- <button @click="closePopup()" class="cursor-pointer md:hidden rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
+                <ns-close-button class="lg:hidden" @click="closePopup()"></ns-close-button>
+                <!-- <button @click="closePopup()" class="cursor-pointer lg:hidden rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
                     <i class="las la-times"></i>
                 </button> -->
             </div>
@@ -129,13 +132,11 @@ export default {
                     <div class="h-12 bg-gray-300 hidden items-center justify-between lg:flex">
                         <div></div>
                         <div class="px-2">
-                            <button @click="closePopup()" class="cursor-pointer rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
-                                <i class="las la-times"></i>
-                            </button>
+                            <ns-close-button @click="closePopup()"></ns-close-button>
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-y-auto" v-if="! showPayment">
-                        <component @submit="submitOrder()" v-bind:is="currentPaymentComponent"></component>
+                        <component @submit="submitOrder()" :identifier="activePayment" v-bind:is="currentPaymentComponent"></component>
                     </div>
                     <div class="flex flex-auto overflow-y-auto p-2 flex-col" v-if="showPayment">
                         <h3 class="text-center font-bold py-2 text-gray-700">List Of Payments</h3>
@@ -156,8 +157,14 @@ export default {
                     </div>
                 </div>
                 <div class="flex w-full bg-gray-300 justify-between p-2">
-                    <div>
-                        
+                    <div class="flex">
+                        <div class="flex items-center lg:hidden">
+                            <h3 class="font-semibold mr-2">Select Payment</h3>
+                            <select @change="selectPaymentAsActive( $event )" class="p-2 rounded border-2 border-blue-400 bg-white shadow">
+                                <option value="">Choose Payment</option>
+                                <option :selected="activePayment.identifier === payment.identifier" :value="payment.identifier" :key="payment.identifier" @click="select( payment )" v-for="payment of paymentsType">{{ payment.label }}</option>
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <ns-button @click="submitOrder()" type="info">Submit Payment</ns-button>

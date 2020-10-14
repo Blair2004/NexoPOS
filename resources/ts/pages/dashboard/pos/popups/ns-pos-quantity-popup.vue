@@ -64,8 +64,19 @@ export default {
         if ( this.$popupParams.product.quantity ) {
             this.finalValue     =   this.$popupParams.product.quantity;
         }
+
+        document.addEventListener( 'keyup', this.handleKeyPress );
+    },
+    destroyed() {
+        document.removeEventListener( 'keypress', this.handleKeyPress );
     },
     methods: {
+        handleKeyPress( event ) {
+            if ( event.keyCode === 13 ) {
+                this.inputValue({ identifier : 'next' });
+            }
+        },
+        
         inputValue( key ) {
             if ( key.identifier === 'next' ) {
                 /**

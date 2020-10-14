@@ -159,14 +159,7 @@ class CurrencyService
      */
     public function get()
     {
-        $value  =   floatval( number_format( 
-            $this->value, 
-            $this->decimal_precision, 
-            $this->decimal_separator, 
-            $this->thousand_separator
-        ) );
-
-        return floatval( $value );
+        return floatval( $this->value );
     }
 
     /**

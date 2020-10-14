@@ -1,2 +1,2 @@
-@includeWhen( request()->query( 'dashboard' ) === 'disabled', 'pages.dashboard.orders.templates._receipt' )
+@includeWhen( request()->query( 'dashboard' ) === 'disabled', 'pages.dashboard.orders.templates._naked_receipt' )
 @includeWhen( empty( request()->query( 'dashboard' ) ), 'pages.dashboard.orders.templates._dashboard_receipt' )

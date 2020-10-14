@@ -2,19 +2,19 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use App\Models\Product;
 use Tests\TestCase;
 
-class OrderTest extends TestCase
+class OrderSecondTestPaymentType extends TestCase
 {
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function testPostingOrder()
+    public function testOrderPaymentStatus()
     {
         $this->json( 'POST', 'auth/sign-in', [
             'username'  =>  env( 'TEST_USERNAME' ),
@@ -63,8 +63,7 @@ class OrderTest extends TestCase
         ]);
 
         $response->assertJsonPath(
-            'data.order.total', 58.5 + 150,
-            'data.order.change', ( 60 + 150 ) - 58.5,
+            'data.order.payment_status', 'paid',
         );
     }
 }

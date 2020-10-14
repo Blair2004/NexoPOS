@@ -61,7 +61,7 @@ class OrdersService
         $this->dateService      =   $dateService;
         $this->unitService      =   $unitService;
         $this->currencyService  =   $currencyService;
-        $this->options          =   $optionsService;
+        $this->optionsService   =   $optionsService;
         $this->taxService       =   $taxService;
     }
 
@@ -140,6 +140,9 @@ class OrdersService
         $this->__computeOrderTotal( compact( 'order', 'subTotal', 'taxes', 'paymentStatus', 'totalPayments') );
 
         $order->save();
+
+        $order->load( 'payments' );
+        $order->load( 'products' );
 
         /**
          * let's notify when an
@@ -294,7 +297,7 @@ class OrdersService
         foreach ($payments as $payment) {
             $orderPayment               =   new OrderPayment;
             $orderPayment->order_id     =   $order->id;
-            $orderPayment->namespace    =   $payment['identifier'];
+            $orderPayment->identifier   =   $payment['identifier'];
             $orderPayment->value        =   $payment['amount'];
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
@@ -339,7 +342,7 @@ class OrdersService
          */
         if ($totalPayments < $total) {
             if (
-                $this->options->get('nexopos.pos.allow_partials_orders', true) === false &&
+                $this->optionsService->get('nexopos.pos.allow_partials_orders', true) === false &&
                 $totalPayments > 0
             ) {
                 throw new NotAllowedException([
@@ -347,7 +350,7 @@ class OrdersService
                     'message'   =>  __('Unable to proceed. Incomplete order aren\'t allowed. This option could be changed on the settings.')
                 ]);
             } else if (
-                $this->options->get('nexopos.pos.allow_quotes_orders', true) === false &&
+                $this->optionsService->get('nexopos.pos.allow_quotes_orders', true) === false &&
                 $totalPayments === 0
             ) {
                 throw new NotAllowedException([
@@ -1172,5 +1175,47 @@ class OrdersService
             case 'failed': return __( 'Shipping Failed' ); break;
             default : return sprintf( _( 'Unknown Status (%s)' ), $type ); break;
         }
+    }
+
+    public function orderTemplateMapping( $option, Order $order )
+    {
+        $template                       =   $this->optionsService->get( $option );
+        $availableTags                  =   [
+            "store_name"                =>  $this->optionsService->get( 'ns_store_name' ),
+            "store_email"               =>  $this->optionsService->get( 'ns_store_email' ),
+            "store_phone"               =>  $this->optionsService->get( 'ns_store_phone' ),
+            "cashier_name"              =>  $order->user->username,
+            "cashier_id"                =>  $order->author,
+            "order_code"                =>  $order->code,
+            "order_date"                =>  $order->created_at,
+            "customer_name"             =>  $order->customer->name,
+            "customer_email"            =>  $order->customer->email,
+            "shipping_" . "name"        =>  $order->shipping_address->name,
+            "shipping_" . "surname"     =>  $order->shipping_address->surname,
+            "shipping_" . "phone"       =>  $order->shipping_address->phone,
+            "shipping_" . "address_1"   =>  $order->shipping_address->address_1,
+            "shipping_" . "address_2"   =>  $order->shipping_address->address_2,
+            "shipping_" . "country"     =>  $order->shipping_address->country,
+            "shipping_" . "city"        =>  $order->shipping_address->city,
+            "shipping_" . "pobox"       =>  $order->shipping_address->pobox,
+            "shipping_" . "company"     =>  $order->shipping_address->company,
+            "shipping_" . "email"       =>  $order->shipping_address->email,
+            "billing_" . "name"         =>  $order->billing_address->name,
+            "billing_" . "surname"      =>  $order->billing_address->surname,
+            "billing_" . "phone"        =>  $order->billing_address->phone,
+            "billing_" . "address_1"    =>  $order->billing_address->address_1,
+            "billing_" . "address_2"    =>  $order->billing_address->address_2,
+            "billing_" . "country"      =>  $order->billing_address->country,
+            "billing_" . "city"         =>  $order->billing_address->city,
+            "billing_" . "pobox"        =>  $order->billing_address->pobox,
+            "billing_" . "company"      =>  $order->billing_address->company,
+            "billing_" . "email"        =>  $order->billing_address->email,
+        ];
+
+        foreach( $availableTags as $tag => $value ) {
+            $template   =   ( str_replace( '{'.$tag.'}', $value, $template ) );
+        }
+
+        return $template;
     }
 }

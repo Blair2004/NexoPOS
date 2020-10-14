@@ -8,6 +8,7 @@
                 <p class="text-gray-600">{{ __( 'Order receipt' ) }}</p>
             </div>
             <div class="my-2 w-full mx-auto">                
+                <ns-link type="info" href="{{ url( '/dashboard/orders/receipt/' . $order->id . '?dashboard=disabled' ) }}">{{ __( 'Hide Dashboard' ) }}</ns-link>
                 @include( 'pages.dashboard.orders.templates._receipt' )
             </div>
         </div>

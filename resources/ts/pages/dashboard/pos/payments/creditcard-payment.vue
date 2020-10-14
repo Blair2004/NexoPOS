@@ -3,6 +3,7 @@
 </template>
 <script>
 export default {
-    
+    name: 'creditcart-payment',
+    props: [ 'identifier' ],
 }
 </script>

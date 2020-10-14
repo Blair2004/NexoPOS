@@ -208,8 +208,7 @@ export default {
                 :headers="{ 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN' : csrf }"
                 accept="image/*"
                 post-action="/api/nexopos/v4/medias"
-                @input-file="inputFile"
-                @input-filter="inputFilter">
+                >
                 <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
                     <h3 class="text-3xl font-bold text-gray-600 mb-4">Click Here Or Drop Your File To Upload</h3>
                     <div class="rounded w-full md:w-2/3 text-gray-700 bg-gray-500 h-56 overflow-y-auto p-2">

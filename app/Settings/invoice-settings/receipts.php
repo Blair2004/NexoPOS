@@ -1,16 +1,22 @@
 <?php
+
+use App\Services\Helper;
+
 return [
     'label'     =>      __( 'Receipts' ),
     'fields'    =>      [
         [
             'label'     =>  __( 'Receipt Template' ),
-            'type'      =>  'text',
+            'type'      =>  'select',
+            'options'   =>  Helper::kvToJsOptions([
+                'default'   =>  __( 'Default' )
+            ]),
             'name'      =>  'ns_invoice_receipt_template',
             'value'     =>  $options->get( 'ns_invoice_receipt_template' ),
             'description'   =>  __( 'Choose the template that applies to receipts' )
         ], [
             'label'     =>  __( 'Receipt Logo' ),
-            'type'      =>  'text',
+            'type'      =>  'media',
             'name'      =>  'ns_invoice_receipt_logo',
             'value'     =>  $options->get( 'ns_invoice_receipt_logo' ),
             'description'   =>  __( 'Provide a URL to the logo.' )
@@ -35,8 +41,26 @@ return [
             __( '{order_date}: displays the order date.' ) . "<br>" .
             __( '{customer_name}: displays the customer name.' ) . "<br>" .
             __( '{customer_email}: displays the customer email.' ) . "<br>" .
-            __( '{customer_address_1}: display the customer\'s address 1.' ) . "<br>" .
-            __( '{customer_address_2}: display the customer\'s address 2.' ) . "<br>"
+            __( '{shipping_name}: displays the shipping name.' ) . "<br>" .
+            __( '{shipping_surname}: displays the shipping surname.' ) . "<br>" .
+            __( '{shipping_phone}: displays the shipping phone.' ) . "<br>" .
+            __( '{shipping_address_1}: displays the shipping address_1.' ) . "<br>" .
+            __( '{shipping_address_2}: displays the shipping address_2.' ) . "<br>" .
+            __( '{shipping_country}: displays the shipping country.' ) . "<br>" .
+            __( '{shipping_city}: displays the shipping city.' ) . "<br>" .
+            __( '{shipping_pobox}: displays the shipping pobox.' ) . "<br>" .
+            __( '{shipping_company}: displays the shipping company.' ) . "<br>" .
+            __( '{shipping_email}: displays the shipping email.' ) . "<br>" .
+            __( '{billing_name}: displays the billing name.' ) . "<br>" .
+            __( '{billing_surname}: displays the billing surname.' ) . "<br>" .
+            __( '{billing_phone}: displays the billing phone.' ) . "<br>" .
+            __( '{billing_address_1}: displays the billing address_1.' ) . "<br>" .
+            __( '{billing_address_2}: displays the billing address_2.' ) . "<br>" .
+            __( '{billing_country}: displays the billing country.' ) . "<br>" .
+            __( '{billing_city}: displays the billing city.' ) . "<br>" .
+            __( '{billing_pobox}: displays the billing pobox.' ) . "<br>" .
+            __( '{billing_company}: displays the billing company.' ) . "<br>" .
+            __( '{billing_email}: displays the billing email.' ) . "<br>"
         ], [
             'label'         =>  __( 'Column B' ),
             'type'          =>  'textarea',
@@ -52,8 +76,26 @@ return [
             __( '{order_date}: displays the order date.' ) . "<br>" .
             __( '{customer_name}: displays the customer name.' ) . "<br>" .
             __( '{customer_email}: displays the customer email.' ) . "<br>" .
-            __( '{customer_address_1}: display the customer\'s address 1.' ) . "<br>" .
-            __( '{customer_address_2}: display the customer\'s address 2.' ) . "<br>"
+            __( '{shipping_name}: displays the shipping name.' ) . "<br>" .
+            __( '{shipping_surname}: displays the shipping surname.' ) . "<br>" .
+            __( '{shipping_phone}: displays the shipping phone.' ) . "<br>" .
+            __( '{shipping_address_1}: displays the shipping address_1.' ) . "<br>" .
+            __( '{shipping_address_2}: displays the shipping address_2.' ) . "<br>" .
+            __( '{shipping_country}: displays the shipping country.' ) . "<br>" .
+            __( '{shipping_city}: displays the shipping city.' ) . "<br>" .
+            __( '{shipping_pobox}: displays the shipping pobox.' ) . "<br>" .
+            __( '{shipping_company}: displays the shipping company.' ) . "<br>" .
+            __( '{shipping_email}: displays the shipping email.' ) . "<br>" .
+            __( '{billing_name}: displays the billing name.' ) . "<br>" .
+            __( '{billing_surname}: displays the billing surname.' ) . "<br>" .
+            __( '{billing_phone}: displays the billing phone.' ) . "<br>" .
+            __( '{billing_address_1}: displays the billing address_1.' ) . "<br>" .
+            __( '{billing_address_2}: displays the billing address_2.' ) . "<br>" .
+            __( '{billing_country}: displays the billing country.' ) . "<br>" .
+            __( '{billing_city}: displays the billing city.' ) . "<br>" .
+            __( '{billing_pobox}: displays the billing pobox.' ) . "<br>" .
+            __( '{billing_company}: displays the billing company.' ) . "<br>" .
+            __( '{billing_email}: displays the billing email.' ) . "<br>"
         ]
     ]
 ];

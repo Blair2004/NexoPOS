@@ -22,7 +22,7 @@ class CreateOrdersPaymentTable extends Migration
                 $table->integer( 'order_id' );
                 $table->float( 'value' )->default(0);
                 $table->integer( 'author' );
-                $table->string( 'namespace' );
+                $table->string( 'identifier' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

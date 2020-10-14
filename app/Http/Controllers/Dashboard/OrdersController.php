@@ -128,7 +128,7 @@ class OrdersController extends DashboardController
                 'ns_pos_printing_enabled_for'   =>  $this->optionsService->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
             ],
             'urls'              =>  [
-                'printing_url'  =>      Hook::filter( 'ns_pos_printing_url', url( '/api/nexopos/v4/orders/print/{id}' ) )
+                'printing_url'  =>      Hook::filter( 'ns_pos_printing_url', url( '/dashboard/orders/receipt/{id}?dashboard=disabled&autoprint=true' ) )
             ],
             'paymentTypes'  =>  $this->paymentTypes
         ]);
@@ -160,9 +160,11 @@ class OrdersController extends DashboardController
 
         return $this->view( 'pages.dashboard.orders.templates.receipt', [
             'order'             =>  $order,
+            'title'             =>  sprintf( __( 'Order Receipt &mdash; %s' ), $order->code ),
             'optionsService'    =>  $this->optionsService,
+            'ordersService'     =>  $this->ordersService,
             'paymentTypes'      =>  collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
-                return [ $payment->identifier => $payment->label ];
+                return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
             })
         ]);
     }

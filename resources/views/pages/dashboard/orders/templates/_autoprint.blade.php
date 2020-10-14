@@ -1,0 +1,3 @@
+<script>
+    window.print();
+</script>

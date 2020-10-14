@@ -119,15 +119,17 @@ export default {
                     .replace( '{paymentType}', this.label )
                     .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
                 onAction: ( action ) => {
-                    POS.addPayment({
-                        amount: this.order.total,
-                        identifier: this.identifier,
-                        selected: false,
-                        label: this.label,
-                        readonly: false,
-                    });
-                    this.$emit( 'submit' );
-                    this.backValue     =   '0';
+                    if ( action ) {
+                        POS.addPayment({
+                            amount: this.order.total,
+                            identifier: this.identifier,
+                            selected: false,
+                            label: this.label,
+                            readonly: false,
+                        });
+                        this.$emit( 'submit' );
+                        this.backValue     =   '0';
+                    }
                 }
             })
         },
