@@ -19,11 +19,13 @@ use Hook
 
 Here is the list off all available filters as long as their purpose and arguments.
 
-| Filter | Description | Arguments
-| ------ | ----------- | -------- |
-| {namespace}-catch-action | Helps to catch bulk action of a specific CRUD component. {namespace} should be replaced by the actual CRUD component namespace(identifier). | 2 (`boolean`, `Illuminate\Http\Request)`|
-| {namespace}-crud-actions | Helps to add actions or various other information on each row part of the result.data array. | 1 (`Illuminate\Database\Eloquent\Model`)|
-| ns-crud-resource | Used to return relevant CRUD component class when there is a match with the identifier(namespace). | 2 ( `<string>namespace`, `<number>?identifier` )|
-| ns-crud-form | Used to hold form as defined on the `getForm` on the CRUD component class. | 3 ( `<array>form`, `<string>namespace`, `<array>(model, namespace, id)` )|
-| ns-validation | Contains the validation rules for a specific CRUD Component class. | 1 ( `<array>validation` )|
-| ns-dashboard-menus | Contains the array where is defined the Dashboard menus. | 1 ( `<array>validation` )|
+| Filter                   | Description         | Arguments  | Version     | Status |
+| ------------------------ | ------------------- | ---------- | ----------- | ------ |
+| {namespace}-catch-action | Catch bulk action of a specific CRUD component. | 2 (`boolean`, `Illuminate\Http\Request)`| 4.0-beta-1 | Valid |
+| {namespace}-crud-actions | Adds actions on each row part of the result.data array. | 1 (`Illuminate\Database\Eloquent\Model`)| 4.0-beta-1 | Valid |
+| ns-crud-resource         | Used to return relevant CRUD component class when there is a match with the identifier. | 2 ( `<string>namespace`, `<number>?identifier` )| 4.0-beta-1 | Valid |
+| ns-crud-form             | Used to hold form as defined on the `getForm` on the CRUD component class. | 3 ( `<array>form`, `<string>namespace`, `<array>(model, namespace, id)` )| 4.0-beta-1 | Valid |
+| ns-validation            | Contains the validation rules for a specific CRUD Component class.      | 1 ( `<array>validation` )| 4.0-beta-1 | Valid |
+| ns-dashboard-menus       | Contains the array where is defined the Dashboard menus.                | 1 ( `<array>validation` )| 4.0-beta-1 | Valid |
+|ns.before-login-fields    | Add or modify output before login fields | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
+|ns.after-login-fields     | Add or modify output after login fields  | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
