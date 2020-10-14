@@ -15,18 +15,20 @@
         "@types/node": "^14.11.2",
         "axios": "^0.20",
         "babel-loader": "^8.1.0",
-        "cross-env": "^7.0",
-        "laravel-mix": "^5.0.5",
+        "cross-env": "^7.0.2",
+        "laravel-mix": "^5.0.7",
         "lodash": "^4.17.20",
-        "resolve-url-loader": "^3.1.0",
-        "sass": "^1.26.11",
-        "sass-loader": "^10.0.2",
+        "resolve-url-loader": "^3.1.1",
+        "sass": "^1.27.0",
+        "sass-loader": "^10.0.3",
         "ts-loader": "^8.0.4",
         "typescript": "^4.0.3",
         "vue-loader": "^15.9.3",
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^23.0.0",
+        "@ckeditor/ckeditor5-vue": "^1.0.3",
         "chart.js": "^2.9.3",
         "dayjs": "^1.8.36",
         "jspdf": "^2.1.1",
@@ -38,6 +40,7 @@
         "uglifyjs-webpack-plugin": "^2.2.0",
         "vue": "^2.6.12",
         "vue-router": "^3.4.3",
-        "vue-upload-component": "^2.8.20"
+        "vue-upload-component": "^2.8.20",
+        "webpack": "^5.1.0"
     }
 }

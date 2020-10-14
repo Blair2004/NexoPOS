@@ -964,7 +964,7 @@ class ProductService
          * the change on the stock is only performed
          * if the Product has the stock management enabled.
          */
-        if ( $product->stock_management_enabled === Product::STOCK_MANAGEMENT_ENABLED ) {
+        if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
 
             if ( in_array( $action, [ 
                 ProductHistory::ACTION_REMOVED,

@@ -23,6 +23,7 @@ use App\Exceptions\NotAllowedException;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Models\DashboardDay;
+use App\Models\ProductHistory;
 
 class OrdersService
 {
@@ -140,7 +141,6 @@ class OrdersService
         $this->__computeOrderTotal( compact( 'order', 'subTotal', 'taxes', 'paymentStatus', 'totalPayments') );
 
         $order->save();
-
         $order->load( 'payments' );
         $order->load( 'products' );
 
@@ -490,7 +490,7 @@ class OrdersService
                 ->additionateBy($product[ 'tax_value' ])
                 ->get();
 
-            $this->productService->stockAdjustment('sold', $history);
+            $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history);
         });
 
         return compact('subTotal', 'taxes', 'order');

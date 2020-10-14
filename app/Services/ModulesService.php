@@ -824,7 +824,7 @@ class ModulesService
 
                 return [
                     'status'    =>  'success',
-                    'message'   =>  __( 'The migration has been successfully runned' )
+                    'message'   =>  __( 'The migration run successfully.' )
                 ];                
             }
 
