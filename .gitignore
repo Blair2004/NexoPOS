@@ -20,3 +20,4 @@ composer.lock
 .env.testing
 .phpunit.result.cache
 worker.log
+storage/module.zip
