@@ -34,7 +34,7 @@
         "moment": "^2.28.0",
         "rx": "^4.1.0",
         "rxjs": "^6.6.3",
-        "tailwindcss": "^1.8.10",
+        "tailwindcss": "^1.9.1",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "vue": "^2.6.12",
         "vue-router": "^3.4.3",

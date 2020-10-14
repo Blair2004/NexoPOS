@@ -1,3 +1,8 @@
+<?php
+
+use App\Classes\Hook;
+use App\Classes\Response;
+?>
 @extends( 'layout.base' )
 
 @section( 'layout.base.body' )
@@ -7,11 +12,13 @@
                 <div class="flex justify-center items-center py-6">
                     <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                 </div>
+                {!! Hook::filter( 'ns.before-login-fields', new Response ) !!}
                 <ns-login>
                     <div class="w-full flex items-center justify-center">
                         <h3 class="font-thin text-sm">{{ __( 'Loading...' ) }}</h3>
                     </div>
                 </ns-login>
+                {!! Hook::filter( 'ns.after-login-fields', new Response ) !!}
             </div>
         </div>
     </div>

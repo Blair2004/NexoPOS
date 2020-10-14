@@ -21,6 +21,7 @@ class ModulesService
     private $modules    =   [];
     private $xmlParser;
     private $options;
+    private $modulesPath;
 
     public function __construct()
     {
@@ -28,10 +29,11 @@ class ModulesService
             /**
              * We can only enable a module if the database is installed.
              */
-            $this->options          =   app()->make( Options::class );
+            $this->options      =   app()->make( Options::class );
         }
 
-        $this->xmlParser    =   new Reader( new Document() );
+        $this->modulesPath      =   base_path( 'modules' ) . DIRECTORY_SEPARATOR;
+        $this->xmlParser        =   new Reader( new Document() );
 
         Storage::disk( 'ns' )->makeDirectory( 'modules' );
     }
@@ -144,26 +146,7 @@ class ModulesService
                  */
                 if ( $config[ 'enabled' ] ) {
 
-                    /**
-                     * Load module folder contents
-                     */
-                    foreach([ 'Models', 'Services', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms' ] as $folder ) {
-                        /**
-                         * Load Module models
-                         */
-                        $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
-
-                        foreach( $files as $file ) {
-                            /**
-                             * @todo run service provider
-                             */
-                            $fileInfo   =   pathinfo(  $modulesPath . $file );
-
-                            if ( $fileInfo[ 'extension' ] == 'php' ) {
-                                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
-                            }
-                        }
-                    }
+                    $this->autoloadModule( $config );
 
                     /**
                      * register module service provider
@@ -226,6 +209,30 @@ class ModulesService
                 'status'    =>  'failed',
                 'message'   =>  sprintf( __( 'No config.xml has been found on the directory : %s' ), $dir )
             ];
+        }
+    }
+
+    public function autoloadModule( $config )
+    {
+        /**
+         * Load module folder contents
+         */
+        foreach([ 'Models', 'Services', 'Events', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms' ] as $folder ) {
+            /**
+             * Load Module models
+             */
+            $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
+
+            foreach( $files as $file ) {
+                /**
+                 * @todo run service provider
+                 */
+                $fileInfo   =   pathinfo(  $this->modulesPath . $file );
+
+                if ( $fileInfo[ 'extension' ] == 'php' ) {
+                    include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
+                }
+            }
         }
     }
 
@@ -865,6 +872,7 @@ class ModulesService
              * We're now atempting to trigger the module
              */
             try {
+                $this->autoloadModule( $module );
                 include_once( $module[ 'index-file' ] );
                 $moduleObject   =   new $module[ 'entry-class' ];
             } catch( Exception $error ) {

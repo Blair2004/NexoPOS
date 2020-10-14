@@ -6,8 +6,8 @@ namespace Modules\{{ $module[ 'namespace' ] }}\Events;
 **/
 class {{ $module[ 'namespace' ] }}Event
 {
-    public function __construct( Menus $menus )
+    public function __construct()
     {
-        $this->menus    =   $menus;
+        //
     }
 }
