@@ -24,7 +24,8 @@
         "ts-loader": "^8.0.4",
         "typescript": "^4.0.3",
         "vue-loader": "^15.9.3",
-        "vue-template-compiler": "^2.6.12"
+        "vue-template-compiler": "^2.6.12",
+        "webpack": "^4.44.2"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^23.0.0",
@@ -40,7 +41,6 @@
         "uglifyjs-webpack-plugin": "^2.2.0",
         "vue": "^2.6.12",
         "vue-router": "^3.4.3",
-        "vue-upload-component": "^2.8.20",
-        "webpack": "^5.1.0"
+        "vue-upload-component": "^2.8.20"
     }
 }
