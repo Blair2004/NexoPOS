@@ -308,3 +308,14 @@ Hook::addFilter( 'ns-crud-footer', function( Response $response ) {
     $response->addOutput( ( string ) view( '/path/to/your/view' ) );
 });
 ```
+
+Then, you view should register the script (using script tag). On your script, you'll just have to listen
+to the event before opening the popup.
+
+```js
+nsEvent.subject().subscribe( event => {
+    if ( event.identifier === 'ns-table-row-action' && event.value.action.namespace === 'my-popup' ) {
+        Popup.show( YourPopupComponentVue, {} );
+    }
+}) 
+```
