@@ -29,4 +29,4 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-dashboard-menus       | Contains the array where is defined the Dashboard menus.                | `<array>validation`| 4.0-beta-1 | Valid |
 |ns.before-login-fields    | Add or modify output before login fields | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
 |ns.after-login-fields     | Add or modify output after login fields  | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
-|ns-crud-footer     | Add or modifier output on crud tables  | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
+|ns-crud-footer     | Add or modifier output on crud tables footer | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
