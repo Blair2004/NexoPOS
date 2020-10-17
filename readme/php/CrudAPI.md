@@ -217,3 +217,94 @@ Sometime, you might want to give a different colors to a row that is rended on t
 ```
 
 You might need to understand how TailwindCSS works to apply [color utilities classes](https://tailwindcss.com/docs/customizing-colors#default-color-palette).
+
+### How To Open A Popup While Clickin On Row Actions
+Usually row actions takes you to a different page where specific actions can be taken. However, if you would like to display informations on a popup on the same page where a row action is clicked, you need to proceed using the "popup" actions. This will show you how to turn an action into a popup.
+
+![screenshot-nexopos-v4 std-2020 10 17-14_32_09](https://user-images.githubusercontent.com/5265663/96338398-b64b1200-1085-11eb-9782-3bbe7939d989.jpg)
+
+By Action we mean the actions that are defined using "setActions" method of a crud class. Here is an example of defined actions : 
+
+```php
+  // ...
+  public function setActions( $entry, $namespace )
+  {
+      // you can make changes here
+      $entry->{'$actions'}    =   [
+          [
+              'label'     =>  __( 'Delete' ),
+              'namespace' =>  'delete',
+              'type'      =>  'DELETE',
+              'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+              'confirm'   =>  [
+                  'message'  =>  __( 'Would you like to delete this ?' ),
+              ]
+          ]
+      ];
+
+      return $entry;
+  }
+  // ...
+```
+In order to create a popup action you need to set the type to "DELETE" : 
+
+```php
+  // ...
+  public function setActions( $entry, $namespace )
+  {
+      // you can make changes here
+      $entry->{'$actions'}    =   [
+          [
+              'label'     =>  __( 'My Popup' ),
+              'namespace' =>  'my-popup',
+              'type'      =>  'POPUP',
+          ], [
+              'label'     =>  __( 'Delete' ),
+              'namespace' =>  'delete',
+              'type'      =>  'DELETE',
+              'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+              'confirm'   =>  [
+                  'message'  =>  __( 'Would you like to delete this ?' ),
+              ]
+          ]
+      ];
+
+      return $entry;
+  }
+  // ...
+```
+Once the button is clicked, it will trigger an event available using the javascript object `nsEvent` :
+
+```js
+nsEvent.emit({
+    identifier: 'ns-table-row-action',
+    value: { action, row: this.row }
+});
+```
+
+Where identifier should help you identify the event is about clicking on an action and value which as the folowing properties : 
+- action : that is one action as it's defined on `setActions`, example : 
+
+```php
+[
+  'label'     =>  __( 'My Popup' ),
+  'namespace' =>  'my-popup',
+  'type'      =>  'POPUP'
+]
+```
+
+- row : that is the line from where the action is clicked.
+
+So, in order to be able to catch that even, you need to register a javascript file that is available on the footer of the CRUD resource you're targetting.
+Ideally, you'll add a filter using the hook "ns-crud-footer" : 
+
+```php
+use App\Classes\Hook;
+use App\Classes\Response;
+
+// ...
+
+Hook::addFilter( 'ns-crud-footer', function( Response $response ) {
+    $response->addOutput( ( string ) view( '/path/to/your/view' ) );
+});
+```
