@@ -22,6 +22,8 @@ import NsProcurement     from './pages/dashboard/ns-procurement.vue';
 import NsNotifications   from './pages/dashboard/ns-notifications.vue';
 import NsMedia           from './pages/dashboard/ns-media.vue';
 import NsDashboardCards  from './pages/dashboard/home/ns-dashboard-cards.vue';
+import NsBestCustomers   from './pages/dashboard/home/ns-best-customers.vue';
+import NsBestCashiers    from './pages/dashboard/home/ns-best-cashiers.vue';
 import NsStockAdjustment from './pages/dashboard/products/ns-stock-adjustment.vue';
 
 declare const nsState;
@@ -104,6 +106,8 @@ const components    =   {
     NsProcurement,
     NsMedia,
     NsDashboardCards,
+    NsBestCustomers,
+    NsBestCashiers,
     NsStockAdjustment,
     ...nsExtraComponents, // add extra components provided by plugins.
 };

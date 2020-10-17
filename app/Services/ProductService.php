@@ -270,7 +270,7 @@ class ProductService
          * since it's case of variable product, the tax on
          * the parent product is not used.  
          */
-        $this->taxService->computeTax( $product, $data[ 'tax_group_id' ] ?? null );
+        // $this->taxService->computeTax( $product, $data[ 'tax_group_id' ] ?? null );
 
         /**
          * save product images
@@ -366,12 +366,6 @@ class ProductService
 
         $product->author        =   Auth::id();
         $product->save();
-
-        /**
-         * compute product tax for either the wholesale_price
-         * and the sale price
-         */
-        $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null);
 
         /**
          * save product images
@@ -523,54 +517,30 @@ class ProductService
          */
         extract( $data );
 
-        if ( in_array( $field, [ 
-            'sale_price', 
-            'sale_price_edit',
-            'excl_tax_sale_price', 
-            'incl_tax_sale_price', 
-            'wholesale_price',
-            'wholesale_price_edit',
-            'incl_tax_wholesale_price', 
-            'excl_tax_wholesale_price', 
-            'tax_value' 
-        ] ) ) {
+        if ( in_array( 'units', $fields ) ) {
+            foreach( $fields[ 'units' ][ 'selling_group' ] as $group ) {
 
-            if ( in_array( $field, [
-                'sale_price_edit',
-                'wholesale_price_edit'
-            ]) ) {
-                $newLabel               =   substr( $field, 0, strlen( $field ) - strlen( '_edit' ) );
-                $product->$newLabel     =   $this->currency->define( 
-                    $product->$field
-                )->get();
-            } 
+                $unitQuantity    =   $this->getUnitQuantity(
+                    $product->id,
+                    $group[ 'unit' ]
+                );
 
-            $product->$field    =   $this->currency->define( $value )
-                ->get();
+                if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
+                    $unitQuantity               =   new ProductUnitQuantity;
+                    $unitQuantity->unit_id      =   $group[ 'unit' ];
+                    $unitQuantity->product_id   =   $product->id;
+                    $unitQuantity->quantity     =   0;
+                }
 
-        } else if ( in_array( $field, [ 'selling_unit_ids', 'purchase_unit_ids', 'transfer_unit_ids' ]) ) {
+                $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
+                $unitQuantity->wholesale_price_edit     =   $group[ 'sale_price' ];
 
-            /**
-             * we only verifiy the unit group
-             * a valid value is provided. Note that for 
-             * variable product, these fields aren't provided
-             */
-            if ( ! empty( $fields[ $field ] ) ) {
-                /**
-                 * try to get either a unit group or the unit itself
-                 * according to the choice made on the item.
-                 * @todo needs to be moved out from here
-                 */
-                $this->unitService->getGroups( $fields[ 'unit_group' ] );
-
-                /**
-                 * as we'll need to store that as a json.
-                 */
-                $product->$field    =   json_encode( array_values( $fields[ $field ] ) );
-            } else {
-                $product->$field    =   '[]';
+                $this->taxService->computeTax( 
+                    $unitQuantity, 
+                    $fields[ 'tax_group_id' ], 
+                    $fields[ 'tax_type' ] 
+                );
             }
-
         } else if ( ! is_array( $value ) ) {
             $product->$field    =   $value;
         }
@@ -935,7 +905,8 @@ class ProductService
             ProductHistory::ACTION_RETURNED,
             ProductHistory::ACTION_SOLD,
             ProductHistory::ACTION_TRANSFER_IN,
-            ProductHistory::ACTION_TRANSFER_OUT
+            ProductHistory::ACTION_TRANSFER_OUT,
+            ProductHistory::ACTION_LOST,
         ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
@@ -970,7 +941,8 @@ class ProductService
                 ProductHistory::ACTION_REMOVED,
                 ProductHistory::ACTION_SOLD,
                 ProductHistory::ACTION_DELETED,
-                ProductHistory::ACTION_DEFECTIVE 
+                ProductHistory::ACTION_DEFECTIVE,
+                ProductHistory::ACTION_LOST,
             ] ) ) {
     
                 /**
@@ -1276,5 +1248,11 @@ class ProductService
             'message'   =>  __( 'The product variation has been updated.' ),
             'data'      =>  compact( 'product' )
         ];
+    }
+
+    public function getProductUnitQuantities( Product $product )
+    {
+        $product->unit_quantities->each( fn( $quantity ) => $quantity->load( 'unit' ) );
+        return $product->unit_quantities;
     }
 }

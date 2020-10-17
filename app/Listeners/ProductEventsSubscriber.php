@@ -6,7 +6,7 @@ use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductBeforeDeleteEvent;
 use App\Services\ProcurementService;
 
-class ProductListener
+class ProductEventsSubscriber
 {
     /** @var ProductService */
     protected $productService;

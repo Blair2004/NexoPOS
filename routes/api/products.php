@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\ProductsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( 'products', 'Dashboard\ProductsController@getProduts' );
@@ -11,11 +12,13 @@ Route::get( 'products/{identifier}/reset', 'Dashboard\ProductsController@reset' 
 Route::get( 'products/{identifier}/history', 'Dashboard\ProductsController@history' );
 Route::get( 'products/{identifier}/units', 'Dashboard\ProductsController@units' );
 Route::get( 'products/{product}/units/{unit}/quantity', 'Dashboard\ProductsController@getUnitQuantity' );
+Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 'getUnitQuantities' ]);
 
 Route::delete( 'products/{identifier}', 'Dashboard\ProductsController@deleteProduct' );
 Route::delete( 'products/all/variations', 'Dashboard\ProductsController@deleteAllVariations' );
 Route::delete( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@deleteSingleVariation' );
 Route::delete( 'products', 'Dashboard\ProductsController@deleteAllProducts' );
+
 
 Route::post( 'products', 'Dashboard\ProductsController@saveProduct' );
 Route::post( 'products/search', 'Dashboard\ProductsController@searchProduct' );

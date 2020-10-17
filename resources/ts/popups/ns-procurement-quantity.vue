@@ -1,8 +1,5 @@
 <template>
     <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-1/5-screen relative">
-        <div id="loading-overlay" v-if="isLoading" style="background:rgb(202 202 202 / 49%)" class="flex w-full h-full absolute top-O left-0 items-center justify-center">
-            <ns-spinner></ns-spinner>
-        </div>
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
             <h1 class="text-xl font-bold text-gray-700 text-center">Define Quantity</h1>
         </div>
@@ -61,8 +58,8 @@ export default {
          * if the quantity is defined, then probably
          * we're already trying to edit an existing product
          */
-        if ( this.$popupParams.product.quantity ) {
-            this.finalValue     =   this.$popupParams.product.quantity;
+        if ( this.$popupParams.quantity ) {
+            this.finalValue     =   this.$popupParams.quantity;
         }
 
         document.addEventListener( 'keyup', this.handleKeyPress );
@@ -90,58 +87,7 @@ export default {
                         .subscribe();
                 }
 
-                this.isLoading                  =   true;
-
-                /**
-                 * The stock should be handled differently
-                 * according to wether the stock management
-                 * is enabled or not.
-                 */
-                if ( product.$original().stock_management === 'enabled' ) {
-
-                    /**
-                     * If the stock management is enabled,
-                     * we'll pull updated stock from the server.
-                     * When a product is added product.id has the real product id
-                     * when a product is already on the cart product.id is not set but
-                     * product.product_id is defined
-                     */
-                    nsHttpClient.get( `/api/nexopos/v4/products/${ product.$original().id }/units/${ data.unit_id }/quantity` )
-                        .subscribe( result => {
-                            this.isLoading      =   false;
-                            const holdQuantity  =   POS.getStockUsage( product.$original().id, data.unit_id ) - ( product.quantity || 0 );
-
-                            /**
-                             * This checks if there is enough
-                             * quantity for product that has stock 
-                             * management enabled
-                             */
-
-                            if ( 
-                                quantity > (
-                                    parseFloat( result.quantity ) -
-                                    /**
-                                     * We'll make sure to ignore the product quantity 
-                                     * already added to the cart by substracting the 
-                                     * provided quantity.
-                                     */
-                                    ( holdQuantity )
-                                )
-                            ) {
-                                return nsSnackBar.error( 'Unable to add the product, there is not enough stock. Remaining %s'.replace( '%s', ( result.quantity - holdQuantity ) ) )
-                                    .subscribe();
-                            }
-    
-                            this.resolve({ quantity });
-                            
-                        }, ( error ) => {
-                            this.isLoading  =   false;
-                            nsSnackBar.error( error.message )
-                                .subscribe();
-                        });
-                } else {
-                    this.resolve({ quantity });
-                }
+                this.resolve({ quantity });
 
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {

@@ -4,6 +4,7 @@ import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
 import NsManageProducts from './manage-products';
+import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
 
 export default {
     name: 'ns-procurement',
@@ -303,6 +304,7 @@ export default {
             product.procurement.total_price                 =   0;
             product.procurement.total_purchase_price        =   0;
             product.procurement.quantity                    =   1;
+            product.procurement.expiration                  =   null;
             product.procurement.tax_group_id                =   0;
             product.procurement.tax_type                    =   'inclusive';
             product.procurement.unit_id                     =   0;
@@ -389,6 +391,12 @@ export default {
             this.globallyChecked    =   event;
             this.rows.forEach( r => r.$checked = event );
         },
+
+        setProductOptions( index ) {
+            Popup.show( nsProcurementProductOptionsVue, {
+                product: this.form.products[ index ]
+            })
+        }
     }
 }
 </script>
@@ -456,44 +464,52 @@ export default {
                                 <table class="w-full">
                                     <thead>
                                         <tr>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Product</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200 w-32">Unit Price</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax Value</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">UOM</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Quantity</td>
-                                            <td class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Total Price</td>
+                                            <td width="200" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Product</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Unit Price</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax Value</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">UOM</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Quantity</td>
+                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Total Price</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
-                                            <td width="200" class="p-2 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <h3 class="font-semibold">{{ product.name }}</h3>
-                                                <div class="flex -mx-1">
-                                                    <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
-                                                    <span @click="switchTaxType( product, index )" class="text-xs text-red-500 cursor-pointer underline px-1">Tax {{ product.procurement.tax_type === 'inclusive' ? 'Inclusive' : 'Exclusive' }}</span>
+                                                <div class="flex justify-between">
+                                                    <div class="flex -mx-1 flex-col">
+                                                        <div class="px-1">
+                                                            <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex -mx-1 flex-col">
+                                                        <div class="px-1">
+                                                            <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="setProductOptions( index )">Options</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
+                                            <td class="p-2 w-3 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <input @change="updateLine( index )" type="text" v-model="product.procurement.purchase_price_edit" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="rounded border-blue-500 border-2 p-2 w-56">
+                                                    <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="rounded border-blue-500 border-2 p-2">
                                                         <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>
                                             <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start flex-col">
+                                                <div class="flex items-start flex-col justify-end">
                                                     <span class="text-sm text-gray-600">{{ product.procurement.tax_value | currency }}</span>
                                                 </div>
                                             </td>
-                                            <td width="100" class="p-2 text-gray-600 border border-gray-300">
+                                            <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-56">
+                                                    <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
                                                         <option v-for="option of product.purchase_units" :key="option.id" :value="option.id">{{ option.name }}</option>
                                                     </select>
                                                 </div>

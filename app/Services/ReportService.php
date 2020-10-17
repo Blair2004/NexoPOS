@@ -12,6 +12,12 @@ class ReportService
     private $dayStarts;
     private $dayEnds;
 
+    public function __construct(
+        DateService $dateService
+    ) {
+        $this->dateService  =   $dateService;
+    }
+
     /**
      * Will compute the report for the current day
      */

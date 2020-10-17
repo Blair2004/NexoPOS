@@ -13,7 +13,7 @@ use App\Events\ProcurementBeforeUpdateProductEvent;
 use App\Models\Provider;
 use App\Services\ProviderService;
 
-class ProcurementListener
+class ProcurementEventsSubscriber
 {
     protected $procurementService;
     protected $providerService;

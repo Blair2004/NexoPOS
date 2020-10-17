@@ -26,6 +26,7 @@ use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
 use App\Services\ModulesService;
+use App\Services\ReportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -84,6 +85,12 @@ class AppServiceProvider extends ServiceProvider
         
         $this->app->singleton( CrudService::class, function() {
             return new CrudService;
+        });
+
+        $this->app->singleton( ReportService::class, function() {
+            return new ReportService(
+                app()->make( DateService::class )
+            );
         });
 
         $this->app->singleton( CoreService::class, function() {

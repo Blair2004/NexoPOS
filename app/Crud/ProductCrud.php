@@ -191,12 +191,13 @@ class ProductCrud extends CrudService
                                     'validation'    =>  'required',
                                     'value' =>  $entry->barcode_type ?? 'ean8',
                                 ], [
-                                    'type'      =>  'select',
+                                    'type'          =>  'select',
                                     'description'   =>  __( 'Select to which category the item is assigned.' ),
-                                    'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
-                                    'name'      =>  'category_id',
-                                    'label'     =>  __( 'Category' ),
-                                    'value'     =>  $entry->category_id ?? '',
+                                    'options'       =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
+                                    'name'          =>  'category_id',
+                                    'label'         =>  __( 'Category' ),
+                                    'validation'    =>  'required',
+                                    'value'         =>  $entry->category_id ?? '',
                                 ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::kvToJsOptions([
@@ -252,50 +253,39 @@ class ProductCrud extends CrudService
                                     'type'          =>  'select',
                                     'options'       =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name'          =>  'unit_group',
-                                    'description'   =>  __( 'What unit group applies to the actual item' ),
+                                    'description'   =>  __( 'What unit group applies to the actual item. This group will apply during the procurement.' ),
                                     'label'         =>  __( 'Unit Group' ),
                                     'validation'    =>  'required',
                                     'value'         =>  $entry->unit_group ?? '',
                                 ], [
-                                    'type'  =>  'multiselect',
-                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
-                                        return [
-                                            'label'     =>  $unit->name,
-                                            'value'     =>  $unit->id,
-                                            'selected'  =>  ! empty( $entry->purchase_unit_ids ) ? in_array( $unit->id, json_decode( $entry->purchase_unit_ids, true ) ) : false,
-                                        ];
-                                    }),
-                                    'name'  =>  'purchase_unit_ids',
-                                    'label' =>  __( 'Purchase Unit' ),
-                                    'description'    =>  __( 'Define the unit or units used while purchasing' ),
-                                    'value' =>  ! empty( $entry->purchase_unit_ids ) ? json_decode( $entry->purchase_unit_ids, true ) : '',
-                                ], [
-                                    'type'  =>  'multiselect',
-                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
-                                        return [
-                                            'label'     =>  $unit->name,
-                                            'value'     =>  $unit->id,
-                                            'selected'  =>  ! empty( $entry->selling_unit_ids ) ? in_array( $unit->id, json_decode( $entry->selling_unit_ids, true ) ) : false,
-                                        ];
-                                    }),
-                                    'name'  =>  'selling_unit_ids',
-                                    'label' =>  __( 'Selling Unit' ),
-                                    'description'   =>  __( 'Define the unit or units used for sale' ),
-                                    'value' =>  ! empty( $entry->selling_unit_ids ) ? json_decode( $entry->selling_unit_ids, true ) : '',
-                                ], [
-                                    'type'  =>  'multiselect',
-                                    'options'   =>  ! $unitGroup instanceof UnitGroup ? [] : $unitGroup->units->map( function( $unit ) use ( $entry ) {
-                                        return [
-                                            'label'     =>  $unit->name,
-                                            'value'     =>  $unit->id,
-                                            'selected'  =>  ! empty( $entry->transfer_unit_ids ) ? in_array( $unit->id, json_decode( $entry->transfer_unit_ids, true ) ) : false,
-                                        ];
-                                    }),
-                                    'name'  =>  'transfer_unit_ids',
-                                    'label' =>  __( 'Transfer Unit' ),
-                                    'description'   =>  __( 'Define the unit or units used for transfer' ),
-                                    'value' =>  ! empty( $entry->transfer_unit_ids ) ? json_decode( $entry->transfer_unit_ids, true ) : '',
-                                ], 
+                                    'type'          =>  'group',
+                                    'name'          =>  'selling_group',
+                                    'description'   =>  __( 'Determine the unit for sale.' ),
+                                    'label'         =>  __( 'Selling Unit' ),
+                                    'fields'        =>  [
+                                        [
+                                            'type'  =>  'select',
+                                            'name'  =>  'unit',
+                                            'label' =>  __( 'Assigned Unit' ),
+                                            'description'   =>  __( 'The assigned unit for sale' ),
+                                            'validation'    =>  'required',
+                                        ], [
+                                            'type'  =>  'number',
+                                            'name'  =>  'sale_price',
+                                            'label' =>  __( 'Sale Price' ),
+                                            'description'   =>  __( 'Define the regular selling price.' ),
+                                            'validation'    =>  'required',
+                                        ], [
+                                            'type'  =>  'number',
+                                            'name'  =>  'wholesale_price',
+                                            'label' =>  __( 'Wholesale Price' ),
+                                            'description'   =>  __( 'Define the wholesale price.' ),
+                                            'validation'    =>  'required',
+                                        ]
+                                    ],                                     
+                                    'groups'        =>  [],
+                                    'options'       =>  [],
+                                ]
                             ]
                         ],
                         'expiracy'      =>  [
@@ -310,12 +300,6 @@ class ProductCrud extends CrudService
                                     'description'   =>  __( 'Set to "No" expiration time will be ignored.' ),
                                     'value'         =>  ( $entry !== null && $entry->expires ? 1 : 0 ),
                                 ], [
-                                    'type'          =>  'date',
-                                    'name'          =>  'expiration',
-                                    'label'         =>  __( 'Expiration' ),
-                                    'description'   =>  __( 'Define when the product expires' ),
-                                    'value'         =>  $entry->expiration ?? '',
-                                ], [
                                     'type'              =>  'select',
                                     'options'           =>  Helper::kvToJsOptions([
                                         'prevent_sales' =>  __( 'Prevent Sales' ),
@@ -328,26 +312,10 @@ class ProductCrud extends CrudService
                                 ]
                             ]
                         ],
-                        'prices'    =>  [
-                            'label' =>  __( 'Price & Taxes' ),
+                        'taxes'    =>  [
+                            'label' =>  __( 'Taxes' ),
                             'fields'    =>  [
                                 [
-                                    'type'  =>  'text',
-                                    'name'  =>  'sale_price_edit',
-                                    'label' =>  __( 'Sale Price' ),
-                                    'validation'    =>  'required',
-                                    'description'   =>  __( 'Define the sale price.' ),
-                                    'value' =>  $entry->sale_price_edit ?? '',
-                                    'extra' =>  $entry->sale_price ?? 0
-                                ], [
-                                    'type'  =>  'text',
-                                    'name'  =>  'wholesale_price_edit',
-                                    'label' =>  __( 'WholeSale Price' ),
-                                    'validation'    =>  'required',
-                                    'description'   =>  __( 'Define the wholesale price.' ),
-                                    'value' =>  $entry->wholesale_price_edit ?? '',
-                                    'extra' =>  $entry->wholesale_price ?? 0
-                                ], [
                                     'type'  =>  'select',
                                     'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ]),
                                     'description'   =>  __( 'Select the tax group that applies to the product/variation.' ),
@@ -432,6 +400,7 @@ class ProductCrud extends CrudService
      * Will only calculate taxes
      * @param array $fields
      * @return array $fields
+     * @deprecated
      */
     private function calculateTaxes( $inputs, Product $product = null )
     {
@@ -468,7 +437,7 @@ class ProductCrud extends CrudService
      */
     public function afterPost( $request, Product $entry )
     {
-        $this->calculateTaxes( $request->all(), $entry );
+        // $this->calculateTaxes( $request->all(), $entry );
 
         return $request;
     }
@@ -575,18 +544,6 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'wholesale_price'  =>  [
-                'label'         =>  __( 'WholeSale Price' ),
-                'width'         =>  '100px',
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'sale_price'  =>  [
-                'label'         =>  __( 'Sale Price Inc. Tax' ),
-                'width'         =>  '100px',
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'status'  =>  [
                 'label'         =>  __( 'Status' ),
                 '$direction'    =>  '',
@@ -619,11 +576,6 @@ class ProductCrud extends CrudService
         $entry->product_type        =   $entry->product_type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
-        $entry->sale_price          =   ( string ) ns()->currency->value( $entry->sale_price );
-        $entry->wholesale_price     =   ( string ) ns()->currency->value( $entry->wholesale_price );
-        $entry->incl_tax_sale_price      =   ( string ) ns()->currency->value( $entry->incl_tax_sale_price );
-        $entry->excl_tax_sale_price    =   ( string ) ns()->currency->value( $entry->excl_tax_sale_price );
-        $entry->tax_value           =   ( string ) ns()->currency->value( $entry->tax_value );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [

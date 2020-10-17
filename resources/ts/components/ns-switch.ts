@@ -46,7 +46,7 @@ const nsSwitch      =   Vue.component( 'ns-switch', {
     template: `
     <div class="flex flex-col mb-2">
         <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
-        <div class="rounded-lg flex overflow-hidden w-96 shadow my-2" :class="hasError ? 'border border-red-400' : ''">
+        <div class="rounded-lg flex overflow-hidden w-40 shadow my-2" :class="hasError ? 'border border-red-400' : ''">
             <button 
                 :disabled="option.disabled" 
                 v-for="option of _options" 

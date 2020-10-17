@@ -56,7 +56,7 @@ class Order extends Model
         return $query->where( 'created_at', '<=', $range_ends );
     }
 
-    public function paymentStatus( $query, $status )
+    public function scopePaymentStatus( $query, $status )
     {
         return $query->where( 'payment_status', $status );
     }

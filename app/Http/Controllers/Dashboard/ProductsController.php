@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductHistory;
 use App\Models\Unit;
 use App\Models\ProductUnitQuantity;
 use App\Services\CrudService;
@@ -110,10 +111,8 @@ class ProductsController extends DashboardController
          * this is made to ensure the array 
          * provided aren't flatten
          */
-        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
-        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
-        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
         unset( $primary[ 'images' ] );
+        unset( $primary[ 'units' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
         $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
@@ -123,11 +122,9 @@ class ProductsController extends DashboardController
          * let's restore the fields before
          * storing that.
          */
-        $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
-        $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
-        $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
-        $primary[ 'images' ]                 =   $source[ 'images' ];
-
+        $primary[ 'images' ]                =   $source[ 'images' ];
+        $primary[ 'units' ]                 =   $source[ 'units' ];
+        
         unset( $primary[ '$primary' ] );
 
         /**
@@ -144,13 +141,13 @@ class ProductsController extends DashboardController
             ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'search' )}%" )
             ->limit(5)
             ->get()
-            ->map( function( $product ) {
+            ->map( function( $product ) use ( $request ) {
                 $units  =   json_decode( $product->purchase_unit_ids );
                 
                 if ( $units ) {
                     $product->purchase_units     =   collect();
-                    collect( $units )->each( function( $taxID ) use ( &$product ) {
-                        $product->purchase_units->push( Unit::find( $taxID ) );
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
                     });
                 }
 
@@ -207,6 +204,11 @@ class ProductsController extends DashboardController
         return $this->productService->getUnitQuantities( 
             $product->id
         );
+    }
+
+    public function getUnitQuantities( Product $product )
+    {
+        return $this->productService->getProductUnitQuantities( $product );
     }
 
     /**
@@ -392,6 +394,12 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.stock-adjustment', [
             'title'     =>      __( 'Stock Adjustment' ),
             'description'   =>  __( 'Adjust stock of existing products.' ),
+            'actions'       =>  Helper::kvToJsOptions([
+                ProductHistory::ACTION_ADDED        =>  __( 'Add' ),
+                ProductHistory::ACTION_DELETED      =>  __( 'Delete' ),
+                ProductHistory::ACTION_DEFECTIVE    =>  __( 'Defective' ),
+                ProductHistory::ACTION_LOST         =>  __( 'Lost' ),
+            ])
         ]);
     }
 

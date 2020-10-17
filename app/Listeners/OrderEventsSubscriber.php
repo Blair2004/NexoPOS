@@ -5,11 +5,12 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
+use App\Jobs\ComputeCustomerAccountJob;
 use App\Jobs\ComputeDayReportJob;
 use App\Services\OrdersService;
 use App\Services\ProductService;
 
-class OrderListener 
+class OrderEventsSubscriber 
 {
     private $ordersService;
     private $productsService;
@@ -26,22 +27,22 @@ class OrderListener
     {
         $events->listen(
             OrderAfterProductRefundedEvent::class,
-            [ OrderListener::class, 'refreshOrder' ]
+            [ OrderEventsSubscriber::class, 'refreshOrder' ]
         );
 
         $events->listen(
             OrderBeforeDeleteEvent::class,
-            [ OrderListener::class, 'beforeDeleteOrder' ]
+            [ OrderEventsSubscriber::class, 'beforeDeleteOrder' ]
         );
 
         $events->listen(
             OrderBeforeDeleteProductEvent::class,
-            [ OrderListener::class, 'beforeDeleteProductEvent' ]
+            [ OrderEventsSubscriber::class, 'beforeDeleteProductEvent' ]
         );
 
         $events->listen(
             OrderAfterCreatedEvent::class,
-            [ OrderListener::class, 'afterOrderCreated' ]
+            [ OrderEventsSubscriber::class, 'afterOrderCreated' ]
         );
     }
 
@@ -60,8 +61,11 @@ class OrderListener
      */
     public function beforeDeleteOrder( OrderBeforeDeleteEvent $event )
     {
-        ComputeDayReportJob::dispatch()
-            ->delay( now()->addMinute() );
+        ComputeDayReportJob::dispatch( $event )
+            ->delay( now()->addSecond( 10 ) );
+
+        ComputeCustomerAccountJob::dispatch( $event )
+            ->delay( now()->addSecond( 10 ) );
     }
 
     /**
@@ -72,6 +76,9 @@ class OrderListener
     {
         ComputeDayReportJob::dispatch()
             ->delay( now()->addMinute() );
+
+        ComputeCustomerAccountJob::dispatch( $event )
+            ->delay( now()->addMinute() );
     }
 
     /**
@@ -81,6 +88,6 @@ class OrderListener
      */
     public function beforeDeleteProductEvent( OrderBeforeDeleteProductEvent $event )
     {
-        // 
+        
     }
 }

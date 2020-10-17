@@ -23,7 +23,6 @@ export default {
         this.title          =   this.$popupParams.title;
         this.message        =   this.$popupParams.message;
         this.$popup.event.subscribe( action => {
-            console.log( action );
             if ( action.event === 'click-overlay' ) {
                 this.$popupParams.onAction( false );
                 this.$popup.close();

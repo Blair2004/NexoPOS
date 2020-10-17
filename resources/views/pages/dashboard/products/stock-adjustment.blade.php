@@ -8,7 +8,7 @@
                 <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
                 <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
             </div>
-            <ns-stock-adjusment></ns-stock-adjusment>
+            <ns-stock-adjustment :actions='@json( $actions )'></ns-stock-adjustment>
         </div>
     </div>
 @endsection

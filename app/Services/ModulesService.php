@@ -426,6 +426,8 @@ class ModulesService
                 }
             }
 
+            unlink( $zipFile );
+
             return [
                 'path'      =>  $zipFile,
                 'module'    =>  $module

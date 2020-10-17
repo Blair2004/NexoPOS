@@ -20,6 +20,7 @@ class ProductHistory extends Model
     const ACTION_SOLD          =   'sold';
     const ACTION_RETURNED      =   'returned';
     const ACTION_DEFECTIVE     =   'defective';
+    const ACTION_LOST          =   'lost';
 
     public function scopeFindProduct( $query, $id )
     {

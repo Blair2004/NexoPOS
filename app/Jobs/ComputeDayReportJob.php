@@ -13,6 +13,8 @@ class ComputeDayReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $reportService;
+
     /**
      * Create a new job instance.
      *
@@ -20,7 +22,7 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function __construct()
     {
-        //
+        $this->reportService    =   app()->make( ReportService::class );
     }
 
     /**
@@ -30,7 +32,6 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function handle()
     {
-        $service    =   new ReportService;
-        $service->computeDayReport();
+        $this->reportService->computeDayReport();
     }
 }

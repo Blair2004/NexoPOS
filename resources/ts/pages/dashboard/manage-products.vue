@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) !== 'images'">
+                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units' ].includes( getActiveTabKey( variation.tabs ) )">
                                 <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field @change="detectChange( variation_index, $event )" :field="field"></ns-field>
@@ -81,6 +81,39 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
+                                <div class="px-4 w-full md:w-1/2 lg:w-1/3">
+                                    <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
+                                </div>
+                                <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
+                                    <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
+                                        <div class="mb-2">
+                                            <label class="font-medium text-gray-700">{{ field.label }}</label>
+                                            <p class="py-1 text-sm text-gray-600">{{ field.description }}</p>
+                                        </div>
+                                        <div class="mb-2">
+                                            <div @click="addUnitGroup( field )" class="border-dashed border-2 border-gray-200 p-1 bg-gray-100 flex justify-between items-center text-gray-700 cursor-pointer rounded-lg">
+                                                <span class="rounded-full border-2 border-gray-300 bg-white h-8 w-8 flex items-center justify-center">
+                                                    <i class="las la-plus-circle"></i>
+                                                </span>
+                                                <span>New Group</span>
+                                            </div>
+                                        </div>
+                                        <div class="-mx-4 flex flex-wrap">
+                                            <div class="px-4 w-full md:w-1/2" :key="index" v-for="(group_fields,index) of field.groups">
+                                                <div class="shadow rounded">
+                                                    <div class="p-2 mb-2">
+                                                        <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
+                                                    </div>
+                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 text-red-800 bg-red-200 flex items-center justify-center cursor-pointer font-medium">
+                                                        Delete
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,6 +124,7 @@
 <script>
 import FormValidation from '../../libraries/form-validation'
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
+import nsPosConfirmPopupVue from './pos/popups/ns-pos-confirm-popup.vue';
 
 export default {
     data: () => {
@@ -140,6 +174,78 @@ export default {
                 }
             }
         },
+
+        /**
+         * The user want to remove a group
+         * we might need confirmation before proceeding.
+         */
+        removeUnitPriceGroup( group_fields, group ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Your Action',
+                message: 'Would you like to delete this group ?',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        const index     =   group.indexOf( group_fields );
+                        group.splice( index, 1 );
+                    }
+                }
+            })
+        },
+
+        /**
+         * When the user click on "New Group", 
+         * this check if there is not enough options as there is groups
+         */
+        addUnitGroup( field ) {
+            if ( field.options.length === 0 ) {
+                return nsSnackBar.error( 'Please select at least one unit group before you proceed.' ).subscribe();
+            }
+
+            if( field.options.length > field.groups.length ) {
+                field.groups.push(JSON.parse( JSON.stringify( field.fields ) ) );
+            } else {
+                nsSnackBar.error( 'There shoulnd\'t be more option than there are units.' ).subscribe();
+            }
+        },
+
+        /**
+         * When a change is made on unit group
+         * we need to pull units attached to and make them available
+         * for every groups. Validation should prevent duplicated units.
+         */
+        loadAvailableUnits( unit_section ) {
+            nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_section.fields[0].value ) )
+                .subscribe( result => {
+
+                    /**
+                     * For each group, we'll loop to find
+                     * the field that allow to choose the unit
+                     * in order to change the options available
+                     */
+                    unit_section.fields.forEach( field => {
+                        if ( field.type === 'group' ) {
+                            field.options   =   result;
+                            field.fields.forEach( _field => {
+                                if ( _field.name === 'unit' ) {
+                                    console.log( _field );
+                                    _field.options  =   result.map( option => {
+                                        return {
+                                            label: option.name,
+                                            value: option.id
+                                        }
+                                    });
+                                }
+                            })
+                        }
+                    });
+
+                    this.$forceUpdate();
+                })
+        },
+
+        /**
+         * @deprecated
+         */
         loadOptionsFor( fieldName, value, variation_index ) {
             nsHttpClient.get( this.unitsUrl.replace( '{id}', value ) )
                 .subscribe( result => {
@@ -183,6 +289,28 @@ export default {
                 return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : 'No error has been provided for the slot "error-multiple-primary"' ).subscribe();
             }
 
+            const validation        =   [];
+
+            this.form.variations.map( ( v, i ) => {
+                return v.tabs.units.fields
+                    .filter( field => field.type === 'group' )
+                    .forEach( fields_groups => {
+                        const uniqueness    =   new Object;
+                        fields_groups.groups.forEach( fields => {
+                            validation.push( this.formValidation.validateFields( fields ) );                            
+                        });
+                });
+            });
+
+            if ( validation.length === 0 ) {
+                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ).subscribe(); 
+            }
+
+            if ( validation.filter( v => v === false ).length > 0 ) {
+                this.$forceUpdate();
+                return nsSnackBar.error( this.$slots[ 'error-invalid-unit-group' ] ? this.$slots[ 'error-invalid-unit-group' ][0].text : 'Unable to proceed as one of the unit group field is invalid' ).subscribe();
+            }
+
             /**
              * let's correctly extract 
              * the form before submitting that
@@ -199,9 +327,25 @@ export default {
                         return this.formValidation.extractFields( fields );
                     });
 
+                    const groups    =   new Object;
+
+                    v.tabs.units.fields.filter( field => field.type === 'group' )
+                        .forEach( field => {
+                            groups[ field.name ]    =   field.groups.map( fields => {
+                                return this.formValidation.extractFields( fields );
+                            })
+                        });
+
+                    data[ 'units' ]         =   { 
+                        ...data[ 'units' ], 
+                        ...groups
+                    };
+
                     return data;
                 })
             }
+
+            console.log( data );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {
@@ -233,6 +377,14 @@ export default {
             }
 
             tabs[ activeIndex ].active  =   true;
+
+            /**
+             * If the loaded tab is "units", we'll
+             * load sub units based on the selection.
+             */
+            if ( activeIndex === 'units' ) {
+                this.loadAvailableUnits( tabs[ activeIndex ] );
+            }
         },  
         duplicate( variation ) {
             this.form.variations.push( Object.assign({}, variation ));

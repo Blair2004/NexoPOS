@@ -9,6 +9,7 @@ use App\Exceptions\NotAllowedException;
 
 use App\Models\Product;
 use App\Models\ProductTax;
+use App\Models\ProductUnitQuantity;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 
@@ -194,7 +195,7 @@ class TaxService
      * compute the tax added to a 
      * product
      */
-    public function computeTax( Product $product, $tax_group_id )
+    public function computeTax( ProductUnitQuantity $product, $tax_group_id, $tax_type = null )
     {
         $taxGroup                               =   TaxGroup::find( $tax_group_id );
 
@@ -213,7 +214,7 @@ class TaxService
                 })
                 ->sum();
 
-            if ( $product->tax_type === 'inclusive' ) {
+            if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
                 $product->excl_tax_sale_price       =   ( floatval( $product->sale_price_edit ) );
                 $product->sale_tax_value            =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
                 $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
@@ -231,8 +232,8 @@ class TaxService
                 );
             }
 
-            $product->tax_value                 =   $this->getComputedTaxGroupValue( 
-                $product->tax_type, 
+            $product->sale_price_tax                        =   $this->getComputedTaxGroupValue( 
+                ( $tax_type ?? $product->tax_type ), 
                 $tax_group_id, 
                 $product->sale_price_edit 
             );
@@ -249,7 +250,7 @@ class TaxService
                 })
                 ->sum();
 
-            if ( $product->tax_type === 'inclusive' ) {
+            if ( ( $tax_type ?? $product->tax_type ) === 'inclusive' ) {
                 $product->wholesale_tax_value               =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit    ) ) );
                 $product->excl_tax_wholesale_price            =   $this->getComputedTaxValue(
                     'inclusive',
@@ -270,8 +271,8 @@ class TaxService
              * Let's simplify tax
              * calculation for a group
              */
-            $product->tax_value                 =   $this->getComputedTaxGroupValue( 
-                $product->tax_type, 
+            $product->wholesale_price_tax                   =   $this->getComputedTaxGroupValue( 
+                ( $tax_type ?? $product->tax_type ), 
                 $tax_group_id, 
                 $product->wholesale_price_edit 
             );

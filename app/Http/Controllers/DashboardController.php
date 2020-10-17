@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\DashboardDay;
 use Illuminate\Http\Request;
 use App\Services\MenuService;
@@ -14,6 +15,7 @@ use App\Models\ProductCategory;
 use App\Services\DateService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
@@ -57,6 +59,11 @@ class DashboardController extends Controller
         return DashboardDay::from( $todayStarts )
             ->to( $todayEnds )
             ->first();
+    }
+
+    public function getBestCustomers()
+    {
+        return Customer::orderBy( 'purchases_amount' )->limit(5)->get();
     }
 }
 
