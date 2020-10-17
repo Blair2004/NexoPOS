@@ -304,9 +304,11 @@ use App\Classes\Response;
 
 // ...
 
-Hook::addFilter( 'ns-crud-footer', function( Response $response ) {
-    $response->addOutput( ( string ) view( '/path/to/your/view' ) );
-});
+Hook::addFilter( 'ns-crud-footer', function( Response $response, string $identifier ) {
+    if ( $identifier === 'ns.products' ) { // here 'ns.products' is the identifier of the Crud resource so that this output is only added on that resource.
+        $response->addOutput( ( string ) view( '/path/to/your/view' ) );
+    }
+}, 10, 2 );
 ```
 
 Then, you view should register the script (using script tag). On your script, you'll just have to listen
