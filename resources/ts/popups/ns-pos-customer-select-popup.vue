@@ -37,8 +37,10 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '../../../../bootstrap';
-import resolveIfQueued from "./../../../../libraries/popup-resolver";
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import resolveIfQueued from "@/libraries/popup-resolver";
+import { Popup } from '@/libraries/popup';
+import nsPosCustomersVue from './ns-pos-customers.vue';
 
 export default {
     data() {
@@ -98,6 +100,8 @@ export default {
 
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
+            this.$popup.close();
+            Popup.show( nsPosCustomersVue, { customer, activeTab: 'customer-account' });
         },
 
         selectCustomer( customer ) {

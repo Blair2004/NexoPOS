@@ -63,7 +63,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                         if ( this.returnUrl && this.returnUrl.length > 0 ) {
                             return document.location   =   this.returnUrl;
                         }
-                        this.$emit( 'save' );
+                        this.$emit( 'save', result );
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {

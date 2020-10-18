@@ -126,9 +126,9 @@
     </div>
 </template>
 <script>
-import FormValidation from '../../libraries/form-validation'
-import { nsSnackBar, nsHttpClient } from '../../bootstrap';
-import nsPosConfirmPopupVue from './pos/popups/ns-pos-confirm-popup.vue';
+import FormValidation from '@/libraries/form-validation'
+import { nsSnackBar, nsHttpClient } from '@/bootstrap';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 
 export default {
     data: () => {
@@ -201,15 +201,17 @@ export default {
                 size: 'w-3/4-screen h-2/5-screen',
                 message: 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?',
                 onAction: ( action ) => {
-                    const id    =   group_fields.filter( f => f.name === 'id' )
+                    if ( action ) {
+                        const id    =   group_fields.filter( f => f.name === 'id' )
                         .map( f => f.value )[0];
 
-                    nsHttpClient.delete( `/api/nexopos/v4/products/units/quantity/${id}`)
-                        .subscribe( result => {
-                            const index     =   group.indexOf( group_fields );
-                            group.splice( index, 1 );
-                            nsSnackBar.success( result.message ).subscribe();
-                        });
+                        nsHttpClient.delete( `/api/nexopos/v4/products/units/quantity/${id}`)
+                            .subscribe( result => {
+                                const index     =   group.indexOf( group_fields );
+                                group.splice( index, 1 );
+                                nsSnackBar.success( result.message ).subscribe();
+                            });
+                    }
                 }
             });
         },

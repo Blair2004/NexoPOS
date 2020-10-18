@@ -1,6 +1,6 @@
 <script>
-import { Popup } from '../../../../libraries/popup';
-import NsPosPendingOrdersPopup from './../popups/ns-pos-pending-orders-popup';
+import { Popup } from '@/libraries/popup';
+import NsPosPendingOrdersPopup from '@/popups/ns-pos-pending-orders-popup';
 
 export default {
     name: 'ns-pos-pending-orders-button',

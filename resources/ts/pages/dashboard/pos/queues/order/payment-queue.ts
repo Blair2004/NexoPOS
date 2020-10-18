@@ -1,14 +1,14 @@
-import { Queue } from "../../../../../contracts/queue";
-import { Popup } from "../../../../../libraries/popup";
+import { Queue } from "@/contracts/queue";
+import { Popup } from "@/libraries/popup";
 
-const paymentPopup      =   require( '../../popups/ns-pos-payment-popup' ).default;
+import { default as nsPaymentPopup } from '@/popups/ns-pos-payment-popup.vue';
 
 export class PaymentQueue implements Queue {
     constructor( private order ) {}
 
     run() { 
         return new Promise( ( resolve, reject ) => {
-            Popup.show( paymentPopup, { resolve, reject })
+            Popup.show( nsPaymentPopup, { resolve, reject })
         })
     }
 }

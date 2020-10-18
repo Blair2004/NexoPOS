@@ -1,13 +1,13 @@
 <script>
-import { Popup } from '../../../../libraries/popup';
-import NsPosPendingOrdersPopup from './../popups/ns-pos-pending-orders-popup';
+import { Popup } from '@/libraries/popup';
+import { default as nsPosCustomers } from '@/popups/ns-pos-customers';
 
 export default {
     name: 'ns-pos-customers-button',
     methods: {
         openPendingOrdersPopup() {
             const popup     =   new Popup;
-            popup.open( NsPosPendingOrdersPopup );
+            popup.open( nsPosCustomers );
         }
     }
 }

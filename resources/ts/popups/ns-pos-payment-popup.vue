@@ -1,9 +1,9 @@
 <script>
-import FormValidation from '../../../../libraries/form-validation';
+import FormValidation from '@/libraries/form-validation';
 import resolveIfQueued from "@/libraries/popup-resolver";
-import { default as CashPayment } from "./../payments/cash-payment";
-import { default as CreditCardPayment } from "./../payments/creditcard-payment";
-import bankPaymentVue from '../payments/bank-payment.vue';
+import { default as CashPayment } from "@/pages/dashboard/pos/payments/cash-payment";
+import { default as CreditCardPayment } from "@/pages/dashboard/pos/payments/creditcard-payment";
+import { default as BankPayment } from '@/pages/dashboard/pos/payments/bank-payment.vue';
 import { Popup } from '@/libraries/popup';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import { nsSnackBar } from '@/bootstrap';
@@ -62,7 +62,7 @@ export default {
                     this.currentPaymentComponent    =   CreditCardPayment;
                 break;
                 case 'bank-payment':
-                    this.currentPaymentComponent    =   bankPaymentVue;
+                    this.currentPaymentComponent    =   BankPayment;
                 break;
             }
         },

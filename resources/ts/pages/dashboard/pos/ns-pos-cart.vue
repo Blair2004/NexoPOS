@@ -166,21 +166,21 @@
 </template>
 <script>
 
-import { Popup } from '../../../libraries/popup';
-import PosPaymentPopup from './popups/ns-pos-payment-popup';
-import PosConfirmPopup from './popups/ns-pos-confirm-popup';
+import { Popup } from '@/libraries/popup';
+import PosPaymentPopup from '@/popups/ns-pos-payment-popup';
+import PosConfirmPopup from '@/popups/ns-pos-confirm-popup';
 import nsPosQuantityPopupVue from '@/popups/ns-pos-quantity-popup.vue';
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
-import nsPosDiscountPopupVue from './popups/ns-pos-discount-popup.vue';
-import nsPosOrderTypePopupVue from './popups/ns-pos-order-type-popup.vue';
-import { nsSnackBar } from '../../../bootstrap';
-import nsPosCustomerPopupVue from './popups/ns-pos-customer-popup.vue';
+import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
+import nsPosOrderTypePopupVue from '@/popups/ns-pos-order-type-popup.vue';
+import { nsSnackBar } from '@/bootstrap';
+import nsPosCustomerPopupVue from '@/popups/ns-pos-customer-select-popup.vue';
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
 import { TypeQueue } from "./queues/order/type-queue";
 import switchTo from "@/libraries/pos-section-switch";
-import nsPosShippingPopupVue from './popups/ns-pos-shipping-popup.vue';
+import nsPosShippingPopupVue from '@/popups/ns-pos-shipping-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
