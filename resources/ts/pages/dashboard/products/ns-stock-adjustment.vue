@@ -41,7 +41,7 @@ export default {
                         suggestion.adjust_quantity      =   1;
                         suggestion.adjust_action        =   '',
                         suggestion.adjust_unit          =   '',
-                        suggestion.adjust_value         =   suggestion.sale_price;
+                        suggestion.adjust_value         =   0;
 
                         this.products.push( suggestion );
                         this.closeSearch();
@@ -55,11 +55,15 @@ export default {
             this.suggestions    =   [];
         },
         recalculateProduct( product ) {
-            if ([ 'deleted', 'defective', 'lost' ].includes( product.adjust_action ) ) {
-                product.adjust_value        =   - ( product.adjust_quantity * product.sale_price );
-            } else {
-                product.adjust_value        =   product.adjust_quantity * product.sale_price;
+            console.log( product );
+            if ( product.adjust_unit !== '' ) {
+                if ([ 'deleted', 'defective', 'lost' ].includes( product.adjust_action ) ) {
+                    product.adjust_value        =   - ( product.adjust_quantity * product.adjust_unit.sale_price );
+                } else {
+                    product.adjust_value        =   product.adjust_quantity * product.adjust_unit.sale_price;
+                }
             }
+            this.$forceUpdate();
         },
         openQuantityPopup( product ) {
             const promise   =   new Promise( ( resolve, reject ) => {
@@ -89,7 +93,7 @@ export default {
 <template>
     <div>
         <div class="input-field flex border-2 border-blue-400 rounded">
-            <input v-model="search" type="text" class="p-2 bg-white flex-auto outline-none">
+            <input @keyup.esc="closeSearch()" v-model="search" type="text" class="p-2 bg-white flex-auto outline-none">
             <button class="px-3 py-2 bg-blue-400 text-white">Search</button>
         </div>
         <div class="h-0" v-if="suggestions.length > 0">
@@ -97,7 +101,6 @@ export default {
                 <ul>
                     <li @click="addSuggestion( suggestion )" v-for="suggestion of suggestions" :key="suggestion.id" class="cursor-pointer hover:bg-gray-100 border-b border-gray-200 p-2 flex justify-between">
                         <span>{{ suggestion.name }}</span>
-                        <span>{{ suggestion.sale_price | currency }}</span>
                     </li>
                 </ul>
             </div>
@@ -121,8 +124,8 @@ export default {
                     <tr :key="product.id" v-for="product of products">
                         <td class="p-2 text-gray-600">{{ product.name }}</td>
                         <td class="p-2 text-gray-600">
-                            <select v-model="product.adjust_unit" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
-                                <option :key="quantity.id" v-for="quantity of product.quantities" value="">{{ quantity.unit.name }}</option>
+                            <select @change="recalculateProduct( product )" v-model="product.adjust_unit" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
+                                <option :key="quantity.id" v-for="quantity of product.quantities" :value="quantity">{{ quantity.unit.name }}</option>
                             </select>
                         </td>
                         <td class="p-2 text-gray-600">
@@ -137,7 +140,7 @@ export default {
                             <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ product.adjust_value | currency }}</span>
                         </td>
                         <td class="p-2 text-gray-600">
-                            <div class="-mx-1 flex">
+                            <div class="-mx-1 flex justify-end">
                                 <div class="px-1">
                                     <button class="bg-blue-400 text-white outline-none rounded-full shadow h-10 w-10">
                                         <i class="las la-comment-dots"></i>
