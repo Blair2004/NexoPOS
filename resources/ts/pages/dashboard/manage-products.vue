@@ -100,12 +100,16 @@
                                             </div>
                                         </div>
                                         <div class="-mx-4 flex flex-wrap">
-                                            <div class="px-4 w-full md:w-1/2" :key="index" v-for="(group_fields,index) of field.groups">
-                                                <div class="shadow rounded">
+                                            <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
+                                                <div class="shadow rounded overflow-hidden">
+                                                    <div class="border-b text-sm bg-blue-400 text-white  border-blue-300 p-2 flex justify-between">
+                                                        <span>Available Quantity</span>
+                                                        <span>{{ getUnitQuantity( group_fields ) }}</span>
+                                                    </div>
                                                     <div class="p-2 mb-2">
                                                         <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
                                                     </div>
-                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 text-red-800 bg-red-200 flex items-center justify-center cursor-pointer font-medium">
+                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 text-red-800 hover:bg-red-200 border-t border-red-200 flex items-center justify-center cursor-pointer font-medium">
                                                         Delete
                                                     </div>
                                                 </div>
@@ -163,6 +167,10 @@ export default {
     },  
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
+        getUnitQuantity( fields ) {
+            const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
+            return quantity.length > 0 ? quantity[0] : 0;
+        },
         detectChange( variation_index, field ) {
             if ( [ 'unit_group' ].includes( field.name ) ) {
                 switch( field.name ) {
@@ -180,16 +188,41 @@ export default {
          * we might need confirmation before proceeding.
          */
         removeUnitPriceGroup( group_fields, group ) {
-            Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'Would you like to delete this group ?',
-                onAction: ( action ) => {
-                    if ( action ) {
-                        const index     =   group.indexOf( group_fields );
-                        group.splice( index, 1 );
+            
+            const hasIdField    =   group_fields.filter( field => field.name === 'id' );
+                Popup.show( nsPosConfirmPopupVue, {
+                    title: 'Confirm Your Action',
+                    message: 'Would you like to delete this group ?',
+                    onAction: ( action ) => {
+                        if ( action ) {
+                            if ( hasIdField.length > 0 ) {
+                                this.confirmUnitQuantityDeletion({ group_fields, group });
+                            } else {
+                                const index     =   group.indexOf( group_fields );
+                                group.splice( index, 1 );
+                            }
+                        }
                     }
+                });
+        },
+
+        confirmUnitQuantityDeletion({ group_fields, group }) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Your Attention Is Required',
+                size: 'w-3/4-screen h-2/5-screen',
+                message: 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?',
+                onAction: ( action ) => {
+                    const id    =   group_fields.filter( f => f.name === 'id' )
+                        .map( f => f.value )[0];
+
+                    nsHttpClient.delete( `/api/nexopos/v4/products/units/quantity/${id}`)
+                        .subscribe( result => {
+                            const index     =   group.indexOf( group_fields );
+                            group.splice( index, 1 );
+                            nsSnackBar.success( result.message ).subscribe();
+                        });
                 }
-            })
+            });
         },
 
         /**
@@ -449,7 +482,6 @@ export default {
                 this.form    =   this.parseForm( f.form );
             });
         },
-
         addImage( variation ) {
             variation.tabs.images.groups.push(
                 this.formValidation.createFields( JSON.parse( JSON.stringify( variation.tabs.images.fields ) ) )

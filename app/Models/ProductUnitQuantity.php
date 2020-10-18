@@ -18,6 +18,11 @@ class ProductUnitQuantity extends Model
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
     }
 
+    public function taxes()
+    {
+        return $this->hasMany( ProductTax::class, 'unit_quantity_id' );
+    }
+
     public function scopeWithUnit( Builder $query, $id )
     {
         return $query->where( 'unit_id', $id );

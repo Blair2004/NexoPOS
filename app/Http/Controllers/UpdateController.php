@@ -24,7 +24,8 @@ class UpdateController extends Controller
     public function updateDatabase()
     {
         return view( 'pages.database-update', [
-            'title'     =>  __( 'Database Update' )
+            'title'     =>  __( 'Database Update' ),
+            'redirect'  =>  session( 'after_update', route( 'ns.dashboard.home' ) )
         ]);
     }
 

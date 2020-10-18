@@ -1,5 +1,5 @@
-import { Popup } from "../../../../../libraries/popup";
-const nsProductUnitPopup    =   require( './../../popups/ns-pos-units' ).default;
+import { Popup } from "@/libraries/popup";
+import { default as nsProductUnitPopup } from '@/popups/ns-pos-units.vue';
 
 export class ProductUnitPromise {
     constructor( protected product ) {}

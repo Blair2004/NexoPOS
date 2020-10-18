@@ -522,18 +522,24 @@ class ProductService
 
                 $unitQuantity    =   $this->getUnitQuantity(
                     $product->id,
-                    $group[ 'unit' ]
+                    $group[ 'unit_id' ]
                 );
 
                 if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
                     $unitQuantity               =   new ProductUnitQuantity;
-                    $unitQuantity->unit_id      =   $group[ 'unit' ];
+                    $unitQuantity->unit_id      =   $group[ 'unit_id' ];
                     $unitQuantity->product_id   =   $product->id;
                     $unitQuantity->quantity     =   0;
                 }
 
+                /**
+                 * We don't need tos ave all the informations
+                 * available on the group variable, that's why we define
+                 * explicitely how everything is saved here.
+                 */
                 $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
-                $unitQuantity->wholesale_price_edit     =   $group[ 'sale_price' ];
+                $unitQuantity->wholesale_price_edit     =   $group[ 'wholesale_price' ];
+                $unitQuantity->preview_url              =   $group[ 'preview_url' ];
 
                 $this->taxService->computeTax( 
                     $unitQuantity, 

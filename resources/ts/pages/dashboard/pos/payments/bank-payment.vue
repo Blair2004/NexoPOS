@@ -1,5 +1,5 @@
 <template>
-    <sample-payment @submit="$emit( 'submit' )" identifier="identifier" label="Bank Transfer"></sample-payment>
+    <sample-payment @submit="$emit( 'submit' )" :identifier="identifier" label="Bank Transfer"></sample-payment>
 </template>
 <script>
 import { default as samplePayment  } from "./sample-payment";

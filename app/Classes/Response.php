@@ -1,6 +1,8 @@
 <?php
 namespace App\Classes;
 
+use Illuminate\Support\Facades\View;
+
 class Response 
 {
     protected $output   =   [];
@@ -8,6 +10,11 @@ class Response
     public function addOutput( $view )
     {
         $this->output[]     =   $view;
+    }
+
+    public function addView( $view )
+    {
+        $this->output[]     =   View::make( $view );
     }
 
     public function setOutput( $view )

@@ -73,14 +73,14 @@ mix
 mix.disableNotifications();
 mix.sourceMaps();
 mix
-    .js('resources/ts/bootstrap.ts', 'public/js')
-    .js('resources/ts/app.ts', 'public/js')
-    .js('resources/ts/update.ts', 'public/js')
-    .js('resources/ts/pos-init.ts', 'public/js')
-    .js('resources/ts/pos.ts', 'public/js')
-    .js('resources/ts/auth.ts', 'public/js')
-    .js('resources/ts/setup.ts', 'public/js')
-    .js( 'resources/ts/pages/dashboard/orders/ns-order-preview-popup.vue', 'public/js' )
+    .js( 'resources/ts/bootstrap.ts', 'public/js')
+    .js( 'resources/ts/app.ts', 'public/js')
+    .js( 'resources/ts/update.ts', 'public/js')
+    .js( 'resources/ts/pos-init.ts', 'public/js')
+    .js( 'resources/ts/pos.ts', 'public/js')
+    .js( 'resources/ts/auth.ts', 'public/js')
+    .js( 'resources/ts/setup.ts', 'public/js')
+    .js( 'resources/ts/popups.ts', 'public/js/' )
     .extract([ 
         'vue', 
         'lodash', 
@@ -92,7 +92,7 @@ mix
         'vue-router', 
         'dayjs' 
     ])
-    .sass('resources/sass/app.scss', 'public/css')
+    // .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],

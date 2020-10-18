@@ -6,6 +6,8 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
+use App\Classes\Response;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Http\Controllers\DashboardController;
@@ -332,6 +334,11 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.products' ]);
 
+        Hook::addFilter( 'ns-crud-footer', function( Response $response ) {
+            $response->addView( 'pages.dashboard.products.quantity-popup' );
+            return $response;
+        });
+
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Products List' ),
             'createUrl'     =>  url( '/dashboard/products/create' ),
@@ -412,6 +419,28 @@ class ProductsController extends DashboardController
         }
 
         throw new Exception( __( 'No stock is provided for the requested product.' ) );
+    }
+
+    public function deleteUnitQuantity( ProductUnitQuantity $unitQuantity )
+    {
+        ns()->restrict([ 'nexopos.delete.products-units', 'nexopos.make.products-adjustments' ]);
+
+        $result     =   true;
+        if ( $unitQuantity->quantity > 0 ) {
+            $result     =   $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
+                'unit_price'    =>  $unitQuantity->sale_price,
+                'quantity'      =>  $unitQuantity->quantity,
+            ]);
+        }
+
+        if ( $result instanceof ProductHistory || $result ) {
+            $unitQuantity->delete();
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The product unit quantity has been deleted.' )
+        ];
     }
 }
 

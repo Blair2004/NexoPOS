@@ -19,6 +19,7 @@ class CheckMigrationStatus
     public function handle(Request $request, Closure $next)
     {
         if ( ns()->update->getMigrations()->count() > 0 ) {
+            session([ 'after_update' => url()->current() ]);
             return redirect( route( 'ns.database-update' ) );
         }
 

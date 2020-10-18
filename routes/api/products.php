@@ -3,26 +3,27 @@
 use App\Http\Controllers\Dashboard\ProductsController;
 use Illuminate\Support\Facades\Route;
 
-Route::get( 'products', 'Dashboard\ProductsController@getProduts' );
-Route::get( 'products/all/variations', 'Dashboard\ProductsController@getAllVariations' );
-Route::get( 'products/{identifier}', 'Dashboard\ProductsController@singleProduct' );
-Route::get( 'products/{identifier}/variations', 'Dashboard\ProductsController@getProductVariations' );
-Route::get( 'products/{identifier}/refresh-prices', 'Dashboard\ProductsController@refreshPrices' );
-Route::get( 'products/{identifier}/reset', 'Dashboard\ProductsController@reset' );
-Route::get( 'products/{identifier}/history', 'Dashboard\ProductsController@history' );
-Route::get( 'products/{identifier}/units', 'Dashboard\ProductsController@units' );
-Route::get( 'products/{product}/units/{unit}/quantity', 'Dashboard\ProductsController@getUnitQuantity' );
+Route::get( 'products', [ ProductsController::class, 'getProduts' ]);
+Route::get( 'products/all/variations', [ ProductsController::class, 'getAllVariations' ]);
+Route::get( 'products/{identifier}', [ ProductsController::class, 'singleProduct' ]);
+Route::get( 'products/{identifier}/variations', [ ProductsController::class, 'getProductVariations' ]);
+Route::get( 'products/{identifier}/refresh-prices', [ ProductsController::class, 'refreshPrices' ]);
+Route::get( 'products/{identifier}/reset', [ ProductsController::class, 'reset' ]);
+Route::get( 'products/{identifier}/history', [ ProductsController::class, 'history' ]);
+Route::get( 'products/{identifier}/units', [ ProductsController::class, 'units' ]);
+Route::get( 'products/{product}/units/{unit}/quantity', [ ProductsController::class, 'getUnitQuantity' ]);
 Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 'getUnitQuantities' ]);
 
-Route::delete( 'products/{identifier}', 'Dashboard\ProductsController@deleteProduct' );
-Route::delete( 'products/all/variations', 'Dashboard\ProductsController@deleteAllVariations' );
-Route::delete( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@deleteSingleVariation' );
-Route::delete( 'products', 'Dashboard\ProductsController@deleteAllProducts' );
+Route::delete( 'products/{identifier}', [ ProductsController::class, 'deleteProduct' ]);
+Route::delete( 'products/units/quantity/{unitQuantity}', [ ProductsController::class, 'deleteUnitQuantity' ]);
+Route::delete( 'products/all/variations', [ ProductsController::class, 'deleteAllVariations' ]);
+Route::delete( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'deleteSingleVariation' ]);
+Route::delete( 'products', [ ProductsController::class, 'deleteAllProducts' ]);
 
 
-Route::post( 'products', 'Dashboard\ProductsController@saveProduct' );
-Route::post( 'products/search', 'Dashboard\ProductsController@searchProduct' );
-Route::post( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@createSingleVariation' );
+Route::post( 'products', [ ProductsController::class, 'saveProduct' ]);
+Route::post( 'products/search', [ ProductsController::class, 'searchProduct' ]);
+Route::post( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'createSingleVariation' ]);
 
-Route::put( 'products/{identifier}/variations/{variation_id}', 'Dashboard\ProductsController@editSingleVariation' );
-Route::put( 'products/{product}', 'Dashboard\ProductsController@updateProduct' );
+Route::put( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'editSingleVariation' ]);
+Route::put( 'products/{product}', [ ProductsController::class, 'updateProduct' ]);

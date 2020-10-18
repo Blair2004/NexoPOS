@@ -1,6 +1,6 @@
 <template>
     <div class="h-full flex-auto bg-gray-300 flex flex-col" id="pos-container">
-        <div class="h-12 overflow-hidden px-2 pt-2 flex">
+        <div class="h-12 overflow-hidden px-2 pt-2 flex flex-shrink-0">
             <div class="-mx-2 flex overflow-x-auto pb-1">
                 <div class="flex px-2" :key="index" v-for="(component,index) of buttons">
                     <component :is="component"></component>

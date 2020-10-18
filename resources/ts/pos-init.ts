@@ -25,7 +25,7 @@ const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =
 const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
 
 export class POS {
-    private _products: BehaviorSubject<Product[]>;
+    private _products: BehaviorSubject<OrderProduct[]>;
     private _breadcrumbs: BehaviorSubject<any[]>;
     private _customers: BehaviorSubject<Customer[]>;
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
@@ -120,7 +120,7 @@ export class POS {
 
     public initialize()
     {
-        this._products          =   new BehaviorSubject<Product[]>([]);
+        this._products          =   new BehaviorSubject<OrderProduct[]>([]);
         this._customers         =   new BehaviorSubject<Customer[]>([]);
         this._types             =   new BehaviorSubject<OrderType[]>([]);
         this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
@@ -349,9 +349,9 @@ export class POS {
      * @param product_id 
      * @param unit_id 
      */
-    getStockUsage( product_id: number, unit_id: number ) {
-        const stocks    =   this._products.getValue().filter( (product: Product) => {
-            return product.product_id === product_id && product.unit_id === unit_id;
+    getStockUsage( product_id: number, unit_quantity_id: number ) {
+        const stocks    =   this._products.getValue().filter( (product: OrderProduct ) => {
+            return product.product_id === product_id && product.unit_quantity_id === unit_quantity_id;
         }).map( product => product.quantity );
 
         if ( stocks.length > 0 ) {
@@ -396,7 +396,7 @@ export class POS {
             quantity            : 0,
             tax_group_id        : product.tax_group_id,
             tax_value           : 0, // is computed automatically using $original()
-            sale_price          : product.sale_price,
+            unit_price          : 0,
             total_price         : 0,
             mode                : 'normal',
             $original           : () => product
@@ -498,11 +498,11 @@ export class POS {
          * real sale price
          */
         if ( product.mode === 'normal' ) {
-            product.sale_price          =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_sale_price : product.$original().excl_tax_sale_price;
-            product.tax_value           =       product.$original().sale_tax_value * product.quantity;
+            product.unit_price          =       product.$original().tax_type === 'inclusive' ? product.$quantities().incl_tax_sale_price : product.$quantities().excl_tax_sale_price;
+            product.tax_value           =       product.$quantities().sale_price_tax * product.quantity;
         } else {
-            product.sale_price          =       product.$original().tax_type === 'inclusive' ? product.$original().incl_tax_wholesale_price : product.$original().excl_tax_wholesale_price;
-            product.tax_value           =       product.$original().wholesale_tax_value * product.quantity;
+            product.unit_price          =       product.$original().tax_type === 'inclusive' ? product.$quantities().incl_tax_wholesale_price : product.$quantities().excl_tax_wholesale_price;
+            product.tax_value           =       product.$quantities().wholesale_price_tax * product.quantity;
         }
 
         /**
@@ -511,11 +511,11 @@ export class POS {
          */
         if ([ 'flat', 'percentage' ].includes( product.discount_type ) ) {
             if ( product.discount_type === 'percentage' ) {
-                product.discount  =   ( ( product.sale_price * product.discount_percentage ) / 100 ) * product.quantity;
+                product.discount  =   ( ( product.$quantities().sale_price * product.discount_percentage ) / 100 ) * product.quantity;
             }
         }
 
-        product.total_price         =   ( product.sale_price * product.quantity ) - product.discount;
+        product.total_price         =   ( product.$quantities().sale_price * product.quantity ) - product.discount;
     }
 
     defineSettings( settings ) {

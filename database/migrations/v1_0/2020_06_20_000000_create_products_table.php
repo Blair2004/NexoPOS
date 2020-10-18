@@ -39,10 +39,6 @@ class CreateProductsTable extends Migration
                 $table->integer( 'parent_id' )->default(0); // to refer to a parent variable product
                 
                 $table->integer( 'unit_group' );
-                $table->string( 'selling_unit_ids' )->nullable(); // either unit id or set of ids
-                $table->string( 'purchase_unit_ids' )->nullable();
-                $table->string( 'transfer_unit_ids' )->nullable();
-
                 $table->string( 'on_expiration' )->default( 'prevent_sales' ); // allow_sales, prevent_sales
                 $table->boolean( 'expires' )->default(false); // true/false
                 $table->integer( 'author' );

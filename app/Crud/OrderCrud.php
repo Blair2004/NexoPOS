@@ -459,11 +459,11 @@ class OrderCrud extends CrudService
                 $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
             break;
             case 'unpaid' : 
-                $entry->payment_status            = __( 'Unpaid' ); 
+                $entry->payment_status              = __( 'Unpaid' ); 
                 $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
             break;
             case 'partially_paid' : 
-                $entry->payment_status    = __( 'Partially paid' ); 
+                $entry->payment_status              = __( 'Partially paid' ); 
                 $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
             break;
         }

@@ -61,17 +61,6 @@ class UnitsController extends DashboardController
 
     public function get( Request $request )
     {
-        if ( $request->query( 'ids' ) ) {
-            $ids    =   json_decode( $request->query( 'ids' ) );
-            return Unit::whereIn( 'id', $ids )->get()->map( function( $unit ) use ( $request ) {
-                $unit->quantities   =   ProductUnitQuantity::withUnit( $unit->id )
-                    ->withProduct( $request->query( 'product_id' ) )
-                    ->first();
-
-                return $unit;
-            });
-        }
-
         return $this->unitService->get();
     }
 

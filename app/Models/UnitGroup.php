@@ -14,4 +14,13 @@ class UnitGroup extends Model
     {
         return $this->hasMany( Unit::class, 'group_id' );
     }
+
+    /**
+     * @todo ensure to update
+     * the database in order for this to work.
+     */
+    // public function scopeCanTransform( $query )
+    // {
+    //     return $query->where( 'transformable', true );
+    // }
 } 

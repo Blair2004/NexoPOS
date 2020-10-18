@@ -65,7 +65,6 @@
                             <div class="h-0 w-full">
                                 <div class="relative w-full flex flex-col items-start justify-center -top-10 h-20 p-2" style="background:rgb(255 255 255 / 73%)">
                                     <h3 class="text-sm text-gray-700 text-center w-full">{{ product.name }}</h3>
-                                    <h2 class="text-sm text-gray-800 font-bold text-center w-full">{{ product.tax_type === 'inclusive' ? product.incl_tax_sale_price : product.excl_tax_sale_price | currency }}</h2>
                                 </div>
                             </div>
                         </div>

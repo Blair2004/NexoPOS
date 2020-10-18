@@ -35,7 +35,7 @@
                                         <a
                                             :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
-                                        >Price : {{ product.sale_price | currency }}</a>
+                                        >Price : {{ product.unit_price | currency }}</a>
                                     </div>
                                     <div class="px-1"> 
                                         <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
@@ -169,7 +169,7 @@
 import { Popup } from '../../../libraries/popup';
 import PosPaymentPopup from './popups/ns-pos-payment-popup';
 import PosConfirmPopup from './popups/ns-pos-confirm-popup';
-import nsPosQuantityPopupVue from './popups/ns-pos-quantity-popup.vue';
+import nsPosQuantityPopupVue from '@/popups/ns-pos-quantity-popup.vue';
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
 import nsPosDiscountPopupVue from './popups/ns-pos-discount-popup.vue';
 import nsPosOrderTypePopupVue from './popups/ns-pos-order-type-popup.vue';

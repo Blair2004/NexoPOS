@@ -54,7 +54,8 @@ trait ArrayHelper {
 
     /**
      * to JS options
-     * @param array
+     * @param Collection
+     * @param Array [ value, label ]
      * @return an array of options
      */
     static function toJsOptions( $collections, $config ): Array 

@@ -34,6 +34,10 @@ class AdjustNexoposUnitsQuantitiesTableOct16 extends Migration
             if( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'expiration_date' ) ) {
                 $table->datetime( 'expiration_date' )->nullable();
             }
+
+            if( ! Schema::hasColumn( 'nexopos_products_unit_quantities', 'preview_url' ) ) {
+                $table->string( 'preview_url' )->nullable();
+            }
         });
     }
 
@@ -57,6 +61,7 @@ class AdjustNexoposUnitsQuantitiesTableOct16 extends Migration
                 'wholesale_price_edit',
                 'incl_tax_wholesale_price',
                 'excl_tax_wholesale_price',
+                'preview_url'
             ] as $column ) {
                 if( Schema::hasColumn( 'nexopos_products_unit_quantities', $column ) ) {
                     $table->dropColumn( $column );

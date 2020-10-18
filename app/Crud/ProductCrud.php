@@ -10,6 +10,7 @@ use Exception;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductTax;
+use App\Models\ProductUnitQuantity;
 use App\Models\Tax;
 use App\Models\TaxGroup;
 use App\Models\Unit;
@@ -148,6 +149,46 @@ class ProductCrud extends CrudService
         }
 
         $groups             =   UnitGroup::get();
+        $units              =   UnitGroup::find( $entry->unit_group )->units;
+        $fields             =   [
+            [
+                'type'          =>  'select',
+                'errors'        =>  [],
+                'name'          =>  'unit_id',
+                'options'       =>  Helper::toJsOptions( $units, [ 'id', 'name' ] ),
+                'label'         =>  __( 'Assigned Unit' ),
+                'description'   =>  __( 'The assigned unit for sale' ),
+                'validation'    =>  'required',
+            ], [
+                'type'  =>  'number',
+                'errors'        =>  [],
+                'name'  =>  'sale_price',
+                'label' =>  __( 'Sale Price' ),
+                'description'   =>  __( 'Define the regular selling price.' ),
+                'validation'    =>  'required',
+            ], [
+                'type'          =>  'number',
+                'errors'        =>  [],
+                'name'          =>  'wholesale_price',
+                'label'         =>  __( 'Wholesale Price' ),
+                'description'   =>  __( 'Define the wholesale price.' ),
+                'validation'    =>  'required',
+            ], [
+                'type'          =>  'media',
+                'errors'        =>  [],
+                'name'          =>  'preview_url',
+                'label'         =>  __( 'Preview Url' ),
+                'description'   =>  __( 'Provide the preview of the current unit.' ),
+            ], [
+                'type'          =>  'hidden',
+                'errors'        =>  [],
+                'name'          =>  'id',
+            ], [
+                'type'          =>  'hidden',
+                'errors'        =>  [],
+                'name'          =>  'quantity',
+            ]
+        ];
 
         return [
             'main' =>  [
@@ -262,29 +303,21 @@ class ProductCrud extends CrudService
                                     'name'          =>  'selling_group',
                                     'description'   =>  __( 'Determine the unit for sale.' ),
                                     'label'         =>  __( 'Selling Unit' ),
-                                    'fields'        =>  [
-                                        [
-                                            'type'  =>  'select',
-                                            'name'  =>  'unit',
-                                            'label' =>  __( 'Assigned Unit' ),
-                                            'description'   =>  __( 'The assigned unit for sale' ),
-                                            'validation'    =>  'required',
-                                        ], [
-                                            'type'  =>  'number',
-                                            'name'  =>  'sale_price',
-                                            'label' =>  __( 'Sale Price' ),
-                                            'description'   =>  __( 'Define the regular selling price.' ),
-                                            'validation'    =>  'required',
-                                        ], [
-                                            'type'  =>  'number',
-                                            'name'  =>  'wholesale_price',
-                                            'label' =>  __( 'Wholesale Price' ),
-                                            'description'   =>  __( 'Define the wholesale price.' ),
-                                            'validation'    =>  'required',
-                                        ]
-                                    ],                                     
-                                    'groups'        =>  [],
-                                    'options'       =>  [],
+                                    'fields'        =>  $fields,  
+                                    
+                                    /**
+                                     * We make sure to popular the unit quantity
+                                     * with the entry values using the fields array. 
+                                     */
+                                    'groups'        =>  ProductUnitQuantity::withProduct( $entry->id )
+                                        ->get()
+                                        ->map( function( $productUnitQuantity ) use ( $fields ) {
+                                            return collect( $fields )->map( function( $field ) use ( $productUnitQuantity ) {
+                                                $field[ 'value' ]   =   $productUnitQuantity->{ $field[ 'name' ] };
+                                                return $field;
+                                            });
+                                        }),
+                                    'options'       =>  UnitGroup::find( $entry->unit_group )->units,
                                 ]
                             ]
                         ],
@@ -579,25 +612,31 @@ class ProductCrud extends CrudService
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      __( 'Edit' ),
+                'label'         =>      '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
             ], [
-                'label'         =>      __( 'See Quantities' ),
+                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
+                'namespace'     =>      'ns.quantities',
+                'type'          =>      'POPUP',
+                'index'         =>      'id',
+                'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+            ], [
+                'label'         =>      '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/units' )
             ], [
-                'label'         =>      __( 'See History' ),
+                'label'         =>      '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/history' )
             ], [
-                'label'     =>  __( 'Delete' ),
+                'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'url'       =>  url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),

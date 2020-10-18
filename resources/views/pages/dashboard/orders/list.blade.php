@@ -18,7 +18,6 @@
 @endsection
 @section( 'layout.dashboard.footer' )
     @parent
-    <script src="{{ asset( '/js/ns-order-preview-popup.js' ) }}"></script>
 <script>
 document.addEventListener( 'DOMContentLoaded', () => {
     nsEvent.subject().subscribe( event => {
@@ -26,7 +25,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
             event.identifier === 'ns-table-row-action' && 
             event.value.action.namespace === 'ns.order-options' 
         ) {
-            Popup.show( nsOrderPreviewPopup, { order : event.value.row });
+            Popup.show( nsOrderPreview, { order : event.value.row });
         }
     });
 });

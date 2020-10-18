@@ -1,6 +1,5 @@
-import { Popup } from "../../../../../libraries/popup";
-
-const nsPosQuantityPopup    =   require( '../../popups/ns-pos-quantity-popup' ).default;
+import { Popup } from '@/libraries/popup';
+import { default as nsPosQuantityPopup } from '@/popups/ns-pos-quantity-popup.vue';
 
 export class ProductQuantityPromise {
     constructor( 

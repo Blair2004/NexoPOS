@@ -1,3 +1,7 @@
+<?php
+use App\Classes\Hook;
+use App\Classes\Response;
+?>
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
@@ -16,4 +20,14 @@
         </ns-crud>
     </div>
 </div>
+@endsection
+
+@section( 'layout.dashboard.footer' )
+    @parent
+<?php
+$identifier    =   collect( explode( $src, '/' ) )
+    ->filter( fn( $segment ) => ! empty( $segment ) )
+    ->last();
+?>
+{!! ( string ) Hook::filter( 'ns-crud-footer', new Response, $identifier ) !!}
 @endsection
