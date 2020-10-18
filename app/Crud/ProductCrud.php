@@ -143,13 +143,14 @@ class ProductCrud extends CrudService
     public function getForm( $entry = null ) 
     {
         if ( $entry instanceof Product ) {
-            $unitGroup              =   UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
+            $unitGroup      =   UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
+            $units          =   UnitGroup::find( $entry->unit_group )->units;
         } else {
             $unitGroup      =   null;
+            $units          =   [];
         }
 
         $groups             =   UnitGroup::get();
-        $units              =   UnitGroup::find( $entry->unit_group )->units;
         $fields             =   [
             [
                 'type'          =>  'select',
@@ -309,15 +310,15 @@ class ProductCrud extends CrudService
                                      * We make sure to popular the unit quantity
                                      * with the entry values using the fields array. 
                                      */
-                                    'groups'        =>  ProductUnitQuantity::withProduct( $entry->id )
+                                    'groups'        =>  ( $entry instanceof Product ? ProductUnitQuantity::withProduct( $entry->id )
                                         ->get()
                                         ->map( function( $productUnitQuantity ) use ( $fields ) {
                                             return collect( $fields )->map( function( $field ) use ( $productUnitQuantity ) {
                                                 $field[ 'value' ]   =   $productUnitQuantity->{ $field[ 'name' ] };
                                                 return $field;
                                             });
-                                        }),
-                                    'options'       =>  UnitGroup::find( $entry->unit_group )->units,
+                                        })  : [] ),
+                                    'options'       =>  $entry instanceof Product ? UnitGroup::find( $entry->unit_group )->units : [],
                                 ]
                             ]
                         ],

@@ -43,6 +43,13 @@ class UnitGroupCrud extends CrudService
         'user'  =>  [ 'username' ],
     ];
 
+    public $permissions     =   [
+        'create'    =>  'nexopos.create.products-units',
+        'read'      =>  'nexopos.read.products-units',
+        'update'    =>  'nexopos.update.products-units',
+        'delete'    =>  'nexopos.delete.products-units',
+    ];
+
     /**
      * Define where statement
      * @var  array
