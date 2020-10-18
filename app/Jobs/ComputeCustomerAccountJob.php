@@ -23,7 +23,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
      */
     public function __construct( $event )
     {
-        $this->events   =   $event;
+        $this->event   =   $event;
     }
 
     /**
@@ -41,13 +41,13 @@ class ComputeCustomerAccountJob implements ShouldQueue
     }
 
     private function handleIncrease( OrderAfterCreatedEvent $event )
-    {
-        if ( $event->order->payment_type === 'paid' ) {
+    {  
+        if ( $event->order->payment_status === 'paid' ) {
             $event->order->customer->purchases_amount    +=  $event->order->total;
-        } else if ( $event->order->payment_type === 'partially_paid' ) {
+        } else if ( $event->order->payment_status === 'partially_paid' ) {
             $event->order->customer->purchases_amount    +=  $event->order->tendered;
         } else {
-            $event->order->customer->owe_amount     +=  $event->order->total;
+            $event->order->customer->owed_amount     +=  $event->order->total;
         }
         
         $event->order->customer->save();
@@ -55,7 +55,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
 
     private function handleDeletion( OrderBeforeDeleteEvent $event )
     {
-        switch( $event->order->payment_type ) {
+        switch( $event->order->payment_status ) {
             case 'paid': 
                 $event->customer->purchases_amount      -=  $event->order->total;
             break;
@@ -63,7 +63,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
                 $event->customer->purchases_amount      -=  $event->order->tendered;
             break;
             default:
-                $event->order->customer->owe_amount     -=  $event->order->total;
+                $event->order->customer->owed_amount    -=  $event->order->total;
             break;
         }
         

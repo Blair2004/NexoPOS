@@ -1,12 +1,12 @@
 <template>
-    <div class="bg-white shadow-lg rounded w-4/5-screen h-4/5-screen flex flex-col">
+    <div class="bg-white shadow-lg rounded w-4/5-screen h-4/5-screen lg:w-3/5-screen flex flex-col overflow-hidden">
         <div class="p-2 flex justify-between items-center border-b border-gray-400">
             <h3 class="font-semibold text-gray-700">Customers</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto p-2 bg-gray-200">
+        <div class="flex-auto p-2 bg-gray-200 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
@@ -24,6 +24,29 @@
                         <p class="text-gray-600">In order to see a customer account, you need to select one customer.</p>
                         <div class="my-2">
                             <ns-button @click="openCustomerSelection()" type="info">Select Customer</ns-button>
+                        </div>
+                    </div>
+                    <div v-if="customer">
+                        <div class="-mx-4 flex flex-wrap">
+                            <div class="px-4 mb-4 w-full">
+                                <h2 class="font-semibold text-gray-700">Summary For : {{ customer.name }}</h2>
+                            </div>
+                            <div class="px-4 mb-4 w-full md:w-1/2">
+                                <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
+                                    <h3 class="font-medium text-2xl">Total Purchases</h3>
+                                    <div class="w-full flex justify-end">
+                                        <h2 class="text-5xl font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 mb-4 w-full md:w-1/2">
+                                <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
+                                    <h3 class="font-medium text-2xl">Total Owed</h3>
+                                    <div class="w-full flex justify-end">
+                                        <h2 class="text-5xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </ns-tabs-item>

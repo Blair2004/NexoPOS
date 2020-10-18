@@ -12,8 +12,9 @@
                     </div>
                 </div>
                 <div class="h-0 w-full">
-                    <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2" style="background:rgb(255 255 255 / 73%)">
-                        <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
+                    <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2 flex-col" style="background:rgb(255 255 255 / 73%)">
+                        <h3 class="font-bold text-gray-700 py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
+                        <p class="text-sm font-medium text-gray-600">{{ unitQuantity.sale_price | currency }}</p>
                     </div>
                 </div>
             </div>

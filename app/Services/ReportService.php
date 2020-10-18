@@ -49,8 +49,22 @@ class ReportService
         $this->computePartiallyPaidOrders( $previousReport, $todayReport );
         $this->computePartiallyPaidOrdersCount( $previousReport, $todayReport );
         $this->computeDiscounts( $previousReport, $todayReport );
+        $this->computeIncome( $previousReport, $todayReport );
 
+        $todayReport->range_starts  =   $this->dayStarts;
+        $todayReport->range_ends    =   $this->dayEnds;
         $todayReport->save();
+    }
+
+    public function computeIncome( $previousReport, $todayReport )
+    {
+        $totalIncome         =   Order::from( $this->dayStarts )
+            ->to( $this->dayEnds )
+            ->paymentStatus( 'unpaid' )
+            ->sum( 'gross_total' );
+
+        $todayReport->day_income    =   $totalIncome;
+        $todayReport->total_income    =   ( $previousReport->total_income ?? 0 ) + $totalIncome;
     }
     
     /**
@@ -156,8 +170,8 @@ class ReportService
             ->paymentStatus( 'paid' )
             ->sum( 'discount' );
 
-        $todayReport->day_discount     = $totalDiscount;
-        $todayReport->total_discount   = ( $previousReport->total_discount ?? 0 ) + $totalDiscount;
+        $todayReport->day_discounts     = $totalDiscount;
+        $todayReport->total_discounts   = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
     private function computeWastedGoods( $previousReport, $todayReport )

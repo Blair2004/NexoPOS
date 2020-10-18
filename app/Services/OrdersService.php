@@ -401,6 +401,7 @@ class OrdersService
             ->get();
 
         $order->tax_value       =   $taxes;
+        $order->net_total       =   $order->total;
         $order->payment_status  =   $paymentStatus;
 
         /**

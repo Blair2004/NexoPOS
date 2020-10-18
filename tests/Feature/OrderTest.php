@@ -16,14 +16,15 @@ class OrderTest extends TestCase
      */
     public function testPostingOrder()
     {
-        return;
-        
         $this->json( 'POST', 'auth/sign-in', [
             'username'  =>  env( 'TEST_USERNAME' ),
             'password'  =>  env( 'TEST_PASSWORD' )
         ]);
 
-        $product    =   Product::withStockDisabled()->firstOrfail();
+        // $product    =   Product::withStockDisabled()->firstOrfail();
+        $product    =   Product::find(1);
+        $unit       =   $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
+        $subtotal   =   $unit->sale_price * 5;
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -43,13 +44,14 @@ class OrderTest extends TestCase
                         'country'       =>  'United State Seattle',
                     ]
                 ],
+                'subtotal'              =>  $subtotal,
                 'shipping'              =>  150,
                 'products'              =>  [
                     [
-                        'product_id'    =>  $product->id,
-                        'quantity'      =>  5,
-                        'sale_price'    =>  12,
-                        'unit_id'       =>  json_decode( $product->selling_unit_ids )[0],
+                        'product_id'            =>  $product->id,
+                        'quantity'              =>  5,
+                        'unit_price'            =>  12,
+                        'unit_quantity_id'      =>  $unit->id,
                     ]
                 ],
                 'payments'              =>  [
@@ -64,9 +66,11 @@ class OrderTest extends TestCase
             'status'    =>  'success'
         ]);
 
+        $subtotal   =   $subtotal - ( ( 2.5 * $subtotal ) / 100 );
+
         $response->assertJsonPath(
-            'data.order.total', 58.5 + 150,
-            'data.order.change', ( 60 + 150 ) - 58.5,
+            'data.order.total', $subtotal + 150,
+            'data.order.change', ( 60 + 150 ) - ( $subtotal + 150 ),
         );
     }
 }

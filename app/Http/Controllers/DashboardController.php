@@ -63,7 +63,7 @@ class DashboardController extends Controller
 
     public function getBestCustomers()
     {
-        return Customer::orderBy( 'purchases_amount' )->limit(5)->get();
+        return Customer::orderBy( 'purchases_amount', 'desc' )->limit(5)->get();
     }
 }
 

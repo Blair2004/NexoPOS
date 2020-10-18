@@ -9,7 +9,7 @@ use App\Models\User;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UnitGroupsFactory extends Factory
+class UnitGroupFactory extends Factory
 {
     protected $model    =   UnitGroup::class;
 

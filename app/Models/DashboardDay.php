@@ -9,6 +9,7 @@ class DashboardDay extends Model
 {
     use HasFactory;
 
+    public $timestamps  =   false;
     protected $table    =   'nexopos_' . 'dashboard_days';
 
     public function scopeFrom( $query, $param )

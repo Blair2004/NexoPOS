@@ -498,10 +498,10 @@ export class POS {
          * real sale price
          */
         if ( product.mode === 'normal' ) {
-            product.unit_price          =       product.$original().tax_type === 'inclusive' ? product.$quantities().incl_tax_sale_price : product.$quantities().excl_tax_sale_price;
+            product.unit_price          =       product.$quantities().sale_price;
             product.tax_value           =       product.$quantities().sale_price_tax * product.quantity;
         } else {
-            product.unit_price          =       product.$original().tax_type === 'inclusive' ? product.$quantities().incl_tax_wholesale_price : product.$quantities().excl_tax_wholesale_price;
+            product.unit_price          =       product.$quantities().wholesale_price;
             product.tax_value           =       product.$quantities().wholesale_price_tax * product.quantity;
         }
 
@@ -511,11 +511,11 @@ export class POS {
          */
         if ([ 'flat', 'percentage' ].includes( product.discount_type ) ) {
             if ( product.discount_type === 'percentage' ) {
-                product.discount  =   ( ( product.$quantities().sale_price * product.discount_percentage ) / 100 ) * product.quantity;
+                product.discount  =   ( ( product.unit_price * product.discount_percentage ) / 100 ) * product.quantity;
             }
         }
 
-        product.total_price         =   ( product.$quantities().sale_price * product.quantity ) - product.discount;
+        product.total_price         =   ( product.unit_price * product.quantity ) - product.discount;
     }
 
     defineSettings( settings ) {

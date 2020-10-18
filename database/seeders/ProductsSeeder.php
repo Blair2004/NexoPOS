@@ -1,7 +1,11 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductUnitQuantity;
+use App\Models\Unit;
+use App\Models\UnitGroup;
 use Illuminate\Database\Seeder;
 
 class ProductsSeeder extends Seeder
@@ -15,7 +19,21 @@ class ProductsSeeder extends Seeder
     {
         return ProductCategory::factory()
             ->count(10)
-            ->hasProducts(20)
-            ->create();
+            ->create()
+            ->each( function( $category ) {
+                Product::factory()
+                    ->count(10)
+                    ->create([ 'category_id' => $category->id ])
+                    ->each( function( $product ) {
+                        UnitGroup::find( $product->unit_group )->units->each( function( $unit ) use ( $product ) {
+                            ProductUnitQuantity::factory()
+                                ->count(1)
+                                ->create([
+                                    'product_id'    =>  $product->id,
+                                    'unit_id'       =>  $unit->id
+                                ]);
+                        });
+                    });
+            });
     }
 }

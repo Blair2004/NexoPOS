@@ -2,23 +2,23 @@
     <div class="h-full w-full py-2">
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
-                <div id="details" class="h-16 flex justify-between items-center bg-blue-400 text-white text-3xl p-2">
+                <div id="details" class="h-16 flex justify-between items-center bg-blue-400 text-white text-xl md:text-3xl p-2">
                     <span>Total : </span>
                     <span>{{ order.total | currency }}</span>
                 </div>
-                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-3xl p-2">
+                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-xl md:text-3xl p-2">
                     <span>Discount : </span>
                     <span>{{ order.discount | currency }}</span>
                 </div>
-                <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-3xl p-2">
+                <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-xl md:text-3xl p-2">
                     <span>Paid : </span>
                     <span>{{ order.paid | currency }}</span>
                 </div>
-                <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-3xl p-2">
+                <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-xl md:text-3xl p-2">
                     <span>Change : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-3xl p-2">
+                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-xl md:text-3xl p-2">
                     <span>Screen : </span>
                     <span>{{ backValue / number | currency }}</span>
                 </div>

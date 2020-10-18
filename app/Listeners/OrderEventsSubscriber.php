@@ -75,10 +75,10 @@ class OrderEventsSubscriber
     public function afterOrderCreated( OrderAfterCreatedEvent $event )
     {
         ComputeDayReportJob::dispatch()
-            ->delay( now()->addMinute() );
+            ->delay( now()->addSecond(5) );
 
         ComputeCustomerAccountJob::dispatch( $event )
-            ->delay( now()->addMinute() );
+            ->delay( now()->addSecond(5) );
     }
 
     /**

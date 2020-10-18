@@ -293,7 +293,11 @@ export default {
          */
         changeQuantity( product ) {
             const quantityPromise   =   new ProductQuantityPromise( product );
-            quantityPromise.run({ unit_id : product.unit_id }).then( result => {
+            quantityPromise.run({ 
+                unit_quantity_id    : product.unit_quantity_id, 
+                unit_name           : product.unit_name, 
+                $quantities         : product.$quantities 
+            }).then( result => {
                 POS.updateProduct( product, result );
             });
         },

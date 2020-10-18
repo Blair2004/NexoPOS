@@ -213,7 +213,7 @@ export default nsOrderPreviewPopup;
                                     <h4 class="text-semibold text-gray-700">{{ product.name }} (x{{ product.quantity }})</h4>
                                     <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }}</p>
                                 </div>
-                                <div class="font-semibold text-gray-800">{{ product.sale_price | currency }}</div>
+                                <div class="font-semibold text-gray-800">{{ product.unit_price | currency }}</div>
                             </div>
                         </div>
                     </div>
