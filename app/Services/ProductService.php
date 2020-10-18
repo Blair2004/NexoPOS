@@ -261,16 +261,15 @@ class ProductService
                 $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
             }
         }
-
+        
         $product->author        =   Auth::id();
         $product->save();
 
         /**
-         * compute product tax if it's provided
-         * since it's case of variable product, the tax on
-         * the parent product is not used.  
+         * this will calculate the unit quantities
+         * for the creaed product. This also comute taxes
          */
-        // $this->taxService->computeTax( $product, $data[ 'tax_group_id' ] ?? null );
+        $this->__computeUnitQuantities( $fields, $product );
 
         /**
          * save product images
@@ -364,8 +363,15 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 
+        
         $product->author        =   Auth::id();
         $product->save();
+
+        /**
+         * this will calculate the unit quantities
+         * for the creaed product.
+         */
+        $this->__computeUnitQuantities( $fields, $product );
 
         /**
          * save product images
@@ -517,38 +523,43 @@ class ProductService
          */
         extract( $data );
 
-        if ( in_array( 'units', $fields ) ) {
-            foreach( $fields[ 'units' ][ 'selling_group' ] as $group ) {
-
-                $unitQuantity    =   $this->getUnitQuantity(
-                    $product->id,
-                    $group[ 'unit_id' ]
-                );
-
-                if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
-                    $unitQuantity               =   new ProductUnitQuantity;
-                    $unitQuantity->unit_id      =   $group[ 'unit_id' ];
-                    $unitQuantity->product_id   =   $product->id;
-                    $unitQuantity->quantity     =   0;
-                }
-
-                /**
-                 * We don't need tos ave all the informations
-                 * available on the group variable, that's why we define
-                 * explicitely how everything is saved here.
-                 */
-                $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
-                $unitQuantity->wholesale_price_edit     =   $group[ 'wholesale_price' ];
-                $unitQuantity->preview_url              =   $group[ 'preview_url' ];
-
-                $this->taxService->computeTax( 
-                    $unitQuantity, 
-                    $fields[ 'tax_group_id' ], 
-                    $fields[ 'tax_type' ] 
-                );
-            }
-        } else if ( ! is_array( $value ) ) {
+        if ( ! in_array( $field, [ 'units', 'images' ]) && ! is_array( $value ) ) {
             $product->$field    =   $value;
+        } else if ( $field === 'units' ) {
+            $product->unit_group    =   $fields[ 'units' ][ 'unit_group' ];
+        }
+    }
+
+    private function __computeUnitQuantities( $fields, $product )
+    {
+        foreach( $fields[ 'units' ][ 'selling_group' ] as $group ) {
+
+            $unitQuantity    =   $this->getUnitQuantity(
+                $product->id,
+                $group[ 'unit_id' ]
+            );
+
+            if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
+                $unitQuantity               =   new ProductUnitQuantity;
+                $unitQuantity->unit_id      =   $group[ 'unit_id' ];
+                $unitQuantity->product_id   =   $product->id;
+                $unitQuantity->quantity     =   0;
+            }
+
+            /**
+             * We don't need tos ave all the informations
+             * available on the group variable, that's why we define
+             * explicitely how everything is saved here.
+             */
+            $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
+            $unitQuantity->wholesale_price_edit     =   $group[ 'wholesale_price' ];
+            $unitQuantity->preview_url              =   $group[ 'preview_url' ];
+
+            $this->taxService->computeTax( 
+                $unitQuantity, 
+                $fields[ 'tax_group_id' ], 
+                $fields[ 'tax_type' ] 
+            );
         }
     }
 

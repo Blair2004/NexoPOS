@@ -56,9 +56,7 @@ class ProductsController extends DashboardController
          * this is made to ensure the array 
          * provided aren't flatten
          */
-        unset( $primary[ 'units' ][ 'purchase_unit_ids' ] );
-        unset( $primary[ 'units' ][ 'selling_unit_ids' ] );
-        unset( $primary[ 'units' ][ 'transfer_unit_ids' ] );
+        unset( $primary[ 'units' ] );
         unset( $primary[ 'images' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
@@ -69,10 +67,8 @@ class ProductsController extends DashboardController
          * let's restore the fields before
          * storing that.
          */
-        $primary[ 'purchase_unit_ids' ]      =   $units[ 'purchase_unit_ids' ];
-        $primary[ 'selling_unit_ids' ]       =   $units[ 'selling_unit_ids' ];
-        $primary[ 'transfer_unit_ids' ]      =   $units[ 'transfer_unit_ids' ];
-        $primary[ 'images' ]                 =   $source[ 'images' ];
+        $primary[ 'images' ]        =   $source[ 'images' ];
+        $primary[ 'units' ]         =   $source[ 'units' ];
         
         unset( $primary[ '$primary' ] );
 

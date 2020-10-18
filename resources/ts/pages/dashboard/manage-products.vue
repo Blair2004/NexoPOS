@@ -59,7 +59,7 @@
                             <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units' ].includes( getActiveTabKey( variation.tabs ) )">
                                 <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                        <ns-field @change="detectChange( variation_index, $event )" :field="field"></ns-field>
+                                        <ns-field :field="field"></ns-field>
                                     </div>
                                 </template>
                             </div>
@@ -171,17 +171,6 @@ export default {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
             return quantity.length > 0 ? quantity[0] : 0;
         },
-        detectChange( variation_index, field ) {
-            if ( [ 'unit_group' ].includes( field.name ) ) {
-                switch( field.name ) {
-                    case 'unit_group' :
-                        this.loadOptionsFor( 'purchase_unit_ids', field.value, variation_index );
-                        this.loadOptionsFor( 'transfer_unit_ids', field.value, variation_index );
-                        this.loadOptionsFor( 'selling_unit_ids', field.value, variation_index );
-                    break;
-                }
-            }
-        },
 
         /**
          * The user want to remove a group
@@ -259,7 +248,7 @@ export default {
                         if ( field.type === 'group' ) {
                             field.options   =   result;
                             field.fields.forEach( _field => {
-                                if ( _field.name === 'unit' ) {
+                                if ( _field.name === 'unit_id' ) {
                                     console.log( _field );
                                     _field.options  =   result.map( option => {
                                         return {

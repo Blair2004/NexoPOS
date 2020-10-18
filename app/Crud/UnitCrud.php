@@ -60,10 +60,10 @@ class UnitCrud extends CrudService
     public $fillable    =   [];
 
     protected $permissions = [
-        'create' => 'nexopos.create.units',
-        'read' => 'nexopos.read.units',
-        'update' => 'nexopos.update.units',
-        'delete' => 'nexopos.delete.units',
+        'create' => 'nexopos.create.products-units',
+        'read' => 'nexopos.read.products-units',
+        'update' => 'nexopos.update.products-units',
+        'delete' => 'nexopos.delete.products-units',
     ];
 
     /**
