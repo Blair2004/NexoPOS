@@ -135,6 +135,7 @@ class ProductsController extends DashboardController
     public function searchProduct( Request $request )
     {
         return Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'search' )}%" )
+            ->with( 'unit_quantities.unit' )
             ->orWhere( 'sku', 'LIKE', "%{$request->input( 'search' )}%" )
             ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'search' )}%" )
             ->limit(5)

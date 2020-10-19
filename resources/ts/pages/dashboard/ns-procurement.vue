@@ -4,6 +4,7 @@ import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
 import NsManageProducts from './manage-products';
+import { Tax } from "@/libraries/tax";
 import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
 
 export default {
@@ -156,20 +157,25 @@ export default {
                  */
                 if ( taxGroup.length > 0 ) {
                     const totalTaxes    =   taxGroup[0].taxes.map( tax => {
-                        return ( parseFloat( tax.rate ) * product.procurement.purchase_price_edit ) / 100;
+                        return Tax.getTaxValue(
+                            product.procurement.tax_type,
+                            product.procurement.purchase_price_edit,
+                            parseFloat( tax.rate )
+                        );
                     });
 
-                    product.procurement.tax_value   =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
+                    product.procurement.tax_value               =   ( totalTaxes.reduce( ( b, a ) => b + a ) );
 
                     if ( product.procurement.tax_type === 'inclusive' ) {
-                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) - product.procurement.tax_value;
-                        product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
-                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
-                    } else {
+                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit ) - product.procurement.tax_value;
                         product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit );
-                        product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit ) + product.procurement.tax_value;
-                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit ) + product.procurement.tax_value;
+                        product.procurement.purchase_price          =   parseFloat( product.procurement.gross_purchase_price );
+                    } else {
+                        product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit ) + product.procurement.tax_value;
+                        product.procurement.net_purchase_price      =   parseFloat( product.procurement.purchase_price_edit );
+                        product.procurement.purchase_price          =   parseFloat( product.procurement.gross_purchase_price );
                     }
+
                 } else {
                     product.procurement.gross_purchase_price    =   parseFloat( product.procurement.purchase_price_edit );
                     product.procurement.purchase_price          =   parseFloat( product.procurement.purchase_price_edit );
@@ -290,8 +296,8 @@ export default {
         },
         addProductList( product ) {
 
-            if ( product.purchase_units === undefined ) {
-                return nsSnackBar.error( 'Unable to add product which doesn\'t have a default unit selected for purchase.' )
+            if ( product.unit_quantities === undefined ) {
+                return nsSnackBar.error( 'Unable to add product which doesn\'t unit quantities defined.' )
                     .subscribe();
             }
 
@@ -393,9 +399,21 @@ export default {
         },
 
         setProductOptions( index ) {
-            Popup.show( nsProcurementProductOptionsVue, {
-                product: this.form.products[ index ]
-            })
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsProcurementProductOptionsVue, {
+                    product: this.form.products[ index ],
+                    resolve, 
+                    reject
+                })
+            });
+            
+            promise.then( value => {
+                for( let key in value ) {
+                    this.form.products[ index ].procurement[ key ]      =   value[ key ];
+                }
+
+                this.updateLine( index );
+            });
         }
     }
 }
@@ -453,9 +471,9 @@ export default {
                                 <div class="h-0">
                                     <div class="shadow bg-white relative z-10">
                                         <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b border-gray-300 p-2 text-gray-700">
-                                            <h3 class="font-bold text-gray-700">{{ product.name }}</h3>
-                                            <h4 class="text-sm text-gray-600">SKU : {{ product.sku }}</h4>
-                                            <h4 class="text-sm text-gray-600">Barcode : {{ product.barcode }}</h4>                                                
+                                            <span class="block font-bold text-gray-700">{{ product.name }}</span>
+                                            <span class="block text-sm text-gray-600">SKU : {{ product.sku }}</span>
+                                            <span class="block text-sm text-gray-600">Barcode : {{ product.barcode }}</span>                                                
                                         </div>
                                     </div>
                                 </div>
@@ -476,7 +494,7 @@ export default {
                                     <tbody>
                                         <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
                                             <td class="p-2 text-gray-600 border border-gray-300">
-                                                <h3 class="font-semibold">{{ product.name }}</h3>
+                                                <span class="font-semibold">{{ product.name }}</span>
                                                 <div class="flex justify-between">
                                                     <div class="flex -mx-1 flex-col">
                                                         <div class="px-1">
@@ -510,7 +528,7 @@ export default {
                                             <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
                                                     <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
-                                                        <option v-for="option of product.purchase_units" :key="option.id" :value="option.id">{{ option.name }}</option>
+                                                        <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
                                                     </select>
                                                 </div>
                                             </td>

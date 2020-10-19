@@ -147,7 +147,7 @@
                         <i class="mr-2 text-xl lg:text-3xl las la-cash-register"></i> 
                         <span class="text-lg lg:text-2xl">Pay</span>
                     </div>
-                    <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
+                    <div @click="holdOrder()" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-pause"></i> 
                         <span class="text-lg lg:text-2xl">Hold</span>
                     </div>
@@ -181,6 +181,8 @@ import { PaymentQueue } from "./queues/order/payment-queue";
 import { TypeQueue } from "./queues/order/type-queue";
 import switchTo from "@/libraries/pos-section-switch";
 import nsPosShippingPopupVue from '@/popups/ns-pos-shipping-popup.vue';
+import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
+import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -231,6 +233,48 @@ export default {
     },
     methods: {
         switchTo,
+
+        async holdOrder() {
+            const queues    =   [
+                ProductsQueue,
+                CustomerQueue,
+                TypeQueue,
+            ];
+
+            for( let index in queues ) {
+                try {
+                    const promise   =   new queues[ index ]( this.order );
+                    const response  =   await promise.run();
+                } catch( exception ) {
+                    /**
+                     * in case there is something broken
+                     * on the promise, we just stop the queue.
+                     */
+                    return false;    
+                }
+            }
+
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPosHoldOrdersPopupVue, { resolve, reject, order : this.order });
+            });
+
+            promise.then( result => {
+                this.order.title            =   result.title;
+                this.order.payment_status   =   'hold';
+                
+                POS.order.next( this.order );
+
+                const popup     =   Popup.show( nsPosLoadingPopupVue );
+                
+                POS.submitOrder().then( result => {
+                    popup.close();
+                    nsSnackBar.success( result.message ).subscribe();
+                }, ( error ) => {
+                    popup.close();
+                    nsSnackBar.error( result.message ).subscribe();
+                });
+            })
+        },
 
         openDiscountPopup( reference, type ) {
             Popup.show( nsPosDiscountPopupVue, { 

@@ -553,7 +553,7 @@ class ProductService
              */
             $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
             $unitQuantity->wholesale_price_edit     =   $group[ 'wholesale_price' ];
-            $unitQuantity->preview_url              =   $group[ 'preview_url' ];
+            $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
 
             $this->taxService->computeTax( 
                 $unitQuantity, 

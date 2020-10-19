@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white shadow-lg w-6/7-screen md:w-5/7-screen lg:w-3/7-screen">
         <div class="p-2 border-b border-gray-200">
-            <h3 class="font-semibold">Options</h3>
+            <h5 class="font-semibold">Options</h5>
         </div>
         <div class="p-2 border-b border-gray-200">
             <ns-field class="w-full" :field="field" v-for="(field,index) of fields" :key="index"></ns-field>
@@ -51,10 +51,7 @@ export default {
             if ( validation ) {
                 const fields    =   this.validation.extractFields( this.fields );
 
-                for( let key in fields ) {
-                    this.$popupParams.product.procurement[ key ]    =   fields[ key ];
-                }
-
+                this.$popupParams.resolve( fields );
                 return this.$popup.close();
             }
 

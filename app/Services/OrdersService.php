@@ -25,6 +25,7 @@ use App\Events\OrderAfterProductRefundedEvent;
 use App\Models\DashboardDay;
 use App\Models\OrderStorage;
 use App\Models\ProductHistory;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class OrdersService
@@ -68,39 +69,10 @@ class OrdersService
         $this->taxService       =   $taxService;
     }
 
-    public function create($fields)
+    public function create( $fields )
     {
-        $customer   =   $this->__customerIsDefined($fields);
-
-        /**
-         * this contains a set (array) of items
-         * which has the following shape
-         * @var array<OrderProduct> {
-         *      'product_id'        =>  // refer to the actual product on the db
-         *      'unit_id'           =>  // refer to the unit used on the product
-         *      'quantity'          =>  // the actual sold quantity for the unit provided
-         *      'discount'          =>  // discount value
-         *      'discount_rate'     =>  // discount rate
-         *      'discount_type'     =>  // either "flat" or "percentage"
-         *      'unit_price'        =>  // base sale price
-         *      'total_price'       =>  // total price
-         *      'tax_group_id'      =>  // the tax that applies to the item
-         *      'tax_value'         =>  // the total price of the tax
-         *      'net_unit_price'    =>  // unit price with taxe over
-         *      'gross_unit_price'  =>  // unit price without taxe over
-         *      'net_total_price'   =>  // total unit price with taxe over
-         *      'gross_total_price' =>  // total unit price without taxe over
-         * }
-         */
-        $session_identifier                 =   Str::random( '10' );
-
-        $fields[ 'products' ]      =   $this->__checkProductStock( $fields['products'], $session_identifier );
-
-        /**
-         * check discount validity and throw an
-         * error is something is not set correctly.
-         */
-        $this->__checkDiscountVality( $fields );
+        $customer               =   $this->__customerIsDefined($fields);
+        $fields[ 'products' ]   =   $this->__buildOrderProducts( $fields['products'] );
 
         /**
          * determine the value of the product 
@@ -111,7 +83,22 @@ class OrdersService
          * @param array $payments
          * @param string $paymentStatus
          */
-        extract($this->__checkOrderPayments( $fields ) );
+        extract( $this->__checkOrderPayments( $fields ) );
+        
+        /**
+         * As no payment might be provided
+         * we make sure to build the products only in case the
+         * order is just saved as hold, otherwise a check is made on the available stock
+         */
+        if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+            $fields[ 'products' ]      =   $this->__checkProductStock( $fields['products'] );
+        } 
+
+        /**
+         * check discount validity and throw an
+         * error is something is not set correctly.
+         */
+        $this->__checkDiscountVality( $fields );
 
         /**
          * check delivery informations before
@@ -127,17 +114,20 @@ class OrdersService
          * modification. All verification on current order
          * should be made prior this section
          */
-        $order      =   $this->__initOrder($fields);
+        $order      =   $this->__initOrder( $fields, $paymentStatus );
 
         $this->__saveAddressInformations($order, $fields);
-        $this->__saveOrderPayments($order, $payments);
+
+        if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+            $this->__saveOrderPayments($order, $payments);
+        }
 
         /**
          * @var Order $order
          * @var float $taxes
          * @var float $subTotal
          */
-        extract($this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
+        extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
 
         /**
          * compute order total
@@ -321,22 +311,24 @@ class OrdersService
     {
         $totalPayments  =   0;
 
-        $total          =   $fields[ 'products' ]->map(function ($product) {
+        $total          =   collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
         })->sum() + $this->__getShippingFee($fields);
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
-        foreach ( $fields['payments'] as $payment) {
-            if (in_array($payment['identifier'], array_keys($allowedPaymentsGateways))) {
-                $totalPayments  =   $this->currencyService->define($totalPayments)
-                    ->additionateBy($payment['amount'])
-                    ->get();
-            } else {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. One of the submitted payment type is not supported.')
-                ]);
+        if ( ! empty( $fields[ 'payments' ] ) ) {
+            foreach ( $fields[ 'payments' ] as $payment) {
+                if (in_array($payment['identifier'], array_keys($allowedPaymentsGateways))) {
+                    $totalPayments  =   $this->currencyService->define($totalPayments)
+                        ->additionateBy($payment['amount'])
+                        ->get();
+                } else {
+                    throw new NotAllowedException([
+                        'status'    =>  'failed',
+                        'message'   =>  __('Unable to proceed. One of the submitted payment type is not supported.')
+                    ]);
+                }
             }
         }
 
@@ -346,20 +338,20 @@ class OrdersService
          */
         if ($totalPayments < $total) {
             if (
-                $this->optionsService->get('nexopos.pos.allow_partials_orders', true) === false &&
+                $this->optionsService->get( 'ns_orders_allow_partial', true ) === false &&
                 $totalPayments > 0
             ) {
                 throw new NotAllowedException([
                     'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Incomplete order aren\'t allowed. This option could be changed on the settings.')
+                    'message'   =>  __('Unable to proceed. Partially paid orders aren\'t allowed. This option could be changed on the settings.')
                 ]);
             } else if (
-                $this->optionsService->get('nexopos.pos.allow_quotes_orders', true) === false &&
+                $this->optionsService->get('ns_orders_allow_incomplete', true) === false &&
                 $totalPayments === 0
             ) {
                 throw new NotAllowedException([
                     'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Quotes orders aren\'t allowed. This option could be changed on the settings.')
+                    'message'   =>  __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.')
                 ]);
             }
         }
@@ -368,12 +360,14 @@ class OrdersService
             $paymentStatus      =   'paid';
         } else if ($totalPayments < $total && $totalPayments > 0) {
             $paymentStatus      =   'partially_paid';
-        } else if ($totalPayments === 0) {
+        } else if ($totalPayments === 0 && $fields[ 'payment_status' ] !== 'hold' ) {
             $paymentStatus      =   'unpaid';
+        } else if ( $totalPayments === 0 && $fields[ 'payment_status' ] === 'hold' ) {
+            $paymentStatus      =   'hold';
         }
 
         return [
-            'payments'          =>  $fields['payments'],
+            'payments'          =>  $fields['payments'] ?? [],
             'total'             =>  $total,
             'totalPayments'     =>  $totalPayments,
             'paymentStatus'     =>  $paymentStatus
@@ -402,7 +396,6 @@ class OrdersService
 
         $order->tax_value       =   $taxes;
         $order->net_total       =   $order->total;
-        $order->payment_status  =   $paymentStatus;
 
         /**
          * compute change
@@ -496,21 +489,43 @@ class OrdersService
                 ->additionateBy($product[ 'tax_value' ])
                 ->get();
 
-            $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history);
+            if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+                $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
+            }
         });
 
         return compact('subTotal', 'taxes', 'order');
     }
 
+    private function __buildOrderProducts( $products )
+    {
+        return collect( $products )->map( function( $orderProduct ) {
+            $product    =   Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function() use ($orderProduct) {
+                if (!empty(@$orderProduct['product_id'])) {
+                    return $this->productService->get($orderProduct['product_id']);
+                } else if (!empty(@$orderProduct['sku'])) {
+                    return $this->productService->getProductUsingSKUOrFail($orderProduct['sku']);
+                }
+            });
+            
+            $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
+            
+            $orderProduct           =   $this->__buildOrderProduct(
+                $orderProduct,
+                $productUnitQuantity,
+                $product
+            );
+
+            return $orderProduct;
+        });
+    }
+
     /**
      * @param array of orderProduct
      */
-    private function __checkProductStock( $items, $session_identifier )
+    private function __checkProductStock( $items )
     {
-        /**
-         * product collection
-         */
-        $productCollection          =   new MapperService([]);
+        $session_identifier         =   Str::random( '10' );
 
         /**
          * here comes a loop.
@@ -519,96 +534,93 @@ class OrdersService
          * we'll also populate the unit for the item 
          * so that it can be reused 
          */
-        $items  =   collect($items)->map(function (array $orderProduct) use (
-            $productCollection,
-            $session_identifier
-        ) {
-            /**
-             * Get the product if it's not yet 
-             * defined
-             * @todo use proper cache here
-             */
-            $product    =   $productCollection->retreive($orderProduct['product_id'] ?? $orderProduct['sku'])
-                ->orReturn(function () use ($orderProduct) {
-                    if (!empty(@$orderProduct['product_id'])) {
-                        return $this->productService->get($orderProduct['product_id']);
-                    } else if (!empty(@$orderProduct['sku'])) {
-                        return $this->productService->getProductUsingSKUOrFail($orderProduct['sku']);
-                    }
-                });
-            
-            /**
-             * This will calculate the product default field
-             * when they aren't provided. 
-             */
-            $orderProduct           =   $this->computeProduct( $orderProduct, $product );
-            $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
-
-            if ($product->stock_management === Product::STOCK_MANAGEMENT_ENABLED) {
-
-                /**
-                 * What we're doing here
-                 * 1 - Get the unit assigned to the products being sold
-                 * 2 - check if the units assigned is what has been stored on the product 
-                 * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
-                 */
-                try {
-                    $storageQuantity        =   OrderStorage::withIdentifier( $session_identifier )
-                        ->withProduct( $product->id )
-                        ->withUnitQuantity( $orderProduct[ 'unit_quantity_id' ] )
-                        ->sum( 'quantity' );
-
-                    if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
-                        throw new \Exception( 
-                            sprintf( 
-                                __( 'Unable to proceed there is not enough stock for %s. Using the unit %s' ),
-                                $product->name,
-                                $productUnitQuantity->unit->name
-                            )
-                        );
-                    }
-
-                    /**
-                     * We keep reference on the database
-                     * that's more easier.
-                     */
-                    $storage                                =   new OrderStorage;
-                    $storage->product_id                    =   $product->id;
-                    $storage->product_unit_id               =   $productUnitQuantity->unit->id;
-                    $storage->unit_quantity_id              =   $orderProduct[ 'unit_quantity_id' ];
-                    $storage->quantity                      =   $orderProduct[ 'quantity' ];
-                    $storage->session_identifier            =   $session_identifier;
-                    $storage->save();
-
-                } catch (NotFoundException $exception) {
-                    throw new \Exception(
-                        sprintf(
-                            __('Unable to proceed, the product "%s" has a unit which is cannot be retreived. It might have been deleted.'),
-                            $product->name
-                        )
-                    );
-                }
-            }
-
-            $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id;
-            $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id;
-            $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
-            $orderProduct[ 'product' ]              =   $product;
-            $orderProduct[ 'unitQuantity' ]         =   $productUnitQuantity;
+        return collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
+            $this->__checkQuantityAvailability( 
+                $orderProduct[ 'product' ], 
+                $orderProduct[ 'unitQuantity' ],
+                $orderProduct,
+                $session_identifier
+            );
 
             return $orderProduct;
         });
+    }
 
+    /**
+     * Prebuild a product that will be processed
+     * @param array Order Product
+     * @param ProductUnitQuantity $productUnitQuantity
+     * @param Product $product
+     * @return array Order Product (updated)
+     */
+    public function __buildOrderProduct( array $orderProduct, ProductUnitQuantity $productUnitQuantity, Product $product )
+    {       
         /**
-         * @todo delete storage session
+         * This will calculate the product default field
+         * when they aren't provided. 
          */
+        $orderProduct                           =   $this->computeProduct( $orderProduct, $product );
+        $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id;
+        $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id;
+        $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
+        $orderProduct[ 'product' ]              =   $product;
+        $orderProduct[ 'unitQuantity' ]         =   $productUnitQuantity;
 
-        return $items;
+        return $orderProduct;
+    }
+
+    public function __checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
+    {
+        if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
+
+            /**
+             * What we're doing here
+             * 1 - Get the unit assigned to the products being sold
+             * 2 - check if the units assigned is what has been stored on the product 
+             * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
+             */
+            try {
+                $storageQuantity        =   OrderStorage::withIdentifier( $session_identifier )
+                    ->withProduct( $product->id )
+                    ->withUnitQuantity( $orderProduct[ 'unit_quantity_id' ] )
+                    ->sum( 'quantity' );
+
+                if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
+                    throw new \Exception( 
+                        sprintf( 
+                            __( 'Unable to proceed there is not enough stock for %s. Using the unit %s' ),
+                            $product->name,
+                            $productUnitQuantity->unit->name
+                        )
+                    );
+                }
+
+                /**
+                 * We keep reference on the database
+                 * that's more easier.
+                 */
+                $storage                                =   new OrderStorage;
+                $storage->product_id                    =   $product->id;
+                $storage->unit_id                       =   $productUnitQuantity->unit->id;
+                $storage->unit_quantity_id              =   $orderProduct[ 'unit_quantity_id' ];
+                $storage->quantity                      =   $orderProduct[ 'quantity' ];
+                $storage->session_identifier            =   $session_identifier;
+                $storage->save();
+
+            } catch (NotFoundException $exception) {
+                throw new \Exception(
+                    sprintf(
+                        __('Unable to proceed, the product "%s" has a unit which is cannot be retreived. It might have been deleted.'),
+                        $product->name
+                    )
+                );
+            }
+        }
     }
 
     public function computeProduct( $fields, Product $product )
     {
-        $sale_price     =   ( $fields[ 'sale_price' ] ?? $product->sale_price );
+        $sale_price     =   ( $fields[ 'unit_price' ] ?? $product->sale_price );
         
         /**
          * if the discount value wasn't provided, it would have
@@ -681,7 +693,7 @@ class OrdersService
         return $carbon->year . '-' . str_pad($carbon->month, 2, STR_PAD_LEFT) . '-' . str_pad($carbon->day, 2, STR_PAD_LEFT) . '-' . str_pad($count, 3, 0, STR_PAD_LEFT);
     }
 
-    private function __initOrder($fields)
+    private function __initOrder( $fields, $paymentStatus)
     {
         /**
          * let's save the order at 
@@ -696,7 +708,7 @@ class OrdersService
         $order->discount            =   $fields['discount'] ?? $this->computeDiscount( $fields, $order );
         $order->total               =   $fields[ 'total' ] ?? $this->computeTotal( $fields, $order );
         $order->type                =   $fields['type']['identifier'];
-        $order->payment_status      =   'unpaid';
+        $order->payment_status      =   $paymentStatus;
         $order->delivery_status     =   'pending';
         $order->process_status      =   'pending';
         $order->author              =   Auth::id();
@@ -1075,12 +1087,8 @@ class OrdersService
      */
     public function getPaymentLabel( $type ) 
     {
-        switch( $type ) {
-            case 'paid': return __( 'Paid' ); break;
-            case 'unpaid': return __( 'Unpaid' ); break;
-            case 'partially_paid': return __( 'Partially Paid' ); break;
-            default : return sprintf( __( 'Unknown Status (%s)' ), $type ); break;
-        }
+        $payments   =   config( 'nexopos.orders.statuses' );
+        return $payments[ $type ] ?? sprintf( __( 'Unknown Status (%s)' ), $type );
     }
 
     /**

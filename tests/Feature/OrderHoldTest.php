@@ -6,8 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Product;
 use App\Models\User;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Laravel\Sanctum\Sanctum;
 
 class OrderTest extends TestCase
 {
@@ -45,6 +45,7 @@ class OrderTest extends TestCase
                         'country'       =>  'United State Seattle',
                     ]
                 ],
+                'payment_status'        =>  'hold',
                 'subtotal'              =>  $subtotal,
                 'shipping'              =>  150,
                 'products'              =>  [
@@ -55,23 +56,8 @@ class OrderTest extends TestCase
                         'unit_quantity_id'      =>  $unit->id,
                     ]
                 ],
-                'payments'              =>  [
-                    [
-                        'identifier'    =>  'cash-payment',
-                        'amount'        =>  60 + 150
-                    ]
-                ]
             ]);
         
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        $subtotal   =   $subtotal - ( ( 2.5 * $subtotal ) / 100 );
-
-        $response->assertJsonPath(
-            'data.order.total', $subtotal + 150,
-            'data.order.change', ( 60 + 150 ) - ( $subtotal + 150 ),
-        );
+        $response->assertJsonPath( 'data.order.status', 'hold' );
     }
 }

@@ -37,13 +37,15 @@ export class POS {
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting       =   false;
-    private defaultOrder        =   () => ({
+    private defaultOrder        =   (): Order => ({
         discount_type: null,
+        title: '',
         discount: 0,
         discount_percentage: 0,
         subtotal: 0,
         total: 0,
         paid: 0,
+        payment_status: undefined,
         customer_id: undefined,
         change: 0,
         total_products: 0,
@@ -218,7 +220,8 @@ export class POS {
 
     submitOrder() {
         return new Promise( ( resolve, reject ) => {
-            if ( this.order.getValue().payments.length  === 0 ) {
+            const order     =   <Order>this.order.getValue();
+            if ( order.payment_status === undefined && order.payments.length  === 0 ) {
                 const message   =   'Please provide a payment before proceeding.';
                 return reject({ status: 'failed', message  });
             }
@@ -256,6 +259,12 @@ export class POS {
             order.paid      =   order.payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
         }
 
+        if ( order.paid >= order.total ) {
+            order.payment_status    =   'paid';
+        } else if ( order.paid > 0 && order.paid < order.total ) {
+            order.payment_status    =   'partially_paid';
+        } 
+        
         order.change    =   order.paid - order.total;
 
         this._order.next( order );
