@@ -31,6 +31,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isMedia() {
             return [ 'media' ].includes( this.field.type );
         },
+        isCkEditor() {
+            return [ 'ckeditor' ].includes( this.field.type );
+        },
     },
     props: [ 'field' ],
     methods: {
@@ -92,6 +95,12 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-multiselect>
+        <ns-ckeditor 
+            :field="field" 
+            v-if="isCkEditor">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-ckeditor>
         <ns-switch 
             :field="field" 
             @change="$emit( 'change', field )"

@@ -158,7 +158,7 @@ class ProductCategoryCrud extends CrudService
                             'description'   =>  __( 'If this category should be a child category of an existing category' ),
                             'value'         =>  $entry->parent_id ?? '',
                         ], [
-                            'type'  =>  'textarea',
+                            'type'  =>  'ckeditor',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
