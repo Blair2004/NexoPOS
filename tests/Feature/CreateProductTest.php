@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class CreateProductTest extends TestCase
@@ -15,10 +17,10 @@ class CreateProductTest extends TestCase
      */
     public function testCreateProduct()
     {
-        $this->json( 'POST', 'auth/sign-in', [
-            'username'  =>  env( 'TEST_USERNAME' ),
-            'password'  =>  env( 'TEST_PASSWORD' )
-        ]);
+        Sanctum::actingAs(
+            User::find(98),
+            ['*']
+        );
 
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )

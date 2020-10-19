@@ -24,6 +24,8 @@ import NsMedia           from './pages/dashboard/ns-media.vue';
 import NsDashboardCards  from './pages/dashboard/home/ns-dashboard-cards.vue';
 import NsBestCustomers   from './pages/dashboard/home/ns-best-customers.vue';
 import NsBestCashiers    from './pages/dashboard/home/ns-best-cashiers.vue';
+import NsOrdersSummary   from './pages/dashboard/home/ns-orders-summary.vue';
+import NsOrdersChart     from './pages/dashboard/home/ns-orders-chart.vue';
 import NsStockAdjustment from './pages/dashboard/products/ns-stock-adjustment.vue';
 
 declare const nsState;
@@ -108,6 +110,8 @@ const components    =   {
     NsDashboardCards,
     NsBestCustomers,
     NsBestCashiers,
+    NsOrdersSummary,
+    NsOrdersChart,
     NsStockAdjustment,
     ...nsExtraComponents, // add extra components provided by plugins.
 };

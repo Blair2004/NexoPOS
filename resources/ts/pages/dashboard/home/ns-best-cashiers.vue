@@ -2,7 +2,7 @@
     <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="head bg-white flex-auto">
             <div class="head text-center border-b border-gray-400 text-gray-700 w-full py-2">
-                <h2>Best Customers</h2>
+                <h5>Best Cashiers</h5>
             </div>
             <div class="body">
                 <table class="table w-full">

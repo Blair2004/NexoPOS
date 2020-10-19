@@ -27,6 +27,16 @@ return [
                 'no'       =>  __( 'No' ),
             ])
         ], [
+            'type'  =>  'switch',
+            'label'     =>  __( 'Allow Partial Orders' ),
+            'name'  =>  'ns_orders_allow_partial',
+            'value'     =>  $options->get( 'ns_orders_allow_partial' ),
+            'description'   =>  __( 'Will prevent partially paid orders to be placed.' ),
+            'options'   =>  Helper::kvToJsOptions([
+                'yes'   =>  __( 'Yes' ),
+                'no'       =>  __( 'No' ),
+            ])
+        ], [
             'type'  =>  'select',
             'label'     =>  __( 'Quotation Expiration' ),
             'name'  =>  'ns_orders_quotation_expiration',

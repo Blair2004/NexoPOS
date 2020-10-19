@@ -16,8 +16,8 @@ class CreateNexoposOrdersStorage extends Migration
         Schema::create('nexopos_orders_storage', function (Blueprint $table) {
             $table->id();
             $table->integer( 'product_id' )->nullable();
-            $table->integer( 'product_unit_quantity_id' )->nullable();
-            $table->integer( 'product_unit_id' )->nullable();
+            $table->integer( 'unit_quantity_id' )->nullable();
+            $table->integer( 'unit_id' )->nullable();
             $table->integer( 'quantity' )->nullable();
             $table->string( 'session_identifier' );
             $table->timestamps();

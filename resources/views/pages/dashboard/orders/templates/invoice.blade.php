@@ -122,7 +122,7 @@ use App\Models\Order;
                                         <h3 class="text-gray-700">{{ $product->name }}</h3>
                                         <span class="text-sm text-gray-600">{{ $product->unit()->first()->name }}</span>
                                     </td>
-                                    <td class="p-2 border border-gray-200 text-center text-gray-700">{{ ns()->currency->define( $product->sale_price ) }}</td>
+                                    <td class="p-2 border border-gray-200 text-center text-gray-700">{{ ns()->currency->define( $product->unit_price ) }}</td>
                                     <td class="p-2 border border-gray-200 text-center text-gray-700">{{ $product->quantity }}</td>
                                     <td class="p-2 border border-gray-200 text-center text-gray-700">{{ ns()->currency->define( $product->discount ) }}</td>
                                     <td class="p-2 border border-gray-200 text-center text-gray-700">{{ ns()->currency->define( $product->tax_value ) }}</td>

@@ -75,6 +75,7 @@ mix.sourceMaps();
 mix
     .js( 'resources/ts/bootstrap.ts', 'public/js')
     .js( 'resources/ts/app.ts', 'public/js')
+    .js( 'resources/ts/dashboard.ts', 'public/js')
     .js( 'resources/ts/update.ts', 'public/js')
     .js( 'resources/ts/pos-init.ts', 'public/js')
     .js( 'resources/ts/pos.ts', 'public/js')

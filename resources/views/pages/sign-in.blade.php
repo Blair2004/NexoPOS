@@ -15,7 +15,7 @@ use App\Classes\Response;
                 {!! Hook::filter( 'ns.before-login-fields', new Response ) !!}
                 <ns-login>
                     <div class="w-full flex items-center justify-center">
-                        <h3 class="font-thin text-sm">{{ __( 'Loading...' ) }}</h3>
+                        <h3 class="font-hairline text-sm">{{ __( 'Loading...' ) }}</h3>
                     </div>
                 </ns-login>
                 {!! Hook::filter( 'ns.after-login-fields', new Response ) !!}

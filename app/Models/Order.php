@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Casts\DateCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,6 +13,10 @@ class Order extends Model
 
     const TYPE_DELIVERY     =   'delivery';
     const TYPE_TAKEAWAY     =   'takeaway';
+
+    public $casts    =   [
+        'created_at'    =>  DateCast::class
+    ];
 
     public function products()
     {

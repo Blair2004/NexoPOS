@@ -373,6 +373,7 @@ class ProcurementService
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
+            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurement->id;
             $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();

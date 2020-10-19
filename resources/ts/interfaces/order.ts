@@ -7,10 +7,12 @@ import { Product } from "./product";
 export interface Order {
     discount_type: 'flat' | 'percentage';
     discount: number;
+    title: string;
     discount_percentage: number;
     subtotal: number;
     total: number;
     paid: number;
+    payment_status: 'hold' | 'paid' | 'unpaid' | 'partially_paid' | 'layaway';
     change: number;
     total_products: number;
     customer: Customer | undefined;

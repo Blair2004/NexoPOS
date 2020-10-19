@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\DashboardDay;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\MenuService;
 use App\Models\ProductCategory;
@@ -56,6 +57,7 @@ class DashboardController extends Controller
     {
         $todayStarts    =   $this->dateService->copy()->startOfDay()->toDateTimeString();
         $todayEnds      =   $this->dateService->copy()->endOfDay()->toDateTimeString();
+        
         return DashboardDay::from( $todayStarts )
             ->to( $todayEnds )
             ->first();
@@ -64,6 +66,16 @@ class DashboardController extends Controller
     public function getBestCustomers()
     {
         return Customer::orderBy( 'purchases_amount', 'desc' )->limit(5)->get();
+    }
+
+    public function getRecentsOrders()
+    {
+        return Order::orderBy( 'created_at', 'desc' )->limit(10)->get();
+    }
+
+    public function getBestCashiers()
+    {
+        return [];
     }
 }
 

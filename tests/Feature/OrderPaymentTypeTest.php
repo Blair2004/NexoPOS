@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class OrderPaymentTypeTest extends TestCase
@@ -16,12 +18,10 @@ class OrderPaymentTypeTest extends TestCase
      */
     public function testOrderPaymentStatus()
     {
-        return;
-        
-        $this->json( 'POST', 'auth/sign-in', [
-            'username'  =>  env( 'TEST_USERNAME' ),
-            'password'  =>  env( 'TEST_PASSWORD' )
-        ]);
+        Sanctum::actingAs(
+            User::find(98),
+            ['*']
+        );
 
         $product    =   Product::withStockDisabled()->firstOrfail();
 

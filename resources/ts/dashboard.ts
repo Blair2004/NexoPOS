@@ -1,15 +1,52 @@
-import Vue from 'vue';
-import * as components from './components/components';
+import { BehaviorSubject, forkJoin } from "rxjs";
+import { map } from "rxjs/operators";
+import { nsHttpClient } from "./bootstrap";
 
-new Vue({
-    el: '#dashboard-aside',
-    components
-});
+export class Dashboard {
+    private _day: BehaviorSubject<{}>;
+    private _bestCustomers: BehaviorSubject<[]>;
+    private _bestCashiers: BehaviorSubject<[]>;
+    private _recentOrders: BehaviorSubject<[]>;
+    private _reports    =   {
+        day: nsHttpClient.get( '/api/nexopos/v4/dashboard/day' ),
+        bestCustomers: nsHttpClient.get( '/api/nexopos/v4/dashboard/best-customers' ),
+        bestCashiers: nsHttpClient.get( '/api/nexopos/v4/dashboard/best-cashiers' ),
+        recentOrders: nsHttpClient.get( '/api/nexopos/v4/dashboard/recent-orders' )
+    };
 
-new Vue({
-    el: '#dashboard-content',
-    components,
-    mounted() {
-        console.log( 'mounted' );
+    constructor() {
+        this._day               =   new BehaviorSubject<{}>({});
+        this._bestCustomers     =   new BehaviorSubject<[]>([]);
+        this._bestCashiers      =   new BehaviorSubject<[]>([]);
+        this._recentOrders      =   new BehaviorSubject<[]>([]);
+
+        for( let index in this._reports ) {
+            this.loadReport( index );
+        }
     }
-});
+
+    loadReport( type ) {
+        return this._reports[ type ]
+            .subscribe( result => {
+                this[ `_${type}` ].next( result );
+            })
+    }
+
+    get day() {
+        return this._day;
+    }
+
+    get bestCustomers() {
+        return this._bestCustomers;
+    }
+
+    get bestCashiers() {
+        return this._bestCashiers;
+    }
+
+    get recentOrders() {
+        return this._recentOrders;
+    }
+}
+
+(<any>window).Dashboard     =   new Dashboard;

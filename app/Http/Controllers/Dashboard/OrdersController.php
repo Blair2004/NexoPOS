@@ -98,10 +98,14 @@ class OrdersController extends DashboardController
 
     public function getOrders( Order $id = null ) {
         if ( $id instanceof Order ) {
-            // to autoload customer related model
-            $id->customer;
+            $id->load( 'customer' );
             return $id;
         }
+
+        if ( request()->query( 'limit' ) ) {
+            return Order::limit( request()->query( 'limit' ) )
+                ->get();
+        } 
 
         return Order::with( 'customer' )->get();
     }

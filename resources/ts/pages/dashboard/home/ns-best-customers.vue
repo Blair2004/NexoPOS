@@ -2,13 +2,13 @@
     <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="head bg-white flex-auto">
             <div class="head text-center border-b border-gray-400 text-gray-700 w-full py-2">
-                <h2>Best Customers</h2>
+                <h5>Best Customers</h5>
             </div>
             <div class="body">
-                <div v-if="loading" class="h-56 w-full flex items-center justify-center">
+                <div v-if="customers.length === 0" class="h-56 w-full flex items-center justify-center">
                     <ns-spinner size="12" border="4"></ns-spinner>
                 </div>
-                <table class="table w-full" v-if="! loading">
+                <table class="table w-full" v-if="customers.length > 0">
                     <thead>
                         <tr v-for="customer of customers" :key="customer.id" class="border-gray-300 border-b text-sm">
                             <th class="p-2">
@@ -34,22 +34,18 @@ import { nsHttpClient } from '@/bootstrap';
 export default {
     name: 'ns-best-customers' ,
     mounted() {
-        this.loadReport();
+        this.subscription   =   Dashboard.bestCustomers.subscribe( customers => {
+            this.customers  =   customers;
+        });
     },
     data() {
         return {
             customers: [],
-            loading: true,
+            subscription: null
         }
     },
-    methods: {
-        loadReport() {
-            nsHttpClient.get( '/api/nexopos/v4/dashboard/best-customers' )
-                .subscribe( customers => {
-                    this.customers  =   customers;
-                    this.loading    =   false;
-                })
-        }
+    destroyed() {
+        this.subscription.unsubscribe();
     }
 }
 </script>

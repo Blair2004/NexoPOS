@@ -182,6 +182,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // ...
+        config([ 'nexopos.orders.statuses' => [
+            'hold'              =>  __( 'Hold' ),
+            'unpaid'            =>  __( 'Unpaid' ),
+            'partially_paid'    =>  __( 'Partially Paid' ),
+            'paid'              =>  __( 'Paid' )
+        ]]);
     }
 }

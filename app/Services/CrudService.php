@@ -328,6 +328,22 @@ class CrudService
          */
         foreach( $entries[ 'data' ] as &$entry ) {
             /**
+             * apply casting to crud resources
+             * as it's defined by the class casting
+             * @todo add support for default casting.
+             */
+            $casts  =   ( new $this->model )->casts;
+
+            if ( ! empty( $casts ) ) {
+                foreach( $casts as $column => $cast ) {
+                    if ( class_exists( $cast ) ) {
+                        $castObject         =   new $cast;
+                        $entry->$column     =   $castObject->get( $entry, $column, $entry->$column, []);
+                    }
+                }
+            }
+            
+            /**
              * @hook crud.entry
              */
             $entry  =   Hook::filter( $this->namespace . '-crud-actions', $entry );

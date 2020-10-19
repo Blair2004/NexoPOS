@@ -107,7 +107,7 @@ export class SnackBar {
 
         sampleSnack.appendChild( textNode );
         sampleSnack.appendChild( buttonsWrapper );
-        sampleSnack.setAttribute( 'class', `md:rounded-lg py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center ${snackThemeClass}` );
+        sampleSnack.setAttribute( 'class', `md:rounded-lg py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center zoom-in-entrance anim-duration-300 ${snackThemeClass}` );
 
         snackWrapper.setAttribute( 'id', 'snack-wrapper' );
         snackWrapper.setAttribute( 'class', 'absolute bottom-0 w-full flex justify-between items-center flex-col')
