@@ -19,6 +19,7 @@ const nsTabs    =   Vue.component( 'ns-tabs', {
     methods: {
         toggle( tab ) {
             this.$emit( 'active', tab.identifier );
+            this.$emit( 'changeTab', tab.identifier );
         }
     },
     mounted() {
@@ -40,9 +41,9 @@ const nsTabsItem    =   Vue.component( 'ns-tabs-item', {
     },
     mounted() {
     },
-    props: [ 'label', 'identifier' ],
+    props: [ 'label', 'identifier', 'padding' ],
     template: `
-    <div class="border flex-auto border-gray-400 p-4 bg-white" v-if="$parent.active === identifier">
+    <div :class="( padding || 'p-4' )" class="border flex-auto border-gray-400 bg-white" v-if="$parent.active === identifier">
         <slot></slot>
     </div>
     `

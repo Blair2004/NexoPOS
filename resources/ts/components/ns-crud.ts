@@ -33,7 +33,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
     mounted() {
         this.loadConfig();
     },
-    props: [ 'src', 'create-url' ],
+    props: [ 'src', 'create-url', 'mode' ],
     computed: {
         /**
          * helps to get parsed
@@ -176,8 +176,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     },
     template: `
-    <div id="crud-table" class="w-full shadow rounded-lg bg-white mb-8">
-        <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap">
+    <div id="crud-table" class="w-full rounded-lg bg-white" :class="mode !== 'light' ? 'shadow mb-8': ''">
+        <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
                 <div class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
@@ -237,7 +237,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             </div>
         </div>
         <div class="p-2 flex justify-between">
-            <div id="grouped-actions" class="flex justify-between rounded-full bg-gray-200 p-1">
+            <div v-if="bulkActions.length > 0" id="grouped-actions" class="flex justify-between rounded-full bg-gray-200 p-1">
                 <select class="text-gray-800 outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option selected value=""><slot name="bulk-label">bulk-label</slot></option>
                     <option v-for="action of bulkActions" :value="action.identifier">{{ action.label }}</option>

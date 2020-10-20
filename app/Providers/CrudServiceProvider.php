@@ -7,6 +7,7 @@ use App\Crud\CustomerCrud;
 use App\Crud\CustomerGroupCrud;
 use App\Crud\ExpenseCategoryCrud;
 use App\Crud\ExpenseCrud;
+use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
 use App\Crud\ProviderCrud;
 use App\Crud\RewardSystemCrud;
@@ -51,6 +52,7 @@ class CrudServiceProvider extends ServiceProvider
         Hook::addFilter( 'ns.crud-resource', function( $namespace ) {
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
+                case 'ns.hold-orders': return HoldOrderCrud::class;
                 case 'ns.coupons': return CouponCrud::class;
                 case 'ns.customers': return CustomerCrud::class;
                 case 'ns.customers-groups': return CustomerGroupCrud::class;
