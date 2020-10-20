@@ -2,6 +2,8 @@
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { Popup } from '@/libraries/popup';
 import nsProcurementQuantityVue from '@/popups/ns-procurement-quantity.vue';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import nsPromptPopupVue from '@/popups/ns-prompt-popup.vue';
 export default {
     name: 'ns-stock-adjustment',
     props: [ 'actions' ],
@@ -40,6 +42,7 @@ export default {
                         suggestion.quantities           =   result;
                         suggestion.adjust_quantity      =   1;
                         suggestion.adjust_action        =   '',
+                        suggestion.adjust_reason        =   '',
                         suggestion.adjust_unit          =   '',
                         suggestion.adjust_value         =   0;
 
@@ -73,6 +76,39 @@ export default {
             promise.then( result => {
                 product.adjust_quantity     =   result.quantity;
                 this.recalculateProduct( product );
+            });
+        },
+        proceedStockAdjustment() {
+            if ( this.products.length === 0 ) {
+                return nsSnackBar.error( 'Unable to proceed as the table is empty.' ).subscribe();
+            }
+
+            Popup.show( nsPosConfirmPopupVue, { 
+                title: 'Confirm Your Action',
+                message: 'The stock adjustment is about to be made. Would you like to confirm ?',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        nsHttpClient.post( '/api/nexopos/v4/products/adjustments', { products: this.products })
+                            .subscribe( result => {
+                                nsSnackBar.success( result.message ).subscribe();
+                                this.products       =   [];
+                            }, error => {
+                                nsSnackBar.error( error.message ).subscribe();
+                            });
+                    }
+                }
+            });
+        },
+        provideReason( product ) {
+            Popup.show( nsPromptPopupVue, {
+                title: 'More Details',
+                message: 'Useful to describe better what are the reasons that leaded to this adjustment.',
+                input: product.adjust_reason,
+                onAction: ( input ) => {
+                    if ( input !== false ) {
+                        product.adjust_reason     =   input;
+                    }
+                }
             });
         }
     },
@@ -122,7 +158,7 @@ export default {
                         <td class="p-2 text-center text-gray-700" colspan="6">Search and add some products</td>
                     </tr>
                     <tr :key="product.id" v-for="product of products">
-                        <td class="p-2 text-gray-600">{{ product.name }}</td>
+                        <td class="p-2 text-gray-600">{{ product.name }} ({{ product.adjust_unit.quantity || 0 }})</td>
                         <td class="p-2 text-gray-600">
                             <select @change="recalculateProduct( product )" v-model="product.adjust_unit" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
                                 <option :key="quantity.id" v-for="quantity of product.quantities" :value="quantity">{{ quantity.unit.name }}</option>
@@ -142,7 +178,7 @@ export default {
                         <td class="p-2 text-gray-600">
                             <div class="-mx-1 flex justify-end">
                                 <div class="px-1">
-                                    <button class="bg-blue-400 text-white outline-none rounded-full shadow h-10 w-10">
+                                    <button @click="provideReason( product )" class="bg-blue-400 text-white outline-none rounded-full shadow h-10 w-10">
                                         <i class="las la-comment-dots"></i>
                                     </button>
                                 </div>
@@ -156,6 +192,9 @@ export default {
                     </tr>
                 </tbody>
             </table>
+            <div class="border-t border-gray-200 p-2 flex justify-end">
+                <ns-button @click="proceedStockAdjustment()" type="info">Proceed</ns-button>
+            </div>
         </div>
     </div>
 </template>

@@ -27,6 +27,9 @@ import NsBestCashiers    from './pages/dashboard/home/ns-best-cashiers.vue';
 import NsOrdersSummary   from './pages/dashboard/home/ns-orders-summary.vue';
 import NsOrdersChart     from './pages/dashboard/home/ns-orders-chart.vue';
 import NsStockAdjustment from './pages/dashboard/products/ns-stock-adjustment.vue';
+import NsPromptPopup     from './popups/ns-prompt-popup.vue';
+import NsAlertPopup      from './popups/ns-alert-popup.vue';
+import NsConfirmPopup    from './popups/ns-pos-confirm-popup.vue';
 
 declare const nsState;
 declare const nsScreen;
@@ -113,6 +116,9 @@ const components    =   {
     NsOrdersSummary,
     NsOrdersChart,
     NsStockAdjustment,
+    NsPromptPopup,
+    NsAlertPopup,
+    NsConfirmPopup,
     ...nsExtraComponents, // add extra components provided by plugins.
 };
 

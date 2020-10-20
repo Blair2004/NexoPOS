@@ -25,7 +25,7 @@ use App\Classes\Response;
 @section( 'layout.dashboard.footer' )
     @parent
 <?php
-$identifier    =   collect( explode( $src, '/' ) )
+$identifier    =   collect( explode( '/', $src ) )
     ->filter( fn( $segment ) => ! empty( $segment ) )
     ->last();
 ?>

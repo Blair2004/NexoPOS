@@ -383,11 +383,13 @@ class ProductHistoryCrud extends CrudService
             'units_name'  =>  [
                 'label'         =>  __( 'Unit' ),
                 '$direction'    =>  '',
+                'width'         =>  '200px',
                 '$sort'         =>  false
             ],
             'orders_code'  =>  [
                 'label'         =>  __( 'Order' ),
                 '$direction'    =>  '',
+                'width'         =>  '200px',
                 '$sort'         =>  false
             ],
             'procurements_name'  =>  [
@@ -454,7 +456,11 @@ class ProductHistoryCrud extends CrudService
 
         // you can make changes here
         $entry->{'$actions'}    =   [
-            
+            [
+                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Descrition' ),
+                'namespace'     =>      'ns.description',
+                'type'          =>      'POPUP',
+            ], 
         ];
 
         return $entry;

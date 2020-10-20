@@ -22,6 +22,28 @@ class ProductHistory extends Model
     const ACTION_DEFECTIVE     =   'defective';
     const ACTION_LOST          =   'lost';
 
+    /**
+     * actions that reduce stock
+     */
+    const STOCK_REDUCE         =   [
+        ProductHistory::ACTION_DELETED,
+        ProductHistory::ACTION_TRANSFER_OUT,
+        ProductHistory::ACTION_REMOVED,
+        ProductHistory::ACTION_SOLD,
+        ProductHistory::ACTION_DEFECTIVE,
+        ProductHistory::ACTION_LOST,
+    ];
+
+    /**
+     * actions that increase stock
+     */
+    const STOCK_INCREASE        =   [
+        ProductHistory::ACTION_ADDED,
+        ProductHistory::ACTION_RETURNED,
+        ProductHistory::ACTION_TRANSFER_IN,
+        ProductHistory::ACTION_STOCKED,
+    ];
+
     public function scopeFindProduct( $query, $id )
     {
         return $query->where( 'product_id', $id );

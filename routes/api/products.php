@@ -23,6 +23,7 @@ Route::delete( 'products', [ ProductsController::class, 'deleteAllProducts' ]);
 
 Route::post( 'products', [ ProductsController::class, 'saveProduct' ]);
 Route::post( 'products/search', [ ProductsController::class, 'searchProduct' ]);
+Route::post( 'products/adjustments', [ ProductsController::class, 'createAdjustment' ]);
 Route::post( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'createSingleVariation' ]);
 
 Route::put( 'products/{identifier}/variations/{variation_id}', [ ProductsController::class, 'editSingleVariation' ]);
