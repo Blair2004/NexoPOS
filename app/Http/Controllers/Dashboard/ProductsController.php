@@ -28,6 +28,7 @@ use App\Services\ProductService;
 use App\Services\Options;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends DashboardController
 {
@@ -390,6 +391,11 @@ class ProductsController extends DashboardController
      */
     public function productHistory()
     {
+        Hook::addFilter( 'ns-crud-footer', function( Response $response, $identifier ) {
+            $response->addView( 'pages.dashboard.products.history' );
+            return $response;
+        }, 10, 2 );
+
         return ProductHistoryCrud::table();
     }
 
@@ -437,6 +443,53 @@ class ProductsController extends DashboardController
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The product unit quantity has been deleted.' )
+        ];
+    }
+
+    public function createAdjustment( Request $request )
+    {
+        ns()->restrict([ 'nexopos.make.products-adjustments' ]);
+
+        $validator =        Validator::make( $request->all(), [
+            'products'  =>  'required'
+        ]);
+
+        if ( $validator->fails() ) {
+            throw new Exception( __( 'Unable to proceed as the request is not valid.' ) );
+        }
+
+        $results        =   [];
+
+        /**
+         * We need to make sure the action
+         * made are actually supported.
+         */
+        foreach( $request->input( 'products' ) as $unit ) {
+            if ( 
+                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_INCREASE ) &&
+                ! in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE )
+            ) {
+                throw new Exception( sprintf( __( 'Unsupported action for the product %s.' ), $unit[ 'name' ] ) );
+            }
+        }
+
+        /**
+         * now we can adjust the stock of the items
+         */
+        foreach( $request->input( 'products' ) as $unit ) {
+            $results[]          =   $this->productService->stockAdjustment( $unit[ 'adjust_action' ], [
+                'unit_price'    =>  $unit[ 'adjust_unit' ][ 'sale_price' ],
+                'unit_id'       =>  $unit[ 'adjust_unit' ][ 'unit_id' ],
+                'product_id'    =>  $unit[ 'id' ],
+                'quantity'      =>  $unit[ 'adjust_quantity' ],
+                'description'   =>  $unit[ 'adjust_reason' ] ?? '',
+            ]);
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The stock has been adjustment successfully.' ),
+            'data'      =>  $results
         ];
     }
 }

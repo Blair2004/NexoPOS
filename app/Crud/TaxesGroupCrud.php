@@ -68,10 +68,10 @@ class TaxesGroupCrud extends CrudService
     }
 
     protected $permissions = [
-        'create' => 'nexopos.create.tax-groups',
-        'read' => 'nexopos.read.tax-groups',
-        'update' => 'nexopos.update.tax-groups',
-        'delete' => 'nexopos.delete.tax-groups',
+        'create'    => 'nexopos.create.taxes',
+        'read'      => 'nexopos.read.taxes',
+        'update'    => 'nexopos.update.taxes',
+        'delete'    => 'nexopos.delete.taxes',
     ];
 
     /**

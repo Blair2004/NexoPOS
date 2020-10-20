@@ -904,7 +904,9 @@ class ProductService
         /**
          * @param int product_id
          * @param float unit_price
+         * @param id unit_id
          * @param float total_price
+         * @param string $description
          * @param float quantity
          */
         $product    =   Product::findOrFail( $product_id );
@@ -932,7 +934,7 @@ class ProductService
          * if the total_price is not provided
          * then we'll compute it
          */
-        $total_price    =   ! empty( $data[ 'total_price' ] ) ? $this->currency
+        $total_price    =   empty( $data[ 'total_price' ] ) ? $this->currency
             ->define( $data[ 'unit_price' ] )
             ->multipliedBy( $data[ 'quantity' ] )
             ->get() : $data[ 'total_price' ];
@@ -954,13 +956,7 @@ class ProductService
          */
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
 
-            if ( in_array( $action, [ 
-                ProductHistory::ACTION_REMOVED,
-                ProductHistory::ACTION_SOLD,
-                ProductHistory::ACTION_DELETED,
-                ProductHistory::ACTION_DEFECTIVE,
-                ProductHistory::ACTION_LOST,
-            ] ) ) {
+            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
     
                 /**
                  * this should prevent negative 
@@ -997,6 +993,7 @@ class ProductService
         $history->operation_type                =   $action;
         $history->unit_price                    =   $unit_price;
         $history->total_price                   =   $total_price;
+        $history->description                   =   $description ?? ''; // a description might be provided to describe the operation
         $history->before_quantity               =   $result[ 'data' ][ 'oldQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
         $history->quantity                      =   abs( $quantity );
         $history->after_quantity                =   $result[ 'data' ][ 'newQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change

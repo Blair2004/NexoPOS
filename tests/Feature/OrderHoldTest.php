@@ -9,7 +9,7 @@ use App\Models\User;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
 
-class OrderTest extends TestCase
+class OrderHoldTest extends TestCase
 {
     /**
      * A basic feature test example.

@@ -54,7 +54,7 @@ export default {
         document.addEventListener( 'click', this.checkClickedItem );
         this.interval   =   setInterval( () => {
             this.loadNotifications();
-        }, 5000 );
+        }, 15000 );
     },
     destroyed() {
         clearInterval( this.interval );
