@@ -59,31 +59,33 @@ body {
     }
 }
 .btn {
-    @apply text-center rounded shadow border py-2 px-3
+    @apply text-center rounded shadow border py-2 px-3;
 }
 .btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white
+    @apply border-blue-600 bg-blue-600 text-white;
 }
 .btn-red {
-    @apply border-red-600 bg-red-600 text-white
+    @apply border-red-600 bg-red-600 text-white;
 }
 
-h1:not([class]) {
-    @apply text-5xl font-bold;
-}
-
-h2:not([class]) {
-    @apply text-4xl font-bold;
-}
-
-h3:not([class]) {
-    @apply text-3xl font-bold;
-}
-
-h4:not([class]) {
-    @apply text-2xl font-bold;
-}
-
-h5:not([class]) {
-    @apply text-xl font-bold;
+#editor {
+    h1 {
+        @apply text-5xl font-bold;
+    }
+    
+    h2 {
+        @apply text-4xl font-bold;
+    }
+    
+    h3 {
+        @apply text-3xl font-bold;
+    }
+    
+    h4 {
+        @apply text-2xl font-bold;
+    }
+    
+    h5 {
+        @apply text-xl font-bold;
+    }
 }

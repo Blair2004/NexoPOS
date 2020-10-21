@@ -414,18 +414,13 @@ class HoldOrderCrud extends CrudService
     public function getColumns() {
         return [
             'code'  =>  [
-                'label'  =>  __( 'Code' ),
+                'label'         =>  __( 'Code' ),
                 '$direction'    =>  '',
                 'width'         =>  '120px',
                 '$sort'         =>  false
             ],
             'nexopos_customers_name'  =>  [
                 'label'         =>  __( 'Customer' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery Status' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],

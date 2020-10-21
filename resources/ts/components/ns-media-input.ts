@@ -1,5 +1,6 @@
+import { Popup } from '@/libraries/popup';
 import Vue from 'vue';
-import { Media } from './../libraries/media';
+import { default as nsMedia } from "@/pages/dashboard/ns-media.vue";
 
 const nsMediaInput   =   Vue.component( 'ns-media-input', {
     template: `
@@ -61,7 +62,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
     },
     data() {
         return {
-            mediaInstance: new Media
+            
         }
     },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
@@ -69,9 +70,11 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
     },
     methods: {
         toggleMedia() {
-            this.mediaInstance.open();
-            this.mediaInstance.popup.event.subscribe( action => {
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsMedia, { resolve, reject });
+            });
 
+            promise.then( (action:any) => {
                 /**
                  * When the performed action is "use-selected"
                  * we define the current field value with what has been selected (first entry)
@@ -89,7 +92,6 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
                     }
 
                     this.$forceUpdate();
-                    this.mediaInstance.popup.close();
                 }
             });
         }

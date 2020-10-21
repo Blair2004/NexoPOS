@@ -1,5 +1,6 @@
 <script>
 import { nsHttpClient, nsSnackBar } from '../../bootstrap';
+import popupCloser from "@/libraries/popup-closer";
 
 const VueUpload     =   require( 'vue-upload-component' );
 
@@ -54,17 +55,7 @@ export default {
          * when the media is being opened
          * from a popup
          */
-        if ( this.popup ) {
-            this.popup.event.subscribe( action => {
-                if ( action.event === 'click-overlay' ) {
-                    this.popup.close();
-                }
-
-                if ( action.event === 'press-esc' ) {
-                    this.popup.close();
-                }
-            });
-        }
+        this.popupCloser();
 
         const gallery   =   this.pages.filter( p => p.name === 'gallery' )[0];
 
@@ -93,9 +84,14 @@ export default {
         },
         csrf() {
             return ns.authentication.csrf;
+        },
+        isPopup() {
+            return typeof this.$popup !== 'undefined';
         }
     },
     methods: {
+        popupCloser,
+
         cancelBulkSelect() {
             this.bulkSelect     =   false;
             this.response.data.forEach( v => v.selected = false );
@@ -163,10 +159,11 @@ export default {
          * @return void
          */
         useSelectedEntries() {
-            this.popup.event.next({
+            this.$popupParams.resolve({
                 event: 'use-selected',
                 value: this.response.data.filter( entry => entry.selected )
             });
+            this.$popup.close();
         },
 
         /** 
@@ -191,7 +188,7 @@ export default {
 }
 </script>
 <template>
-    <div class="flex bg-white shadow-xl overflow-hidden" :class="$popup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
+    <div class="flex bg-white shadow-xl overflow-hidden" :class="isPopup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
         <div class="sidebar w-48 bg-gray-200 h-full flex-shrink-0">
             <h3 class="text-xl font-bold text-gray-800 my-4 text-center">Medias Manager</h3>
             <ul>
@@ -232,9 +229,9 @@ export default {
                 </div>
             </div>
             <div class="flex flex-auto overflow-hidden">
-                <div id="grid" class="content flex flex-auto flex-col overflow-y-auto">
-                    <div class="flex flex-auto bg-white shadow">
-                        <div class="p-2 flex overflow-x-auto flex-wrap">
+                <div id="grid" class="bg-white shadow content flex flex-auto flex-col overflow-y-auto">
+                    <div class="flex">
+                        <div class="p-2 flex flex-wrap overflow-x-auto">
                             <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
                                 <div class="p-2">
                                     <div @click="selectResource( resource )" :class="resource.selected ? 'shadow-outline' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">

@@ -7,7 +7,6 @@ import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
 import * as moment from 'moment';
 import { Popup } from "./libraries/popup";
-import { Media } from "./libraries/media";
 import Vue from "vue";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
@@ -88,7 +87,6 @@ window.ChartJS          =   ChartJS;
 window.EventEmitter     =   EventEmitter;
 window.Popup            =   Popup;
 window.RxJS             =   RxJS;
-window.Media            =   Media;
 window.FormValidation   =   FormValidation;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl };
