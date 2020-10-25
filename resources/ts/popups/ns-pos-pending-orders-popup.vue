@@ -20,6 +20,7 @@
                         src="/api/nexopos/v4/crud/ns.hold-orders" 
                         id="crud-table-body">
                         <template v-slot:bulk-label>Bulk Actions</template>
+                        <template v-slot:checkbox>A</template>
                     </ns-crud>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="unpaid" label="Unpaid">
