@@ -7,5 +7,6 @@ export interface OrderProduct extends Product {
     unit_price: number;
     total_price: number;
     quantity: number;
+    product?: Product;
     $quantities?: () => ProductUnitQuantity
 }

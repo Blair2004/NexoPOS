@@ -25,6 +25,7 @@ use App\Events\OrderAfterProductRefundedEvent;
 use App\Models\DashboardDay;
 use App\Models\OrderStorage;
 use App\Models\ProductHistory;
+use App\Models\Unit;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -69,10 +70,18 @@ class OrdersService
         $this->taxService       =   $taxService;
     }
 
-    public function create( $fields )
+    public function create( $fields, Order $order = null )
     {
         $customer               =   $this->__customerIsDefined($fields);
+
         $fields[ 'products' ]   =   $this->__buildOrderProducts( $fields['products'] );
+        
+        /**
+         * if we're editing an order. We need to loop the products in order
+         * to recover all the products that has been deleted from the POS and therefore
+         * aren't tracked no more.
+         */
+        $this->deleteUntrackedProducts( $order, $fields[ 'products' ] );
 
         /**
          * determine the value of the product 
@@ -83,7 +92,7 @@ class OrdersService
          * @param array $payments
          * @param string $paymentStatus
          */
-        extract( $this->__checkOrderPayments( $fields ) );
+        extract( $this->__checkOrderPayments( $fields, $order ) );
         
         /**
          * As no payment might be provided
@@ -114,10 +123,14 @@ class OrdersService
          * modification. All verification on current order
          * should be made prior this section
          */
-        $order      =   $this->__initOrder( $fields, $paymentStatus );
+        $order      =   $this->__initOrder( $fields, $paymentStatus, $order );
 
-        $this->__saveAddressInformations($order, $fields);
+        $this->__saveAddressInformations( $order, $fields );
 
+        /**
+         * if the order has a valid payment 
+         * method, then we can save that and attach it the ongoing order.
+         */
         if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
             $this->__saveOrderPayments($order, $payments);
         }
@@ -149,6 +162,29 @@ class OrdersService
             'message'   =>  __( 'The order has been placed.' ),
             'data'      =>  compact( 'order' )
         ];
+    }
+
+    /**
+     * will delete the products belonging to an order
+     * that aren't tracked.
+     * @param Order $order
+     * @param Array $products
+     * @return void
+     */
+    public function deleteUntrackedProducts( $order, $products ) 
+    {
+        if ( $order instanceof Order ) {
+            $ids    =   collect( $products )
+                ->map( fn( $product ) => $product[ 'id' ] ?? false )
+                ->filter( fn( $product ) => $product !== false )
+                ->toArray();
+            
+            $order->products->each( function( $orderProduct ) use ( $ids ) {
+                if ( ! in_array( $orderProduct->id, $ids ) ) {
+                    $orderProduct->delete();
+                }
+            });
+        }
     }
 
     private function __saveOrderDiscount($order, $fields)
@@ -238,6 +274,7 @@ class OrdersService
     private function __checkAddressesInformations($fields)
     {
         $allowedKeys    =   [
+            'id',
             'name',
             'surname',
             'phone',
@@ -250,12 +287,16 @@ class OrdersService
             'email'
         ];
 
+        /**
+         * this will erase the unsupported
+         * attribute before saving the order.
+         */
         if ( ! empty( $fields[ 'addresses' ] ) ) {
             foreach (['shipping', 'billing'] as $type) {
                 $keys   =   array_keys($fields['addresses'][$type]);
                 foreach ($keys as $key) {
                     if (!in_array($key, $allowedKeys)) {
-                        throw new NotAllowedException(sprintf(__('Unable to proceed because the "%s" field is an unsupported attribute.'), $key));
+                        unset( $fields[ 'addresses' ][ $type ][ $key ] );
                     }
                 }
             }
@@ -271,7 +312,20 @@ class OrdersService
     private function __saveAddressInformations($order, $fields)
     {
         foreach (['shipping', 'billing'] as $type) {
-            $orderShipping          =   new OrderAddress;
+
+            /**
+             * if the id attribute is already provided
+             * we should attempt to find the related addresses
+             * and use that as a reference otherwise create a new instance.
+             * @todo add a verification to enforce address to be attached
+             * to the processed order.
+             */
+            if ( isset( $fields[ 'addresses' ][ $type ][ 'id' ] ) ) {
+                $orderShipping          =   OrderAddress::find( $fields[ 'addresses' ][ $type ][ 'id' ] );
+            } else {
+                $orderShipping          =   new OrderAddress;
+            }
+
             $orderShipping->type    =   $type;
 
             if (!empty($fields['addresses'][$type])) {
@@ -288,6 +342,14 @@ class OrdersService
 
     private function __saveOrderPayments($order, $payments)
     {
+        /**
+         * As we're about to record new payments,
+         * we first need to delete previous payments that
+         * might have been made. Probably we'll need to keep these
+         * order and only update them.
+         */
+        OrderPayment::withOrder( $order->id )->delete();
+
         foreach ($payments as $payment) {
             $orderPayment               =   new OrderPayment;
             $orderPayment->order_id     =   $order->id;
@@ -307,8 +369,16 @@ class OrdersService
      * @param Collection $products
      * @param array field
      */
-    private function __checkOrderPayments( $fields)
+    private function __checkOrderPayments( $fields, Order $order = null )
     {
+        /**
+         * we shouldn't process order if while
+         * editing an order it seems that order is already paid.
+         */
+        if ( $order !== null && $order->payment_status === 'paid' ) {
+            throw new NotAllowedException( __( 'Unable to edit an order that is completely paid.' ) );
+        }
+        
         $totalPayments  =   0;
 
         $total          =   collect( $fields[ 'products' ] )->map(function ($product) {
@@ -324,10 +394,7 @@ class OrdersService
                         ->additionateBy($payment['amount'])
                         ->get();
                 } else {
-                    throw new NotAllowedException([
-                        'status'    =>  'failed',
-                        'message'   =>  __('Unable to proceed. One of the submitted payment type is not supported.')
-                    ]);
+                    throw new NotAllowedException( __('Unable to proceed. One of the submitted payment type is not supported.') );
                 }
             }
         }
@@ -441,9 +508,19 @@ class OrdersService
                     ->get()
             ];
 
-            $orderProduct                               =   new OrderProduct;
+            /**
+             * if the product id is provided
+             * then we can use that id as a reference. 
+             */            
+            if ( isset( $product[ 'id' ] ) ) {
+                $orderProduct           =   OrderProduct::find( $product[ 'id' ] );
+            } else {
+                $orderProduct           =   new OrderProduct;
+            }
+
             $orderProduct->order_id                     =   $order->id;
             $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
+            $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
             $orderProduct->unit_id                      =   $product[ 'unit_id' ];
             $orderProduct->product_id                   =   $product[ 'product' ]->id;
             $orderProduct->name                         =   $product[ 'product' ]->name;
@@ -693,27 +770,35 @@ class OrdersService
         return $carbon->year . '-' . str_pad($carbon->month, 2, STR_PAD_LEFT) . '-' . str_pad($carbon->day, 2, STR_PAD_LEFT) . '-' . str_pad($count, 3, 0, STR_PAD_LEFT);
     }
 
-    private function __initOrder( $fields, $paymentStatus)
+    private function __initOrder( $fields, $paymentStatus, $order )
     {
+        /**
+         * if the order is not provided as a parameter
+         * a new instance is initialized.
+         */
+        if ( ! $order instanceof Order ) {
+            $order                      =   new Order;
+        }
+
         /**
          * let's save the order at 
          * his initial state
          */
-        $order                      =   new Order;
-        $order->customer_id         =   $fields['customer_id'];
-        $order->shipping            =   $fields[ 'shipping' ] ?? 0; // if shipping is not provided, we assume it's free
-        $order->subtotal            =   $fields[ 'subtotal' ] ?? $this->computeSubTotal( $fields, $order );
-        $order->discount_type       =   $fields['discount_type'] ?? null;
-        $order->discount_percentage =   $fields['discount_percentage'] ?? 0;
-        $order->discount            =   $fields['discount'] ?? $this->computeDiscount( $fields, $order );
-        $order->total               =   $fields[ 'total' ] ?? $this->computeTotal( $fields, $order );
-        $order->type                =   $fields['type']['identifier'];
-        $order->payment_status      =   $paymentStatus;
-        $order->delivery_status     =   'pending';
-        $order->process_status      =   'pending';
-        $order->author              =   Auth::id();
-        $order->tax_value           =   $fields[ 'tax_value' ] ?? $this->computeOrderTaxValue( $fields, $order );
-        $order->code                =   $this->generateOrderCode();
+        $order->customer_id             =   $fields['customer_id'];
+        $order->shipping                =   $fields[ 'shipping' ] ?? 0; // if shipping is not provided, we assume it's free
+        $order->subtotal                =   $fields[ 'subtotal' ] ?? $this->computeSubTotal( $fields, $order );
+        $order->discount_type           =   $fields['discount_type'] ?? null;
+        $order->discount_percentage     =   $fields['discount_percentage'] ?? 0;
+        $order->discount                =   $fields['discount'] ?? $this->computeDiscount( $fields, $order );
+        $order->total                   =   $fields[ 'total' ] ?? $this->computeTotal( $fields, $order );
+        $order->type                    =   $fields['type']['identifier'];
+        $order->payment_status          =   $paymentStatus;
+        $order->delivery_status         =   'pending';
+        $order->process_status          =   'pending';
+        $order->author                  =   Auth::id();
+        $order->title                   =   $fields[ 'title' ] ?? null;
+        $order->tax_value               =   $fields[ 'tax_value' ] ?? $this->computeOrderTaxValue( $fields, $order );
+        $order->code                    =   $this->generateOrderCode();
         $order->save();
 
         return $order;
@@ -862,7 +947,11 @@ class OrdersService
     {
         if (in_array($as, ['id', 'code'])) {
             $order  =   Order::where($as, $identifier)
-                ->with( 'products' )
+                ->with( 'payments' )
+                ->with( 'shipping_address' )
+                ->with( 'billing_address' )
+                ->with( 'products.unit' )
+                ->with( 'products.product.unit_quantities' )
                 ->with( 'customer' )
                 ->first();
 

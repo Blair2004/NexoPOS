@@ -1,5 +1,5 @@
 <template>
-    <div id="discount-popup" class="bg-white shadow min-h-2/5-screen w-6/7-screen md:w-3/5-screen lg:w-2/5-screen xl:w-1/5-screen relative">
+    <div id="discount-popup" class="bg-white shadow min-h-2/5-screen w-6/7-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
             <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'product'">Product Discount</h1>
             <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'cart'">Cart Discount</h1>

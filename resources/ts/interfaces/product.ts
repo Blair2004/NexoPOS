@@ -11,4 +11,5 @@ export interface Product {
     mode: 'normal' | 'wholesale';
     $original?: any;
     unit_quantity_id?: number;
+    unit_quantities?: any
 }

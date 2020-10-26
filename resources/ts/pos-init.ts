@@ -1,6 +1,6 @@
 import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
-import { Subject, BehaviorSubject } from "rxjs";
+import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { Product } from "./interfaces/product";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
@@ -227,7 +227,11 @@ export class POS {
             }
 
             if ( ! this._isSubmitting ) {
-                return nsHttpClient.post( '/api/nexopos/v4/orders', this.order.getValue() )
+                
+                const order     =   this.order.getValue();
+                const method    =   order.id !== undefined ? 'put' : 'post';
+
+                return nsHttpClient[ method ]( `/api/nexopos/v4/orders${ order.id !== undefined ? '/' + order.id : '' }`, order )
                     .subscribe( result => {
                         this._isSubmitting  =   true;
                         resolve( result );
@@ -238,8 +242,61 @@ export class POS {
                     })
             }
 
-            return reject({ status: 'failed', message: 'Order ongoing...' });
+            return reject({ status: 'failed', message: 'An order is currently being processed.' });
         });
+    }
+
+    loadOrder( order_id ) {
+        console.log( order_id );
+        nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
+            .subscribe( ( order: any ) => {
+                /**
+                 * We'll rebuilt the product
+                 */
+                const products  =   order.products.map( (orderProduct: OrderProduct ) => {
+                    orderProduct.$original       =   () => orderProduct.product;
+                    orderProduct.$quantities     =   () => orderProduct
+                        .product
+                        .unit_quantities
+                        .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
+                    return orderProduct;
+                });
+
+                /**
+                 * we'll redefine the order type
+                 */
+                order.type          =   this.types.getValue().filter( type => type.identifier === order.type )[0];
+
+                /**
+                 * the address is provided differently
+                 * then we need to rebuild it the way it's saved and used
+                 */
+                order.addresses     =   {
+                    shipping    :   order.shipping_address,
+                    billing     :   order.billing_address
+                }
+
+                delete order.shipping_address;
+                delete order.billing_address;
+
+                /**
+                 * let's all set, let's load the order
+                 * from now. No further change is required
+                 */
+
+                this.buildOrder( order );
+                this.buildProducts( products );
+                // this.refreshProducts( this.products.getValue() );
+                // this.refreshCart();
+            });
+    }
+
+    buildOrder( order ) {
+        this.order .next( order );
+    }
+
+    buildProducts( products ) {
+        this.products.next( products );
     }
 
     printOrder( order_id ) {

@@ -9,7 +9,7 @@ export default {
             const popup     =   new Popup;
             popup.open( NsPosPendingOrdersPopup );
         }
-    }
+    },
 }
 </script>
 <template>

@@ -1,10 +1,12 @@
 import { Address } from "cluster";
 import { Customer } from "./customer";
+import { OrderProduct } from "./order-product";
 import { OrderType } from "./order-type";
 import { Payment } from "./payment";
 import { Product } from "./product";
 
 export interface Order {
+    id?: number;
     discount_type: 'flat' | 'percentage';
     discount: number;
     title: string;
@@ -22,7 +24,7 @@ export interface Order {
     shipping: number;
     shipping_rate: number;
     shipping_type: 'flat' | 'percentage';
-    products: Product[], 
+    products: OrderProduct[], 
     payments: Payment[],
     addresses: {
         shipping: Address,

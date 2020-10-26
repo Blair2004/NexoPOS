@@ -17,6 +17,8 @@ use App\Events\ProcurementAfterUpdateEvent;
 use App\Models\Order;
 use App\Models\Option;
 use App\Models\Procurement;
+use App\Models\Product;
+use App\Models\ProductUnitQuantity;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class OrdersController extends DashboardController
@@ -51,6 +53,11 @@ class OrdersController extends DashboardController
         return $this->ordersService->create( $request->all() );
     }
 
+    public function updateOrder( Order $id, Request $request )
+    {
+        return $this->ordersService->create( $request->all(), $id );
+    }
+
     public function refundOrderProduct( $order_id, $product_id )
     {
         $order      =   $this->ordersService->getOrder( $order_id );
@@ -73,6 +80,11 @@ class OrdersController extends DashboardController
         return $this->view( 'pages.dashboard.orders.list', [
             'title' =>  __( 'Orders' )
         ]);
+    }
+
+    public function getPOSOrder( $order_id )
+    {
+        return $this->ordersService->getOrder( $order_id );        
     }
 
     /**

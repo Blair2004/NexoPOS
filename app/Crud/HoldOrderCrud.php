@@ -74,7 +74,10 @@ class HoldOrderCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick        =   [
+        'nexopos_users'     =>  [ 'username' ],
+        'nexopos_customers' =>  [ 'name' ],
+    ];
 
     /**
      * Define where statement
@@ -110,6 +113,7 @@ class HoldOrderCrud extends CrudService
 
     public function hook( $query )
     {
+        $query->orderBy( 'created_at', 'desc' );
         $query->where( 'payment_status', 'hold' );
     }
 
