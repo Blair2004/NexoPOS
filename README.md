@@ -37,6 +37,14 @@ Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't pos
 ## Installation
 Before showing the step to install the application there is prior consideration to have in mind. The current root folder of the application, having the folders "app", "bootstrap", "config"... shouldn't be at the root of your server. If you're using Linux, you should configure apache to use the folder "public" (where the index.php is located) as the RootDocument of the installation. For Windows users, with [laragon](https://laragon.org/), you can also point what is the root directory. This technique prevents a lot of exploits. 
 
+### Simplified Installation Steps
+
+There is a tutorial written on how to Install NexoPOS 4.x : 
+
+- [How to Download and Install NexoPOS 4.x On Ubuntu 20.04](http://my.nexopos.com/en/blog/post/how-to-install-nexopos-4-x-on-ubuntu-20-04)
+
+### Advanced Installation Steps (for contributors)
+
 The following installation steps require additionnal skills on using CLI (Command Line Interface), but when we'll release NexoPOS builds, that will be a full installation with all the dependencies. We might also create an installer with a very simplified user interface.
 
 **Note**: If you're running on linux, chances are the user that runs httpd process doesn't have any right on the directory where NexoPOS 4.x is installed. Ideally, you'll ake sure to `chown php-fpm . -R` if the user running php is "php-fpm" (otherwise it should be "apache").
