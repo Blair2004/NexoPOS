@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Enums\NotificationsEnums;
 use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
@@ -16,7 +17,7 @@ class NotificationService
     private $url;
     private $identifier;
     private $source;
-
+    
     public function create( $config ) 
     {
         extract( $config );

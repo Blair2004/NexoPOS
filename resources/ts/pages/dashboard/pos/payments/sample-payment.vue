@@ -12,7 +12,7 @@
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-xl md:text-3xl p-2">
                     <span>Paid : </span>
-                    <span>{{ order.paid | currency }}</span>
+                    <span>{{ order.tendered | currency }}</span>
                 </div>
                 <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-xl md:text-3xl p-2">
                     <span>Change : </span>

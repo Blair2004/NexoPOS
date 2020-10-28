@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Enums\NotificationsEnum;
 use App\Events\SettingsSavedEvent;
 use App\Jobs\TestWorkerJob;
 use App\Models\Role;
@@ -37,15 +38,15 @@ class SettingsListener
         $options        =   app()->make( Options::class );
 
         if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
-            $notification_id    =   'ns-workers-notification';
+            $notification_id    =   NotificationsEnum::NSWORKERDISABLED;
             
             TestWorkerJob::dispatch( $notification_id )
                 ->delay( now() );
 
             $this->notificationService->create([
-                'title'         =>  __( 'Worker Settings' ),
+                'title'         =>  __( 'Workers Aren\'t Running' ),
                 'description'   =>  __( 'The workers has been enabled, but it looks like NexoPOS can\'t run workers. This usually happen if supervisor is not configured correctly.' ),
-                'url'           =>  url( '/dashboard/settings/workers' ),
+                'url'           =>  'https://laravel.com/docs/8.x/queues#supervisor-configuration',
                 'identifier'    =>  $notification_id,
             ])->dispatchForGroup( Role::namespace( 'admin' ) );
         }

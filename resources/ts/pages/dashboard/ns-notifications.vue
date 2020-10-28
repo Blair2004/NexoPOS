@@ -19,7 +19,7 @@
                             <div class="p-2 cursor-pointer" @click="triggerLink( notification )">
                                 <div class="flex items-center justify-between">
                                     <h1 class="font-semibold text-gray-700">{{ notification.title }}</h1>
-                                    <ns-close-button @click="closeNotice( $event )"></ns-close-button>
+                                    <ns-close-button @click="closeNotice( $event, notification )"></ns-close-button>
                                 </div>
                                 <p class="py-1 text-gray-600 text-sm">{{ notification.description }}</p>
                             </div>
@@ -55,6 +55,7 @@ export default {
         this.interval   =   setInterval( () => {
             this.loadNotifications();
         }, 15000 );
+        this.loadNotifications();
     },
     destroyed() {
         clearInterval( this.interval );
@@ -89,7 +90,11 @@ export default {
             }
         },
 
-        closeNotice( event ) {
+        closeNotice( event, notification ) {
+            nsHttpClient.delete( `/api/nexopos/v4/notifications/${notification.id}` )
+                .subscribe( result => {
+                    this.loadNotifications();
+                });
             event.stopPropagation();
         }
     }

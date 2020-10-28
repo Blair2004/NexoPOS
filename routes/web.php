@@ -32,7 +32,10 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
     Route::get( '/database-update/', 'UpdateController@updateDatabase' )->withoutMiddleware([ CheckMigrationStatus::class ])
         ->name( 'ns.database-update' );
 
-    Route::middleware([ 'auth' ])->group( function() {
+    Route::middleware([ 
+        'auth',
+        'ns.check-application-health',
+    ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'ns.dashboard.home' );
 
         Route::get( '/dashboard/orders', [ OrdersController::class, 'listOrders' ]);

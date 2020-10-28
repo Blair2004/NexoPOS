@@ -6,7 +6,7 @@
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto p-2 bg-gray-200 overflow-y-auto">
+        <div class="flex-auto flex p-2 bg-gray-200 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
@@ -31,19 +31,27 @@
                             <div class="px-4 mb-4 w-full">
                                 <h2 class="font-semibold text-gray-700">Summary For : {{ customer.name }}</h2>
                             </div>
-                            <div class="px-4 mb-4 w-full md:w-1/2">
+                            <div class="px-4 mb-4 w-full md:w-1/3">
                                 <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
-                                    <h3 class="font-medium text-2xl">Total Purchases</h3>
+                                    <h3 class="font-medium text-xl">Total Purchases</h3>
                                     <div class="w-full flex justify-end">
-                                        <h2 class="text-5xl font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                        <h2 class="text-3xl font-bold">{{ customer.purchases_amount | currency }}</h2>
                                     </div>
                                 </div>
                             </div>
-                            <div class="px-4 mb-4 w-full md:w-1/2">
+                            <div class="px-4 mb-4 w-full md:w-1/3">
                                 <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
-                                    <h3 class="font-medium text-2xl">Total Owed</h3>
+                                    <h3 class="font-medium text-xl">Total Owed</h3>
                                     <div class="w-full flex justify-end">
-                                        <h2 class="text-5xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                        <h2 class="text-3xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="px-4 mb-4 w-full md:w-1/3">
+                                <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
+                                    <h3 class="font-medium text-xl">Account Amount</h3>
+                                    <div class="w-full flex justify-end">
+                                        <h2 class="text-3xl font-bold">{{ customer.account_amount | currency }}</h2>
                                     </div>
                                 </div>
                             </div>

@@ -104,6 +104,8 @@ class Role extends Model
             collect( $permissions )->each( function( $permissionNamespace ) {
                 $this->addPermissions( $permissionNamespace );
             });
+        } else if ( $permissions instanceof Permission ) {
+            return $this->addPermissions( $permissions->namespace, $silent );
         }
     }
 

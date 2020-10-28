@@ -44,7 +44,7 @@ export class POS {
         discount_percentage: 0,
         subtotal: 0,
         total: 0,
-        paid: 0,
+        tendered: 0,
         payment_status: undefined,
         customer_id: undefined,
         change: 0,
@@ -183,7 +183,7 @@ export class POS {
     }
 
     defineOptions( options ) {
-        this._options;
+        this._options.next( options );
     }
 
     defineCurrentScreen() {
@@ -221,9 +221,15 @@ export class POS {
     submitOrder() {
         return new Promise( ( resolve, reject ) => {
             const order     =   <Order>this.order.getValue();
+
             if ( order.payment_status === undefined && order.payments.length  === 0 ) {
                 const message   =   'Please provide a payment before proceeding.';
                 return reject({ status: 'failed', message  });
+            }
+
+            if ( order.total > order.tendered && this.options.getValue().ns_orders_allow_partial === 'no' ) {
+                const message   =   'Partially paid orders are disabled.';
+                return reject({ status: 'failed', message });
             }
 
             if ( ! this._isSubmitting ) {
@@ -310,19 +316,19 @@ export class POS {
 
     computePaid() {
         const order     =   this._order.getValue();   
-        order.paid      =   0;
+        order.tendered      =   0;
 
         if ( order.payments.length > 0 ) {
-            order.paid      =   order.payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
+            order.tendered      =   order.payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
         }
 
-        if ( order.paid >= order.total ) {
+        if ( order.tendered >= order.total ) {
             order.payment_status    =   'paid';
-        } else if ( order.paid > 0 && order.paid < order.total ) {
+        } else if ( order.tendered > 0 && order.tendered < order.total ) {
             order.payment_status    =   'partially_paid';
         } 
         
-        order.change    =   order.paid - order.total;
+        order.change    =   order.tendered - order.total;
 
         this._order.next( order );
     }

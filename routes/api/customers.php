@@ -1,20 +1,22 @@
 <?php
 
+use App\Http\Controllers\Dashboard\CustomersController;
+use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use Illuminate\Support\Facades\Route;
 
-Route::delete( 'customers/{id}', 'Dashboard\CustomersController@delete' );
-Route::delete( 'customers/using-email/{email}', 'Dashboard\CustomersController@deleteUsingEmail' );
-Route::get( 'customers/{customer?}', 'Dashboard\CustomersController@get' )->where([ 'customer' => '[0-9]+' ]);
-Route::get( 'customers/{customer}/orders', 'Dashboard\CustomersController@getOrders' );
-Route::get( 'customers/{customer}/addresses', 'Dashboard\CustomersController@getAddresses' );
-Route::get( 'customers/schema', 'Dashboard\CustomersController@schema' );
-Route::post( 'customers', 'Dashboard\CustomersController@post' );
-Route::post( 'customers/search', 'Dashboard\CustomersController@searchCustomer' );
-Route::put( 'customers/{customer}', 'Dashboard\CustomersController@put' );
+Route::delete( 'customers/{id}', [ CustomersController::class, 'delete' ]);
+Route::delete( 'customers/using-email/{email}', [ CustomersController::class, 'deleteUsingEmail' ]);
+Route::get( 'customers/{customer?}', [ CustomersController::class, 'get' ])->where([ 'customer' => '[0-9]+' ]);
+Route::get( 'customers/{customer}/orders', [ CustomersController::class, 'getOrders' ]);
+Route::get( 'customers/{customer}/addresses', [ CustomersController::class, 'getAddresses' ]);
+Route::get( 'customers/schema', [ CustomersController::class, 'schema' ]);
+Route::post( 'customers', [ CustomersController::class, 'post' ]);
+Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);
+Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ]);
 
-Route::get( 'customers-groups/{id?}', 'Dashboard\CustomersGroupsController@get' );
-Route::get( 'customers-groups/{id?}/customers', 'Dashboard\CustomersGroupsController@getCustomers' );
-Route::delete( 'customers-groups/{id}', 'Dashboard\CustomersGroupsController@delete' );
-Route::post( 'customers-groups', 'Dashboard\CustomersGroupsController@post' );
-Route::put( 'customers-groups/{id}', 'Dashboard\CustomersGroupsController@put' );
-Route::post( 'customers-groups/transfer-customers', 'Dashboard\CustomersGroupsController@transferOwnership' );
+Route::get( 'customers-groups/{id?}', [ CustomersGroupsController::class, 'get' ]);
+Route::get( 'customers-groups/{id?}/customers', [ CustomersGroupsController::class, 'getCustomers' ]);
+Route::delete( 'customers-groups/{id}', [ CustomersGroupsController::class, 'delete' ]);
+Route::post( 'customers-groups', [ CustomersGroupsController::class, 'post' ]);
+Route::put( 'customers-groups/{id}', [ CustomersGroupsController::class, 'put' ]);
+Route::post( 'customers-groups/transfer-customers', [ CustomersGroupsController::class, 'transferOwnership' ]);

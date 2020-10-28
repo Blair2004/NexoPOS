@@ -13,7 +13,7 @@ export interface Order {
     discount_percentage: number;
     subtotal: number;
     total: number;
-    paid: number;
+    tendered: number;
     payment_status: 'hold' | 'paid' | 'unpaid' | 'partially_paid' | 'layaway';
     change: number;
     total_products: number;

@@ -18,9 +18,9 @@ return [
             ])
         ], [
             'type'  =>  'switch',
-            'label'     =>  __( 'Allow Incomplete Orders' ),
-            'name'  =>  'ns_orders_allow_incomplete',
-            'value'     =>  $options->get( 'ns_orders_allow_incomplete' ),
+            'label'     =>  __( 'Allow Unpaid Orders' ),
+            'name'  =>  'ns_orders_allow_unpaid',
+            'value'     =>  $options->get( 'ns_orders_allow_unpaid' ),
             'description'   =>  __( 'Will prevent incomplete orders to be placed. If credit is allowed, this option should be set to "yes".' ),
             'options'   =>  Helper::kvToJsOptions([
                 'yes'   =>  __( 'Yes' ),
