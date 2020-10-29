@@ -11,6 +11,7 @@ Route::get( 'orders/{id}/refund/{product_id}', [ OrdersController::class, 'refun
 Route::get( 'orders/{id}/full-refund', [ OrdersController::class, 'refundOrderProduct' ]);
 
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
+Route::post( 'orders/search', [ OrdersController::class, 'searchOrder' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 
 Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);

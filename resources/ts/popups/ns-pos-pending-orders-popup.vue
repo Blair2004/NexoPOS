@@ -12,8 +12,8 @@
                     <div class="flex flex-col overflow-hidden">
                         <div class="p-1">
                             <div class="flex rounded border-2 border-blue-400">
-                                <input type="text" class="p-2 outline-none flex-auto">
-                                <button class="w-16 md:w-24 bg-blue-400 text-white">
+                                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
+                                <button @click="searchOrder()" class="w-16 md:w-24 bg-blue-400 text-white">
                                     <i class="las la-search"></i>
                                     <span class="mr-1 hidden md:visible">Search</span>
                                 </button>
@@ -70,13 +70,24 @@ import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
 export default {
     methods: {
+        searchOrder() {
+            nsHttpClient.post( '/api/nexopos/v4/orders/search', {
+                    search: this.searchField
+                })
+                .subscribe( orders => {
+                    this.orders     =   orders;
+                })
+        },
+
         setActiveTab( event ) {
             this.active     =   event;
         },
+
         openOrder( order ) {
             POS.loadOrder( order.id );
             this.$popup.close();
         },
+
         loadOrderFromType( type ) {
             nsHttpClient.get( '/api/nexopos/v4/crud/ns.hold-orders' )
                 .subscribe( result => {
@@ -113,6 +124,7 @@ export default {
     data() {
         return {
             active: 'hold',
+            searchField: '',
             orders: [],
         }
     },

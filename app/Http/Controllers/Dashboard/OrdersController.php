@@ -194,5 +194,14 @@ class OrdersController extends DashboardController
             })
         ]);
     }
+
+    public function searchOrder( Request $request )
+    {
+        $reference      =   $request->input( 'search' );
+        
+        return Order::orWhere( 'code', 'like', '%' . $reference . '%' )
+            ->orWhere( 'title', 'like', '%' . $reference . '%' )
+            ->get();
+    }
 }
 
