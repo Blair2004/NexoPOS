@@ -179,6 +179,17 @@ class SimpleUser extends User
 
 Then while linking the model to your CRUD instance, you just have to use the `SimpleUser::class` instead of the user class.
 
+### Crud Relationships
+While creating your crud resource, you might want to create a link with the model used on the Crud object with table (or model). The Crud object uses a different way of defining relations (different from Angular defaults). The definition of a crud relationship is defined on the property `relations`, which contains an array of definitions. Here is an example: 
+
+```php
+// ...
+public $relations   =   [
+    [ 'nexopos_users as user', 'nexopos_expenses.author', '=', 'user.id' ]
+]
+```
+Here, the definition create a link between `nexopos_users` aliased as `user` and `nexopos_expenses` where the columns `author` equal the `user` (alias) `id`. As you might have noticed it's possible to define alias.
+
 ### Tabs and Relationships
 You might have a CRUD form that has general information stored on a specific model and other tabs with informations stored on different related model. We've used this approach to store customer general informations on "nexopos_customers" table and customer shipping & billing informations to store them on "nexopos_customers_addresses" (using custom CustomerAddress model with different scopes), but visually all that are displayed on the same UI.
 
