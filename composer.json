@@ -1,8 +1,7 @@
 {
-    "name": "nexo/pos",
-    "version": "4.0.1",
+    "name": "blair2004/nexopos",
     "type": "project",
-    "description": "The point of sale system.",
+    "description": "The Free Modern Point Of Sale System build with Laravel, TailwindCSS and Vue.js.",
     "keywords": [
         "nexopos",
         "point of sale",
@@ -11,7 +10,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.2.5",
+        "php": "^7.4.0",
         "doctrine/dbal": "^2.11",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
