@@ -50,8 +50,6 @@ class Kernel extends ConsoleKernel
 
         $schedule->job( new TaskSchedulingPingJob )->hourly();
         $schedule->job( new ExecuteExpensesJob )->daily();
-
-        dd( 'ok' );
     }
 
     /**
