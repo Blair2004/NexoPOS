@@ -37,20 +37,24 @@ class AdjustNexoposProcurementsProductsTableOct16 extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_procurements_products', 'expiration_date' ) ) {
-                $table->dropColumn( 'expiration_date' );
-            }
+        if ( Schema::hasTable( 'nexopos_procurements_products' ) ) {
+            Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {
+                if ( Schema::hasColumn( 'nexopos_procurements_products', 'expiration_date' ) ) {
+                    $table->dropColumn( 'expiration_date' );
+                }
+    
+                if ( Schema::hasColumn( 'nexopos_procurements_products', 'barcode' ) ) {
+                    $table->dropColumn( 'barcode' );
+                }
+            });
+        }
 
-            if ( Schema::hasColumn( 'nexopos_procurements_products', 'barcode' ) ) {
-                $table->dropColumn( 'barcode' );
-            }
-        });
-
-        Schema::table( 'nexopos_products', function( Blueprint $table ) {
-            if ( ! Schema::hasColumn( 'nexopos_products', 'expiration' ) ) {
-                $table->datetime( 'expiration' )->nullable();
-            }
-        });
+        if ( Schema::hasTable( 'nexopos_products' ) ) {
+            Schema::table( 'nexopos_products', function( Blueprint $table ) {
+                if ( ! Schema::hasColumn( 'nexopos_products', 'expiration' ) ) {
+                    $table->datetime( 'expiration' )->nullable();
+                }
+            });
+        }
     }
 }
