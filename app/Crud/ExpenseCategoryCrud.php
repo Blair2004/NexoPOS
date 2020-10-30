@@ -82,8 +82,8 @@ class ExpenseCategoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'ExpenseCategories List' ),
-            'list_description'      =>  __( 'Display all expensecategories.' ),
+            'list_title'            =>  __( 'Expenses Categories List' ),
+            'list_description'      =>  __( 'Display all expenses categories.' ),
             'no_entry'              =>  __( 'No expensecategories has been registered' ),
             'create_new'            =>  __( 'Add a new expensecategory' ),
             'create_title'          =>  __( 'Create a new expensecategory' ),
@@ -281,7 +281,7 @@ class ExpenseCategoryCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'expenses/categories' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
@@ -344,9 +344,11 @@ class ExpenseCategoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.expenses-categories',
-            'create'    =>  'ns.expenses-categories/create',
-            'edit'      =>  'ns.expenses-categories/edit/#'
+            'list'      =>  url( 'dashboard/' . 'expenses/categories' ),
+            'create'    =>  url( 'dashboard/' . 'expenses/categories/create' ),
+            'edit'      =>  url( 'dashboard/' . 'expenses/categories/edit/' ),
+            'post'      =>  url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
+            'put'       =>  url( 'api/nexopos/v4/crud/ns.expenses-categories/{id}' ),
         ];
     }
 

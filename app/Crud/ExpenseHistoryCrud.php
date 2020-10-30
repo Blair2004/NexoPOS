@@ -1,10 +1,4 @@
-@inject( 'Schema', 'Illuminate\Support\Facades\Schema' )
-@inject( 'Str', 'Illuminate\Support\Str' )
 <?php
-$model          =   explode( '\\', $model_name );
-$lastClassName  =   $model[ count( $model ) - 1 ];
-?>
-<{{ '?php' }}
 namespace App\Crud;
 
 use Illuminate\Support\Facades\Auth;
@@ -15,53 +9,51 @@ use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
-use {{ trim( $model_name ) }};
+use App\Models\ExpenseHistory;
 
-class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
+class ExpenseHistoryCrud extends CrudService
 {
     /**
      * define the base table
-     * @param string
+     * @param  string
      */
-    protected $table      =   '{{ strtolower( trim( $table_name ) ) }}';
+    protected $table      =   'nexopos_expenses_history';
 
     /**
      * default identifier
-     * @param string
+     * @param  string
      */
-    protected $identifier   =   '{{ strtolower( trim( $route_name ) ) }}';
+    protected $identifier   =   'expenses/history';
 
     /**
      * Define namespace
-     * @param string
+     * @param  string
      */
-    protected $namespace  =   '{{ strtolower( trim( $namespace ) ) }}';
+    protected $namespace  =   'ns.expenses-history';
 
     /**
      * Model Used
-     * @param string
+     * @param  string
      */
-    protected $model      =   {{ trim( $lastClassName ) }}::class;
+    protected $model      =   ExpenseHistory::class;
 
     /**
      * Define permissions
-     * @param array
+     * @param  array
      */
     protected $permissions  =   [
-        'create'    =>  true,
+        'create'    =>  false,
         'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  true,
+        'update'    =>  false,
+        'delete'    =>  false,
     ];
 
     /**
      * Adding relation
-     * @param array
+     * @param  array
      */
     public $relations   =  [
-        @if( isset( $relations ) && count( $relations ) > 0 )@foreach( $relations as $relation )[ '{{ strtolower( trim( $relation[0] ) ) }}', '{{ strtolower( trim( $relation[2] ) ) }}', '=', '{{ strtolower( trim( $relation[1] ) ) }}' ],
-        @endforeach
-        @endif
+        [ 'nexopos_users as user', 'nexopos_expenses_history.author', '=', 'user.id' ]
     ];
 
     /**
@@ -81,34 +73,30 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick        =   [ 
+        'user'  =>  [ 'username', 'id' ]
+    ];
 
     /**
      * Define where statement
-     * @var array
+     * @var  array
     **/
     protected $listWhere    =   [];
 
     /**
      * Define where in statement
-     * @var array
+     * @var  array
      */
     protected $whereIn      =   [];
 
     /**
      * Fields which will be filled during post/put
      */
-    @php
-    $fields         =   explode( ',', $fillable );
-    foreach( $fields as &$field ) {
-        $field      =   trim( $field );
-    }
-    @endphp
-    public $fillable    =   {!! json_encode( $fillable ?: [] ) !!};
+        public $fillable    =   [];
 
     /**
      * Define Constructor
-     * @param 
+     * @param  
      */
     public function __construct()
     {
@@ -120,26 +108,26 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Return the label used for the crud 
      * instance
-     * @return array
+     * @return  array
     **/
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( '{{ ucwords( $Str::plural( trim( $resource_name ) ) ) }} List' ),
-            'list_description'      =>  __( 'Display all {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }}.' ),
-            'no_entry'              =>  __( 'No {{ strtolower( $Str::plural( trim( $resource_name ) ) ) }} has been registered' ),
-            'create_new'            =>  __( 'Add a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_title'          =>  __( 'Create a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'create_description'    =>  __( 'Register a new {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }} and save it.' ),
-            'edit_title'            =>  __( 'Edit {{ strtolower( $Str::singular( trim( $resource_name ) ) ) }}' ),
-            'edit_description'      =>  __( 'Modify  {{ ucwords( strtolower( $Str::singular( trim( $resource_name ) ) ) ) }}.' ),
-            'back_to_list'          =>  __( 'Return to {{ ucwords( $Str::plural( trim( $resource_name ) ) ) }}' ),
+            'list_title'            =>  __( 'Expenses History List' ),
+            'list_description'      =>  __( 'Display all Expenses History.' ),
+            'no_entry'              =>  __( 'No Expense History has been registered' ),
+            'create_new'            =>  __( 'Add a new Expense history' ),
+            'create_title'          =>  __( 'Create a new Expense History' ),
+            'create_description'    =>  __( 'Register a new Expense History and save it.' ),
+            'edit_title'            =>  __( 'Edit Expense History' ),
+            'edit_description'      =>  __( 'Modify  Expense History.' ),
+            'back_to_list'          =>  __( 'Return to Expenses Histories' ),
         ];
     }
 
     /**
      * Check whether a feature is enabled
-     * @return boolean
+     * @return  boolean
     **/
     public function isEnabled( $feature )
     {
@@ -148,8 +136,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Fields
-     * @param object/null
-     * @return array of field
+     * @param  object/null
+     * @return  array of field
      */
     public function getForm( $entry = null ) 
     {
@@ -164,13 +152,47 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
-                        @foreach( $Schema::getColumnListing( $table_name ) as $column )[
+                        [
                             'type'  =>  'text',
-                            'name'  =>  '{{ $column }}',
-                            'label' =>  __( '{{ ucwords( $column ) }}' ),
-                            'value' =>  $entry->{{ $column }} ?? '',
-                        ], @endforeach
-                    ]
+                            'name'  =>  'author',
+                            'label' =>  __( 'Author' ),
+                            'value' =>  $entry->author ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'created_at',
+                            'label' =>  __( 'Created_at' ),
+                            'value' =>  $entry->created_at ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'expense_category_name',
+                            'label' =>  __( 'Expense_category_name' ),
+                            'value' =>  $entry->expense_category_name ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'expense_id',
+                            'label' =>  __( 'Expense_id' ),
+                            'value' =>  $entry->expense_id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'expense_name',
+                            'label' =>  __( 'Expense_name' ),
+                            'value' =>  $entry->expense_name ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'id',
+                            'label' =>  __( 'Id' ),
+                            'value' =>  $entry->id ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'updated_at',
+                            'label' =>  __( 'Updated_at' ),
+                            'value' =>  $entry->updated_at ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'value',
+                            'label' =>  __( 'Value' ),
+                            'value' =>  $entry->value ?? '',
+                        ],                     ]
                 ]
             ]
         ];
@@ -178,8 +200,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Filter POST input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
     public function filterPostInputs( $inputs )
     {
@@ -188,18 +210,18 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Filter PUT input fields
-     * @param array of fields
-     * @return array of fields
+     * @param  array of fields
+     * @return  array of fields
      */
-    public function filterPutInputs( $inputs, {{ trim( $lastClassName ) }} $entry )
+    public function filterPutInputs( $inputs, ExpenseHistory $entry )
     {
         return $inputs;
     }
 
     /**
      * Before saving a record
-     * @param Request $request
-     * @return void
+     * @param  Request $request
+     * @return  void
      */
     public function beforePost( $request )
     {
@@ -214,11 +236,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * After saving a record
-     * @param Request $request
-     * @param {{ trim( $lastClassName ) }} $entry
-     * @return void
+     * @param  Request $request
+     * @param  ExpenseHistory $entry
+     * @return  void
      */
-    public function afterPost( $request, {{ trim( $lastClassName ) }} $entry )
+    public function afterPost( $request, ExpenseHistory $entry )
     {
         return $request;
     }
@@ -226,8 +248,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     
     /**
      * get
-     * @param string
-     * @return mixed
+     * @param  string
+     * @return  mixed
      */
     public function get( $param )
     {
@@ -238,9 +260,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Before updating a record
-     * @param Request $request
-     * @param object entry
-     * @return void
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
      */
     public function beforePut( $request, $entry )
     {
@@ -255,9 +277,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * After updating a record
-     * @param Request $request
-     * @param object entry
-     * @return void
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
      */
     public function afterPut( $request, $entry )
     {
@@ -266,10 +288,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Before Delete
-     * @return void
+     * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == '{{ strtolower( trim( $namespace ) ) }}' ) {
+        if ( $namespace == 'ns.expenses-history' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -289,17 +311,35 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Define Columns
-     * @return array of columns configuration
+     * @return  array of columns configuration
      */
     public function getColumns() {
         return [
-            @foreach( $Schema::getColumnListing( $table_name ) as $column )
-'{{ $column }}'  =>  [
-                'label'  =>  __( '{{ ucwords( $column ) }}' ),
+            'expense_name'  =>  [
+                'label'  =>  __( 'Expense Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            @endforeach
+            'expense_category_name'  =>  [
+                'label'  =>  __( 'Category Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'value'  =>  [
+                'label'  =>  __( 'Value' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'  =>  __( 'By' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Date' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
         ];
     }
 
@@ -316,16 +356,10 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
-            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
+                'url'       =>  url( '/api/nexopos/v4/crud/ns.expenses-history/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -338,8 +372,8 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     
     /**
      * Bulk Delete Action
-     * @param  object Request with object
-     * @return  false/array
+     * @param    object Request with object
+     * @return    false/array
      */
     public function bulkAction( Request $request ) 
     {
@@ -366,7 +400,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof {{ trim( $lastClassName ) }} ) {
+                if ( $entity instanceof ExpenseHistory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -381,22 +415,22 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * get Links
-     * @return array of links
+     * @return  array of links
      */
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
-            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
-            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+            'list'      =>  url( 'dashboard/' . 'expenses/history' ),
+            'create'    =>  url( 'dashboard/' . 'expenses/history/create' ),
+            'edit'      =>  url( 'dashboard/' . 'expenses/history/edit/' ),
+            'post'      =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses-history' ),
+            'put'       =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses-history/{id}' . '' ),
         ];
     }
 
     /**
      * Get Bulk actions
-     * @return array of actions
+     * @return  array of actions
     **/
     public function getBulkActions()
     {
@@ -413,7 +447,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * get exports
-     * @return array of export formats
+     * @return  array of export formats
     **/
     public function getExports()
     {

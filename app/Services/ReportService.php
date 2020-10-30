@@ -2,7 +2,10 @@
 namespace App\Services;
 
 use App\Models\DashboardDay;
+use App\Models\Expense;
+use App\Models\ExpenseHistory;
 use App\Models\Order;
+use App\Models\ProductHistory;
 
 class ReportService
 {
@@ -54,6 +57,50 @@ class ReportService
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
         $todayReport->save();
+    }
+
+    /**
+     * will update wasted goods report
+     * @param ProductHistory $history
+     * @return void
+     */
+    public function handleStockAdjustment( ProductHistory $history )
+    {
+        if ( in_array( $history->operation_type, [
+            ProductHistory::ACTION_DEFECTIVE,
+            ProductHistory::ACTION_LOST,
+            ProductHistory::ACTION_DELETED,
+            ProductHistory::ACTION_REMOVED,
+        ])) {
+            $currentDay     =   DashboardDay::forToday();
+            $yesterDay      =   DashboardDay::forDayBefore(1);
+
+            if ( ! $currentDay instanceof DashboardDay ) {
+                $currentDay     =   new DashboardDay;
+                $currentDay->day_wasted_goods_count     =   0;
+                $currentDay->day_wasted_goods           =   0;
+                $currentDay->total_wasted_goods_count   =   0;
+                $currentDay->total_wasted_goods         =   0;
+            }
+
+            $currentDay->day_wasted_goods_count         +=   $history->quantity;
+            $currentDay->day_wasted_goods               +=   $history->total_price;
+            $currentDay->total_wasted_goods_count       =   ( $yesterDay->total_wasted_goods_count ?? 0 ) + $currentDay->day_wasted_goods_count;
+            $currentDay->total_wasted_goods             =   ( $yesterDay->total_wasted_goods ?? 0 ) + $currentDay->day_wasted_goods;
+            $currentDay->save();
+
+            return $currentDay;
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The dashboard report has been updated.' )
+            ];
+        }
+
+        return [
+            'status'    =>  'failed',
+            'message'   =>  __( 'Unsupported action' ),
+        ];
     }
 
     public function computeIncome( $previousReport, $todayReport )
@@ -174,13 +221,17 @@ class ReportService
         $todayReport->total_discounts   = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
-    private function computeWastedGoods( $previousReport, $todayReport )
+    public function increaseTodayExpenses( ExpenseHistory $expense )
     {
+        $today      =   DashboardDay::forToday();
+        $yesterday  =   DashboardDay::forDayBefore(1);
 
-    }
+        if ( ! $today instanceof DashboardDay ) {
+            $today  =   new DashboardDay;
+        }   
 
-    private function computeTodayExpenses( $previousReport, $todayReport )
-    {
-        
+        $today->day_expenses        +=  $expense->value;
+        $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+        $today->save();
     }
 }

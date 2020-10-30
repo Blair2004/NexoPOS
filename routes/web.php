@@ -76,6 +76,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
         Route::get( '/dashboard/expenses', 'Dashboard\ExpensesController@listExpenses' );
         Route::get( '/dashboard/expenses/create', 'Dashboard\ExpensesController@createExpense' );
         Route::get( '/dashboard/expenses/edit/{expense}', 'Dashboard\ExpensesController@editExpense' );
+        Route::get( '/dashboard/expenses/history', 'Dashboard\ExpensesController@expensesHistory' );
         
         Route::get( '/dashboard/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
         Route::get( '/dashboard/expenses/categories/create', 'Dashboard\ExpensesCategoriesController@createExpenseCategory' );

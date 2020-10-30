@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\ExpensesEventSubscriber;
 use App\Listeners\OrderEventsSubscriber;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
         ProcurementEventsSubscriber::class,
         ProductEventsSubscriber::class,
         OrderEventsSubscriber::class,
+        ExpensesEventSubscriber::class,
     ];
 
     /**

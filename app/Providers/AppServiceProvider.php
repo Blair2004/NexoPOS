@@ -150,7 +150,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton( ExpenseService::class, function( $app ) {
-            return new ExpenseService();
+            return new ExpenseService(
+                app()->make( DateService::class )
+            );
         });
 
         $this->app->singleton( OrdersService::class, function( $app ) {

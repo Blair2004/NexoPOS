@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\NotificationsEnum;
+use App\Services\DateService;
 use App\Services\NotificationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
-class ApplicationHealthJob implements ShouldQueue
+class TaskSchedulingPingJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -32,14 +33,17 @@ class ApplicationHealthJob implements ShouldQueue
      */
     public function handle()
     {
-        if ( ! DotenvEditor::keyExists( 'NS_CRON_STATUS' ) ) {
-            /**
-             * @var NotificationService
-             */
-            $notification       =   app()->make( NotificationService::class );
-            $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
-            DotenvEditor::setKey( 'NS_CRON_STATUS', true );
-            DotenvEditor::save();
-        }
+        /**
+         * @var NotificationService
+         */
+        $notification       =   app()->make( NotificationService::class );
+        $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
+        
+        /**
+         * @var DateService
+         */
+        $date               =   app()->make( DateService::class );
+        DotenvEditor::setKey( 'NS_CRON_PING', $date->toDateTimeString() );
+        DotenvEditor::save();
     }
 }

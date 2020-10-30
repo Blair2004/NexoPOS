@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ExpenseHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Expense;
 use Illuminate\Http\Request;
@@ -147,6 +148,11 @@ class ExpensesController extends DashboardController
     public function getCategoryExpenses( $id )
     {
         return $this->expenseService->getCategories( $id )->expenses;
+    }
+
+    public function expensesHistory()
+    {
+        return ExpenseHistoryCrud::table();
     }
 }
 

@@ -1,5 +1,11 @@
 <?php
 namespace App\Crud;
+
+use App\Events\ExpenseAfterCreateEvent;
+use App\Events\ExpenseAfterUpdateEvent;
+use App\Events\ExpenseBeforeCreateEvent;
+use App\Events\ExpenseBeforeDeleteEvent;
+use App\Events\ExpenseBeforeUpdateEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -131,6 +137,14 @@ class ExpenseCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
+                            'type'      =>  'switch',
+                            'options'   =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name'      =>  'active',
+                            'label'     =>  __( 'Active' ),
+                            'description'   =>  __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
+                            'validation'    =>  'required',
+                            'value'     =>  $entry->active ?? '',
+                        ], [
                             'type'          =>  'select',
                             'name'          =>  'group_id',
                             'label'         =>  __( 'Users Group' ),
@@ -177,13 +191,13 @@ class ExpenseCrud extends CrudService
                             'options'       =>  [
                                 [
                                     'label' =>  __( 'Start of Month' ),
-                                    'value' =>  'month_start',
+                                    'value' =>  'month_starts',
                                 ], [
                                     'label' =>  __( 'Mid of Month' ),
-                                    'value' =>  'month_mid',
+                                    'value' =>  'month_mids',
                                 ], [
                                     'label' =>  __( 'End of Month' ),
-                                    'value' =>  'month_end',
+                                    'value' =>  'month_ends',
                                 ], [
                                     'label' =>  __( 'X days Before Month Ends' ),
                                     'value' =>  'x_before_month_ends',
@@ -243,6 +257,8 @@ class ExpenseCrud extends CrudService
     {
         $this->allowedTo( 'create' );
 
+        event( new ExpenseBeforeCreateEvent( $request ) );
+
         return $request;
     }
 
@@ -254,6 +270,8 @@ class ExpenseCrud extends CrudService
      */
     public function afterPost( $request, Expense $entry )
     {
+        event( new ExpenseAfterCreateEvent( $entry, $request ) );
+
         return $request;
     }
 
@@ -279,6 +297,9 @@ class ExpenseCrud extends CrudService
     public function beforePut( $request, $entry )
     {
         $this->allowedTo( 'update' );
+
+        event( new ExpenseBeforeUpdateEvent( $entry, $request ) );
+
         return $request;
     }
 
@@ -290,6 +311,8 @@ class ExpenseCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
+        event( new ExpenseAfterUpdateEvent( $entry, $request ) );
+
         return $request;
     }
     
@@ -318,7 +341,10 @@ class ExpenseCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.expenses' ) {
+            
             $this->allowedTo( 'delete' );
+
+            event( new ExpenseBeforeDeleteEvent( $model ) );
         }
     }
 

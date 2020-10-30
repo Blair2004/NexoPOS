@@ -602,7 +602,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( $entry ? $entry->id . '/form-config' : 'form-config' ) ) ),
+            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( $entry ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.
@@ -614,7 +614,7 @@ class CrudService
              * This will pull the submitURL that might be different wether the $entry is
              * provided or not. can be overwritten on the configuration ($config).
              */
-            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : $instance->getLinks()[ 'put' ] ),
+            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : 'foo' .  str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
             
             /**
              * By default the method used is "post" but might change to "put" according to 

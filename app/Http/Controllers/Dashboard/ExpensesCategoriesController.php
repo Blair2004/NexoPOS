@@ -7,7 +7,10 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ExpenseCategoryCrud;
 use App\Http\Controllers\DashboardController;
+use App\Models\ExpenseCategory;
+use App\Services\CrudService;
 use App\Services\Options;
 use Illuminate\Support\Facades\View;
 
@@ -39,12 +42,7 @@ class ExpensesCategoriesController extends DashboardController
      */
     public function listExpensesCategories()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
-            'title'         =>  __( 'Expenses Categories' ),
-            'createUrl'    =>  url( '/dashboard/expenses/categories/create' ),
-            'description'   =>  __( 'List all created expenses categories' ),
-        ]);
+        return ExpenseCategoryCrud::table();
     }
 
     /**
@@ -54,13 +52,12 @@ class ExpensesCategoriesController extends DashboardController
      */
     public function createExpenseCategory()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'src'           =>  url( 'api/nexopos/v4/crud/ns.expenses-categories/form-config' ),
-            'title'         =>  __( 'Create New Expense Category' ),
-            'returnUrl'    =>  url( '/dashboard/expenses/categories' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses-categories' ),
-            'description'   =>  __( 'Register a new expense category on the system.' ),
-        ]);
+        return ExpenseCategoryCrud::form();
+    }
+
+    public function editExpenseCategory( ExpenseCategory $category )
+    {
+        return ExpenseCategoryCrud::form( $category );
     }
 }
 

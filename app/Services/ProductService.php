@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Crud\ProductHistoryCrud;
+use App\Events\ProductAfterStockAdjustmentEvent;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -908,7 +909,7 @@ class ProductService
          * @param float total_price
          * @param string $description
          * @param float quantity
-         */
+         */       
         $product    =   Product::findOrFail( $product_id );
 
         /**
@@ -981,7 +982,6 @@ class ProductService
                  */
                 $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
             }
-
         }
 
         $history                                =   new ProductHistory;
@@ -999,6 +999,8 @@ class ProductService
         $history->after_quantity                =   $result[ 'data' ][ 'newQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
         $history->author                        =   Auth::id();
         $history->save();
+
+        event( new ProductAfterStockAdjustmentEvent( $history ) );
 
         return $history;
     }

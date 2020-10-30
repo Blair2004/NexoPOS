@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,7 +20,7 @@ class ProductAdjustmentTest extends TestCase
     public function testExample()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 
@@ -29,14 +30,17 @@ class ProductAdjustmentTest extends TestCase
         $response           =   $this->json( 'POST', '/api/nexopos/v4/products/adjustments', [
             'products'              =>  [
                 [
-                    'id'                =>  1,
+                    'id'                =>  $product->id,
                     'adjust_action'     =>  'deleted',
                     'name'              =>  $product->name,
                     'adjust_unit'       =>  $unitQuantity,
+                    'adjust_reason'     =>  __( 'Performing a test adjustment' ),
                     'adjust_quantity'   =>  1
                 ]
             ]
         ]);
+
+        $response->dump();
 
         $response->assertJsonPath( 'status', 'success' );
     }

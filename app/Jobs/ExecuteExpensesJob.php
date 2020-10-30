@@ -2,21 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Services\ReportService;
+use App\Services\ExpenseService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ComputeDayReportJob implements ShouldQueue
+class ExecuteExpensesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    /**
-     * @var ReportService
-     */
-    public $reportService;
 
     /**
      * Create a new job instance.
@@ -25,7 +20,7 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->reportService    =   app()->make( ReportService::class );
+        //
     }
 
     /**
@@ -35,6 +30,10 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->reportService->computeDayReport();
+        /**
+         * @var ExpenseService
+         */
+        $expenses       =   app()->make( ExpenseService::class );
+        $expenses->handleRecurringExpenses();
     }
 }

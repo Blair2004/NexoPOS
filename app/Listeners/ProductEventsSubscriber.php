@@ -3,8 +3,11 @@ namespace App\Listeners;
 
 use App\Services\ProductService;
 use App\Events\ProductAfterDeleteEvent;
+use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductBeforeDeleteEvent;
+use App\Jobs\HandleStockAdjustmentJob;
 use App\Services\ProcurementService;
+use App\Services\ReportService;
 
 class ProductEventsSubscriber
 {
@@ -14,24 +17,34 @@ class ProductEventsSubscriber
     /** @var ProcurementService */
     protected $procurementService;
 
+    /** @var ReportService */
+    protected $reportService;
+
     public function __construct(
         ProductService $productService,
-        ProcurementService $procurementService
+        ProcurementService $procurementService,
+        ReportService $reportService
     ) {
         $this->productService       =   $productService;
         $this->procurementService   =   $procurementService;
+        $this->reportService        =   $reportService;
     }
 
     public function subscribe( $events )
     {
         $events->listen(
             ProductBeforeDeleteEvent::class,
-            useThis( ProductListener::class )->method( 'beforeDeleteProduct' )
+            [ ProductEventsSubscriber::class,  'beforeDeleteProduct' ]
         );
         
         $events->listen(
             ProductAfterDeleteEvent::class,
-            useThis( ProductListener::class )->method( 'afterDeleteProduct' )
+            [ ProductEventsSubscriber::class,  'afterDeleteProduct' ]
+        );
+
+        $events->listen(
+            ProductAfterStockAdjustmentEvent::class,
+            [ ProductEventsSubscriber::class, 'afterStockAdjustment' ]
         );
     }
 
@@ -52,6 +65,12 @@ class ProductEventsSubscriber
              */
             $this->productService->deleteVariations( $variation );
         });
+    }
+
+    public function afterStockAdjustment( ProductAfterStockAdjustmentEvent $event )
+    {
+        HandleStockAdjustmentJob::dispatch( $event )
+            ->delay( now() );
     }
 
     public function afterDeleteProduct( ProductAfterDeleteEvent $event )

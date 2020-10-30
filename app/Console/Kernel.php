@@ -2,7 +2,8 @@
 
 namespace App\Console;
 
-use App\Jobs\ApplicationHealthJob;
+use App\Jobs\ExecuteExpensesJob;
+use App\Jobs\TaskSchedulingPingJob;
 use App\Services\ModulesService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -47,7 +48,10 @@ class Kernel extends ConsoleKernel
             }
         });
 
-        $schedule->job( new ApplicationHealthJob )->everyMinute();
+        $schedule->job( new TaskSchedulingPingJob )->hourly();
+        $schedule->job( new ExecuteExpensesJob )->daily();
+
+        dd( 'ok' );
     }
 
     /**

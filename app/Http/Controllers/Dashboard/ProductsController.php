@@ -476,13 +476,13 @@ class ProductsController extends DashboardController
         /**
          * now we can adjust the stock of the items
          */
-        foreach( $request->input( 'products' ) as $unit ) {
-            $results[]          =   $this->productService->stockAdjustment( $unit[ 'adjust_action' ], [
-                'unit_price'    =>  $unit[ 'adjust_unit' ][ 'sale_price' ],
-                'unit_id'       =>  $unit[ 'adjust_unit' ][ 'unit_id' ],
-                'product_id'    =>  $unit[ 'id' ],
-                'quantity'      =>  $unit[ 'adjust_quantity' ],
-                'description'   =>  $unit[ 'adjust_reason' ] ?? '',
+        foreach( $request->input( 'products' ) as $product ) {
+            $results[]          =   $this->productService->stockAdjustment( $product[ 'adjust_action' ], [
+                'unit_price'    =>  $product[ 'adjust_unit' ][ 'sale_price' ],
+                'unit_id'       =>  $product[ 'adjust_unit' ][ 'unit_id' ],
+                'product_id'    =>  $product[ 'id' ],
+                'quantity'      =>  $product[ 'adjust_quantity' ],
+                'description'   =>  $product[ 'adjust_reason' ] ?? '',
             ]);
         }
 

@@ -152,10 +152,15 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.read.expenses' ],
                         'href'  =>  url( '/dashboard/expenses' )
                     ], 
-                    'create-provider'   =>  [
+                    'create-expense'   =>  [
                         'label' =>  __( 'Create Expense'),
                         'permissions'   =>  [ 'nexopos.create.expenses' ],
                         'href'  =>  url( '/dashboard/expenses/create' )
+                    ],
+                    'expenses-history'  =>  [
+                        'label'         =>  __( 'Expenses History' ),
+                        'permissions'   =>  [ 'nexopos.read.expenses' ],
+                        'href'          =>  url( '/dashboard/expenses/history' )
                     ],
                     'expenses-categories'   =>  [
                         'label' =>  __( 'Expense Categories'),

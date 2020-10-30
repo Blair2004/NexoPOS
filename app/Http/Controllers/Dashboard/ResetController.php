@@ -51,7 +51,6 @@ class ResetController extends DashboardController
         DB::table( 'nexopos_options' )->truncate();
         DB::table( 'nexopos_dashboard_days' )->truncate();
         DB::table( 'nexopos_dashboard_weeks' )->truncate();
-        // DB::table( 'nexopos_trucks' )->truncate();
         
         return [
             'status'    =>  'success',

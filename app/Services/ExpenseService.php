@@ -1,13 +1,23 @@
 <?php
 namespace App\Services;
 
+use App\Events\ExpenseHistoryAfterCreatedEvent;
+use App\Exceptions\NotAllowedException;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ExpenseCategory;
 use App\Exceptions\NotFoundException;
+use App\Models\ExpenseHistory;
+use App\Models\Role;
+use Carbon\Carbon;
 
 class ExpenseService 
 {
+    public function __construct( DateService $dateService )
+    {   
+        $this->dateService      =   $dateService;
+    }
+    
     public function create( $fields )
     {
         $expense    =   new Expense;
@@ -56,7 +66,7 @@ class ExpenseService
      * get a specific expense using
      * the provided id
      * @param int expense id
-     * @return array|NotFoundException
+     * @return Collection|Expense|NotFoundException
      */
     public function get( $id = null ) 
     {
@@ -122,9 +132,7 @@ class ExpenseService
         $expenseCategory    =   $this->getCategories( $id );
 
         if ( $expenseCategory->expenses->count() > 0 && $force === false ) {
-            throw new NotAllowedException([
-                'message'   =>  __( 'You cannot delete a category which has expenses bound.' )
-            ]);
+            throw new NotAllowedException( __( 'You cannot delete a category which has expenses bound.' ) );
         }
 
         /**
@@ -147,7 +155,7 @@ class ExpenseService
      * Get a specific expense
      * category using the provided ID
      * @param int expense category id
-     * @return array|void
+     * @return void|Collection
      */
     public function getCategory( $id )
     {
@@ -216,5 +224,62 @@ class ExpenseService
     {
         $expenseCategory    =   $this->getCategory( $id );
         return $expenseCategory->expenses;
+    }
+
+    public function recordExpenseHistory( Expense $expense )
+    {
+        if ( ! empty( $expense->group_id  ) ) {
+            Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
+                $history                            =   new ExpenseHistory;
+                $history->value                     =   $expense->value;
+                $history->expense_id                =   $expense->id;
+                $history->author                    =   $expense->author;
+                $history->expense_name              =   str_replace( '{user}', $user->name, $expense->name );
+                $history->expense_category_name     =   $expense->category->name;
+                $history->save();
+
+                event( new ExpenseHistoryAfterCreatedEvent( $history ) );
+            });
+        } else {
+            $history                            =   new ExpenseHistory;
+            $history->value                     =   $expense->value;
+            $history->expense_id                =   $expense->id;
+            $history->author                    =   $expense->author;
+            $history->expense_name              =   $expense->name;
+            $history->expense_category_name     =   $expense->category->name;
+            $history->save();
+
+            event( new ExpenseHistoryAfterCreatedEvent( $history ) );
+        }
+    }
+
+    public function handleRecurringExpenses()
+    {
+        Expense::recurring()
+            ->active()
+            ->get()
+            ->map( function( $expense ) {
+                switch( $expense->occurence ) {
+                    case 'month_starts':
+                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth() );   
+                    break;
+                    case 'month_mid':
+                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth()->addDays(14) );
+                    break;
+                    case 'month_ends':
+                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->endOfMonth() );
+                    break;
+                    case 'x_before_month_ends':
+                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                    break;
+                    case 'x_after_month_starts':
+                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                    break;
+                }
+
+                if ( $this->date->isSameDay( $expenseScheduledDate ) ) {
+                    $this->recordExpenseHistory( $expense );
+                } 
+            });
     }
 }
