@@ -52,11 +52,13 @@ class RemoveUselessFieldsNexoposProductsOct16 extends Migration
             'incl_tax_wholesale_price',
             'excl_tax_wholesale_price',
         ] as $field ) {
-            Schema::table( 'nexopos_products', function( Blueprint $table ) use( $field ) {
-                if ( ! Schema::hasColumn( 'nexopos_products', $field ) ) {
-                    $table->float( $field )->default(0);
-                }
-            });
+            if ( Schema::hasTable( 'nexopos_products' ) ) {
+                Schema::table( 'nexopos_products', function( Blueprint $table ) use( $field ) {
+                    if ( ! Schema::hasColumn( 'nexopos_products', $field ) ) {
+                        $table->float( $field )->default(0);
+                    }
+                });
+            }
         }
     }
 }
