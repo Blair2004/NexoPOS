@@ -37,8 +37,7 @@ class ReportService
             ->to( $this->lastDayEnds )
             ->first();
 
-        $todayReport    =   DashboardDay::from( $this->dayStarts )
-            ->to( $this->dayEnds )->first();
+        $todayReport    =   DashboardDay::forToday();
 
         if ( ! $todayReport instanceof DashboardDay ) {
             $todayReport    =   new DashboardDay;
@@ -57,6 +56,8 @@ class ReportService
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
         $todayReport->save();
+
+        return $todayReport;
     }
 
     /**
@@ -88,8 +89,6 @@ class ReportService
             $currentDay->total_wasted_goods_count       =   ( $yesterDay->total_wasted_goods_count ?? 0 ) + $currentDay->day_wasted_goods_count;
             $currentDay->total_wasted_goods             =   ( $yesterDay->total_wasted_goods ?? 0 ) + $currentDay->day_wasted_goods;
             $currentDay->save();
-
-            return $currentDay;
 
             return [
                 'status'    =>  'success',
@@ -233,5 +232,19 @@ class ReportService
         $today->day_expenses        +=  $expense->value;
         $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
         $today->save();
+    }
+
+    public function initializeDailyReport()
+    {
+        $dashboardDay   =   $this->computeDayReport();
+        $this->initializeDailyReport( $dashboardDay );
+    }
+
+    public function initializeWastedGood( $dashboardDay )
+    {
+        $previousReport                                 =   DashboardDay::forDayBefore(1);
+        $dashboardDay->total_wasted_goods_count         =   $previousReport->total_wasted_goods_count ?? 0;
+        $dashboardDay->total_wasted_goods               =   $previousReport->total_wasted_goods ?? 0;
+        $dashboardDay->save();
     }
 }

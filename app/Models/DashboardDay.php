@@ -23,11 +23,12 @@ class DashboardDay extends Model
         return $query->where( 'range_ends', '<=', $param );
     }
 
-    public static function forToday(): DashboardDay
+    public static function forToday()
     {
         $date   =   app()->make( DateService::class );
-        return DashboardDay::from( $date->startOfDay()->toDateTimeString() )
-            ->to( $date->endOfDay()->toDateTimeString() )
+        
+        return DashboardDay::from( $date->copy()->startOfDay()->toDateTimeString() )
+            ->to( $date->copy()->endOfDay()->toDateTimeString() )
             ->first();
     }
 

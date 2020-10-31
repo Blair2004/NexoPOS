@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\NotificationsEnum;
+use App\Events\BeforeBootEvent;
 use App\Models\Role;
 use App\Services\DateService;
 use App\Services\NotificationService;
@@ -38,6 +39,8 @@ class CheckApplicationHealthMiddleware
                 $this->emitMisconfigurationNotification();
             }
         }
+
+        event( new BeforeBootEvent );
 
         return $next($request);
     }

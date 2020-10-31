@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Permission;
-use App\Models\Role;
-use App\Models\User;
 use App\Services\AuthService;
 use App\Services\CoreService;
 use App\Services\CrudService;

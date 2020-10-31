@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\CoreEventSubscriber;
 use App\Listeners\ExpensesEventSubscriber;
 use App\Listeners\OrderEventsSubscriber;
 use Illuminate\Auth\Events\Registered;
@@ -29,6 +30,7 @@ class EventServiceProvider extends ServiceProvider
         ProductEventsSubscriber::class,
         OrderEventsSubscriber::class,
         ExpensesEventSubscriber::class,
+        CoreEventSubscriber::class,
     ];
 
     /**
