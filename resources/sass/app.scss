@@ -10,6 +10,8 @@ body {
     width: 100%;
 }
 
+[v-cloak] > * { display:none }
+
 .loader {
     border-top-color: #3498db !important;
     &.slow {

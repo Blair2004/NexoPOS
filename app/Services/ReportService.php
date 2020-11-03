@@ -6,6 +6,7 @@ use App\Models\Expense;
 use App\Models\ExpenseHistory;
 use App\Models\Order;
 use App\Models\ProductHistory;
+use Illuminate\Support\Facades\Log;
 
 class ReportService
 {
@@ -26,23 +27,17 @@ class ReportService
      */
     public function computeDayReport()
     {
-        $this->lastDay        =   $this->dateService->copy()->sub( 1, 'day' );
-        $this->lastDayStarts  =   $this->lastDay->startOfDay()->toDateTimeString();
-        $this->lastDayEnds    =   $this->lastDay->startOfDay()->toDateTimeString();
-
         $this->dayStarts      =   $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds        =   $this->dateService->copy()->endOfDay()->toDateTimeString();
 
-        $previousReport  =   DashboardDay::from( $this->lastDayStarts )
-            ->to( $this->lastDayEnds )
-            ->first();
-
-        $todayReport    =   DashboardDay::forToday();
-
+        $todayReport        =   DashboardDay::forToday();
+        
         if ( ! $todayReport instanceof DashboardDay ) {
-            $todayReport    =   new DashboardDay;
+            $todayReport                =   new DashboardDay;
             $todayReport->day_of_year   =   $this->dateService->dayOfYear;
         }
+
+        $previousReport     =   DashboardDay::forLastRecentDay( $todayReport );
         
         $this->computeUnpaidOrdersCount( $previousReport, $todayReport );
         $this->computeUnpaidOrders( $previousReport, $todayReport );
@@ -74,25 +69,36 @@ class ReportService
             ProductHistory::ACTION_REMOVED,
         ])) {
             $currentDay     =   DashboardDay::forToday();
-            $yesterDay      =   DashboardDay::forDayBefore(1);
 
-            if ( ! $currentDay instanceof DashboardDay ) {
-                $currentDay     =   new DashboardDay;
-                $currentDay->day_wasted_goods_count     =   0;
-                $currentDay->day_wasted_goods           =   0;
-                $currentDay->total_wasted_goods_count   =   0;
-                $currentDay->total_wasted_goods         =   0;
+            if ( $currentDay instanceof DashboardDay ) {
+                $yesterDay                                  =   DashboardDay::forLastRecentDay( $currentDay );
+                $currentDay->day_wasted_goods_count         +=   $history->quantity;
+                $currentDay->day_wasted_goods               +=   $history->total_price;
+                $currentDay->total_wasted_goods_count       =   ( $yesterDay->total_wasted_goods_count ?? 0 ) + $currentDay->day_wasted_goods_count;
+                $currentDay->total_wasted_goods             =   ( $yesterDay->total_wasted_goods ?? 0 ) + $currentDay->day_wasted_goods;
+                $currentDay->save();
+    
+                return [
+                    'status'    =>  'success',
+                    'message'   =>  __( 'The dashboard report has been updated.' )
+                ];
             }
-
-            $currentDay->day_wasted_goods_count         +=   $history->quantity;
-            $currentDay->day_wasted_goods               +=   $history->total_price;
-            $currentDay->total_wasted_goods_count       =   ( $yesterDay->total_wasted_goods_count ?? 0 ) + $currentDay->day_wasted_goods_count;
-            $currentDay->total_wasted_goods             =   ( $yesterDay->total_wasted_goods ?? 0 ) + $currentDay->day_wasted_goods;
-            $currentDay->save();
+            
+            /**
+             * @todo make sure outgoing link takes to relevant article
+             * @var NotificationService
+             */
+            $message            =   __( 'A stock operation (%s) has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+            $notification       =   app()->make( NotificationService::class );
+            $notification->create([
+                'title'         =>      __( 'Untracked Stock Operation' ),
+                'description'   =>      $message,
+                'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation'
+            ])->dispatchFor( Role::namespace( 'admin' ) );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The dashboard report has been updated.' )
+                'status'    =>  'failed',
+                'message'   =>  $message
             ];
         }
 
@@ -223,26 +229,46 @@ class ReportService
     public function increaseTodayExpenses( ExpenseHistory $expense )
     {
         $today      =   DashboardDay::forToday();
-        $yesterday  =   DashboardDay::forDayBefore(1);
 
-        if ( ! $today instanceof DashboardDay ) {
-            $today  =   new DashboardDay;
-        }   
+        if ( $today instanceof DashboardDay ) {
+            $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+            $today->day_expenses        +=  $expense->getRawOriginal( 'value' );
+            $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+            $today->save();
 
-        $today->day_expenses        +=  $expense->value;
-        $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
-        $today->save();
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The expense has been correctly saved.' ),
+            ];
+        }
+
+        /**
+         * @todo make sure outgoing link takes to relevant article
+         * @var NotificationService
+         */
+        $message            =   __( 'A stock operation (%s) has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+        $notification       =   app()->make( NotificationService::class );
+        $notification->create([
+            'title'         =>      __( 'Untracked Stock Operation' ),
+            'description'   =>      $message,
+            'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation'
+        ])->dispatchFor( Role::namespace( 'admin' ) );
+
+        return [
+            'status'    =>  'failed',
+            'message'   =>  $message
+        ];
     }
 
     public function initializeDailyReport()
     {
         $dashboardDay   =   $this->computeDayReport();
-        $this->initializeDailyReport( $dashboardDay );
+        $this->initializeWastedGood( $dashboardDay );
     }
 
     public function initializeWastedGood( $dashboardDay )
     {
-        $previousReport                                 =   DashboardDay::forDayBefore(1);
+        $previousReport                                 =   DashboardDay::forLastRecentDay( $dashboardDay );
         $dashboardDay->total_wasted_goods_count         =   $previousReport->total_wasted_goods_count ?? 0;
         $dashboardDay->total_wasted_goods               =   $previousReport->total_wasted_goods ?? 0;
         $dashboardDay->save();

@@ -134,6 +134,7 @@ class ExpenseCrud extends CrudService
             ],
             'tabs'  =>  [
                 'general'   =>  [
+                    'general'   =>  [
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [

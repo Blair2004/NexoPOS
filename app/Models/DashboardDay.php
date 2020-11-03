@@ -42,4 +42,13 @@ class DashboardDay extends Model
             ->to( $endRange )
             ->first();
     }
+
+    public static function forLastRecentDay( DashboardDay $day )
+    {
+        $dashboardDay       =   DashboardDay::get()->filter( function( $dashboard ) use ( $day ) {
+            return $dashboard->id < $day->id;
+        });
+
+        return $dashboardDay->last();
+    }
 }

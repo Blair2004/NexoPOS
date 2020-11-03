@@ -1,10 +1,12 @@
 import Vue from 'vue';
+import TwitterCldr from 'twitter_cldr';
 
 declare const ns;
 declare const window;
 
-const nsCurrency    =   Vue.filter( 'currency', ( value ) => {
-    
+const nsCurrency    =   Vue.filter( 'currency', ( value, abbreviate, locale = 'en' ) => {
+    const formater  =   TwitterCldr.load( locale );
+    console.log( formater );
     const currency  =   new Intl.NumberFormat( ns.currency.ns_currency_position === 'before' ? 'en-US' : 'fr-FR', {
         currency: ns.currency.ns_currency_iso || 'USD',
         minimumFractionDigits: ns.currency.ns_currency_precision,
