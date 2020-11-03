@@ -30,10 +30,13 @@ import NsStockAdjustment from './pages/dashboard/products/ns-stock-adjustment.vu
 import NsPromptPopup     from './popups/ns-prompt-popup.vue';
 import NsAlertPopup      from './popups/ns-alert-popup.vue';
 import NsConfirmPopup    from './popups/ns-pos-confirm-popup.vue';
+import RawVueApexCharts from 'vue-apexcharts';
 
 declare const nsState;
 declare const nsScreen;
 declare const nsExtraComponents;
+
+const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
 (<any>window).nsDashboardAside  =   new Vue({
     el: '#dashboard-aside',
@@ -119,6 +122,7 @@ const components    =   {
     NsPromptPopup,
     NsAlertPopup,
     NsConfirmPopup,
+    VueApexCharts,
     ...nsExtraComponents, // add extra components provided by plugins.
 };
 

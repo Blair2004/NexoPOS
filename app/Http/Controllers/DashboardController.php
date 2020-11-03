@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Services\MenuService;
 use App\Models\ProductCategory;
 use App\Services\DateService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +77,74 @@ class DashboardController extends Controller
     public function getBestCashiers()
     {
         return [];
+    }
+
+    public function getWeekReports()
+    {
+        $weekMap = [
+            0 => [
+                'label' =>  __( 'Sunday' ),
+                'value' =>  'SU'
+            ],
+            1 => [
+                'label' =>  __( 'Monday' ),
+                'value' =>  'MO'
+            ],
+            2 => [
+                'label' =>  __( 'Tuesday' ),
+                'value' =>  'TU'
+            ],
+            3 => [
+                'label' =>  __( 'Wednesday' ),
+                'value' =>  'WE'
+            ],
+            4 => [
+                'label' =>  __( 'Thursday' ),
+                'value' =>  'TH'
+            ],
+            5 => [
+                'label' =>  __( 'Friday' ),
+                'value' =>  'FR'
+            ],
+            6 => [
+                'label' =>  __( 'Saturday' ),
+                'value' =>  'SA'
+            ],
+        ];
+
+        $currentWeekStarts      =   $this->dateService->copy()->startOfWeek();
+        $currentWeekEnds        =   $this->dateService->copy()->endOfWeek();
+        $lastWeekStarts         =   $currentWeekStarts->copy()->subDay()->startOfWeek();
+        $lastWeekEnds           =   $currentWeekStarts->copy()->subDay()->endOfWeek();
+
+        DashboardDay::from( $currentWeekStarts->toDateTimeString() )
+            ->to( $currentWeekEnds->toDateTimeString() )
+            ->get()
+            ->each( function( $report ) use ( &$weekMap ) {
+                if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ] ) ) {
+                    $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ]    =   [];
+                }
+
+                $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'current' ][ 'entries' ][]      =   $report;
+            });
+           
+        DashboardDay::from( $lastWeekStarts->toDateTimeString() )
+            ->to( $lastWeekEnds->toDateTimeString() )
+            ->get()
+            ->each( function( $report ) use ( &$weekMap ) {
+                if ( ! isset( $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ] ) ) {
+                    $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ]    =   [];
+                }
+
+                $weekMap[ Carbon::parse( $report->range_starts )->dayOfWeek ][ 'previous' ][ 'entries' ][]      =   $report;
+            });
+        
+
+        return [
+            'range_starts'  =>  $lastWeekStarts->toDateTimeString(),
+            'range_ends'    =>  $currentWeekEnds->toDateTimeString(),
+            'result'        =>  $weekMap,
+        ];
     }
 }
 

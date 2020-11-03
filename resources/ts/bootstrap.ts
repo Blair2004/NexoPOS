@@ -12,8 +12,6 @@ import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 
-Vue.use( VueRouter );
-
 declare const window;
 declare const ns;
 

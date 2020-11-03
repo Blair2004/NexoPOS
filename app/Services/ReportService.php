@@ -6,6 +6,7 @@ use App\Models\Expense;
 use App\Models\ExpenseHistory;
 use App\Models\Order;
 use App\Models\ProductHistory;
+use App\Models\Role;
 use Illuminate\Support\Facades\Log;
 
 class ReportService
