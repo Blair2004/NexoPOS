@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Fields\AuthLoginFields;
 use App\Fields\AuthRegisterFields;
+use App\Fields\CustomersAccountFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -51,6 +52,9 @@ class FormsProvider extends ServiceProvider
                 break;
                 case 'ns.register' :
                     return new AuthRegisterFields;
+                break;
+                case 'ns.customers-account' :
+                    return new CustomersAccountFields;
                 break;
             }
         }, 10, 2 );

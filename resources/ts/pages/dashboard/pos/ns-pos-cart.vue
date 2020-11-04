@@ -271,7 +271,7 @@ export default {
                     nsSnackBar.success( result.message ).subscribe();
                 }, ( error ) => {
                     popup.close();
-                    nsSnackBar.error( result.message ).subscribe();
+                    nsSnackBar.error( error.message ).subscribe();
                 });
             })
         },

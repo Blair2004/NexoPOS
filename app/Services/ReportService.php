@@ -44,6 +44,7 @@ class ReportService
         $this->computeUnpaidOrders( $previousReport, $todayReport );
         $this->computePaidOrders( $previousReport, $todayReport );
         $this->computePaidOrdersCount( $previousReport, $todayReport );
+        $this->computeOrdersTaxes( $previousReport, $todayReport );
         $this->computePartiallyPaidOrders( $previousReport, $todayReport );
         $this->computePartiallyPaidOrdersCount( $previousReport, $todayReport );
         $this->computeDiscounts( $previousReport, $todayReport );
@@ -54,6 +55,17 @@ class ReportService
         $todayReport->save();
 
         return $todayReport;
+    }
+
+    public function computeOrdersTaxes( $previousReport, $todayReport )
+    {
+        $timeRangeTaxes     =   Order::from( $this->dayStarts  )
+            ->to( $this->dayEnds )
+            ->paymentStatus( 'paid' )
+            ->sum( 'tax_value' );
+
+        $todayReport->day_taxes     =   $timeRangeTaxes;
+        $todayReport->total_taxes   =   ( $todayReport->total_taxes ?? 0 ) + $timeRangeTaxes;
     }
 
     /**

@@ -51,8 +51,8 @@ export default {
         popupCloser,
 
         submitHold() {
-            this.$popupParams.resolve({ title: this.title });
             this.$popup.close();
+            this.$popupParams.resolve({ title: this.title });
         }
     }
 }

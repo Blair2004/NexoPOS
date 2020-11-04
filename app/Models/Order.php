@@ -14,6 +14,10 @@ class Order extends Model
     const TYPE_DELIVERY     =   'delivery';
     const TYPE_TAKEAWAY     =   'takeaway';
 
+    const PAYMENT_PAID          =   'paid';
+    const PAYMENT_PARTIALLY     =   'partially_paid';
+    const PAYMENT_UNPAID        =   'unpaid';
+
     public $casts    =   [
         'created_at'    =>  DateCast::class
     ];

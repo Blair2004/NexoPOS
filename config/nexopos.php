@@ -10,6 +10,9 @@ return [
             ], [
                 'label'         =>  'Bank Transfer',
                 'identifier'    =>  'bank-payment'
+            ], [
+                'label'         =>  'Customer Account',
+                'identifier'    =>  'account-payment'
             ]
         ]
     ]

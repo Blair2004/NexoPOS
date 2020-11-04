@@ -159,7 +159,15 @@ class CurrencyService
      */
     public function get()
     {
-        return floatval( $this->value );
+        return $this->getRaw( $this->value );
+    }
+
+    public function getRaw( $value = null )
+    {
+        $val        =   bcmul( ( $value ?? $this->value ), 1, $this->decimal_precision );
+        preg_match( "#^([\+\-]|)([0-9]*)(\.([0-9]*?)|)(0*)$#", trim( $val ), $o );
+        $result     =   $o[1] . sprintf( '%d', $o[2] ) . ( $o[3] != '.' ? $o[3]:'' );
+        return strpos( $result, '.' ) === false ? intval( $result ) : floatval( $result );
     }
 
     /**

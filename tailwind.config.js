@@ -20,6 +20,7 @@ const heightDims = {
   '2/3-screen': '66.66vh',
   '1/3-screen': '33.33vh',
   'half': '50vh',
+  '95vh': '95vh'
 };
 
 const widthDims = {
@@ -44,6 +45,7 @@ const widthDims = {
   '2/3-screen': '66.66vw',
   '1/3-screen': '33.33vw',
   'half': '50vw',
+  '95vw': '95vw'
 }
 
 module.exports = {

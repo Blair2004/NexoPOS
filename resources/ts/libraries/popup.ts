@@ -41,7 +41,9 @@ export class Popup {
     }
 
     open( component, params = {} ) {
-        this.parentWrapper.style.filter   =   'blur(5px)';
+        const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
+        this.parentWrapper.style.filter     =   'blur(4px)';
+        body.style.filter                   =   'blur(6px)';
         
         this.container.setAttribute( 'class', 'absolute top-0 left-0 w-full h-full flex items-center justify-center is-popup' );
 
@@ -121,6 +123,13 @@ export class Popup {
          * primary selector once again.
          */
         this.parentWrapper.style.filter   =   'blur(0px)';
+        const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
+
+        console.log( 'closing' );
+
+        if ( document.querySelectorAll( '.is-popup' ).length <= 1 ) {
+            body.style.filter   =   'blur(0px)';
+        }
         
         this.popupBody.classList.remove( 'zoom-out-entrance' );
         this.popupBody.classList.add( 'zoom-in-exit' );

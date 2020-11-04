@@ -1,12 +1,14 @@
 <?php
 namespace App\Services;
 
+use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
+use App\Models\CustomerAccountHistory;
 
 class CustomerService
 {
@@ -248,5 +250,43 @@ class CustomerService
             'status'    =>  'success',
             'message'   =>  __( 'The customer has been deleted.' )
         ];
+    }
+
+    /**
+     * save customer transaction
+     * @param string operation
+     * @param int amount
+     * @return array
+     */
+    public function saveTransaction( $customer, $operation, $amount )
+    {
+        if ( $operation === CustomerAccountHistory::OPERATION_DEDUCT && $customer->account_amount - $amount < 0 ) {
+            throw new Exception( __( 'The operation will cause negative account for the customer.' ) );
+        }
+
+        $customerAccount                =   new CustomerAccountHistory;
+        $customerAccount->operation     =   $operation;
+        $customerAccount->customer_id   =   $customer->id;
+        $customerAccount->amount        =   $amount;
+        $customerAccount->author        =   Auth::id();
+        $customerAccount->save();
+
+        event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccount ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The customer account has been updated.' )
+        ];
+    }
+
+    public function updateCustomerAccount( CustomerAccountHistory $history )
+    {
+        if ( $history->operation === CustomerAccountHistory::OPERATION_DEDUCT ) {
+            $history->customer->account_amount      -=   $history->amount;
+        } else if ( $history->operation === CustomerAccountHistory::OPERATION_ADD ) {
+            $history->customer->account_amount      +=   $history->amount;
+        }
+
+        $history->customer->save();
     }
 }

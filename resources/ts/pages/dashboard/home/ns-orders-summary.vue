@@ -6,7 +6,7 @@
                 
             </div>
         </div>
-        <div class="head bg-gray-200 flex-auto flex h-56">
+        <div class="head bg-gray-100 flex-auto flex h-56">
             <table class="table flex-auto">
                 <thead>
                     <tr>
@@ -27,7 +27,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-2 bg-white -mx-4 flex flex-wrap">
+        <!-- <div class="p-2 bg-white -mx-4 flex flex-wrap">
             <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">
                 <span class="text-xs text-gray-600">Week Due</span>
                 <h2 class="text-3xl text-gray-700 font-bold">$ 35</h2>
@@ -44,7 +44,7 @@
                 <span class="text-xs text-gray-600">Week Expenses</span>
                 <h2 class="text-3xl text-gray-700 font-bold">$ 200</h2>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 <script>

@@ -14,6 +14,9 @@ Route::post( 'customers', [ CustomersController::class, 'post' ]);
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);
 Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ]);
 
+Route::post( 'customers/{customer}/account-history', [ CustomersController::class, 'accountTransaction' ])
+    ->middleware( 'ns.restrict:nexopos.customers.manage-account-history' );
+
 Route::get( 'customers-groups/{id?}', [ CustomersGroupsController::class, 'get' ]);
 Route::get( 'customers-groups/{id?}/customers', [ CustomersGroupsController::class, 'getCustomers' ]);
 Route::delete( 'customers-groups/{id}', [ CustomersGroupsController::class, 'delete' ]);

@@ -4,6 +4,7 @@ import resolveIfQueued from "@/libraries/popup-resolver";
 import { default as CashPayment } from "@/pages/dashboard/pos/payments/cash-payment";
 import { default as CreditCardPayment } from "@/pages/dashboard/pos/payments/creditcard-payment";
 import { default as BankPayment } from '@/pages/dashboard/pos/payments/bank-payment.vue';
+import { default as AccountPayment } from '@/pages/dashboard/pos/payments/account-payment.vue';
 import { Popup } from '@/libraries/popup';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import { nsSnackBar } from '@/bootstrap';
@@ -63,6 +64,9 @@ export default {
                 break;
                 case 'bank-payment':
                     this.currentPaymentComponent    =   BankPayment;
+                break;
+                case 'account-payment':
+                    this.currentPaymentComponent    =   AccountPayment;
                 break;
             }
         },

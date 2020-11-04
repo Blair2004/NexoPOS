@@ -590,6 +590,10 @@ export class POS {
         product.total_price         =   ( product.unit_price * product.quantity ) - product.discount;
     }
 
+    loadCustomer( id ) {
+        return nsHttpClient.get( `/api/nexopos/v4/customers/${id}` );
+    }
+
     defineSettings( settings ) {
         this._settings.next( settings );
     }

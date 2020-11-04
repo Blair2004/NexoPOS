@@ -5,6 +5,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
+use App\Jobs\ComputeCashierSalesJob;
 use App\Jobs\ComputeCustomerAccountJob;
 use App\Jobs\ComputeDayReportJob;
 use App\Services\OrdersService;
@@ -66,6 +67,9 @@ class OrderEventsSubscriber
 
         ComputeCustomerAccountJob::dispatch( $event )
             ->delay( now()->addSecond( 10 ) );
+
+        ComputeCashierSalesJob::dispatch( $event )
+            ->delay( now()->addSecond(10) );
     }
 
     /**
@@ -79,6 +83,9 @@ class OrderEventsSubscriber
 
         ComputeCustomerAccountJob::dispatch( $event )
             ->delay( now()->addSecond(5) );
+
+        ComputeCashierSalesJob::dispatch( $event )
+            ->delay( now()->addSecond(10) );
     }
 
     /**

@@ -13,6 +13,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\MenuService;
 use App\Models\ProductCategory;
+use App\Models\Role;
+use App\Models\User;
 use App\Services\DateService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +78,11 @@ class DashboardController extends Controller
 
     public function getBestCashiers()
     {
-        return [];
+        return Role::namespace( 'nexopos.store.cashier' )
+            ->users()
+            ->orderBy( 'total_sales', 'desc' )
+            ->limit(10)
+            ->get();
     }
 
     public function getWeekReports()

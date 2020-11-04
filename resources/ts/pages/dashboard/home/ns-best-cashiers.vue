@@ -7,57 +7,21 @@
             <div class="body">
                 <table class="table w-full">
                     <thead>
-                        <tr class="border-gray-300 border-b text-sm">
+                        <tr v-for="cashier of cashiers" :key="cashier.id" class="border-gray-300 border-b text-sm">
                             <th class="p-2">
                                 <div class="-mx-1 flex justify-start items-center">
                                     <div class="px-1">
                                         <div class="rounded-full bg-gray-600 h-6 w-6 "></div>
                                     </div>
                                     <div class="px-1 justify-center">
-                                        <h3 class="font-semibold text-gray-600 items-center">John Doe</h3>
+                                        <h3 class="font-semibold text-gray-600 items-center">{{ cashier.username }}</h3>
                                     </div>
                                 </div>
                             </th>
-                            <th class="flex justify-end text-green-700 p-2">$1412,55</th>
+                            <th class="flex justify-end text-green-700 p-2">{{ cashier.total_sales | currency( 'abbreviate' ) }}</th>
                         </tr>
-                        <tr class="border-gray-300 border-b text-sm">
-                            <th class="p-2">
-                                <div class="-mx-1 flex justify-start items-center">
-                                    <div class="px-1">
-                                        <div class="rounded-full bg-gray-600 h-6 w-6 "></div>
-                                    </div>
-                                    <div class="px-1 justify-center">
-                                        <h3 class="font-semibold text-gray-600 items-center">Nicolas Doe</h3>
-                                    </div>
-                                </div>
-                            </th>
-                            <th class="flex justify-end text-green-700 p-2">$1212,30</th>
-                        </tr>
-                        <tr class="border-gray-300 border-b text-sm">
-                            <th class="p-2">
-                                <div class="-mx-1 flex justify-start items-center">
-                                    <div class="px-1">
-                                        <div class="rounded-full bg-gray-600 h-6 w-6 "></div>
-                                    </div>
-                                    <div class="px-1 justify-center">
-                                        <h3 class="font-semibold text-gray-600 items-center">Anna Doe</h3>
-                                    </div>
-                                </div>
-                            </th>
-                            <th class="flex justify-end text-green-700 p-2">$1000,45</th>
-                        </tr>
-                        <tr class="border-gray-300 border-b text-sm">
-                            <th class="p-2">
-                                <div class="-mx-1 flex justify-start items-center">
-                                    <div class="px-1">
-                                        <div class="rounded-full bg-gray-600 h-6 w-6 "></div>
-                                    </div>
-                                    <div class="px-1 justify-center">
-                                        <h3 class="font-semibold text-gray-600 items-center">Paul Doe</h3>
-                                    </div>
-                                </div>
-                            </th>
-                            <th class="flex justify-end text-green-700 p-2">$900,70</th>
+                        <tr v-if="cashiers.length === 0">
+                            <th colspan="2">No result to display.</th>
                         </tr>
                     </thead>
                 </table>
@@ -67,6 +31,20 @@
 </template>
 <script>
 export default {
-   name: 'ns-best-customers' 
+    name: 'ns-best-customers',
+    data() {
+        return {
+            subscription: null,
+            cashiers: []
+        }
+    },
+    mounted() {
+        this.subscription    =   Dashboard.bestCashiers.subscribe( cashiers => {
+            this.cashiers   =   cashiers;
+        });
+    },
+    destroyed() {
+        this.subscription.unsubscribe();
+    }
 }
 </script>

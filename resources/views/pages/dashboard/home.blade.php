@@ -12,10 +12,10 @@
                 <div class="p-4 w-full flex lg:w-1/2">
                     <ns-orders-summary></ns-orders-summary>
                 </div>
-                <div class="p-4 w-full flex lg:w-1/4">
+                <div class="p-4 w-full flex lg:w-1/2">
                     <ns-best-customers></ns-best-customers>
                 </div>
-                <div class="p-4 w-full flex lg:w-1/4">
+                <div class="p-4 w-full flex lg:w-1/2">
                     <ns-best-cashiers></ns-best-cashiers>
                 </div>
             </div>

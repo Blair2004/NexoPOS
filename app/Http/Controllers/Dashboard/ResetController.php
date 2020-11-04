@@ -60,6 +60,8 @@ class ResetController extends DashboardController
 
     public function truncateWithDemo( Request $request )
     {
+        $this->truncateAllTables();
+
         if ( $request->input( 'mode' ) === 'wipe_plus_grocery' ) {
             Artisan::call( 'db:seed --class=FirstDemoSeeder' );
         } else {

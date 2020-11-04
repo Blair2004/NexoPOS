@@ -200,6 +200,8 @@ class OrdersService
                     ->subtractBy($order->discount)
                     ->get();
                 $order->gross_total     =   $this->currencyService->define($order->subtotal)
+                    ->get();
+                $order->net_total     =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($order->discount)
                     ->get();
                 break;
@@ -213,6 +215,8 @@ class OrdersService
                     ->subtractBy($discountValue)
                     ->get();
                 $order->gross_total =   $this->currencyService->define($order->subtotal)
+                    ->get();
+                $order->net_total =   $this->currencyService->define($order->subtotal)
                     ->subtractBy($discountValue)
                     ->get();
                 break;
@@ -227,7 +231,7 @@ class OrdersService
      */
     private function __getShippingFee($fields)
     {
-        return $fields['shipping'] ?? 0;
+        return $this->currencyService->getRaw( $fields['shipping'] ?? 0 );
     }
 
     /**
@@ -248,14 +252,14 @@ class OrdersService
             } else if ($fields['discount_type'] === 'flat') {
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
-                    return floatval($product['quantity']) * floatval($product['sale_price']);
+                    return $this->currencyService->getRaw( floatval($product['quantity']) * floatval($product['sale_price']) );
                 })->reduce(function ($before, $after) {
                     return $before + $after;
                 });
 
                 $shippingFees       =   $this->__getShippingFee($fields);
 
-                if ($fields['discount'] > $productsTotal + $shippingFees) {
+                if ( $fields['discount'] > $productsTotal + $shippingFees) {
                     throw new NotAllowedException([
                         'status'    =>  'failed',
                         'message'   =>  __('A discount cannot exceed the total value of an order.')
@@ -354,12 +358,12 @@ class OrdersService
             $orderPayment               =   new OrderPayment;
             $orderPayment->order_id     =   $order->id;
             $orderPayment->identifier   =   $payment['identifier'];
-            $orderPayment->value        =   $payment['amount'];
+            $orderPayment->value        =   $this->currencyService->getRaw( $payment['amount'] );
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
         }
 
-        $order->tendered    =   collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'amount' ] ) )->sum();
+        $order->tendered    =   $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'amount' ] ) )->sum() );
     }
 
     /**
@@ -381,9 +385,9 @@ class OrdersService
         
         $totalPayments  =   0;
 
-        $total          =   collect( $fields[ 'products' ] )->map(function ($product) {
+        $total          =   $this->currencyService->getRaw( collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum() + $this->__getShippingFee($fields);
+        })->sum() + $this->__getShippingFee($fields) );
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
@@ -462,7 +466,7 @@ class OrdersService
             ->get();
 
         $order->tax_value       =   $taxes;
-        $order->net_total       =   $order->total;
+        $order->gross_total     =   $order->total;
 
         /**
          * compute change
@@ -474,8 +478,8 @@ class OrdersService
         /**
          * compute gross total
          */
-        $order->gross_total     =   $this->currencyService->define( $order->subtotal )
-            ->subtractBy($taxes)
+        $order->net_total     =   $this->currencyService->define( $order->subtotal )
+            ->subtractBy( $taxes )
             ->get();
 
         return $order;
@@ -502,7 +506,7 @@ class OrdersService
                 'unit_id'       =>  $product['unit_id'],
                 'product_id'    =>  $product['product']->id,
                 'quantity'      =>  $product['quantity'],
-                'unit_price'    =>  $product['unit_price'],
+                'unit_price'    =>  $this->currencyService->getRaw( $product['unit_price'] ),
                 'total_price'   =>  $this->currencyService->define($product['unit_price'])
                     ->multiplyBy($product['quantity'])
                     ->get()
@@ -532,7 +536,7 @@ class OrdersService
              */
             if ( $product['product']['tax_type'] !== 'disabled' && ! empty( $product['product']->tax_group_id )) {
                 $orderProduct->tax_group_id         =   $product['product']->tax_group_id;
-                $orderProduct->tax_type             =   $product['product']->tax_type;
+                $orderProduct->tax_type             =   $this->currencyService->getRaw( $product['product']->tax_type );
                 $orderProduct->tax_value            =   $product[ 'tax_value' ];
             }
 
@@ -785,19 +789,19 @@ class OrdersService
          * his initial state
          */
         $order->customer_id             =   $fields['customer_id'];
-        $order->shipping                =   $fields[ 'shipping' ] ?? 0; // if shipping is not provided, we assume it's free
-        $order->subtotal                =   $fields[ 'subtotal' ] ?? $this->computeSubTotal( $fields, $order );
+        $order->shipping                =   $this->currencyService->getRaw( $fields[ 'shipping' ] ?? 0 ); // if shipping is not provided, we assume it's free
+        $order->subtotal                =   $this->currencyService->getRaw( $fields[ 'subtotal' ] ?? 0 ) ?: $this->computeSubTotal( $fields, $order );
         $order->discount_type           =   $fields['discount_type'] ?? null;
-        $order->discount_percentage     =   $fields['discount_percentage'] ?? 0;
-        $order->discount                =   $fields['discount'] ?? $this->computeDiscount( $fields, $order );
-        $order->total                   =   $fields[ 'total' ] ?? $this->computeTotal( $fields, $order );
+        $order->discount_percentage     =   $this->currencyService->getRaw( $fields['discount_percentage'] ?? 0 );
+        $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeDiscount( $fields, $order );
+        $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
         $order->author                  =   Auth::id();
         $order->title                   =   $fields[ 'title' ] ?? null;
-        $order->tax_value               =   $fields[ 'tax_value' ] ?? $this->computeOrderTaxValue( $fields, $order );
+        $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 ) ?: $this->computeOrderTaxValue( $fields, $order );
         $order->code                    =   $this->generateOrderCode();
         $order->save();
 
@@ -812,27 +816,27 @@ class OrdersService
     public function computeDiscount( $fields, $order )
     {
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return ( floatval( $fields[ 'subtotal' ] ?? $order->subtotal ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100;
+            return $this->currencyService->getRaw( ( floatval( $fields[ 'subtotal' ] ?? $order->subtotal ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100 );
         } else {
-            return $fields[ 'discount' ] ?? 0;
+            return $this->currencyService->getRaw( $fields[ 'discount' ] ?? 0 );
         }
     }
 
     public function computeOrderTaxValue( $fields, $order )
     {
-        return $fields[ 'products' ]->map( fn( $product ) => $product[ 'tax_value' ] )->sum();
+        return $this->currencyService->getRaw( $fields[ 'products' ]->map( fn( $product ) => $product[ 'tax_value' ] )->sum() );
     }
 
     public function computeTotal( $fields, $order )
     {
-        return ( $order->subtotal - $order->discount ) + $order->shipping;
+        return $this->currencyService->getRaw( ( $order->subtotal - $order->discount ) + $order->shipping );
     }
 
     public function computeSubTotal( $fields, $order )
     {
-        return collect( $fields[ 'products' ] )
+        return $this->currencyService->getRaw( collect( $fields[ 'products' ] )
             ->map( fn( $product ) => floatval( $product[ 'total_price' ] ) )
-            ->sum();
+            ->sum() );
     }
 
     private function __customerIsDefined($fields)
@@ -1030,6 +1034,7 @@ class OrdersService
      * shipping all together.
      * @param Order
      * @return array repsonse
+     * @todo test required
      */
     public function refreshOrder(Order $order)
     {

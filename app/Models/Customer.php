@@ -43,6 +43,11 @@ class Customer extends Model
         return $this->hasOne( CustomerShippingAddress::class, 'customer_id' );
     }
 
+    public function account_history()
+    {
+        return $this->hasMany( CustomerAccountHistory::class, 'customer_id' );
+    }
+
     /**
      * Get customer using email
      * @param Query

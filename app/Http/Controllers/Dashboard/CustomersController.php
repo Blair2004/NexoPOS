@@ -14,9 +14,17 @@ use App\Services\CustomerService;
 
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
+use App\Models\CustomerAccountHistory;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 
 class CustomersController extends DashboardController
 {
+    /**
+     * @var CustomerService
+     */
+    protected $customerService;
+
     public function __construct(
         CustomerService $customerService
     )
@@ -49,8 +57,13 @@ class CustomersController extends DashboardController
      * get list of avialable customers
      * @return json response
      */
-    public function get( Customer $customer )
+    public function get( $customer_id = null )
     {
+        $customer   =   Customer::find( $customer_id );
+        if ( $customer instanceof Customer ) {
+            return $customer;
+        }
+
         return $this->customerService->get();
     }
 
@@ -222,7 +235,7 @@ class CustomersController extends DashboardController
             'title'         =>  __( 'Edit Coupon' ),
             'description'   =>  __( 'Editing an existing coupon.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
-            'returnUrl'    =>  url( '/dashboard/customers/coupons' ),
+            'returnUrl'     =>  url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'PUT',
             'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);
@@ -238,6 +251,24 @@ class CustomersController extends DashboardController
             ->get();
 
         return $customers;
+    }
+
+    public function accountTransaction( Customer $customer, Request $request )
+    {
+        $validation     =   Validator::make( $request->all(), [
+            'operation'     =>  'required',
+            'amount'        =>  'required|integer'
+        ]);
+
+        if ( $validation->fails() ) {
+            throw new Exception( __( 'Invalid Request.' ) );
+        }
+
+        return $this->customerService->saveTransaction(
+            $customer,
+            $request->input( 'operation' ),
+            $request->input( 'amount' )
+        );
     }
 }
 

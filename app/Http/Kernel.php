@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -71,5 +72,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'ns.check-migrations'    =>  CheckMigrationStatus::class,
         'ns.check-application-health'   =>  CheckApplicationHealthMiddleware::class,
+        'ns.restrict'  =>   ProtectRoutePermissionMiddleware::class,
     ];
 }
