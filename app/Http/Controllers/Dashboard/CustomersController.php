@@ -59,7 +59,8 @@ class CustomersController extends DashboardController
      */
     public function get( $customer_id = null )
     {
-        $customer   =   Customer::find( $customer_id );
+        $customer   =   Customer::with( 'group' )->find( $customer_id );
+
         if ( $customer instanceof Customer ) {
             return $customer;
         }
@@ -267,8 +268,14 @@ class CustomersController extends DashboardController
         return $this->customerService->saveTransaction(
             $customer,
             $request->input( 'operation' ),
-            $request->input( 'amount' )
+            $request->input( 'amount' ),
+            $request->input( 'description' )
         );
+    }
+
+    public function getGroup( Customer $customer )
+    {
+        return $customer->group;
     }
 }
 

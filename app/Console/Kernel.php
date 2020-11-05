@@ -2,7 +2,9 @@
 
 namespace App\Console;
 
+use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ExecuteExpensesJob;
+use App\Jobs\PurgeOrderStorageJob;
 use App\Jobs\TaskSchedulingPingJob;
 use App\Services\ModulesService;
 use Illuminate\Console\Scheduling\Schedule;
@@ -50,6 +52,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->job( new TaskSchedulingPingJob )->hourly();
         $schedule->job( new ExecuteExpensesJob )->daily();
+        $schedule->job( new PurgeOrderStorageJob )->daily();
+        $schedule->job( new ClearHoldOrdersJob )->daily();
     }
 
     /**

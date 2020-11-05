@@ -164,15 +164,15 @@ export default {
              */
             promise.then( result => {
                 POS.loadCustomer( customer.id )
-                    .subscribe( customer => {
-                        this.customer   =   customer;
-                    })
+                    .subscribe( _customer => {
+                        POS.selectCustomer( _customer );
+                    });
             })
         },
 
         handleSavedCustomer( response ) {
             nsSnackBar.success( response.message ).subscribe();
-            POS.definedCustomer( response.entry );
+            POS.selectCustomer( response.entry );
             this.$popup.close();
         }
     }

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Fields\AuthLoginFields;
 use App\Fields\AuthRegisterFields;
 use App\Fields\CustomersAccountFields;
+use App\Fields\LayawayFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -55,6 +56,9 @@ class FormsProvider extends ServiceProvider
                 break;
                 case 'ns.customers-account' :
                     return new CustomersAccountFields;
+                break;
+                case 'ns.layaway' :
+                    return new LayawayFields;
                 break;
             }
         }, 10, 2 );

@@ -8,8 +8,9 @@ class CustomerAccountHistory extends Model
 {
     use HasFactory;
 
-    const OPERATION_DEDUCT  =   'deduct';
-    const OPERATION_ADD     =   'add';
+    const OPERATION_DEDUCT      =   'deduct';
+    const OPERATION_ADD         =   'add';
+    const OPERATION_PAYMENT     =   'payment';
 
     protected $table    =   'nexopos_' . 'customers_account_history';
 

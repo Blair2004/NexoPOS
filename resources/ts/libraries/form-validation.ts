@@ -58,6 +58,11 @@ export default class FormValidation {
         return this.checkField( field );
     }
 
+    fieldsValid( fields ) {
+        return ! ( fields.map( field => field.errors && field.errors.length > 0 )
+            .filter( f => f ).length > 0 );
+    }
+
     createFields( fields ) {
         return fields.map( field => {
             field.type      =   field.type      || 'text',
@@ -252,7 +257,6 @@ export default class FormValidation {
     }
 
     triggerFielsErrors( fields, data ) {
-        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {

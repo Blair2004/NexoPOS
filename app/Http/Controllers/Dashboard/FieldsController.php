@@ -21,7 +21,7 @@ class FieldsController extends DashboardController
         $instance      =       Hook::filter( 'ns.fields', $resource, $identifier );
 
         if ( ! $instance instanceof FieldsService ) {
-            throw new Exception( sprintf( __( '"%s" is not an instance of "FieldsService"') ) );
+            throw new Exception( sprintf( __( '"%s" is not an instance of "FieldsService"' ), $resource ) );
         }
         
         return $instance->get( $identifier );

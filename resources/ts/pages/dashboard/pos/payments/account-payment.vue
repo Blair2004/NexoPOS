@@ -31,7 +31,14 @@
         <div class="px-2 pb-2">
             <div class="-mx-2 flex flex-wrap">
                 <div class="pl-2 pr-1 flex-auto">
-                    <ns-numpad @changed="handleChange( $event )" @next="proceedAddingPayment( $event )"></ns-numpad>
+                    <ns-numpad @changed="handleChange( $event )" @next="proceedAddingPayment( $event )">
+                        <template v-slot:numpad-footer>
+                            <div
+                            @click="makeFullPayment()"
+                            class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
+                            Full Payment</div>
+                        </template>
+                    </ns-numpad>
                 </div>
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
@@ -58,12 +65,15 @@
 </template>
 <script>
 import { default as nsNumpad } from "@/components/ns-numpad";
+import { nsSnackBar } from '@/bootstrap';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 
 export default {
     name: "ns-account-payment",
     components: {
         nsNumpad
     },
+    props: [ 'identifier', 'label' ],
     data() {
         return {
             subscription: null,
@@ -76,7 +86,47 @@ export default {
             this.screenValue    =   event;
         },
         proceedAddingPayment( event ) {
-            console.log( event );
+            const amount    =   parseFloat( event );
+            const payments  =   this.order.payments;
+
+            if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
+                return nsSnackBar.error( 'The customer account can only be used once per order. Consider deleting the previously used payment.' )
+                    .subscribe();
+            }
+
+            if ( amount > this.order.customer.account_amount ) {
+                return nsSnackBar.error( 'Not enough funds to add {amount} as a payment. Available balance {balance}.'
+                    .replace( '{amount}', this.$options.filters.currency( amount ) ) 
+                    .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) ) 
+                ).subscribe();
+            }
+
+            POS.addPayment({
+                amount,
+                identifier: 'account-payment',
+                selected: false,
+                label: this.label,
+                readonly: false,
+            });
+
+            this.order.customer.account_amount  -=  amount;
+            POS.selectCustomer( this.order.customer );
+
+            this.$emit( 'submit' );
+        },
+        proceedFullPayment() {
+            this.proceedAddingPayment( this.order.total );
+        },
+        makeFullPayment() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Full Payment',
+                message: 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?'.replace( '{amount}', this.$options.filters.currency( this.order.total ) ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.proceedFullPayment();
+                    }
+                }
+            });
         },
     },
     mounted() {

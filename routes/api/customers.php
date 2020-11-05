@@ -9,6 +9,7 @@ Route::delete( 'customers/using-email/{email}', [ CustomersController::class, 'd
 Route::get( 'customers/{customer?}', [ CustomersController::class, 'get' ])->where([ 'customer' => '[0-9]+' ]);
 Route::get( 'customers/{customer}/orders', [ CustomersController::class, 'getOrders' ]);
 Route::get( 'customers/{customer}/addresses', [ CustomersController::class, 'getAddresses' ]);
+Route::get( 'customers/{customer}/group', [ CustomersController::class, 'getGroup' ]);
 Route::get( 'customers/schema', [ CustomersController::class, 'schema' ]);
 Route::post( 'customers', [ CustomersController::class, 'post' ]);
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);

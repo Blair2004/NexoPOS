@@ -8,7 +8,11 @@ class OrderPayment extends Model
 {
     use HasFactory;
     
-    protected $table    =   'nexopos_' . 'orders_payments';
+    protected $table        =   'nexopos_' . 'orders_payments';
+
+    const PAYMENT_CASH      =   'cash-payment';
+    const PAYMENT_ACCOUNT   =   'account-payment';
+    const PAYMENT_BANK      =   'bank-payment';
 
     public function order()
     {

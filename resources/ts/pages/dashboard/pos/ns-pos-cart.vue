@@ -213,7 +213,6 @@ export default {
     mounted() {
         this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
         this.orderSubscribe  =   POS.order.subscribe( order => {
-            console.log( 'has subscribed orders' );
             this.order   =   order;
         });
         this.productSubscribe  =   POS.products.subscribe( products => {

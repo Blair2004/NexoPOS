@@ -136,7 +136,7 @@ class CustomerGroupCrud extends CrudService
                             'type'          =>  'number',
                             'name'          =>  'minimal_credit_payment',
                             'label'         =>  __( 'Minimum Credit Amount' ),
-                            'value'         =>  $entry->minimum_credit_payement ?? '',
+                            'value'         =>  $entry->minimal_credit_payment ?? '',
                             'description'   =>  __( 'Determine in percentage, what is the first minimum credit payment made by all customers on the group, in case of credit order.' )
                         ], [
                             'type'          =>  'textarea',
@@ -158,6 +158,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        $inputs[ 'minimal_credit_payment' ]   =   $inputs[ 'minimal_credit_payment' ] === null ? 0 : $inputs[ 'minimal_credit_payment' ];
         return $inputs;
     }
 
@@ -168,6 +169,7 @@ class CustomerGroupCrud extends CrudService
      */
     public function filterPutInputs( $inputs, CustomerGroup $entry )
     {
+        $inputs[ 'minimal_credit_payment' ]   =   $inputs[ 'minimal_credit_payment' ] === null ? 0 : $inputs[ 'minimal_credit_payment' ];
         return $inputs;
     }
 

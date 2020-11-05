@@ -2,32 +2,34 @@
 
 namespace App\Services;
 
-use App\Events\OrderAfterCreatedEvent;
-use App\Models\Order;
-use App\Services\Options;
 use Illuminate\Support\Facades\DB;
-use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Services\DateService;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\NotAllowedException;
+use App\Events\OrderBeforeDeleteProductEvent;
+use App\Events\OrderAfterProductRefundedEvent;
+use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderBeforeDeleteEvent;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\OrderAddress;
 use App\Models\OrderPayment;
 use App\Models\OrderProduct;
-use App\OrderBeforeDeleteEvent;
+use App\Models\Customer;
+use App\Models\CustomerAccountHistory;
+use App\Models\DashboardDay;
+use App\Models\OrderStorage;
+use App\Models\ProductHistory;
+use App\Models\ProductUnitQuantity;
+use App\Models\Unit;
+use App\Services\Options;
+use App\Services\DateService;
 use App\Services\MapperService;
 use App\Services\ProductService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
-use App\Exceptions\NotFoundException;
-use App\Models\ProductUnitQuantity;
-use App\Exceptions\NotAllowedException;
-use App\Events\OrderBeforeDeleteProductEvent;
-use App\Events\OrderAfterProductRefundedEvent;
-use App\Models\DashboardDay;
-use App\Models\OrderStorage;
-use App\Models\ProductHistory;
-use App\Models\Unit;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class OrdersService
 {
@@ -92,7 +94,7 @@ class OrdersService
          * @param array $payments
          * @param string $paymentStatus
          */
-        extract( $this->__checkOrderPayments( $fields, $order ) );
+        extract( $this->__checkOrderPayments( $fields, $order, $customer ) );
         
         /**
          * As no payment might be provided
@@ -132,7 +134,7 @@ class OrdersService
          * method, then we can save that and attach it the ongoing order.
          */
         if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
-            $this->__saveOrderPayments($order, $payments);
+            $this->__saveOrderPayments( $order, $payments, $customer );
         }
 
         /**
@@ -344,7 +346,7 @@ class OrdersService
         }
     }
 
-    private function __saveOrderPayments($order, $payments)
+    private function __saveOrderPayments($order, $payments, $customer )
     {
         /**
          * As we're about to record new payments,
@@ -361,6 +363,18 @@ class OrdersService
             $orderPayment->value        =   $this->currencyService->getRaw( $payment['amount'] );
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
+
+            /**
+             * When the customer is making some payment
+             * we store it on his history.
+             */
+            if ( $payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
+                $this->customerService->saveTransaction( 
+                    $customer, 
+                    CustomerAccountHistory::OPERATION_PAYMENT, 
+                    $payment[ 'amount' ] 
+                );
+            }
         }
 
         $order->tendered    =   $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'amount' ] ) )->sum() );
@@ -373,13 +387,13 @@ class OrdersService
      * @param Collection $products
      * @param array field
      */
-    private function __checkOrderPayments( $fields, Order $order = null )
+    private function __checkOrderPayments( $fields, Order $order = null, Customer $customer  )
     {
         /**
          * we shouldn't process order if while
          * editing an order it seems that order is already paid.
          */
-        if ( $order !== null && $order->payment_status === 'paid' ) {
+        if ( $order !== null && $order->payment_status === Order::PAYMENT_PAID ) {
             throw new NotAllowedException( __( 'Unable to edit an order that is completely paid.' ) );
         }
         
@@ -393,10 +407,22 @@ class OrdersService
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {
+                
+
                 if (in_array($payment['identifier'], array_keys($allowedPaymentsGateways))) {
+                    
+                    /**
+                     * check if the customer account are enough for the account-payment
+                     * when that payment is provided
+                     */
+                    if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'amount' ] ) ) {
+                        throw new NotAllowedException( __( 'The customer account funds are\'nt enough to process the payment.' ) );
+                    }
+
                     $totalPayments  =   $this->currencyService->define($totalPayments)
                         ->additionateBy($payment['amount'])
                         ->get();
+
                 } else {
                     throw new NotAllowedException( __('Unable to proceed. One of the submitted payment type is not supported.') );
                 }
@@ -428,13 +454,13 @@ class OrdersService
         }
 
         if ($totalPayments >= $total) {
-            $paymentStatus      =   'paid';
+            $paymentStatus      =   Order::PAYMENT_PAID;
         } else if ($totalPayments < $total && $totalPayments > 0) {
-            $paymentStatus      =   'partially_paid';
-        } else if ($totalPayments === 0 && $fields[ 'payment_status' ] !== 'hold' ) {
-            $paymentStatus      =   'unpaid';
-        } else if ( $totalPayments === 0 && $fields[ 'payment_status' ] === 'hold' ) {
-            $paymentStatus      =   'hold';
+            $paymentStatus      =   Order::PAYMENT_PARTIALLY;
+        } else if ($totalPayments === 0 && $fields[ 'payment_status' ] !== Order::PAYMENT_HOLD ) {
+            $paymentStatus      =   Order::PAYMENT_UNPAID;
+        } else if ( $totalPayments === 0 && $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) {
+            $paymentStatus      =   Order::PAYMENT_HOLD;
         }
 
         return [

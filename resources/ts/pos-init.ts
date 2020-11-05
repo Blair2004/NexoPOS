@@ -7,7 +7,7 @@ import { OrderType } from "./interfaces/order-type";
 import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
-import { nsHttpClient, nsSnackBar } from "./bootstrap";
+import { nsEvent, nsHttpClient, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { timeStamp } from "console";
@@ -23,6 +23,8 @@ const NsPosDashboardButton      =   (<any>window).NsPosDashboardButton         =
 const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton      =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button' ).default;
 const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
 const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
+const NsAlertPopup              =   (<any>window).NsAlertPopup                 =   require( './popups/ns-' + 'alert' + '-popup' ).default;
+const NsLayawayPopup            =   (<any>window).NsLayawayPopup               =   require( './popups/ns-pos-' + 'layaway' + '-popup' ).default;
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -214,22 +216,93 @@ export class POS {
         const index     =   order.payments.indexOf( payment );
         order.payments.splice( index, 1 );
         this._order.next( order );
-        
+
+        nsEvent.emit({ 
+            identifier: 'ns.pos.remove-payment',
+            value: payment
+        });
+
+        this.updateCustomerAccount( payment );
         this.computePaid();
     }
 
-    submitOrder() {
-        return new Promise( ( resolve, reject ) => {
-            const order     =   <Order>this.order.getValue();
+    updateCustomerAccount( payment: Payment ) {
+        if ( payment.identifier === 'account-payment' ) {
+            const customer              =   this.order.getValue().customer;
+            customer.account_amount     +=  payment.amount;
+            this.selectCustomer( customer );
+        }
+    }
 
-            if ( order.payment_status === undefined && order.payments.length  === 0 ) {
-                const message   =   'Please provide a payment before proceeding.';
-                return reject({ status: 'failed', message  });
+    /**
+     * This will check if the order can be saved as layway.
+     * might request additionnal information through a popup.
+     * @param order Order
+     */
+    canProceedAsLaidAway( order: Order ) {
+        return new Promise( async ( resolve, reject ) => {
+            const minimalPaymentPercent     =   order.customer.group.minimal_credit_payment;
+            const expected                  =   ( order.total * minimalPaymentPercent ) / 100;
+
+            /**
+             * checking order details
+             * installments & payment date
+             */
+            if ( order.expected_payment_date === undefined ) {
+                try {
+                    await new Promise( ( resolve, reject ) => {
+                        Popup.show( NsLayawayPopup, { order, reject, resolve });
+                    });
+                } catch( exception ) {
+                    return reject( exception );
+                }
             }
 
-            if ( order.total > order.tendered && this.options.getValue().ns_orders_allow_partial === 'no' ) {
-                const message   =   'Partially paid orders are disabled.';
+            if ( order.tendered < expected ) {
+                const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
+                Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
                 return reject({ status: 'failed', message });
+            }
+
+            return resolve({ status: 'success', message: 'Can Proceed as layaway' });
+        });
+    }
+
+    submitOrder() {
+        return new Promise( async ( resolve, reject ) => {
+            const order             =   <Order>this.order.getValue();
+            const minimalPayment    =   order.customer.group.minimal_credit_payment;
+
+            /**
+             * this verification applies only if the 
+             * order is not "hold".
+             */
+            if ( order.payment_status !== 'hold' ) {
+                if ( order.payments.length  === 0 ) {
+                    if ( this.options.getValue().ns_orders_allow_unpaid === 'no' ) {
+                        const message   =   'Please provide a payment before proceeding.';
+                        return reject({ status: 'failed', message  });
+                    } else if ( minimalPayment > 0 ) {
+                        try {
+                            await this.canProceedAsLaidAway( order );
+                        } catch( exception ) {
+                            return reject( exception );
+                        }
+                    }
+                }
+    
+                if ( order.total > order.tendered ) {
+                    if ( this.options.getValue().ns_orders_allow_partial === 'no' ) {
+                        const message   =   'Partially paid orders are disabled.';
+                        return reject({ status: 'failed', message });
+                    } else if ( minimalPayment > 0 ) {
+                        try {
+                            await this.canProceedAsLaidAway( order );
+                        } catch( exception ) {
+                            return reject( exception );
+                        }
+                    }
+                }
             }
 
             if ( ! this._isSubmitting ) {
@@ -253,7 +326,6 @@ export class POS {
     }
 
     loadOrder( order_id ) {
-        console.log( order_id );
         nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
             .subscribe( ( order: any ) => {
                 /**
@@ -345,11 +417,21 @@ export class POS {
         this._paymentsType.next( payments );
     }
 
-    definedCustomer( customer ) {
+    selectCustomer( customer ) {
         const order         =   this.order.getValue();
         order.customer      =   customer;
         order.customer_id   =   customer.id
         this.order.next( order );
+
+        /**
+         * asynchronously we can load
+         * customer meta data
+         */
+        nsHttpClient.get( `/api/nexopos/v4/customers/${customer.id}/group` )
+            .subscribe( group => {
+                order.customer.group      =   group;
+                this.order.next( order );
+            });
     }
 
     updateCart( current, update ) {

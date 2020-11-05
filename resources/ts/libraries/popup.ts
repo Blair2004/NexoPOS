@@ -125,14 +125,13 @@ export class Popup {
         this.parentWrapper.style.filter   =   'blur(0px)';
         const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
 
-        console.log( 'closing' );
-
         if ( document.querySelectorAll( '.is-popup' ).length <= 1 ) {
             body.style.filter   =   'blur(0px)';
         }
         
         this.popupBody.classList.remove( 'zoom-out-entrance' );
         this.popupBody.classList.add( 'zoom-in-exit' );
+        this.container.classList.remove( 'is-popup' );
 
         setTimeout( () => {
             this.container.remove();

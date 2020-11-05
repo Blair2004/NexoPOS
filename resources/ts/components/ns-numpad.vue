@@ -9,10 +9,7 @@
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
-        <div
-            @click="makeFullPayment()"
-            class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
-            Full Payment</div>
+        <slot name="numpad-footer"></slot>
     </div>
 </template>
 <script>

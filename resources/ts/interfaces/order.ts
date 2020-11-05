@@ -26,6 +26,8 @@ export interface Order {
     shipping_type: 'flat' | 'percentage';
     products: OrderProduct[], 
     payments: Payment[],
+    expected_payment_date?: string;
+    total_installments?: number;
     addresses: {
         shipping: Address,
         billing: Address,

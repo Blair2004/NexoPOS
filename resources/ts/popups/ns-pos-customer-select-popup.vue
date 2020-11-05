@@ -112,7 +112,7 @@ export default {
              * define the customer using the default
              * POS object;
              */
-            POS.definedCustomer( customer );
+            POS.selectCustomer( customer );
             this.resolveIfQueued( customer );
         },
         searchCustomer( value ) {

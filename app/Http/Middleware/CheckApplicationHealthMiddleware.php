@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\NotificationsEnum;
 use App\Events\BeforeBootEvent;
+use App\Jobs\TaskSchedulingPingJob;
 use App\Models\Role;
 use App\Services\DateService;
 use App\Services\NotificationService;
@@ -37,6 +38,12 @@ class CheckApplicationHealthMiddleware
 
             if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
                 $this->emitMisconfigurationNotification();
+
+                /**
+                 * force dispatching the job
+                 * to force check the tasks status.
+                 */
+                TaskSchedulingPingJob::dispatch()->delay( now() );
             }
         }
 

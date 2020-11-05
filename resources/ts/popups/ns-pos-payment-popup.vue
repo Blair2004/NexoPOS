@@ -140,7 +140,7 @@ export default {
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-y-auto" v-if="! showPayment">
-                        <component @submit="submitOrder()" :identifier="activePayment.identifier" v-bind:is="currentPaymentComponent"></component>
+                        <component @submit="submitOrder()" :label="activePayment.label" :identifier="activePayment.identifier" v-bind:is="currentPaymentComponent"></component>
                     </div>
                     <div class="flex flex-auto overflow-y-auto p-2 flex-col" v-if="showPayment">
                         <h3 class="text-center font-bold py-2 text-gray-700">List Of Payments</h3>
@@ -171,7 +171,10 @@ export default {
                         </div>
                     </div>
                     <div>
-                        <ns-button @click="submitOrder()" type="info">Submit Payment</ns-button>
+                        <ns-button @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
+                            <span v-if="order.tendered >= order.total"><i class="las la-cash-register"></i> Submit Payment</span>
+                            <span v-if="order.tendered < order.total"><i class="las la-bookmark"></i> Layaway</span>
+                        </ns-button>
                     </div>
                 </div>
             </div>

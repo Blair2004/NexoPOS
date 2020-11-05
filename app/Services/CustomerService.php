@@ -258,7 +258,7 @@ class CustomerService
      * @param int amount
      * @return array
      */
-    public function saveTransaction( $customer, $operation, $amount )
+    public function saveTransaction( $customer, $operation, $amount, $description = '' )
     {
         if ( $operation === CustomerAccountHistory::OPERATION_DEDUCT && $customer->account_amount - $amount < 0 ) {
             throw new Exception( __( 'The operation will cause negative account for the customer.' ) );
@@ -268,6 +268,7 @@ class CustomerService
         $customerAccount->operation     =   $operation;
         $customerAccount->customer_id   =   $customer->id;
         $customerAccount->amount        =   $amount;
+        $customerAccount->description   =   $description;
         $customerAccount->author        =   Auth::id();
         $customerAccount->save();
 
@@ -281,11 +282,14 @@ class CustomerService
 
     public function updateCustomerAccount( CustomerAccountHistory $history )
     {
-        if ( $history->operation === CustomerAccountHistory::OPERATION_DEDUCT ) {
+        if ( in_array( $history->operation, [ 
+            CustomerAccountHistory::OPERATION_DEDUCT,
+            CustomerAccountHistory::OPERATION_PAYMENT
+        ] ) ) {
             $history->customer->account_amount      -=   $history->amount;
         } else if ( $history->operation === CustomerAccountHistory::OPERATION_ADD ) {
             $history->customer->account_amount      +=   $history->amount;
-        }
+        } 
 
         $history->customer->save();
     }

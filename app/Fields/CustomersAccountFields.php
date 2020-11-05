@@ -24,6 +24,11 @@ class CustomersAccountFields extends FieldsService
                 'description'   =>  __( 'Determine the amount of the transaction.' ),
                 'name'          =>  'amount',
                 'type'          =>  'number',
+            ], [
+                'label'         =>  __( 'Description' ),
+                'description'   =>  __( 'Further details about the transaction.' ),
+                'name'          =>  'description',
+                'type'          =>  'textarea',
             ]
         ];
         
