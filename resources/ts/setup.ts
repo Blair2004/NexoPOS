@@ -20,6 +20,8 @@ const routes    =   [
     { path: '/configuration', component: SetupConfigurationComponent },
 ];
 
+Vue.use( VueRouter );
+
 const nsRouter    =   new VueRouter({ routes });
 
 new Vue({
