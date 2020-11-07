@@ -42,11 +42,17 @@ class NotificationService
      * @param Role $role
      * @return void
      */
-    public function dispatchForGroup( Role $role )
+    public function dispatchForGroup( $role )
     {
-        $role->users->map( function( $user ) {
-            $this->__makeNotificationFor( $user );
-        });
+        if ( is_array( $role ) ) {
+            collect( $role )->each( function( $role ) {
+                $this->dispatchForGroup( $role );
+            });
+        } else {
+            $role->users->map( function( $user ) {
+                $this->__makeNotificationFor( $user );
+            });
+        }
     }
 
     private function __makeNotificationFor( $user )

@@ -67,7 +67,7 @@
                                             <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">Order</th>
                                             <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">Total</th>
                                             <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">Status</th>
-                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">Options</th>
+                                            <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">Options</th>
                                         </tr>
                                     </thead>
                                     <tbody class="text-gray-700">
@@ -79,10 +79,10 @@
                                             <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
                                             <td class="border border-gray-200 p-2 text-center">{{ order.payment_status }}</td>
                                             <td class="border border-gray-200 p-2 text-center">
-                                                <ns-button v-if="allowedForPayment( order )" type="info">
-                                                    <i class="las la-wallet mr-1"></i>
-                                                    <span>Pay</span>
-                                                </ns-button>
+                                                <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
+                                                    <i class="las la-wallet"></i>
+                                                    <span class="ml-1">Payment</span>
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>

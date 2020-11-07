@@ -12,13 +12,13 @@
         <div class="rounded shadow bg-white overflow-hidden flex-auto flex flex-col">
             <div id="grid-header" class="p-2 border-b border-gray-200">
                 <div class="border rounded flex border-gray-400 overflow-hidden">
-                    <button class="w-10 h-10 bg-gray-200 border-r border-gray-400">
+                    <button @click="openSearchPopup()" class="w-10 h-10 bg-gray-200 border-r border-gray-400 outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button class="w-10 h-10 shadow-inner bg-gray-300 border-r border-gray-400">
+                    <button @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked bg-gray-400' : 'bg-gray-200'" class="outline-none w-10 h-10 border-r border-gray-400">
                         <i class="las la-barcode"></i>
                     </button>
-                    <input type="text" class="flex-auto outline-none px-2 bg-gray-100">
+                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 bg-gray-100">
                 </div>
             </div>
             <div id="grid-breadscrumb" class="p-2 border-gray-200">
@@ -79,8 +79,9 @@
 </template>
 <script >
 import Vue from 'vue';
-import { nsHttpClient } from '../../../bootstrap'
+import { nsHttpClient, nsSnackBar } from '../../../bootstrap'
 import switchTo from "@/libraries/pos-section-switch";
+import nsPosSearchProductVue from '@/popups/ns-pos-search-product.vue';
 
 export default {
     name: 'ns-pos-grid',
@@ -89,6 +90,8 @@ export default {
             products: [],
             categories: [],
             breadcrumbs: [],
+            autoFocus: false,
+            barcode: '',
             previousCategory: null,
             order: null,
             visibleSection: null,
@@ -96,11 +99,21 @@ export default {
             orderSubscription: null,
             visibleSectionSubscriber: null,
             currentCategory: null,
+            interval: null,
+            searchTimeout: null,
         }
     },
     computed: {
         hasCategories() {
             return this.categories.length > 0;
+        }
+    },
+    watch: {
+        barcode() {
+            clearTimeout( this.searchTimeout );
+            this.searchTimeout  =   setTimeout( () => {
+                this.submitSearch( this.barcode );
+            }, 1000 );
         }
     },
     mounted() {
@@ -112,14 +125,43 @@ export default {
             this.visibleSection     =   section;
         });
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
+
+        this.interval   =   setInterval( () => this.checkFocus(), 500 );
     },
     destroyed() {
         this.orderSubscription.unsubscribe();
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
+        clearInterval( this.interval );
     },
     methods: {
         switchTo,
+
+        openSearchPopup() {
+            Popup.show( nsPosSearchProductVue );
+        },
+
+        submitSearch( value ) {
+            if ( value.length > 0 ) {
+                nsHttpClient.get( `/api/nexopos/v4/products/search/using-barcode/${value}` )
+                    .subscribe( result => {
+                        this.barcode     =   '';
+                        POS.addToCart( result.product );
+                    }, ( error ) => {
+                        this.barcode     =   '';
+                        nsSnackBar.error( error.message ).subscribe();
+                    })
+            }
+        },
+
+        checkFocus() {
+            if ( this.autoFocus ) {
+                const popup     =   document.querySelectorAll( '.is-popup' );
+                if ( popup.length === 0 ) {
+                    this.$refs.search.focus();
+                }
+            }
+        },
         
         loadCategories( parent ) {
             nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )

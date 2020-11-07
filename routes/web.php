@@ -38,7 +38,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
     ])->group( function() {
         Route::get( '/dashboard', 'DashboardController@home' )->name( 'ns.dashboard.home' );
 
-        Route::get( '/dashboard/orders', [ OrdersController::class, 'listOrders' ]);
+        Route::get( '/dashboard/orders', [ OrdersController::class, 'listOrders' ])->name( 'ns.dashboard.orders' );
         Route::get( '/dashboard/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
         Route::get( '/dashboard/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt' ]);
         Route::get( '/dashboard/pos', [ OrdersController::class, 'showPOS' ]);

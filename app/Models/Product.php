@@ -30,6 +30,17 @@ class Product extends Model
         return $query->where( 'barcode', $barcode );
     }
 
+    /**
+     * get a product using a barcode
+     * @param QueryBuilder
+     * @param string barcode
+     * @return QueryBuilder
+     */
+    public function scopeBarcode( $query, $barcode )
+    {
+        return $this->scopeFindUsingBarcode( $query, $barcode );
+    }
+
 
     /**
      * Filter a product using the SKU

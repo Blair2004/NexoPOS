@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\DueOrdersEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -20,9 +21,11 @@ use App\Models\OrderProduct;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
+use App\Models\Notification;
 use App\Models\OrderStorage;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
+use App\Models\Role;
 use App\Models\Unit;
 use App\Services\Options;
 use App\Services\DateService;
@@ -822,6 +825,8 @@ class OrdersService
         $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeDiscount( $fields, $order );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
+        $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
+        $order->total_installments      =   $fields['total_installments' ] ?? 0;
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
@@ -1268,5 +1273,47 @@ class OrdersService
         }
 
         return $template;
+    }
+
+    public function notifyExpiredLaidAway() 
+    {
+        $orders                 =   Order::paymentExpired()->get();
+
+        if ( ! $orders->isEmpty() ) {
+            $notificationID     =   'ns.due-orders-notifications';
+
+            /**
+             * let's clear previously emitted notification
+             * with the specified identifier
+             */
+            Notification::identifiedBy( $notificationID )->delete();
+
+            /**
+             * @var NotificationService
+             */
+            $notificationService    =   app()->make( NotificationService::class );
+
+            $notificationService->create([
+                'title'         =>  __( 'Unpaid Orders Turned Due' ),
+                'identifier'    =>  $notificationID,
+                'url'           =>  route( 'ns.dashboard.orders' ),
+                'description'   =>  sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), $orders->count() )
+            ])->dispatchForGroup([
+                Role::namespace( 'admin' ),
+                Role::namespace( 'nexopos.store.administrator' )
+            ]);
+
+            event( new DueOrdersEvent( $orders ) );
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The operation was successful.' ),
+            ];
+        }
+
+        return [
+            'status'    =>  'failed',
+            'message'   =>  __( 'No orders to handle for the moment.' )
+        ];
     }
 }
