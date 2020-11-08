@@ -43,9 +43,11 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
             require( dirname( __FILE__ ) . '/nexopos.php' );
             
-            Route::prefix( 'store/{store_id}' )->group( function( $store_id ) {
+            Route::prefix( 'store/{store_id}' )
+                ->middleware([ StoreDetectorMiddleware::class ])
+                ->group( function( $store_id ) {
                 require( dirname( __FILE__ ) . '/nexopos.php' );
-            })->middleware([ StoreDetectorMiddleware::class ]);
+            });
     
             Route::get( '/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
             Route::get( '/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
