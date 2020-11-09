@@ -3,6 +3,7 @@ namespace App\Providers;
 
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
+use App\Events\ModulesLoadedEvent;
 
 class ModulesServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot( ModulesService $modules )
     {
-        $modules->init();
+        $modules->init( self::class );
     }
 
     /**
@@ -27,6 +28,9 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->singleton( ModulesService::class, function( $app ) {
             $modules    =   new ModulesService;
             $modules->load();
+
+            event( new ModulesLoadedEvent( $modules->get() ) );
+
             return $modules;
         });
     }

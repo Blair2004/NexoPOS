@@ -6,6 +6,8 @@ use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Events\WebRoutesLoadedEvent;
+use App\Http\Middleware\StoreDetectorMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,12 +44,8 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
         Route::prefix( 'dashboard' )->group( function() {
 
             require( dirname( __FILE__ ) . '/nexopos.php' );
-            
-            Route::prefix( 'store/{store_id}' )
-                ->middleware([ StoreDetectorMiddleware::class ])
-                ->group( function( $store_id ) {
-                require( dirname( __FILE__ ) . '/nexopos.php' );
-            });
+
+            event( new WebRoutesLoadedEvent( 'dashboard' ) );
     
             Route::get( '/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
             Route::get( '/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );

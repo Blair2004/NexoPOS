@@ -12,6 +12,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Listeners\ProcurementEventsSubscriber;
 use App\Listeners\ProductEventsSubscriber;
+use App\Services\ModulesService;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        WebRouteLoadedEvent::class => [
+
+        ]
     ];
 
     protected $subscribe    =   [
@@ -35,6 +39,15 @@ class EventServiceProvider extends ServiceProvider
         CustomerEventSubscriber::class,
     ];
 
+    public function register()
+    {
+        $this->listen[ WebRouteLoadedEvent::class ]  = [
+
+        ];
+
+        parent::register();
+    }
+
     /**
      * Register any events for your application.
      *
@@ -44,7 +57,15 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        //
+        /**
+         * @param ModulesService
+         */
+        $modules    =   app()->make( ModulesService::class );
+
+        Event::listen( WebRouteLoadedEvent::class, fn() => dd( 'ok' ) );
+
+        collect( $modules->getEnabled() )
+            ->each( fn( $module ) => $modules->serviceProvider( $module, self::class, 'boot' ) );
     }
 
     public function shouldDiscoverEvents()

@@ -170,9 +170,10 @@ class ModulesService
                                 $config[ 'providers' ][ $className ]   =   new $fullClassName( app() );
                                 
                                 /**
-                                 * If a register method exists
+                                 * If a register method exists and the class is an 
+                                 * instance of ModulesServiceProvider
                                  */
-                                if ( method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
+                                if ( $config[ 'providers' ][ $className ] instanceof ModuleServiceProvider && method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
                                     call_user_func([ $config[ 'providers' ][ $className ], 'register' ]);
                                 }
                             }
@@ -252,15 +253,6 @@ class ModulesService
              */
             if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
                 include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
-            }
-
-            /**
-             * Run boot() method for each enabled module
-             */
-            foreach( $module[ 'providers' ] as $provider ) {
-                if( method_exists( $provider, 'boot' ) ) {
-                    $provider->boot();
-                }
             }
 
             // include module index file
@@ -1086,5 +1078,14 @@ class ModulesService
                 }
             }
         }
+    }
+
+    public function serviceProvider( $module, $instance, $method, $params = null )
+    {
+        collect( $module[ 'providers' ] )->each( function( $provider ) use ( $instance, $params, $method ) {
+            if ( $provider instanceof $instance ) {
+                $provider->$method( $params );
+            }
+        });
     }
 }

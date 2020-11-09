@@ -13,6 +13,13 @@ class CoreService
     public $currency;
 
     /**
+     * @var boolean
+     */
+    public $isMultistore    =   false;
+    public $storeID;
+    public $store;
+
+    /**
      * @param UpdateService
      */
     public $update;
@@ -23,11 +30,17 @@ class CoreService
         $this->update       =   new UpdateService;
         $this->date         =   app()->make( DateService::class );
         $this->order        =   app()->make( OrdersService::class );
+        $this->modules      =   app()->make( ModulesService::class );
     }
 
     public function installed()
     {
         return Helper::installed();
+    }
+
+    public function route( $route, $params = [])
+    {
+        return route( $route, $params );
     }
 
     /**
