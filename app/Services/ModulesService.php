@@ -31,7 +31,7 @@ class ModulesService
              */
             $this->options      =   app()->make( Options::class );
         }
-
+        
         $this->modulesPath      =   base_path( 'modules' ) . DIRECTORY_SEPARATOR;
         $this->xmlParser        =   new Reader( new Document() );
 

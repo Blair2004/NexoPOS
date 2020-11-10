@@ -11,6 +11,9 @@ class CoreService
      * @param CurrenService;
      */
     public $currency;
+    public $date;
+    public $order;
+    public $modules;
 
     /**
      * @var boolean
@@ -24,13 +27,17 @@ class CoreService
      */
     public $update;
     
-    public function __construct()
+    public function __construct(
+        CurrencyService $CurrencyService,
+        UpdateService $UpdateService,
+        DateService $DateService,
+        OrdersService $OrdersService
+    )
     {
-        $this->currency     =   app()->make( CurrencyService::class );
-        $this->update       =   new UpdateService;
-        $this->date         =   app()->make( DateService::class );
-        $this->order        =   app()->make( OrdersService::class );
-        $this->modules      =   app()->make( ModulesService::class );
+        $this->currency     =   $CurrencyService;
+        $this->update       =   $UpdateService;
+        $this->date         =   $DateService;
+        $this->order        =   $OrdersService;
     }
 
     public function installed()

@@ -11,6 +11,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\ExpenseService;
 use App\Services\MediaService;
+use App\Services\UpdateService;
 use App\Services\MenuService;
 use App\Services\Options;
 use App\Services\OrdersService;
@@ -48,6 +49,10 @@ class AppServiceProvider extends ServiceProvider
             return new MenuService();
         });
 
+        $this->app->singleton( UpdateService::class, function(){
+            return new UpdateService();
+        });
+
         // save Singleton for options
         $this->app->singleton( DateService::class, function(){
             $options    =   app()->make( Options::class );
@@ -58,6 +63,11 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( AuthService::class, function(){
             return new AuthService();
+        });
+
+        // save Singleton for modules
+        $this->app->singleton( ModulesService::class, function(){
+            return new ModulesService();
         });
         
         // save Singleton for options
@@ -92,7 +102,12 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton( CoreService::class, function() {
-            return new CoreService;
+            return new CoreService(
+                app()->make( CurrencyService::class ),
+                app()->make( UpdateService::class ),
+                app()->make( DateService::class ),
+                app()->make( OrdersService::class ),
+            );
         });
 
         $this->app->singleton( ProductCategoryService::class, function( $app ) {
