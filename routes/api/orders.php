@@ -10,11 +10,12 @@ Route::get( 'orders/{id}/payments', [ OrdersController::class, 'getOrderPayments
 Route::get( 'orders/{id}/refund/{product_id}', [ OrdersController::class, 'refundOrderProduct' ]);
 Route::get( 'orders/{id}/full-refund', [ OrdersController::class, 'refundOrderProduct' ]);
 
+Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->middleware( 'ns.restrict:nexopos.void.orders' );
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
 Route::post( 'orders/search', [ OrdersController::class, 'searchOrder' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 
 Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);
 
-Route::delete( 'orders/{id}', [ OrdersController::class, 'delete' ])->where('id', '[0-9]+');
+Route::delete( 'orders/{order}', [ OrdersController::class, 'deleteOrder' ])->middleware( 'ns.restrict:nexopos.delete.orders' );
 Route::delete( 'orders/{id}/products/{product_id}', [ OrdersController::class, 'deleteOrderProduct' ])->where('id', '[0-9]+');

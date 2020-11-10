@@ -8,51 +8,26 @@
         </div>
         <div class="p-2 flex overflow-hidden flex-auto">
             <ns-tabs :active="active" @changeTab="setActiveTab( $event )">
-                <ns-tabs-item identifier="hold" label="On Hold" padding="p-0" class="flex flex-col overflow-hidden">
-                    <div class="flex flex-col overflow-hidden">
-                        <div class="p-1">
-                            <div class="flex rounded border-2 border-blue-400">
-                                <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
-                                <button @click="searchOrder()" class="w-16 md:w-24 bg-blue-400 text-white">
-                                    <i class="las la-search"></i>
-                                    <span class="mr-1 hidden md:visible">Search</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="overflow-y-auto">
-                            <div class="flex p-2 flex-col overflow-y-auto">
-                                <div class="border-b border-blue-400 w-full py-2" v-for="order of orders" :key="order.id">
-                                    <h3 class="text-gray-700">{{ order.title || 'Untitled Order' }}</h3>
-                                    <div class="px-2">
-                                        <div class="flex flex-wrap -mx-4">
-                                            <div class="w-full md:w-1/2 px-2">
-                                                <p class="text-sm text-gray-600"><strong>Cashier</strong> : {{ order.nexopos_users_username }}</p>
-                                                <p class="text-sm text-gray-600"><strong>Register</strong> : {{ order.total | currency }}</p>
-                                                <p class="text-sm text-gray-600"><strong>Tendered</strong> : {{ order.tendered | currency }}</p>
-                                            </div>
-                                            <div class="w-full md:w-1/2 px-2">
-                                                <p class="text-sm text-gray-600"><strong>Customer</strong> : {{ order.nexopos_customers_name }}</p>
-                                                <p class="text-sm text-gray-600"><strong>Date</strong> : {{ order.created_at }}</p>
-                                                <p class="text-sm text-gray-600"><strong>Type</strong> : {{ order.type }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-end w-full mt-2">
-                                        <div class="flex rounded-lg overflow-hidden">
-                                            <button @click="proceedOpenOrder( order )" class="text-white bg-green-400 outline-none px-2 py-1"><i class="las la-lock-open"></i> Open</button>
-                                            <button @click="previewOrder( order )" class="text-white bg-blue-400 outline-none px-2 py-1"><i class="las la-eye"></i> Products</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <ns-tabs-item identifier="ns.hold-orders" label="On Hold" padding="p-0" class="flex flex-col overflow-hidden">
+                    <ns-pos-pending-orders :orders="orders" 
+                        @searchOrder="searchOrder( $event )"
+                        @previewOrder="previewOrder( $event )"
+                        @proceedOpenOrder="proceedOpenOrder( $event )">
+                    </ns-pos-pending-orders>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="unpaid" label="Unpaid">
-
+                <ns-tabs-item identifier="ns.unpaid-orders" label="Unpaid" padding="p-0" class="flex flex-col overflow-hidden">
+                    <ns-pos-pending-orders :orders="orders" 
+                        @searchOrder="searchOrder( $event )"
+                        @previewOrder="previewOrder( $event )"
+                        @proceedOpenOrder="proceedOpenOrder( $event )">
+                    </ns-pos-pending-orders>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="partially-paid" label="Partially Paid">
-
+                <ns-tabs-item identifier="ns.partially-paid-orders" label="Partially Paid" padding="p-0" class="flex flex-col overflow-hidden">
+                    <ns-pos-pending-orders :orders="orders" 
+                        @searchOrder="searchOrder( $event )"
+                        @previewOrder="previewOrder( $event )"
+                        @proceedOpenOrder="proceedOpenOrder( $event )">
+                    </ns-pos-pending-orders>
                 </ns-tabs-item>
             </ns-tabs>
         </div>
@@ -68,9 +43,16 @@
 import { nsEvent, nsHttpClient } from '@/bootstrap';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
+import nsPosPendingOrders from './ns-pos-pending-orders';
 export default {
+    components: {
+        nsPosPendingOrders
+    },
     methods: {
         searchOrder() {
+            /**
+             * @todo possible exploit
+             */
             nsHttpClient.post( '/api/nexopos/v4/orders/search', {
                     search: this.searchField
                 })
@@ -81,6 +63,7 @@ export default {
 
         setActiveTab( event ) {
             this.active     =   event;
+            this.loadOrderFromType( event );
         },
 
         openOrder( order ) {
@@ -89,7 +72,8 @@ export default {
         },
 
         loadOrderFromType( type ) {
-            nsHttpClient.get( '/api/nexopos/v4/crud/ns.hold-orders' )
+            console.log( type );
+            nsHttpClient.get( `/api/nexopos/v4/crud/${type}` )
                 .subscribe( result => {
                     this.orders     =   result.data;
                 });
@@ -101,7 +85,7 @@ export default {
 
             promise.then( products => {
                 this.proceedOpenOrder( order );
-            });
+            }, ( error ) => error );
         },
         proceedOpenOrder( order ) {
             const products  =   POS.products.getValue();
@@ -123,7 +107,7 @@ export default {
     },
     data() {
         return {
-            active: 'hold',
+            active: 'ns.hold-orders',
             searchField: '',
             orders: [],
         }

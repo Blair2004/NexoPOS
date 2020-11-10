@@ -14,7 +14,6 @@ const tailwindcss = require('tailwindcss');
 
 mix.extend( 'webpackCustomConfig', new class {
     webpackRules() {
-        console.log( 'is effective' );
         return [
             {
                 test: /\.vue$/,
@@ -85,6 +84,7 @@ mix
     .extract([ 
         'vue', 
         'lodash', 
+        'vue-apexcharts',
         'chart.js', 
         'axios', 
         'moment', 

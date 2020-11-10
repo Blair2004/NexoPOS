@@ -12,7 +12,9 @@ use App\Exceptions\NotAllowedException;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderBeforeDeleteEvent;
+use App\Events\OrderVoidedEvent;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\OrderAddress;
@@ -357,13 +359,17 @@ class OrdersService
          * might have been made. Probably we'll need to keep these
          * order and only update them.
          */
-        OrderPayment::withOrder( $order->id )->delete();
-
         foreach ($payments as $payment) {
-            $orderPayment               =   new OrderPayment;
+
+            $orderPayment       =  isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
+
+            if ( ! $orderPayment instanceof OrderPayment ) {
+                $orderPayment       =   new OrderPayment;
+            }
+
             $orderPayment->order_id     =   $order->id;
             $orderPayment->identifier   =   $payment['identifier'];
-            $orderPayment->value        =   $this->currencyService->getRaw( $payment['amount'] );
+            $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
             $orderPayment->author       =   Auth::id();
             $orderPayment->save();
 
@@ -375,12 +381,12 @@ class OrdersService
                 $this->customerService->saveTransaction( 
                     $customer, 
                     CustomerAccountHistory::OPERATION_PAYMENT, 
-                    $payment[ 'amount' ] 
+                    $payment[ 'value' ] 
                 );
             }
         }
 
-        $order->tendered    =   $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'amount' ] ) )->sum() );
+        $order->tendered    =   $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() );
     }
 
     /**
@@ -399,6 +405,33 @@ class OrdersService
         if ( $order !== null && $order->payment_status === Order::PAYMENT_PAID ) {
             throw new NotAllowedException( __( 'Unable to edit an order that is completely paid.' ) );
         }
+
+        /**
+         * if the order was partially paid and we would like to change
+         * some product, we need to make sure that the previously submitted
+         * payment hasn't been deleted.
+         */
+        if ( $order instanceof Order ) {
+            $currenctPayments   =   collect( $fields[ 'payments' ] )
+                ->map( fn( $payment ) => $payment[ 'id' ] ?? false )
+                ->filter( fn( $payment ) => $payment !== false )
+                ->toArray();
+            
+            $order->payments->each( function( $payment ) use ( $currenctPayments ) {
+                if ( ! in_array( $payment->id, $currenctPayments ) ) {
+                    throw new NotAllowedException( __( 'Unable to proceed as one of the previous submitted payment is missing from the order.' ) );
+                }
+            });
+
+            /**
+             * if the order was no more "hold"
+             * we shouldn't allow the order to switch to hold.
+             */
+            if ( $order->payment_status !== Order::PAYMENT_HOLD && $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) {
+                throw new NotAllowedException( __( 'The order payment status cannot switch to hold as a payment has already been made on that order.' ) );
+            }
+        }
+
         
         $totalPayments  =   0;
 
@@ -418,12 +451,12 @@ class OrdersService
                      * check if the customer account are enough for the account-payment
                      * when that payment is provided
                      */
-                    if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'amount' ] ) ) {
+                    if ( $payment[ 'identifier' ] === 'account-payment' && $customer->account_amount < floatval( $payment[ 'value' ] ) ) {
                         throw new NotAllowedException( __( 'The customer account funds are\'nt enough to process the payment.' ) );
                     }
 
                     $totalPayments  =   $this->currencyService->define($totalPayments)
-                        ->additionateBy($payment['amount'])
+                        ->additionateBy($payment['value'])
                         ->get();
 
                 } else {
@@ -1116,30 +1149,30 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        event(new OrderBeforeDeleteEvent($order));
+        event( new OrderBeforeDeleteEvent( $order ) );
 
-        $products       =   $this->getOrderProducts($order->id);
-
-        $products->map(function ($product) {
-            if ($product->status === 'sold') {
-                /**
-                 * we do proceed by doing an initial return
-                 */
-                $this->productService->stockAdjustment('returned', [
-                    'total_price'       =>  $product->total_price,
-                    'quantity'          =>  $product->quantity,
-                    'unit_price'        =>  $product->sale_price
-                ]);
-            }
+        $order->products->each( function( OrderProduct $product) {
+            /**
+             * we do proceed by doing an initial return
+             */
+            $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
+                'total_price'       =>  $product->total_price,
+                'product_id'        =>  $product->product_id,
+                'unit_id'           =>  $product->unit_id,
+                'quantity'          =>  $product->quantity,
+                'unit_price'        =>  $product->unit_price
+            ]);
 
             $product->delete();
         });
 
         $order->delete();
 
+        event( new OrderAfterDeletedEvent( $order ) );
+
         return [
             'status'    =>  'success',
-            'message'   =>  __('The order has been deleted')
+            'message'   =>  __('The order has been deleted.' )
         ];
     }
 
@@ -1314,6 +1347,37 @@ class OrdersService
         return [
             'status'    =>  'failed',
             'message'   =>  __( 'No orders to handle for the moment.' )
+        ];
+    }
+
+    /**
+     * void a specific order
+     * by keeping a trace of what has happened.
+     */
+    public function void( Order $order, $reason )
+    {
+        $order->products->each( function( OrderProduct $product ) {
+            /**
+             * we do proceed by doing an initial return
+             */
+            $this->productService->stockAdjustment( ProductHistory::ACTION_VOID_RETURN, [
+                'total_price'       =>  $product->total_price,
+                'product_id'        =>  $product->product_id,
+                'unit_id'           =>  $product->unit_id,
+                'quantity'          =>  $product->quantity,
+                'unit_price'        =>  $product->unit_price
+            ]);
+        });
+
+        $order->payment_status      =   Order::PAYMENT_VOID;
+        $order->voidance_reason     =   $reason;
+        $order->save();
+
+        event( new OrderVoidedEvent( $order ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The order has been correctly voided.' )
         ];
     }
 }

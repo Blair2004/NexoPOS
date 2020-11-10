@@ -155,7 +155,7 @@
                         <i class="mr-2 text-xl lg:text-3xl las la-percent"></i> 
                         <span class="text-lg lg:text-2xl">Discount</span>
                     </div>
-                    <div class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
+                    <div @click="voidOngoingOrder( order )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-trash"></i> 
                         <span class="text-lg lg:text-2xl">Void</span>
                     </div>
@@ -233,7 +233,16 @@ export default {
     methods: {
         switchTo,
 
+        voidOngoingOrder() {
+            POS.voidOrder( this.order );
+        },
+
         async holdOrder() {
+
+            if ( this.order.payment_status !== 'hold' && this.order.payments.length > 0 ) {
+                return nsSnackBar.error( 'Unable to hold an order which payment status has been updated already.' ).subscribe();
+            }
+
             const queues    =   [
                 ProductsQueue,
                 CustomerQueue,

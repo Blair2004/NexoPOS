@@ -454,17 +454,20 @@ class OrderCrud extends CrudService
         }
 
         switch( $entry->payment_status ) {
-            case 'paid' : 
+            case Order::PAYMENT_PAID : 
                 $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
             break;
-            case 'unpaid' : 
+            case Order::PAYMENT_UNPAID : 
                 $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
             break;
-            case 'partially_paid' : 
+            case Order::PAYMENT_PARTIALLY : 
                 $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
             break;
-            case 'hold' : 
+            case Order::PAYMENT_HOLD : 
                 $entry->{ '$cssClass' }             =   'bg-gray-200 border-gray-300 border text-sm';
+            break;
+            case Order::PAYMENT_VOID : 
+                $entry->{ '$cssClass' }             =   'bg-red-200 border-red-300 border text-sm';
             break;
         }
 

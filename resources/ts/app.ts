@@ -30,7 +30,7 @@ import NsStockAdjustment from './pages/dashboard/products/ns-stock-adjustment.vu
 import NsPromptPopup     from './popups/ns-prompt-popup.vue';
 import NsAlertPopup      from './popups/ns-alert-popup.vue';
 import NsConfirmPopup    from './popups/ns-pos-confirm-popup.vue';
-import RawVueApexCharts from 'vue-apexcharts';
+import RawVueApexCharts  from 'vue-apexcharts';
 
 declare const nsState;
 declare const nsScreen;

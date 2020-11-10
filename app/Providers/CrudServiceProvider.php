@@ -10,6 +10,7 @@ use App\Crud\ExpenseCrud;
 use App\Crud\ExpenseHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
+use App\Crud\PartiallyPaidOrderCrud;
 use App\Crud\ProviderCrud;
 use App\Crud\RewardSystemCrud;
 use App\Crud\UnitCrud;
@@ -24,6 +25,7 @@ use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Crud\RegisterCrud;
 use App\Crud\RolesCrud;
+use App\Crud\UnpaidOrderCrud;
 use App\Models\ExpenseHistory;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -55,6 +57,8 @@ class CrudServiceProvider extends ServiceProvider
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.hold-orders': return HoldOrderCrud::class;
+                case 'ns.unpaid-orders': return UnpaidOrderCrud::class;
+                case 'ns.partially-paid-orders': return PartiallyPaidOrderCrud::class;
                 case 'ns.coupons': return CouponCrud::class;
                 case 'ns.customers': return CustomerCrud::class;
                 case 'ns.customers-groups': return CustomerGroupCrud::class;

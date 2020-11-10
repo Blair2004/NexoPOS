@@ -442,15 +442,35 @@ class ProductHistoryCrud extends CrudService
             ->format();
 
         switch( $entry->operation_type ) {
-            case ProductHistory::ACTION_STOCKED : $entry->operation_type = __( 'Stocked' ); break;
-            case ProductHistory::ACTION_DEFECTIVE : $entry->operation_type = __( 'Defective' ); break;
-            case ProductHistory::ACTION_DELETED : $entry->operation_type = __( 'Deleted' ); break;
-            case ProductHistory::ACTION_REMOVED : $entry->operation_type = __( 'Removed' ); break;
-            case ProductHistory::ACTION_RETURNED : $entry->operation_type = __( 'Returned' ); break;
-            case ProductHistory::ACTION_SOLD : $entry->operation_type = __( 'Sold' ); break;
-            case ProductHistory::ACTION_ADDED : $entry->operation_type = __( 'Added' ); break;
-            case ProductHistory::ACTION_TRANSFER_IN : $entry->operation_type = __( 'Incoming Transfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_OUT : $entry->operation_type = __( 'Outgoing Transfer' ); break;
+            case ProductHistory::ACTION_DEFECTIVE : 
+            case ProductHistory::ACTION_DELETED : 
+            case ProductHistory::ACTION_REMOVED : 
+            case ProductHistory::ACTION_RETURNED : 
+            case ProductHistory::ACTION_VOID_RETURN : 
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+            break;
+            case ProductHistory::ACTION_SOLD : 
+            case ProductHistory::ACTION_ADDED : 
+            case ProductHistory::ACTION_STOCKED : 
+                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+            break;
+            case ProductHistory::ACTION_TRANSFER_OUT : 
+            case ProductHistory::ACTION_TRANSFER_IN : 
+                $entry->{ '$cssClass' }             =   'bg-blue-100 border-blue-200 border text-sm';
+            break;
+        }
+
+        switch( $entry->operation_type ) {
+            case ProductHistory::ACTION_STOCKED : $entry->operation_type        = __( 'Stocked' ); break;
+            case ProductHistory::ACTION_DEFECTIVE : $entry->operation_type      = __( 'Defective' ); break;
+            case ProductHistory::ACTION_DELETED : $entry->operation_type        = __( 'Deleted' ); break;
+            case ProductHistory::ACTION_REMOVED : $entry->operation_type        = __( 'Removed' ); break;
+            case ProductHistory::ACTION_RETURNED : $entry->operation_type       = __( 'Returned' ); break;
+            case ProductHistory::ACTION_SOLD : $entry->operation_type           = __( 'Sold' ); break;
+            case ProductHistory::ACTION_ADDED : $entry->operation_type          = __( 'Added' ); break;
+            case ProductHistory::ACTION_TRANSFER_IN : $entry->operation_type    = __( 'Incoming Transfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_OUT : $entry->operation_type   = __( 'Outgoing Transfer' ); break;
+            case ProductHistory::ACTION_VOID_RETURN : $entry->operation_type    = __( 'Void Return' ); break;
             default: $entry->operation_type;break;
         }
 

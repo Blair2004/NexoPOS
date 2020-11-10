@@ -121,7 +121,7 @@ export default {
                 onAction: ( action ) => {
                     if ( action ) {
                         POS.addPayment({
-                            amount: this.order.total,
+                            value: this.order.total,
                             identifier: this.identifier,
                             selected: false,
                             label: this.label,
@@ -155,7 +155,7 @@ export default {
 
             if ( key.identifier === 'next' ) {
                 POS.addPayment({
-                    amount: parseFloat( this.backValue / this.number ),
+                    value: parseFloat( this.backValue / this.number ),
                     identifier: this.identifier,
                     selected: false,
                     label: this.label,

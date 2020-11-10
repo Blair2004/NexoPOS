@@ -24,6 +24,8 @@ const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton      =
 const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
 const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
 const NsAlertPopup              =   (<any>window).NsAlertPopup                 =   require( './popups/ns-' + 'alert' + '-popup' ).default;
+const NsConfirmPopup            =   (<any>window).NsConfirmPopup               =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
+const NsPromptPopup             =   (<any>window).NsPromptPopup               =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
 const NsLayawayPopup            =   (<any>window).NsLayawayPopup               =   require( './popups/ns-pos-' + 'layaway' + '-popup' ).default;
 
 export class POS {
@@ -200,7 +202,7 @@ export class POS {
     }
 
     addPayment( payment: Payment ) {
-        if ( payment.amount > 0 ) {
+        if ( payment.value > 0 ) {
             const order  =   this._order.getValue();
             order.payments.push( payment );
             this._order.next( order );
@@ -212,6 +214,11 @@ export class POS {
     }
 
     removePayment( payment: Payment ) {
+
+        if ( payment.id !== undefined ) {
+            return nsSnackBar.error( 'Unable to delete a payment attached to the order' ).subscribe();
+        }
+
         const order     =   this._order.getValue();
         const index     =   order.payments.indexOf( payment );
         order.payments.splice( index, 1 );
@@ -229,7 +236,7 @@ export class POS {
     updateCustomerAccount( payment: Payment ) {
         if ( payment.identifier === 'account-payment' ) {
             const customer              =   this.order.getValue().customer;
-            customer.account_amount     +=  payment.amount;
+            customer.account_amount     +=  payment.value;
             this.selectCustomer( customer );
         }
     }
@@ -357,13 +364,15 @@ export class POS {
                 delete order.shipping_address;
                 delete order.billing_address;
 
+                
                 /**
                  * let's all set, let's load the order
                  * from now. No further change is required
                  */
-
+                
                 this.buildOrder( order );
                 this.buildProducts( products );
+                this.selectCustomer( order.customer );
                 // this.refreshProducts( this.products.getValue() );
                 // this.refreshCart();
             });
@@ -391,7 +400,7 @@ export class POS {
         order.tendered      =   0;
 
         if ( order.payments.length > 0 ) {
-            order.tendered      =   order.payments.map( p => p.amount ).reduce( ( b, a ) => a + b );
+            order.tendered      =   order.payments.map( p => p.value ).reduce( ( b, a ) => a + b );
         }
 
         if ( order.tendered >= order.total ) {
@@ -678,6 +687,47 @@ export class POS {
 
     defineSettings( settings ) {
         this._settings.next( settings );
+    }
+
+    voidOrder( order ) {
+        console.log( order.id );
+        if ( order.id !== undefined ) {
+            if ( [ 'hold' ].includes( order.payment_status ) ) {
+                Popup.show( NsConfirmPopup, {
+                    title: 'Order Deletion',
+                    message: 'The current order will be deleted as no payment has been made so far.',
+                    onAction: ( action ) => {
+                        if ( action ) {
+                            nsHttpClient.delete( `/api/nexopos/v4/orders/${order.id}` )
+                                .subscribe( ( result: any ) => {
+                                    nsSnackBar.success( result.message ).subscribe();
+                                    this.reset();
+                                }, ( error ) => {
+                                    return nsSnackBar.error( error.message ).subscribe();
+                                })
+                        }
+                    }
+                });
+            } else {
+                Popup.show( NsPromptPopup, {
+                    title: 'Void The Order',
+                    message: 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
+                    onAction: ( reason ) => {
+                        if ( reason !== false ) {
+                            nsHttpClient.post( `/api/nexopos/v4/orders/${order.id}/void`, { reason })
+                                .subscribe( ( result: any ) => {
+                                    nsSnackBar.success( result.message ).subscribe();
+                                    this.reset();
+                                }, ( error ) => {
+                                    return nsSnackBar.error( error.message ).subscribe();
+                                })
+                        }
+                    }
+                });
+            }            
+        } else {
+            nsSnackBar.error( 'Unable to void an unpaid order.' ).subscribe();
+        }
     }
 
     destroy() {

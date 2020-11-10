@@ -86,10 +86,10 @@ export default {
             this.screenValue    =   event;
         },
         proceedAddingPayment( event ) {
-            const amount    =   parseFloat( event );
+            const value    =   parseFloat( event );
             const payments  =   this.order.payments;
 
-            if ( amount <= 0 ) {
+            if ( value <= 0 ) {
                 return nsSnackBar.error( 'Please provide a valid payment amount.' )
                     .subscribe();
             }
@@ -99,22 +99,22 @@ export default {
                     .subscribe();
             }
 
-            if ( amount > this.order.customer.account_amount ) {
+            if ( value > this.order.customer.account_amount ) {
                 return nsSnackBar.error( 'Not enough funds to add {amount} as a payment. Available balance {balance}.'
-                    .replace( '{amount}', this.$options.filters.currency( amount ) ) 
+                    .replace( '{amount}', this.$options.filters.currency( value ) ) 
                     .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) ) 
                 ).subscribe();
             }
 
             POS.addPayment({
-                amount,
+                value,
                 identifier: 'account-payment',
                 selected: false,
                 label: this.label,
                 readonly: false,
             });
 
-            this.order.customer.account_amount  -=  amount;
+            this.order.customer.account_amount  -=  value;
             POS.selectCustomer( this.order.customer );
 
             this.$emit( 'submit' );

@@ -19,6 +19,7 @@ class Order extends Model
     const PAYMENT_PARTIALLY     =   'partially_paid';
     const PAYMENT_UNPAID        =   'unpaid';
     const PAYMENT_HOLD          =   'hold';
+    const PAYMENT_VOID          =   'order_void';
 
     public $casts    =   [
         'created_at'    =>  DateCast::class

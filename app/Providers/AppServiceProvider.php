@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
 use App\Services\CoreService;
@@ -197,11 +198,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        config([ 'nexopos.orders.statuses' => [
-            'hold'              =>  __( 'Hold' ),
-            'unpaid'            =>  __( 'Unpaid' ),
-            'partially_paid'    =>  __( 'Partially Paid' ),
-            'paid'              =>  __( 'Paid' )
+        config([ 'nexopos.orders.statuses'      => [
+            Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
+            Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
+            Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
+            Order::PAYMENT_PAID                 =>  __( 'Paid' ),
+            Order::PAYMENT_VOID                 =>  __( 'Voided' ),
         ]]);
     }
 }

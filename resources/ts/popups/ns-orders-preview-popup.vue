@@ -241,7 +241,12 @@ export default nsOrderPreviewPopup;
             </ns-tabs>
         </div> 
         <div class="p-2 flex justify-between border-t border-gray-200">
-            <div></div>
+            <div>
+                <ns-button @click="voidOrder()" type="info">
+                    <i class="las la-ban"></i>
+                    Void
+                </ns-button>
+            </div>
             <div>
                 <ns-button @click="printOrder()" type="info">
                     <i class="las la-print"></i>

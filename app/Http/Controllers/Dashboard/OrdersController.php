@@ -203,5 +203,15 @@ class OrdersController extends DashboardController
             ->orWhere( 'title', 'like', '%' . $reference . '%' )
             ->get();
     }
+
+    public function voidOrder( Order $order, Request $request )
+    {
+        return $this->ordersService->void( $order, $request->input( 'reason' ) );
+    }
+
+    public function deleteOrder( Order $order )
+    {
+        return $this->ordersService->deleteOrder( $order );
+    }
 }
 

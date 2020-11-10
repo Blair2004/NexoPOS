@@ -7,7 +7,8 @@
   </coverage>
   <testsuites>
     <testsuite name="Feature">
-      <directory suffix="OrderTest.php">./tests/Feature</directory>
+      <directory suffix="OrderHostTest.php">./tests/Feature</directory>
+      <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

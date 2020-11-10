@@ -3,5 +3,6 @@ export class Payment {
     identifier: string;
     selected: boolean;
     readonly: boolean;
-    amount: number;
+    value: number;
+    id?: number;
 }

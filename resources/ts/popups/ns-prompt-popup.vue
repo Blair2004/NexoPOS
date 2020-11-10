@@ -1,5 +1,5 @@
 <template>
-    <div id="popup" :class="size" class="flex flex-col bg-white shadow-lg">
+    <div id="popup" :class="size" class="w-5/7-screen md:w-3/7-screen flex flex-col bg-white shadow-lg">
         <div class="flex items-center justify-center flex-col flex-auto p-2">
             <h2 class="text-3xl font-body text-gray-700">{{ title }}</h2>
             <p class="w-full md:mx-auto md:w-2/3 py-4 text-gray-600 text-center">{{ message }}</p>

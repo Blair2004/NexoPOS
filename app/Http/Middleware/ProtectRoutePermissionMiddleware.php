@@ -15,9 +15,9 @@ class ProtectRoutePermissionMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $role )
+    public function handle(Request $request, Closure $next, $permission )
     {
-        if ( ns()->allowedTo( $role ) ) {
+        if ( ns()->allowedTo( $permission ) ) {
             return $next($request);
         }
 

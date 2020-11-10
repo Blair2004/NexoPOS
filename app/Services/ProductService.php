@@ -927,6 +927,7 @@ class ProductService
             ProductHistory::ACTION_TRANSFER_IN,
             ProductHistory::ACTION_TRANSFER_OUT,
             ProductHistory::ACTION_LOST,
+            ProductHistory::ACTION_VOID_RETURN,
         ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }

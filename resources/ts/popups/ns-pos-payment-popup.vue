@@ -151,7 +151,7 @@ export default {
                             <li :key="index" v-for="(payment,index) of order.payments" class="p-2 bg-gray-200 flex justify-between mb-2 items-center">
                                 <span>{{ payment.label}}</span>
                                 <div class="flex items-center">
-                                    <span>{{ payment.amount | currency }}</span>
+                                    <span>{{ payment.value | currency }}</span>
                                     <button @click="deletePayment( payment )" class="rounded-full bg-red-400 h-8 w-8 flex items-center justify-center text-white ml-2">
                                         <i class="las la-trash-alt"></i>
                                     </button>

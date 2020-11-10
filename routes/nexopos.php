@@ -3,6 +3,7 @@ use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
+use Illuminate\Support\Facades\Route;
 
 Route::get( '', 'DashboardController@home' )->name( 'ns.dashboard.home' );
     
