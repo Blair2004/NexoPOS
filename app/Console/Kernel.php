@@ -32,6 +32,8 @@ class Kernel extends ConsoleKernel
     {
         $modules    =   app()->make( ModulesService::class );
 
+        return false;
+
         collect( $modules->getEnabled() )->each( function( $module ) {
             $filePath   =   $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Kernel.php';
             if ( is_file( $filePath ) ) {
