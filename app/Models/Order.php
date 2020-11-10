@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Casts\DateCast;
+use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -69,5 +70,15 @@ class Order extends Model
     public function scopePaymentStatus( $query, $status )
     {
         return $query->where( 'payment_status', $status );
+    }
+
+    public function scopePaymentExpired( $query )
+    {
+        $date   =   app()->make( DateService::class );
+
+        return $query
+            ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
+            ->where( 'expected_payment_date', '<>', null )
+            ->where( 'expected_payment_date', '<', $date->now()->toDateTimeString() );
     }
 }

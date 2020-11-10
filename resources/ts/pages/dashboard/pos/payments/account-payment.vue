@@ -89,6 +89,11 @@ export default {
             const amount    =   parseFloat( event );
             const payments  =   this.order.payments;
 
+            if ( amount <= 0 ) {
+                return nsSnackBar.error( 'Please provide a valid payment amount.' )
+                    .subscribe();
+            }
+
             if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
                 return nsSnackBar.error( 'The customer account can only be used once per order. Consider deleting the previously used payment.' )
                     .subscribe();

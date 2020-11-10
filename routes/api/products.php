@@ -13,6 +13,7 @@ Route::get( 'products/{identifier}/history', [ ProductsController::class, 'histo
 Route::get( 'products/{identifier}/units', [ ProductsController::class, 'units' ]);
 Route::get( 'products/{product}/units/{unit}/quantity', [ ProductsController::class, 'getUnitQuantity' ]);
 Route::get( 'products/{product}/units/quantities', [ ProductsController::class, 'getUnitQuantities' ]);
+Route::get( 'products/search/using-barcode/{product}', [ ProductsController::class, 'searchUsingArgument' ]);
 
 Route::delete( 'products/{identifier}', [ ProductsController::class, 'deleteProduct' ]);
 Route::delete( 'products/units/quantity/{unitQuantity}', [ ProductsController::class, 'deleteUnitQuantity' ]);

@@ -10,7 +10,9 @@ use App\Classes\Hook;
 use App\Classes\Response;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Models\ProcurementProduct;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -491,6 +493,33 @@ class ProductsController extends DashboardController
             'message'   =>  __( 'The stock has been adjustment successfully.' ),
             'data'      =>  $results
         ];
+    }
+
+    public function searchUsingArgument( $reference )
+    {
+        $procurementProduct     =   ProcurementProduct::with( 'product.unit_quantities' )
+            ->barcode( $reference )
+            ->first();
+
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            return [
+                'type'      =>  'procurement-product',
+                'product'   =>  $procurementProduct
+            ];
+        }
+
+        $product        =   Product::barcode( $reference )
+            ->with( 'unit_quantities' )
+            ->first();
+
+        if ( $product instanceof Product ) {
+            return [
+                'type'      =>  'product',
+                'product'   =>  $product
+            ];
+        }
+
+        throw new NotFoundException( __( 'The product request cannot be found.' ) );
     }
 }
 
