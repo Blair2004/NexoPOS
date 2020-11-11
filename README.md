@@ -15,6 +15,9 @@ This version available for free, aims to be more :
 
 Same as the version 3.x, NexoPOS 4.x will support modules that will ensure extensibility. For those currently using NexoPOS 3.x there should be a module that will ensure the migration to that major upgrade. 
 
+## Changelog & Feature Announcement
+We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS 4.x.
+
 ## Demo
 - Address : https://v4.nexopos.com
 - Username : demouser
