@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
 use App\Jobs\ComputeDashboardExpensesJob;
+use App\Models\Expense;
 use App\Services\ExpenseService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -35,7 +36,7 @@ class ExpensesEventSubscriber
             ExpenseAfterCreateEvent::class,
             function( $event ) {
                 if ( ! $event->expense->recurring ) {
-                    $this->expenseService->recordExpenseHistory( $event->expense );
+                    $this->expenseService->triggerExpense( $event->expense );
                 }
             }
         );

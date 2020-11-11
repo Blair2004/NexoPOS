@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\ExpenseCrud;
 use App\Crud\ExpenseHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Expense;
@@ -40,25 +41,12 @@ class ExpensesController extends DashboardController
 
     public function createExpense()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses/form-config' ),
-            'title'         =>  __( 'Create Expense' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
-            'description'   =>  __( 'add new expense on the system' ),
-            'returnUrl'    =>  url( '/dashboard/expenses' )
-        ]);
+        return ExpenseCrud::form();
     }
 
     public function editExpense( Expense $expense )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
-            'title'         =>  __( 'Edit Expense' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
-            'submitMethod'  =>  'PUT',
-            'description'   =>  __( 'edit an existing expense' ),
-            'returnUrl'    =>  url( '/dashboard/expenses' )
-        ]);
+        return ExpenseCrud::form( $expense );
     }
 
     /**

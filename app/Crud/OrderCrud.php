@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
+use App\Services\OrdersService;
 
 class OrderCrud extends CrudService
 {
@@ -352,6 +353,17 @@ class OrderCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.orders' ) {
             $this->allowedTo( 'delete' );
+
+            /**
+             * @var OrdersService
+             */
+            $orderService   =   app()->make( OrdersService::class );
+            $orderService->deleteOrder( $model );
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The order and the attached products has been deleted.' )
+            ];
         }
     }
 

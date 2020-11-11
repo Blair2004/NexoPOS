@@ -55,7 +55,7 @@ class OrderPaymentTypeTest extends TestCase
                 'payments'              =>  [
                     [
                         'identifier'    =>  'cash-payment',
-                        'amount'        =>  60 + 150
+                        'value'         =>  60 + 150
                     ]
                 ]
             ]);

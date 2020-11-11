@@ -137,13 +137,13 @@ class ExpenseCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'      =>  'switch',
-                            'options'   =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
-                            'name'      =>  'active',
-                            'label'     =>  __( 'Active' ),
+                            'type'          =>  'switch',
+                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name'          =>  'active',
+                            'label'         =>  __( 'Active' ),
                             'description'   =>  __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
                             'validation'    =>  'required',
-                            'value'     =>  $entry->active ?? '',
+                            'value'         =>  $entry->active,
                         ], [
                             'type'          =>  'select',
                             'name'          =>  'group_id',
@@ -215,7 +215,7 @@ class ExpenseCrud extends CrudService
                             'name'          =>  'occurence_value',
                             'label'         =>  __( 'Occurence Value' ),
                             'description'   =>  __( 'Must be used in case of X days after month starts and X days before month ends.' ),
-                            'value'         =>  $entry->occurence ?? '',
+                            'value'         =>  $entry->occurence_value ?? '',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
@@ -421,7 +421,7 @@ class ExpenseCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
@@ -484,9 +484,11 @@ class ExpenseCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.expenses',
-            'create'    =>  'ns.expenses/create',
-            'edit'      =>  'ns.expenses/edit/#'
+            'list'      =>  url( 'dashboard/' . 'expenses' ),
+            'create'    =>  url( 'dashboard/' . 'expenses/create' ),
+            'edit'      =>  url( 'dashboard/' . 'expenses/edit/{id}' ),
+            'post'      =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses' ),
+            'put'       =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses/' . '{id}' ),
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException as MainValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -48,7 +49,7 @@ class Handler extends ExceptionHandler
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ( $request->expectsJson() ) {
-            return response()->json([ 'error' => 'Unauthenticated.' ], 401);
+            return response()->json([ 'status' => 'failed', 'message' => __( 'You\'re not authenticated.' ) ], 401);
         }
 
         return redirect()->guest( route( 'ns.login' ) );
@@ -65,6 +66,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ( $exception instanceof MainValidationException ) {
+            return ( new ValidationException( $exception->validator, $exception->response, $exception->errorBag ) )
+                ->render( $request );
+        }
+
         return parent::render($request, $exception);
     }
 }

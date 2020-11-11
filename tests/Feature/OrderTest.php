@@ -27,12 +27,6 @@ class OrderTest extends TestCase
             ['*']
         );
 
-        $this->expectsJobs([
-            ComputeDayReportJob::class,
-            ComputeCustomeerAccountJob::class,
-            ComputeCashierSalesJob::class,
-        ]);
-
         $currency       =   app()->make( CurrencyService::class );
         $product        =   Product::with( 'unit_quantities' )->find(1);
         $shippingFees   =   150;
@@ -72,7 +66,7 @@ class OrderTest extends TestCase
                 'payments'              =>  [
                     [
                         'identifier'    =>  'cash-payment',
-                        'amount'        =>  $subtotal + $shippingFees
+                        'value'         =>  $subtotal + $shippingFees
                     ]
                 ]
             ]);

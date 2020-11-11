@@ -17,7 +17,7 @@ class ProductAdjustmentTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testAdjustProduct()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -39,8 +39,6 @@ class ProductAdjustmentTest extends TestCase
                 ]
             ]
         ]);
-
-        $response->dump();
 
         $response->assertJsonPath( 'status', 'success' );
     }

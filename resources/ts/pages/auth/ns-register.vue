@@ -65,8 +65,7 @@ export default {
                     document.location   =   result.data.redirectTo;
                 }, 1500 );
             }, ( error ) => {
-                console.log( error, this.fields );
-                this.validation.triggerFielsErrors( this.fields, error );
+                this.validation.triggerFieldsErrors( this.fields, error );
                 this.validation.enableFields( this.fields );
                 nsSnackBar.error( error.message ).subscribe();
             })

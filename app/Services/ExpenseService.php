@@ -13,6 +13,11 @@ use Carbon\Carbon;
 
 class ExpenseService 
 {
+    /**
+     * @var DateService
+     */
+    protected $dateService;
+
     public function __construct( DateService $dateService )
     {   
         $this->dateService      =   $dateService;
@@ -220,6 +225,24 @@ class ExpenseService
         ];
     }
 
+    /**
+     * Will trigger for not recurring expense
+     * @param Expense $expense
+     * @return void
+     */
+    public function triggerExpense( $expense )
+    {
+        $this->recordExpenseHistory( $expense );
+
+        /**
+         * a non recurring expenses
+         * once triggered should be disabled to 
+         * prevent futher execution on modification.
+         */
+        $expense->active    =   false;
+        $expense->save();
+    }
+
     public function getCategoryExpense( $id )
     {
         $expenseCategory    =   $this->getCategory( $id );
@@ -234,7 +257,7 @@ class ExpenseService
                 $history->value                     =   $expense->value;
                 $history->expense_id                =   $expense->id;
                 $history->author                    =   $expense->author;
-                $history->expense_name              =   str_replace( '{user}', $user->name, $expense->name );
+                $history->expense_name              =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
                 $history->expense_category_name     =   $expense->category->name;
                 $history->save();
 
@@ -253,33 +276,89 @@ class ExpenseService
         }
     }
 
+    /**
+     * Process recorded expenses
+     * and check wether they are supposed to be processed 
+     * on the current day. 
+     * 
+     * @return array of process results.
+     */
     public function handleRecurringExpenses()
     {
-        Expense::recurring()
+        $processStatus      =   Expense::recurring()
             ->active()
             ->get()
             ->map( function( $expense ) {
                 switch( $expense->occurence ) {
                     case 'month_starts':
-                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth() );   
+                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth() );   
                     break;
                     case 'month_mid':
-                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth()->addDays(14) );
+                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
                     break;
                     case 'month_ends':
-                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->endOfMonth() );
+                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->endOfMonth() );
                     break;
                     case 'x_before_month_ends':
-                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
                     break;
                     case 'x_after_month_starts':
-                        $expenseScheduledDate   =   Carbon::parse( $this->date->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
                     break;
                 }
 
-                if ( $this->date->isSameDay( $expenseScheduledDate ) ) {
-                    $this->recordExpenseHistory( $expense );
+                /**
+                 * Checks if the recurring expenses about to be saved has been
+                 * already issued on the occuring day.
+                 */
+                if ( $this->dateService->isSameDay( $expenseScheduledDate ) ) {
+                    
+                    if ( ! $this->hadExpenseRecordedAlready( $expenseScheduledDate, $expense ) ) {
+                        
+                        $this->recordExpenseHistory( $expense );
+                        
+                        return [
+                            'status'    =>  'success',
+                            'message'   =>  sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
+                        ];
+                    } 
+
+                    return [
+                        'status'    =>  'failed',
+                        'message'   =>  sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
+                    ];
                 } 
+
+                return [
+                    'status'    =>  'failed',
+                    'message'   =>  sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name )
+                ];
+
             });
+
+        $successFulProcesses    =   collect( $processStatus )->filter( fn( $process ) => $process[ 'status' ] === 'success' );
+
+        return [
+            'status'    =>  'success',
+            'data'      =>  $processStatus->toArray(),
+            'message'   =>  $successFulProcesses->count() === $processStatus->count() ?
+                __( 'The process has been correctly executed and all expenses has been processed.' ) :
+                    sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() )
+        ];
+    }
+
+    /**
+     * Check if an expense has been executed during a day.
+     * To prevent many recurring expenses to trigger multiple times
+     * during a day.
+     */
+    public function hadExpenseRecordedAlready( $date, Expense $expense )
+    {
+        $history    =   ExpenseHistory::where( 'expense_id', $expense->id )
+            ->where( 'created_at', '>=', $date->startOfDay()->toDateTimeString() )
+            ->where( 'created_at', '<=', $date->endOfDay()->toDateTimeString() )
+            ->get();
+
+        return $history instanceof ExpenseHistory;
     }
 }

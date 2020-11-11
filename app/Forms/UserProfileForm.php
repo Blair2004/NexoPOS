@@ -4,6 +4,7 @@ namespace App\Forms;
 use App\Http\Requests\UserProfileRequest;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserAttribute;
 use App\Services\Helper;
 use App\Services\Options;
 use App\Services\UserOptions;
@@ -21,7 +22,7 @@ class UserProfileForm extends SettingsPage
         
         $this->form    =   [
             'tabs'  =>  [
-                'general'       =>  include( dirname( __FILE__ ) . '/user-profile/general.php' ),
+                'attribute'     =>  include( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
                 'security'      =>  include( dirname( __FILE__ ) . '/user-profile/security.php' ),
             ]
         ];
@@ -31,30 +32,77 @@ class UserProfileForm extends SettingsPage
     {
         ns()->restrict([ 'manage.profile' ]);
 
-        $result         =   [];
-        $userOptions    =   app()->make( UserOptions::class );
-        $inputs         =   $this->getPlainData( $request );
+        $validator      =   Validator::make( $request->input( 'security' ), []);
 
-        foreach( $inputs as $field => $value ) {
-            if ( ! in_array( $field, [ 'password', 'old_password', 'password_confirm' ] ) ) {
-                if ( empty( $value ) ) {
-                    $userOptions->delete( $field );
-                } else {
-                    $userOptions->set( $field, $value );
-                }
+        $results         =   [];       
+        $results[]       =   $this->processCredentials( $request, $validator );
+        $results[]       =   $this->processOptions( $request );
+        $results[]       =   $this->processAttribute( $request );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The profile has been successfully saved.' ),
+            'data'      =>  compact( 'results', 'validator' ),
+        ];
+    }
+
+    public function processAttribute( $request )
+    {
+        $allowedInputs  =   collect( $this->form[ 'tabs' ][ 'attribute' ][ 'fields' ] )
+            ->map( fn( $field ) => $field[ 'name' ] )
+            ->toArray();
+
+        $user           =   UserAttribute::firstOrNew();
+        $user->user_id  =   Auth::id();
+
+        foreach( $request->input( 'attribute' ) as $key => $value ) {
+            if ( in_array( $key, $allowedInputs ) ) {
+                $user->$key     =   $value;
             }
         }
 
-        $validator      =   Validator::make( $request->all(), []);
+        $user->save();
 
-        if ( ! Auth::attempt([
-            'username'  =>  Auth::user()->username,
-            'password'  =>  $request->input( 'security.old_password' )
-        ])) {
-            
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The user attribute has been saved.' )
+        ];
+    }
+
+    public function processOptions( $request )
+    {
+        $userOptions    =   app()->make( UserOptions::class );
+
+        if ( $request->input( 'options' ) ) {
+            foreach( $request->input( 'options' ) as $field => $value ) {
+                if ( ! in_array( $field, [ 'password', 'old_password', 'password_confirm' ] ) ) {
+                    if ( empty( $value ) ) {
+                        $userOptions->delete( $field );
+                    } else {
+                        $userOptions->set( $field, $value );
+                    }
+                }
+            }
+    
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The options has been successfully updated.' )
+            ];
+        }
+
+        return [
+            'status'    =>  'failed',
+            'message'   =>  __( 'No options was provided.' )
+        ];
+    }
+
+    public function processCredentials( $request, $validator )
+    {
+        if ( ! Hash::check( $request->input( 'security.old_password' ), Auth::user()->password ) ) {  
+
             $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
 
-            $result[]   =   [
+            return  [
                 'status'    =>  'failed',
                 'message'   =>  __( 'Wrong old password provided' )
             ];
@@ -64,18 +112,10 @@ class UserProfileForm extends SettingsPage
             $user->password     =   Hash::make( $request->input( 'security.password'  ) );
             $user->save();
 
-            $result[]       =   [
+            return [
                 'status'    =>  'success',
                 'message'   =>  __( 'Password Successfully updated.' )
             ];
         }
-
-
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The profile has been successfully saved.' ),
-            'data'      =>  $result,
-            'validator' =>  $validator
-        ];
     }
 }

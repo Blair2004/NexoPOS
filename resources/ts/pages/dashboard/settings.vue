@@ -57,8 +57,8 @@ export default {
                         this.validation.enableForm( this.form );
                         this.loadSettingsForm();
 
-                        if ( result.data ) {
-                            result.data.forEach( response => {
+                        if ( result.data.results ) {
+                            result.data.results.forEach( response => {
                                 if ( response.status === 'failed' ) {
                                     nsSnackBar.error( response.message ).subscribe();
                                 } else {
@@ -70,6 +70,7 @@ export default {
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
+                        this.validation.triggerFieldsErrors( this.form, error );
                         nsSnackBar.error( error.message || 'No error message provided in case the form is not valid.' )
                             .subscribe();
                     })

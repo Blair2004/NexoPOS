@@ -49,15 +49,10 @@ export default {
         nsPosPendingOrders
     },
     methods: {
-        searchOrder() {
-            /**
-             * @todo possible exploit
-             */
-            nsHttpClient.post( '/api/nexopos/v4/orders/search', {
-                    search: this.searchField
-                })
-                .subscribe( orders => {
-                    this.orders     =   orders;
+        searchOrder( search ) {
+            nsHttpClient.get( `/api/nexopos/v4/crud/${this.active}?search=${search}` )
+                .subscribe( (result) => {
+                    this.orders     =   result.data;
                 })
         },
 
@@ -72,7 +67,6 @@ export default {
         },
 
         loadOrderFromType( type ) {
-            console.log( type );
             nsHttpClient.get( `/api/nexopos/v4/crud/${type}` )
                 .subscribe( result => {
                     this.orders     =   result.data;

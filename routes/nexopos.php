@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
+use App\Http\Controllers\Dashboard\ExpensesController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use Illuminate\Support\Facades\Route;
@@ -36,10 +37,10 @@ Route::get( '/providers', 'Dashboard\ProvidersController@listProviders' );
 Route::get( '/providers/create', 'Dashboard\ProvidersController@createProvider' );
 Route::get( '/providers/edit/{provider}', 'Dashboard\ProvidersController@editProvider' );
 
-Route::get( '/expenses', 'Dashboard\ExpensesController@listExpenses' );
-Route::get( '/expenses/create', 'Dashboard\ExpensesController@createExpense' );
-Route::get( '/expenses/edit/{expense}', 'Dashboard\ExpensesController@editExpense' );
-Route::get( '/expenses/history', 'Dashboard\ExpensesController@expensesHistory' );
+Route::get( '/expenses', [ ExpensesController::class, 'listExpenses' ]);
+Route::get( '/expenses/create', [ ExpensesController::class, 'createExpense' ]);
+Route::get( '/expenses/edit/{expense}', [ ExpensesController::class, 'editExpense' ]);
+Route::get( '/expenses/history', [ ExpensesController::class, 'expensesHistory' ]);
 
 Route::get( '/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
 Route::get( '/expenses/categories/create', 'Dashboard\ExpensesCategoriesController@createExpenseCategory' );

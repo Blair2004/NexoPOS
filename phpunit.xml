@@ -7,8 +7,7 @@
   </coverage>
   <testsuites>
     <testsuite name="Feature">
-      <directory suffix="OrderHostTest.php">./tests/Feature</directory>
-      <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerCreditTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>
@@ -20,7 +19,7 @@
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="database"/>
     <server name="SESSION_DRIVER" value="array"/>
-    <server name="TELESCOPE_ENABLED" value="true"/>
+    <server name="TELESCOPE_ENABLED" value="false"/>
     <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
     <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
   </php>

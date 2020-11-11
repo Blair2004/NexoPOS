@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col overflow-hidden">
+    <div class="flex flex-auto flex-col overflow-hidden">
         <div class="p-1">
             <div class="flex rounded border-2 border-blue-400">
                 <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
@@ -9,8 +9,8 @@
                 </button>
             </div>
         </div>
-        <div class="overflow-y-auto">
-            <div class="flex p-2 flex-col overflow-y-auto">
+        <div class="overflow-y-auto flex flex-auto">
+            <div class="flex p-2 flex-auto flex-col overflow-y-auto">
                 <div class="border-b border-blue-400 w-full py-2" v-for="order of orders" :key="order.id">
                     <h3 class="text-gray-700">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">

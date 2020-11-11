@@ -63,6 +63,7 @@ export default {
                 document.location   =   result.data.redirectTo;
             }, ( error ) => {
                 this.validation.enableFields( this.fields );
+                this.validation.triggerFieldsErrors( this.fields, error.data );
                 nsSnackBar.error( error.message ).subscribe();
             })
         }

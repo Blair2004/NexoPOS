@@ -614,7 +614,7 @@ class CrudService
              * This will pull the submitURL that might be different wether the $entry is
              * provided or not. can be overwritten on the configuration ($config).
              */
-            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : 'foo' .  str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
+            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
             
             /**
              * By default the method used is "post" but might change to "put" according to 

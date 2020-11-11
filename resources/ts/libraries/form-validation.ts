@@ -256,21 +256,17 @@ export default class FormValidation {
         }
     }
 
-    triggerFielsErrors( fields, data ) {
+    triggerFieldsErrors( fields, data ) {
         if ( data.errors ) {
-            for( let index in data.errors ) {
-                let path    =   index.split( '.' ).filter( exp => {
-                    return ! /^\d+$/.test( exp );
-                });
-
+            for( let fieldName in data.errors ) {
                 /**
                  * if the validation path
                  * has 2 entries we believe it's a 
                  * an error on a field within a tab
                  */
                 fields.forEach( field => {
-                    if ( field.name === path[0] ) {
-                        data.errors[ index ].forEach( errorMessage => {
+                    if ( field.name === fieldName ) {
+                        data.errors[ fieldName ].forEach( errorMessage => {
                             const error     =   {
                                 identifier: 'invalid',
                                 invalid: true,

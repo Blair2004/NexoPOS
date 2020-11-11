@@ -55,6 +55,11 @@ class User extends Authenticatable
         parent::__construct( $attributes );
     }
 
+    public function attribute()
+    {
+        return $this->hasOne( UserAttribute::class, 'user_id', 'id' );
+    }
+
     /**
      * Relation with roles
      * @return void

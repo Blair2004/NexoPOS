@@ -17,7 +17,7 @@ class DeleteOrderTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testDeleteOrder()
     {
         Sanctum::actingAs(
             User::find(98),

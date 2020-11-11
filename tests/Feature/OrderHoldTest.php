@@ -58,6 +58,6 @@ class OrderHoldTest extends TestCase
                 ],
             ]);
         
-        $response->assertJsonPath( 'data.order.status', 'hold' );
+        $response->assertJsonPath( 'data.order.payment_status', 'hold' );
     }
 }

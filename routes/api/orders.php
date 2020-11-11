@@ -12,7 +12,6 @@ Route::get( 'orders/{id}/full-refund', [ OrdersController::class, 'refundOrderPr
 
 Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->middleware( 'ns.restrict:nexopos.void.orders' );
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
-Route::post( 'orders/search', [ OrdersController::class, 'searchOrder' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 
 Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);

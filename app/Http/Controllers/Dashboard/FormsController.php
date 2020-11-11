@@ -20,17 +20,17 @@ class FormsController extends DashboardController
         parent::__construct();
     }
 
-    public function getForm( $identifier ) 
+    public function getForm( $resource ) 
     {
         /**
          * @var SettingsPage
          */
-        $instance   =   Hook::filter( 'ns.forms', [], $identifier );
+        $instance   =   Hook::filter( 'ns.forms', [], $resource );
 
         if ( ! $instance instanceof SettingsPage ) {
             throw new Exception( sprintf( 
                 '%s is not an instanceof "%s".',
-                $identifier, 
+                $resource, 
                 SettingsPage::class 
             ) );
         }
@@ -38,14 +38,14 @@ class FormsController extends DashboardController
         return $instance->getForm();
     }
 
-    public function saveForm( FormsRequest $request, $identifier )
+    public function saveForm( FormsRequest $request, $resource, $identifier = null )
     {
-        $instance   =   Hook::filter( 'ns.forms', [], $identifier );
+        $instance   =   Hook::filter( 'ns.forms', [], $resource, $identifier );
 
         if ( ! $instance instanceof SettingsPage ) {
             throw new Exception( sprintf( 
                 '%s is not an instanceof "%s".',
-                $identifier, 
+                $resource, 
                 SettingsPage::class 
             ) );
         }

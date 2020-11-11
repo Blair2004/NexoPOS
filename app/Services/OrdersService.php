@@ -866,7 +866,7 @@ class OrdersService
         $order->author                  =   Auth::id();
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 ) ?: $this->computeOrderTaxValue( $fields, $order );
-        $order->code                    =   $this->generateOrderCode();
+        $order->code                    =   $order->code ?? $this->generateOrderCode(); // to avoid generating a new code
         $order->save();
 
         return $order;

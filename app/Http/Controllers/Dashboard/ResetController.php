@@ -20,6 +20,7 @@ class ResetController extends DashboardController
         DB::table( 'nexopos_customers_addresses' )->truncate();
         DB::table( 'nexopos_expenses_categories' )->truncate();
         DB::table( 'nexopos_expenses' )->truncate();
+        DB::table( 'nexopos_expenses_history' )->truncate();
         DB::table( 'nexopos_orders_coupons' )->truncate();
         DB::table( 'nexopos_orders_metas' )->truncate();
         DB::table( 'nexopos_orders_payments' )->truncate();
