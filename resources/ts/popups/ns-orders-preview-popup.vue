@@ -36,6 +36,8 @@ const nsOrderPreviewPopup   =   {
                     this.order      =   result[0];
                     this.products   =   result[1];
                     this.payments   =   result[2];
+
+                    console.log( result );
                 });
         },
         getTypeLabel( label ) {
@@ -126,7 +128,7 @@ export default nsOrderPreviewPopup;
                                         <span>Customer</span>
                                     </h4>
                                 </div>
-                                <div class="font-semibold text-gray-800">{{ order.customer.name }}</div>
+                                <div class="font-semibold text-gray-800">{{ order.nexopos_customers_name }}</div>
                             </div>
                             <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
                                 <div>
@@ -235,7 +237,7 @@ export default nsOrderPreviewPopup;
 
                 <!-- Refund -->
                 <ns-tabs-item label="Refund & Return" identifier="refund">
-                    <h1>Refund component</h1>
+                    <!-- <ns-order-refund></ns-order-refund> -->
                 </ns-tabs-item>
                 <!-- End Refund -->
             </ns-tabs>
@@ -256,3 +258,11 @@ export default nsOrderPreviewPopup;
         </div>
     </div>
 </template>
+<script>
+import { default as nsOrderRefund } from "@/pages/dashboard/orders/ns-order-refund";
+export default {
+    components: {
+        nsOrderRefund
+    }
+}
+</script>
