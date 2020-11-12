@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use App\Services\OrdersService;
 use App\Services\Options;
 use App\Events\ProcurementAfterUpdateEvent;
+use App\Fields\OrderPaymentFields;
+use App\Http\Requests\OrderPaymentRequest;
 use App\Models\Order;
 use App\Models\Option;
 use App\Models\Procurement;
@@ -207,6 +209,25 @@ class OrdersController extends DashboardController
     public function deleteOrder( Order $order )
     {
         return $this->ordersService->deleteOrder( $order );
+    }
+
+    public function getSupportedPayments()
+    {
+        return ( new OrderPaymentFields )->get();
+    }
+
+    /**
+     * Will perform a payment on a specific order
+     * @param Order $order
+     * @param Request $request
+     * @return array
+     */
+    public function addPayment( Order $order, OrderPaymentRequest $request )
+    {
+        return $this->ordersService->makeOrderSinglePayment([
+            'identifier'    =>  $request->input( 'identifier' ),
+            'value'         =>  $request->input( 'value' )
+        ], $order );
     }
 }
 

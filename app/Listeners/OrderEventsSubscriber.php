@@ -2,12 +2,15 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
+use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Jobs\ComputeCashierSalesJob;
 use App\Jobs\ComputeCustomerAccountJob;
 use App\Jobs\ComputeDayReportJob;
+use App\Services\CustomerService;
 use App\Services\OrdersService;
 use App\Services\ProductService;
 
@@ -15,13 +18,16 @@ class OrderEventsSubscriber
 {
     private $ordersService;
     private $productsService;
+    private $customerService;
 
     public function __construct(
         OrdersService $ordersService,
-        ProductService $productsService
+        ProductService $productsService,
+        CustomerService $customerService
     ) {
         $this->ordersService    =   $ordersService;
         $this->productsService  =   $productsService;
+        $this->customerService  =   $customerService;
     }
 
     public function subscribe( $events )
@@ -44,6 +50,16 @@ class OrderEventsSubscriber
         $events->listen(
             OrderAfterCreatedEvent::class,
             [ OrderEventsSubscriber::class, 'afterOrderCreated' ]
+        );
+
+        $events->listen(
+            OrderAfterPaymentCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'afterOrderPaymentCreated' ]
+        );
+
+        $events->listen(
+            OrderBeforePaymentCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'beforePaymentCreated' ]
         );
     }
 
@@ -86,6 +102,30 @@ class OrderEventsSubscriber
 
         ComputeCashierSalesJob::dispatch( $event )
             ->delay( now()->addSecond(10) );
+    }
+
+    /**
+     * When a sales is made on a specific order
+     * we to increase the customers purchases
+     */
+    public function afterOrderPaymentCreated( OrderAfterPaymentCreatedEvent $event )
+    {
+        $this->customerService->increaseOrderPurchases( 
+            $event->order->customer, 
+            $event->orderPayment->value 
+        );
+    }
+
+    /**
+     * Will check if the payment can be made on 
+     * the customer account or will throw an error.
+     * 
+     * @param OrderBeforePaymentCreatedEvent $event
+     * @return void
+     */
+    public function beforePaymentCreated( OrderBeforePaymentCreatedEvent $event )
+    {
+        $this->customerService->canReduceCustomerAccount( $event->customer, $event->value );
     }
 
     /**

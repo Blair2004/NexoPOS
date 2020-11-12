@@ -74,6 +74,12 @@
                 </div>
                 <div class="font-semibold text-gray-800">{{ order.tax_value | currency }}</div>
             </div>
+            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-blue-100">
+                <div>
+                    <h4 class="text-semibold text-gray-700">Total</h4>
+                </div>
+                <div class="font-semibold text-gray-800">{{ order.total | currency }}</div>
+            </div>
             <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
                 <div>
                     <h4 class="text-semibold text-gray-700">Paid</h4>

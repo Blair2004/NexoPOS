@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
+use App\Events\CustomerAfterUpdatedEvent;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
@@ -258,7 +259,7 @@ class CustomerService
      * @param int amount
      * @return array
      */
-    public function saveTransaction( $customer, $operation, $amount, $description = '' )
+    public function saveTransaction( Customer $customer, $operation, $amount, $description = '' )
     {
         if ( $operation === CustomerAccountHistory::OPERATION_DEDUCT && $customer->account_amount - $amount < 0 ) {
             throw new NotAllowedException( __( 'The operation will cause negative account for the customer.' ) );
@@ -292,5 +293,22 @@ class CustomerService
         } 
 
         $history->customer->save();
+    }
+
+    public function increaseOrderPurchases( Customer $customer, $value )
+    {
+        $customer->purchases_amount     +=  $value;
+        $customer->save();
+
+        event( new CustomerAfterUpdatedEvent( $customer ) );
+
+        return $customer;
+    }
+
+    public function canReduceCustomerAccount( Customer $customer, $value )
+    {
+        if ( $customer->account_amount - $value < 0 ) {
+            throw new NotAllowedException( __( 'The customer account doesn\'t have enough funds to proceed.' ) );
+        }
     }
 }

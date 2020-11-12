@@ -37,4 +37,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $orders->namespace      =   'nexopos.refund.orders';
     $orders->description    =   __( 'Let the user refund orders' );
     $orders->save();
+
+    $orders                 =   new Permission;
+    $orders->name           =   __( 'Make Payment To orders' );
+    $orders->namespace      =   'nexopos.make-payment.orders';
+    $orders->description    =   __( 'Allow the user to make payments to orders.' );
+    $orders->save();
 }

@@ -296,7 +296,6 @@ export default class FormValidation {
                 field.errors.forEach( ( error, index ) => {
                     if ( error.identifier === rule.identifier && error.invalid === true ) {
                         field.errors.splice( index, 1 );
-                        console.log( field );
                     }
                 });
             }
@@ -314,7 +313,6 @@ export default class FormValidation {
                 field.errors.forEach( ( error, index ) => {
                     if ( error[ rule.identifier ] === true ) {
                         field.errors.splice( index, 1 );
-                        console.log( field );
                     }
                 });
             }

@@ -13,7 +13,9 @@ use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
+use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
+use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Models\Order;
 use App\Models\Product;
@@ -360,33 +362,76 @@ class OrdersService
          * order and only update them.
          */
         foreach ($payments as $payment) {
-
-            $orderPayment       =  isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
-
-            if ( ! $orderPayment instanceof OrderPayment ) {
-                $orderPayment       =   new OrderPayment;
-            }
-
-            $orderPayment->order_id     =   $order->id;
-            $orderPayment->identifier   =   $payment['identifier'];
-            $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
-            $orderPayment->author       =   Auth::id();
-            $orderPayment->save();
-
-            /**
-             * When the customer is making some payment
-             * we store it on his history.
-             */
-            if ( $payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
-                $this->customerService->saveTransaction( 
-                    $customer, 
-                    CustomerAccountHistory::OPERATION_PAYMENT, 
-                    $payment[ 'value' ] 
-                );
-            }
+            $this->__saveOrderSinglePayment( $payment, $order );
         }
 
         $order->tendered    =   $this->currencyService->getRaw( collect( $payments )->map( fn( $payment ) => floatval( $payment[ 'value' ] ) )->sum() );
+    }
+
+    /**
+     * Perform a single payment to a provided order
+     * and ensure to display relevant events
+     * @param array $payment
+     * @param Order $order
+     * @return array
+     */
+    public function makeOrderSinglePayment( $payment, Order $order )
+    {
+        event( new OrderBeforePaymentCreatedEvent( $payment[ 'value' ], $order->customer ) );
+        
+        $orderPayment   =   $this->__saveOrderSinglePayment( $payment, $order );
+        
+        /**
+         * let's refresh the order to check wether the 
+         * payment has made the order complete or not.
+         */
+        $order->refresh();
+        
+        $this->refreshOrder( $order );
+
+        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The payment has been saved.' ),
+        ];
+    }
+
+    /**
+     * Save an order payment (or update). deplete customer
+     * account if "account payment" is used.
+     * 
+     * @param array $payment
+     * @param Order $order
+     * @return OrderPayment
+     */
+    private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
+    {
+        $orderPayment       =  isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
+
+        if ( ! $orderPayment instanceof OrderPayment ) {
+            $orderPayment       =   new OrderPayment;
+        }
+
+        $orderPayment->order_id     =   $order->id;
+        $orderPayment->identifier   =   $payment['identifier'];
+        $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
+        $orderPayment->author       =   Auth::id();
+        $orderPayment->save();
+
+        /**
+         * When the customer is making some payment
+         * we store it on his history.
+         */
+        if ( $payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
+            $this->customerService->saveTransaction( 
+                $order->customer, 
+                CustomerAccountHistory::OPERATION_PAYMENT, 
+                $payment[ 'value' ] 
+            );
+        }
+
+        return $orderPayment;
     }
 
     /**
@@ -1123,6 +1168,8 @@ class OrdersService
         });
 
         $orderShipping          =   $order->shipping;
+        $totalPayments          =   $order->payments->map( fn( $payment ) => $payment->value )->sum();
+        $order->tendered        =   $totalPayments;
 
         /**
          * We're not proceeding to 
@@ -1130,8 +1177,14 @@ class OrdersService
          * @todo we might need to dispatch an event
          */
         $order->gross_total     =   $productGrossTotal;
-        $order->total           =   $productTotal;
+        $order->total           =   $productTotal + $orderShipping;
         $order->tax_value       =   $productsTotalTaxes;
+        $order->change          =   $order->total - $order->tendered;
+
+        if ( $order->tendered >= $order->total ) {
+            $order->payment_status      =       Order::PAYMENT_PAID;
+        }
+
         $order->save();
 
         return [

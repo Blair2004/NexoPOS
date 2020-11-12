@@ -44,6 +44,9 @@ const nsOrderPreviewPopup   =   {
         setActive( active ) {
             this.active     =   active;
         },
+        refresh() {
+            this.loadOrderDetails( this.$popupParams.order.id );
+        },
         loadOrderDetails( orderId ) {
             forkJoin([
                 nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}` ),
@@ -144,13 +147,13 @@ export default nsOrderPreviewPopup;
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item label="Payments" identifier="payments" class="overflow-y-auto">
-                    <ns-order-payment :order="order"></ns-order-payment>
+                <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Payments" identifier="payments" class="overflow-y-auto">
+                    <ns-order-payment @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item label="Refund & Return" identifier="refund">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Refund & Return" identifier="refund">
                     <ns-order-refund></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
