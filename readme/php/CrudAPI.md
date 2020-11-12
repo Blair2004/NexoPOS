@@ -289,7 +289,7 @@ Once the button is clicked, it will trigger an event available using the javascr
 ```js
 nsEvent.emit({
     identifier: 'ns-table-row-action',
-    value: { action, row: this.row }
+    value: { action, row: this.row, component: this }
 });
 ```
 
@@ -305,6 +305,7 @@ Where identifier should help you identify the event is about clicking on an acti
 ```
 
 - row : that is the line from where the action is clicked.
+- component : is the Vue Component that represent the row which options is clicked.
 
 So, in order to be able to catch that even, you need to register a javascript file that is available on the footer of the CRUD resource you're targetting.
 Ideally, you'll add a filter using the hook "ns-crud-footer" : 
