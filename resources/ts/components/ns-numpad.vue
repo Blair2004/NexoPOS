@@ -14,6 +14,7 @@
 </template>
 <script>
 export default {
+    props: [ 'value' ],
     data() {
         return {
             backValue: '0',
@@ -34,6 +35,9 @@ export default {
                 ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
             ]
         }
+    },
+    mounted() {
+        this.backValue  =   this.value || this.backValue;
     },
     methods: {
         increaseBy( key ) {

@@ -25,7 +25,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
             event.identifier === 'ns-table-row-action' && 
             event.value.action.namespace === 'ns.order-options' 
         ) {
-            Popup.show( nsOrderPreview, { order : event.value.row });
+            Popup.show( nsOrderPreview, { order : event.value.row, component : event.value.component });
         }
     });
 });

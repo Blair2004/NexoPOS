@@ -6,6 +6,7 @@ import { nsHttpClient, nsSnackBar }   from './../bootstrap';
 const nsCrud    =   Vue.component( 'ns-crud', {
     data: () => {
         return {
+            isRefreshing: false,
             sortColumn: '',
             searchInput: '',
             searchQuery: '',
@@ -168,10 +169,15 @@ const nsCrud    =   Vue.component( 'ns-crud', {
 
         },
         refresh() {
+            this.isRefreshing   =   true;
             const request   =   nsHttpClient.get( `${this.getParsedSrc}` );
             request.subscribe( (f:HttpCrudResponse) => {
+                this.isRefreshing   =   false;
                 this.result     =   f;
                 this.page       =   f.current_page;
+            }, ( error ) => {
+                this.isRefreshing   =   false;
+                nsSnackBar.error( error.message ).subscribe();
             });
         }
     },
@@ -190,7 +196,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                     </div>
                 </div>
                 <div class="px-2 flex">
-                    <button @click="refresh()" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-sync"></i> </button>
+                    <button @click="refresh()" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 bg-white px-3 outline-none text-gray-800 border border-gray-400"><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">

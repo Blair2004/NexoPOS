@@ -28,12 +28,19 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
 
             if ( this.row.$toggled ) {
                 setTimeout(() => {
-                    // const contextMenu               =   element.target.parentElement.lastElementChild;
-                    // const offset                    =   this.getElementOffset( element.target );
-                    // contextMenu.style.top           =   ( offset.top + element.target.offsetHeight ) + 'px';
-                    // contextMenu.style.right         =   ( offset.right - element.target.offsetWidth ) + 'px';
-                    // console.log( offset.left - element.target.offsetWidth );
+                    console.log(  );
+                    const dropdown                  =   this.$el.querySelectorAll( '.relative > .absolute' )[0];
+                    const parent                    =   this.$el.querySelectorAll( '.relative' )[0];
+                    const offset                    =   this.getElementOffset( parent );
+                    dropdown.style.top              =   offset.top + 'px';
+                    dropdown.style.left             =   offset.left + 'px';
+                    parent.classList.remove( 'relative' );
+                    parent.classList.add( 'dropdown-holder' );
                 }, 100 );
+            } else {
+                const parent                    =   this.$el.querySelectorAll( '.dropdown-holder' )[0];
+                parent.classList.remove( 'dropdown-holder' );
+                parent.classList.add( 'relative' );
             }
         },
         handleChanged( event ) {
@@ -55,7 +62,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
             } else {
                 nsEvent.emit({
                     identifier: 'ns-table-row-action',
-                    value: { action, row: this.row }
+                    value: { action, row: this.row, component : this }
                 });
                 this.toggleMenu();
             }

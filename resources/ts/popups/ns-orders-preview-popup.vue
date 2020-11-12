@@ -1,7 +1,12 @@
 <script>
-import { nsHttpClient } from "@/bootstrap";
+import { nsHttpClient, nsSnackBar } from "@/bootstrap";
 import { nsCurrency } from "@/filters/currency";
 import { forkJoin } from "rxjs";
+import nsOrderRefund from "@/pages/dashboard/orders/ns-order-refund.vue";
+import nsPromptPopupVue from "./ns-prompt-popup.vue";
+import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
+import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
+import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
 
 /**
  * @var {ExtendedVue}
@@ -16,8 +21,21 @@ const nsOrderPreviewPopup   =   {
             active: 'details',
             order: new Object,
             products: [],
-            payments: []
+            payments: [],
         }
+    },
+    components: {
+        nsOrderRefund,
+        nsOrderPayment,
+        nsOrderDetails
+    },
+    computed: {
+        isVoidable() {
+            return [ 'paid', 'partially_paid', 'unpaid' ].includes( this.order.payment_status );
+        },
+        isDeleteAble() {
+            return [ 'hold' ].includes( this.order.payment_status );
+        },
     },
     methods: {
         closePopup() {
@@ -40,42 +58,44 @@ const nsOrderPreviewPopup   =   {
                     console.log( result );
                 });
         },
-        getTypeLabel( label ) {
-            switch( label ) {
-                // @todo localization needed here
-                case 'delivery' : return 'Delivery'; break;
-                case 'takeaway' : return 'Take Away'; break;
-                default : return 'Unknown Type'; break;
-            }
+        deleteOrder() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Your Action',
+                message: 'Would you like to delete this order',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.$popupParams.order.id}` )
+                            .subscribe( result => {
+                                nsSnackBar.success( result.message ).subscribe();
+                                this.refreshCrudTable();
+                                this.closePopup();
+                            }, error => {
+                                nsSnackBar.error( error.message ).subscribe();
+                            })
+                    }
+                }
+            })
         },
-        getDeliveryStatus( label ) {
-            switch( label ) {
-                // @todo localization needed here
-                case 'pending' : return 'Pending'; break;
-                case 'ongoing' : return 'Ongoing'; break;
-                case 'delivered' : return 'Delivered'; break;
-                case 'failed' : return 'Delivery Failure'; break;
-                default : return 'Unknown Status'; break;
-            }
+        voidOrder() {
+            Popup.show( nsPromptPopupVue, {
+                title: 'Confirm Your Action',
+                message: 'The current order will be void. This action will be recorded. Consider providing a reason for this operation',
+                onAction:  ( reason ) => {
+                    if ( reason !== false ) {
+                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.$popupParams.order.id}/void`, { reason })
+                            .subscribe( result => {
+                                nsSnackBar.success( result.message ).subscribe();
+                                this.refreshCrudTable();
+                                this.closePopup();
+                            }, error => {
+                                nsSnackBar.error( error.message ).subscribe();
+                            })
+                    }
+                }
+            });
         },
-        getProcessingStatus( label ) {
-            switch( label ) {
-                // @todo localization needed here
-                case 'pending' : return 'Pending'; break;
-                case 'ongoing' : return 'Ongoing'; break;
-                case 'done' : return 'Done'; break;
-                case 'failed' : return 'Failure'; break;
-                default : return 'Unknown Status'; break;
-            }
-        },
-        getPaymentStatus( label ) {
-            switch( label ) {
-                // @todo localization needed here
-                case 'paid' : return 'Paid'; break;
-                case 'unpaid' : return 'Unpaid'; break;
-                case 'partially_paid' : return 'Partially Paid'; break;
-                default : return 'Unknown Status'; break;
-            }
+        refreshCrudTable() {
+            this.$popupParams.component.$emit( 'updated', true );
         }
     },
     watch: {
@@ -114,139 +134,40 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 bg-gray-100 flex flex-auto">
-            <ns-tabs :active="active" @active="setActive( $event )">
+        <div class="p-2 overflow-hidden bg-gray-100 flex flex-auto">
+            <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item label="Details" identifier="details">
-                    <div class="-mx-4 flex flex-wrap">
-
-                        <div class="px-4 w-full md:w-1/3 lg:w-1/4 mb-2">
-                            <h3 class="font-semibold text-gray-800 pb-2">Order Status</h3>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Customer</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.nexopos_customers_name }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Type</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ getTypeLabel( order.type ) }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Delivery Status</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ getDeliveryStatus( order.delivery_status ) }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Proceessing Status</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ getProcessingStatus( order.delivery_status ) }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Payment Status</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ getPaymentStatus( order.payment_status ) }}</div>
-                            </div>
-                        </div>
-
-                        <div class="px-4 w-full md:w-1/3 lg:w-1/4 mb-2">
-                            <h3 class="font-semibold text-gray-800 pb-2">Payment Summary</h3>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">Sub Total</h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.subtotal | currency }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">
-                                        <span>Discount</span>
-                                        <span class="ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                        <span class="ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
-                                    </h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.discount | currency }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">Shipping</h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.shipping | currency }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">Taxes</h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.tax_value | currency }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">Paid</h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.tendered | currency }}</div>
-                            </div>
-                            <div class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">Change</h4>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ order.change | currency }}</div>
-                            </div>
-                        </div>
-
-                        <div class="px-4 w-full md:w-1/3 lg:w-1/4 mb-2">
-                            <h3 class="font-semibold text-gray-800 pb-2">Products</h3>
-                            <div :key="product.id" v-for="product of products" class="border-b border-blue-400 p-2 flex justify-between items-start bg-gray-100">
-                                <div>
-                                    <h4 class="text-semibold text-gray-700">{{ product.name }} (x{{ product.quantity }})</h4>
-                                    <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }}</p>
-                                </div>
-                                <div class="font-semibold text-gray-800">{{ product.unit_price | currency }}</div>
-                            </div>
-                        </div>
-                    </div>
+                    <ns-order-details :order="order"></ns-order-details>
                 </ns-tabs-item>
 
                 <!-- End Summary -->
 
-                <!-- Refund -->
-                <ns-tabs-item label="Shipping Management" identifier="shipping">
-                    <h1>Shipping Component</h1>
-                </ns-tabs-item>
-                <!-- End Refund -->
-
-                <!-- Refund -->
-                <ns-tabs-item label="Payments" identifier="payments">
-                    <h1>Payment component</h1>
+                <!-- Payment Component -->
+                <ns-tabs-item label="Payments" identifier="payments" class="overflow-y-auto">
+                    <ns-order-payment :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
                 <ns-tabs-item label="Refund & Return" identifier="refund">
-                    <!-- <ns-order-refund></ns-order-refund> -->
+                    <ns-order-refund></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
             </ns-tabs>
+            <div v-if="! order.id" class="h-full w-full flex items-center justify-center">
+                <ns-spinner></ns-spinner>
+            </div>
         </div> 
         <div class="p-2 flex justify-between border-t border-gray-200">
             <div>
-                <ns-button @click="voidOrder()" type="info">
+                <ns-button v-if="isVoidable" @click="voidOrder()" type="danger">
                     <i class="las la-ban"></i>
                     Void
+                </ns-button>
+                <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="danger">
+                    <i class="las la-trash"></i>
+                    Delete
                 </ns-button>
             </div>
             <div>
@@ -258,11 +179,3 @@ export default nsOrderPreviewPopup;
         </div>
     </div>
 </template>
-<script>
-import { default as nsOrderRefund } from "@/pages/dashboard/orders/ns-order-refund";
-export default {
-    components: {
-        nsOrderRefund
-    }
-}
-</script>

@@ -111,6 +111,10 @@ class OrdersController extends DashboardController
     public function getOrders( Order $id = null ) {
         if ( $id instanceof Order ) {
             $id->load( 'customer' );
+            $id->load( 'payments' );
+            $id->load( 'shipping_address' );
+            $id->load( 'billing_address' );
+            $id->load( 'products.unit' );
             return $id;
         }
 
