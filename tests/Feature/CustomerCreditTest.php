@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CustomerAddCreditTest extends TestCase
+class CustomerCreditTest extends TestCase
 {
     /**
      * A basic feature test example.

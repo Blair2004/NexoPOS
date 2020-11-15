@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
+use App\Models\Role;
 use App\Models\User;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,7 +21,7 @@ class DeleteOrderTest extends TestCase
     public function testDeleteOrder()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

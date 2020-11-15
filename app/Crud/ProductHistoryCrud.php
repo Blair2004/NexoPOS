@@ -458,19 +458,25 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_TRANSFER_IN : 
                 $entry->{ '$cssClass' }             =   'bg-blue-100 border-blue-200 border text-sm';
             break;
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN : 
+            case ProductHistory::ACTION_ADJUSTMENT_SALE : 
+                $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
+            break;
         }
 
         switch( $entry->operation_type ) {
-            case ProductHistory::ACTION_STOCKED : $entry->operation_type        = __( 'Stocked' ); break;
-            case ProductHistory::ACTION_DEFECTIVE : $entry->operation_type      = __( 'Defective' ); break;
-            case ProductHistory::ACTION_DELETED : $entry->operation_type        = __( 'Deleted' ); break;
-            case ProductHistory::ACTION_REMOVED : $entry->operation_type        = __( 'Removed' ); break;
-            case ProductHistory::ACTION_RETURNED : $entry->operation_type       = __( 'Returned' ); break;
-            case ProductHistory::ACTION_SOLD : $entry->operation_type           = __( 'Sold' ); break;
-            case ProductHistory::ACTION_ADDED : $entry->operation_type          = __( 'Added' ); break;
-            case ProductHistory::ACTION_TRANSFER_IN : $entry->operation_type    = __( 'Incoming Transfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_OUT : $entry->operation_type   = __( 'Outgoing Transfer' ); break;
-            case ProductHistory::ACTION_VOID_RETURN : $entry->operation_type    = __( 'Void Return' ); break;
+            case ProductHistory::ACTION_STOCKED :           $entry->operation_type      = __( 'Stocked' ); break;
+            case ProductHistory::ACTION_DEFECTIVE :         $entry->operation_type      = __( 'Defective' ); break;
+            case ProductHistory::ACTION_DELETED :           $entry->operation_type      = __( 'Deleted' ); break;
+            case ProductHistory::ACTION_REMOVED :           $entry->operation_type      = __( 'Removed' ); break;
+            case ProductHistory::ACTION_RETURNED :          $entry->operation_type      = __( 'Returned' ); break;
+            case ProductHistory::ACTION_SOLD :              $entry->operation_type      = __( 'Sold' ); break;
+            case ProductHistory::ACTION_ADDED :             $entry->operation_type      = __( 'Added' ); break;
+            case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type      = __( 'Incoming Transfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type      = __( 'Outgoing Transfer' ); break;
+            case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type      = __( 'Void Return' ); break;
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type      = __( 'Adjustment Return' ); break;
+            case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type      = __( 'Adjustment Sale' ); break;
             default: $entry->operation_type;break;
         }
 

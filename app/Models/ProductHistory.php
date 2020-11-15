@@ -11,17 +11,19 @@ class ProductHistory extends Model
     
     protected $table    =   'nexopos_' . 'products_histories';
 
-    const ACTION_STOCKED        =   'procured';
-    const ACTION_DELETED        =   'deleted';
-    const ACTION_TRANSFER_OUT   =   'outgoing-transfer';
-    const ACTION_TRANSFER_IN    =   'incoming-transfer';
-    const ACTION_REMOVED        =   'removed';
-    const ACTION_ADDED          =   'added';
-    const ACTION_SOLD           =   'sold';
-    const ACTION_RETURNED       =   'returned';
-    const ACTION_DEFECTIVE      =   'defective';
-    const ACTION_LOST           =   'lost';
-    const ACTION_VOID_RETURN    =   'void-return';
+    const ACTION_STOCKED            =   'procured';
+    const ACTION_DELETED            =   'deleted';
+    const ACTION_TRANSFER_OUT       =   'outgoing-transfer';
+    const ACTION_TRANSFER_IN        =   'incoming-transfer';
+    const ACTION_REMOVED            =   'removed';
+    const ACTION_ADDED              =   'added';
+    const ACTION_SOLD               =   'sold';
+    const ACTION_RETURNED           =   'returned';
+    const ACTION_DEFECTIVE          =   'defective';
+    const ACTION_LOST               =   'lost';
+    const ACTION_VOID_RETURN        =   'void-return';
+    const ACTION_ADJUSTMENT_RETURN  =   'return-adjustment';
+    const ACTION_ADJUSTMENT_SALE    =   'sale-adjustment';
 
     /**
      * actions that reduce stock
@@ -33,6 +35,7 @@ class ProductHistory extends Model
         ProductHistory::ACTION_SOLD,
         ProductHistory::ACTION_DEFECTIVE,
         ProductHistory::ACTION_LOST,
+        ProductHistory::ACTION_ADJUSTMENT_SALE,
     ];
 
     /**
@@ -44,6 +47,7 @@ class ProductHistory extends Model
         ProductHistory::ACTION_TRANSFER_IN,
         ProductHistory::ACTION_STOCKED,
         ProductHistory::ACTION_VOID_RETURN,
+        ProductHistory::ACTION_ADJUSTMENT_RETURN,
     ];
 
     public function scopeFindProduct( $query, $id )

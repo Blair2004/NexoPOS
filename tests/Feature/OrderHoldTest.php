@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Tests\TestCase;
 use Laravel\Sanctum\Sanctum;
@@ -19,7 +20,7 @@ class OrderHoldTest extends TestCase
     public function testPostingOrder()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

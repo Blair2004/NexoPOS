@@ -18,11 +18,11 @@ class ProductsSeeder extends Seeder
     public function run()
     {
         return ProductCategory::factory()
-            ->count(10)
+            ->count(2)
             ->create()
             ->each( function( $category ) {
                 Product::factory()
-                    ->count(10)
+                    ->count(3)
                     ->create([ 'category_id' => $category->id ])
                     ->each( function( $product ) {
                         UnitGroup::find( $product->unit_group )->units->each( function( $unit ) use ( $product ) {

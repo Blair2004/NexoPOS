@@ -10,6 +10,7 @@ use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Jobs\ComputeCashierSalesJob;
 use App\Jobs\ComputeCustomerAccountJob;
 use App\Jobs\ComputeDayReportJob;
+use App\Models\OrderPayment;
 use App\Services\CustomerService;
 use App\Services\OrdersService;
 use App\Services\ProductService;
@@ -125,7 +126,9 @@ class OrderEventsSubscriber
      */
     public function beforePaymentCreated( OrderBeforePaymentCreatedEvent $event )
     {
-        $this->customerService->canReduceCustomerAccount( $event->customer, $event->value );
+        if ( $event->payment[ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
+            $this->customerService->canReduceCustomerAccount( $event->customer, $event->payment[ 'value' ] );
+        }
     }
 
     /**

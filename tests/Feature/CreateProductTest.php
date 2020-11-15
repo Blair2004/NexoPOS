@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,7 +19,7 @@ class CreateProductTest extends TestCase
     public function testCreateProduct()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

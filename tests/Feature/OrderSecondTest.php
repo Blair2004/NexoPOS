@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,7 +20,7 @@ class OrderSecondTest extends TestCase
     public function testPostingOrder()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

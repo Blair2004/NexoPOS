@@ -11,6 +11,7 @@ import Vue from "vue";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
+import CrudHandler from "./libraries/crud-handler";
 
 declare const window;
 declare const ns;
@@ -29,6 +30,7 @@ const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
 const nsSnackBar        =   new SnackBar;
 const nsUrl             =   new Url;
+const nsCrudHandler     =   new CrudHandler;
 
 /**
  * create a screen class
@@ -86,5 +88,6 @@ window.EventEmitter     =   EventEmitter;
 window.Popup            =   Popup;
 window.RxJS             =   RxJS;
 window.FormValidation   =   FormValidation;
+window.nsCrudHandler    =   nsCrudHandler;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl };

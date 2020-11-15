@@ -5,7 +5,12 @@
         </div>
         <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
             <span>Selected : </span>
-            <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
+            <div class="flex items-center justify-between">
+                <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
+                <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
+                    <i class="las la-eye"></i>
+                </button>
+            </div>
         </div>
         <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
             <input

@@ -8,6 +8,7 @@ use App\Jobs\ComputeDayReportJob;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Product;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\CurrencyService;
 use Laravel\Sanctum\Sanctum;
@@ -23,7 +24,7 @@ class OrderTest extends TestCase
     public function testPostingOrder()
     {
         Sanctum::actingAs(
-            User::find(98),
+            Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 

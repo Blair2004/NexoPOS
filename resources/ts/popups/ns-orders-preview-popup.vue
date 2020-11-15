@@ -45,6 +45,16 @@ const nsOrderPreviewPopup   =   {
             this.active     =   active;
         },
         refresh() {
+            /**
+             * this will notify the crud component to
+             * refresh the list of result as a row state has changed.
+             */
+            this.$popupParams.component.$emit( 'updated' );
+
+            /**
+             * Withn the popup let's refresh the order
+             * and display updated values.
+             */
             this.loadOrderDetails( this.$popupParams.order.id );
         },
         loadOrderDetails( orderId ) {

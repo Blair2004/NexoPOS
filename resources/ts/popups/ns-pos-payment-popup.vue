@@ -83,11 +83,14 @@ export default {
         selectPaymentAsActive( event ) {
             this.select( this.paymentsType.filter( payment => payment.identifier === event.target.value )[0] );
         },
-        submitOrder() {
+        submitOrder( data = {}) {
             const popup     =   Popup.show( nsPosLoadingPopupVue );
             
             try {
-                POS.submitOrder().then( result => {
+
+                const order     =   { ...POS.order.getValue(), ...data };
+
+                POS.submitOrder( order ).then( result => {
                     // close spinner
                     popup.close();
 
@@ -171,9 +174,11 @@ export default {
                         </div>
                     </div>
                     <div>
-                        <ns-button @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span v-if="order.tendered >= order.total"><i class="las la-cash-register"></i> Submit Payment</span>
-                            <span v-if="order.tendered < order.total"><i class="las la-bookmark"></i> Layaway</span>
+                        <ns-button v-if="order.tendered >= order.total" @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
+                            <span ><i class="las la-cash-register"></i> Submit Payment</span>
+                        </ns-button>
+                        <ns-button v-if="order.tendered < order.total" @click="submitOrder({ payment_status: 'unpaid' })" :type="order.tendered >= order.total ? 'success' : 'info'">
+                            <span><i class="las la-bookmark"></i> Layaway</span>
                         </ns-button>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ import { HttpCrudResponse } from '../interfaces/http-crud-response';
 import { HttpStatusResponse } from '../interfaces/http-status-response';
 import { nsHttpClient, nsSnackBar }   from './../bootstrap';
 
+declare const nsCrudHandler;
+
 const nsCrud    =   Vue.component( 'ns-crud', {
     data: () => {
         return {
@@ -32,9 +34,13 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     }, 
     mounted() {
+        if ( this.identifier !== undefined  ) {
+            nsCrudHandler.defineInstance( this.identifier, this );
+        }
+
         this.loadConfig();
     },
-    props: [ 'src', 'create-url', 'mode' ],
+    props: [ 'src', 'create-url', 'mode', 'identifier' ],
     computed: {
         /**
          * helps to get parsed

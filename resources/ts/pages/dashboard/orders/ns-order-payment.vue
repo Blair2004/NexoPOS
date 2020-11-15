@@ -88,8 +88,6 @@ export default {
         submitPayment( value ) {
             this.validation.validateFields( this.fields );
 
-            console.log( this.fields );
-
             if ( ! this.validation.fieldsValid( this.fields ) ) {
                 return nsSnackBar.error( 'Unable to proceed the form is not valid' ).subscribe();
             }
@@ -97,6 +95,8 @@ export default {
             if ( parseFloat( value ) == 0 ) {
                 return nsSnackBar.error( 'Please provide a valid value' ).subscribe();
             }
+        
+            value   =   parseFloat( value );
 
             const form  =   {
                 ...this.validation.extractFields( this.fields ),

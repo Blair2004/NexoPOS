@@ -928,6 +928,8 @@ class ProductService
             ProductHistory::ACTION_TRANSFER_OUT,
             ProductHistory::ACTION_LOST,
             ProductHistory::ACTION_VOID_RETURN,
+            ProductHistory::ACTION_ADJUSTMENT_RETURN,
+            ProductHistory::ACTION_ADJUSTMENT_SALE,
         ]) ) {
             throw new NotAllowedException( __( 'The action is not an allowed operation.' ) );
         }
@@ -947,10 +949,6 @@ class ProductService
          * the remaining quantity will be greather than 0
          */
         $oldQuantity        =   $this->getQuantity( $product_id, $unit_id );
-        $diffQuantity       =   $this->currency
-            ->define( $oldQuantity )
-            ->subtractBy( $quantity )
-            ->get();
 
         /**
          * the change on the stock is only performed
@@ -959,13 +957,18 @@ class ProductService
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
 
             if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+
+                $diffQuantity       =   $this->currency
+                    ->define( $oldQuantity )
+                    ->subtractBy( $quantity )
+                    ->get();
     
                 /**
                  * this should prevent negative 
                  * stock on the current item
                  */
                 if ( $diffQuantity < 0 ) {
-                    throw new NotAllowedException( __( 'Unable to proceed, this action will cause negative stock.' ) );
+                    throw new NotAllowedException( sprintf( __( 'Unable to proceed, this action will cause negative stock (%s) Old Quantity : (%s),  Quantity : (%s).' ), $diffQuantity, $oldQuantity, $quantity ) );
                 }
     
                 /**

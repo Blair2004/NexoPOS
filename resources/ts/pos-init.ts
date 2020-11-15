@@ -23,6 +23,7 @@ const NsPosDashboardButton      =   (<any>window).NsPosDashboardButton         =
 const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton      =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button' ).default;
 const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
 const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
+const NsPosResetButton          =   (<any>window).NsPosResetButton              =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button' ).default;
 const NsAlertPopup              =   (<any>window).NsAlertPopup                 =   require( './popups/ns-' + 'alert' + '-popup' ).default;
 const NsConfirmPopup            =   (<any>window).NsConfirmPopup               =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
 const NsPromptPopup             =   (<any>window).NsPromptPopup               =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
@@ -183,6 +184,7 @@ export class POS {
             NsPosPendingOrderButton,
             NsPosOrderTypeButton,
             NsPosCustomersButton,
+            NsPosResetButton,
         }
     }
 
@@ -265,6 +267,8 @@ export class POS {
                 }
             }
 
+            console.log( order.tendered, expected );
+
             if ( order.tendered < expected ) {
                 const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
                 Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
@@ -275,9 +279,18 @@ export class POS {
         });
     }
 
-    submitOrder() {
+    /**
+     * Fields might be provided to overwrite the default information 
+     * set on the order. 
+     * @param orderFields Object
+     */
+    submitOrder( orderFields = {} ) {
         return new Promise( async ( resolve, reject ) => {
-            const order             =   <Order>this.order.getValue();
+            const order             =   { 
+                ...<Order>this.order.getValue(),
+                ...orderFields
+            };
+
             const minimalPayment    =   order.customer.group.minimal_credit_payment;
 
             /**

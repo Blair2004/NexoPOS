@@ -57,7 +57,7 @@ export default {
                         this.validation.enableForm( this.form );
                         this.loadSettingsForm();
 
-                        if ( result.data.results ) {
+                        if ( result.data && result.data.results ) {
                             result.data.results.forEach( response => {
                                 if ( response.status === 'failed' ) {
                                     nsSnackBar.error( response.message ).subscribe();

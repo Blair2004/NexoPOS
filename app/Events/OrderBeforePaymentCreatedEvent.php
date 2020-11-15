@@ -15,7 +15,7 @@ class OrderBeforePaymentCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $value;
+    public $payment;
     public $customer;
 
     /**
@@ -23,9 +23,9 @@ class OrderBeforePaymentCreatedEvent
      *
      * @return void
      */
-    public function __construct( $value, Customer $customer )
+    public function __construct( $payment, Customer $customer )
     {
-        $this->value        =   $value;
+        $this->payment      =   $payment;
         $this->customer     =   $customer;
     }
 
