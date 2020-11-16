@@ -40,7 +40,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
 
         this.loadConfig();
     },
-    props: [ 'src', 'create-url', 'mode', 'identifier' ],
+    props: [ 'src', 'create-url', 'mode', 'identifier', 'queryParams' ],
     computed: {
         /**
          * helps to get parsed
@@ -48,7 +48,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
          * pagination, total items per pages
          */
         getParsedSrc() {
-            return `${this.src}?${this.sortColumn}${this.searchQuery}${this.queryPage}`
+            return `${this.src}?${this.sortColumn}${this.searchQuery}${this.queryPage}&${this.getQueryParams()}`
         },
 
         getSelectedAction() {
@@ -73,6 +73,15 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     },
     methods: {
+        getQueryParams() {
+            if ( this.queryParams ) {
+                return ( Object.keys( this.queryParams )
+                    .map(key => `${key}=${this.queryParams[key]}`)
+                    .join('&') );
+            }
+            return '';
+        },
+
         pageNumbers(count, current) {
             var shownPages = 3;
             var result = [];
@@ -96,7 +105,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             this.result.data.forEach( r => r.$checked = event );
         },
         loadConfig() {
-            const request   =   nsHttpClient.get( `${this.src}/config` );
+            const request   =   nsHttpClient.get( `${this.src}/config?${this.getQueryParams()}` );
             request.subscribe( (f:any) => {
                 this.columns        =   f.columns;
                 this.bulkActions    =   f.bulkActions;

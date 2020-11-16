@@ -531,7 +531,7 @@ class CrudService
             throw new NotAllowedException();
         }
         
-        return View::make( 'pages.dashboard.crud.table', [
+        return View::make( 'pages.dashboard.crud.table', array_merge([
             /**
              * that displays the title on the page.
              * It fetches the value from the labels
@@ -559,7 +559,7 @@ class CrudService
              * Provided to render the side menu.
              */
             'menus'         =>  app()->make( MenuService::class )
-        ]);
+        ], $config ) );
     }
 
     /**

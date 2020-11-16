@@ -361,6 +361,7 @@ class ProductHistoryCrud extends CrudService
             'operation_type'  =>  [
                 'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
+                'width'         =>  '200px',
                 '$sort'         =>  false
             ],
             'before_quantity'  =>  [
@@ -539,6 +540,14 @@ class ProductHistoryCrud extends CrudService
     public function hook( $query )
     {
         $query->orderBy( 'id', 'desc' );
+
+        /**
+         * This will enfore the products to list
+         * only for the product which query parameter is provided
+         */
+        if ( request()->query( 'product_id' ) ) {
+            $query->where( 'product_id', request()->input( 'query' ) );
+        }
     }
 
     /**

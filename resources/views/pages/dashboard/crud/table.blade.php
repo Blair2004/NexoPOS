@@ -14,6 +14,7 @@ use App\Classes\Response;
         </div>
         <ns-crud 
             src="{{ $src }}" 
+            :query-params='@json( $queryParams ?? [] )'
             create-url="{{ $createUrl ?? '#' }}"
             id="crud-table-body">
             <template v-slot:bulk-label>{{ $bulkLabel ?? __( 'Bulk Actions' ) }}</template>

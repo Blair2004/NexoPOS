@@ -391,14 +391,18 @@ class ProductsController extends DashboardController
      * history
      * @return View
      */
-    public function productHistory()
+    public function productHistory( $identifier )
     {
         Hook::addFilter( 'ns-crud-footer', function( Response $response, $identifier ) {
             $response->addView( 'pages.dashboard.products.history' );
             return $response;
         }, 10, 2 );
 
-        return ProductHistoryCrud::table();
+        return ProductHistoryCrud::table([
+            'queryParams'    =>  [
+                'product_id'    =>  $identifier
+            ]
+        ]);
     }
 
     public function showStockAdjustment()
