@@ -111,7 +111,6 @@ export default {
                      * quantity for product that has stock 
                      * management enabled
                      */
-
                     if ( 
                         quantity > (
                             parseFloat( data.$quantities().quantity ) -

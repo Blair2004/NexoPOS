@@ -1,0 +1,75 @@
+<template>
+    <div class="shadow-xl bg-white w-95vw md:w-3/5-screen lg:w-3/7-screen h-95vh md:h-3/5-screen lg:h-3/7-screen overflow-hidden flex flex-col">
+        <div class="p-2 flex justify-between border-b border-gray-200 items-center">
+            <h3 class="text-semibold">Products</h3>
+            <div>
+                <ns-close-button @click="close()"></ns-close-button>
+            </div>
+        </div>
+        <div class="flex-auto overflow-y-auto relative">
+            <div class="p-2">
+                <ns-field v-for="(field,index) of fields" :key="index" :field="field"></ns-field>
+            </div>
+            <div v-if="fields.length === 0" class="h-full w-full flex items-center justify-center">
+                <ns-spinner></ns-spinner>
+            </div>
+        </div>
+        <div class="p-2 flex justify-between items-center border-t border-gray-200">
+            <div></div>
+            <div>
+                <ns-button @click="addProduct()" type="info">Add Product</ns-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import popuCloser from "@/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import FormValidation from '@/libraries/form-validation';
+export default {
+    mounted() {
+        this.popuCloser();
+        this.loadFields();
+        this.product    =   this.$popupParams.product;
+    },
+    data() {
+        return {
+            formValidation: new FormValidation,
+            fields: [],
+            product: null
+        }
+    },
+    methods: {
+        popuCloser,
+        close() {
+            this.$popupParams.reject( false ); 
+            this.$popup.close();
+        },
+
+        addProduct() {
+            this.formValidation.validateFields( this.fields );
+
+            if ( this.formValidation.fieldsValid( this.fields ) ) {
+                const fields    =   this.formValidation.extractFields( this.fields );
+                const product   =   { ...this.product, ...fields };
+                this.$popupParams.resolve( product );
+                console.log( fields, product );
+                return this.close();
+            }
+
+            nsSnackBar.error( 'The form is not valid.' ).subscribe();
+        },
+
+        loadFields() {
+            nsHttpClient.get( '/api/nexopos/v4/fields/ns.refund-product' )
+                .subscribe( fields => {
+                    console.log( this.product );
+                    this.fields     =   this.formValidation.createFields( fields );
+                    this.fields.forEach( field => {
+                        field.value     =   this.product[ field.name ] || '';
+                    });
+                })
+        }
+    }
+}
+</script>

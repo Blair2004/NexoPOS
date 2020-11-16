@@ -7,10 +7,18 @@ export default function() {
     if ( keys.includes( '$popup' ) ) {
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
+                if ( this.$popupParams && this.$popupParams.reject !== undefined ) {
+                    this.$popupParams.reject( false );
+                }
+
                 this.$popup.close();
             }
     
             if ( action.event === 'press-esc' ) {
+                if ( this.$popupParams && this.$popupParams.reject !== undefined ) {
+                    this.$popupParams.reject( false );
+                }
+
                 this.$popup.close();
             }
         })

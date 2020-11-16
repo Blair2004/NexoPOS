@@ -6,6 +6,7 @@ use App\Fields\AuthLoginFields;
 use App\Fields\AuthRegisterFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
+use App\Fields\RefundProductFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -60,6 +61,9 @@ class FormsProvider extends ServiceProvider
                 case 'ns.layaway' :
                     return new LayawayFields;
                 break;
+                case 'ns.refund-product':
+                    return new RefundProductFields;
+                break;                
             }
         }, 10, 2 );
     }

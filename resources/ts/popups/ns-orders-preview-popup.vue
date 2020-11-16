@@ -164,7 +164,7 @@ export default nsOrderPreviewPopup;
 
                 <!-- Refund -->
                 <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Refund & Return" identifier="refund">
-                    <ns-order-refund></ns-order-refund>
+                    <ns-order-refund :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
             </ns-tabs>

@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class OrderProduct extends Model
 {
     use HasFactory;
+
+    const CONDITION_DAMAGED     =   'damaged';
+    const CONDITION_UNSPOILED   =   'unspoiled';
     
     protected $table    =   'nexopos_' . 'orders_products';
 
