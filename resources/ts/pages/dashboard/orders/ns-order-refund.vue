@@ -35,6 +35,9 @@
                             <p @click="openSettings( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">
                                 <i class="las la-cog text-xl"></i>
                             </p>
+                            <p @click="deleteProduct( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">
+                                <i class="las la-trash"></i>
+                            </p>
                             <p @click="changeQuantity( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">{{ product.quantity }}</p>
                         </div>
                     </li>
@@ -58,7 +61,7 @@
                 </div>
                 <div class="bg-gray-300 text-gray-900 font-semibold flex mb-2 p-2 justify-between">
                     <span>Screen</span>
-                    <span>{{ screen | currency }}</span>
+                    <span>{{ screenValue | currency }}</span>
                 </div>
                 <div>
                     <ns-numpad :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad>
@@ -75,6 +78,7 @@ import nsOrdersProductQuantityVue from '@/popups/ns-orders-product-quantity.vue'
 import nsNumpad from "@/components/ns-numpad";
 import { nsSelect } from '@/components/ns-select';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 
 export default {
     components: {
@@ -82,6 +86,16 @@ export default {
     },
     props: [ 'order' ],
     computed: {
+        screenValue() {
+            let number    =   parseInt( 
+                1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
+                .fill('')
+                .map( _ => 0 )
+                .join('') 
+            )
+            const amount    =   this.screen  / number;
+            return amount;
+        },
         total() {
             if ( this.refundables.length > 0 ) {
                 return this.refundables.map( product => parseFloat( product.unit_price ) * parseFloat( product.quantity ) )
@@ -120,6 +134,21 @@ export default {
         updateScreen( value ) {
             this.screen     =   value;
         },
+
+        proceedPayment() {
+            if ( this.selectedPaymentGateway === false ) {
+                return nsSnackBar.error( 'Please select a payment gateway before proceeding.' ).subscribe();
+            }
+
+            if ( this.refundables.length === 0 ) {
+                return nsSnackBar.error( 'Please add at list a product for a refund.' ).subscribe();
+            }
+
+            if ( this.screenValue === 0 ) {
+                return nsSnackBar.error( 'Please provide a valid payment amount.' ).subscribe();
+            }
+        },
+
         addProduct() {
             this.formValidation.validateFields( this.selectFields );
 
@@ -221,6 +250,21 @@ export default {
                     this.$set( this.refundables, productIndex, updatedProduct );
                 }
             });
+        },
+
+        deleteProduct( product ) {
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPosConfirmPopupVue, {
+                    title: 'Confirm Your Action',
+                    message: 'Would you like to delete this product ?',
+                    onAction: action => {
+                        if ( action ) {
+                            const index     =   this.refundables.indexOf( product );
+                            this.refundables.splice( index, 1 );
+                        }
+                    }
+                });
+            })
         }
     },  
     mounted() {
