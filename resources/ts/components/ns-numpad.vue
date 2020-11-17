@@ -14,7 +14,7 @@
 </template>
 <script>
 export default {
-    props: [ 'value' ],
+    props: [ 'value', 'currency' ],
     data() {
         return {
             backValue: '0',
@@ -70,7 +70,7 @@ export default {
                     this.backValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.backValue      =   this.backValue.substr( 1 );
+                    this.backValue      =   this.backValue.substr( 0, this.backValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.allSelected ) {

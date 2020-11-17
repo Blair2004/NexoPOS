@@ -42,22 +42,63 @@
             </div>
         </div>
         <div class="px-4 w-full lg:w-1/2">
-            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">Refund Without Products</h3>
+            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">Summary</h3>
+            <div class="py-2">
+                <div class="bg-blue-400 text-white font-semibold flex mb-2 p-2 justify-between">
+                    <span>Total</span>
+                    <span>{{ total | currency }}</span>
+                </div>
+                <div class="bg-teal-400 text-white font-semibold flex mb-2 p-2 justify-between">
+                    <span>Paid</span>
+                    <span>{{ order.tendered | currency }}</span>
+                </div>
+                <div @click="selectPaymentGateway()" class="bg-indigo-400 text-white font-semibold flex mb-2 p-2 justify-between cursor-pointer">
+                    <span>Payment Gateway</span>
+                    <span>{{ selectedPaymentGateway ? selectedPaymentGateway.label : 'N/A' }}</span>
+                </div>
+                <div class="bg-gray-300 text-gray-900 font-semibold flex mb-2 p-2 justify-between">
+                    <span>Screen</span>
+                    <span>{{ screen | currency }}</span>
+                </div>
+                <div>
+                    <ns-numpad :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 <script>
 import FormValidation from '@/libraries/form-validation';
-import { nsSnackBar } from '@/bootstrap';
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import nsOrdersRefundProducts from "@/popups/ns-orders-refund-product-popup";
 import nsOrdersProductQuantityVue from '@/popups/ns-orders-product-quantity.vue';
+import nsNumpad from "@/components/ns-numpad";
+import { nsSelect } from '@/components/ns-select';
+import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 
 export default {
+    components: {
+        nsNumpad
+    },
     props: [ 'order' ],
+    computed: {
+        total() {
+            if ( this.refundables.length > 0 ) {
+                return this.refundables.map( product => parseFloat( product.unit_price ) * parseFloat( product.quantity ) )
+                    .reduce( ( before, after ) => before + after );
+            }
+
+            return 0;
+        }
+    },
     data() {
         return {
             formValidation: new FormValidation,
             refundables: [],
+            paymentOptions: [],
+            paymentField: [],
+            selectedPaymentGateway: false,
+            screen: 0,
             selectFields: [
                 {
                     type: 'select',
@@ -76,6 +117,9 @@ export default {
         }
     }, 
     methods: {
+        updateScreen( value ) {
+            this.screen     =   value;
+        },
         addProduct() {
             this.formValidation.validateFields( this.selectFields );
 
@@ -103,9 +147,26 @@ export default {
                 Popup.show( nsOrdersRefundProducts, { resolve, reject, product })
             });
 
-            promise.then( result => {
-                this.refundables.push( result );
-            })
+            promise.then( product => {
+                /**
+                 * this will set the quantity to be equal to the 
+                 * remaining available quantity
+                 */
+                product.quantity    =   this.getProductOriginalQuantity( product.id ) - this.getProductUsedQuantity( product.id );
+                this.refundables.push( product );
+            }, _ => _ )
+        },
+
+        getProductOriginalQuantity( product_id ) {
+            const product   =   this.order.products.filter( product => product.id === product_id );
+            
+            if ( product.length > 0 ) {
+                return product
+                    .map( product => parseFloat( product.quantity ) )
+                    .reduce( ( before, after ) => before + after );
+            }
+
+            return 0;
         },
 
         getProductUsedQuantity( product_id ) {
@@ -113,7 +174,7 @@ export default {
 
             if ( existingProducts.length > 0 ) {
                 const totalUsedQuantity     =   existingProducts
-                    .map( product => parseInt( product.quantity ) )
+                    .map( product => parseFloat( product.quantity ) )
                     .reduce( ( before, after ) => before + after );
 
                 return totalUsedQuantity;
@@ -130,12 +191,23 @@ export default {
             promise.then( _updatedProduct => {
                 const productIndex  =   this.refundables.indexOf( product );
                 this.$set( this.refundables, productIndex, _updatedProduct );
+            }, _ => _ );
+        },
+
+        selectPaymentGateway() {
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsSelectPopupVue, { resolve, reject, value : [ this.selectedPaymentOption ], ...this.paymentField[0] })
             });
+
+            promise.then( option => {
+                this.selectedPaymentGateway     =   option[0];
+            }, _ => _ )
         },
 
         changeQuantity( product ) {
             const promise   =   new Promise( ( resolve, reject ) => {
-                const availableQuantity     =   this.getProductUsedQuantity( product.id ) - product.quantity;
+                const availableQuantity     =   
+                    this.getProductOriginalQuantity( product.id ) - this.getProductUsedQuantity( product.id ) + parseFloat( product.quantity );
                 Popup.show( nsOrdersProductQuantityVue, { resolve, reject, product, availableQuantity });
             });
 
@@ -153,6 +225,10 @@ export default {
     },  
     mounted() {
         this.selectFields   =   this.formValidation.createFields( this.selectFields );
+        nsHttpClient.get( '/api/nexopos/v4/orders/payments' )
+            .subscribe( paymentField => {
+                this.paymentField       =   paymentField;
+            })
     }
 }
 </script>

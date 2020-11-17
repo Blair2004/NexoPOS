@@ -10,7 +10,7 @@
             <span>{{ seeValue }}</span> 
             <span class="text-gray-600 text-sm">({{ availableQuantity }} available)</span>
         </div>
-        <div class="flex-auto overflow-y-auto p-2">
+        <div class="flex-auto overflow-y-auto p-2" v-if="product">
             <ns-numpad :value="product.quantity" @next="updateQuantity( $event )" @changed="setChangedValue( $event )"></ns-numpad>
         </div>
     </div>
@@ -52,7 +52,7 @@ export default {
                 return nsSnackBar.error( 'Unable to proceed as the quantity provided is exceed the available quantity.' ).subscribe();
             }
 
-            this.product.quantity   =   quantity;
+            this.product.quantity   =   parseFloat( quantity );
             this.$popupParams.resolve( this.product );
             this.$popup.close();
         },        
