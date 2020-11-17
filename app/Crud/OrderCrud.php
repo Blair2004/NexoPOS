@@ -479,6 +479,9 @@ class OrderCrud extends CrudService
                 $entry->{ '$cssClass' }             =   'bg-gray-200 border-gray-300 border text-sm';
             break;
             case Order::PAYMENT_VOID : 
+                $entry->{ '$cssClass' }             =   'bg-yellow-200 border-yellow-300 text-gray-700 border text-sm';
+            break;
+            case Order::PAYMENT_REFUNDED : 
                 $entry->{ '$cssClass' }             =   'bg-red-200 border-red-300 border text-sm';
             break;
         }

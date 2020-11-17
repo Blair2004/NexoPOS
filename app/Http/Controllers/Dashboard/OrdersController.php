@@ -229,5 +229,10 @@ class OrdersController extends DashboardController
             'value'         =>  $request->input( 'value' )
         ], $order );
     }
+
+    public function makeOrderRefund( Order $order, Request $request )
+    {
+        return $this->ordersService->refundOrder( $order, $request->all() );
+    }
 }
 

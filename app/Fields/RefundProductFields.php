@@ -20,7 +20,7 @@ class RefundProductFields extends FieldsService
                 'label'         =>  __( 'Condition' ),
                 'description'   =>  __( 'Determine in which condition the product is returned.' ),
                 'validation'    =>  'required',
-                'name'          =>  'return_condition',
+                'name'          =>  'condition',
                 'type'          =>  'select',
                 'options'       =>  Helper::kvToJsOptions([
                     OrderProduct::CONDITION_DAMAGED   =>  __( 'Damaged' ),
@@ -29,7 +29,7 @@ class RefundProductFields extends FieldsService
             ], [
                 'label'         =>  __( 'Other Observations' ),
                 'description'   =>  __( 'Describe in details the condition of the returned product.' ),
-                'name'          =>  'return_observations',
+                'name'          =>  'description',
                 'type'          =>  'textarea',
             ]
         ];

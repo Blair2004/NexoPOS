@@ -20,6 +20,7 @@ class Order extends Model
     const PAYMENT_UNPAID        =   'unpaid';
     const PAYMENT_HOLD          =   'hold';
     const PAYMENT_VOID          =   'order_void';
+    const PAYMENT_REFUNDED      =   'refunded';
 
     public $casts    =   [
         'created_at'    =>  DateCast::class
@@ -36,6 +37,11 @@ class Order extends Model
     public function user()
     {
         return $this->hasOne( User::class, 'id', 'author' );
+    }
+
+    public function refund()
+    {
+        return $this->hasMany( OrderRefund::class, 'order_id', 'id' );
     }
 
     public function payments()

@@ -1,5 +1,8 @@
 <template>
-    <div class="-mx-4 flex flex-wrap">
+    <div class="-m-4 flex-auto flex flex-wrap relative">
+        <div v-if="isSubmitting" class="bg-overlay h-full w-full flex items-center justify-center absolute z-30">
+            <ns-spinner></ns-spinner>
+        </div>
         <div class="px-4 w-full lg:w-1/2">
             <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">Refund With Products</h3>
             <div class="my-2">
@@ -22,8 +25,8 @@
                             <div class="flex flex-col">
                                 <p class="py-2">
                                     <span>{{ product.name }}</span>
-                                    <span v-if="product.return_condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-red-400 mx-2 text-white">Damaged</span>
-                                    <span v-if="product.return_condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-green-400 mx-2 text-white">Unspoiled</span>
+                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-red-400 mx-2 text-white">Damaged</span>
+                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-green-400 mx-2 text-white">Unspoiled</span>
                                 </p>
                                 <small>{{ product.unit.name }}</small>
                             </div>
@@ -107,6 +110,7 @@ export default {
     },
     data() {
         return {
+            isSubmitting: false,
             formValidation: new FormValidation,
             refundables: [],
             paymentOptions: [],
@@ -147,6 +151,21 @@ export default {
             if ( this.screenValue === 0 ) {
                 return nsSnackBar.error( 'Please provide a valid payment amount.' ).subscribe();
             }
+
+            const data      =   {
+                products    :   this.refundables,
+                total       :   this.screenValue,
+                payment     :   this.selectedPaymentGateway,
+            }
+
+            this.isSubmitting   =   true;
+            nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
+                .subscribe( result => {
+                    this.isSubmitting   =   false;
+                    nsSnackBar.success( error.message ).subscribe();
+                }, error => {
+                    nsSnackBar.error( error.message ).subscribe();
+                })
         },
 
         addProduct() {
@@ -170,7 +189,14 @@ export default {
                 }
             }
 
-            const product    =   { ...currentProduct[0] };
+            if ( currentProduct[0].quantity === 0 ) {
+                return nsSnackBar.error( 'Not enough quantity to proceed.' ).subscribe();
+            }
+
+            const product    =   { ...currentProduct[0], ...{
+                condition: '',
+                description: '',
+            }};
 
             const promise   =   new Promise( ( resolve, reject ) => {
                 Popup.show( nsOrdersRefundProducts, { resolve, reject, product })

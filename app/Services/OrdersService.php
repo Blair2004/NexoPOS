@@ -14,6 +14,7 @@ use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Events\OrderVoidedEvent;
@@ -24,8 +25,9 @@ use App\Models\OrderPayment;
 use App\Models\OrderProduct;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
-use App\Models\DashboardDay;
 use App\Models\Notification;
+use App\Models\OrderProductRefund;
+use App\Models\OrderRefund;
 use App\Models\OrderStorage;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
@@ -33,7 +35,6 @@ use App\Models\Role;
 use App\Models\Unit;
 use App\Services\Options;
 use App\Services\DateService;
-use App\Services\MapperService;
 use App\Services\ProductService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
@@ -1072,21 +1073,79 @@ class OrdersService
         }
     }
 
+    public function refundOrder( Order $order, $fields )
+    {
+        if ( ! in_array( $order->payment_status, [
+            Order::PAYMENT_PARTIALLY,
+            Order::PAYMENT_UNPAID,
+            Order::PAYMENT_PAID
+        ] ) ) {
+            throw new NotAllowedException([
+                'status'    =>  'failed',
+                'message'   =>  __('Unable to proceed a refund on an unpaid order.')
+            ]);
+        }
+
+        $orderRefund                    =   new OrderRefund();
+        $orderRefund->author            =   Auth::id();
+        $orderRefund->order_id          =   $order->id;
+        $orderRefund->payment_method    =   $fields[ 'payment' ][ 'identifier' ];
+        $orderRefund->total             =   $this->currencyService->getRaw( $fields[ 'total' ] );
+        $orderRefund->save();
+
+        $results                =   [];
+
+        foreach( $fields[ 'products' ] as $product ) {
+            $results[]   =   $this->refundSingleProduct( $order, OrderProduct::find( $product[ 'id' ] ), $product );
+        }
+
+        $order->payment_status  =   Order::PAYMENT_REFUNDED;
+        $order->save();
+
+        /**
+         * check if the payment used is the customer account
+         * so that we can withdraw the funds to the account
+         */
+        if ( $fields[ 'payment' ][ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT ) {
+            $this->customerService->saveTransaction(
+                $order->customer,
+                CustomerAccountHistory::OPERATION_REFUND,
+                $fields[ 'total' ],
+                __( 'The current credit has been issued from a refund.' )
+            );
+        }
+
+        event( new OrderAfterRefundedEvent( $order, $orderRefund ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The order has been successfully refunded.' ),
+            'data'      =>  compact( 'results' )
+        ];
+    }
+
     /**
      * Refund a product from an order
      * @param int product id
      * @param string status : sold, returned, defective
      */
-    public function refundSingleProduct(Order $order, OrderProduct $product, $status)
+    public function refundSingleProduct( Order $order, OrderProduct $orderProduct, $details )
     {
-        if (!in_array($status, ['sold', 'returned', 'damaged'])) {
+        if ( ! in_array( $details[ 'condition' ], [
+            OrderProductRefund::CONDITION_DAMAGED,
+            OrderProductRefund::CONDITION_UNSPOILED
+        ] ) ) {
             throw new NotAllowedException([
                 'status'    =>  'failed',
                 'message'   =>  __('unable to proceed to a refund as the provided status is not supported')
             ]);
         }
 
-        if ($order->unpaid) {
+        if ( ! in_array( $order->payment_status, [
+            Order::PAYMENT_PARTIALLY,
+            Order::PAYMENT_UNPAID,
+            Order::PAYMENT_PAID
+        ] ) ) {
             throw new NotAllowedException([
                 'status'    =>  'failed',
                 'message'   =>  __('Unable to proceed a refund on an unpaid order.')
@@ -1094,40 +1153,57 @@ class OrdersService
         }
 
         /**
-         * we should broadcast an event
-         * while doing this
+         * proceeding a refund should reduce the quantity 
+         * available on the order for a specific product.
          */
-        $product->status        =   $status;
-        $product->author        =   Auth::id();
-        $product->save();
+        $orderProduct->status           =   'returned';
+        $orderProduct->quantity         -=   floatval( $details[ 'quantity' ] );
+        $orderProduct->total_price      -=   floatval( $details[ 'quantity' ] ) * $orderProduct->unit_price;
+        $orderProduct->save();
 
-        event(new OrderAfterProductRefundedEvent($order, $product));
+        $productRefund                      =   new OrderProductRefund;
+        $productRefund->condition           =   $details[ 'condition' ];
+        $productRefund->description         =   $details[ 'description' ];
+        $productRefund->unit_price          =   $details[ 'unit_price' ];
+        $productRefund->unit_id             =   $orderProduct->unit_id;
+        $productRefund->total_price         =   $this->currencyService->getRaw( $productRefund->unit_price * floatval( $details[ 'quantity' ] ) );
+        $productRefund->quantity            =   $details[ 'quantity' ];
+        $productRefund->author              =   Auth::id();
+        $productRefund->order_id            =   $order->id;
+        $productRefund->order_product_id    =   $orderProduct->id;
+        $productRefund->product_id          =   $orderProduct->product_id;
+
+        event( new OrderAfterProductRefundedEvent( $order, $orderProduct ) );
 
         /**
          * we do proceed by doing an initial return
          */
-        $this->productService->stockAdjustment('returned', [
-            'total_price'       =>  $product->total_price,
-            'quantity'          =>  $product->quantity,
-            'unit_price'        =>  $product->sale_price
+        $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
+            'total_price'       =>  $productRefund->total_price,
+            'quantity'          =>  $productRefund->quantity,
+            'unit_price'        =>  $productRefund->unit_price,
+            'product_id'        =>  $productRefund->product_id,
+            'unit_id'           =>  $productRefund->unit_id
         ]);
 
         /**
          * If the returned stock is damaged
          * then we can pull this out from the stock
          */
-        if ($status === 'damaged') {
-            $this->productService->stockAdjustment($status, [
-                'total_price'       =>  $product->total_price,
-                'quantity'          =>  $product->quantity,
-                'unit_price'        =>  $product->sale_price
+        if ( $details[ 'condition' ] === OrderProductRefund::CONDITION_DAMAGED ) {
+            $this->productService->stockAdjustment( ProductHistory::ACTION_DEFECTIVE, [
+                'total_price'       =>  $productRefund->total_price,
+                'quantity'          =>  $productRefund->quantity,
+                'unit_price'        =>  $productRefund->unit_price,
+                'product_id'        =>  $productRefund->product_id,
+                'unit_id'           =>  $productRefund->unit_id
             ]);
         }
 
         return [
             'status'    =>  'success',
             'message'   =>  __('The product %s has been successfully refunded.'),
-            'data'      =>  compact('product')
+            'data'      =>  compact( 'productRefund', 'orderProduct' )
         ];
     }
 

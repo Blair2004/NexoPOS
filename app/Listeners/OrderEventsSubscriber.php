@@ -4,6 +4,7 @@ namespace App\Listeners;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
+use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
@@ -39,8 +40,13 @@ class OrderEventsSubscriber
         );
 
         $events->listen(
+            OrderAfterRefundedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleRefundEvent' ]
+        );
+
+        $events->listen(
             OrderBeforeDeleteEvent::class,
-            [ OrderEventsSubscriber::class, 'beforeDeleteOrder' ]
+            [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
         );
 
         $events->listen(
@@ -50,7 +56,7 @@ class OrderEventsSubscriber
 
         $events->listen(
             OrderAfterCreatedEvent::class,
-            [ OrderEventsSubscriber::class, 'afterOrderCreated' ]
+            [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
         );
 
         $events->listen(
@@ -74,26 +80,10 @@ class OrderEventsSubscriber
     }
 
     /**
-     * Handle cases when an order is about to be deleted
-     * @param OrderBeforeDeleteEvent class
-     */
-    public function beforeDeleteOrder( OrderBeforeDeleteEvent $event )
-    {
-        ComputeDayReportJob::dispatch( $event )
-            ->delay( now()->addSecond( 10 ) );
-
-        ComputeCustomerAccountJob::dispatch( $event )
-            ->delay( now()->addSecond( 10 ) );
-
-        ComputeCashierSalesJob::dispatch( $event )
-            ->delay( now()->addSecond(10) );
-    }
-
-    /**
      * listen when an order has
      * been created
      */
-    public function afterOrderCreated( OrderAfterCreatedEvent $event )
+    public function handleOrderUpdate( $event )
     {
         ComputeDayReportJob::dispatch()
             ->delay( now()->addSecond(5) );
@@ -131,13 +121,9 @@ class OrderEventsSubscriber
         }
     }
 
-    /**
-     * Listen when somebody try 
-     * to delete an order product
-     * @param OrderBeforeDeleteProductEvent $event
-     */
-    public function beforeDeleteProductEvent( OrderBeforeDeleteProductEvent $event )
+    public function handleRefundEvent( OrderAfterRefundedEvent $event )
     {
-        
+        $this->ordersService->refreshOrder( $event->order );
+        $this->handleOrderUpdate( $event );
     }
 }

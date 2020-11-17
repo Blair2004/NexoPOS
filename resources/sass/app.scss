@@ -12,6 +12,10 @@ body {
     width: 100%;
 }
 
+.bg-overlay {
+    background:rgb(51 51 51 / 26%);
+}
+
 [v-cloak] > * { display:none }
 
 .loader {

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
@@ -48,6 +49,9 @@ class ComputeCashierSalesJob implements ShouldQueue
                 $order->user->total_sales_count     =   $order->user->total_sales_count - 1;
                 $order->user->save();
             }
+        } else if ( $this->event instanceof OrderAfterRefundedEvent ) {
+            $order->user->total_sales           -=  $this->event->orderRefund->total;
+            $order->user->save();
         }
     }
 }

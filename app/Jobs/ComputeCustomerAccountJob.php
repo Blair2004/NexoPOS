@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,6 +38,8 @@ class ComputeCustomerAccountJob implements ShouldQueue
             $this->handleIncrease( $this->event );
         } else if ( $this->event instanceof OrderBeforeDeleteEvent ) {
             $this->handleDeletion( $this->event );
+        } else if ( $this->event instanceof OrderAfterRefundedEvent ) {
+            $this->reduceCustomerPurchases( $this->event );
         }
     }
 
@@ -50,6 +53,12 @@ class ComputeCustomerAccountJob implements ShouldQueue
             $event->order->customer->owed_amount     +=  $event->order->total;
         }
         
+        $event->order->customer->save();
+    }
+
+    private function reduceCustomerPurchases( OrderAfterRefundedEvent $event )
+    {
+        $event->order->customer->purchases_amount     -=  $event->orderRefund->total;
         $event->order->customer->save();
     }
 

@@ -37,7 +37,7 @@ class CreateOrdersProductsTable extends Migration
                 $table->float( 'total_price' );
                 $table->float( 'total_net_price' );
                 $table->string( 'uuid' )->nullable();
-                $table->string( 'status' )->default( 'sold' ); // sold, damaged, returned
+                $table->string( 'status' )->default( 'sold' ); // sold, refunded
                 $table->timestamps();
             });
         }

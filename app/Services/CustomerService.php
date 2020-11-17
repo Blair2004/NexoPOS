@@ -285,10 +285,13 @@ class CustomerService
     {
         if ( in_array( $history->operation, [ 
             CustomerAccountHistory::OPERATION_DEDUCT,
-            CustomerAccountHistory::OPERATION_PAYMENT
+            CustomerAccountHistory::OPERATION_PAYMENT,
         ] ) ) {
             $history->customer->account_amount      -=   $history->amount;
-        } else if ( $history->operation === CustomerAccountHistory::OPERATION_ADD ) {
+        } else if ( in_array( $history->operation, [
+            CustomerAccountHistory::OPERATION_ADD,
+            CustomerAccountHistory::OPERATION_REFUND,
+        ]) ) {
             $history->customer->account_amount      +=   $history->amount;
         } 
 

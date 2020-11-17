@@ -204,6 +204,7 @@ class AppServiceProvider extends ServiceProvider
             Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
             Order::PAYMENT_PAID                 =>  __( 'Paid' ),
             Order::PAYMENT_VOID                 =>  __( 'Voided' ),
+            Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
         ]]);
     }
 }

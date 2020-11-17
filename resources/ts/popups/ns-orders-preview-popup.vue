@@ -157,13 +157,13 @@ export default nsOrderPreviewPopup;
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Payments" identifier="payments" class="overflow-y-auto">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" label="Payments" identifier="payments" class="overflow-y-auto">
                     <ns-order-payment @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Refund & Return" identifier="refund">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold' ].includes( order.payment_status )" label="Refund & Return" identifier="refund" class="flex">
                     <ns-order-refund :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->

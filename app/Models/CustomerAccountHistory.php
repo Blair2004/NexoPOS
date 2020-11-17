@@ -9,6 +9,7 @@ class CustomerAccountHistory extends Model
     use HasFactory;
 
     const OPERATION_DEDUCT      =   'deduct';
+    const OPERATION_REFUND      =   'refund';
     const OPERATION_ADD         =   'add';
     const OPERATION_PAYMENT     =   'payment';
 

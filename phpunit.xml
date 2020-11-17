@@ -7,7 +7,7 @@
   </coverage>
   <testsuites>
     <testsuite name="Feature">
-      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="DatabaseSeedTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>
