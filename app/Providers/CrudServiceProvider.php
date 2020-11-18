@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Crud\CouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerGroupCrud;
+use App\Crud\CustomerOrderCrud;
 use App\Crud\ExpenseCategoryCrud;
 use App\Crud\ExpenseCrud;
 use App\Crud\ExpenseHistoryCrud;
@@ -62,6 +63,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.coupons': return CouponCrud::class;
                 case 'ns.customers': return CustomerCrud::class;
                 case 'ns.customers-groups': return CustomerGroupCrud::class;
+                case 'ns.customers-orders': return CustomerOrderCrud::class;
                 case 'ns.customers-coupons': return CustomerCouponCrud::class;
                 case 'ns.rewards-system': return RewardSystemCrud::class;
                 case 'ns.providers': return ProviderCrud::class;

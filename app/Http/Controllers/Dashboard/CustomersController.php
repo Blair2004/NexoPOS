@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CustomerOrderCrud;
 use App\Models\Customer;
 
 use Illuminate\Http\Request;
@@ -276,6 +277,16 @@ class CustomersController extends DashboardController
     public function getGroup( Customer $customer )
     {
         return $customer->group;
+    }
+
+    public function getCustomersOrders( Customer $customer )
+    {
+        return CustomerOrderCrud::table([
+            'src'           =>  url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'queryParams'   =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
     }
 }
 

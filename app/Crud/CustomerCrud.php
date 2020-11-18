@@ -459,6 +459,12 @@ class CustomerCrud extends CrudService
             'email'  =>  [
                 'label'  =>  __( 'Email' )
             ],
+            'account_amount'  =>  [
+                'label'  =>  __( 'Account Credit' )
+            ],
+            'owed_amount'  =>  [
+                'label'  =>  __( 'Owed Amount' )
+            ],
             'gender'  =>  [
                 'label'  =>  __( 'Gender' )
             ],
@@ -476,18 +482,24 @@ class CustomerCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
+        $entry->owed_amount     =   ns()->currency->define( $entry->owed_amount );
+        $entry->account_amount  =   ns()->currency->define( $entry->account_amount );
+        
         $entry->{'$actions'}    =   [
             [
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
-                'index'         =>      'id',
                 'url'           =>      url( 'dashboard/customers/edit/' . $entry->id )
+            ], [
+                'label'         =>      __( 'Orders' ),
+                'namespace'     =>      'customers_orders',
+                'type'          =>      'GOTO',
+                'url'           =>      url( 'dashboard/customers/' . $entry->id . '/orders' )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'index'     =>  'id',
                 'url'       =>  url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),

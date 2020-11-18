@@ -446,11 +446,11 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_DEFECTIVE : 
             case ProductHistory::ACTION_DELETED : 
             case ProductHistory::ACTION_REMOVED : 
-            case ProductHistory::ACTION_RETURNED : 
             case ProductHistory::ACTION_VOID_RETURN : 
                 $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
             break;
             case ProductHistory::ACTION_SOLD : 
+            case ProductHistory::ACTION_RETURNED : 
             case ProductHistory::ACTION_ADDED : 
             case ProductHistory::ACTION_STOCKED : 
                 $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
@@ -546,7 +546,7 @@ class ProductHistoryCrud extends CrudService
          * only for the product which query parameter is provided
          */
         if ( request()->query( 'product_id' ) ) {
-            $query->where( 'product_id', request()->input( 'query' ) );
+            $query->where( 'product_id', request()->query( 'product_id' ) );
         }
     }
 

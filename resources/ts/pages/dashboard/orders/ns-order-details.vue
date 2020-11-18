@@ -1,6 +1,6 @@
 <template>
     <div class="-mx-4 flex flex-wrap">
-        <div>
+        <div class="flex-auto">
             <div class="w-full mb-2 flex-wrap flex">
                 <div class="w-full mb-2 px-4">
                     <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">Payment Summary</h3>

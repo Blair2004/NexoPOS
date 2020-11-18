@@ -261,7 +261,7 @@ class CustomerService
      */
     public function saveTransaction( Customer $customer, $operation, $amount, $description = '' )
     {
-        if ( $operation === CustomerAccountHistory::OPERATION_DEDUCT && $customer->account_amount - $amount < 0 ) {
+        if ( in_array( $operation, [ CustomerAccountHistory::OPERATION_DEDUCT ]) && $customer->account_amount - $amount < 0 ) {
             throw new NotAllowedException( __( 'The operation will cause negative account for the customer.' ) );
         }
 

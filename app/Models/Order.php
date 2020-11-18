@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
 use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
@@ -15,15 +16,16 @@ class Order extends Model
     const TYPE_DELIVERY     =   'delivery';
     const TYPE_TAKEAWAY     =   'takeaway';
 
-    const PAYMENT_PAID          =   'paid';
-    const PAYMENT_PARTIALLY     =   'partially_paid';
-    const PAYMENT_UNPAID        =   'unpaid';
-    const PAYMENT_HOLD          =   'hold';
-    const PAYMENT_VOID          =   'order_void';
-    const PAYMENT_REFUNDED      =   'refunded';
+    const PAYMENT_PAID                      =   'paid';
+    const PAYMENT_PARTIALLY                 =   'partially_paid';
+    const PAYMENT_UNPAID                    =   'unpaid';
+    const PAYMENT_HOLD                      =   'hold';
+    const PAYMENT_VOID                      =   'order_void';
+    const PAYMENT_REFUNDED                  =   'refunded';
+    const PAYMENT_PARTIALLY_REFUNDED        =   'partially_refunded';
 
     public $casts    =   [
-        'created_at'    =>  DateCast::class
+        'created_at'    =>  DateCast::class,
     ];
 
     public function products()

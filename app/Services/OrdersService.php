@@ -368,16 +368,12 @@ class OrdersService
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
                     return $this->currencyService->getRaw( floatval($product['quantity']) * floatval($product['sale_price']) );
-                })->reduce(function ($before, $after) {
-                    return $before + $after;
-                });
+                })->sum();
 
-                $shippingFees       =   $this->__getShippingFee($fields);
-
-                if ( $fields['discount'] > $productsTotal + $shippingFees) {
+                if ( $fields['discount'] > $productsTotal ) {
                     throw new NotAllowedException([
                         'status'    =>  'failed',
-                        'message'   =>  __('A discount cannot exceed the total value of an order.')
+                        'message'   =>  __('A discount cannot exceed the sub total value of an order.')
                     ]);
                 }
             }
@@ -766,21 +762,10 @@ class OrdersService
                 $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
                 $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
     
-                $orderProduct->total_gross_price    =   $this->currencyService->define($product['unitQuantity']->excl_tax_sale_price)
-                    ->multiplyBy($product['quantity'])
-                    ->get();
-                $orderProduct->total_price          =   $this->currencyService->define($product['unit_price'])
-                    ->multiplyBy($product['quantity'])
-                    ->get();
-                $orderProduct->total_net_price      =   $this->currencyService->define($product['unitQuantity']->incl_tax_sale_price)
-                    ->multiplyBy($product['quantity'])
-                    ->get();
+                $this->computeOrderProduct( $orderProduct );
     
                 $orderProduct->save();
-    
-                /**
-                 * @todo compute discounts
-                 */
+
                 $subTotal  =   $this->currencyService->define($subTotal)
                     ->additionateBy($orderProduct->total_price)
                     ->get();
@@ -1013,7 +998,7 @@ class OrdersService
         $order->subtotal                =   $this->currencyService->getRaw( $fields[ 'subtotal' ] ?? 0 ) ?: $this->computeSubTotal( $fields, $order );
         $order->discount_type           =   $fields['discount_type'] ?? null;
         $order->discount_percentage     =   $this->currencyService->getRaw( $fields['discount_percentage'] ?? 0 );
-        $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeDiscount( $fields, $order );
+        $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
         $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
@@ -1035,12 +1020,18 @@ class OrdersService
      * @param array $fields
      * @return int $discount
      */
-    public function computeDiscount( $fields, $order )
+    public function computeOrderDiscount( $order, $fields = [] )
     {
+        $fields[ 'discount_type' ]          =   $fields[ 'discount_type' ] ?? $order->discount_type;
+        $fields[ 'discount_percentage' ]    =   $fields[ 'discount_percentage' ] ?? $order->discount_percentage;
+        $fields[ 'discount' ]               =   $fields[ 'discount' ] ?? $order->discount;
+        $fields[ 'subtotal' ]               =   $fields[ 'subtotal' ] ?? $order->subtotal;
+        $fields[ 'discount' ]               =   $fields[ 'discount' ] ?? $order->discount ?? 0;
+
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return $this->currencyService->getRaw( ( floatval( $fields[ 'subtotal' ] ?? $order->subtotal ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100 );
+            return $this->currencyService->getRaw( ( floatval( $fields[ 'subtotal' ] ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100 );
         } else {
-            return $this->currencyService->getRaw( $fields[ 'discount' ] ?? 0 );
+            return $this->currencyService->getRaw( $fields[ 'discount' ] );
         }
     }
 
@@ -1099,7 +1090,8 @@ class OrdersService
             $results[]   =   $this->refundSingleProduct( $order, OrderProduct::find( $product[ 'id' ] ), $product );
         }
 
-        $order->payment_status  =   Order::PAYMENT_REFUNDED;
+        $availableQuantities    =   $order->products->map( fn( $product ) => $product->quantity )->sum();
+        $order->payment_status  =   $availableQuantities === 0 ? Order::PAYMENT_REFUNDED : Order::PAYMENT_PARTIALLY_REFUNDED;
         $order->save();
 
         /**
@@ -1137,7 +1129,7 @@ class OrdersService
         ] ) ) {
             throw new NotAllowedException([
                 'status'    =>  'failed',
-                'message'   =>  __('unable to proceed to a refund as the provided status is not supported')
+                'message'   =>  __( 'unable to proceed to a refund as the provided status is not supported.' )
             ]);
         }
 
@@ -1148,7 +1140,7 @@ class OrdersService
         ] ) ) {
             throw new NotAllowedException([
                 'status'    =>  'failed',
-                'message'   =>  __('Unable to proceed a refund on an unpaid order.')
+                'message'   =>  __( 'Unable to proceed a refund on an unpaid order.' )
             ]);
         }
 
@@ -1158,7 +1150,7 @@ class OrdersService
          */
         $orderProduct->status           =   'returned';
         $orderProduct->quantity         -=   floatval( $details[ 'quantity' ] );
-        $orderProduct->total_price      -=   floatval( $details[ 'quantity' ] ) * $orderProduct->unit_price;
+        $this->computeOrderProduct( $orderProduct );
         $orderProduct->save();
 
         $productRefund                      =   new OrderProductRefund;
@@ -1183,7 +1175,8 @@ class OrdersService
             'quantity'          =>  $productRefund->quantity,
             'unit_price'        =>  $productRefund->unit_price,
             'product_id'        =>  $productRefund->product_id,
-            'unit_id'           =>  $productRefund->unit_id
+            'unit_id'           =>  $productRefund->unit_id,
+            'order_id'          =>  $order->id
         ]);
 
         /**
@@ -1196,7 +1189,8 @@ class OrdersService
                 'quantity'          =>  $productRefund->quantity,
                 'unit_price'        =>  $productRefund->unit_price,
                 'product_id'        =>  $productRefund->product_id,
-                'unit_id'           =>  $productRefund->unit_id
+                'unit_id'           =>  $productRefund->unit_id,
+                'order_id'          =>  $order->id
             ]);
         }
 
@@ -1205,6 +1199,70 @@ class OrdersService
             'message'   =>  __('The product %s has been successfully refunded.'),
             'data'      =>  compact( 'productRefund', 'orderProduct' )
         ];
+    }
+
+    /**
+     * this method computes total for the current provided
+     * order product
+     * @param OrderProduct $orderProduct
+     * @return void
+     */
+    public function computeOrderProduct( OrderProduct $orderProduct )
+    {
+        /**
+         * let's compute the discount
+         * for that specific product
+         */
+        $total_gross_discount   =   ( float ) $orderProduct->discount;
+        $total_discount         =   ( float ) $orderProduct->discount;
+        $total_net_discount     =   ( float ) $orderProduct->discount;
+
+        if ( $orderProduct->discount_type === 'percentage' ) {
+            $total_gross_discount       =   $this->computeDiscountValues( 
+                $orderProduct->discount_percentage,
+                $orderProduct->total_gross_price
+            );
+
+            $total_discount             =   $this->computeDiscountValues( 
+                $orderProduct->discount_percentage,
+                $orderProduct->total_gross_price
+            );
+
+            $total_net_discount         =   $this->computeDiscountValues( 
+                $orderProduct->discount_percentage,
+                $orderProduct->total_gross_price
+            );
+        }
+
+        $orderProduct->total_gross_price    =   $this->currencyService
+            ->define( $orderProduct->excl_tax_sale_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $total_gross_discount )
+            ->get();
+
+        $orderProduct->total_price          =   $this->currencyService
+            ->define( $orderProduct->unit_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $total_discount )
+            ->get();
+
+        $orderProduct->total_net_price      =   $this->currencyService
+            ->define( $orderProduct->incl_tax_sale_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $total_net_discount )
+            ->get();
+    }
+
+    /**
+     * compute a discount value using
+     * provided values
+     * @param float $rate
+     * @param float $value
+     * @return float
+     */
+    public function computeDiscountValues( $rate, $value )
+    {
+        return ( $value * $rate ) / 100;
     }
 
     /**
@@ -1339,32 +1397,26 @@ class OrdersService
 
         $productTotal           =   $products->map(function ($product) {
             return floatval($product->total_price);
-        })->reduce(function ($before, $after) {
-            return $before + $after;
-        });
+        })->sum();
 
         $productGrossTotal      =   $products->map(function ($product) {
             return floatval($product->total_gross_price);
-        })->reduce(function ($before, $after) {
-            return $before + $after;
-        });
+        })->sum();
 
         $productsTotalTaxes     =   $products->map(function ($product) {
             return floatval($product->tax_value);
-        })->reduce(function ($before, $after) {
-            return $before + $after;
-        });
+        })->sum();
 
         $orderShipping          =   $order->shipping;
         $totalPayments          =   $order->payments->map( fn( $payment ) => $payment->value )->sum();
         $order->tendered        =   $totalPayments;
 
         /**
-         * We're not proceeding to 
-         * the computing. 
-         * @todo we might need to dispatch an event
+         * let's refresh all the order values
          */
+        $order->subtotal        =   $productGrossTotal;
         $order->gross_total     =   $productGrossTotal;
+        $order->discount        =   $this->computeOrderDiscount( $order );
         $order->total           =   $productTotal + $orderShipping;
         $order->tax_value       =   $productsTotalTaxes;
         $order->change          =   $order->total - $order->tendered;

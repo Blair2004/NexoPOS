@@ -48,7 +48,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
          * pagination, total items per pages
          */
         getParsedSrc() {
-            return `${this.src}?${this.sortColumn}${this.searchQuery}${this.queryPage}&${this.getQueryParams()}`
+            return `${this.src}?${this.sortColumn}${this.searchQuery}${this.queryPage}${this.getQueryParams() ? '&' + this.getQueryParams() : ''}`
         },
 
         getSelectedAction() {
@@ -160,7 +160,6 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         bulkDo() {
             if ( this.bulkAction ) {
                 if ( this.result.data.filter( row => row.$checked ).length > 0 ) {
-                    console.log( this.getSelectedAction );
                     if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || 'No bulk confirmation message provided on the CRUD class.' ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,

@@ -38,7 +38,7 @@ class CurrencyService
         $this->thousand_separator   =   $thousand_separator ?? self::$_thousand_separator;
     }
 
-    private static function __defineAmount( $amount )
+    private static function __defineAmount( $amount ): CurrencyService
     {
         return app()->make( CurrencyService::class )->value( $amount );
     }
@@ -46,7 +46,7 @@ class CurrencyService
     /**
      * Define an amount to work on
      * @param string
-     * @return Currency
+     * @return CurrencyService
      */
     public static function define( $amount )
     {

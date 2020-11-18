@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Casts\CurrencyCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -9,7 +10,7 @@ class Customer extends Model
     use HasFactory;
     
     protected $table    =   'nexopos_' . 'customers';
-
+    
     /**
      * define the relationship
      * @return Model\RelationShip
