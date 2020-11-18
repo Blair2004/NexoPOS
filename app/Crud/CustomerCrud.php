@@ -482,8 +482,8 @@ class CustomerCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->owed_amount     =   ns()->currency->define( $entry->owed_amount );
-        $entry->account_amount  =   ns()->currency->define( $entry->account_amount );
+        $entry->owed_amount     =   ( string ) ns()->currency->define( $entry->owed_amount );
+        $entry->account_amount  =   ( string ) ns()->currency->define( $entry->account_amount );
         
         $entry->{'$actions'}    =   [
             [

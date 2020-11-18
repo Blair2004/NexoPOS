@@ -57,6 +57,14 @@ const nsOrderPreviewPopup   =   {
              */
             this.loadOrderDetails( this.$popupParams.order.id );
         },
+        printOrder() {
+            const order     =   this.$popupParams.order;
+
+            nsHttpClient.get( `/api/nexopos/v4/orders/${order.id}/print/receipt` )
+                .subscribe( result => {
+                    nsSnackBar.success( result.message ).subscribe();
+                });
+        },
         loadOrderDetails( orderId ) {
             forkJoin([
                 nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}` ),

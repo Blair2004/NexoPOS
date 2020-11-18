@@ -8,6 +8,7 @@ Route::get( 'orders/payments', [ OrdersController::class, 'getSupportedPayments'
 Route::get( 'orders/{id}/pos', [ OrdersController::class, 'getPosOrder' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/products', [ OrdersController::class, 'getOrderProducts' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/payments', [ OrdersController::class, 'getOrderPayments' ])->where( 'id', '[0-9]+');
+Route::get( 'orders/{order}/print/{doc?}', [ OrdersController::class, 'printOrder' ])->where( 'id', '[0-9]+');
 
 /**
  * @deprecated

@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CustomerCrud;
+use App\Events\OrderAfterPrintedEvent;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
@@ -233,6 +234,16 @@ class OrdersController extends DashboardController
     public function makeOrderRefund( Order $order, Request $request )
     {
         return $this->ordersService->refundOrder( $order, $request->all() );
+    }
+
+    public function printOrder( Order $order, $doc = 'receipt' )
+    {
+        event( new OrderAfterPrintedEvent( $order, $doc ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The printing event has been successfully dispatched.' )
+        ];
     }
 }
 

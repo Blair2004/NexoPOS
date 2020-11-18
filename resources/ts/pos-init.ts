@@ -400,6 +400,12 @@ export class POS {
     }
 
     printOrder( order_id ) {
+        const options           =   this.options.getValue();
+
+        if ( options.ns_pos_printing_enabled_for === 'disabled' ) {
+            return false;
+        }
+
         const printSection      =   document.createElement( 'iframe' );
         printSection.id         =   'printing-section';
         printSection.className  =   'hidden';
