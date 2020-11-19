@@ -25,6 +25,10 @@ export default {
         activePayment() {
             let payment;
             return ( payment = this.paymentsType.filter( p => p.selected ) ).length > 0 ? payment[0] : false;
+        },
+        expectedPayment() {
+            const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
+            return ( this.order.total * minimalPaymentPercent ) / 100;
         }
     },
     mounted() {
@@ -178,7 +182,7 @@ export default {
                             <span ><i class="las la-cash-register"></i> Submit Payment</span>
                         </ns-button>
                         <ns-button v-if="order.tendered < order.total" @click="submitOrder({ payment_status: 'unpaid' })" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span><i class="las la-bookmark"></i> Layaway</span>
+                            <span><i class="las la-bookmark"></i> Layaway &mdash; {{ expectedPayment | currency }}</span>
                         </ns-button>
                     </div>
                 </div>

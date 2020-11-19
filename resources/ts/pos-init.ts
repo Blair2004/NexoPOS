@@ -267,8 +267,6 @@ export class POS {
                 }
             }
 
-            console.log( order.tendered, expected );
-
             if ( order.tendered < expected ) {
                 const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
                 Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
