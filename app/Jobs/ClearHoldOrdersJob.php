@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Role;
 use App\Services\DateService;
 use App\Services\NotificationService;
+use App\Services\Options;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -75,6 +76,9 @@ class ClearHoldOrdersJob implements ShouldQueue
         $notification->create([
             'title'     =>      __( 'Hold Order Cleared' ),
             'message'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() )
-        ])->dispatchFor( Role::namespace( 'admin' ) );
+        ])->dispatchForGroup([
+            Role::namespace( 'admin' ),
+            Role::namespace( 'nexopos.store.administrator' ),
+        ]);
     }
 }

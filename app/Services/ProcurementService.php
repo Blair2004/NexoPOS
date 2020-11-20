@@ -27,6 +27,7 @@ use App\Events\ProcurementRefreshedEvent;
 use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
+use App\Models\Role;
 use Exception;
 
 class ProcurementService
@@ -40,12 +41,14 @@ class ProcurementService
         ProviderService $providerService,
         UnitService $unitService,
         ProductService $productService,
-        CurrencyService $currency
+        CurrencyService $currency,
+        DateService $dateService
     )
     {
         $this->providerService      =   $providerService;
         $this->unitService          =   $unitService;
         $this->productService       =   $productService;
+        $this->dateService          =   $dateService;
         $this->currency             =   $currency;
     }
 
@@ -780,7 +783,7 @@ class ProcurementService
             $procurement->products->map( function( $product ) {
                 /**
                  * We'll keep an history of what has just happened.
-                 * this will help to track how the stock evolve.
+                 * in order to monitor how the stock evolve.
                  */
                 $this->productService->saveHistory( ProductHistory::ACTION_STOCKED, [
                     'procurement_id'            =>  $product->procurement_id,
@@ -795,6 +798,37 @@ class ProcurementService
             });
     
             $this->setDeliveryStatus( $procurement, Procurement::STOCKED );
+        }
+    }
+
+    /**
+     * Make sure to procure procurement that 
+     * are awaiting auto-submittion
+     * @return void
+     */
+    public function stockAwaitingProcurements()
+    {
+        $startOfDay     =   $this->dateService->copy();
+        $procurements   =   Procurement::where( 'delivery_time', '<=', $startOfDay )
+            ->pending()
+            ->autoApproval()
+            ->get();
+
+        $procurements->each( function( Procurement $procurement ) {
+            $this->setDeliveryStatus( $procurement, Procurement::DELIVERED );
+            $this->handleProcurement( $procurement );
+        });
+
+        if ( $procurements->count() ) {
+            ns()->notification->create([
+                'title'         =>  __( 'Procurement Automatically Stocked' ),
+                'identifier'    =>  'ns-warn-auto-procurement',
+                'url'           =>  url( '/dashboard/procurements' ),
+                'description'   =>  sprintf( __( '%s procurement(s) has recently been automatically procured.' ), $procurements->count() )
+            ])->dispatchForGroup([
+                Role::namespace( 'admin' ),
+                Role::namespace( 'nexopos.store.administrator' ),
+            ]);
         }
     }
 }

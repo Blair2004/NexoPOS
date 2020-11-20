@@ -26,6 +26,7 @@ use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
 use App\Services\ModulesService;
+use App\Services\NotificationService;
 use App\Services\ReportService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
@@ -108,6 +109,7 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( UpdateService::class ),
                 app()->make( DateService::class ),
                 app()->make( OrdersService::class ),
+                app()->make( NotificationService::class ),
             );
         });
 
@@ -186,7 +188,8 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( ProviderService::class ),
                 $app->make( UnitService::class ),
                 $app->make( ProductService::class ),
-                $app->make( CurrencyService::class )
+                $app->make( CurrencyService::class ),
+                $app->make( DateService::class ),
             );
         });
     }

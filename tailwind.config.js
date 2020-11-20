@@ -74,6 +74,9 @@ module.exports = {
           '108': '27rem',
           '120': '30rem',
       },
+      screens: {
+        'print': {'raw': 'print'},
+      },
       inset: {
           '-5': '-2.5em',
           '-10': '-5em',

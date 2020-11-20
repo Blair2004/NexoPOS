@@ -25,7 +25,8 @@ class Order extends Model
     const PAYMENT_PARTIALLY_REFUNDED        =   'partially_refunded';
 
     public $casts    =   [
-        'created_at'    =>  DateCast::class,
+        'created_at'                =>  DateCast::class,
+        'expected_payment_date'     =>  DateCast::class,
     ];
 
     public function products()

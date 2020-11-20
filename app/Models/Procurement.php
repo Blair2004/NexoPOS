@@ -67,4 +67,14 @@ class Procurement extends Model
     {
         return $this->belongsTo( Provider::class );
     }
+
+    public function scopePending( $query )
+    {
+        return $query->where( 'delivery_status', self::PENDING );
+    }
+
+    public function scopeAutoApproval( $query )
+    {
+        return $query->where( 'automatic_approval', true );
+    }
 }

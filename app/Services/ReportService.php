@@ -281,9 +281,29 @@ class ReportService
 
     public function initializeWastedGood( $dashboardDay )
     {
-        $previousReport                                 =   DashboardDay::forLastRecentDay( $dashboardDay );
-        $dashboardDay->total_wasted_goods_count         =   $previousReport->total_wasted_goods_count ?? 0;
-        $dashboardDay->total_wasted_goods               =   $previousReport->total_wasted_goods ?? 0;
+        $previousReport                                     =   DashboardDay::forLastRecentDay( $dashboardDay );
+        $dashboardDay->total_unpaid_orders                  =   $previousReport->total_unpaid_orders ?? 0;
+        $dashboardDay->day_unpaid_orders                    =   0;
+        $dashboardDay->total_unpaid_orders_count            =   $previousReport->total_unpaid_orders_count ?? 0;
+        $dashboardDay->day_unpaid_orders_count              =   0;
+        $dashboardDay->total_paid_orders                    =   $previousReport->total_paid_orders ?? 0;
+        $dashboardDay->day_paid_orders                      =   0;
+        $dashboardDay->total_paid_orders_count              =   $previousReport->total_paid_orders_count ?? 0;
+        $dashboardDay->day_paid_orders_count                =   0;
+        $dashboardDay->total_partially_paid_orders          =   $previousReport->total_partially_paid_orders ?? 0;
+        $dashboardDay->day_partially_paid_orders            =   0;
+        $dashboardDay->total_partially_paid_orders_count    =   $previousReport->total_partially_paid_orders_count ?? 0;
+        $dashboardDay->day_partially_paid_orders_count      =   0;
+        $dashboardDay->total_income                         =   $previousReport->total_income ?? 0;
+        $dashboardDay->day_income                           =   0;
+        $dashboardDay->total_discounts                      =   $previousReport->total_discounts ?? 0;
+        $dashboardDay->day_discounts                        =   0;
+        $dashboardDay->total_wasted_goods_count             =   $previousReport->total_wasted_goods_count ?? 0;
+        $dashboardDay->day_wasted_goods_count               =   0;
+        $dashboardDay->total_wasted_goods                   =   $previousReport->total_wasted_goods ?? 0;
+        $dashboardDay->day_wasted_goods                     =   0;
+        $dashboardDay->total_expenses                       =   $previousReport->total_expenses ?? 0;
+        $dashboardDay->day_expenses                         =   0;
         $dashboardDay->save();
     }
 }

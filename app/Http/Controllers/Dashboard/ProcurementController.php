@@ -61,6 +61,7 @@ class ProcurementController extends DashboardController
 
     public function edit( Procurement $procurement, ProcurementRequest $request )
     {
+        dd( 'ok' );
         if ( $procurement->delivery_status === Procurement::STOCKED ) {
             throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }

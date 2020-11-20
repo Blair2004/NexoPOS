@@ -26,14 +26,21 @@ class CoreService
      * @param UpdateService
      */
     public $update;
+
+    /**
+     * @var NotificationService
+     */
+    public $notification;
     
     public function __construct(
         CurrencyService $CurrencyService,
         UpdateService $UpdateService,
         DateService $DateService,
-        OrdersService $OrdersService
+        OrdersService $OrdersService,
+        NotificationService $notificationService
     )
     {
+        $this->notification =   $notificationService;
         $this->currency     =   $CurrencyService;
         $this->update       =   $UpdateService;
         $this->date         =   $DateService;

@@ -647,7 +647,7 @@ class ProductService
         $history->before_quantity               =   $currentQuantity;
         $history->quantity                      =   $quantity;
         $history->after_quantity                =   $newQuantity;
-        $history->author                        =   Auth::id();
+        $history->author                        =   Auth::id() ?: Procurement::find( $procurement_id )->author;
         $history->save();
 
         return $this->setQuantity( $product_id, $unit_id, $newQuantity );

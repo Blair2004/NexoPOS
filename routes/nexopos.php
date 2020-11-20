@@ -4,6 +4,7 @@ use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use App\Http\Controllers\Dashboard\ExpensesController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
+use App\Http\Controllers\Dashboard\ProcurementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', 'DashboardController@home' )->name( 'ns.dashboard.home' );
@@ -20,17 +21,16 @@ Route::get( '/customers/{customer}/orders', [ CustomersController::class, 'getCu
 Route::get( '/customers/groups', [ CustomersGroupsController::class, 'listCustomersGroups' ]);
 Route::get( '/customers/groups/create', [ CustomersGroupsController::class, 'createCustomerGroup' ]);
 Route::get( '/customers/groups/edit/{group}', [ CustomersGroupsController::class, 'editCustomerGroup' ]);
-
 Route::get( '/customers/rewards-system', 'Dashboard\RewardsSystemController@list' );
 Route::get( '/customers/rewards-system/create', 'Dashboard\RewardsSystemController@create' );
 Route::get( '/customers/rewards-system/edit/{reward}', 'Dashboard\RewardsSystemController@edit' );
-
 Route::get( '/customers/coupons', [ CustomersController::class, 'listCoupons' ]);
 Route::get( '/customers/coupons/create', [ CustomersController::class, 'createCoupon' ]);
 Route::get( '/customers/coupons/edit/{coupon}', [ CustomersController::class, 'editCoupon' ]);
-Route::get( '/procurements', 'Dashboard\ProcurementController@listProcurements' );
-Route::get( '/procurements/create', 'Dashboard\ProcurementController@createProcurement' );
-Route::get( '/procurements/edit/{procurement}', 'Dashboard\ProcurementController@updateProcurement' );
+
+Route::get( '/procurements', [ ProcurementController::class, 'listProcurements' ]);
+Route::get( '/procurements/create', [ ProcurementController::class, 'createProcurement' ]);
+Route::get( '/procurements/edit/{procurement}', [ ProcurementController::class, 'updateProcurement' ]);
 
 Route::get( '/medias', 'Dashboard\MediasController@showMedia' );
 

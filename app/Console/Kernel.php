@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Jobs\ClearHoldOrdersJob;
 use App\Jobs\ExecuteExpensesJob;
 use App\Jobs\PurgeOrderStorageJob;
+use App\Jobs\StockProcurementJob;
 use App\Jobs\TaskSchedulingPingJob;
 use App\Jobs\TrackLaidAwayOrdersJob;
 use App\Services\ModulesService;
@@ -53,6 +54,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->job( new TaskSchedulingPingJob )->hourly();
         $schedule->job( new ExecuteExpensesJob )->daily( '00:01' );
+        $schedule->job( new StockProcurementJob() )->daily( '00:05' );        
         $schedule->job( new PurgeOrderStorageJob )->daily( '15:00' );
         $schedule->job( new ClearHoldOrdersJob )->dailyAt( '14:00' );
         $schedule->job( new TrackLaidAwayOrdersJob )->dailyAt( '13:00' ); // we don't want all job to run daily at the same time

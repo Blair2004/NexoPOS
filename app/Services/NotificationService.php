@@ -76,6 +76,13 @@ class NotificationService
             $notification->url              =   $this->url;
             $notification->identifier       =   $this->identifier;
             $notification->save();
+        } else {
+            $notification->title            =   $this->title;
+            $notification->description      =   $this->description;
+            $notification->dismissable      =   $this->dismissable;
+            $notification->source           =   $this->source;
+            $notification->url              =   $this->url;
+            $notification->save();
         }
     }
 
