@@ -158,7 +158,7 @@ export default nsOrderPreviewPopup;
         <div class="p-2 overflow-hidden bg-gray-100 flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
-                <ns-tabs-item label="Details" identifier="details">
+                <ns-tabs-item label="Details" identifier="details" class="overflow-y-auto">
                     <ns-order-details :order="order"></ns-order-details>
                 </ns-tabs-item>
 
@@ -171,7 +171,7 @@ export default nsOrderPreviewPopup;
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" label="Refund & Return" identifier="refund" class="flex">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" label="Refund & Return" identifier="refund" class="flex overflow-y-auto">
                     <ns-order-refund :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->

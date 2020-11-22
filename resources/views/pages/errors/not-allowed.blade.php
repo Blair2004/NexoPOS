@@ -2,7 +2,7 @@
 
 @section( 'layout.base.body' )
     <div class="h-full w-full overflow-y-auto pb-10 bg-gradient-to-bl from-teal-400 to-purple-500 flex items-center justify-center">
-        <div class="w-full md:w-1/2 lg:w-1/3 flex items-center flex-col justify-center">
+        <div class="w-full md:w-1/2 xl:1/3 flex items-center flex-col justify-center">
             <span class="rounded-full text-6xl w-24 h-24 flex items-center justify-center bg-white shadow text-red-500"><i class="las la-user-shield"></i></span>
             <h1 class="text-white text-3xl lg:text-5xl font-bold text-center">{!! $title ?? __( 'Not Allowed Action' ) !!}</h1>
             <p class="py-3 text-white lg:text-lg text-center px-4 lg:px-0">{{ $message }}</p>
