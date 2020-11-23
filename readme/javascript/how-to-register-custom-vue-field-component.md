@@ -71,4 +71,5 @@ nsExtraComponents.myCustomInput   = Vue.component( 'myCustomInput', {
   props: [ 'field' ]
 });
 
+```
 *We assume here `myCustomInput` is correctly defined on the field signature*.
