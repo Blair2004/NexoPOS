@@ -23,7 +23,6 @@ class Options
      */
     public function __construct()
     {
-        
         $this->build();
     }
 

@@ -831,4 +831,30 @@ class ProcurementService
             ]);
         }
     }
+
+    public function getDeliveryLabel( $label ) {
+        switch( $label ) {
+            case Procurement::DELIVERED :
+                return __( 'Delivered' );
+            case Procurement::DRAFT;
+                return __( 'Draft' );
+            case Procurement::PENDING;
+                return __( 'Pending' );
+            case Procurement::STOCKED;
+                return __( 'Stocked' );
+            default :
+                return $label;
+        }
+    }
+
+    public function getPaymentLabel( $label ) {
+        switch( $label ) {
+            case Procurement::PAYMENT_PAID :
+                return __( 'Paid' );
+            case Procurement::PAYMENT_UNPAID;
+                return __( 'Unpaid' );
+            default :
+                return $label;
+        }
+    }
 }

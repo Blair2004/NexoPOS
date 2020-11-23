@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use App\Fields\ProcurementFields;
 use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
+use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
 use App\Models\Procurement;
 use Tendoo\Core\Exceptions\AccessDeniedException;
@@ -26,17 +27,26 @@ class ProcurementController extends DashboardController
 {
     protected $crud;
 
-    /** @param ProcurementService */
+    /** 
+     * @var ProcurementService 
+     **/
     protected $procurementService;
 
+    /**
+     * @var Options
+     */
+    protected $options;
+
     public function __construct(
-        ProcurementService $procurementService
+        ProcurementService $procurementService,
+        Options $options
     )
     {
         parent::__construct();
 
         $this->validation           =   new Validation;
         $this->procurementService   =   $procurementService;
+        $this->options              =   $options;
     }
 
     /**
@@ -61,7 +71,6 @@ class ProcurementController extends DashboardController
 
     public function edit( Procurement $procurement, ProcurementRequest $request )
     {
-        dd( 'ok' );
         if ( $procurement->delivery_status === Procurement::STOCKED ) {
             throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
@@ -201,6 +210,18 @@ class ProcurementController extends DashboardController
             'title'         =>  __( 'Edit Procurement' ),
             'description'   =>  __( 'Perform adjustment on existing procurement.' ),
             'procurement'   =>  $procurement
+        ]);
+    }
+
+    public function procurementInvoice( Procurement $procurement )
+    {
+        ns()->restrict([ 'nexopos.read.procurements' ]);
+
+        return $this->view( 'pages.dashboard.procurements.invoice', [
+            'title'         =>  sprintf( __( '%s - Invoice' ), $procurement->name ),
+            'description'   =>  __( 'list of product procured.' ),
+            'procurement'   =>  $procurement,
+            'options'       =>  $this->options
         ]);
     }
 }

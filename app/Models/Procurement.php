@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Casts\DateCast;
 use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementAfterUpdateEvent;
@@ -16,6 +17,10 @@ class Procurement extends Model
     use HasFactory;
     
     protected $table    =   'nexopos_' . 'procurements';
+    public $casts       =   [
+        'created_at'    =>  DateCast::class,
+        'updated_at'    =>  DateCast::class,
+    ];
 
     /**
      * this status mention when the procurement

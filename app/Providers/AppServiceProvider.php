@@ -110,6 +110,8 @@ class AppServiceProvider extends ServiceProvider
                 app()->make( DateService::class ),
                 app()->make( OrdersService::class ),
                 app()->make( NotificationService::class ),
+                app()->make( ProcurementService::class ),
+                app()->make( Options::class )
             );
         });
 

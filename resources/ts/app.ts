@@ -13,12 +13,13 @@ import './shared/time';
 
 import NsRewardsSystem      from './pages/dashboard/rewards-system.vue';
 import NsCreateCoupons      from './pages/dashboard/create-coupons.vue';
-import NsManageProducts     from './pages/dashboard/manage-products.vue';
 import NsSettings           from './pages/dashboard/settings.vue';
 import NsReset              from './pages/dashboard/reset.vue';
 import NsModules            from './pages/dashboard/modules.vue';
 import NsPermissions        from './pages/dashboard/ns-permissions.vue';
-import NsProcurement        from './pages/dashboard/ns-procurement.vue';
+import NsProcurement        from './pages/dashboard/procurements/ns-procurement.vue';
+import NsManageProducts     from './pages/dashboard/procurements/manage-products.vue';
+import NsProcurementInvoice from './pages/dashboard/procurements/ns-procurement-invoice.vue';
 import NsNotifications      from './pages/dashboard/ns-notifications.vue';
 import NsMedia              from './pages/dashboard/ns-media.vue';
 import NsDashboardCards     from './pages/dashboard/home/ns-dashboard-cards.vue';
@@ -128,6 +129,7 @@ const components    =   {
     NsReset,
     NsPermissions,
     NsProcurement,
+    NsProcurementInvoice,
     NsMedia,
     NsDashboardCards,
     NsBestCustomers,

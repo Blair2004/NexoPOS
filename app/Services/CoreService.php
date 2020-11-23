@@ -11,9 +11,16 @@ class CoreService
      * @param CurrenService;
      */
     public $currency;
+
+    /**
+     * @var DateService
+     */
     public $date;
+
+    /**
+     * @var OrdersService
+     */
     public $order;
-    public $modules;
 
     /**
      * @var boolean
@@ -31,13 +38,25 @@ class CoreService
      * @var NotificationService
      */
     public $notification;
+
+    /**
+     * @var ProcurementService
+     */
+    public $procurement;
+
+    /**
+     * @var Options
+     */
+    public $option;
     
     public function __construct(
         CurrencyService $CurrencyService,
         UpdateService $UpdateService,
         DateService $DateService,
         OrdersService $OrdersService,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        ProcurementService $procurementService,
+        Options $option
     )
     {
         $this->notification =   $notificationService;
@@ -45,6 +64,8 @@ class CoreService
         $this->update       =   $UpdateService;
         $this->date         =   $DateService;
         $this->order        =   $OrdersService;
+        $this->procurement  =   $procurementService;
+        $this->option       =   $option;
     }
 
     public function installed()

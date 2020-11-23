@@ -1,8 +1,8 @@
 <script>
-import FormValidation from '../../libraries/form-validation';
+import FormValidation from '@/libraries/form-validation';
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
-import { nsSnackBar, nsHttpClient } from '../../bootstrap';
+import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import NsManageProducts from './manage-products';
 import { Tax } from "@/libraries/tax";
 import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
@@ -277,7 +277,8 @@ export default {
                         return {
                             name: product.name,
                             purchase_units: product.purchase_units,
-                            procurement: product
+                            procurement: product,
+                            unit_quantities: product.unit_quantities || []
                         }
                     });
 
@@ -527,7 +528,6 @@ export default {
                                             </td>
                                             <td class="p-2 text-gray-600 border border-gray-300">
                                                 <div class="flex items-start">
-                                                    {{ product.unit_quantities }}
                                                     <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
                                                         <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
                                                     </select>

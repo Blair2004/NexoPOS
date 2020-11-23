@@ -30,6 +30,7 @@ class ProcurementForm extends SettingsPage
             ],
             'products'          =>  isset( $procurement ) ? $procurement->products->map( function( $_product ) {
                 $product                    =   Product::findOrFail( $_product->product_id );
+                $product->load( 'unit_quantities.unit' )->get();
                 $_product->unit_quantities  =   $product->unit_quantities;
                 return $_product;
             }) : [],

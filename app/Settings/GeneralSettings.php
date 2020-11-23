@@ -71,6 +71,18 @@ class GeneralSettings extends SettingsPage
                             'type'          =>  'textarea',
                             'description'   =>  __( 'Store additional informations.' ),
                         ], [
+                            'name'  =>  'ns_store_square_logo',
+                            'value'          =>  $options->get( 'ns_store_square_logo' ),
+                            'label' =>  __( 'Store Square Logo' ), 
+                            'type'          =>  'media',
+                            'description'   =>  __( 'Choose what is the square logo of the store.' ),
+                        ], [
+                            'name'  =>  'ns_store_rectangle_logo',
+                            'value'          =>  $options->get( 'ns_store_rectangle_logo' ),
+                            'label' =>  __( 'Store Rectangle Logo' ), 
+                            'type'          =>  'media',
+                            'description'   =>  __( 'Choose what is the rectangle logo of the store.' ),
+                        ], [
                             'name'          =>  'ns_store_language',
                             'value'         =>  $options->get( 'ns_store_language' ),
                             'options'         =>  Helper::kvToJsOptions([

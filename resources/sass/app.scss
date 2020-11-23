@@ -83,6 +83,35 @@ body {
     box-shadow: inset 0px 0px 5px 0px #a4a5a7;
 }
 
+.ns-table {
+    @apply w-full;
+    thead th {
+        @apply border border-gray-300 bg-gray-200 p-2 text-gray-700;
+    }
+    tbody td {
+        @apply border border-gray-200 p-2 text-gray-700;
+    }
+    tfoot td {
+        @apply border border-gray-200 p-2 text-gray-700;
+    }
+
+    tbody > tr.info {
+        @apply bg-blue-200;
+    }
+
+    tbody > tr.danger {
+        @apply bg-red-200;
+    }
+
+    tbody > tr.success {
+        @apply bg-green-200;
+    }
+
+    tbody > tr.green {
+        @apply bg-yellow-200;
+    }
+}
+
 #editor {
     h1 {
         @apply text-5xl font-bold;
