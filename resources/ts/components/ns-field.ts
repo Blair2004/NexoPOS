@@ -34,6 +34,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isCkEditor() {
             return [ 'ckeditor' ].includes( this.field.type );
         },
+        isCustom() {
+            return [ 'custom' ].includes( this.field.type );
+        },
     },
     props: [ 'field' ],
     methods: {
@@ -108,6 +111,15 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-switch>
+        <template v-if="isCustom">
+            <keep-alive>
+                <component 
+                    :field="field"
+                    @blur="$emit( 'blur', field )" 
+                    @change="$emit( 'change', field )" 
+                    v-bind:is="field.component"></component>
+            </keep-alive>
+        </template>
     </div>
     `,
 });

@@ -13,7 +13,10 @@
         </div>
         <div class="flex justify-between items-center bg-gray-200 p-3">
             <div>
-                <ns-button @click="signIn()" type="info">Sign In</ns-button>
+                <ns-button @click="signIn()" class="justify-between" type="info">
+                    <ns-spinner class="mr-2" v-if="isSubitting" size="6" border="2"></ns-spinner>
+                    <span>Sign In</span>
+                </ns-button>
             </div>
             <div>
                 <ns-link :href="'/sign-up'" type="success">Register</ns-link>
@@ -24,7 +27,7 @@
 <script>
 import { forkJoin } from 'rxjs';
 import FormValidation from '@/libraries/form-validation';
-import { nsHttpClient } from '@/bootstrap';
+import { nsHooks, nsHttpClient } from '@/bootstrap';
 
 export default {
     name: 'ns-login',
@@ -32,7 +35,8 @@ export default {
         return {
             fields: [],
             xXsrfToken: null,
-            validation: new FormValidation
+            validation: new FormValidation,
+            isSubitting: false,
         }
     },
     mounted() {
@@ -43,6 +47,12 @@ export default {
         .subscribe( result => {
             this.fields         =   this.validation.createFields( result[0] );
             this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+
+            /**
+             * emit an event
+             * when the component is mounted
+             */
+            setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
         });
     },
     methods: {
@@ -55,17 +65,30 @@ export default {
 
             this.validation.disableFields( this.fields );
 
-            nsHttpClient.post( '/auth/sign-in', this.validation.getValue( this.fields ), {
-                headers: {
-                    'X-XSRF-TOKEN'  : this.xXsrfToken
-                }
-            }).subscribe( (result) => {
-                document.location   =   result.data.redirectTo;
-            }, ( error ) => {
-                this.validation.enableFields( this.fields );
-                this.validation.triggerFieldsErrors( this.fields, error.data );
-                nsSnackBar.error( error.message ).subscribe();
-            })
+            /**
+             * that will allow override and prevent submitting
+             * when certain conditions are meet.
+             */
+            if ( nsHooks.applyFilters( 'ns-login-submit', true ) ) {
+                this.isSubitting    =   true;
+                nsHttpClient.post( '/auth/sign-in', this.validation.getValue( this.fields ), {
+                    headers: {
+                        'X-XSRF-TOKEN'  : this.xXsrfToken
+                    }
+                }).subscribe( (result) => {
+                    this.isSubitting    =   false;
+                    document.location   =   result.data.redirectTo;
+                }, ( error ) => {
+                    this.isSubitting    =   false;
+                    this.validation.enableFields( this.fields );
+                    
+                    if ( error.data ) {
+                        this.validation.triggerFieldsErrors( this.fields, error.data );
+                    }
+
+                    nsSnackBar.error( error.message ).subscribe();
+                })
+            }
         }
     }
 }

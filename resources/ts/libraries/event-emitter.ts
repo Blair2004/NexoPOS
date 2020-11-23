@@ -1,10 +1,10 @@
-import * as rx from 'rx';
+import { ReplaySubject } from 'rxjs';
 
 export class EventEmitter {
-    _subject;
+    _subject: ReplaySubject<any>
     
     constructor() {
-        this._subject    =   new rx.Subject;        
+        this._subject    =   new ReplaySubject;        
     }
 
     subject() {
@@ -12,6 +12,6 @@ export class EventEmitter {
     }
 
     emit({ identifier, value }) {
-        this._subject.onNext({ identifier, value });
+        this._subject.next({ identifier, value });
     }
 }

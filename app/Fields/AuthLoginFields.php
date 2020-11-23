@@ -1,13 +1,14 @@
 <?php
 namespace App\Fields;
 
+use App\Classes\Hook;
 use App\Services\FieldsService;
 
 class AuthLoginFields extends FieldsService
 {
     public function get()
     {
-        $fields     =   [
+        $fields     =   Hook::filter( 'ns-login-fields', [
             [
                 'label'         =>  __( 'Username' ),
                 'description'   =>  __( 'Provide your username.' ),
@@ -21,7 +22,7 @@ class AuthLoginFields extends FieldsService
                 'name'          =>  'password',
                 'type'          =>  'password',
             ]
-        ];
+        ]);
         
         return $fields;
     }

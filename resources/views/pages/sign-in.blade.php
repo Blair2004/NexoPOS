@@ -26,5 +26,6 @@ use App\Classes\Response;
 
 @section( 'layout.base.footer' )
     @parent
+    {!! Hook::filter( 'ns-login-footer', new Response ) !!}
     <script src="{{ asset( 'js/auth.js' ) }}"></script>
 @endsection

@@ -218,7 +218,7 @@ class ModulesService
         /**
          * Load module folder contents
          */
-        foreach([ 'Models', 'Services', 'Events', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms' ] as $folder ) {
+        foreach([ 'Models', 'Services', 'Events', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms', 'Settings' ] as $folder ) {
             /**
              * Load Module models
              */

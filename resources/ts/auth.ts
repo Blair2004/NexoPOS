@@ -8,7 +8,12 @@ import FormValidation from './libraries/form-validation';
 const nsLogin       =   require( '@/pages/auth/ns-login' ).default;
 const nsRegister    =   require( '@/pages/auth/ns-register' ).default;
 
-new Vue({
+declare const nsState;
+declare const nsScreen;
+declare const nsExtraComponents;
+
+(<any>window).nsComponents          =   { ...components, ...nsExtraComponents };
+(<any>window).authVueComponent      =   new Vue({
     el: '#page-container',
     components: {
         nsLogin,

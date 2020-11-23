@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\ExpensesController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\Dashboard\ProcurementController;
+use App\Http\Controllers\Dashboard\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', 'DashboardController@home' )->name( 'ns.dashboard.home' );
@@ -21,9 +22,9 @@ Route::get( '/customers/{customer}/orders', [ CustomersController::class, 'getCu
 Route::get( '/customers/groups', [ CustomersGroupsController::class, 'listCustomersGroups' ]);
 Route::get( '/customers/groups/create', [ CustomersGroupsController::class, 'createCustomerGroup' ]);
 Route::get( '/customers/groups/edit/{group}', [ CustomersGroupsController::class, 'editCustomerGroup' ]);
-Route::get( '/customers/rewards-system', 'Dashboard\RewardsSystemController@list' );
-Route::get( '/customers/rewards-system/create', 'Dashboard\RewardsSystemController@create' );
-Route::get( '/customers/rewards-system/edit/{reward}', 'Dashboard\RewardsSystemController@edit' );
+Route::get( '/customers/rewards-system', [ RewardsSystemController::class, 'list' ]);
+Route::get( '/customers/rewards-system/create', [ RewardsSystemController::class, 'create' ]);
+Route::get( '/customers/rewards-system/edit/{reward}', [ RewardsSystemController::class, 'edit' ]);
 Route::get( '/customers/coupons', [ CustomersController::class, 'listCoupons' ]);
 Route::get( '/customers/coupons/create', [ CustomersController::class, 'createCoupon' ]);
 Route::get( '/customers/coupons/edit/{coupon}', [ CustomersController::class, 'editCoupon' ]);
@@ -35,18 +36,18 @@ Route::get( '/procurements/edit/{procurement}/invoice', [ ProcurementController:
 
 Route::get( '/medias', 'Dashboard\MediasController@showMedia' );
 
-Route::get( '/providers', 'Dashboard\ProvidersController@listProviders' );
-Route::get( '/providers/create', 'Dashboard\ProvidersController@createProvider' );
-Route::get( '/providers/edit/{provider}', 'Dashboard\ProvidersController@editProvider' );
+Route::get( '/providers', [ ProvidersController::class, 'listProviders' ]);
+Route::get( '/providers/create', [ ProvidersController::class, 'createProvider' ]);
+Route::get( '/providers/edit/{provider}', [ ProvidersController::class, 'editProvider' ]);
 
 Route::get( '/expenses', [ ExpensesController::class, 'listExpenses' ]);
 Route::get( '/expenses/create', [ ExpensesController::class, 'createExpense' ]);
 Route::get( '/expenses/edit/{expense}', [ ExpensesController::class, 'editExpense' ]);
 Route::get( '/expenses/history', [ ExpensesController::class, 'expensesHistory' ]);
 
-Route::get( '/expenses/categories', 'Dashboard\ExpensesCategoriesController@listExpensesCategories' );
-Route::get( '/expenses/categories/create', 'Dashboard\ExpensesCategoriesController@createExpenseCategory' );
-Route::get( '/expenses/categories/edit/{category}', 'Dashboard\ExpensesCategoriesController@editExpenseCategory' );
+Route::get( '/expenses/categories', [ ExpensesCategoriesController::class, 'listExpensesCategories' ]);
+Route::get( '/expenses/categories/create', [ ExpensesCategoriesController::class, 'createExpenseCategory' ]);
+Route::get( '/expenses/categories/edit/{category}', [ ExpensesCategoriesController::class, 'editExpenseCategory' ]);
 
 Route::get( '/products', [ ProductsController::class, 'listProducts' ]);
 Route::get( '/products/create', [ ProductsController::class, 'createProduct' ]);
@@ -54,33 +55,31 @@ Route::get( '/products/stock-adjustment', [ ProductsController::class, 'showStoc
 Route::get( '/products/edit/{product}', [ ProductsController::class, 'editProduct' ]);
 Route::get( '/products/{product}/units', [ ProductsController::class, 'productUnits' ]);
 Route::get( '/products/{product}/history', [ ProductsController::class, 'productHistory' ]);
-Route::get( '/products/categories', 'Dashboard\CategoryController@listCategories' );
-Route::get( '/products/categories/create', 'Dashboard\CategoryController@createCategory' );
-Route::get( '/products/categories/edit/{category}', 'Dashboard\CategoryController@editCategory' );
+Route::get( '/products/categories', [ CategoryController::class, 'listCategories' ]);
+Route::get( '/products/categories/create', [ CategoryController::class, 'createCategory' ]);
+Route::get( '/products/categories/edit/{category}', [ CategoryController::class, 'editCategory' ]);
 
-Route::get( '/taxes', 'Dashboard\TaxesController@listTaxes' );
-Route::get( '/taxes/create', 'Dashboard\TaxesController@createTax' );
-Route::get( '/taxes/edit/{tax}', 'Dashboard\TaxesController@editTax' );
-Route::get( '/taxes/groups', 'Dashboard\TaxesController@taxesGroups' );
-Route::get( '/taxes/groups/create', 'Dashboard\TaxesController@createTaxGroups' );
-Route::get( '/taxes/groups/edit/{group}', 'Dashboard\TaxesController@editTaxGroup' );
+Route::get( '/taxes', [ TaxesController::class, 'listTaxes' ]);
+Route::get( '/taxes/create', [ TaxesController::class, 'createTax' ]);
+Route::get( '/taxes/edit/{tax}', [ TaxesController::class, 'editTax' ]);
+Route::get( '/taxes/groups', [ TaxesController::class, 'taxesGroups' ]);
+Route::get( '/taxes/groups/create', [ TaxesController::class, 'createTaxGroups' ]);
+Route::get( '/taxes/groups/edit/{group}', [ TaxesController::class, 'editTaxGroup' ]);
 
-Route::get( '/units', 'Dashboard\UnitsController@listUnits' );
-Route::get( '/units/edit/{unit}', 'Dashboard\UnitsController@editUnit' );
-Route::get( '/units/create', 'Dashboard\UnitsController@createUnit' );
-Route::get( '/units/groups', 'Dashboard\UnitsController@listUnitsGroups' );
-Route::get( '/units/groups/create', 'Dashboard\UnitsController@createUnitGroup' );
-Route::get( '/units/groups/edit/{group}', 'Dashboard\UnitsController@editUnitGroup' );
+Route::get( '/units', [ UnitsController::class, 'listUnits' ]);
+Route::get( '/units/edit/{unit}', [ UnitsController::class, 'editUnit' ]);
+Route::get( '/units/create', [ UnitsController::class, 'createUnit' ]);
+Route::get( '/units/groups', [ UnitsController::class, 'listUnitsGroups' ]);
+Route::get( '/units/groups/create', [ UnitsController::class, 'createUnitGroup' ]);
+Route::get( '/units/groups/edit/{group}', [ UnitsController::class, 'editUnitGroup' ]);
 
-Route::get( '/users', 'Dashboard\UsersController@listUsers' );
-Route::get( '/users/create', 'Dashboard\UsersController@createUser' );
-Route::get( '/users/edit/{user}', 'Dashboard\UsersController@editUser' );
-Route::get( '/users/roles/permissions-manager', 'Dashboard\UsersController@permissionManager' );
-Route::get( '/users/profile', 'Dashboard\UsersController@getProfile' )->name( 'ns.dashboard.users.profile' );
-Route::get( '/users/roles', 'Dashboard\UsersController@rolesList' );
-Route::get( '/users/roles/{id}', 'Dashboard\UsersController@editRole' );
+Route::get( '/users', [ UsersController::class, 'listUsers' ]);
+Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
+Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
+Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
+Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
+Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
+Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
 
-Route::get( '/settings/{settings}', 'Dashboard\SettingsController@getSettings' );
-Route::get( '/settings/form/{settings}', 'Dashboard\SettingsController@loadSettingsForm' );
-
-Route::get( '/experiments', 'DashboardController@experiments' );
+Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
+Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

@@ -116,7 +116,6 @@ class RouteServiceProvider extends ServiceProvider
                 Route::middleware([ 'web', 'ns.installed' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'routes-file' ] );
-                
             }
 
             if ( $module[ 'api-file' ] !== false ) {

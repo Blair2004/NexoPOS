@@ -1,3 +1,5 @@
+declare const nsExtraComponents;
+
 export default class FormValidation {
     validateFields( fields ) {
         return fields.map( field => {
@@ -68,8 +70,13 @@ export default class FormValidation {
             field.type      =   field.type      || 'text',
             field.errors    =   field.errors    || [];
             field.disabled  =   field.disabled  || false;
+
+            if ( field.type === 'custom' ) {
+                field.component     =   nsExtraComponents[ field.name ];
+            }
+            
             return field;
-        })
+        });
     }
 
     createForm( form ) {

@@ -31,6 +31,7 @@
     "dependencies": {
         "@ckeditor/ckeditor5-build-classic": "^23.0.0",
         "@ckeditor/ckeditor5-vue": "^1.0.3",
+        "@wordpress/hooks": "^2.10.0",
         "apexcharts": "^3.22.1",
         "chart.js": "^2.9.3",
         "dayjs": "^1.8.36",

@@ -12,6 +12,7 @@ import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
+import { createHooks } from '@wordpress/hooks';
 
 declare const window;
 declare const ns;
@@ -23,6 +24,7 @@ window.moment           =   moment;
 window.Axios            =   Axios;
 window.VueRouter        =   VueRouter;
 window.SnackBar         =   SnackBar;
+window.nsHooks          =   createHooks();
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 
@@ -31,6 +33,7 @@ const nsHttpClient      =   new HttpClient;
 const nsSnackBar        =   new SnackBar;
 const nsUrl             =   new Url;
 const nsCrudHandler     =   new CrudHandler;
+const nsHooks           =   window.nsHooks;
 
 /**
  * create a screen class
@@ -90,4 +93,4 @@ window.RxJS             =   RxJS;
 window.FormValidation   =   FormValidation;
 window.nsCrudHandler    =   nsCrudHandler;
 
-export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl };
+export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

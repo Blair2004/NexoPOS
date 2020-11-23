@@ -31,3 +31,7 @@ Here is the list off all available filters as long as their purpose and argument
 |ns.after-login-fields     | Add or modify output after login fields  | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
 |ns-crud-footer     | Add or modifier output on crud tables footer | `App\Classes\Response`   | 4.0-beta-1 | Valid    |
 | ns-pos-settings-tabs | Add or modifiy POS settings | Array | 4.0-beta-1 | Valid |
+| ns-login-fields | Add or modifiy login fields | Array | 4.0-beta-1 | Valid |
+| ns-login-footer | inject output at the end of the sign-in page | Array | 4.0-beta-1 | Valid |
+| ns-login-form | provide a way to inject code while the login form is being validated | Array | 4.0-beta-1 | Valid |
+| ns-register-footer | Allow injecting output at the footer of the registration page | Array | 4.0-beta-1 | Valid |

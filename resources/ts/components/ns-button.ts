@@ -10,9 +10,9 @@ const nsButton      =   Vue.component( 'ns-button', {
     props: [ 'type', 'disabled', 'link', 'href', 'routerLink', 'to' ],
     template: `
     <div class="flex" @click="$emit( 'click' )">
-        <button :disabled="isDisabled" v-if="!link" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></button>
-        <router-link  :to="to" v-if="routerLink" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
-        <a v-if="link" :href="href" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
+        <button :disabled="isDisabled" v-if="!link" :class="buttonclass" class="flex rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></button>
+        <router-link  :to="to" v-if="routerLink" :class="buttonclass" class="flex rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
+        <a v-if="link" :href="href" :class="buttonclass" class="flex rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
     </div>
     `,
     mounted() {

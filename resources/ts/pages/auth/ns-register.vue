@@ -23,7 +23,7 @@
 </template>
 <script>
 import FormValidation from '@/libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { forkJoin } from 'rxjs';
 
 export default {
@@ -43,6 +43,12 @@ export default {
         .subscribe( result => {
             this.fields         =   this.validation.createFields( result[0] );
             this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+
+            /**
+             * emit an event
+             * when the component is mounted
+             */
+            setTimeout( () => nsHooks.doAction( 'ns-register-mounted', this ) );
         });
     },
     methods: {
@@ -50,25 +56,27 @@ export default {
             const isValid   =   this.validation.validateFields( this.fields );            
 
             if ( ! isValid ) {
-                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+                // return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
             }
 
             this.validation.disableFields( this.fields );
 
-            nsHttpClient.post( '/auth/sign-up', this.validation.getValue( this.fields ), {
-                headers: {
-                    'X-XSRF-TOKEN'  : this.xXsrfToken
-                }
-            }).subscribe( (result) => {
-                nsSnackBar.success( result.message ).subscribe();
-                setTimeout( () => {
-                    document.location   =   result.data.redirectTo;
-                }, 1500 );
-            }, ( error ) => {
-                this.validation.triggerFieldsErrors( this.fields, error );
-                this.validation.enableFields( this.fields );
-                nsSnackBar.error( error.message ).subscribe();
-            })
+            if ( nsHooks.applyFilters( 'ns-register-submit', true ) ) {
+                nsHttpClient.post( '/auth/sign-up', this.validation.getValue( this.fields ), {
+                    headers: {
+                        'X-XSRF-TOKEN'  : this.xXsrfToken
+                    }
+                }).subscribe( (result) => {
+                    nsSnackBar.success( result.message ).subscribe();
+                    setTimeout( () => {
+                        document.location   =   result.data.redirectTo;
+                    }, 1500 );
+                }, ( error ) => {
+                    this.validation.triggerFieldsErrors( this.fields, error );
+                    this.validation.enableFields( this.fields );
+                    nsSnackBar.error( error.message ).subscribe();
+                })
+            }
         }
     }
 }

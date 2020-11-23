@@ -1,13 +1,14 @@
 <?php
 namespace App\Fields;
 
+use App\Classes\Hook;
 use App\Services\FieldsService;
 
 class AuthRegisterFields extends FieldsService
 {
     public function get()
     {
-        $fields     =   [
+        $fields     =   Hook::filter( 'ns-register-fields', [
             [
                 'label'         =>  __( 'Username' ),
                 'description'   =>  __( 'Provide your username.' ),
@@ -33,7 +34,7 @@ class AuthRegisterFields extends FieldsService
                 'name'          =>  'password_confirm',
                 'type'          =>  'password',
             ]
-        ];
+        ]);
         
         return $fields;
     }

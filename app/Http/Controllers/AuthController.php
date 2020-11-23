@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
@@ -71,7 +72,9 @@ class AuthController extends Controller
 
     public function postSignIn( SignInRequest $request )
     {
-        $attempt    =   Auth::attempt([
+        Hook::action( 'ns-login-form', $request );
+        
+        $attempt        =   Auth::attempt([
             'username'  =>  $request->input( 'username' ),
             'password'  =>  $request->input( 'password' )
         ]);
@@ -137,6 +140,8 @@ class AuthController extends Controller
      */
     public function postSignUp( SignUpRequest $request )
     {
+        Hook::action( 'ns-register-form', $request );
+
         $options                    =   app()->make( Options::class );
         $role                       =   $options->get( 'ns_registration_role' );
         $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );

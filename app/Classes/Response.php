@@ -12,9 +12,9 @@ class Response
         $this->output[]     =   $view;
     }
 
-    public function addView( $view )
+    public function addView( $view, $options = [])
     {
-        $this->output[]     =   View::make( $view );
+        $this->output[]     =   View::make( $view, $options );
     }
 
     public function setOutput( $view )
