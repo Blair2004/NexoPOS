@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateOrdersAddressesTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_orders_addresses' ) ) {
-            Schema::create( 'nexopos_orders_addresses', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_orders_addresses' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_orders_addresses' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
                 $table->string( 'type' ); // either "billing" or "shipping"
@@ -45,8 +47,8 @@ class CreateOrdersAddressesTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_orders_addresses' ) ) {
-            Schema::drop( 'nexopos_orders_addresses' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_orders_addresses' ) ) ) {
+            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_orders_addresses' ) );
         }
     }
 }

@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -19,8 +21,8 @@ class CreateTransferProductsTable extends Migration
         /**
          * i believe it should support the unit of measure.
          */
-        if ( ! Schema::hasTable( 'nexopos_transfers_products' ) ) {
-            Schema::create( 'nexopos_transfers_products', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_transfers_products' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_transfers_products' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'product_id' );
                 $table->integer( 'transfer_id' );
@@ -39,8 +41,8 @@ class CreateTransferProductsTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_transfers_products' ) ) {
-            Schema::drop( 'nexopos_transfers_products' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_transfers_products' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_transfers_products' ) );
         }
     }
 }

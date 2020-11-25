@@ -14,8 +14,12 @@ class UpdateNexoPOSCustomersTable extends Migration
     public function up()
     {
         Schema::table( 'nexopos_customers', function( Blueprint $table ) {
-            $table->float( 'purchases_amount' )->default(0);
-            $table->float( 'owed_amount' )->default(0);
+            if ( ! Schema::hasColumn( 'nexopos_customers', 'purchases_amount' ) ) {
+                $table->float( 'purchases_amount' )->default(0);
+            }
+            if ( ! Schema::hasColumn( 'nexopos_customers', 'owed_amount' ) ) {
+                $table->float( 'owed_amount' )->default(0);
+            }
         });
     }
 

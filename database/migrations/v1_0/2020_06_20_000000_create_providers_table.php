@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateProvidersTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_providers' ) ) {
-            Schema::create( 'nexopos_providers', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_providers' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_providers' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'surname' )->nullable();
@@ -44,8 +46,8 @@ class CreateProvidersTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_providers' ) ) {
-            Schema::drop( 'nexopos_providers' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_providers' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_providers' ) );
         }
     }
 }

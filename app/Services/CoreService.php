@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Exceptions\NotEnoughPermissionException;
 use App\Services\Helpers\App;
 use Illuminate\Support\Facades\Auth;
@@ -75,7 +76,12 @@ class CoreService
 
     public function route( $route, $params = [])
     {
-        return route( $route, $params );
+        return Hook::filter( 'ns-route', false, $route, $params ) ?: route( $route, $params );
+    }
+
+    public function url( $url )
+    {
+        return url( Hook::filter( 'ns-url', $url ) );
     }
 
     /**

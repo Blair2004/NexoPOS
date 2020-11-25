@@ -602,7 +602,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( $entry ? 'form-config/' . $entry->id : 'form-config' ) ) ),
+            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.

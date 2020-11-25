@@ -50,12 +50,12 @@
                                 <ns-button v-if="moduleObject.migrated" disabled type="success"><i class="las la-check text-xl"></i></ns-button>
                             </div>
                             <div class="px-1 flex -mx-1">
-                                <div class="px-1">
+                                <div class="px-1 flex">
                                     <ns-button @click="download( moduleObject )" type="info">
                                         <i class="las la-archive"></i>
                                     </ns-button>
                                 </div>
-                                <div class="px-1">
+                                <div class="px-1 flex">
                                     <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
                                 </div>
                             </div>

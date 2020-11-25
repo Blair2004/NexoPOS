@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateProductsCategoriesTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_categories' ) ) {
-            Schema::create( 'nexopos_products_categories', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_categories' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_products_categories' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'parent_id' )->default(0)->nullable();
@@ -40,8 +42,8 @@ class CreateProductsCategoriesTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_categories' ) ) {
-            Schema::drop( 'nexopos_products_categories' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_categories' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_products_categories' ) );
         }
     }
 }

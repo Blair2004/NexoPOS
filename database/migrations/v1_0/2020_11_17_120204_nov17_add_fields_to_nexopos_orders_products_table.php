@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create( 'nexopos_orders_refunds', function( Blueprint $table ) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_orders_refunds' ), function( Blueprint $table ) {
             $table->bigIncrements( 'id' );
             $table->integer( 'order_id' );
             $table->integer( 'author' );
@@ -22,7 +23,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('nexopos_orders_products_refunds', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_orders_products_refunds' ), function (Blueprint $table) {
             $table->bigIncrements( 'id' );
             $table->integer( 'order_id' );
             $table->integer( 'order_refund_id' );
@@ -46,7 +47,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_orders_products_refunds' );
-        Schema::dropIfExists( 'nexopos_orders_refunds' );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_orders_products_refunds' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_orders_refunds' ) );
     }
 }

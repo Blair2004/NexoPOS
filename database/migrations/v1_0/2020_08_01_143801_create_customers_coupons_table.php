@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class CreateCustomersCouponsTable extends Migration
      */
     public function up()
     {
-        Schema::create( 'nexopos_customers_coupons', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons' ), function (Blueprint $table) {
             $table->id();
             $table->string( 'name' );
             $table->string( 'type' )->default( 'discount' ); // percentage_discount, flat_discount, giveaway
@@ -30,13 +31,13 @@ class CreateCustomersCouponsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create( 'nexopos_customers_coupons_products', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons_products' ), function (Blueprint $table) {
             $table->id();
             $table->integer( 'coupon_id' );
             $table->integer( 'product_id' );
         });
 
-        Schema::create( 'nexopos_customers_coupons_categories', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons_categories' ), function (Blueprint $table) {
             $table->id();
             $table->integer( 'coupon_id' );
             $table->integer( 'category_id' );
@@ -50,8 +51,8 @@ class CreateCustomersCouponsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_customers_coupons');
-        Schema::dropIfExists('nexopos_customers_coupons_products');
-        Schema::dropIfExists('nexopos_customers_coupons_categories');
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons') );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons_products') );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers_coupons_categories') );
     }
 }

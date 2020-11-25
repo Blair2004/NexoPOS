@@ -32,7 +32,7 @@ class NotificationsController extends DashboardController
      */
     public function getNotifications()
     {
-        return Notification::for( Auth::id() )->get();
+        return Notification::for( Auth::id() )->orderBy( 'id', 'desc' )->get();
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class CreateNexoposOrdersStorage extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_orders_storage', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_orders_storage' ), function (Blueprint $table) {
             $table->id();
             $table->integer( 'product_id' )->nullable();
             $table->integer( 'unit_quantity_id' )->nullable();
@@ -31,6 +32,6 @@ class CreateNexoposOrdersStorage extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_orders_storage');
+        Schema::dropIfExists( Hook::filter( 'nexopos_orders_storage', 'ns-table-prefix' ) );
     }
 }

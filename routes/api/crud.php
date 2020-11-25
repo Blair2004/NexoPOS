@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Route;
 
 Route::get( 'crud/{namespace}', 'Dashboard\CrudController@crudList' );
@@ -9,6 +10,6 @@ Route::get( 'crud/{namespace}/config/{id?}', 'Dashboard\CrudController@getConfig
 Route::get( 'crud/{namespace}/form-config/{id?}', 'Dashboard\CrudController@getFormConfig' );
 Route::put( 'crud/{namespace}/{id}', 'Dashboard\CrudController@crudPut' )->where(['id' => '[0-9]+']);
 Route::post( 'crud/{namespace}', 'Dashboard\CrudController@crudPost' );
-Route::post( 'crud/{namespace}/bulk-actions', 'Dashboard\CrudController@crudBulkActions' )->name( 'crud.bulk-actions' );
+Route::post( 'crud/{namespace}/bulk-actions', 'Dashboard\CrudController@crudBulkActions' )->name( Hook::filter( 'ns-route-name', 'crud.bulk-actions' ) );
 Route::post( 'crud/{namespace}/can-access', 'Dashboard\CrudController@canAccess' );
 Route::delete( 'crud/{namespace}/{id}', 'Dashboard\CrudController@crudDelete' );

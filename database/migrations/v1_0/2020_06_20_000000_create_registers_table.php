@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateRegistersTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_registers' ) ) {
-            Schema::create( 'nexopos_registers', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_registers' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_registers' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'status' )->default( 'closed' ); // open, closed, disabled
@@ -37,8 +39,8 @@ class CreateRegistersTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_registers' ) ) {
-            Schema::drop( 'nexopos_registers' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_registers' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_registers' ) );
         }
     }
 }

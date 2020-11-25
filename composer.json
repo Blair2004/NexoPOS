@@ -22,6 +22,7 @@
         "laravel/telescope": "^4.0",
         "laravel/tinker": "^2.0",
         "laravie/parser": "^2.1",
+        "rct567/dom-query": "^0.8.0",
         "spatie/laravel-db-snapshots": "^1.7",
         "tormjens/eventy": "^0.6.0"
     },

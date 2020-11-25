@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateTaxesTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_taxes' ) ) {
-            Schema::create( 'nexopos_taxes', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_taxes' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_taxes' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -29,8 +31,8 @@ class CreateTaxesTable extends Migration
             });
         }
 
-        if ( ! Schema::hasTable( 'nexopos_taxes_groups' ) ) {
-            Schema::create( 'nexopos_taxes_groups', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_taxes_groups' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_taxes_groups' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -48,12 +50,12 @@ class CreateTaxesTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_taxes' ) ) {
-            Schema::drop( 'nexopos_taxes' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_taxes' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_taxes' ) );
         }
 
-        if ( Schema::hasTable( 'nexopos_taxes_groups' ) ) {
-            Schema::drop( 'nexopos_taxes_groups' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_taxes_groups' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_taxes_groups' ) );
         }
     }
 }

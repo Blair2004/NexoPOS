@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_histories' ) ) {
-            Schema::create( 'nexopos_products_histories', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_histories' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_products_histories' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'product_id' );
                 $table->integer( 'procurement_id' )->nullable();
@@ -30,6 +32,7 @@ class CreateProductsHistoryTable extends Migration
                 $table->float( 'after_quantity' )->nullable();
                 $table->float( 'unit_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->float( 'total_price' ); // could be the cost of the procurement, the lost (defective)
+                $table->text( 'description' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
@@ -44,8 +47,8 @@ class CreateProductsHistoryTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_histories' ) ) {
-            Schema::drop( 'nexopos_products_histories' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_histories' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_products_histories' ) );
         }
     }
 }

@@ -13,17 +13,15 @@ class AddPriceModeOnOrdersProductsTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasColumn( 'nexopos_orders_products', 'mode' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders_products', 'mode' ) ) {
                 $table->string( 'mode' )->default( 'normal' ); // can be wholesale
-            });
-        }
-
-        if ( ! Schema::hasColumn( 'nexopos_orders_products', 'unit_name' ) ) {
-            Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
+            }
+            if ( ! Schema::hasColumn( 'nexopos_orders_products', 'unit_name' ) ) {
                 $table->string( 'unit_name' )->nullable(); // can be wholesale
-            });
-        }
+            }
+        });
+
     }
 
     /**

@@ -14,6 +14,7 @@ use PhpParser\Error;
 use PhpParser\NodeDumper;
 use PhpParser\ParserFactory;
 use App\Exceptions\CoreException;
+use App\Providers\ModulesServiceProvider;
 use Exception;
 
 class ModulesService
@@ -148,37 +149,7 @@ class ModulesService
 
                     $this->autoloadModule( $config );
 
-                    /**
-                     * register module service provider
-                     */
-                    $servicesProviders   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
-
-                    foreach( $servicesProviders as $service ) {
-                        /**
-                         * @todo run service provider
-                         */
-                        $fileInfo   =   pathinfo( $service );
-
-                        if ( is_file( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
-                            include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service );
-    
-                            $className      =   ucwords( $fileInfo[ 'filename' ] );
-                            $fullClassName  =   'Modules\\' . $config[ 'namespace' ] . '\\Providers\\' . $className;
-    
-                            if ( class_exists( $fullClassName ) ) {
-
-                                $config[ 'providers' ][ $className ]   =   new $fullClassName( app() );
-                                
-                                /**
-                                 * If a register method exists and the class is an 
-                                 * instance of ModulesServiceProvider
-                                 */
-                                if ( $config[ 'providers' ][ $className ] instanceof ModuleServiceProvider && method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
-                                    call_user_func([ $config[ 'providers' ][ $className ], 'register' ]);
-                                }
-                            }
-                        }
-                    }
+                    $this->triggerServiceProviders( $config, 'register' );
 
                     /**
                      * Load Module Config
@@ -210,6 +181,42 @@ class ModulesService
                 'status'    =>  'failed',
                 'message'   =>  sprintf( __( 'No config.xml has been found on the directory : %s' ), $dir )
             ];
+        }
+    }
+
+    public function triggerServiceProviders( $config, $method )
+    {
+        /**
+         * register module service provider
+         */
+        $servicesProviders   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
+
+        foreach( $servicesProviders as $service ) {
+            /**
+             * @todo run service provider
+             */
+            $fileInfo   =   pathinfo( $service );
+
+            if ( is_file( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
+                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service );
+
+                $className      =   ucwords( $fileInfo[ 'filename' ] );
+                $fullClassName  =   'Modules\\' . $config[ 'namespace' ] . '\\Providers\\' . $className;
+                
+                
+                if ( class_exists( $fullClassName ) ) {
+                    
+                    $config[ 'providers' ][ $className ]   =   new $fullClassName( app() );
+                    
+                    /**
+                     * If a register method exists and the class is an 
+                     * instance of ModulesServiceProvider
+                     */
+                    if ( $config[ 'providers' ][ $className ] instanceof ModulesServiceProvider && method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
+                        call_user_func([ $config[ 'providers' ][ $className ], $method ], $this );
+                    }
+                }
+            }
         }
     }
 
@@ -255,6 +262,9 @@ class ModulesService
                 include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
             }
 
+            // boot service providers
+            $this->triggerServiceProviders( $module, 'boot' );
+
             // include module index file
             include_once( $module[ 'index-file' ] );
             
@@ -273,8 +283,9 @@ class ModulesService
     public function get( $namespace = null )
     {
         if ( $namespace !== null ) {
-            return @$this->modules[ $namespace ];
+            return $this->modules[ $namespace ] ?? null;
         }
+        
         return $this->modules;
     }
 

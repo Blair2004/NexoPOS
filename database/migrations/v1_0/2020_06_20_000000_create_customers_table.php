@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateCustomersTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_customers' ) ) {
-            Schema::create( 'nexopos_customers', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->string( 'surname' )->nullable();
@@ -28,17 +30,21 @@ class CreateCustomersTable extends Migration
                 $table->string( 'email' )->unique()->nullable();
                 $table->string( 'pobox' )->nullable();
                 $table->integer( 'group_id' );
+                $table->float( 'purchases_amount' )->default(0);
+                $table->float( 'owed_amount' )->default(0);
+                $table->float( 'account_amount' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });
         }
 
-        if ( ! Schema::hasTable( 'nexopos_customers_addresses' ) ) {
-            Schema::create( 'nexopos_customers_addresses', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->string( 'type' ); // either "billing" | "shipping"
                 $table->string( 'name' )->nullable();
+                $table->string( 'email' )->nullable();
                 $table->string( 'surname' )->nullable();
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
@@ -52,6 +58,19 @@ class CreateCustomersTable extends Migration
                 $table->timestamps();
             });
         }
+
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_account_history' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_account_history' ), function( Blueprint $table ) {
+                $table->bigIncrements( 'id' );
+                $table->integer( 'customer_id' );
+                $table->integer( 'order_id' )->nullable();
+                $table->float( 'amount' )->default(0);
+                $table->string( 'operation' ); // sub / add
+                $table->integer( 'author' );
+                $table->text( 'description' )->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -61,11 +80,11 @@ class CreateCustomersTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_customers' ) ) {
-            Schema::drop( 'nexopos_customers' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) ) ) {
+            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) );
         }
-        if ( Schema::hasTable( 'nexopos_customers_addresses' ) ) {
-            Schema::drop( 'nexopos_customers_addresses' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) ) ) {
+            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) );
         }
     }
 }

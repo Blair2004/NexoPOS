@@ -102,6 +102,9 @@ class RouteServiceProvider extends ServiceProvider
              */
 
             // include module controllers
+            /**
+             * @deprecated this inclusion seems useless now
+             */
             $controllers    =   Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
 
             foreach( $controllers as $controller ) {
@@ -119,7 +122,8 @@ class RouteServiceProvider extends ServiceProvider
             }
 
             if ( $module[ 'api-file' ] !== false ) {
-                Route::middleware([ 'ns.installed' ]) // 'ns.cors', 
+                Route::prefix('api')
+                    ->middleware([ 'ns.installed', 'api' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'api-file' ] );
             }

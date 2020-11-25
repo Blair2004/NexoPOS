@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateUnitsTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_units' ) ) {
-            Schema::create( 'nexopos_units', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_units' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_units' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -38,8 +40,8 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_units' ) ) {
-            Schema::drop( 'nexopos_units' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_units' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_units' ) );
         }
     }
 }

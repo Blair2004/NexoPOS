@@ -35,3 +35,7 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-login-footer | inject output at the end of the sign-in page | Array | 4.0-beta-1 | Valid |
 | ns-login-form | provide a way to inject code while the login form is being validated | Array | 4.0-beta-1 | Valid |
 | ns-register-footer | Allow injecting output at the footer of the registration page | Array | 4.0-beta-1 | Valid |
+| ns-table-prefix | provides table name | Array | 4.0-beta-1 | Valid |
+| ns-route | returns the route value | Array | 4.0-beta-1 | Valid |
+| ns-dashboard-header | returns the output of the dashboard header | Array | 4.0-beta-1 | Valid |
+| ns-route-name | returns routes names | Array | 4.0-beta-1 | Valid |

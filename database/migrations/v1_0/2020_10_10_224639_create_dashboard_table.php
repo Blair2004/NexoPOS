@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,17 +14,17 @@ class CreateDashboardTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::create( 'nexopos_dashboard_days' , function (Blueprint $table) {
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'id' ) ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ) , function (Blueprint $table) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
             });
         }
 
-        if ( Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::table( 'nexopos_dashboard_days' , function (Blueprint $table) {
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'id' ) ) {
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ) ) ) {
+            Schema::table( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), function (Blueprint $table) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
 
@@ -52,6 +53,9 @@ class CreateDashboardTable extends Migration
                     'total_discounts',
                     'day_discounts',
 
+                    'day_taxes',
+                    'total_taxes',
+
                     'total_wasted_goods_count',
                     'day_wasted_goods_count',
 
@@ -61,55 +65,55 @@ class CreateDashboardTable extends Migration
                     'total_expenses',
                     'day_expenses',
                 ] as $column ) {
-                    if ( ! Schema::hasColumn( 'nexopos_dashboard_days', $column ) ) {
+                    if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), $column ) ) {
                         $table->float( $column )->default(0);
                     }
                 }
     
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'day_of_year' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), 'day_of_year' ) ) {
                     $table->integer( 'day_of_year' )->default(0);
                 }
     
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_starts' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), 'range_starts' ) ) {
                     $table->datetime( 'range_starts' );                    
                 }
                 
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_ends' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ), 'range_ends' ) ) {
                     $table->datetime( 'range_ends' );
                 }
             });
         }
 
-        if ( ! Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
-            Schema::create( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'id' ) ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), function( Blueprint $table ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
             });
         }
 
-        if ( Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
-            Schema::table( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ) ) ) {
+            Schema::table( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), function( Blueprint $table ) {
                 foreach([
                     'total_gross_income',
                     'total_taxes',
                     'total_expenses',
                     'total_net_income',
                 ] as $column ) {
-                    if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', $column ) ) {
+                    if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), $column ) ) {
                         $table->float( $column )->default(0);
                     }
                 }
     
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'week_number' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), 'week_number' ) ) {
                     $table->integer( 'week_number' )->default(0);
                 }
 
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_starts' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), 'range_starts' ) ) {
                     $table->datetime( 'range_starts' );
                 }
 
-                if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_ends' ) ) {
+                if ( ! Schema::hasColumn( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ), 'range_ends' ) ) {
                     $table->datetime( 'range_ends' );
                 }
             });
@@ -123,7 +127,7 @@ class CreateDashboardTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( 'nexopos_dashboard_days' );
-        Schema::dropIfExists( 'nexopos_dashboard_week' );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_week' ) );
     }
 }

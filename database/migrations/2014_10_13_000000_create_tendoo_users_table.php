@@ -22,6 +22,8 @@ class CreateTendooUsersTable extends Migration
             $table->integer( 'author' )->nullable(); // the first user is created by him self
             $table->string( 'email' )->unique();
             $table->string('password');
+            $table->integer( 'total_sales_count' );
+            $table->float( 'total_sales' );
             $table->rememberToken();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@
  * @package  5.0
 **/
 
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -17,8 +18,8 @@ class CreateCustomersGroupsTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_customers_groups' ) ) {
-            Schema::create( 'nexopos_customers_groups', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_groups' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_customers_groups' ), function( Blueprint $table ) {
                 $table->bigIncrements('id');
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
@@ -38,8 +39,8 @@ class CreateCustomersGroupsTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_customers_groups' ) ) {
-            Schema::drop( 'nexopos_customers_groups' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_groups' ) ) ) {
+            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_customers_groups' ) );
         }
     }
 }

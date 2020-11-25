@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Migration;
+use App\Services\Helpers\App;
+use App\Services\ModulesService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +23,16 @@ class CheckMigrationStatus
         if ( ns()->update->getMigrations()->count() > 0 ) {
             session([ 'after_update' => url()->current() ]);
             return redirect( route( 'ns.database-update' ) );
+        }
+
+        if ( App::installed() ) {
+            $module     =   app()->make( ModulesService::class );
+            $modules    =   collect( $module->get() );
+            $total      =   $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );
+            
+            if ( $total->count() > 0 ) {
+                return redirect( route( 'ns.database-update' ) );
+            }
         }
 
         return $next($request);

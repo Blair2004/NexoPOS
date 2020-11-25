@@ -24,16 +24,16 @@ class MenuService
                     'index'             =>  [
                         'label'         =>  __( 'Home' ),
                         'permissions'   =>  [ 'read.dashboard' ],
-                        'href'          =>  url( '/dashboard' ),
+                        'href'          =>  ns()->url( '/dashboard' ),
                     ],
                     'updates'           =>  [
                         'label'         =>  __( 'Updates'),
                         'permissions'   =>  [ 'update.core' ],
-                        'href'          =>  url( '/dashboard/updates' )
+                        'href'          =>  ns()->url( '/dashboard/updates' )
                     ], 
                     'about'             =>  [
                         'label'         =>  __( 'About'),
-                        'href'          =>  url( '/dashboard/about' )
+                        'href'          =>  ns()->url( '/dashboard/about' )
                     ]
                 ]
             ], 
@@ -41,19 +41,19 @@ class MenuService
                 'label' =>  __( 'POS' ),
                 'icon'  =>  'la-cash-register',
                 'permissions'   =>  [ 'nexopos.create.orders' ],
-                'href'  =>  url( '/dashboard/pos' )
+                'href'  =>  ns()->url( '/dashboard/pos' )
             ], 
             'orders'    =>  [
                 'label' =>  __( 'Orders' ),
                 'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
                 'icon'  =>  'la-list-ol',
-                'href'  =>  url( '/dashboard/orders' )
+                'href'  =>  ns()->url( '/dashboard/orders' )
             ], 
             'medias'    =>  [
                 'label'         =>  __( 'Medias' ),
                 'permissions'   =>  [ 'nexopos.upload.medias', 'nexopos.see.medias' ],
                 'icon'          =>  'la-photo-video',
-                'href'          =>  url( '/dashboard/medias' )
+                'href'          =>  ns()->url( '/dashboard/medias' )
             ], 
             'customers' =>  [
                 'label' =>  __( 'Customers' ),
@@ -73,47 +73,47 @@ class MenuService
                     'customers' =>  [
                         'label' =>  __( 'List'),
                         'permissions'   =>  [ 'nexopos.read.customers' ],
-                        'href'  =>  url( '/dashboard/customers' )
+                        'href'  =>  ns()->url( '/dashboard/customers' )
                     ], 
                     'create-customer'  =>   [
                         'label' =>  __( 'Create Customer'),
                         'permissions'   =>  [ 'nexopos.create.customers' ],
-                        'href'  =>  url( '/dashboard/customers/create' )
+                        'href'  =>  ns()->url( '/dashboard/customers/create' )
                     ], 
                     'customers-groups'  =>  [
                         'label' =>  __( 'Customers Groups'),
                         'permissions'   =>  [ 'nexopos.read.customers-groups' ],
-                        'href'  =>  url( '/dashboard/customers/groups' )
+                        'href'  =>  ns()->url( '/dashboard/customers/groups' )
                     ], 
                     'create-customers-group'    =>  [
                         'label' =>  __( 'Create Group'),
                         'permissions'   =>  [ 'nexopos.create.customers-groups' ],
-                        'href'  =>  url( '/dashboard/customers/groups/create' )
+                        'href'  =>  ns()->url( '/dashboard/customers/groups/create' )
                     ], 
                     'import-customers'  =>  [
                         'label' =>  __( 'Import Customers'),
                         'permissions'   =>  [ 'nexopos.import.customers' ],
-                        'href'  =>  url( '/dashboard/customers/import' )
+                        'href'  =>  ns()->url( '/dashboard/customers/import' )
                     ],
                     'list-reward-system'    =>  [
                         'label' =>  __( 'Reward Systems'),
                         'permissions'   =>  [ 'nexopos.read.rewards' ],
-                        'href'  =>  url( '/dashboard/customers/rewards-system' )
+                        'href'  =>  ns()->url( '/dashboard/customers/rewards-system' )
                     ],
                     'create-reward-system'    =>  [
                         'label' =>  __( 'Create Reward'),
                         'permissions'   =>  [ 'nexopos.create.rewards' ],
-                        'href'  =>  url( '/dashboard/customers/rewards-system/create' )
+                        'href'  =>  ns()->url( '/dashboard/customers/rewards-system/create' )
                     ],
                     'list-coupons'    =>  [
                         'label' =>  __( 'List Coupons'),
                         'permissions'   =>  [ 'nexopos.read.coupons' ],
-                        'href'  =>  url( '/dashboard/customers/coupons' )
+                        'href'  =>  ns()->url( '/dashboard/customers/coupons' )
                     ],
                     'create-coupons'    =>  [
                         'label' =>  __( 'Create Coupon'),
                         'permissions'   =>  [ 'nexopos.create.coupons' ],
-                        'href'  =>  url( '/dashboard/customers/coupons/create' )
+                        'href'  =>  ns()->url( '/dashboard/customers/coupons/create' )
                     ],
                 ]
             ], 
@@ -128,12 +128,12 @@ class MenuService
                     'providers' =>  [
                         'label' =>  __( 'List'),
                         'permissions'   =>  [ 'nexopos.read.providers' ],
-                        'href'  =>  url( '/dashboard/providers' )
+                        'href'  =>  ns()->url( '/dashboard/providers' )
                     ], 
                     'create-provider'   =>  [
                         'label' =>  __( 'Create Providers'),
                         'permissions'   =>  [ 'nexopos.create.providers' ],
-                        'href'  =>  url( '/dashboard/providers/create' )
+                        'href'  =>  ns()->url( '/dashboard/providers/create' )
                     ]
                 ]
             ], 
@@ -150,27 +150,27 @@ class MenuService
                     'expenses' =>  [
                         'label' =>  __( 'Expenses'),
                         'permissions'   =>  [ 'nexopos.read.expenses' ],
-                        'href'  =>  url( '/dashboard/expenses' )
+                        'href'  =>  ns()->url( '/dashboard/expenses' )
                     ], 
                     'create-expense'   =>  [
                         'label' =>  __( 'Create Expense'),
                         'permissions'   =>  [ 'nexopos.create.expenses' ],
-                        'href'  =>  url( '/dashboard/expenses/create' )
+                        'href'  =>  ns()->url( '/dashboard/expenses/create' )
                     ],
                     'expenses-history'  =>  [
                         'label'         =>  __( 'Expenses History' ),
                         'permissions'   =>  [ 'nexopos.read.expenses' ],
-                        'href'          =>  url( '/dashboard/expenses/history' )
+                        'href'          =>  ns()->url( '/dashboard/expenses/history' )
                     ],
                     'expenses-categories'   =>  [
                         'label' =>  __( 'Expense Categories'),
                         'permissions'   =>  [ 'nexopos.read.expenses-categories' ],
-                        'href'  =>  url( '/dashboard/expenses/categories' )
+                        'href'  =>  ns()->url( '/dashboard/expenses/categories' )
                     ],
                     'create-expenses-categories'   =>  [
                         'label' =>  __( 'Create Expense Category'),
                         'permissions'   =>  [ 'nexopos.create.expenses-categories' ],
-                        'href'  =>  url( '/dashboard/expenses/categories/create' )
+                        'href'  =>  ns()->url( '/dashboard/expenses/categories/create' )
                     ]
                 ]
             ], 
@@ -192,47 +192,47 @@ class MenuService
                     'products'  =>  [
                         'label' =>  __( 'Products' ),
                         'permissions'   =>  [ 'nexopos.read.products' ],
-                        'href'  =>  url( '/dashboard/products' )
+                        'href'  =>  ns()->url( '/dashboard/products' )
                     ], 
                     'create-products'   =>  [
                         'label' =>  __( 'Create Product'),
                         'permissions'   =>  [ 'nexopos.create.products' ],
-                        'href'  =>  url( '/dashboard/products/create' )
+                        'href'  =>  ns()->url( '/dashboard/products/create' )
                     ], 
                     'categories'   =>  [
                         'label' =>  __( 'Categories'),
                         'permissions'   =>  [ 'nexopos.read.categories' ],
-                        'href'  =>  url( '/dashboard/products/categories' )
+                        'href'  =>  ns()->url( '/dashboard/products/categories' )
                     ], 
                     'create-categories'   =>  [
                         'label' =>  __( 'Create Categories'),
                         'permissions'   =>  [ 'nexopos.create.categories' ],
-                        'href'  =>  url( '/dashboard/products/categories/create' )
+                        'href'  =>  ns()->url( '/dashboard/products/categories/create' )
                     ],
                     'units'   =>  [
                         'label' =>  __( 'Units'),
                         'permissions'   =>  [ 'nexopos.read.products-units' ],
-                        'href'  =>  url( '/dashboard/units' )
+                        'href'  =>  ns()->url( '/dashboard/units' )
                     ],
                     'create-units'   =>  [
                         'label' =>  __( 'Create Unit'),
                         'permissions'   =>  [ 'nexopos.create.products-units' ],
-                        'href'  =>  url( '/dashboard/units/create' )
+                        'href'  =>  ns()->url( '/dashboard/units/create' )
                     ],
                     'unit-groups'   =>  [
                         'label' =>  __( 'Unit Groups'),
                         'permissions'   =>  [ 'nexopos.read.products-units' ],
-                        'href'  =>  url( '/dashboard/units/groups' )
+                        'href'  =>  ns()->url( '/dashboard/units/groups' )
                     ],
                     'create-unit-groups'   =>  [
                         'label' =>  __( 'Create Unit Groups'),
                         'permissions'   =>  [ 'nexopos.create.products-units' ],
-                        'href'  =>  url( '/dashboard/units/groups/create' )
+                        'href'  =>  ns()->url( '/dashboard/units/groups/create' )
                     ],
                     'stock-adjustment'   =>  [
                         'label' =>  __( 'Stock Adjustment'),
                         'permissions'   =>  [ 'nexopos.make.products-adjustments' ],
-                        'href'  =>  url( '/dashboard/products/stock-adjustment' )
+                        'href'  =>  ns()->url( '/dashboard/products/stock-adjustment' )
                     ],
                 ]
             ], 
@@ -249,22 +249,22 @@ class MenuService
                     'taxes-groups'   =>  [
                         'label'         =>  __( 'Taxes Groups'),
                         'permissions'   =>  [ 'nexopos.read.taxes' ],
-                        'href'          =>  url( '/dashboard/taxes/groups' )
+                        'href'          =>  ns()->url( '/dashboard/taxes/groups' )
                     ],
                     'create-taxes-group'   =>  [
                         'label'         =>  __( 'Create Tax Groups'),
                         'permissions'   =>  [ 'nexopos.create.taxes' ],
-                        'href'          =>  url( '/dashboard/taxes/groups/create' )
+                        'href'          =>  ns()->url( '/dashboard/taxes/groups/create' )
                     ],
                     'taxes'             =>  [
                         'label'         =>  __( 'Taxes'),
                         'permissions'   =>  [ 'nexopos.read.taxes' ],
-                        'href'          =>  url( '/dashboard/taxes' )
+                        'href'          =>  ns()->url( '/dashboard/taxes' )
                     ],
                     'create-tax'        =>  [
                         'label'         =>  __( 'Create Tax'),
                         'permissions'   =>  [ 'nexopos.create.taxes' ],
-                        'href'          =>  url( '/dashboard/taxes/create' )
+                        'href'          =>  ns()->url( '/dashboard/taxes/create' )
                     ]
                 ]
             ],
@@ -275,11 +275,11 @@ class MenuService
                 'childrens'     =>  [
                     'modules'  =>  [
                         'label' =>  __( 'List' ),
-                        'href'  =>  url( '/dashboard/modules' )
+                        'href'  =>  ns()->url( '/dashboard/modules' )
                     ], 
                     'upload-module'   =>  [
                         'label' =>  __( 'Upload Module'),
-                        'href'  =>  url( '/dashboard/modules/upload' )
+                        'href'  =>  ns()->url( '/dashboard/modules/upload' )
                     ], 
                 ]
             ], 
@@ -290,36 +290,36 @@ class MenuService
                     'profile'  =>  [
                         'label' =>  __( 'List' ),
                         'permissions'   =>  [ 'manage.profile' ],
-                        'href'  =>  url( '/dashboard/users/profile' )
+                        'href'  =>  ns()->url( '/dashboard/users/profile' )
                     ], 
                     'users'  =>  [
                         'label' =>  __( 'List' ),
                         'permissions'   =>  [ 'read.users' ],
-                        'href'  =>  url( '/dashboard/users' )
+                        'href'  =>  ns()->url( '/dashboard/users' )
                     ], 
                     'create-user'  =>  [
                         'label' =>  __( 'Create User' ),
                         'permissions'   =>  [ 'create.users' ],
-                        'href'  =>  url( '/dashboard/users/create' )
+                        'href'  =>  ns()->url( '/dashboard/users/create' )
                     ], 
                     'roles'  =>  [
                         'label' =>  __( 'Roles' ),
                         'permissions'   =>  [ 'read.roles' ],
-                        'href'  =>  url( '/dashboard/users/roles' )
+                        'href'  =>  ns()->url( '/dashboard/users/roles' )
                     ], 
                     'create-role'  =>  [
                         'label' =>  __( 'Create Roles' ),
                         'permissions'   =>  [ 'create.roles' ],
-                        'href'  =>  url( '/dashboard/users/roles/create' )
+                        'href'  =>  ns()->url( '/dashboard/users/roles/create' )
                     ], 
                     'permissions'  =>  [
                         'label' =>  __( 'Permissions Manager' ),
                         'permissions'   =>  [ 'update.roles' ],
-                        'href'  =>  url( '/dashboard/users/roles/permissions-manager' )
+                        'href'  =>  ns()->url( '/dashboard/users/roles/permissions-manager' )
                     ], 
                     'profile'  =>  [
                         'label' =>  __( 'Profile' ),
-                        'href'  =>  url( '/dashboard/users/profile' )
+                        'href'  =>  ns()->url( '/dashboard/users/profile' )
                     ], 
                 ]
             ],
@@ -331,12 +331,12 @@ class MenuService
                     'procurements'  =>  [
                         'label'         =>  __( 'Procurements List' ),
                         'permissions'   =>  [ 'nexopos.read.procurements' ],
-                        'href'          =>  url( '/dashboard/procurements' )
+                        'href'          =>  ns()->url( '/dashboard/procurements' )
                     ], 
                     'procurements-create'  =>  [
                         'label' =>  __( 'New Procurement' ),
                         'permissions'   =>  [ 'nexopos.create.procurements' ],
-                        'href'  =>  url( '/dashboard/procurements/create' )
+                        'href'  =>  ns()->url( '/dashboard/procurements/create' )
                     ], 
                 ]
             ],
@@ -355,52 +355,52 @@ class MenuService
                     'sales'  =>  [
                         'label' =>  __( 'Sale Report' ),
                         'permissions'   =>  [ 'nexopos.report.sales' ],
-                        'href'  =>  url( '/dashboard/reports/sales' )
+                        'href'  =>  ns()->url( '/dashboard/reports/sales' )
                     ], 
                     'detailed-report'  =>  [
                         'label' =>  __( 'Detailed report' ),
-                        'href'  =>  url( '/dashboard/reports/detailed-report' )
+                        'href'  =>  ns()->url( '/dashboard/reports/detailed-report' )
                     ], 
                     'best-sales'  =>  [
                         'label' =>  __( 'Best Sales' ),
                         'permissions'   =>  [ 'nexopos.report.best_sales' ],
-                        'href'  =>  url( '/dashboard/reports/best-sales' )
+                        'href'  =>  ns()->url( '/dashboard/reports/best-sales' )
                     ], 
                     'income-losses'  =>  [
                         'label' =>  __( 'Incomes & Loosses' ),
-                        'href'  =>  url( '/dashboard/reports/income-losses' )
+                        'href'  =>  ns()->url( '/dashboard/reports/income-losses' )
                     ], 
                     'cash-flow'  =>  [
                         'label' =>  __( 'Cash Flow' ),
                         'permissions'   =>  [ 'nexopos.report.cash_flow' ],
-                        'href'  =>  url( '/dashboard/reports/cash-flow' )
+                        'href'  =>  ns()->url( '/dashboard/reports/cash-flow' )
                     ], 
                     'annulal-sales'  =>  [
                         'label' =>  __( 'Yearly Sales' ),
                         'permissions'   =>  [ 'nexopos.report.yearly' ],
-                        'href'  =>  url( '/dashboard/reports/yearly-sales' )
+                        'href'  =>  ns()->url( '/dashboard/reports/yearly-sales' )
                     ], 
                     'customers'  =>  [
                         'label' =>  __( 'Customers' ),
                         'permissions'   =>  [ 'nexopos.report.customers' ],
-                        'href'  =>  url( '/dashboard/reports/customers' )
+                        'href'  =>  ns()->url( '/dashboard/reports/customers' )
                     ], 
                     'providers'  =>  [
                         'label' =>  __( 'Providers' ),
-                        'href'  =>  url( '/dashboard/reports/providers' )
+                        'href'  =>  ns()->url( '/dashboard/reports/providers' )
                     ], 
                     'inventory-tracking'  =>  [
                         'label' =>  __( 'Inventory Tracking' ),
                         'permissions'   =>  [ 'nexopos.report.inventory' ],
-                        'href'  =>  url( '/dashboard/reports/inventory-tracking' )
+                        'href'  =>  ns()->url( '/dashboard/reports/inventory-tracking' )
                     ], 
                     'activity-log'  =>  [
                         'label' =>  __( 'Activity Log' ),
-                        'href'  =>  url( '/dashboard/reports/activity-log' )
+                        'href'  =>  ns()->url( '/dashboard/reports/activity-log' )
                     ], 
                     'expenses'  =>  [
                         'label' =>  __( 'Expenses' ),
-                        'href'  =>  url( '/dashboard/reports/expenses' )
+                        'href'  =>  ns()->url( '/dashboard/reports/expenses' )
                     ], 
                 ]
             ],
@@ -411,51 +411,51 @@ class MenuService
                 'childrens'     =>  [
                     'general'   =>  [
                         'label' =>  __( 'General' ),
-                        'href'  =>  url( '/dashboard/settings/general' )
+                        'href'  =>  ns()->url( '/dashboard/settings/general' )
                     ], 
                     'pos'       =>  [
                         'label' =>  __( 'POS'),
-                        'href'  =>  url( '/dashboard/settings/pos' )
+                        'href'  =>  ns()->url( '/dashboard/settings/pos' )
                     ],  
                     'customers' =>  [
                         'label' =>  __( 'Customers'),
-                        'href'  =>  url( '/dashboard/settings/customers' )
+                        'href'  =>  ns()->url( '/dashboard/settings/customers' )
                     ], 
                     'supplies-delivery'     =>  [
                         'label'             =>  __( 'Supplies & Deliveries'),
-                        'href'              =>  url( '/dashboard/settings/supplies-deliveries' )
+                        'href'              =>  ns()->url( '/dashboard/settings/supplies-deliveries' )
                     ],
                     'orders'        =>  [
                         'label'     =>  __( 'Orders'),
-                        'href'      =>  url( '/dashboard/settings/orders' )
+                        'href'      =>  ns()->url( '/dashboard/settings/orders' )
                     ],
                     'stores'        =>  [
                         'label'     =>  __( 'Stores'),
-                        'href'      =>  url( '/dashboard/settings/stores' )
+                        'href'      =>  ns()->url( '/dashboard/settings/stores' )
                     ],
                     'reports'       =>  [
                         'label'     =>  __( 'Reports'),
-                        'href'      =>  url( '/dashboard/settings/reports' )
+                        'href'      =>  ns()->url( '/dashboard/settings/reports' )
                     ],
                     'invoice-settings'  =>  [
                         'label'         =>  __( 'Invoice Settings'),
-                        'href'          =>  url( '/dashboard/settings/invoice-settings' )
+                        'href'          =>  ns()->url( '/dashboard/settings/invoice-settings' )
                     ],
                     'service-providers'     =>  [
                         'label'             =>  __( 'Service Providers'),
-                        'href'              =>  url( '/dashboard/settings/service-providers' )
+                        'href'              =>  ns()->url( '/dashboard/settings/service-providers' )
                     ],
                     'notifications'     =>  [
                         'label'         =>  __( 'Notifications'),
-                        'href'          =>  url( '/dashboard/settings/notifications' )
+                        'href'          =>  ns()->url( '/dashboard/settings/notifications' )
                     ],
                     'workers'           =>  [
                         'label'         =>  __( 'Workers' ),
-                        'href'          =>  url( '/dashboard/settings/workers' ),
+                        'href'          =>  ns()->url( '/dashboard/settings/workers' ),
                     ],
                     'reset'         =>  [
                         'label'     =>  __( 'Reset'),
-                        'href'      =>  url( '/dashboard/settings/reset' )
+                        'href'      =>  ns()->url( '/dashboard/settings/reset' )
                     ]
                 ]
             ],

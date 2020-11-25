@@ -28,7 +28,8 @@
                     <div class="flex">
                         <button v-if="updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-sync animate-spin"></i>
-                            <span>Updating...</span>
+                            <span v-if="! updatingModule">{{ __( 'Updating...' ) }}</span>
+                            <span v-if="updatingModule">{{ __( 'Updating Modules...' ) }}</span>
                         </button>
                         <a :href="returnLink" v-if="! updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-undo"></i>
@@ -48,8 +49,10 @@ export default {
         return {
             files: Update.files,
             returnLink: Update.returnLink,
+            modules: Update.modules,
             updating: false,
             xXsrfToken: null,
+            updatingModule: false,
             error: false,
             lastErrorMessage: '',
         }
@@ -86,6 +89,30 @@ export default {
                     this.lastErrorMessage   =   exception.message;
 
                     return nsSnackBar.error( exception.message ).subscribe();
+                }
+            }
+
+            if ( Object.values( this.modules ).length > 0 ) {
+                this.updatingModule     =   true;
+
+                for( let index in this.modules ) {
+                    try {
+                        const response  =   await new Promise( ( resolve, reject ) => {
+                            nsHttpClient.post( '/api/nexopos/v4/update', {
+                                module: this.modules[ index ]
+                            }, {
+                                headers: {
+                                    'X-XSRF-TOKEN'  : this.xXsrfToken
+                                }
+                            }).subscribe( resolve, reject );
+                        });
+                    } catch( exception ) {
+                        this.updating           =   false;
+                        this.error              =   true;
+                        this.lastErrorMessage   =   exception.message;
+
+                        return nsSnackBar.error( exception.message ).subscribe();
+                    }
                 }
             }
 

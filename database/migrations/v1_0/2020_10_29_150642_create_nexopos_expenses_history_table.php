@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class CreateNexoposExpensesHistoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_expenses_history', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_expenses_history' ), function (Blueprint $table) {
             $table->id();
             $table->integer( 'expense_id' );
             $table->string( 'expense_name' );
@@ -31,6 +32,6 @@ class CreateNexoposExpensesHistoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_expenses_history');
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_expenses_history') );
     }
 }

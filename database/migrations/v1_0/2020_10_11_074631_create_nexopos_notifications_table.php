@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +14,8 @@ class CreateNexoposNotificationsTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_notifications' ) ) {
-            Schema::create('nexopos_notifications', function (Blueprint $table) {
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ), function (Blueprint $table) {
                 $table->id();
                 $table->integer( 'user_id' );
                 $table->string( 'identifier' );
@@ -35,6 +36,6 @@ class CreateNexoposNotificationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_notifications');
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ) );
     }
 }

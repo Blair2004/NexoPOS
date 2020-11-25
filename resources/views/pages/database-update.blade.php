@@ -10,7 +10,8 @@
     <script>
         const Update    =   {
             returnLink: '{{ $redirect ?? ( ! in_array( url()->previous(), [ url( "database-update" ), route( "setup" ) ]) ? url()->previous() : url( "/dashboard" ) ) }}',
-            files:  @json( ns()->update->getMigrations()->values() )
+            files:  @json( ns()->update->getMigrations()->values() ),
+            modules: @json( $modules )
         }
     </script>
     <script src="{{ asset( '/js/update.js' ) }}"></script>

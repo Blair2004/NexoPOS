@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,8 +18,8 @@ class CreateProcurementsProductsTable extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_procurements_products' ) ) {
-            Schema::create( 'nexopos_procurements_products', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_procurements_products' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_procurements_products' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->float( 'gross_purchase_price' )->default(0);
@@ -27,6 +29,8 @@ class CreateProcurementsProductsTable extends Migration
                 $table->float( 'purchase_price' )->default(0);
                 $table->float( 'quantity' );
                 $table->integer( 'tax_group_id' );
+                $table->datetime( 'expiration_date' )->nullable();
+                $table->string( 'barcode' );
                 $table->string( 'tax_type' ); // inclusive or exclusive;
                 $table->float( 'tax_value' )->default(0);
                 $table->float( 'total_purchase_price' )->default(0);
@@ -45,8 +49,8 @@ class CreateProcurementsProductsTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_procurements_products' ) ) {
-            Schema::drop( 'nexopos_procurements_products' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_procurements_products' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_procurements_products' ) );
         }
     }
 }

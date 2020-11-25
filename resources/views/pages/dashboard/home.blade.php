@@ -2,7 +2,7 @@
 
 @section( 'layout.dashboard.body' )
     <div>
-        @include( '../common/dashboard-header' )
+        @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
         <div id="dashboard-content" class="px-4">
             <ns-dashboard-cards></ns-dashboard-cards>
             <div class="-m-4 flex flex-wrap">

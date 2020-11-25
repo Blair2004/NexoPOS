@@ -22,18 +22,6 @@ class AddAccountAmountToCustomersTableOct28 extends Migration
             }
         });
 
-        if ( ! Schema::hasTable( 'nexopos_customers_account_history' ) ) {
-            Schema::create( 'nexopos_customers_account_history', function( Blueprint $table ) {
-                $table->bigIncrements( 'id' );
-                $table->integer( 'customer_id' );
-                $table->float( 'amount' )->default(0);
-                $table->string( 'operation' ); // sub / add
-                $table->integer( 'author' );
-                $table->text( 'description' )->nullable();
-                $table->timestamps();
-            });
-        }
-
         if ( ! Permission::namespace( 'nexopos.customers.manage-account' ) instanceof Permission ) {
             $permission                     =   new Permission;
             $permission->namespace          =   'nexopos.customers.manage-account';

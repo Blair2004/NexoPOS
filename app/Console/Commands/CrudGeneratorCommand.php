@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Services\ModulesService;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +15,7 @@ class CrudGeneratorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:crud';
+    protected $signature = 'make:crud {module?}';
 
     /**
      * The console command description.
@@ -49,6 +51,17 @@ class CrudGeneratorCommand extends Command
      */
     public function handle()
     {
+        $moduleNamespace     =   $this->argument( 'module' );
+
+        if ( ! empty( $moduleNamespace ) ) {
+            $modulesService     =   app()->make( ModulesService::class );
+            $module             =   $modulesService->get( $moduleNamespace );
+
+            if ( empty( $module ) ) {
+                throw new Exception( sprintf( __( 'Unable to find a module having the identifier/namespace "%s"' ), $moduleNamespace ) );
+            }
+        }
+
         return $this->askResourceName();
     }
 
@@ -203,10 +216,24 @@ class CrudGeneratorCommand extends Command
      */
     public function generateCrud()
     {
-        Storage::disk( 'ns' )->put( 
-            'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
-            view( 'generate.crud', $this->crudDetails )
-        );
+        $moduleNamespace     =   $this->argument( 'module' );
+
+        if ( ! empty( $moduleNamespace ) ) {
+            $modulesService     =   app()->make( ModulesService::class );
+            $module             =   $modulesService->get( $moduleNamespace );
+
+            if ( $module ) {
+                Storage::disk( 'ns-modules' )->put( 
+                    $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
+                    view( 'generate.crud', $this->crudDetails )
+                );
+            }
+        } else {
+            Storage::disk( 'ns' )->put( 
+                'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
+                view( 'generate.crud', $this->crudDetails )
+            );
+        }
 
         return $this->info( __( 'The CRUD resource has been published' ) );
     }

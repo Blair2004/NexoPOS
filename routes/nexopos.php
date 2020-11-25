@@ -1,14 +1,19 @@
 <?php
+
+use App\Classes\Hook;
 use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use App\Http\Controllers\Dashboard\ExpensesController;
+use App\Http\Controllers\Dashboard\MediasController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\Dashboard\ProcurementController;
+use App\Http\Controllers\Dashboard\RewardsSystemController;
 use App\Http\Controllers\Dashboard\SettingsController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::get( '', 'DashboardController@home' )->name( 'ns.dashboard.home' );
+Route::get( '', [ DashboardController::class, 'home' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.home' ) );
     
 Route::get( '/orders', [ OrdersController::class, 'listOrders' ]);
 Route::get( '/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
@@ -34,7 +39,7 @@ Route::get( '/procurements/create', [ ProcurementController::class, 'createProcu
 Route::get( '/procurements/edit/{procurement}', [ ProcurementController::class, 'updateProcurement' ]);
 Route::get( '/procurements/edit/{procurement}/invoice', [ ProcurementController::class, 'procurementInvoice' ]);
 
-Route::get( '/medias', 'Dashboard\MediasController@showMedia' );
+Route::get( '/medias', [ MediasController::class, 'showMedia' ]);
 
 Route::get( '/providers', [ ProvidersController::class, 'listProviders' ]);
 Route::get( '/providers/create', [ ProvidersController::class, 'createProvider' ]);
@@ -77,7 +82,7 @@ Route::get( '/users', [ UsersController::class, 'listUsers' ]);
 Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
 Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
 Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
-Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
+Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.users.profile' ) );
 Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
 Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
 

@@ -3,6 +3,8 @@
  * Table Migration
  * @package  5.0
 **/
+
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -16,11 +18,13 @@ class CreateProductsUnitQuantities extends Migration
      */
     public function up()
     {
-        if ( ! Schema::hasTable( 'nexopos_products_unit_quantities' ) ) {
-            Schema::create( 'nexopos_products_unit_quantities', function( Blueprint $table ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_unit_quantities' ) ) ) {
+            Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_products_unit_quantities' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'product_id' );
                 $table->string( 'type' )->default( 'product' ); // product | variation
+                $table->string( 'preview_url' )->nullable(); 
+                $table->datetime( 'expiration_date' )->nullable(); 
                 $table->integer( 'unit_id' );
                 $table->float( 'quantity' );
                 $table->float( 'sale_price' )->default(0); // could be 0 if the product support variations
@@ -46,8 +50,8 @@ class CreateProductsUnitQuantities extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_products_unit_quantities' ) ) {
-            Schema::drop( 'nexopos_products_unit_quantities' );
+        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_products_unit_quantities' ) ) ) {
+            Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_products_unit_quantities' ) );
         }
     }
 }
