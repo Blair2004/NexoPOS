@@ -13,11 +13,7 @@ use App\Classes\Response;
                     <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-teal-500 bg-gradient-to-br">NexoPOS</h2>
                 </div>
                 {!! Hook::filter( 'ns.before-login-fields', new Response ) !!}
-                <ns-login>
-                    <div class="w-full flex items-center justify-center">
-                        <h3 class="font-hairline text-sm">{{ __( 'Loading...' ) }}</h3>
-                    </div>
-                </ns-login>
+                @include( '/common/auth/sign-in-form' )
                 {!! Hook::filter( 'ns.after-login-fields', new Response ) !!}
             </div>
         </div>

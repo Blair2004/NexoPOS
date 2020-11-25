@@ -1,8 +1,12 @@
 <?php
-Route::get( 'registers/{id?}', 'Dashboard\RegistersController@getRegister' );
-Route::get( 'registers/{id}/history', 'Dashboard\RegistersController@getHistory' );
-Route::get( 'registers/{id}/orders', 'Dashboard\RegistersController@getRegisterOrders' );
-Route::put( 'registers/{id}', 'Dashboard\RegistersController@editRegister' );
-Route::post( 'registers', 'Dashboard\RegistersController@create' );
-Route::delete( 'registers/{id}', 'Dashboard\RegistersController@deleteRegister' );
-Route::delete( 'registers/{id}/history/{history_id}', 'Dashboard\RegistersController@deleteRegisterHistory' );
+
+use App\Http\Controllers\Dashboard\RegistersController;
+use Illuminate\Support\Facades\Route;
+
+Route::get( 'registers/{id?}', [ RegistersController::class, 'getRegister' ]);
+Route::get( 'registers/{id}/history', [ RegistersController::class, 'getHistory' ]);
+Route::get( 'registers/{id}/orders', [ RegistersController::class, 'getRegisterOrders' ]);
+Route::put( 'registers/{id}', [ RegistersController::class, 'editRegister' ]);
+Route::post( 'registers', [ RegistersController::class, 'create' ]);
+Route::delete( 'registers/{id}', [ RegistersController::class, 'deleteRegister' ]);
+Route::delete( 'registers/{id}/history/{history_id}', [ RegistersController::class, 'deleteRegisterHistory' ]);

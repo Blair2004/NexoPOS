@@ -7,8 +7,11 @@ use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
+use App\Http\Controllers\Dashboard\ModulesController;
 use App\Http\Middleware\StoreDetectorMiddleware;
 use Illuminate\Support\Facades\Route;
+use dekor\ArrayToTextTable;
+use Illuminate\Routing\Route as RoutingRoute;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,14 +50,12 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
     
-            Route::get( '/modules', 'Dashboard\ModulesController@listModules' )->name( 'ns.dashboard.modules.list' );
-            Route::get( '/modules/upload', 'Dashboard\ModulesController@showUploadModule' )->name( 'ns.dashboard.modules.upload' );
-            Route::get( '/modules/download/{identifier}', 'Dashboard\ModulesController@downloadModule' )->name( 'ns.dashboard.modules.upload' );
-            Route::get( '/modules/migrate/{namespace}', 'Dashboard\ModulesController@migrateModule' )->name( 'ns.dashboard.modules.migrate' );
+            Route::get( '/modules', [ ModulesController::class, 'listModules' ])->name( 'ns.dashboard.modules.list' );
+            Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules.upload' );
+            Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules.upload' );
+            Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules.migrate' );
         });
     });
-
-    include_once( dirname( __FILE__ ) . '/api/stores.php' );
 });
 
 Route::middleware([ 'ns.not-installed' ])->group( function() {
@@ -64,5 +65,12 @@ Route::middleware([ 'ns.not-installed' ])->group( function() {
 });
 
 Route::get( '/routes', function() {
-    return ( array ) app( 'router' )->getRoutes();
+    $values     =   collect( array_values( ( array ) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
+        return [
+            'uri'       =>  $route->uri(),
+            'methods'   =>  collect( $route->methods() )->join( ', ' ),
+        ];
+    })->values();
+
+    return ( new ArrayToTextTable( $values->toArray() ) )->render();
 });

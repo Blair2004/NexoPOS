@@ -7,12 +7,6 @@ class MenuService
 {
     protected $menus;
 
-    public function __construct()
-    {
-        $this->buildMenus();
-        $this->toggleActive();
-    }
-
     public function buildMenus()
     {
         $this->menus    =   [
@@ -468,6 +462,8 @@ class MenuService
      */
     public function getMenus()
     {
+        $this->buildMenus();
+        $this->toggleActive();
         return Hook::filter( 'ns-dashboard-menus', $this->menus );
     }
 

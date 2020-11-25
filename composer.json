@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.4.0",
+        "dekor/php-array-table": "^1.0",
         "doctrine/dbal": "^2.11",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",

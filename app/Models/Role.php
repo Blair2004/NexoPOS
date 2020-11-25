@@ -55,7 +55,7 @@ class Role extends Model
     /**
      * Get Name
      * @param string role name
-     * @return model
+     * @return Role
     **/
     public static function namespace( $name )
     {

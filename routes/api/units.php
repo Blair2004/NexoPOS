@@ -1,19 +1,20 @@
 <?php
 
+use App\Http\Controllers\Dashboard\UnitsController;
 use Illuminate\Support\Facades\Route;
 
-Route::get( 'units/{id?}', 'Dashboard\UnitsController@get' );
-Route::get( 'units/{id}/group', 'Dashboard\UnitsController@getUnitParentGroup' );
-Route::get( 'units-groups/{id?}', 'Dashboard\UnitsController@getGroups' );
+Route::get( 'units/{id?}', [ UnitsController::class, 'get' ]);
+Route::get( 'units/{id}/group', [ UnitsController::class, 'getUnitParentGroup' ]);
+Route::get( 'units-groups/{id?}', [ UnitsController::class, 'getGroups' ]);
 
-Route::post( 'units', 'Dashboard\UnitsController@postUnit' );
-Route::post( 'units-groups', 'Dashboard\UnitsController@postGroup' );
+Route::post( 'units', [ UnitsController::class, 'postUnit' ]);
+Route::post( 'units-groups', [ UnitsController::class, 'postGroup' ]);
 
-Route::delete( 'units/{id}', 'Dashboard\UnitsController@deleteUnit' );
-Route::delete( 'units-groups/{id}', 'Dashboard\UnitsController@deleteUnitGroup' );
+Route::delete( 'units/{id}', [ UnitsController::class, 'deleteUnit' ]);
+Route::delete( 'units-groups/{id}', [ UnitsController::class, 'deleteUnitGroup' ]);
 
 
-Route::put( 'units-groups/{id}', 'Dashboard\UnitsController@putGroup' );
-Route::put( 'units/{id}', 'Dashboard\UnitsController@putUnit' );
+Route::put( 'units-groups/{id}', [ UnitsController::class, 'putGroup' ]);
+Route::put( 'units/{id}', [ UnitsController::class, 'putUnit' ]);
 
-Route::get( 'units-groups/{id}/units', 'Dashboard\UnitsController@getGroupUnits' );
+Route::get( 'units-groups/{id}/units', [ UnitsController::class, 'getGroupUnits' ]);

@@ -1,16 +1,23 @@
 <?php
 
 use App\Classes\Hook;
+use App\Http\Controllers\Dashboard\CategoryController;
 use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
+use App\Http\Controllers\Dashboard\ExpensesCategoriesController;
 use App\Http\Controllers\Dashboard\ExpensesController;
 use App\Http\Controllers\Dashboard\MediasController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\Dashboard\ProcurementController;
+use App\Http\Controllers\Dashboard\ProvidersController;
 use App\Http\Controllers\Dashboard\RewardsSystemController;
 use App\Http\Controllers\Dashboard\SettingsController;
+use App\Http\Controllers\Dashboard\TaxesController;
+use App\Http\Controllers\Dashboard\UnitsController;
+use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', [ DashboardController::class, 'home' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.home' ) );
@@ -85,6 +92,8 @@ Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permi
 Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.users.profile' ) );
 Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
 Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
+
+Route::get( '/reports/sales-report', [ ReportsController::class, 'salesReport' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

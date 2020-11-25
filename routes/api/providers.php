@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Dashboard\ProvidersController;
 use Illuminate\Support\Facades\Route;
 
-Route::get( 'providers', 'Dashboard\ProvidersController@list' );
-Route::post( 'providers', 'Dashboard\ProvidersController@create' );
-Route::put( 'providers/{id}', 'Dashboard\ProvidersController@edit' );
-Route::get( 'providers/{id}/procurements', 'Dashboard\ProvidersController@providerProcurements' );
-Route::get( 'providers/{id}', 'Dashboard\ProvidersController@getSingleProvider' );
-Route::delete( 'providers/{id}', 'Dashboard\ProvidersController@deleteProvider' );
+Route::get( 'providers', [ ProvidersController::class, 'list' ]);
+Route::post( 'providers', [ ProvidersController::class, 'create' ]);
+Route::put( 'providers/{id}', [ ProvidersController::class, 'edit' ]);
+Route::get( 'providers/{id}/procurements', [ ProvidersController::class, 'providerProcurements' ]);
+Route::get( 'providers/{id}', [ ProvidersController::class, 'getSingleProvider' ]);
+Route::delete( 'providers/{id}', [ ProvidersController::class, 'deleteProvider' ]);

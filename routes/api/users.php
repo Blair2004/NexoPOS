@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\Dashboard\UsersController;
 use Illuminate\Support\Facades\Route;
 
-Route::get( '/users/roles', 'Dashboard\UsersController@getRoles' );
-Route::put( '/users/roles', 'Dashboard\UsersController@updateRole' );
-Route::get( '/users/permissions', 'Dashboard\UsersController@getPermissions' );
+Route::get( '/users/roles', [ UsersController::class, 'getRoles' ]);
+Route::put( '/users/roles', [ UsersController::class, 'updateRole' ]);
+Route::get( '/users/permissions', [ UsersController::class, 'getPermissions' ]);
