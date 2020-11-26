@@ -14,7 +14,7 @@ class CreateNexoposNotificationsTable extends Migration
      */
     public function up()
     {
-        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ) ) ) {
+        if ( ! Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ) ) ) {
             Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_notifications' ), function (Blueprint $table) {
                 $table->id();
                 $table->integer( 'user_id' );

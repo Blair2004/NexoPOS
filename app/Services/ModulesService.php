@@ -26,7 +26,7 @@ class ModulesService
 
     public function __construct()
     {
-        if ( ns()->installed() ) {
+        if ( Helper::installed() ) {
             /**
              * We can only enable a module if the database is installed.
              */

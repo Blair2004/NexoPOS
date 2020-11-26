@@ -39,9 +39,11 @@ class ResetCommand extends Command
      */
     public function handle()
     {    
+        Artisan::call( 'migrate:reset --path=/database/migrations/default' );
         Artisan::call( 'migrate:reset --path=/database/migrations/v1_0' );
         Artisan::call( 'migrate:reset --path=/database/migrations/v1_1' );
         Artisan::call( 'migrate:reset --path=/database/migrations/v1_2' );
+        Artisan::call( 'migrate:reset --path=/database/migrations/v1_3' );
 
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'SANCTUM_STATEFUL_DOMAINS' );

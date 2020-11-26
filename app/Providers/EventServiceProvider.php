@@ -57,12 +57,11 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
+
         /**
          * @param ModulesService
          */
         $modules    =   app()->make( ModulesService::class );
-
-        Event::listen( WebRouteLoadedEvent::class, fn() => dd( 'ok' ) );
 
         collect( $modules->getEnabled() )
             ->each( fn( $module ) => $modules->serviceProvider( $module, self::class, 'boot' ) );

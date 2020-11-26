@@ -32,6 +32,6 @@ class CreateNexoposOrdersStorage extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( Hook::filter( 'nexopos_orders_storage', 'ns-table-prefix' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_orders_storage' ) );
     }
 }

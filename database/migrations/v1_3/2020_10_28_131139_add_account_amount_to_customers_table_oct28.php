@@ -42,23 +42,25 @@ class AddAccountAmountToCustomersTableOct28 extends Migration
      */
     public function down()
     {
-        Schema::table('nexopos_customers', function (Blueprint $table) {
-            if ( Schema::hasColumn( 'nexopos_customers', 'account_amount' ) ) {
-                $table->dropColumn( 'account_amount' );
-            }
-        });
+        if ( Schema::hasTable( 'nexopos_customers' ) ) {
+            Schema::table('nexopos_customers', function (Blueprint $table) {
+                if ( Schema::hasColumn( 'nexopos_customers', 'account_amount' ) ) {
+                    $table->dropColumn( 'account_amount' );
+                }
+            });
+        }
 
         if ( Schema::hasTable( 'nexopos_customers_account_history' ) ) {
             Schema::dropIfExists( 'nexopos_customers_account_history' );
         }
 
-        $permission     =   Permission::namespace( 'nexopos.customers.manage-account' );
-
-        if ( $permission instanceof Permission ) {
-
-            RolePermission::where( 'permission_id', $permission->id )->delete();
-
-            $permission->delete();
+        if ( Schema::hasTable( 'nexopos_permissions' ) ) {
+            $permission     =   Permission::namespace( 'nexopos.customers.manage-account' );
+    
+            if ( $permission instanceof Permission ) {
+                RolePermission::where( 'permission_id', $permission->id )->delete();
+                $permission->delete();
+            }
         }
     }
 }

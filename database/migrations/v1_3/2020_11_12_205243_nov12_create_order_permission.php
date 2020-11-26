@@ -39,7 +39,9 @@ class Nov12CreateOrderPermission extends Migration
      */
     public function down()
     {
-        $permission     =   Permission::namespace( self::permissionName );
-        $permission->removeFromRoles();
+        if ( Schema::hasTable( 'nexopos_permissions' ) ) {
+            $permission     =   Permission::namespace( self::permissionName );
+            $permission->removeFromRoles();
+        }
     }
 }

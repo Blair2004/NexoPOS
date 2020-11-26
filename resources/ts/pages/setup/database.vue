@@ -39,7 +39,6 @@ export default {
                     }
                 );
             }
-            console.log( 'not valid' );
         },
         checkDatabase( fields ) {
             return nsHttpClient.post( `/api/nexopos/v4/setup/database`, fields );

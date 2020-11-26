@@ -31,14 +31,16 @@ class Nov17AddsFieldsToNexoposOrdersProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('nexopos_orders_products', function (Blueprint $table) {
-            if ( ! Schema::hasColumn( 'nexopos_orders_products', 'return_condition' ) ) {
-                $table->string( 'return_condition' )->nullable();
-            }
-
-            if ( ! Schema::hasColumn( 'nexopos_orders_products', 'return_observations' ) ) {
-                $table->text( 'return_observations' )->nullable();
-            }
-        });
+        if ( Schema::hasTable( 'nexopos_orders_products' ) ) {
+            Schema::table('nexopos_orders_products', function (Blueprint $table) {
+                if ( ! Schema::hasColumn( 'nexopos_orders_products', 'return_condition' ) ) {
+                    $table->string( 'return_condition' )->nullable();
+                }
+    
+                if ( ! Schema::hasColumn( 'nexopos_orders_products', 'return_observations' ) ) {
+                    $table->text( 'return_observations' )->nullable();
+                }
+            });
+        }
     }
 }

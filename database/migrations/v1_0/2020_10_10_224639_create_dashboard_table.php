@@ -128,6 +128,6 @@ class CreateDashboardTable extends Migration
     public function down()
     {
         Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_days' ) );
-        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_week' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_weeks' ) );
     }
 }

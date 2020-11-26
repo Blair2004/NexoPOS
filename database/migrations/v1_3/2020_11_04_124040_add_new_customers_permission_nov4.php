@@ -39,11 +39,13 @@ class AddNewCustomersPermissionNov4 extends Migration
      */
     public function down()
     {
-        $permission     =   Permission::namespace( $this->permission );
-
-        if ( $permission instanceof Permission ) {
-            RolePermission::where( 'permission_id', $permission->id )->delete();
-            Permission::namespace( $this->permission )->delete();
+        if ( Schema::hasTable( 'nexopos_permissions' ) ) {
+            $permission     =   Permission::namespace( $this->permission );
+    
+            if ( $permission instanceof Permission ) {
+                RolePermission::where( 'permission_id', $permission->id )->delete();
+                Permission::namespace( $this->permission )->delete();
+            }
         }
     }
 }
