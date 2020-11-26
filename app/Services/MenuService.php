@@ -338,17 +338,17 @@ class MenuService
                 'label'         =>  __( 'Reports' ),
                 'icon'          =>  'la-chart-pie',
                 'permissions'   =>  [
-                    'nexopos.report.sales',
-                    'nexopos.report.best_sales',
-                    'nexopos.report.cash_flow',
-                    'nexopos.report.yearly',
-                    'nexopos.report.customers',
-                    'nexopos.report.inventory',
+                    'nexopos.reports.sales',
+                    'nexopos.reports.best_sales',
+                    'nexopos.reports.cash_flow',
+                    'nexopos.reports.yearly',
+                    'nexopos.reports.customers',
+                    'nexopos.reports.inventory',
                 ],
                 'childrens'     =>  [
                     'sales'  =>  [
                         'label' =>  __( 'Sale Report' ),
-                        'permissions'   =>  [ 'nexopos.report.sales' ],
+                        'permissions'   =>  [ 'nexopos.reports.sales' ],
                         'href'  =>  ns()->url( '/dashboard/reports/sales' )
                     ], 
                     'detailed-report'  =>  [
@@ -357,7 +357,7 @@ class MenuService
                     ], 
                     'best-sales'  =>  [
                         'label' =>  __( 'Best Sales' ),
-                        'permissions'   =>  [ 'nexopos.report.best_sales' ],
+                        'permissions'   =>  [ 'nexopos.reports.best_sales' ],
                         'href'  =>  ns()->url( '/dashboard/reports/best-sales' )
                     ], 
                     'income-losses'  =>  [
@@ -366,17 +366,17 @@ class MenuService
                     ], 
                     'cash-flow'  =>  [
                         'label' =>  __( 'Cash Flow' ),
-                        'permissions'   =>  [ 'nexopos.report.cash_flow' ],
+                        'permissions'   =>  [ 'nexopos.reports.cash_flow' ],
                         'href'  =>  ns()->url( '/dashboard/reports/cash-flow' )
                     ], 
                     'annulal-sales'  =>  [
                         'label' =>  __( 'Yearly Sales' ),
-                        'permissions'   =>  [ 'nexopos.report.yearly' ],
+                        'permissions'   =>  [ 'nexopos.reports.yearly' ],
                         'href'  =>  ns()->url( '/dashboard/reports/yearly-sales' )
                     ], 
                     'customers'  =>  [
                         'label' =>  __( 'Customers' ),
-                        'permissions'   =>  [ 'nexopos.report.customers' ],
+                        'permissions'   =>  [ 'nexopos.reports.customers' ],
                         'href'  =>  ns()->url( '/dashboard/reports/customers' )
                     ], 
                     'providers'  =>  [
@@ -385,7 +385,7 @@ class MenuService
                     ], 
                     'inventory-tracking'  =>  [
                         'label' =>  __( 'Inventory Tracking' ),
-                        'permissions'   =>  [ 'nexopos.report.inventory' ],
+                        'permissions'   =>  [ 'nexopos.reports.inventory' ],
                         'href'  =>  ns()->url( '/dashboard/reports/inventory-tracking' )
                     ], 
                     'activity-log'  =>  [

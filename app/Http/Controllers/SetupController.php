@@ -10,11 +10,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationConfigRequest;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-
 use App\Models\ProductCategory;
 use App\Services\Setup;
 
@@ -22,6 +19,8 @@ class SetupController extends Controller
 {
     public function welcome()
     {
+        Cookie::clear();
+        
         return view( 'pages.setup.welcome', [
             'title'     =>      __( 'NexoPOS 4 &mdash; Setup Wizard' )
         ]);

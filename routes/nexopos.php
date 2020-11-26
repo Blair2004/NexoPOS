@@ -16,8 +16,8 @@ use App\Http\Controllers\Dashboard\SettingsController;
 use App\Http\Controllers\Dashboard\TaxesController;
 use App\Http\Controllers\Dashboard\UnitsController;
 use App\Http\Controllers\Dashboard\UsersController;
+use App\Http\Controllers\Dashboard\ReportsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', [ DashboardController::class, 'home' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.home' ) );
@@ -93,7 +93,7 @@ Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( H
 Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
 Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
 
-Route::get( '/reports/sales-report', [ ReportsController::class, 'salesReport' ]);
+Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

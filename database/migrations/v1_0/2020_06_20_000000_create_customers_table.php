@@ -80,12 +80,9 @@ class CreateCustomersTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) ) ) {
-            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) );
-        }
-        if ( Schema::hasTable( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) ) ) {
-            Schema::drop( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) );
-        }
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers_addresses' ) );
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_customers_account_history' ) );
     }
 }
 
