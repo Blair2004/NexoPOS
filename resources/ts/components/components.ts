@@ -18,6 +18,7 @@ import { nsMediaInput }         from  './ns-media-input';
 import { nsCloseButton }        from  './ns-close-button';
 import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
+import nsDatepicker   from  './ns-datepicker.vue';
 
 export { nsMenu };
 export { nsSubmenu };
@@ -39,3 +40,4 @@ export { nsMediaInput };
 export { nsCloseButton };
 export { nsCkeditor };
 export { nsTabs, nsTabsItem };
+export { nsDatepicker }
