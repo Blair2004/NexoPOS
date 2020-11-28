@@ -26,4 +26,16 @@ class DateService extends Carbon
             break;
         }
     }
+
+    public function getNowFormatted( $mode = 'full' )
+    {
+        switch( $mode ) {
+            case 'short':
+                return $this->now()->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
+            break;
+            case 'full':
+                return $this->now()->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
+            break;
+        }
+    }
 }

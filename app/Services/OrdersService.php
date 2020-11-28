@@ -38,6 +38,8 @@ use App\Services\DateService;
 use App\Services\ProductService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class OrdersService
 {
@@ -584,7 +586,7 @@ class OrdersService
 
         $total          =   $this->currencyService->getRaw( collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum() + $this->__getShippingFee($fields) );
+        })->sum() + $this->__getShippingFee($fields) ) - floatval( $fields[ 'discount' ] ?? 0 );
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
@@ -1672,5 +1674,30 @@ class OrdersService
             'status'    =>  'success',
             'message'   =>  __( 'The order has been correctly voided.' )
         ];
+    }
+
+    /**
+     * get orders sold during a specific perdiod
+     * @param string $startDate range starts
+     * @param string $endDate range ends
+     * @return Collection
+     */
+    public function getPaidSales( $startDate, $endDate )
+    {
+        return Order::paid()
+            ->where( 'created_at', '>=', Carbon::parse( $startDate )->startOfDay()->toDateTimeString() )
+            ->where( 'created_at', '<=', Carbon::parse( $endDate )->endOfDay()->toDateTimeString() )
+            ->get();
+    }
+
+    /**
+     * get sold stock during a specific period
+     * @param string $startDate range starts
+     * @param string $endDate range ends
+     * @return Collection
+     */
+    public function getSoldStock( $startDate, $endDate )
+    {
+        // return OrderProduct
     }
 }

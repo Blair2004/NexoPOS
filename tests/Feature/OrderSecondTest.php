@@ -24,7 +24,7 @@ class OrderSecondTest extends TestCase
             ['*']
         );
 
-        $product    =   Product::find(10);
+        $product    =   Product::find(1);
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [

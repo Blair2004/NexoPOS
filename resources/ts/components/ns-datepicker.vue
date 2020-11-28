@@ -3,9 +3,9 @@
         <div @click="visible = !visible" class="rounded cursor-pointer bg-white shadow px-1 py-1 flex items-center text-gray-700">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm">
-                <span>Date : </span>
-                <span v-if="selectedDate">{{ selectedDate.format( 'YYYY/MM/DD' ) }}</span>
-                <span v-if="selectedDate === null">N/A</span>
+                <span>{{ label || 'Date' }} : </span>
+                <span v-if="currentDay">{{ currentDay.format( 'YYYY/MM/DD' ) }}</span>
+                <span v-if="currentDay === null">N/A</span>
             </span>
         </div>
         <div class="relative h-0 w-0 -mb-2" v-if="visible">
@@ -30,9 +30,9 @@
                         <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Sat</div>
                     </div>
                     <div v-for="(week, index) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
-                        <div :key="_index" v-for="( dayOfWeek, _index) in daysOfWeek" class="border border-gray-200 h-8 flex justify-center items-center text-sm cursor-pointer hover:bg-gray-100">
+                        <div :key="_index" v-for="( dayOfWeek, _index) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
                             <template v-for="(day,_dayIndex) of week" class="h-full w-full">
-                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" class="h-full w-full flex items-center justify-center" @click="selectDate( day.date )">
+                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'bg-blue-400 text-white border border-blue-500' : 'hover:bg-gray-100 border border-gray-200'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
                                     {{ day.date.format( 'DD' ) }}
                                 </div>
                             </template>
@@ -50,11 +50,11 @@
 import moment from "moment";
 export default {
     name: "ns-datepicker",
+    props: [ 'label', 'date' ],
     data() {
         return {
             visible: false,
             currentDay: null,
-            selectedDate: null,
             daysOfWeek: (new Array(7)).fill('').map( ( _, i ) => i ),
             calendar: [
                 [], // first week
@@ -62,14 +62,24 @@ export default {
         }
     },
     mounted() {
-        this.currentDay     =   moment();
+    document.addEventListener( 'click', this.checkClickedItem );
+        this.currentDay     =   [ undefined, null ].includes( this.date ) ? moment() : moment( this.date );
         this.build();
     },
     methods: {
+        checkClickedItem( event ) {
+            let clickChildrens;
+
+            clickChildrens        =   this.$el.contains( event.srcElement );
+            
+            if ( ! clickChildrens && this.visible ) {
+                this.visible    =   false;
+            }
+        },
         selectDate( date ) {
-            this.selectedDate   =   date;
+            this.currentDay     =   date;
             this.visible        =   false;
-            this.$emit( 'change', data );
+            this.$emit( 'change', date );
         },
         subMonth() {
             this.currentDay.subtract( 1, 'month' );
@@ -111,9 +121,7 @@ export default {
                 });
 
                 currentCursor.add( 1, 'day' );
-            }     
-            
-            console.log( this.calendar );
+            }
         }
     }
 }
