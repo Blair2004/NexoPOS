@@ -627,6 +627,7 @@ class ProductService
          * @var float total_price
          * @var int procurement_product_id
          * @var int procurement_id
+         * @var float quantity
          */
         extract( $data );
 
@@ -649,8 +650,6 @@ class ProductService
         $history->after_quantity                =   $newQuantity;
         $history->author                        =   Auth::id() ?: Procurement::find( $procurement_id )->author;
         $history->save();
-
-        return $this->setQuantity( $product_id, $unit_id, $newQuantity );
     }
 
     /**
@@ -664,9 +663,10 @@ class ProductService
      */
     public function setQuantity( $product_id, $unit_id, $quantity )
     {
-        $unitQuantity   =   ProductUnitQuantity::where( 'product_id', $product_id )
-            ->where( 'unit_id', $unit_id )
-            ->first();
+        $query   =   ProductUnitQuantity::where( 'product_id', $product_id )
+            ->where( 'unit_id', $unit_id );
+
+        $unitQuantity   =   $query->first();
 
         if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
             $unitQuantity   =   new ProductUnitQuantity;

@@ -23,6 +23,8 @@ import NsProcurementInvoice from './pages/dashboard/procurements/ns-procurement-
 import NsNotifications      from './pages/dashboard/ns-notifications.vue';
 import NsMedia              from './pages/dashboard/ns-media.vue';
 import NsSaleReport         from './pages/dashboard/reports/ns-sale-report.vue';
+import NsSoldStockReport    from './pages/dashboard/reports/ns-sold-stock-report.vue';
+import NsProfitReport       from './pages/dashboard/reports/ns-profit-report.vue';
 import NsDashboardCards     from './pages/dashboard/home/ns-dashboard-cards.vue';
 import NsBestCustomers      from './pages/dashboard/home/ns-best-customers.vue';
 import NsBestCashiers       from './pages/dashboard/home/ns-best-cashiers.vue';
@@ -138,6 +140,8 @@ const components    =   {
     NsOrdersSummary,
     NsOrdersChart,
     NsSaleReport,
+    NsSoldStockReport,
+    NsProfitReport,
     NsStockAdjustment,
     NsPromptPopup,
     NsAlertPopup,

@@ -6,38 +6,39 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 export default {
-    name: 'ns-sale-report',
+    name: 'ns-sold-stock-report',
     data() {
         return {
-            startDate: null,
-            endDate: null,
-            orders: []
+            startDate: moment(),
+            endDate: moment(),
+            products: []
         }
     },
     components: {
         nsDatepicker
     },
     computed: {
-        totalDiscounts() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.discount )
+        totalQuantity() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( product => product.quantity )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
         },
         totalTaxes() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.taxes )
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( product => product.tax_value )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
         },
-        totalOrders() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.total )
+        totalPrice() {
+            console.log( this.products );
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( product => product.total_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -45,11 +46,10 @@ export default {
     },
     methods: {
         printSaleReport() {
-            this.$htmlToPaper( 'sale-report' );
+            this.$htmlToPaper( 'report-printable' );
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
-            console.log( this.startDate );
         },
 
         loadReport() {
@@ -67,8 +67,8 @@ export default {
             nsHttpClient.post( '/api/nexopos/v4/reports/sold-stock-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
-            }).subscribe( orders => {
-                this.orders     =   orders;
+            }).subscribe( products => {
+                this.products     =   products;
             }, ( error ) => {
                 nsSnackBar.error( error.message ).subscribe();
             });

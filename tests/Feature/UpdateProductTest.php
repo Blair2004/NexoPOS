@@ -2,14 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use App\Models\Role;
+use App\Models\UnitGroup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CreateProductTest extends TestCase
+class UpdateProductTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -23,9 +25,11 @@ class CreateProductTest extends TestCase
             ['*']
         );
 
-        $response = $this
+        $product    =   Product::get()->random()->first();
+
+        $response   = $this
             ->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'PUT', '/api/nexopos/v4/products/1', [
+            ->json( 'PUT', '/api/nexopos/v4/products/' . $product->id, [
             'name'          =>  'Sample Product',
             'variations'    =>  [
                 [
@@ -54,7 +58,7 @@ class CreateProductTest extends TestCase
                             [
                                 'sale_price'        =>  10,
                                 'wholesale_price'   =>  9.55,
-                                'unit'              =>  6
+                                'unit_id'           =>  UnitGroup::find(2)->units->random()->first()->id
                             ]
                         ],
                         'unit_group'    =>  2
@@ -62,8 +66,6 @@ class CreateProductTest extends TestCase
                 ]
             ]
         ]);
-
-        $response->dump();
 
         $response->assertStatus(200);
     }

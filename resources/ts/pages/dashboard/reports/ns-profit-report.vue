@@ -6,38 +6,46 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 export default {
-    name: 'ns-sale-report',
+    name: 'ns-profit-report',
     data() {
         return {
             startDate: moment(),
             endDate: moment(),
-            orders: []
+            products: []
         }
     },
     components: {
         nsDatepicker
     },
     computed: {
-        totalDiscounts() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.discount )
+        totalQuantities() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( order => order.quantity )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
         },
-        totalTaxes() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.tax_value )
+        totalPurchasePrice() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( order => order.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
         },
-        totalOrders() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.total )
+        totalSalePrice() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( order => order.total_price )
+                    .reduce( ( b, a ) => b + a );
+            }
+            return 0;
+        },
+        totalProfit() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( order => order.total_price - order.total_purchase_price )
                     .reduce( ( b, a ) => b + a );
             }
             return 0;
@@ -45,7 +53,7 @@ export default {
     },
     methods: {
         printSaleReport() {
-            this.$htmlToPaper( 'sale-report' );
+            this.$htmlToPaper( 'profit-report' );
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
@@ -64,11 +72,11 @@ export default {
                 return nsSnackBar.error( 'Unable to proceed. The current time range is not valid.' ).subscribe();
             }
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/sale-report', { 
+            nsHttpClient.post( '/api/nexopos/v4/reports/profit-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
-            }).subscribe( orders => {
-                this.orders     =   orders;
+            }).subscribe( products => {
+                this.products     =   products;
             }, ( error ) => {
                 nsSnackBar.error( error.message ).subscribe();
             });

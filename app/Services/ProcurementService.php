@@ -376,7 +376,6 @@ class ProcurementService
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
-            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurement->id;
             $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
@@ -780,7 +779,8 @@ class ProcurementService
     public function handleProcurement( Procurement $procurement )
     {
         if ( $procurement->delivery_status === Procurement::DELIVERED ) {
-            $procurement->products->map( function( $product ) {
+            
+            $procurement->products->map( function( ProcurementProduct $product ) {
                 /**
                  * We'll keep an history of what has just happened.
                  * in order to monitor how the stock evolve.
@@ -795,6 +795,19 @@ class ProcurementService
                     'total_price'               =>  $product->total_purchase_price,
                     'unit_id'                   =>  $product->unit_id,
                 ]);
+
+                $currentQuantity                =   $this->productService->getQuantity( 
+                    $product->product_id, 
+                    $product->unit_id,
+                    $product->id
+                );
+
+                $newQuantity                            =   $this->currency
+                    ->define( $currentQuantity )
+                    ->additionateBy( $product->quantity )
+                    ->get();
+
+                $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
             });
     
             $this->setDeliveryStatus( $procurement, Procurement::STOCKED );

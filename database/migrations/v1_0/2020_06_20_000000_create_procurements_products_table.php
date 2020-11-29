@@ -30,7 +30,6 @@ class CreateProcurementsProductsTable extends Migration
                 $table->float( 'quantity' );
                 $table->integer( 'tax_group_id' );
                 $table->datetime( 'expiration_date' )->nullable();
-                $table->string( 'barcode' );
                 $table->string( 'tax_type' ); // inclusive or exclusive;
                 $table->float( 'tax_value' )->default(0);
                 $table->float( 'total_purchase_price' )->default(0);

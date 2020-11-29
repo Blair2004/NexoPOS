@@ -94,6 +94,8 @@ Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
 Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
 
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
+Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
+Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

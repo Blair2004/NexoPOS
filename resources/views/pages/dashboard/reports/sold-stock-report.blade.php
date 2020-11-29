@@ -10,7 +10,7 @@
                 <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
             </div>
         </div>
-        <ns-sale-report inline-template v-cloak>
+        <ns-sold-stock-report inline-template v-cloak>
             <div id="report-section" class="px-4">
                 <div class="flex -mx-2">
                     <div class="px-2">
@@ -32,13 +32,13 @@
                         </button>
                     </div>
                 </div>
-                <div id="sale-report">
+                <div id="report-printable anim-duration-500 fade-in-entrance">
                     <div class="flex w-full">
                         <div class="my-4 flex justify-between w-full">
                             <div class="text-gray-600">
                                 <ul>
                                     <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ __( 'Document : Sale Report' ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ __( 'Document : Sold Stock Report' ) }}</li>
                                     <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
                                 </ul>
                             </div>
@@ -52,26 +52,28 @@
                             <table class="table w-full">
                                 <thead class="text-gray-700">
                                     <tr>
-                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">Orders</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Discounts</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Taxes</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Total</th>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">Product</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Unit' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Quantity' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Tax Value' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Total' ) }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-700">
-                                    <tr v-for="order of orders" :key="order.id">
-                                        <td class="p-2 border border-blue-200 bg-white">@{{ order.code }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.discount | currency }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.tax_value | currency }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.total | currency }}</td>
+                                    <tr v-for="product of products" :key="product.id">
+                                        <td class="p-2 border border-blue-200 bg-white">@{{ product.name }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.unit_name }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.quantity }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.tax_value | currency }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.total_price | currency }}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="text-gray-700 font-semibold">
                                     <tr>
-                                        <td class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
-                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalDiscounts | currency }}</td>
+                                        <td colspan="2" class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalQuantity }}</td>
                                         <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalTaxes | currency }}</td>
-                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalOrders | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalPrice | currency }}</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -79,7 +81,7 @@
                     </div>
                 </div>
             </div>
-        </ns-sale-report>
+        </ns-sold-stock-report>
     </div>
 </div>
 @endsection

@@ -41,8 +41,9 @@ class CreateOrdersProductsTable extends Migration
                 $table->string( 'mode' )->default( 'retail' );
                 $table->string( 'unit_name' )->nullable();
                 // $table->float( 'base_quantity' );
-                $table->float( 'total_gross_price' );
-                $table->float( 'total_price' );
+                $table->float( 'total_gross_price' )->default(0);
+                $table->float( 'total_price' )->default(0);
+                $table->float( 'total_purchase_price' )->default(0);
                 $table->string( 'return_condition' );
                 $table->text( 'return_observations' );
                 $table->float( 'total_net_price' );

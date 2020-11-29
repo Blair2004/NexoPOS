@@ -110,6 +110,18 @@ export default {
                     }
                 }
             });
+        },
+        removeProduct( product ) {
+            Popup.show( nsPosConfirmPopupVue, { 
+                title: 'Confirm Your Action',
+                message: 'Would you like to remove this product from the table ?',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        const index     =   this.products.indexOf( product );
+                        this.products.splice( index, 1 );
+                    }
+                }
+            });
         }
     },
     watch: {
@@ -183,7 +195,7 @@ export default {
                                     </button>
                                 </div>
                                 <div class="px-1">
-                                    <button class="bg-red-400 text-white outline-none rounded-full shadow h-10 w-10">
+                                    <button @click="removeProduct( product )" class="bg-red-400 text-white outline-none rounded-full shadow h-10 w-10">
                                         <i class="las la-times"></i>
                                     </button>
                                 </div>

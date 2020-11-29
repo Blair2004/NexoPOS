@@ -6,3 +6,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post( 'reports/sale-report', [ ReportsController::class, 'getSaleReport' ]);
 Route::post( 'reports/sold-stock-report', [ ReportsController::class, 'getSoldStockReport' ]);
+Route::post( 'reports/profit-report', [ ReportsController::class, 'getProfit' ]);

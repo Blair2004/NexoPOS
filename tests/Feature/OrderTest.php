@@ -28,6 +28,9 @@ class OrderTest extends TestCase
             ['*']
         );
 
+        /**
+         * @var CurrencyService
+         */
         $currency       =   app()->make( CurrencyService::class );
         $product        =   Product::with( 'unit_quantities' )->find(1);
         $shippingFees   =   150;
@@ -76,11 +79,27 @@ class OrderTest extends TestCase
             'status'    =>  'success'
         ]);
 
-        $discount       =   ( ( $discountRate * $subtotal ) / 100 );
-        $netsubtotal    =   $subtotal - $discount;
+        $discount       =   $currency->define( $discountRate )
+            ->multipliedBy( $subtotal )
+            ->divideBy( 100 )
+            ->getRaw();
+
+        $netsubtotal    =   $currency
+            ->define( $subtotal )
+            ->subtractBy( $discount )
+            ->getRaw();
 
         $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
-        $response->assertJsonPath( 'data.order.total',      $currency->getRaw( $netsubtotal + $shippingFees ) );
-        $response->assertJsonPath( 'data.order.change',     $currency->getRaw( ( $subtotal + $shippingFees ) - ( $netsubtotal + $shippingFees ) ) );
+        
+        $response->assertJsonPath( 'data.order.total',      $currency->define( $netsubtotal )
+            ->additionateBy( $shippingFees )
+            ->getRaw() 
+        );
+
+        $response->assertJsonPath( 'data.order.change',     $currency->define( $netsubtotal )
+            ->additionateBy( $shippingFees )
+            ->subtractBy( $currency->define( $netsubtotal )->additionateBy( $shippingFees )->getRaw() )
+            ->getRaw() 
+        );
     }
 }

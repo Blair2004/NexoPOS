@@ -25,11 +25,6 @@ class ProcurementProduct extends Model
         'deleted'       =>  ProcurementProductAfterDeleteEvent::class,
     ];
 
-    public function scopeBarcode( $query, $barcode )
-    {
-        return $query->where( 'barcode', $barcode );
-    }
-
     public function procurement()
     {
         return $this->belongsTo( Procurement::class, 'procurement_id' );

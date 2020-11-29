@@ -29,6 +29,7 @@ use App\Models\Notification;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
+use App\Models\ProcurementProduct;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
@@ -39,6 +40,7 @@ use App\Services\ProductService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class OrdersService
@@ -85,7 +87,6 @@ class OrdersService
     public function create( $fields, Order $order = null )
     {
         $customer               =   $this->__customerIsDefined($fields);
-
         $fields[ 'products' ]   =   $this->__buildOrderProducts( $fields['products'] );
 
         /**
@@ -720,11 +721,11 @@ class OrdersService
                  */
                 $history                    =   [
                     'order_id'      =>  $order->id,
-                    'unit_id'       =>  $product['unit_id'],
-                    'product_id'    =>  $product['product']->id,
-                    'quantity'      =>  $product['quantity'],
-                    'unit_price'    =>  $this->currencyService->getRaw( $product['unit_price'] ),
-                    'total_price'   =>  $this->currencyService->define($product['unit_price'])
+                    'unit_id'       =>  $product[ 'unit_id' ],
+                    'product_id'    =>  $product[ 'product' ]->id,
+                    'quantity'      =>  $product[ 'quantity' ],
+                    'unit_price'    =>  $this->currencyService->getRaw( $product[ 'unit_price' ] ),
+                    'total_price'   =>  $this->currencyService->define($product[ 'unit_price' ])
                         ->multiplyBy($product['quantity'])
                         ->get()
                 ];
@@ -751,18 +752,22 @@ class OrdersService
                  * We might need to have another consideration
                  * on how we do compute the taxes
                  */
-                if ( $product['product']['tax_type'] !== 'disabled' && ! empty( $product['product']->tax_group_id )) {
-                    $orderProduct->tax_group_id         =   $product['product']->tax_group_id;
-                    $orderProduct->tax_type             =   $this->currencyService->getRaw( $product['product']->tax_type );
+                if ( $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
+                    $orderProduct->tax_group_id         =   $product[ 'product' ]->tax_group_id;
+                    $orderProduct->tax_type             =   $product[ 'product' ]->tax_type;
                     $orderProduct->tax_value            =   $product[ 'tax_value' ];
                 }
     
-                $orderProduct->unit_price           =   $product['unit_price'];
-                $orderProduct->net_price            =   $product['unitQuantity']->incl_tax_sale_price;
-                $orderProduct->gross_price          =   $product['unitQuantity']->excl_tax_sale_price;
+                $orderProduct->unit_price           =   $product[ 'unit_price' ];
+                $orderProduct->net_price            =   $product[ 'unitQuantity' ]->incl_tax_sale_price;
+                $orderProduct->gross_price          =   $product[ 'unitQuantity' ]->excl_tax_sale_price;
                 $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
                 $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
                 $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
+                $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price'] )
+                    ->subtractBy( $orderProduct->discount )
+                    ->subtractBy( $orderProduct->tax_value ?? 0 )
+                    ->getRaw();
     
                 $this->computeOrderProduct( $orderProduct );
     
@@ -847,7 +852,7 @@ class OrdersService
          * This will calculate the product default field
          * when they aren't provided. 
          */
-        $orderProduct                           =   $this->computeProduct( $orderProduct, $product );
+        $orderProduct                           =   $this->computeProduct( $orderProduct, $product, $productUnitQuantity );
         $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id;
         $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id;
         $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
@@ -863,7 +868,7 @@ class OrdersService
 
             /**
              * What we're doing here
-             * 1 - Get the unit assigned to the products being sold
+             * 1 - Get the unit assigned to the product being sold
              * 2 - check if the units assigned is what has been stored on the product 
              * 3 - If the a group is assigned to a product, the we check if that unit belongs to the unit group
              */
@@ -876,7 +881,7 @@ class OrdersService
                 if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
                     throw new \Exception( 
                         sprintf( 
-                            __( 'Unable to proceed there is not enough stock for %s. Using the unit %s' ),
+                            __( 'Unable to proceed, there is not enough stock for %s using the unit %s' ),
                             $product->name,
                             $productUnitQuantity->unit->name
                         )
@@ -898,7 +903,7 @@ class OrdersService
             } catch (NotFoundException $exception) {
                 throw new \Exception(
                     sprintf(
-                        __('Unable to proceed, the product "%s" has a unit which is cannot be retreived. It might have been deleted.'),
+                        __('Unable to proceed, the product "%s" has a unit which cannot be retreived. It might have been deleted.'),
                         $product->name
                     )
                 );
@@ -906,9 +911,9 @@ class OrdersService
         }
     }
 
-    public function computeProduct( $fields, Product $product )
+    public function computeProduct( $fields, Product $product, ProductUnitQuantity $productUnitQuantity )
     {
-        $sale_price     =   ( $fields[ 'unit_price' ] ?? $product->sale_price );
+        $sale_price     =   ( $fields[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
         
         /**
          * if the discount value wasn't provided, it would have
@@ -920,7 +925,7 @@ class OrdersService
             isset( $fields[ 'discount_type' ] ) && 
             $fields[ 'discount_type' ] === 'percentage' &&
             empty( $fields[ 'discount' ] ) ) {
-            $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 );
+                $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 );
         } else {
             $fields[ 'discount' ]       =   $fields[ 'discount' ] ?? 0;
         }
@@ -931,11 +936,15 @@ class OrdersService
          * the value is "0".
          */
         if ( empty( $fields[ 'tax_value' ] ) ) {
-            $fields[ 'tax_value' ]      =   $this->taxService->getComputedTaxGroupValue(
-                $product->tax_type,
-                $product->tax_group_id,
-                $sale_price
-            ) * floatval( $fields[ 'quantity' ] );        
+            $fields[ 'tax_value' ]      =   $this->currencyService->define(
+                $this->taxService->getComputedTaxGroupValue(
+                    $product->tax_type,
+                    $product->tax_group_id,
+                    $sale_price
+                )
+            )
+            ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
+            ->getRaw();        
         }
 
         /**
@@ -948,6 +957,26 @@ class OrdersService
                 $fields[ 'discount' ]
             ) * floatval( $fields[ 'quantity' ] );
         }
+
+        /**
+         * We'll retreive the last defined purchase price
+         * for the defined item. Won't work for unmaterial item
+         */
+        $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
+            ->where( 'unit_id', $productUnitQuantity->unit_id )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        /**
+         * @todo we might check if the barcode provided
+         * here include a procurement id
+         */
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            $fields[ 'total_purchase_price' ]       =   $this->currencyService->define( $procurementProduct->purchase_price )
+                ->multiplyBy( $fields[ 'quantity' ] )
+                ->getRaw();
+        }
+
 
         return $fields;
     }
@@ -1561,6 +1590,13 @@ class OrdersService
         }
     }
 
+    /**
+     * parse and render options template
+     * based on the provided values
+     * @param array options
+     * @param Order $order
+     * @return string
+     */
     public function orderTemplateMapping( $option, Order $order )
     {
         $template                       =   $this->optionsService->get( $option );
@@ -1603,6 +1639,11 @@ class OrdersService
         return $template;
     }
 
+    /**
+     * notify administrator when order
+     * turned due (for layaway)
+     * @return array
+     */
     public function notifyExpiredLaidAway() 
     {
         $orders                 =   Order::paymentExpired()->get();
@@ -1646,8 +1687,11 @@ class OrdersService
     }
 
     /**
-     * void a specific order
+     * Void a specific order
      * by keeping a trace of what has happened.
+     * @param Order
+     * @param string $reason
+     * @return array
      */
     public function void( Order $order, $reason )
     {
@@ -1698,6 +1742,16 @@ class OrdersService
      */
     public function getSoldStock( $startDate, $endDate )
     {
-        // return OrderProduct
+        $rangeStarts    =   Carbon::parse( $startDate )->startOfDay()->toDateTimeString();
+        $rangeEnds      =   Carbon::parse( $endDate )->startOfDay()->toDateTimeString();
+
+        $products       =   OrderProduct::whereHas( 'order', function( Builder $query ) {
+            $query->where( 'payment_status', Order::PAYMENT_PAID );
+        })
+            ->where( 'created_at', '>=', $rangeStarts )
+            ->where( 'created_at', '<=', $rangeEnds )
+            ->get();
+
+        return $products;
     }
 }

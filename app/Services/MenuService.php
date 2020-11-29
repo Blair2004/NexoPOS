@@ -351,18 +351,13 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.reports.sales' ],
                         'href'  =>  ns()->url( '/dashboard/reports/sales' )
                     ], 
-                    'detailed-report'  =>  [
-                        'label' =>  __( 'Detailed report' ),
-                        'href'  =>  ns()->url( '/dashboard/reports/detailed-report' )
+                    'sold-stock'  =>  [
+                        'label' =>  __( 'Sold Stock' ),
+                        'href'  =>  ns()->url( '/dashboard/reports/sold-stock' )
                     ], 
-                    'best-sales'  =>  [
-                        'label' =>  __( 'Best Sales' ),
-                        'permissions'   =>  [ 'nexopos.reports.best_sales' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/best-sales' )
-                    ], 
-                    'income-losses'  =>  [
+                    'profit'  =>  [
                         'label' =>  __( 'Incomes & Loosses' ),
-                        'href'  =>  ns()->url( '/dashboard/reports/income-losses' )
+                        'href'  =>  ns()->url( '/dashboard/reports/profit' )
                     ], 
                     'cash-flow'  =>  [
                         'label' =>  __( 'Cash Flow' ),
