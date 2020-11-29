@@ -18,6 +18,11 @@ class OrderProduct extends Model
         return $this->hasOne( Unit::class, 'id', 'unit_id' );
     }
 
+    public function order()
+    {
+        return $this->belongsTo( Order::class, 'order_id', 'id' );
+    }
+
     public function product()
     {
         return $this->hasOne( Product::class, 'id', 'product_id' );

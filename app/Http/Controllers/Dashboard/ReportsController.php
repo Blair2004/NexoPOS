@@ -28,6 +28,14 @@ class ReportsController extends DashboardController
             'description'   =>  __( 'Provides an overview over the sales during a specific period' )
         ]);
     }
+    
+    public function soldStock()
+    {
+        return $this->view( 'pages.dashboard.reports.sold-stock-report', [
+            'title'         =>  __( 'Sold Stock' ),
+            'description'   =>  __( 'Provides an overview over the sold stock during a specific period.' )
+        ]);
+    }
 
     /**
      * get sales based on a specific time range
@@ -50,10 +58,26 @@ class ReportsController extends DashboardController
      */
     public function getSoldStockReport( Request $request )
     {
-        return $this->ordersService
+        $orders     =   $this->ordersService
             ->getSoldStock( 
                 $request->input( 'startDate' ), 
                 $request->input( 'endDate' ) 
             );
+
+        return collect( $orders )->mapToGroups( function( $product ) {
+            return [
+                $product->product_id . '-' . $product->unit_id  =>  $product
+            ];
+        })->map( function( $groups ) {
+            return [
+                'name'          =>  $groups->first()->name,
+                'unit_name'     =>  $groups->first()->unit_name,
+                'mode'          =>  $groups->first()->mode,
+                'unit_price'    =>  $groups->sum( 'unit_price' ),
+                'quantity'      =>  $groups->sum( 'quantity' ),
+                'total_price'   =>  $groups->sum( 'total_price' ),
+                'tax_value'     =>  $groups->sum( 'tax_value' ),
+            ];
+        })->values();
     }
 }

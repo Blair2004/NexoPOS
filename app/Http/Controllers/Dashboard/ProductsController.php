@@ -501,17 +501,6 @@ class ProductsController extends DashboardController
 
     public function searchUsingArgument( $reference )
     {
-        $procurementProduct     =   ProcurementProduct::with( 'product.unit_quantities' )
-            ->barcode( $reference )
-            ->first();
-
-        if ( $procurementProduct instanceof ProcurementProduct ) {
-            return [
-                'type'      =>  'procurement-product',
-                'product'   =>  $procurementProduct
-            ];
-        }
-
         $product        =   Product::barcode( $reference )
             ->with( 'unit_quantities' )
             ->first();
