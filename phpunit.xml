@@ -8,7 +8,13 @@
   <testsuites>
     <testsuite name="Feature">
       <directory suffix="CreateProductTest.php">./tests/Feature</directory>
-      <directory suffix="OrderTest.php">./tests/Feature</directory>
+      <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
+      <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
+      <directory suffix="OrderRefundTest.php">./tests/Feature</directory>
+      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
+      <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

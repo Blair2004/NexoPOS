@@ -101,7 +101,7 @@ class TaxService
     }
 
     /**
-     * create a tax using the provided informations
+     * Create a tax using the provided details
      * @param array tax fields
      * @return Tax
      */
@@ -169,6 +169,14 @@ class TaxService
         return $tax;
     }
 
+    /**
+     * Retreive the tax value for a specific
+     * amount using a determined tax group id on which the calculation is made
+     * @param string $tax_type might be "inclusive" or "exclusive".
+     * @param integer $tax_group_id is the tax group id on which the calculation is made
+     * @param float $price the amount used for the calculation
+     * @return float calculated value
+     */
     public function getComputedTaxGroupValue( $tax_type, $tax_group_id, $price )
     {
         $taxGroup       =   TaxGroup::find( $tax_group_id );
@@ -193,7 +201,11 @@ class TaxService
 
     /**
      * compute the tax added to a 
-     * product
+     * product using a defined tax group id and type
+     * @param ProductUnitQuantity
+     * @param integer $tax_group_id the tax group on which the calculation is made
+     * @param string $tax_type might be "inclusive" or "exclusive"
+     * @return void
      */
     public function computeTax( ProductUnitQuantity $product, $tax_group_id, $tax_type = null )
     {
@@ -308,6 +320,38 @@ class TaxService
         } else if ( $type === 'exclusive' ) {
             return $this->getComputedTaxValue( $type, $rate, $value ) - $value;
         }
+    }
+
+    /**
+     * get the tax value from an amount calculated
+     * over a provided tax group
+     * @param string type
+     * @param TaxGroup
+     * @param float $value
+     * @return float
+     */
+    public function getTaxGroupVatValue( $type, TaxGroup $group, float $value )
+    {
+        if ( $type === 'inclusive' ) {
+            return $value - $this->getTaxGroupComputedValue( $type, $group, $value );
+        } else if ( $type === 'exclusive' ) {
+            return $this->getTaxGroupComputedValue( $type, $group, $value ) - $value;
+        }
+    }
+
+    /**
+     * calculate a percentage of a provided
+     * value using a defined rate
+     * @param float value
+     * @param float rate
+     * @return float
+     */
+    public function getPercentageOf( $value, $rate )
+    {
+        return $this->currency->define( $value )
+            ->multiplyBy( $rate )
+            ->dividedBy( 100 )
+            ->getRaw();
     }
 
     /**

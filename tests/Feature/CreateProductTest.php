@@ -79,7 +79,6 @@ class CreateProductTest extends TestCase
             ]
         ]);
 
-        $response->dump();
         $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), 10 ) );
         $response->assertStatus(200);
     }

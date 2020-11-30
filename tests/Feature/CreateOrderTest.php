@@ -14,7 +14,7 @@ use App\Services\CurrencyService;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class OrderTest extends TestCase
+class CreateOrderTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -99,6 +99,7 @@ class OrderTest extends TestCase
         $response->assertJsonPath( 'data.order.change',     $currency->define( $netsubtotal )
             ->additionateBy( $shippingFees )
             ->subtractBy( $currency->define( $netsubtotal )->additionateBy( $shippingFees )->getRaw() )
+            ->additionateBy( $discount )
             ->getRaw() 
         );
     }

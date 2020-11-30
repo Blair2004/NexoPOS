@@ -50,6 +50,14 @@ export default {
             }
             return 0;
         },
+        totalTax() {
+            if ( this.products.length > 0 ) {
+                return this.products
+                    .map( order => order.tax_value )
+                    .reduce( ( b, a ) => b + a );
+            }
+            return 0;
+        },
     },
     methods: {
         printSaleReport() {

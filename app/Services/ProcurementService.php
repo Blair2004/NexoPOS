@@ -366,6 +366,11 @@ class ProcurementService
                 $procurementProduct                             =   new ProcurementProduct;
             }
 
+            /**
+             * @todo these value might also 
+             * be calculated automatically.
+             */
+
             $procurementProduct->name                       =   $product->name;
             $procurementProduct->gross_purchase_price       =   $procuredProduct[ 'gross_purchase_price' ];
             $procurementProduct->net_purchase_price         =   $procuredProduct[ 'net_purchase_price' ];

@@ -57,6 +57,7 @@
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Quantity' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Purchase Price' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Sale Price' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Taxes' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Profit' ) }}</th>
                                     </tr>
                                 </thead>
@@ -67,6 +68,7 @@
                                         <td class="p-2 border text-right border-blue-200">@{{ product.quantity }}</td>
                                         <td class="p-2 border text-right border-blue-200">@{{ product.total_purchase_price | currency }}</td>
                                         <td class="p-2 border text-right border-blue-200">@{{ product.total_price | currency }}</td>
+                                        <td class="p-2 border text-right border-blue-200">@{{ product.tax_value | currency }}</td>
                                         <td class="p-2 border text-right border-blue-200">@{{ ( product.total_price - product.total_purchase_price ) | currency }}</td>
                                     </tr>
                                 </tbody>
@@ -76,6 +78,7 @@
                                         <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalQuantities }}</td>
                                         <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalPurchasePrice | currency }}</td>
                                         <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalSalePrice | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalTax | currency }}</td>
                                         <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalProfit | currency }}</td>
                                     </tr>
                                 </tfoot>

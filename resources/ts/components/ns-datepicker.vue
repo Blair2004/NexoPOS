@@ -101,11 +101,6 @@ export default {
             const endOfMonth        =   this.currentDay.clone().endOf( 'month' );
             
             while( true ) {
-                if ( currentCursor.isSame( endOfMonth, 'day' ) ) {
-                    break;
-                }
-
-
                 if ( currentCursor.day() === 0 ) {
                     if ( this.calendar[0].length > 0 ) {
                         this.calendar.push([]);
@@ -119,6 +114,10 @@ export default {
                     dayOfWeek: currentCursor.day(),
                     isToday: currentCursor.isSame( moment.now(), 'day' )
                 });
+
+                if ( currentCursor.isSame( endOfMonth, 'day' ) ) {
+                    break;
+                }
 
                 currentCursor.add( 1, 'day' );
             }

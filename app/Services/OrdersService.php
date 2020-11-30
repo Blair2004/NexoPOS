@@ -766,7 +766,7 @@ class OrdersService
                 $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
                 $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
                     ->subtractBy( $orderProduct->discount )
-                    ->subtractBy( $orderProduct->tax_value ?? 0 )
+                    // ->subtractBy( $orderProduct->tax_value ?? 0 ) maybe we need to create a gross_purchase_price and net_purchase_price fields
                     ->getRaw();
     
                 $this->computeOrderProduct( $orderProduct );
@@ -1743,7 +1743,7 @@ class OrdersService
     public function getSoldStock( $startDate, $endDate )
     {
         $rangeStarts    =   Carbon::parse( $startDate )->startOfDay()->toDateTimeString();
-        $rangeEnds      =   Carbon::parse( $endDate )->startOfDay()->toDateTimeString();
+        $rangeEnds      =   Carbon::parse( $endDate )->endOfDay()->toDateTimeString();
 
         $products       =   OrderProduct::whereHas( 'order', function( Builder $query ) {
             $query->where( 'payment_status', Order::PAYMENT_PAID );
