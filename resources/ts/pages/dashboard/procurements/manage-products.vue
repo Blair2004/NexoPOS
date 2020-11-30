@@ -177,7 +177,6 @@ export default {
          * we might need confirmation before proceeding.
          */
         removeUnitPriceGroup( group_fields, group ) {
-            
             const hasIdField    =   group_fields.filter( field => field.name === 'id' );
                 Popup.show( nsPosConfirmPopupVue, {
                     title: 'Confirm Your Action',

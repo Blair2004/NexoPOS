@@ -758,13 +758,13 @@ class OrdersService
                     $orderProduct->tax_value            =   $product[ 'tax_value' ];
                 }
     
-                $orderProduct->unit_price           =   $product[ 'unit_price' ];
-                $orderProduct->net_price            =   $product[ 'unitQuantity' ]->incl_tax_sale_price;
-                $orderProduct->gross_price          =   $product[ 'unitQuantity' ]->excl_tax_sale_price;
+                $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
+                $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price )->getRaw();
+                $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price )->getRaw();
                 $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
                 $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
                 $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
-                $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price'] )
+                $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
                     ->subtractBy( $orderProduct->discount )
                     ->subtractBy( $orderProduct->tax_value ?? 0 )
                     ->getRaw();

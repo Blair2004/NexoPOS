@@ -164,7 +164,15 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        $val        =   bcmul( ( $value ?? $this->value ), 1, $this->decimal_precision );
+        $val    =   floatval( number_format( 
+            ( $value ?? $this->value ), 
+            $this->decimal_precision 
+        ) );
+        
+        /**
+         * @todo need to understand the reason of this
+         */
+        // $val        =   bcmul( ( $value ?? $this->value ), 1, $this->decimal_precision );
         preg_match( "#^([\+\-]|)([0-9]*)(\.([0-9]*?)|)(0*)$#", trim( $val ), $o );
         $result     =   $o[1] . sprintf( '%d', $o[2] ) . ( $o[3] != '.' ? $o[3]:'' );
         return strpos( $result, '.' ) === false ? intval( $result ) : floatval( $result );

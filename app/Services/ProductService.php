@@ -273,6 +273,12 @@ class ProductService
         $this->__computeUnitQuantities( $fields, $product );
 
         /**
+         * We'll reload the unit quantity
+         * that is helpful to test if the tax is well computed
+         */
+        $product->load( 'unit_quantities' );
+
+        /**
          * save product images
          */
         $this->saveGallery( $product, $fields[ 'images' ]);
@@ -552,8 +558,8 @@ class ProductService
              * available on the group variable, that's why we define
              * explicitely how everything is saved here.
              */
-            $unitQuantity->sale_price_edit          =   $group[ 'sale_price' ];
-            $unitQuantity->wholesale_price_edit     =   $group[ 'wholesale_price' ];
+            $unitQuantity->sale_price_edit          =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
+            $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
             $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
 
             $this->taxService->computeTax( 

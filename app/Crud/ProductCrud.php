@@ -163,14 +163,14 @@ class ProductCrud extends CrudService
             ], [
                 'type'  =>  'number',
                 'errors'        =>  [],
-                'name'  =>  'sale_price',
+                'name'  =>  'sale_price_edit',
                 'label' =>  __( 'Sale Price' ),
                 'description'   =>  __( 'Define the regular selling price.' ),
                 'validation'    =>  'required',
             ], [
                 'type'          =>  'number',
                 'errors'        =>  [],
-                'name'          =>  'wholesale_price',
+                'name'          =>  'wholesale_price_edit',
                 'label'         =>  __( 'Wholesale Price' ),
                 'description'   =>  __( 'Define the wholesale price.' ),
                 'validation'    =>  'required',

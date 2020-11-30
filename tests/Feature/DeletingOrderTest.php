@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class DeleteOrderTest extends TestCase
+class DeletingOrderTest extends TestCase
 {
     /**
      * A basic feature test example.
