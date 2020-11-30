@@ -199,7 +199,7 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/products/categories' )
                     ], 
                     'create-categories'   =>  [
-                        'label' =>  __( 'Create Categories'),
+                        'label' =>  __( 'Create Category'),
                         'permissions'   =>  [ 'nexopos.create.categories' ],
                         'href'  =>  ns()->url( '/dashboard/products/categories/create' )
                     ],
