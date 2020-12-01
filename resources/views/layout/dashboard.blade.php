@@ -61,7 +61,7 @@ use App\Services\DateService;
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             <div class="flex flex-auto overflow-hidden bg-gray-200">
                 <div class="overflow-y-auto flex-auto">
-                    @yield( 'layout.dashboard.body' )
+                    @yield( 'layout.dashboard.body', View::make( 'common.dashboard.with-header' ) )
                 </div>
             </div>
         </div>

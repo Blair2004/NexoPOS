@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
                 
                 include_once( $filePath );
                 
-                $kernelClass    =   $entryClass . '\Console\Kernel';
+                $kernelClass    =   $module[ 'entry-class' ] . '\Console\Kernel';
 
                 /**
                  * a kernel class should be defined

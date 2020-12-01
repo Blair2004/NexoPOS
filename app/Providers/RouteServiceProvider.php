@@ -116,7 +116,7 @@ class RouteServiceProvider extends ServiceProvider
 
             // if module has a web route file
             if ( $module[ 'routes-file' ] !== false ) {
-                Route::middleware([ 'web', 'ns.installed' ])
+                Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'routes-file' ] );
             }
