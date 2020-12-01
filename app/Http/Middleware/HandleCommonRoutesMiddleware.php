@@ -17,7 +17,7 @@ class HandleCommonRoutesMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if( $resultRequest = Hook::filter( 'ns-common-routes', null, $request, $next ) === null ) {
+        if( $resultRequest = Hook::filter( 'ns-common-routes', false, $request, $next ) === false ) {
             return $next( $request );
         }
 

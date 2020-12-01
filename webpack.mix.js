@@ -82,16 +82,25 @@ mix
     .js( 'resources/ts/setup.ts', 'public/js')
     .js( 'resources/ts/popups.ts', 'public/js/' )
     .extract([ 
-        'vue', 
-        'lodash', 
-        'vue-apexcharts',
-        'chart.js', 
-        'axios', 
-        'moment', 
-        'rxjs', 
-        'rx', 
-        'vue-router', 
-        'dayjs' 
+        // 'vue', 
+        // 'lodash', 
+        // 'vue-apexcharts',
+        // 'chart.js', 
+        // 'axios', 
+        // 'moment', 
+        // 'rxjs', 
+        // 'rx', 
+        // 'vue-router', 
+        // 'dayjs',
+        // 'vue-html-to-paper',
+        // '@wordpress/hooks',
+        // 'numeral',
+        // 'css-loader',
+        // 'autoprefixer',
+        // 'apexcharts',
+        // '@ckeditor/ckeditor5-vue',
+        // 'twitter_cldr',
+        // 'vue-upload-component'
     ])
     .sass('resources/sass/app.scss', 'public/css')
     .options({
