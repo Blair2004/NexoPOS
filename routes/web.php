@@ -8,7 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\ModulesController;
-use App\Http\Middleware\StoreDetectorMiddleware;
+use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use Illuminate\Support\Facades\Route;
 use dekor\ArrayToTextTable;
 use Illuminate\Routing\Route as RoutingRoute;
@@ -25,7 +25,9 @@ use Illuminate\Routing\Route as RoutingRoute;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome', [
+        'title'     =>  __( 'Welcome &mdash; NexoPOS 4.x' )
+    ]);
 });
 
 Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( function() {
@@ -46,7 +48,11 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
     ])->group( function() {
         Route::prefix( 'dashboard' )->group( function() {
 
-            require( dirname( __FILE__ ) . '/nexopos.php' );
+            Route::middleware([
+                HandleCommonRoutesMiddleware::class
+            ])->group( function() {
+                require( dirname( __FILE__ ) . '/nexopos.php' );
+            });
 
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
     

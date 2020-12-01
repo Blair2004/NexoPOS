@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="p-4 w-full md:w-1/2 lg:w-1/4">
-            <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-teal-400 to-teal-600 text-white px-3 py-5">
+            <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-red-300 via-red-400 to-red-500 text-white px-3 py-5">
                 <div class="flex flex-row md:flex-col flex-auto">
                     <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                         <h6 class="font-bold hidden text-right md:inline-block">Wasted Goods</h6>

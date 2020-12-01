@@ -1,3 +1,5 @@
+const colors  = require( 'tailwindcss/colors' );
+
 const heightDims = {
   '6/7-screen': '85.71vh',
   '5/7-screen': '71.42vh',
@@ -50,18 +52,16 @@ const widthDims = {
 
 module.exports = {
   important: true,
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-    defaultLineHeights: true,
-    standardFontWeights: true,
-  },
   theme: {
     fontFamily: {
       display: ['Gilroy', 'sans-serif'],
       body: ['Graphik', 'sans-serif'],
     },
     extend: {
+      colors: {
+        teal: colors.teal
+      },
+      fontWeight: [ 'hover', 'focus' ],
       height: heightDims,
       minHeight: heightDims,
       width: {
@@ -109,13 +109,7 @@ module.exports = {
       },
     }
   },
-  future: {
-    removeDeprecatedGapUtilities: true,
-  },
   variants: {
     opacity: [ 'responsive', 'hover', 'active' ]
-  },
-  experimental: {
-    applyComplexClasses: true,
-  },
+  }
 }

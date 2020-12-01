@@ -37,5 +37,9 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-register-footer | Allow injecting output at the footer of the registration page | Array | 4.0-beta-1 | Valid |
 | ns-table-prefix | provides table name | Array | 4.0-beta-1 | Valid |
 | ns-route | returns the route value | Array | 4.0-beta-1 | Valid |
+| ns-route-dashboard-home | used to allow dashboard home route to be overwritten | Array | 4.0-beta-1 | Valid |
 | ns-dashboard-header | returns the output of the dashboard header | Array | 4.0-beta-1 | Valid |
-| ns-route-name | returns routes names | Array | 4.0-beta-1 | Valid |
+| ns-route-name | Used to overwrite routes name | Array | 4.0-beta-1 | Valid |
+| ns-common-routes | Execute within a middleware that covers all common routes. Common routes excludes system route (modules, users), but instead this gives a way to control the access to certain features. | Array | 4.0-beta-1 | Valid |
+| ns-login-redirect | returns the default redirection url, where the user is redirected after authentication. The second parameter which is a boolean, defines wether or not the user will be redirected to an intended page. "True" if the user intended to access to a page, "False" if not. | Array | 4.0-beta-1 | Valid |
+

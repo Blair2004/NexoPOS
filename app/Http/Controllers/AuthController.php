@@ -102,7 +102,7 @@ class AuthController extends Controller
                 return redirect( route( 'ns.login' ) )->withErrors( $validator );
             }
 
-            return redirect()->intended(); 
+            return redirect()->intended( Hook::filter( 'ns-login-redirect' ) ); 
         }
 
         $validator      =   Validator::make( $request->all(), []);
@@ -122,14 +122,12 @@ class AuthController extends Controller
             Auth::logout();                    
             throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
         }
-
-        // dd( Session::all() );
         
         return [
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully connected.' ),
             'data'      =>  [
-                'redirectTo'    =>  redirect()->intended()->getTargetUrl() ?? url( '/dashboard' )
+                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', redirect()->intended()->getTargetUrl() ?? route( 'ns.dashboard.home' ), redirect()->intended()->getTargetUrl() ? true : false )
             ]
         ];
     }
