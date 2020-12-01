@@ -66,11 +66,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton( AuthService::class, function(){
             return new AuthService();
         });
-
-        // save Singleton for modules
-        $this->app->singleton( ModulesService::class, function(){
-            return new ModulesService();
-        });
         
         // save Singleton for options
         $this->app->singleton( UserOptions::class, function(){

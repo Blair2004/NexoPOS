@@ -45,7 +45,7 @@ class PasswordResetRequestedMail extends Mailable
             ->subject( __( '👮 A New Password Reset Has Been Requested !' ) )
             ->markdown('tendoo::email.password-change-requested', [
                 'user'  =>  $this->user,
-                'link'  =>  route( 'dashboard.users.edit', [
+                'link'  =>  ns()->route( 'dashboard.users.edit', [
                     'entry'     =>  $this->user->id
                 ])
             ]);

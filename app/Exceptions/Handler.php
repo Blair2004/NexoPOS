@@ -52,7 +52,7 @@ class Handler extends ExceptionHandler
             return response()->json([ 'status' => 'failed', 'message' => __( 'You\'re not authenticated.' ) ], 401);
         }
 
-        return redirect()->guest( route( 'ns.login' ) );
+        return redirect()->guest( ns()->route( 'ns.login' ) );
     }
 
     /**

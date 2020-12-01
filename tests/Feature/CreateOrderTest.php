@@ -2,14 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\ComputeCashierSalesJob;
-use App\Jobs\ComputeCustomerAccountJob;
-use App\Jobs\ComputeDayReportJob;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\Product;
 use App\Models\Role;
-use App\Models\User;
 use App\Services\CurrencyService;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;

@@ -41,10 +41,6 @@ class EventServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->listen[ WebRouteLoadedEvent::class ]  = [
-
-        ];
-
         parent::register();
     }
 
@@ -55,8 +51,15 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        parent::boot();
+        /**
+         * @var ModulesService
+         */
+        $modules    =   app()->make( ModulesService::class );
 
+        collect( $modules->getEnabled() )
+            ->each( fn( $module ) => $modules->triggerServiceProviders( $module, 'register', self::class ) );
+
+        parent::boot();
 
         /**
          * @param ModulesService
@@ -64,7 +67,7 @@ class EventServiceProvider extends ServiceProvider
         $modules    =   app()->make( ModulesService::class );
 
         collect( $modules->getEnabled() )
-            ->each( fn( $module ) => $modules->serviceProvider( $module, self::class, 'boot' ) );
+            ->each( fn( $module ) => $modules->serviceProvider( $module, 'boot', self::class ) );
     }
 
     public function shouldDiscoverEvents()

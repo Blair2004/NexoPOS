@@ -85,6 +85,5 @@ class CrudServiceProvider extends ServiceProvider
             }
             return $namespace;
         });
-
     }
 }

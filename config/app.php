@@ -169,17 +169,17 @@ return [
         /*
          * Application Service Providers...
          */
+        App\Providers\TelescopeServiceProvider::class,
         App\Providers\AppServiceProvider::class,
+        App\Providers\ModulesServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
         App\Providers\BladeComponentsProvider::class,
         App\Providers\CrudServiceProvider::class,
         App\Providers\SettingsPageProvider::class,
         App\Providers\FormsProvider::class,
-        App\Providers\ModulesServiceProvider::class,
     ],
 
     /*

@@ -6,26 +6,36 @@
                 
             </div>
         </div>
-        <div class="head bg-gray-100 flex-auto flex h-56">
-            <table class="table flex-auto">
-                <thead>
-                    <tr>
-                        <th width="100" class="px-3 py-1 bg-white border-t-0 border-l-0 border-gray-300 border">Order</th>
-                        <th width="100" class="px-3 py-1 bg-white border-t-0 border-gray-300 border">Total</th>
-                        <th width="100" class="px-3 py-1 bg-white border-t-0 border-r-0 border-gray-300 border">Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="order of orders" :key="order.id">
-                        <td class="text-center text-sm text-gray-800 bg-white border-t-0 border-gray-300 border">{{ order.code }}</td>
-                        <td class="text-center text-sm text-gray-800 bg-white border-t-0 border-gray-300 border">{{ order.total | currency }}</td>
-                        <td class="text-center text-sm text-gray-800 bg-white border-t-0 border-gray-300 border">{{ order.created_at }}</td>
-                    </tr>
-                    <tr>
-                        <td v-if="orders.length === 0" class="text-gray-600 p-1 text-center bg-white" colspan="3">No order to display...</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="head bg-gray-100 flex-auto flex-col flex h-56">
+            <div 
+                v-for="order of orders" 
+                :key="order.id" 
+                :class="order.payment_status === 'paid' ? 'bg-green-50' : 'bg-white'" 
+                class="border-b border-gray-200 p-2 flex justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-600">Order : {{ order.code }}</h3>
+                    <div class="flex -mx-2">
+                        <div class="px-1">
+                            <h4 class="text-semibold text-xs text-gray-500">
+                                <i class="lar la-user-circle"></i>
+                                <span>{{ order.user.username }}</span>
+                            </h4>
+                        </div>
+                        <div class="divide-y-4"></div>
+                        <div class="px-1">
+                            <h4 class="text-semibold text-xs text-gray-600">
+                                <i class="las la-clock"></i> 
+                                <span>{{ order.created_at }}</span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 
+                        :class="order.payment_status === 'paid' ? 'text-green-600' : 'bg-gray-700'" 
+                        class="text-xl font-bold">{{ order.total | currency }}</h2>
+                </div>
+            </div>
         </div>
         <!-- <div class="p-2 bg-white -mx-4 flex flex-wrap">
             <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">

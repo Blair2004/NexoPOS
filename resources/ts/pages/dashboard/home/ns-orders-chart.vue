@@ -9,21 +9,21 @@
             <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2 lg:border-b lg:border-t xl:border-none border-gray-200 lg:py-1 lg:my-1">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs text-gray-600">Weekly Sales</span>
-                    <h2 class="text-lg lg:text-xl xl:text-2xl text-gray-700 font-bold">{{ totalWeeklySales | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeeklySales | currency( 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs text-gray-600">Week Taxes</span>
-                    <h2 class="text-lg lg:text-xl xl:text-2xl text-gray-700 font-bold">{{ totalWeekTaxes | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekTaxes | currency( 'abbreviate' ) }}</h2>
                 </div>
             </div>
             <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs text-gray-600">Net Income</span>
-                    <h2 class="text-lg lg:text-xl xl:text-2xl text-gray-700 font-bold">{{ totalWeekIncome | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekIncome | currency( 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs text-gray-600">Week Expenses</span>
-                    <h2 class="text-lg lg:text-xl xl:text-2xl text-gray-700 font-bold">{{ totalWeekExpenses | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekExpenses | currency( 'abbreviate' ) }}</h2>
                 </div>
             </div>
         </div>

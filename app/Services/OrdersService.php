@@ -1665,7 +1665,7 @@ class OrdersService
             $notificationService->create([
                 'title'         =>  __( 'Unpaid Orders Turned Due' ),
                 'identifier'    =>  $notificationID,
-                'url'           =>  route( 'ns.dashboard.orders' ),
+                'url'           =>  ns()->route( 'ns.dashboard.orders' ),
                 'description'   =>  sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), $orders->count() )
             ])->dispatchForGroup([
                 Role::namespace( 'admin' ),

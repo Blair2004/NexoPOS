@@ -9,7 +9,7 @@
     @parent
     <script>
         const Update    =   {
-            returnLink: '{{ $redirect ?? ( ! in_array( url()->previous(), [ url( "database-update" ), route( "setup" ) ]) ? url()->previous() : url( "/dashboard" ) ) }}',
+            returnLink: '{{ $redirect ?? ( ! in_array( url()->previous(), [ ns()->route( "ns.database-update" ), ns()->route( "ns.do-setup" ) ]) ? url()->previous() : ns()->route( "ns.dashboard.home" ) ) }}',
             files:  @json( ns()->update->getMigrations()->values() ),
             modules: @json( $modules )
         }

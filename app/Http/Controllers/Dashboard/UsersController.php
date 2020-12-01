@@ -59,7 +59,7 @@ class UsersController extends DashboardController
         ns()->restrict([ 'update.users' ]);
 
         if ( $user->id === Auth::id() ) {
-            return redirect( route( 'dashboard.users.profile' ) );
+            return redirect( ns()->route( 'dashboard.users.profile' ) );
         }
 
         /**

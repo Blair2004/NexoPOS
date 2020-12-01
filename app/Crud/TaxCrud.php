@@ -396,7 +396,7 @@ class TaxCrud extends CrudService
             [
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  route( 'crud.bulk-actions', [
+                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

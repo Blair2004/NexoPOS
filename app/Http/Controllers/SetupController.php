@@ -19,8 +19,6 @@ class SetupController extends Controller
 {
     public function welcome()
     {
-        Cookie::clear();
-        
         return view( 'pages.setup.welcome', [
             'title'     =>      __( 'NexoPOS 4 &mdash; Setup Wizard' )
         ]);

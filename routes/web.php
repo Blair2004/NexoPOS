@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\ModulesController;
+use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use Illuminate\Support\Facades\Route;
 use dekor\ArrayToTextTable;
@@ -44,7 +45,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
     Route::middleware([ 
         'auth',
-        'ns.check-application-health',
+        CheckApplicationHealthMiddleware::class,
     ])->group( function() {
         Route::prefix( 'dashboard' )->group( function() {
 
@@ -56,27 +57,30 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
 
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
     
-            Route::get( '/modules', [ ModulesController::class, 'listModules' ])->name( 'ns.dashboard.modules.list' );
-            Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules.upload' );
-            Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules.upload' );
-            Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules.migrate' );
+            Route::get( '/modules', [ ModulesController::class, 'listModules' ])->name( 'ns.dashboard.modules-list' );
+            Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules-upload' );
+            Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules-upload' );
+            Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules-migrate' );
         });
     });
 });
 
 Route::middleware([ 'ns.not-installed' ])->group( function() {
     Route::prefix( '/do-setup/' )->group( function() {
-        Route::get( '', 'SetupController@welcome' )->name( 'setup' );
+        Route::get( '', 'SetupController@welcome' )->name( 'ns.do-setup' );
     });
 });
 
-Route::get( '/routes', function() {
-    $values     =   collect( array_values( ( array ) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
-        return [
-            'uri'       =>  $route->uri(),
-            'methods'   =>  collect( $route->methods() )->join( ', ' ),
-        ];
-    })->values();
-
-    return ( new ArrayToTextTable( $values->toArray() ) )->render();
-});
+if ( env( 'APP_DEBUG' ) ) {
+    Route::get( '/routes', function() {
+        $values     =   collect( array_values( ( array ) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
+            return [
+                'uri'       =>  $route->uri(),
+                'methods'   =>  collect( $route->methods() )->join( ', ' ),
+                'name'      =>  $route->getName()
+            ];
+        })->values();
+    
+        return ( new ArrayToTextTable( $values->toArray() ) )->render();
+    });
+}

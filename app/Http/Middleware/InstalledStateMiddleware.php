@@ -19,6 +19,6 @@ class InstalledStateMiddleware
             return $next($request);
         }
         
-        return redirect()->route( 'setup' );
+        return redirect()->route( 'ns.do-setup' );
     }
 }

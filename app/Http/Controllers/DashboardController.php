@@ -65,7 +65,7 @@ class DashboardController extends Controller
 
     public function getRecentsOrders()
     {
-        return Order::orderBy( 'created_at', 'desc' )->limit(10)->get();
+        return Order::orderBy( 'created_at', 'desc' )->with( 'user' )->limit(10)->get();
     }
 
     public function getBestCashiers()

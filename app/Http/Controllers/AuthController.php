@@ -60,7 +60,7 @@ class AuthController extends Controller
         $request->session()->regenerate();
         $request->session()->flush();
 
-        return redirect( route( 'ns.dashboard.home' ) );
+        return redirect( ns()->route( 'ns.dashboard.home' ) );
     }
 
     public function updateDatabase()
@@ -99,7 +99,7 @@ class AuthController extends Controller
                 $validator      =   Validator::make( $request->all(), []);
                 $validator->errors()->add( 'username', __( 'This account is disabled.' ) );
 
-                return redirect( route( 'ns.login' ) )->withErrors( $validator );
+                return redirect( ns()->route( 'ns.login' ) )->withErrors( $validator );
             }
 
             return redirect()->intended( Hook::filter( 'ns-login-redirect' ) ); 
@@ -109,7 +109,7 @@ class AuthController extends Controller
         $validator->errors()->add( 'username', __( 'Unable to find record having that username.' ) );
         $validator->errors()->add( 'password', __( 'Unable to find record having that password.' ) );
 
-        return redirect( route( 'ns.login' ) )->withErrors( $validator );
+        return redirect( ns()->route( 'ns.login' ) )->withErrors( $validator );
     }
 
     public function handleJsonRequests( $request, $attempt )
@@ -127,7 +127,7 @@ class AuthController extends Controller
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully connected.' ),
             'data'      =>  [
-                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', redirect()->intended()->getTargetUrl() ?? route( 'ns.dashboard.home' ), redirect()->intended()->getTargetUrl() ? true : false )
+                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', redirect()->intended()->getTargetUrl() ?? ns()->route( 'ns.dashboard.home' ), redirect()->intended()->getTargetUrl() ? true : false )
             ]
         ];
     }
@@ -167,7 +167,7 @@ class AuthController extends Controller
                     __( 'Your Account has been successfully creaetd.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
                 'data'      =>  [
-                    'redirectTo'    =>  route( 'ns.login' )
+                    'redirectTo'    =>  ns()->route( 'ns.login' )
                 ]
             ];
         } else {

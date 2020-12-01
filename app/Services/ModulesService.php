@@ -138,9 +138,7 @@ class ModulesService
                  * Entry class must be namespaced like so : 'Modules\[namespace]\[namespace] . 'Module';
                  */
                 $config[ 'entry-class' ]    =  'Modules\\' . $config[ 'namespace' ] . '\\' . $config[ 'namespace' ] . 'Module'; 
-
-                // store providers
-                $config[ 'providers' ]      =   [];
+                $config[ 'providers' ]      =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
 
                 /**
                  * Service providers are registered when the module is enabled
@@ -148,8 +146,6 @@ class ModulesService
                 if ( $config[ 'enabled' ] ) {
 
                     $this->autoloadModule( $config );
-
-                    $this->triggerServiceProviders( $config, 'register' );
 
                     /**
                      * Load Module Config
@@ -184,14 +180,9 @@ class ModulesService
         }
     }
 
-    public function triggerServiceProviders( $config, $method )
+    public function triggerServiceProviders( $config, $method, $parentClass = false )
     {
-        /**
-         * register module service provider
-         */
-        $servicesProviders   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
-
-        foreach( $servicesProviders as $service ) {
+        foreach( $config[ 'providers' ] as $service ) {
             /**
              * @todo run service provider
              */
@@ -212,7 +203,7 @@ class ModulesService
                      * If a register method exists and the class is an 
                      * instance of ModulesServiceProvider
                      */
-                    if ( $config[ 'providers' ][ $className ] instanceof ModulesServiceProvider && method_exists( $config[ 'providers' ][ $className ], 'register' ) ) {
+                    if ( $config[ 'providers' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers' ][ $className ], $method ) ) {
                         call_user_func([ $config[ 'providers' ][ $className ], $method ], $this );
                     }
                 }
@@ -261,9 +252,6 @@ class ModulesService
             if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
                 include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
             }
-
-            // boot service providers
-            $this->triggerServiceProviders( $module, 'boot' );
 
             // include module index file
             include_once( $module[ 'index-file' ] );

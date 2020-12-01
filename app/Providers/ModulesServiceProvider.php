@@ -14,7 +14,25 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot( ModulesService $modules )
     {
-        $modules->init( self::class );
+        $modules        =   app()->make( ModulesService::class );
+
+        collect( $modules )->each( fn( $module ) => $modules->init( $module ) );
+        
+        /**
+         * trigger register method only for enabled modules
+         * service providers that extends ModulesServiceProvider.
+         */
+        collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+            $modules->triggerServiceProviders( $module, 'register', self::class );
+        });
+
+        /**
+         * trigger boot method only for enabled modules
+         * service providers that extends ModulesServiceProvider.
+         */
+        collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+            $modules->triggerServiceProviders( $module, 'boot', self::class );
+        });
     }
 
     /**

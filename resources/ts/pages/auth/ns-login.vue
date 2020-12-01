@@ -76,7 +76,6 @@ export default {
                         'X-XSRF-TOKEN'  : this.xXsrfToken
                     }
                 }).subscribe( (result) => {
-                    this.isSubitting    =   false;
                     document.location   =   result.data.redirectTo;
                 }, ( error ) => {
                     this.isSubitting    =   false;
