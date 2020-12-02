@@ -10,7 +10,7 @@ use App\Events\ProcurementProductBeforeUpdateEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProcurementProduct extends Model
+class ProcurementProduct extends NsModel
 {
     use HasFactory;
     

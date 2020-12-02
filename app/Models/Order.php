@@ -7,7 +7,7 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Order extends Model
+class Order extends NsModel
 {
     use HasFactory;
     

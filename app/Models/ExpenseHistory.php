@@ -6,7 +6,7 @@ use App\Casts\DateCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ExpenseHistory extends Model
+class ExpenseHistory extends NsModel
 {
     use HasFactory;
     

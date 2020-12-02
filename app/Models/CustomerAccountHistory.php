@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CustomerAccountHistory extends Model
+class CustomerAccountHistory extends NsModel
 {
     use HasFactory;
 

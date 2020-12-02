@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Observers\UUIDObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ExpenseCategory extends Model
+class ExpenseCategory extends NsModel
 {
     use HasFactory;
     

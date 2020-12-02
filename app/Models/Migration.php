@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Migration extends Model
+class Migration extends NsModel
 {
     use HasFactory;
 
     protected $table    =   'migrations';
+    protected $migration;
 }

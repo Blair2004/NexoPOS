@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TaxGroup extends Model
+class TaxGroup extends NsModel
 {
     use HasFactory;
     

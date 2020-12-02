@@ -10,6 +10,7 @@ class Option extends Model
     use HasFactory;
     
     protected $table = 'nexopos_options';
+    protected $key;
     
     //
     public function scopeKey( $query, $key )

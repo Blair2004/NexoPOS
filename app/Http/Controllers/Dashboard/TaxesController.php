@@ -139,22 +139,6 @@ class TaxesController extends DashboardController
     }
 
     /**
-     * Get Model Schema
-     * which describe the field expected on post/put
-     * requests
-     * @return json
-     */
-    public function schema()
-    {
-        return [
-            'name'          =>  'string',
-            'description'   =>  'string',
-            'media_id'      =>  'number',
-            'parent_id'     =>  'number'
-        ];
-    }
-
-    /**
      * List all available taxes
      * @return view
      */
@@ -208,9 +192,9 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'List of Taxes Groups' ),
-            'createUrl'    =>  url( '/dashboard/taxes/groups/create' ),
+            'createUrl'     =>  ns()->url( '/dashboard/taxes/groups/create' ),
             'description'   =>  __( 'shows the list of available taxes groups.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' )
         ]);
     }
 

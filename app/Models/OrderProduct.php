@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class OrderProduct extends Model
+class OrderProduct extends NsModel
 {
     use HasFactory;
 

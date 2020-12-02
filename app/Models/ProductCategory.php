@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProductCategory extends Model
+class ProductCategory extends NsModel
 {
     use HasFactory;
 

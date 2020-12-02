@@ -12,7 +12,7 @@ use App\Models\Provider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Procurement extends Model
+class Procurement extends NsModel
 {
     use HasFactory;
     

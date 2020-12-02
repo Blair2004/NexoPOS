@@ -1,11 +1,11 @@
 <template>
     <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
         <div class="head bg-white flex-auto">
-            <div class="head text-center border-b border-gray-400 text-gray-700 w-full py-2">
+            <div class="head text-center border-b border-gray-200 text-gray-700 w-full py-2">
                 <h5>Best Cashiers</h5>
             </div>
             <div class="body">
-                <table class="table w-full">
+                <table class="table w-full" v-if="cashiers.length > 0">
                     <thead>
                         <tr v-for="cashier of cashiers" :key="cashier.id" class="border-gray-300 border-b text-sm">
                             <th class="p-2">
@@ -25,6 +25,13 @@
                         </tr>
                     </thead>
                 </table>
+                <div class="h-56 flex items-center justify-center" v-if="! hasLoaded">
+                    <ns-spinner size="8" border="4"></ns-spinner>
+                </div>
+                <div class="h-56 flex items-center justify-center flex-col" v-if="hasLoaded && cashiers.length === 0">
+                    <i class="las la-grin-beam-sweat text-6xl text-gray-700"></i>
+                    <p class="text-gray-600 text-sm">Well.. nothing to show for the meantime.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -35,11 +42,14 @@ export default {
     data() {
         return {
             subscription: null,
-            cashiers: []
+            cashiers: [],
+            hasLoaded: false,
         }
     },
     mounted() {
+        this.hasLoaded      =   false;
         this.subscription    =   Dashboard.bestCashiers.subscribe( cashiers => {
+            this.hasLoaded  =   true;
             this.cashiers   =   cashiers;
         });
     },

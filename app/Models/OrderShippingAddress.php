@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class OrderShippingAddress extends Model
+class OrderShippingAddress extends NsModel
 {
     use HasFactory;
     

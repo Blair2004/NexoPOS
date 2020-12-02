@@ -6,7 +6,7 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class DashboardDay extends Model
+class DashboardDay extends NsModel
 {
     use HasFactory;
 

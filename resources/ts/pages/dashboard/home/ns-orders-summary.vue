@@ -7,6 +7,13 @@
             </div>
         </div>
         <div class="head bg-gray-100 flex-auto flex-col flex h-56">
+            <div class="h-full flex items-center justify-center" v-if="! hasLoaded">
+                <ns-spinner size="8" border="4"></ns-spinner>
+            </div>
+            <div class="h-full flex items-center justify-center flex-col" v-if="hasLoaded && orders.length === 0">
+                <i class="las la-grin-beam-sweat text-6xl text-gray-700"></i>
+                <p class="text-gray-600 text-sm">Well.. nothing to show for the meantime.</p>
+            </div>
             <div 
                 v-for="order of orders" 
                 :key="order.id" 
@@ -64,11 +71,14 @@ export default {
     data() {
         return {
             orders: [],
-            subscription: null
+            subscription: null,
+            hasLoaded: false,
         }
     },
     mounted() {
+        this.hasLoaded      =   false;
         this.subscription   =   Dashboard.recentOrders.subscribe( orders => {
+            this.hasLoaded  =   true;
             this.orders     =   orders;
         });
     },

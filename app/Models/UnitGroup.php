@@ -4,7 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UnitGroup extends Model 
+class UnitGroup extends NsModel 
 {
     use HasFactory;
     
@@ -14,13 +14,4 @@ class UnitGroup extends Model
     {
         return $this->hasMany( Unit::class, 'group_id' );
     }
-
-    /**
-     * @todo ensure to update
-     * the database in order for this to work.
-     */
-    // public function scopeCanTransform( $query )
-    // {
-    //     return $query->where( 'transformable', true );
-    // }
 } 
