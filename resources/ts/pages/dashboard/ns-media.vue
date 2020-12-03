@@ -1,5 +1,5 @@
 <script>
-import { nsHttpClient, nsSnackBar } from '../../bootstrap';
+import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
 import popupCloser from "@/libraries/popup-closer";
 
 const VueUpload     =   require( 'vue-upload-component' );
@@ -73,6 +73,9 @@ export default {
         }
     },
     computed: {
+        postMedia() {
+            return nsHooks.applyFilters( 'http-client-url', '/api/nexopos/v4/medias' );
+        },
         currentPage() {
             return this.pages.filter( page => page.selected )[0];
         },
@@ -204,7 +207,7 @@ export default {
                 :multiple="true"
                 :headers="{ 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN' : csrf }"
                 accept="image/*"
-                post-action="/api/nexopos/v4/medias"
+                :post-action="postMedia"
                 >
                 <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
                     <h3 class="text-3xl font-bold text-gray-600 mb-4">Click Here Or Drop Your File To Upload</h3>
@@ -223,14 +226,12 @@ export default {
             <div class="p-2 flex flex-shrink-0 justify-between bg-gray-200" v-if="popup">
                 <div></div>
                 <div>
-                    <button @click="popup.close()" class="rounded-full flex items-center justify-center h-10 w-10 bg-white shadow text-red-400 hover:shadow-md hover:bg-red-400 hover:text-white">
-                        <i class="las la-times-circle text-3xl"></i>
-                    </button>
+                    <ns-close-button @click="popup.close()"></ns-close-button>
                 </div>
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div id="grid" class="bg-white shadow content flex flex-auto flex-col overflow-y-auto">
-                    <div class="flex">
+                    <div class="flex flex-auto">
                         <div class="p-2 flex flex-wrap overflow-x-auto">
                             <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
                                 <div class="p-2">
@@ -241,7 +242,7 @@ export default {
                             </div>
                         </div>
                         <div v-if="response.data.length === 0" class="flex flex-auto items-center justify-center">
-                            <h3 class="text-3xl text-gray-700 font-bold">Nothing has already been uploaded</h3>
+                            <h3 class="text-2xl text-gray-600 font-bold">Nothing has already been uploaded</h3>
                         </div>
                     </div>
                 </div>

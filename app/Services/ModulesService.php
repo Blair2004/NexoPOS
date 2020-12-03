@@ -1085,6 +1085,9 @@ class ModulesService
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function serviceProvider( $module, $instance, $method, $params = null )
     {
         collect( $module[ 'providers' ] )->each( function( $provider ) use ( $instance, $params, $method ) {

@@ -381,13 +381,13 @@ class RewardSystemCrud extends CrudService
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this reward system ?' ),
                     'title'     =>  __( 'Delete a licence' )

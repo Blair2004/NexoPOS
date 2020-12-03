@@ -402,18 +402,18 @@ class ProcurementCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
             ], [
                 'label'         =>      __( 'Invoice' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
+                'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]

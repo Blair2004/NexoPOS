@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
 use App\Http\Controllers\DashboardController;
+use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -11,48 +13,56 @@ class ResetController extends DashboardController
 {
     public function truncateAllTables()
     {
-        DB::table( 'nexopos_customers_groups' )->truncate();
-        DB::table( 'nexopos_customers_metas' )->truncate();
-        DB::table( 'nexopos_customers_coupons' )->truncate();
-        DB::table( 'nexopos_customers_coupons_products' )->truncate();
-        DB::table( 'nexopos_customers_coupons_categories' )->truncate();
-        DB::table( 'nexopos_customers' )->truncate();
-        DB::table( 'nexopos_customers_addresses' )->truncate();
-        DB::table( 'nexopos_expenses_categories' )->truncate();
-        DB::table( 'nexopos_expenses' )->truncate();
-        DB::table( 'nexopos_expenses_history' )->truncate();
-        DB::table( 'nexopos_orders_coupons' )->truncate();
-        DB::table( 'nexopos_orders_metas' )->truncate();
-        DB::table( 'nexopos_orders_payments' )->truncate();
-        DB::table( 'nexopos_orders_products' )->truncate();
-        DB::table( 'nexopos_orders_addresses' )->truncate();
-        DB::table( 'nexopos_orders' )->truncate();
-        DB::table( 'nexopos_procurements_products' )->truncate();
-        DB::table( 'nexopos_procurements_products_unit_quantities' )->truncate();
-        DB::table( 'nexopos_procurements' )->truncate();
-        DB::table( 'nexopos_products_categories' )->truncate();
-        DB::table( 'nexopos_products_histories' )->truncate();
-        DB::table( 'nexopos_products_galleries' )->truncate();
-        DB::table( 'nexopos_products_metas' )->truncate();
-        DB::table( 'nexopos_products' )->truncate();
-        DB::table( 'nexopos_products_taxes' )->truncate();
-        DB::table( 'nexopos_products_unit_quantities' )->truncate();
-        DB::table( 'nexopos_providers' )->truncate();
-        DB::table( 'nexopos_registers_history' )->truncate();
-        DB::table( 'nexopos_registers' )->truncate();
-        DB::table( 'nexopos_rewards_system_rules' )->truncate();
-        DB::table( 'nexopos_rewards_system' )->truncate();
-        DB::table( 'nexopos_stores' )->truncate();
-        DB::table( 'nexopos_taxes' )->truncate();
-        DB::table( 'nexopos_taxes_groups' )->truncate();
-        DB::table( 'nexopos_transfers_products' )->truncate();
-        DB::table( 'nexopos_transfers' )->truncate();
-        DB::table( 'nexopos_units_groups' )->truncate();
-        DB::table( 'nexopos_units' )->truncate();
-        DB::table( 'nexopos_medias' )->truncate();
-        DB::table( 'nexopos_options' )->truncate();
-        DB::table( 'nexopos_dashboard_days' )->truncate();
-        DB::table( 'nexopos_dashboard_weeks' )->truncate();
+        $tables     =   [
+            'nexopos_customers_groups',
+            'nexopos_customers_metas',
+            'nexopos_customers_coupons',
+            'nexopos_customers_coupons_products',
+            'nexopos_customers_coupons_categories',
+            'nexopos_customers',
+            'nexopos_customers_addresses',
+            'nexopos_expenses_categories',
+            'nexopos_expenses',
+            'nexopos_expenses_history',
+            'nexopos_orders_coupons',
+            'nexopos_orders_metas',
+            'nexopos_orders_payments',
+            'nexopos_orders_products',
+            'nexopos_orders_addresses',
+            'nexopos_orders',
+            'nexopos_procurements_products',
+            'nexopos_procurements',
+            'nexopos_products_categories',
+            'nexopos_products_histories',
+            'nexopos_products_galleries',
+            'nexopos_products_metas',
+            'nexopos_products',
+            'nexopos_products_taxes',
+            'nexopos_products_unit_quantities',
+            'nexopos_providers',
+            'nexopos_registers_history',
+            'nexopos_registers',
+            'nexopos_rewards_system_rules',
+            'nexopos_rewards_system',
+            'nexopos_stores',
+            'nexopos_taxes',
+            'nexopos_taxes_groups',
+            'nexopos_transfers_products',
+            'nexopos_transfers',
+            'nexopos_units_groups',
+            'nexopos_notifications',
+            'nexopos_units',
+            'nexopos_medias',
+            'nexopos_options',
+            'nexopos_dashboard_days',
+            'nexopos_dashboard_weeks',
+        ];
+
+        foreach( $tables as $table ) {
+            if ( Hook::filter( 'ns-reset-table', $table ) !== false ) {
+                DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
+            }
+        }
         
         return [
             'status'    =>  'success',
@@ -66,13 +76,13 @@ class ResetController extends DashboardController
 
         switch( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
-                Artisan::call( 'db:seed --class=FirstDemoSeeder' );
+                ( new FirstDemoSeeder )->run();
             break;
             case 'wipe_plus_simple':
-                Artisan::call( 'db:seed --class=FirstDemoSeeder' );
+                ( new FirstDemoSeeder )->run();
             break;
             default:
-                Artisan::call( 'db:seed' );
+                ( new FirstDemoSeeder )->run();
             break;
         }
 

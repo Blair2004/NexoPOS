@@ -310,12 +310,12 @@ class RolesCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]

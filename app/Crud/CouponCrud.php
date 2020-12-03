@@ -459,13 +459,13 @@ class CouponCrud extends CrudService
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/customers/coupons/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/customers/coupons/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )

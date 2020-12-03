@@ -3,7 +3,7 @@ export default {
     name: 'ns-pos-dashboard-button',
     methods: {
         goToDashboard() {
-            return document.location = `/dashboard`;
+            return document.location = POS.settings.getValue()[ 'urls' ][ 'dashboard_url' ];
         }
     }
 }

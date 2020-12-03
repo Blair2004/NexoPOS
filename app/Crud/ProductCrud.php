@@ -617,30 +617,30 @@ class ProductCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
             ], [
                 'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
                 'namespace'     =>      'ns.quantities',
                 'type'          =>      'POPUP',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
             ], [
                 'label'         =>      '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/units' )
+                'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' )
             ], [
                 'label'         =>      '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'products/' . $entry->id . '/history' )
+                'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' )
             ], [
                 'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]

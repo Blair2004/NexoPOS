@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Hook;
 use Carbon\Carbon;
 use App\Services\DateService;
 use App\Models\Media;
@@ -75,7 +76,7 @@ class MediaService
 
             $year           =   $this->date->year;
             $month          =   sprintf( "%02d", $this->date->month );
-            $folderPath     =   $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR;
+            $folderPath     =   Hook::filter( 'ns-media-path', $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR );
             
             $filePath       =   Storage::disk( 'public' )->putFileAs( 
                 '', 
@@ -100,7 +101,7 @@ class MediaService
             $media              =   new Media;
             $media->name        =   $fileName;
             $media->extension   =   $extension;
-            $media->slug        =   $year . '/' . $month . '/' . $fileName;
+            $media->slug        =   Hook::filter( 'ns-media-path', $year . '/' . $month . '/' . $fileName );
             $media->user_id     =   Auth::id();
             $media->save();
 

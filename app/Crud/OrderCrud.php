@@ -496,22 +496,22 @@ class OrderCrud extends CrudService
                 'label'         =>      '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
                 'namespace'     =>      'ns.order-options',
                 'type'          =>      'POPUP',
-                'url'           =>      url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
             ], [
                 'label'         =>      '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
             ], [
                 'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id )
             ], [
                 'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]

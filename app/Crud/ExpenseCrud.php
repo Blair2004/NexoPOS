@@ -143,7 +143,7 @@ class ExpenseCrud extends CrudService
                             'label'         =>  __( 'Active' ),
                             'description'   =>  __( 'determine if the expense is effective or not. Work for recurring and not reccuring expenses.' ),
                             'validation'    =>  'required',
-                            'value'         =>  $entry->active,
+                            'value'         =>  $entry->active ?? '',
                         ], [
                             'type'          =>  'select',
                             'name'          =>  'group_id',
@@ -421,12 +421,12 @@ class ExpenseCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.expenses/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -484,11 +484,11 @@ class ExpenseCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . 'expenses' ),
-            'create'    =>  url( 'dashboard/' . 'expenses/create' ),
-            'edit'      =>  url( 'dashboard/' . 'expenses/edit/{id}' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses/' . '{id}' ),
+            'list'      => ns()->url( 'dashboard/' . 'expenses' ),
+            'create'    => ns()->url( 'dashboard/' . 'expenses/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'expenses/edit/{id}' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses/' . '{id}' ),
         ];
     }
 

@@ -359,7 +359,7 @@ class ExpenseHistoryCrud extends CrudService
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.expenses-history/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses-history/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -420,11 +420,11 @@ class ExpenseHistoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . 'expenses/history' ),
-            'create'    =>  url( 'dashboard/' . 'expenses/history/create' ),
-            'edit'      =>  url( 'dashboard/' . 'expenses/history/edit/' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses-history' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/' . 'ns.expenses-history/{id}' . '' ),
+            'list'      => ns()->url( 'dashboard/' . 'expenses/history' ),
+            'create'    => ns()->url( 'dashboard/' . 'expenses/history/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'expenses/history/edit/' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses-history' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses-history/{id}' . '' ),
         ];
     }
 

@@ -116,6 +116,16 @@ class CrudService
         return $this->bulkActions;
     }
 
+    public function __extractTable( $relation )
+    {
+        $parts  =   explode( 'as', $relation[0] );
+        if ( count( $parts ) === 2 ) {
+            return trim( $parts[0] );
+        } else {
+            return $relation[0];
+        }
+    }
+
     /**
      * get Entries
      * @param crud config
@@ -158,19 +168,38 @@ class CrudService
              * we're extracting the joined table
              * to make sure building the alias works
              */
-            $relations  =   [];
+            $relations      =   [];
+            $relatedTables  =   [];
             
-            collect( $this->relations )->each( function( $relation ) use ( &$relations ){
+            collect( $this->relations )->each( function( $relation ) use ( &$relations, &$relatedTables ){
                 if ( isset( $relation[0] ) ) {
                     if ( ! is_array( $relation[0] ) ) {
                         $relations[]    =   $relation;
+
+                        /**
+                         * We do extract the table name
+                         * defined on the relation array
+                         */
+                        $relatedTables[]    = $this->__extractTable( $relation );
+
                     } else {
-                        collect( $relation )->each( function( $_relation ) use ( &$relations ) {
+                        collect( $relation )->each( function( $_relation ) use ( &$relations, &$relatedTables ) {
                             $relations[]    =   $_relation;
+
+                            /**
+                             * We do extract the table name
+                             * defined on the relation array
+                             */
+                            $relatedTables[]    = $this->__extractTable( $_relation );
                         });
                     }
                 }
             });
+
+            $relatedTables      =   collect( $relatedTables )
+                ->unique()
+                ->push( $this->table ) // the crud table must be considered as a related table as well.
+                ->toArray();
             
             /**
              * Build Select for joined table
@@ -245,18 +274,20 @@ class CrudService
                             $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
 
                             /**
-                             * makes sure first table can be filtered
+                             * makes sure first table can be filtered. We should also check 
+                             * if the column are actual column and not aliases
                              */
                             $relatedTableParts  =   explode( '.', $junction_relation[1] );
-                            if ( count( $relatedTableParts ) === 2 ) {
+                            if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
                                 $junction_relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                             }
 
                             /**
-                             * makes sure the second table can be filtered
+                             * makes sure the second table can be filtered. We should also check 
+                             * if the column are actual column and not aliases
                              */
                             $relatedTableParts  =   explode( '.', $junction_relation[3] );
-                            if ( count( $relatedTableParts ) === 2 ) {
+                            if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
                                 $junction_relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[3];
                             }
 
@@ -271,18 +302,20 @@ class CrudService
                         $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
                         
                         /**
-                         * makes sure the first table can be filtered
+                         * makes sure the first table can be filtered. We should also check 
+                         * if the column are actual column and not aliases
                          */
                         $relatedTableParts  =   explode( '.', $relation[1] );
-                        if ( count( $relatedTableParts ) === 2 ) {
+                        if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
                             $relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                         }
 
                         /**
-                         * makes sure the second table can be filtered
+                         * makes sure the second table can be filtered. We should also check 
+                         * if the column are actual column and not aliases
                          */
                         $relatedTableParts  =   explode( '.', $relation[3] );
-                        if ( count( $relatedTableParts ) === 2 ) {
+                        if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
                             $relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                         }
                         

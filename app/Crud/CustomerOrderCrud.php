@@ -410,11 +410,11 @@ class CustomerOrderCrud extends OrderCrud
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . 'dashboard/customers/orders' ),
-            'create'    =>  url( 'dashboard/' . 'dashboard/customers/orders/create' ),
-            'edit'      =>  url( 'dashboard/' . 'dashboard/customers/orders/edit/' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/' . 'ns.customers.orders' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/' . 'ns.customers.orders/{id}' . '' ),
+            'list'      =>  ns()->url( 'dashboard/' . 'dashboard/customers/orders' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'dashboard/customers/orders/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'dashboard/customers/orders/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers.orders/{id}' . '' ),
         ];
     }
 

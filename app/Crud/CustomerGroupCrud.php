@@ -290,13 +290,13 @@ class CustomerGroupCrud extends CrudService
                 'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( 'dashboard/customers/groups/edit/' . $entry->id )
+                'url'           =>     ns()->url( 'dashboard/customers/groups/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       =>  url( '/api/nexopos/v4/customers/groups/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/customers/groups/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )

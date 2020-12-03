@@ -128,7 +128,7 @@ class UnitGroupCrud extends CrudService
                         [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
-                            'value' =>  $entry->description,
+                            'value' =>  $entry->description ?? '',
                             'label' =>  __( 'Description' ),
                         ]
                     ]

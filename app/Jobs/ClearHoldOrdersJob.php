@@ -69,16 +69,19 @@ class ClearHoldOrdersJob implements ShouldQueue
                 return false;
             });
 
-        /**
-         * Dispatch notification
-         * to let admins know it has been cleared.
-         */
-        $notification->create([
-            'title'     =>      __( 'Hold Order Cleared' ),
-            'message'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() )
-        ])->dispatchForGroup([
-            Role::namespace( 'admin' ),
-            Role::namespace( 'nexopos.store.administrator' ),
-        ]);
+        if ( $deleted->count() > 0 ) {
+            /**
+             * Dispatch notification
+             * to let admins know it has been cleared.
+             */
+            $notification->create([
+                'title'         =>  __( 'Hold Order Cleared' ),
+                'identifier'    =>  self::class,
+                'description'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() )
+            ])->dispatchForGroup([
+                Role::namespace( 'admin' ),
+                Role::namespace( 'nexopos.store.administrator' ),
+            ]);
+        }
     }
 }

@@ -25,7 +25,8 @@ class CreateUnitsTable extends Migration
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->integer( 'group_id' );
-                $table->float( 'value' );                
+                $table->float( 'value' );        
+                $table->string( 'preview_url' )->nullable();        
                 $table->boolean( 'base_unit' ); // 0, 1
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

@@ -161,7 +161,9 @@ class OrdersController extends DashboardController
                 'ns_pos_printing_enabled_for'           =>  $this->optionsService->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
             ],
             'urls'              =>  [
-                'printing_url'  =>      Hook::filter( 'ns_pos_printing_url', url( '/dashboard/orders/receipt/{id}?dashboard=disabled&autoprint=true' ) )
+                'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', url( '/dashboard/orders/receipt/{id}?dashboard=disabled&autoprint=true' ) ),
+                'orders_url'    =>      ns()->route( 'ns.dashboard.orders' ),
+                'dashboard_url' =>      ns()->route( 'ns.dashboard.home' ),
             ],
             'paymentTypes'  =>  $this->paymentTypes
         ]);

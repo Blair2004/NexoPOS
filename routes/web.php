@@ -69,7 +69,7 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class, SubstituteBindi
             Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
             Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
             Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
-            Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.users.profile' ) );
+            Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
             Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
             Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
         });

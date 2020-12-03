@@ -490,17 +490,17 @@ class CustomerCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
-                'url'           =>      url( 'dashboard/customers/edit/' . $entry->id )
+                'url'           =>     ns()->url( 'dashboard/customers/edit/' . $entry->id )
             ], [
                 'label'         =>      __( 'Orders' ),
                 'namespace'     =>      'customers_orders',
                 'type'          =>      'GOTO',
-                'url'           =>      url( 'dashboard/customers/' . $entry->id . '/orders' )
+                'url'           =>     ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a customers' )

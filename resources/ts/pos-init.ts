@@ -1,4 +1,4 @@
-import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
+    import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { Product } from "./interfaces/product";

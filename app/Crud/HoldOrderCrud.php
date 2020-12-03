@@ -514,11 +514,11 @@ class HoldOrderCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . 'ns.hold-orders' ),
-            'create'    =>  url( 'dashboard/' . 'ns.hold-orders/create' ),
-            'edit'      =>  url( 'dashboard/' . 'ns.hold-orders/edit/' ),
-            'post'      =>  url( 'dashboard/' . 'ns.hold-orders' ),
-            'put'       =>  url( 'dashboard/' . 'ns.hold-orders/' . '' ),
+            'list'      => ns()->url( 'dashboard/' . 'ns.hold-orders' ),
+            'create'    => ns()->url( 'dashboard/' . 'ns.hold-orders/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'ns.hold-orders/edit/' ),
+            'post'      => ns()->url( 'dashboard/' . 'ns.hold-orders' ),
+            'put'       => ns()->url( 'dashboard/' . 'ns.hold-orders/' . '' ),
         ];
     }
 

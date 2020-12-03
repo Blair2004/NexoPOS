@@ -281,12 +281,12 @@ class ExpenseCategoryCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'expenses/categories' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'expenses/categories' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.expenses-categories/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses-categories/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -344,11 +344,11 @@ class ExpenseCategoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . 'expenses/categories' ),
-            'create'    =>  url( 'dashboard/' . 'expenses/categories/create' ),
-            'edit'      =>  url( 'dashboard/' . 'expenses/categories/edit/' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/ns.expenses-categories/{id}' ),
+            'list'      => ns()->url( 'dashboard/' . 'expenses/categories' ),
+            'create'    => ns()->url( 'dashboard/' . 'expenses/categories/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'expenses/categories/edit/' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/ns.expenses-categories/{id}' ),
         ];
     }
 
