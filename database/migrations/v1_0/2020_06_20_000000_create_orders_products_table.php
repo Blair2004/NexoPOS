@@ -44,9 +44,9 @@ class CreateOrdersProductsTable extends Migration
                 $table->float( 'total_gross_price' )->default(0);
                 $table->float( 'total_price' )->default(0);
                 $table->float( 'total_purchase_price' )->default(0);
-                $table->string( 'return_condition' );
-                $table->text( 'return_observations' );
-                $table->float( 'total_net_price' );
+                $table->string( 'return_condition' )->nullable();
+                $table->text( 'return_observations' )->nullable();
+                $table->float( 'total_net_price' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->string( 'status' )->default( 'sold' ); // sold, refunded
                 $table->timestamps();

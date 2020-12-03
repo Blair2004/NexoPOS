@@ -34,7 +34,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware([ 'ns.installed', CheckMigrationStatus::class, SubstituteBindings::class ])->group( function() {
+Route::middleware([ 
+    'ns.installed', 
+    CheckMigrationStatus::class, 
+    SubstituteBindings::class 
+])->group( function() {
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );

@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Models\Customer;
 
@@ -49,9 +50,7 @@ class CustomersController extends DashboardController
      */
     public function listCustomers()
     {
-        return $this->view( 'pages.dashboard.customers.list', [
-            'title'     =>  __( 'Customers' )
-        ]);
+        return CustomerCrud::table();
     }
 
     /**

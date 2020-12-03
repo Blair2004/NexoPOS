@@ -250,8 +250,7 @@ class CrudService
                         $columnsLongName[]  =   $__name;
                         $select[]           =   $__name . ' as ' . trim( $hasAlias[1] ) . '_' . $column;
                     } else {
-                        $relation[0]        =   $this->hookTableName( $relation[0] );
-                        $__name             =   $relation[0] . '.' . $column;
+                        $__name             =   $this->hookTableName( $relation[0] ) . '.' . $column;
                         $columnsLongName[]  =   $__name;
                         $select[]           =   $__name . ' as ' . $relation[0] . '_' . $column;
                     }
@@ -278,6 +277,7 @@ class CrudService
                              * if the column are actual column and not aliases
                              */
                             $relatedTableParts  =   explode( '.', $junction_relation[1] );
+
                             if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
                                 $junction_relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                             }
@@ -301,6 +301,12 @@ class CrudService
                         $hasAlias           =   explode( 'as', $relation[0]);
                         $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
                         
+                        /**
+                         * makes sure the first table can be filtered. We should also check 
+                         * if the column are actual column and not aliases
+                         */
+                        $relation[0]   =   $this->hookTableName( $relation[0] );
+
                         /**
                          * makes sure the first table can be filtered. We should also check 
                          * if the column are actual column and not aliases

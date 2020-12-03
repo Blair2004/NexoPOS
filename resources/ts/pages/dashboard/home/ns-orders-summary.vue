@@ -6,7 +6,7 @@
                 
             </div>
         </div>
-        <div class="head bg-gray-100 flex-auto flex-col flex h-56">
+        <div class="head bg-gray-100 flex-auto flex-col flex h-56 overflow-y-auto">
             <div class="h-full flex items-center justify-center" v-if="! hasLoaded">
                 <ns-spinner size="8" border="4"></ns-spinner>
             </div>
@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <h2 
-                        :class="order.payment_status === 'paid' ? 'text-green-600' : 'bg-gray-700'" 
+                        :class="order.payment_status === 'paid' ? 'text-green-600' : 'text-gray-700'" 
                         class="text-xl font-bold">{{ order.total | currency }}</h2>
                 </div>
             </div>

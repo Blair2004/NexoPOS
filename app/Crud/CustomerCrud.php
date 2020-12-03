@@ -490,19 +490,19 @@ class CustomerCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit_customers_group',
                 'type'          =>      'GOTO',
-                'url'           =>     ns()->url( 'dashboard/customers/edit/' . $entry->id )
+                'url'           =>      ns()->url( 'dashboard/customers/edit/' . $entry->id )
             ], [
                 'label'         =>      __( 'Orders' ),
                 'namespace'     =>      'customers_orders',
                 'type'          =>      'GOTO',
-                'url'           =>     ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
+                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
             ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
+                'label'     =>      __( 'Delete' ),
+                'namespace' =>      'delete',
+                'type'      =>      'DELETE',
+                'url'       =>      ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
                 'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
+                    'message'   =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a customers' )
                 ]
             ]
@@ -571,9 +571,9 @@ class CustomerCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'  =>  'ns.customers.index',
-            'create'    =>  'ns.customers.index/create',
-            'edit'      =>  'ns.customers.index/edit/#'
+            'list'      =>  ns()->url( '/dashboard/customers' ),
+            'create'    =>  ns()->url( '/dashboard/customers/create' ),
+            'edit'      =>  ns()->url( '/dashboard/customers/edit/{id}' )
         ];
     }
 
