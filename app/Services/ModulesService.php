@@ -239,29 +239,37 @@ class ModulesService
      * Run Modules
      * @return void
      */
-    public function init()
+    public function boot( $module = null )
     {
-        foreach( $this->modules as $module ) {
-            if ( ! $module[ 'enabled' ] ) {
-                continue;
+        if ( ! empty( $module ) && $module[ 'enabled' ] ) {
+            $this->__boot( $module );
+        } else {
+            foreach( $this->modules as $module ) {
+                if ( ! $module[ 'enabled' ] ) {
+                    continue;
+                }
+                $this->__boot( $module );
             }
-
-            /**
-             * Autoload Vendors
-             */
-            if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
-                include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
-            }
-
-            // include module index file
-            include_once( $module[ 'index-file' ] );
-            
-            // run module entry class
-            $loadedModule     =   new $module[ 'entry-class' ];
-
-            // add view namespace
-            View::addNamespace( ucwords( $module[ 'namespace' ] ), $module[ 'views-path' ] );
         }
+    }
+
+    private function __boot( $module )
+    {
+        /**
+         * Autoload Vendors
+         */
+        if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
+            include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
+        }
+
+        // include module index file
+        include_once( $module[ 'index-file' ] );
+        
+        // run module entry class
+        new $module[ 'entry-class' ];
+
+        // add view namespace
+        View::addNamespace( ucwords( $module[ 'namespace' ] ), $module[ 'views-path' ] );
     }
 
     /**

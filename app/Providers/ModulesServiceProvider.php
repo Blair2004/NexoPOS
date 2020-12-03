@@ -16,7 +16,7 @@ class ModulesServiceProvider extends ServiceProvider
     {
         $modules        =   app()->make( ModulesService::class );
 
-        collect( $modules )->each( fn( $module ) => $modules->init( $module ) );
+        collect( $modules->getEnabled() )->each( fn( $module ) => $modules->boot( $module ) );
         
         /**
          * trigger register method only for enabled modules
