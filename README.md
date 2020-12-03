@@ -24,7 +24,9 @@ We're frequently discussing about the future of the app (while waiting discussio
 - Password : 123456
 
 ## Major Additions & Benefits
-Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operation will ensure a working application that perform long task behind the scene while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. Let's recapt the major additions.
+Thanks to Laravel, NexoPOS will offer a lot of interesting features that were not possible using CodeIgniter. Most of all we'll have a clear and testable code base, important to keep improving the application without bringing additionnal issues. But also, asynchronous operations, to ensure a working application that perform long task behind the scene, while the application remains blazing fast. The email wasn't perfect on NexoPOS 3.x, that will be solved on NexoPOS 4.x. 
+
+Let's recapt the major additions.
 
 - Asynchronous Stock Operation (control avialable stock)
 - Asynchronous Notifications (get emailed about exausted, damaged & expired stock)
@@ -37,6 +39,7 @@ Thanks to Laravel, NexoPOS will offer a lot of interesting issue that wasn't pos
 - Offline Service*
 - Accurate Stock Report (shows when a product sold has been procured).
 - Remote Printing With Nexo Print Server 4.x
+- [Dedicated Marketplace](https://my.nexopos.com/en/marketplace)
 - A lot more coming up...
 
 ## Installation
