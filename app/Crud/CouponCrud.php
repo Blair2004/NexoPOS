@@ -541,7 +541,7 @@ class CouponCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Coupons' ),
                 'confirm'       =>  __( 'Would you like to delete selected coupons?' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

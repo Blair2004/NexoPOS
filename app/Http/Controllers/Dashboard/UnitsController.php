@@ -117,9 +117,9 @@ class UnitsController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units Groups' ),
-            'createUrl'    =>  url( '/dashboard/units/groups/create' ),
+            'createUrl'     =>  ns()->url( '/dashboard/units/groups/create' ),
             'description'   =>  __( 'List of available units groups.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups' ),
         ]);
     }
 
@@ -129,9 +129,9 @@ class UnitsController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>  __( 'Units' ),
-            'createUrl'    =>  url( '/dashboard/units/create' ),
+            'createUrl'     =>  ns()->url( '/dashboard/units/create' ),
             'description'   =>  __( 'List of available units.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units' ),
         ]);
     }
 
@@ -141,10 +141,10 @@ class UnitsController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit Group' ),
-            'returnUrl'    =>  url( '/dashboard/units/groups' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/units/groups' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups' ),
             'description'   =>  __( 'Allows you to register a new unit group.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups/form-config' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups/form-config' )
         ]);
     }
 
@@ -159,11 +159,11 @@ class UnitsController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Unit Group' ),
-            'returnUrl'    =>  url( '/dashboard/units/groups' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units-groups/' . $group->id ),
+            'returnUrl'     =>  ns()->url( '/dashboard/units/groups' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups/' . $group->id ),
             'submitMethod'  =>  'PUT',
             'description'   =>  __( 'Edit an existing unit group.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units-groups/form-config/' . $group->id )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups/form-config/' . $group->id )
         ]);
     }
 
@@ -173,10 +173,10 @@ class UnitsController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Unit' ),
-            'returnUrl'    =>  url( '/dashboard/units' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/units' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.units' ),
             'description'   =>  __( 'Allows you to register a new unit.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units/form-config' )
         ]);
     }
 
@@ -187,10 +187,10 @@ class UnitsController extends DashboardController
         return $this->view( 'pages.dashboard.crud.form', [
             'submitMethod'  =>  'PUT',
             'title'         =>  __( 'Edit Unit' ),
-            'returnUrl'    =>  url( '/dashboard/units' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/units' ),
             'description'   =>  __( 'Adjusting an existing unit.' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.units/' . $unit->id ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.units/form-config/' . $unit->id )
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.units/' . $unit->id ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.units/form-config/' . $unit->id )
         ]);
     }
 }

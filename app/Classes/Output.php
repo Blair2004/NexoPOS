@@ -3,7 +3,7 @@ namespace App\Classes;
 
 use Illuminate\Support\Facades\View;
 
-class Response 
+class Output 
 {
     protected $output   =   [];
 
@@ -15,6 +15,11 @@ class Response
     public function addView( $view, $options = [])
     {
         $this->output[]     =   View::make( $view, $options );
+    }
+
+    public function clear()
+    {
+        $this->output       =   [];
     }
 
     public function setOutput( $view )

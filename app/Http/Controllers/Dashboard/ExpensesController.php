@@ -32,10 +32,10 @@ class ExpensesController extends DashboardController
     public function listExpenses()
     {
         return $this->view( 'pages.dashboard.crud.table', [
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.expenses' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.expenses' ),
             'title'         =>  __( 'Expenses' ),
             'description'   =>  __( 'List all created expenses' ),
-            'createUrl'    =>  url( '/dashboard/expenses/create' )
+            'createUrl'     =>  ns()->url( '/dashboard/expenses/create' )
         ]);
     }
 

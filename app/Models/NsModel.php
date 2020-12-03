@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class NsModel extends Model
 {
-    public function getTable()
+    public function __construct( $attributes = [] )
     {
-        return Hook::filter( 'ns-model-table', $this->table );
+        parent::__construct( $attributes );
+        $this->table    =   Hook::filter( 'ns-model-table', $this->table );
     }
 }

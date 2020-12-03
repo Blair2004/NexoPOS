@@ -7,7 +7,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
-use App\Classes\Response;
+use App\Classes\Output;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Exceptions\NotFoundException;
@@ -334,16 +334,16 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.read.products' ]);
 
-        Hook::addFilter( 'ns-crud-footer', function( Response $response ) {
-            $response->addView( 'pages.dashboard.products.quantity-popup' );
-            return $response;
+        Hook::addFilter( 'ns-crud-footer', function( Output $output ) {
+            $output->addView( 'pages.dashboard.products.quantity-popup' );
+            return $output;
         });
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Products List' ),
-            'createUrl'     =>  url( '/dashboard/products/create' ),
+            'createUrl'     =>  ns()->url( '/dashboard/products/create' ),
             'desccription'  =>  __( 'List all products available on the system' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products' ),
         ]);
     }
 
@@ -354,11 +354,11 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.create', [
             'title'         =>  __( 'Edit a product' ),
             'description'   =>  __( 'Makes modifications to a product' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/products/' . $product->id ),
-            'returnUrl'     =>  url( '/dashboard/products' ),
-            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/products/' . $product->id ),
+            'returnUrl'     =>  ns()->url( '/dashboard/products' ),
+            'unitsUrl'      =>  ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
             'submitMethod'  =>  'PUT',
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products/form-config/' . $product->id ),
         ]);
     }
 
@@ -369,10 +369,10 @@ class ProductsController extends DashboardController
         return $this->view( 'pages.dashboard.products.create', [
             'title'         =>  __( 'Create a product' ),
             'description'   =>  __( 'Add a new product on the system' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/products' ),
-            'returnUrl'    =>  url( '/dashboard/products' ),
-            'unitsUrl'      =>  url( '/api/nexopos/v4/units-groups/{id}/units' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products/form-config' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/products' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/products' ),
+            'unitsUrl'      =>  ns()->url( '/api/nexopos/v4/units-groups/{id}/units' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products/form-config' ),
         ]);
     }
 
@@ -393,9 +393,9 @@ class ProductsController extends DashboardController
      */
     public function productHistory( $identifier )
     {
-        Hook::addFilter( 'ns-crud-footer', function( Response $response, $identifier ) {
-            $response->addView( 'pages.dashboard.products.history' );
-            return $response;
+        Hook::addFilter( 'ns-crud-footer', function( Output $output, $identifier ) {
+            $output->addView( 'pages.dashboard.products.history' );
+            return $output;
         }, 10, 2 );
 
         return ProductHistoryCrud::table([

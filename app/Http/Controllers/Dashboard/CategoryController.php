@@ -7,16 +7,12 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-
 use App\Models\ProductCategory;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
 {
@@ -55,10 +51,7 @@ class CategoryController extends DashboardController
              * linked to it.
              */
             if ( $category->subCategories->count() > 0 ) {
-                throw new CoreException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Can\'t delete a category having sub categories linked to it.' )
-                ]);
+                throw new NotFoundException( __( 'Can\'t delete a category having sub categories linked to it.' ) );
             }
             
             $category->delete();
@@ -69,10 +62,7 @@ class CategoryController extends DashboardController
             ];
         }
 
-        throw new CoreException([
-            'stauts'    =>  'failed',
-            'message'   =>  __( 'Unable to find the category using the provided identifier.' )
-        ]);
+        throw new NotFoundException( __( 'Unable to find the category using the provided identifier.' ) );
     }
 
     /**
@@ -88,18 +78,12 @@ class CategoryController extends DashboardController
          */
         $parentCategory   =   ProductCategory::find( $request->input( 'parent_id' ) );
         if ( ! $parentCategory instanceof ProductCategory && intval( $request->input( 'parent_id' ) ) !== 0 ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the attached category parent' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the attached category parent' ) );
         }
 
         $fields         =   $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
         if ( empty( $fields ) ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' )
-            ]);
+            throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
 
         $category    =   new ProductCategory;
@@ -133,18 +117,12 @@ class CategoryController extends DashboardController
          */
         $category   =   ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory && $request->input( 'parent_id' ) !== 0 ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the category using the provided identifier' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
         $fields         =   $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
         if ( empty( $fields ) ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' )
-            ]);
+            throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
 
         foreach( $fields as $name => $field ) {
@@ -170,10 +148,7 @@ class CategoryController extends DashboardController
     {
         $category   =   ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the category using the provided identifier' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
         return $category->products->filter( function( $product ) {
@@ -190,10 +165,7 @@ class CategoryController extends DashboardController
     {
         $category   =   ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory ) {
-            throw new CoreException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the category using the provided identifier' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
         return $category->products->filter( function( $product ) {
@@ -221,9 +193,9 @@ class CategoryController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Product Categories' ),
-            'createUrl'    =>  url( '/dashboard/products/categories/create' ),
+            'createUrl'     =>  ns()->url( '/dashboard/products/categories/create' ),
             'description'   =>  __( 'List all categories available.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories' ),
         ]);
     }
 
@@ -231,10 +203,10 @@ class CategoryController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Product Category' ),
-            'returnUrl'    =>  url( '/dashboard/products/categories' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products-categories' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/products/categories' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories' ),
             'description'   =>  __( 'Allow you to create a new product category.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/form-config' )
         ]);
     }
 
@@ -245,11 +217,11 @@ class CategoryController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Edit Product Category' ),
-            'returnUrl'    =>  url( '/dashboard/products/categories' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/products/categories' ),
             'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.products-categories/' . $category->id ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $category->id ),
             'description'   =>  __( 'Allow you to edit an existing product category.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )
         ]);
     }
 

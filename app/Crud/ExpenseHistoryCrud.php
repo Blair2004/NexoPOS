@@ -438,7 +438,7 @@ class ExpenseHistoryCrud extends CrudService
             [
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

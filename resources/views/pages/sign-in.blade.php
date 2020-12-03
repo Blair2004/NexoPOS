@@ -1,7 +1,7 @@
 <?php
 
 use App\Classes\Hook;
-use App\Classes\Response;
+use App\Classes\Output;
 ?>
 @extends( 'layout.base' )
 
@@ -12,9 +12,9 @@ use App\Classes\Response;
                 <div class="flex justify-center items-center py-6">
                     <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-400 via-teal-400 to-purple-400 bg-gradient-to-br">NexoPOS</h2>
                 </div>
-                {!! Hook::filter( 'ns.before-login-fields', new Response ) !!}
+                {!! Hook::filter( 'ns.before-login-fields', new Output ) !!}
                 @include( '/common/auth/sign-in-form' )
-                {!! Hook::filter( 'ns.after-login-fields', new Response ) !!}
+                {!! Hook::filter( 'ns.after-login-fields', new Output ) !!}
             </div>
         </div>
     </div>
@@ -22,6 +22,6 @@ use App\Classes\Response;
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-login-footer', new Response ) !!}
+    {!! Hook::filter( 'ns-login-footer', new Output ) !!}
     <script src="{{ asset( 'js/auth.js' ) }}"></script>
 @endsection

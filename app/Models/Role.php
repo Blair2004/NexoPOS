@@ -22,7 +22,6 @@ class Role extends Model
 
     /**
      * Relation with users
-     * @return void
     **/
     public function users()
     {

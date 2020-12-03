@@ -1,6 +1,6 @@
 import * as rx from "rx";
 import * as rxjs from 'rxjs';
-import { nsUrl } from '@/bootstrap'
+import { nsHooks, nsUrl } from '@/bootstrap'
 
 export class HttpClient {
     _subject: rxjs.Subject<{}>;
@@ -40,9 +40,10 @@ export class HttpClient {
          * for an unknown reason
          * trailing slash is buggy on https.
          */
-        url     =   url.replace( /\/$/, '' );
+        url     =   nsHooks.applyFilters( 'http-client-url', url.replace( /\/$/, '' ) );
         
         this._subject.next({ identifier: 'async.start', url, data });
+
         return new rxjs.Observable( observer => {
             this._client[ type ]( url, data, { 
                 ...this._client.defaults[ type ],

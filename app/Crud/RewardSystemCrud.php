@@ -464,7 +464,7 @@ class RewardSystemCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Rewards' ),
                 'confirm'       =>  __( 'Would you like to delete selected rewards?' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

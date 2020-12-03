@@ -7,14 +7,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\NotAllowedException;
-use Tendoo\Core\Exceptions\NotFoundException;
 
 use App\Models\CustomerGroup;
 use App\Models\Customer;
@@ -156,9 +153,7 @@ class CustomersGroupsController extends DashboardController
         $to     =   $request->input( 'to' );
 
         if( $to === $from ) {
-            throw new NotAllowedException([
-                'message'   =>  __( 'Unable to transfer customers to the same account.' )
-            ]);
+            throw new NotAllowedException( __( 'Unable to transfer customers to the same account.' ) );
         }
 
         $fromModel      =   CustomerGroup::findOrFail( $from );

@@ -1,6 +1,8 @@
 <?php
 
 use App\Services\Options;
+use App\Classes\Output;
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Cookie;
 
 $options            =   app()->make( Options::class );
@@ -29,4 +31,9 @@ ns.base_url         =   '{{ url( "/" ) }}';
 <script src="{{ asset( 'js/vendor.js' ) }}"></script>
 <script src="{{ asset( 'js/bootstrap.js' ) }}"></script>
 <script src="{{ asset( 'js/popups.js' ) }}"></script>
+<?php 
+    $output     =   new Output;
+    Hook::action( 'ns-dashboard-footer', $output );
+    echo ( string ) $output;
+?>
 @yield( 'layout.dashboard.footer.inject' )

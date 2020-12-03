@@ -123,8 +123,9 @@ class CrudService
      */
     public function getEntries()
     {
+        $table              =   Hook::filter( 'ns-model-table', $this->table );
         $request            =   app()->make( Request::class );
-        $query              =   DB::table( $this->table );
+        $query              =   DB::table( $table );
         $columnsLongName    =   [];
         /**
          * Let's loop relation if they exists
@@ -140,15 +141,15 @@ class CrudService
              * We're caching the table columns, since we would like to 
              * avoid many DB Calls
              */
-            if( ! empty( Cache::get( 'table-columns-' . $this->table ) ) && true === false ) {
-                $columns        =   Cache::get( 'table-columns-' . $this->table );
+            if( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
+                $columns        =   Cache::get( 'table-columns-' . $table );
             } else {
-                $columns        =   Schema::getColumnListing( $this->table );
-                Cache::put( 'table-columns-' . $this->table, $columns, Carbon::now()->addDays(1) );
+                $columns        =   Schema::getColumnListing( $table );
+                Cache::put( 'table-columns-' . $table, $columns, Carbon::now()->addDays(1) );
             }
 
             foreach( $columns as $index => $column ) {
-                $__name             =   $this->table . '.' . $column;
+                $__name             =   $table . '.' . $column;
                 $columnsLongName[]  =   $__name;
                 $select[]           =  $__name . ' as ' . $column;
             }
@@ -188,6 +189,7 @@ class CrudService
                     $table          =   $relation[0];
                     $pick           =   $this->pick ?? [];
                     $hasAlias       =   explode( 'as', $relation[0] ); // if there is an alias, let's just pick the table name
+                    $hasAlias[0]    =   $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName      =   $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
                     $columns        =   collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
                         ->filter( function( $column ) use ( $pick, $table, $aliasName ) {
@@ -207,6 +209,7 @@ class CrudService
 
                 foreach( $columns as $index => $column ) {
                     $hasAlias           =   explode( 'as', $relation[0]);
+                    $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
 
                     /**
                      * If the relation has an alias, we'll 
@@ -218,6 +221,7 @@ class CrudService
                         $columnsLongName[]  =   $__name;
                         $select[]           =   $__name . ' as ' . trim( $hasAlias[1] ) . '_' . $column;
                     } else {
+                        $relation[0]        =   $this->hookTableName( $relation[0] );
                         $__name             =   $relation[0] . '.' . $column;
                         $columnsLongName[]  =   $__name;
                         $select[]           =   $__name . ' as ' . $relation[0] . '_' . $column;
@@ -238,6 +242,24 @@ class CrudService
                     if ( $junction !== 'join' ) {
                         foreach( $relation as $junction_relation ) {
                             $hasAlias           =   explode( 'as', $junction_relation[0]);
+                            $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
+
+                            /**
+                             * makes sure first table can be filtered
+                             */
+                            $relatedTableParts  =   explode( '.', $junction_relation[1] );
+                            if ( count( $relatedTableParts ) === 2 ) {
+                                $junction_relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                            }
+
+                            /**
+                             * makes sure the second table can be filtered
+                             */
+                            $relatedTableParts  =   explode( '.', $junction_relation[3] );
+                            if ( count( $relatedTableParts ) === 2 ) {
+                                $junction_relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[3];
+                            }
+
                             if ( count( $hasAlias ) === 2 ) {
                                 $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $junction_relation[1], $junction_relation[2], $junction_relation[3] );
                             } else {
@@ -246,6 +268,25 @@ class CrudService
                         }
                     } else {
                         $hasAlias           =   explode( 'as', $relation[0]);
+                        $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
+                        
+                        /**
+                         * makes sure the first table can be filtered
+                         */
+                        $relatedTableParts  =   explode( '.', $relation[1] );
+                        if ( count( $relatedTableParts ) === 2 ) {
+                            $relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                        }
+
+                        /**
+                         * makes sure the second table can be filtered
+                         */
+                        $relatedTableParts  =   explode( '.', $relation[3] );
+                        if ( count( $relatedTableParts ) === 2 ) {
+                            $relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                        }
+                        
+
                         if ( count( $hasAlias ) === 2 ) {
                             $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $relation[1], $relation[2], $relation[3] );
                         } else {
@@ -350,6 +391,16 @@ class CrudService
         }
 
         return $entries;
+    }
+
+    private function hookTableName( $tableName )
+    {
+        return Hook::filter( 'ns-model-table', $tableName );
+    }
+
+    public function hook( $query )
+    {
+        //
     }
 
     /**
@@ -547,7 +598,7 @@ class CrudService
             /**
              * This create the src URL using the "namespace".
              */
-            'src'           =>  url( '/api/nexopos/v4/crud/' . $instance->namespace ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace ),
 
             /**
              * This pull the creation link. That link should takes the user
@@ -602,7 +653,7 @@ class CrudService
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src'           =>  $config[ 'src' ] ?? ( url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
+            'src'           =>  $config[ 'src' ] ?? ( ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.

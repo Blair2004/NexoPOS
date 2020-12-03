@@ -181,15 +181,15 @@ class CustomersController extends DashboardController
     public function editCustomer( Customer $customer )
     {
         return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  sprintf( __( 'Edit Customer : %s' ), $customer->name ),
-            'description'   =>  __( 'Edit an existing customer.' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.customers/' . $customer->id ),
-            'returnUrl'    =>  url( '/dashboard/customers' ),
-            'submitMethod'  =>  'PUT',
+            'title'             =>  sprintf( __( 'Edit Customer : %s' ), $customer->name ),
+            'description'       =>  __( 'Edit an existing customer.' ),
+            'submitUrl'         =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $customer->id ),
+            'returnUrl'         =>  ns()->url( '/dashboard/customers' ),
+            'submitMethod'      =>  'PUT',
             'mainFieldLabel'    =>  __( 'Customer Name' ),
-            'saveButton'    =>  __( 'Update Customer' ),
-            'src'        =>  url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
-            'customer'      =>  $customer
+            'saveButton'        =>  __( 'Update Customer' ),
+            'src'               =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
+            'customer'          =>  $customer
         ]);
     }
 
@@ -214,8 +214,8 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Coupons List' ),
             'description'   =>  __( 'Manage all created coupons.' ),
-            'createUrl'    =>  url( '/dashboard/customers/coupons/create' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons' )
+            'createUrl'    =>  ns()->url( '/dashboard/customers/coupons/create' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons' )
         ]);
     }
 
@@ -224,10 +224,10 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title'         =>  __( 'Create Coupon' ),
             'description'   =>  __( 'helps you creating a coupon.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
-            'returnUrl'    =>  url( '/dashboard/customers/coupons' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
+            'returnUrl'    =>  ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'POST',
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons' ),
         ]);
     }
 
@@ -236,10 +236,10 @@ class CustomersController extends DashboardController
         return $this->view( 'pages.dashboard.coupons.create', [
             'title'         =>  __( 'Edit Coupon' ),
             'description'   =>  __( 'Editing an existing coupon.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
-            'returnUrl'     =>  url( '/dashboard/customers/coupons' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
+            'returnUrl'     =>  ns()->url( '/dashboard/customers/coupons' ),
             'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
 
@@ -282,7 +282,7 @@ class CustomersController extends DashboardController
     public function getCustomersOrders( Customer $customer )
     {
         return CustomerOrderCrud::table([
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
             'queryParams'   =>  [
                 'customer_id'   =>  $customer->id
             ]

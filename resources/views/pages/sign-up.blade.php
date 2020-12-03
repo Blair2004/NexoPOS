@@ -1,7 +1,7 @@
 <?php
 
-use App\Classes\Response;
-
+use App\Classes\Output;
+use App\Classes\Hook;
 ?>
 
 @extends( 'layout.base' )
@@ -22,6 +22,6 @@ use App\Classes\Response;
 
 @section( 'layout.base.footer' )
     @parent
-    {!! Hook::filter( 'ns-register-footer', new Response ) !!}
+    {!! Hook::filter( 'ns-register-footer', new Output ) !!}
     <script src="{{ asset( 'js/auth.js' ) }}"></script>
 @endsection

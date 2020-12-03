@@ -128,6 +128,7 @@ class UnitGroupCrud extends CrudService
                         [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
+                            'value' =>  $entry->description,
                             'label' =>  __( 'Description' ),
                         ]
                     ]
@@ -286,12 +287,12 @@ class UnitGroupCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.units-groups/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -365,7 +366,7 @@ class UnitGroupCrud extends CrudService
             [
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

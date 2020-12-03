@@ -340,18 +340,18 @@ class ProviderCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
             ], [
                 'label'         =>      __( 'See Procurements' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
+                'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -425,7 +425,7 @@ class ProviderCrud extends CrudService
             [
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.dashboard.crud-actions', [
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])
             ]

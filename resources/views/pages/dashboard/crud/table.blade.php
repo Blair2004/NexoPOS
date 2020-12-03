@@ -1,6 +1,6 @@
 <?php
 use App\Classes\Hook;
-use App\Classes\Response;
+use App\Classes\Output;
 ?>
 @extends( 'layout.dashboard' )
 
@@ -30,5 +30,5 @@ $identifier    =   collect( explode( '/', $src ) )
     ->filter( fn( $segment ) => ! empty( $segment ) )
     ->last();
 ?>
-{!! ( string ) Hook::filter( 'ns-crud-footer', new Response, $identifier ) !!}
+{!! ( string ) Hook::filter( 'ns-crud-footer', new Output, $identifier ) !!}
 @endsection

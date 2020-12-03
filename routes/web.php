@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use App\Http\Controllers\Dashboard\ProductsController;
@@ -8,10 +9,12 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\ModulesController;
+use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use Illuminate\Support\Facades\Route;
 use dekor\ArrayToTextTable;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Route as RoutingRoute;
 
 /*
@@ -31,7 +34,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( function() {
+Route::middleware([ 'ns.installed', CheckMigrationStatus::class, SubstituteBindings::class ])->group( function() {
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
@@ -61,6 +64,14 @@ Route::middleware([ 'ns.installed', CheckMigrationStatus::class ])->group( funct
             Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules-upload' );
             Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules-upload' );
             Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules-migrate' );
+
+            Route::get( '/users', [ UsersController::class, 'listUsers' ]);
+            Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
+            Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
+            Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
+            Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.users.profile' ) );
+            Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
+            Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
         });
     });
 });

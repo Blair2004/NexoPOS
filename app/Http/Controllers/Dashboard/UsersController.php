@@ -35,7 +35,7 @@ class UsersController extends DashboardController
 
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Users List' ),
-            'createUrl'    =>  url( '/dashboard/users/create' ),
+            'createUrl'     =>  url( '/dashboard/users/create' ),
             'description'   =>  __( 'Manage all users available.' ),
             'src'           =>  url( '/api/nexopos/v4/crud/ns.users' ),
         ]);

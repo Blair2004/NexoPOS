@@ -206,10 +206,10 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Tax Group' ),
-            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/taxes/groups' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
             'description'   =>  __( 'Add a new tax group on the system.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
         ]);
     }
 
@@ -221,11 +221,11 @@ class TaxesController extends DashboardController
     {
         return $this->view( 'pages.dashboard.crud.form', [
             'title'         =>  __( 'Create New Tax Group' ),
-            'returnUrl'    =>  url( '/dashboard/taxes/groups' ),
+            'returnUrl'     =>  ns()->url( '/dashboard/taxes/groups' ),
             'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
+            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
             'description'   =>  __( 'Add a new tax group on the system.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
+            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
         ]);
     }
 }

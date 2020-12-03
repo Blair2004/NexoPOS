@@ -85,14 +85,6 @@ Route::get( '/units/groups', [ UnitsController::class, 'listUnitsGroups' ]);
 Route::get( '/units/groups/create', [ UnitsController::class, 'createUnitGroup' ]);
 Route::get( '/units/groups/edit/{group}', [ UnitsController::class, 'editUnitGroup' ]);
 
-Route::get( '/users', [ UsersController::class, 'listUsers' ]);
-Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
-Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
-Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
-Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.users.profile' ) );
-Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
-Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
-
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
