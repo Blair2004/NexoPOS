@@ -27,7 +27,7 @@ class OrderEventsSubscriber
         ProductService $productsService,
         CustomerService $customerService
     ) {
-        $this->ordersService    =   $ordersService;
+        $this->ordersService    =   app()->make( OrdersService::class );
         $this->productsService  =   $productsService;
         $this->customerService  =   $customerService;
     }

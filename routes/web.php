@@ -10,8 +10,11 @@ use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\ModulesController;
 use App\Http\Controllers\Dashboard\UsersController;
+use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
+use App\Http\Middleware\InstalledStateMiddleware;
+use App\Http\Middleware\NotInstalledStateMiddleware;
 use Illuminate\Support\Facades\Route;
 use dekor\ArrayToTextTable;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -35,7 +38,7 @@ Route::get('/', function () {
 });
 
 Route::middleware([ 
-    'ns.installed', 
+    InstalledStateMiddleware::class, 
     CheckMigrationStatus::class, 
     SubstituteBindings::class 
 ])->group( function() {
@@ -51,10 +54,12 @@ Route::middleware([
         ->name( 'ns.database-update' );
 
     Route::middleware([ 
-        'auth',
+        Authenticate::class,
         CheckApplicationHealthMiddleware::class,
     ])->group( function() {
         Route::prefix( 'dashboard' )->group( function() {
+
+            event( new WebRoutesLoadedEvent( 'dashboard' ) );
 
             Route::middleware([
                 HandleCommonRoutesMiddleware::class
@@ -62,8 +67,6 @@ Route::middleware([
                 require( dirname( __FILE__ ) . '/nexopos.php' );
             });
 
-            event( new WebRoutesLoadedEvent( 'dashboard' ) );
-    
             Route::get( '/modules', [ ModulesController::class, 'listModules' ])->name( 'ns.dashboard.modules-list' );
             Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules-upload' );
             Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules-upload' );
@@ -80,7 +83,7 @@ Route::middleware([
     });
 });
 
-Route::middleware([ 'ns.not-installed' ])->group( function() {
+Route::middleware([ NotInstalledStateMiddleware::class ])->group( function() {
     Route::prefix( '/do-setup/' )->group( function() {
         Route::get( '', 'SetupController@welcome' )->name( 'ns.do-setup' );
     });

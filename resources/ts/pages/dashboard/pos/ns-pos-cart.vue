@@ -5,7 +5,7 @@
                 <span>Cart</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
-            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-400 text-gray-600">
+            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
                 Products
             </div>
         </div>
@@ -67,44 +67,44 @@
                 <div class="flex">
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'both'">
                         <tr>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2">Sub Total</td>
-                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.subtotal | currency }}</td>
+                            <td width="200" class="border border-gray-300 p-2">Sub Total</td>
+                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.subtotal | currency }}</td>
                         </tr>
                         <tr>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <span>Discount</span>
                                 <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
                                 <span v-if="order.discount_type === 'flat'">(Flat)</span>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2 text-right">
+                            <td width="200" class="border border-gray-300 p-2 text-right">
                                 <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="200" class="border border-gray-400 p-2"></td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.shipping | currency }}</td>
+                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
                         <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-400 p-2"></td>
-                            <td width="200" class="border border-gray-400 p-2">Total</td>
-                            <td width="200" class="border border-gray-400 p-2 text-right">{{ order.total | currency }}</td>
+                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">Total</td>
+                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
                     </table>
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'cart'">
                         <tr>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between">
                                     <span>Sub Total</span>
                                     <span>{{ order.subtotal | currency }}</span>
@@ -112,10 +112,10 @@
                             </td>
                         </tr>
                         <tr>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
                             </td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between items-center">
                                     <p>
                                         <span>Discount</span>
@@ -127,15 +127,15 @@
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="200" class="border border-gray-400 p-2"></td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
                                 <span></span>                          
                             </td>
                         </tr>
                         <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-400 p-2"></td>
-                            <td width="200" class="border border-gray-400 p-2">
+                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">
                                 <span>Total</span>
                                 <span>{{ order.total | currency }}</span>    
                             </td>

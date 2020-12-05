@@ -10,9 +10,10 @@ use App\Services\CurrencyService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
+use Modules\NsMultiStore\Models\Store;
 use Tests\TestCase;
 
-class OrderRefundTest extends TestCase
+class StoreRefundOrder extends TestCase
 {
     /**
      * A basic feature test example.
@@ -26,6 +27,9 @@ class OrderRefundTest extends TestCase
             ['*']
         );
 
+        $store          =   Store::first();
+        ns()->store->setStore( $store );
+        
         $currency       =   app()->make( CurrencyService::class );
         $product        =   Product::withStockEnabled()->with( 'unit_quantities' )->first();
         $shippingFees   =   150;

@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\NotificationsEnum;
-use App\Events\BeforeBootEvent;
+use App\Events\AfterAppHealthCheckedEvent;
 use App\Jobs\TaskSchedulingPingJob;
 use App\Models\Role;
 use App\Services\DateService;
@@ -47,7 +47,7 @@ class CheckApplicationHealthMiddleware
             }
         }
 
-        event( new BeforeBootEvent );
+        event( new AfterAppHealthCheckedEvent );
 
         return $next($request);
     }

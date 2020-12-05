@@ -83,14 +83,14 @@ class ExpenseCategoryCrud extends CrudService
     {
         return [
             'list_title'            =>  __( 'Expenses Categories List' ),
-            'list_description'      =>  __( 'Display all expenses categories.' ),
-            'no_entry'              =>  __( 'No expensecategories has been registered' ),
-            'create_new'            =>  __( 'Add a new expensecategory' ),
-            'create_title'          =>  __( 'Create a new expensecategory' ),
-            'create_description'    =>  __( 'Register a new expensecategory and save it.' ),
-            'edit_title'            =>  __( 'Edit expensecategory' ),
-            'edit_description'      =>  __( 'Modify  Expensecategory.' ),
-            'back_to_list'          =>  __( 'Return to ExpenseCategories' ),
+            'list_description'      =>  __( 'Display All Expense Categories.' ),
+            'no_entry'              =>  __( 'No Expense Category has been registered' ),
+            'create_new'            =>  __( 'Add a new Expense Category' ),
+            'create_title'          =>  __( 'Create a new Expense Category' ),
+            'create_description'    =>  __( 'Register a new Expense Category and save it.' ),
+            'edit_title'            =>  __( 'Edit Expense Category' ),
+            'edit_description'      =>  __( 'Modify An Expense Category.' ),
+            'back_to_list'          =>  __( 'Return to Expense Categories' ),
         ];
     }
 

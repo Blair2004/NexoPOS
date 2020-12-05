@@ -1,7 +1,7 @@
 <template>
     <div id="pos-grid" class="flex-auto flex flex-col">
         <div id="tools" class="flex pl-2" v-if="visibleSection === 'grid'">
-            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-400 text-gray-600">
+            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
                 <span>Cart</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
@@ -11,11 +11,11 @@
         </div>
         <div class="rounded shadow bg-white overflow-hidden flex-auto flex flex-col">
             <div id="grid-header" class="p-2 border-b border-gray-200">
-                <div class="border rounded flex border-gray-400 overflow-hidden">
-                    <button @click="openSearchPopup()" class="w-10 h-10 bg-gray-200 border-r border-gray-400 outline-none">
+                <div class="border rounded flex border-gray-300 overflow-hidden">
+                    <button @click="openSearchPopup()" class="w-10 h-10 bg-gray-200 border-r border-gray-300 outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked bg-gray-400' : 'bg-gray-200'" class="outline-none w-10 h-10 border-r border-gray-400">
+                    <button @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked bg-gray-300' : 'bg-gray-200'" class="outline-none w-10 h-10 border-r border-gray-300">
                         <i class="las la-barcode"></i>
                     </button>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 bg-gray-100">

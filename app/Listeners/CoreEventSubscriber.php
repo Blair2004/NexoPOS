@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\BeforeBootEvent;
+use App\Events\AfterAppHealthCheckedEvent;
 use App\Jobs\InitializeDailyReportJob;
 use App\Models\DashboardDay;
 use App\Services\ReportService;
@@ -26,7 +26,7 @@ class CoreEventSubscriber
     public function subscribe( $event )
     {
         $event->listen(
-            BeforeBootEvent::class,
+            AfterAppHealthCheckedEvent::class,
             [ CoreEventSubscriber::class, 'initializeJobReport' ]
         );
     }

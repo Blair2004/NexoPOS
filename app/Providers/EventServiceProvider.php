@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Classes\Hook;
 use App\Listeners\CoreEventSubscriber;
 use App\Listeners\CustomerEventSubscriber;
 use App\Listeners\ExpensesEventSubscriber;
@@ -25,19 +26,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        WebRouteLoadedEvent::class => [
-
-        ]
     ];
 
-    protected $subscribe    =   [
-        ProcurementEventsSubscriber::class,
-        ProductEventsSubscriber::class,
-        OrderEventsSubscriber::class,
-        ExpensesEventSubscriber::class,
-        CoreEventSubscriber::class,
-        CustomerEventSubscriber::class,
-    ];
+    protected $subscribe    =   [];
 
     public function register()
     {
@@ -68,6 +59,19 @@ class EventServiceProvider extends ServiceProvider
 
         collect( $modules->getEnabled() )
             ->each( fn( $module ) => $modules->serviceProvider( $module, 'boot', self::class ) );
+
+        /**
+         * if something doesn't prevent the subscribers to be registered
+         * We'll then register them.
+         */
+        if ( Hook::filter( 'ns-register-subscribers', true ) ) {
+            Event::subscribe( ProcurementEventsSubscriber::class );
+            Event::subscribe( ProductEventsSubscriber::class );
+            Event::subscribe( OrderEventsSubscriber::class );
+            Event::subscribe( ExpensesEventSubscriber::class );
+            Event::subscribe( CoreEventSubscriber::class );
+            Event::subscribe( CustomerEventSubscriber::class );
+        }
     }
 
     public function shouldDiscoverEvents()

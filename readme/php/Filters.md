@@ -37,6 +37,7 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-register-footer | Allow injecting output at the footer of the registration page | Array | 4.0-beta-1 | Valid |
 | ns-table-prefix | provides table name | Array | 4.0-beta-1 | Valid |
 | ns-route | returns the route value | Array | 4.0-beta-1 | Valid |
+| ns-register-subscribers | Determine if subscriber should be begistered | Array | 4.0-beta-1 | Valid |
 | ns-model-table | provides a way to overwrite model tables | Array | 4.0-beta-1 | Valid |
 | ns-route-dashboard-home | used to allow dashboard home route to be overwritten | Array | 4.0-beta-1 | Valid |
 | ns-dashboard-header | returns the output of the dashboard header | Array | 4.0-beta-1 | Valid |
