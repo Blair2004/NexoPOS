@@ -21,4 +21,14 @@ class ExpenseHistory extends NsModel
     {
         return $this->belongsTo( Expense::class, 'expense_id' );
     }
+
+    public function scopeFrom( $query, $date )
+    {
+        return $query->where( 'created_at', '<=', $date );
+    }
+
+    public function scopeTo( $query, $date )
+    {
+        return $query->where( 'created_at', '>=', $date );
+    }
 }

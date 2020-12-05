@@ -125,11 +125,15 @@ class ReportService
     {
         $totalIncome         =   Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->paymentStatus( 'unpaid' )
-            ->sum( 'gross_total' );
+            ->paymentStatus( Order::PAYMENT_PAID )
+            ->sum( 'total' );
 
-        $todayReport->day_income    =   $totalIncome;
-        $todayReport->total_income    =   ( $previousReport->total_income ?? 0 ) + $totalIncome;
+        $totalExpenses      =   ExpenseHistory::from( $this->dayStarts )
+            ->to( $this->dayEnds )
+            ->sum( 'value' );
+
+        $todayReport->day_income        =   $totalIncome - $totalExpenses;
+        $todayReport->total_income      =   ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
     }
     
     /**
