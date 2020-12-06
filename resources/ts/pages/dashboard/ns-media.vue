@@ -235,7 +235,7 @@ export default {
                         <div class="p-2 flex flex-wrap overflow-x-auto">
                             <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
                                 <div class="p-2">
-                                    <div @click="selectResource( resource )" :class="resource.selected ? 'shadow-outline' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
+                                    <div @click="selectResource( resource )" :class="resource.selected ? 'ring-4 ring-blue-500 ring-opacity-50' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
                                         <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
                                     </div>
                                 </div>

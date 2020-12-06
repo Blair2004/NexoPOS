@@ -9,8 +9,8 @@
             <p class="text-gray-600">{{ __( 'Create groups to assign customers' ) }}</p>
         </div>
         <ns-crud 
-            src="{{ url( 'api/nexopos/v4/crud/ns.customers-groups' ) }}" 
-            create-url="{{ url( 'dashboard/customers/groups/create' ) }}"
+            src="{{ ns()->url( 'api/nexopos/v4/crud/ns.customers-groups' ) }}" 
+            create-url="{{ ns()->url( 'dashboard/customers/groups/create' ) }}"
             id="crud-table-body">
             <template v-slot:bulk-label>{{ __( 'Bulk Actions' ) }}</template>
         </ns-crud>

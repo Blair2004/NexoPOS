@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
@@ -210,10 +211,7 @@ class CustomersGroupsController extends DashboardController
         $customerGroup  =   CustomerGroup::find( $group_id );
 
         if( ! $customerGroup instanceof CustomerGroup ) {
-            throw new NotFoundException([
-                'message'   =>  __( 'Unable to find the requested group using the provided id.' ),
-                'status'    =>  'failed'
-            ]);
+            throw new NotFoundException( __( 'Unable to find the requested group using the provided id.' ) );
         }
 
         return $customerGroup->customers;

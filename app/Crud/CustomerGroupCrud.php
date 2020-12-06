@@ -359,7 +359,7 @@ class CustomerGroupCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'  =>  'ns.customers-group.index',
+            'list'      =>  'ns.customers-group.index',
             'create'    =>  'ns.customers-group.index/create',
             'edit'      =>  'ns.customers-group.index/edit/#'
         ];

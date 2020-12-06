@@ -131,31 +131,37 @@ class ProviderCrud extends CrudService
                             'type'  =>  'text',
                             'name'  =>  'email',
                             'label' =>  __( 'Email' ),
+                            'description'   =>  __( 'Provide the provider email. Mightbe used to send automatted email.' ),
                             'value' =>  $entry->email ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'surname',
                             'label' =>  __( 'Surname' ),
+                            'description'   =>  __( 'Provider surname if necessary.' ),
                             'value' =>  $entry->surname ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'phone',
                             'label' =>  __( 'Phone' ),
+                            'description'   =>  __( 'Contact phone number for the provider. Might be used to send automatted SMS notifications.' ),
                             'value' =>  $entry->phone ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'address_1',
                             'label' =>  __( 'Address 1' ),
+                            'description'   =>  __( 'First address of the provider.' ),
                             'value' =>  $entry->address_1 ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'address_2',
                             'label' =>  __( 'Address 2' ),
+                            'description'   =>  __( 'Second address of the provider.' ),
                             'value' =>  $entry->address_2 ?? '',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
+                            'description'   =>  __( 'Further details about the provider' ),
                             'value' =>  $entry->description ?? '',
                         ], 
                     ]

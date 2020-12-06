@@ -100,7 +100,7 @@ export default {
             return form;
         },
         getRuleForm() {
-            return this.form.ruleForm;
+            return JSON.parse( JSON.stringify( this.form.ruleForm ) );
         },
         addRule() {
             this.form.rules.push( this.getRuleForm() );
