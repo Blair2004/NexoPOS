@@ -20,7 +20,7 @@ All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.ne
 
 - [Configuring the environment](https://my.nexopos.com/en/documentation/getting-started/configuring-the-environment)
 - [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
-- [Installing NexoPOS][https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
+- [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
 
 
 ## Support Terms
