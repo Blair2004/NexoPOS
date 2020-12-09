@@ -1,6 +1,7 @@
 <?php
 
 use App\Classes\Hook;
+use App\Models\ExpenseHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,7 @@ class CreateNexoposExpensesHistoryTable extends Migration
             $table->id();
             $table->integer( 'expense_id' );
             $table->string( 'expense_name' );
+            $table->string( 'status' )->default( ExpenseHistory::STATUS_ACTIVE );
             $table->string( 'expense_category_name' )->nullable();
             $table->float( 'value' )->default(0);
             $table->integer( 'author' );

@@ -125,7 +125,7 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/providers' )
                     ], 
                     'create-provider'   =>  [
-                        'label' =>  __( 'Create Providers'),
+                        'label' =>  __( 'Create A Provider'),
                         'permissions'   =>  [ 'nexopos.create.providers' ],
                         'href'  =>  ns()->url( '/dashboard/providers/create' )
                     ]

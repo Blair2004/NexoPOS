@@ -1,11 +1,13 @@
 <?php
 namespace App\Crud;
 
+use App\Events\ExpenseHistoryBeforeDeleteEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
 use App\Exceptions\NotAllowedException;
+use App\Models\Expense;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
@@ -43,9 +45,9 @@ class ExpenseHistoryCrud extends CrudService
      */
     protected $permissions  =   [
         'create'    =>  false,
-        'read'      =>  true,
+        'read'      =>  'nexopos.read.expenses-history',
         'update'    =>  false,
-        'delete'    =>  false,
+        'delete'    =>  'nexopos.delete.expenses-history',
     ];
 
     /**
@@ -234,6 +236,11 @@ class ExpenseHistoryCrud extends CrudService
         return $request;
     }
 
+    public function hook( $query )
+    {
+        $query->orderBy( 'id', 'desc' );
+    }
+
     /**
      * After saving a record
      * @param  Request $request
@@ -306,6 +313,17 @@ class ExpenseHistoryCrud extends CrudService
             } else {
                 throw new NotAllowedException;
             }
+
+            if ( $model->status !== ExpenseHistory::STATUS_ACTIVE ) {
+                throw new NotAllowedException( __( 'This expense history does\'nt have a status that allow deletion.' ) );
+            }
+
+            event( new ExpenseHistoryBeforeDeleteEvent( ExpenseHistory::find( $model->id ) ) );
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The expense history is about to be deleted.' )
+            ];
         }
     }
 

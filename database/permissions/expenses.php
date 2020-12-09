@@ -25,4 +25,16 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $expenses->namespace      =   'nexopos.read.expenses';
     $expenses->description    =   __( 'Let the user read expenses' );
     $expenses->save();
+    
+    $expenses                 =   new Permission;
+    $expenses->name           =   __( 'Read Expense History' );
+    $expenses->namespace      =   'nexopos.read.expenses-history';
+    $expenses->description    =   __( 'Allow to the expense history.' );
+    $expenses->save();
+
+    $expenses                 =   new Permission;
+    $expenses->name           =   __( 'Delete Expense History' );
+    $expenses->namespace      =   'nexopos.delete.expenses-history';
+    $expenses->description    =   __( 'Allow to delete an expense history.' );
+    $expenses->save();
 }

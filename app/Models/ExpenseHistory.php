@@ -3,7 +3,6 @@ namespace App\Models;
 
 use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ExpenseHistory extends NsModel
@@ -16,6 +15,9 @@ class ExpenseHistory extends NsModel
         'value'         =>  CurrencyCast::class,
         'created_at'    =>  DateCast::class
     ];
+
+    const STATUS_ACTIVE     =   'active';
+    const STATUS_DELETING   =   'deleting';
 
     public function expense()
     {

@@ -4,11 +4,9 @@ namespace App\Listeners;
 
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
+use App\Events\ExpenseHistoryBeforeDeleteEvent;
 use App\Jobs\ComputeDashboardExpensesJob;
-use App\Models\Expense;
 use App\Services\ExpenseService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ExpensesEventSubscriber
 {
@@ -47,6 +45,15 @@ class ExpensesEventSubscriber
          */
         $event->listen(
             ExpenseHistoryAfterCreatedEvent::class,
+            fn( $event ) => ComputeDashboardExpensesJob::dispatch( $event )
+        );
+
+        /**
+         * this will handled expense history when it's being
+         * deleted. This should recalculate the expenses for the specific day.
+         */
+        $event->listen(
+            ExpenseHistoryBeforeDeleteEvent::class,
             fn( $event ) => ComputeDashboardExpensesJob::dispatch( $event )
         );
     }

@@ -2,18 +2,14 @@
 namespace App\Services;
 
 use App\Models\DashboardDay;
-use App\Models\Expense;
 use App\Models\ExpenseHistory;
 use App\Models\Order;
 use App\Models\ProductHistory;
 use App\Models\Role;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class ReportService
 {
-    private $lastDay;
-    private $lastDayStarts;
-    private $lastDayEnds;
     private $dayStarts;
     private $dayEnds;
 
@@ -23,23 +19,17 @@ class ReportService
         $this->dateService  =   $dateService;
     }
 
-    /**
-     * Will compute the report for the current day
-     */
-    public function computeDayReport()
+    public function refreshFromDashboardDay( DashboardDay $todayReport )
     {
-        $this->dayStarts      =   $this->dateService->copy()->startOfDay()->toDateTimeString();
-        $this->dayEnds        =   $this->dateService->copy()->endOfDay()->toDateTimeString();
-
-        $todayReport        =   DashboardDay::forToday();
-        
-        if ( ! $todayReport instanceof DashboardDay ) {
-            $todayReport                =   new DashboardDay;
-            $todayReport->day_of_year   =   $this->dateService->dayOfYear;
-        }
-
         $previousReport     =   DashboardDay::forLastRecentDay( $todayReport );
-        
+
+        /**
+         * when the method is used without defining
+         * the dayStarts and dayEnds, this method
+         * create these values.
+         */
+        $this->defineDate( $todayReport );
+
         $this->computeUnpaidOrdersCount( $previousReport, $todayReport );
         $this->computeUnpaidOrders( $previousReport, $todayReport );
         $this->computePaidOrders( $previousReport, $todayReport );
@@ -49,6 +39,32 @@ class ReportService
         $this->computePartiallyPaidOrdersCount( $previousReport, $todayReport );
         $this->computeDiscounts( $previousReport, $todayReport );
         $this->computeIncome( $previousReport, $todayReport );
+    }
+
+    private function defineDate( DashboardDay $dashboardDay )
+    {
+        $this->dayStarts      =   ! isset( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->created_at )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
+        $this->dayEnds        =   ! isset( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->created_at )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
+    }
+
+    /**
+     * Will compute the report for the current day
+     */
+    public function computeDayReport( $dateStart = null, $dateEnd = null )
+    {
+        $this->dayStarts      =   $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
+        $this->dayEnds        =   $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
+
+        $todayReport        =   DashboardDay::from( $this->dayStarts )
+            ->to( $this->dayEnds )
+            ->first();
+        
+        if ( ! $todayReport instanceof DashboardDay ) {
+            $todayReport                =   new DashboardDay;
+            $todayReport->day_of_year   =   $this->dateService->dayOfYear;
+        }
+        
+        $this->refreshFromDashboardDay( $todayReport );
 
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
@@ -243,9 +259,9 @@ class ReportService
         $todayReport->total_discounts   = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
-    public function increaseTodayExpenses( ExpenseHistory $expense )
+    public function increaseDailyExpenses( $expense, $today = null )
     {
-        $today      =   DashboardDay::forToday();
+        $today  =   $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
             $yesterday                  =   DashboardDay::forLastRecentDay( $today );
@@ -259,6 +275,30 @@ class ReportService
             ];
         }
 
+        return $this->notifyIncorrectDashboardReport();
+    }
+
+    public function reduceDailyExpenses( $expense, $today = null )
+    {
+        $today  =   $today === null ? DashboardDay::forToday() : $today;
+
+        if ( $today instanceof DashboardDay ) {
+            $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+            $today->day_expenses        -=  $expense->getRawOriginal( 'value' );
+            $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+            $today->save();
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The expense has been correctly saved.' ),
+            ];
+        }
+
+        return $this->notifyIncorrectDashboardReport();
+    }
+
+    public function notifyIncorrectDashboardReport()
+    {
         /**
          * @todo make sure outgoing link takes to relevant article
          * @var NotificationService

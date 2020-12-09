@@ -43,6 +43,12 @@ class DashboardDay extends NsModel
             ->first();
     }
 
+    /**
+     * This should retreive the previous DashboardDay instance
+     * @todo Maybe there is a better way to do this
+     * @param DashboardDay $day
+     * @return DashboardDay
+     */
     public static function forLastRecentDay( DashboardDay $day )
     {
         $dashboardDay       =   DashboardDay::get()->filter( function( $dashboard ) use ( $day ) {
