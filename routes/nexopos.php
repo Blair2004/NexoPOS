@@ -88,6 +88,7 @@ Route::get( '/units/groups/edit/{group}', [ UnitsController::class, 'editUnitGro
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
+Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

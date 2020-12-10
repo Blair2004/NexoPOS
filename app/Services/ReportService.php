@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\ProductHistory;
 use App\Models\Role;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class ReportService
 {
@@ -349,5 +350,18 @@ class ReportService
         $dashboardDay->total_expenses                       =   $previousReport->total_expenses ?? 0;
         $dashboardDay->day_expenses                         =   0;
         $dashboardDay->save();
+    }
+
+    /**
+     * get from a specific date
+     * @param string $startDate
+     * @param string $endDate
+     * @return Collection
+     */
+    public function getFromTimeRange( $startDate, $endDate )
+    {
+        return DashboardDay::from( $startDate )
+            ->to( $endDate )
+            ->get();
     }
 }

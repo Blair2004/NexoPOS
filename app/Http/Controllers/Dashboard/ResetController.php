@@ -82,7 +82,7 @@ class ResetController extends DashboardController
                 ( new FirstDemoSeeder )->run();
             break;
             default:
-                ( new FirstDemoSeeder )->run();
+                // nothing run if a mode is not defined
             break;
         }
 

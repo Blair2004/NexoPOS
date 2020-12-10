@@ -158,13 +158,13 @@ class ExpenseCrud extends CrudService
                                 ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ]) 
                             ],
                         ], [
-                            'type'      =>  'select',
-                            'options'   =>  Helper::toJsOptions( ExpenseCategory::get(), [ 'id', 'name' ]),
-                            'name'      =>  'category_id',
-                            'label'     =>  __( 'Expense Category' ),
+                            'type'          =>  'select',
+                            'options'       =>  Helper::toJsOptions( ExpenseCategory::get(), [ 'id', 'name' ]),
+                            'name'          =>  'category_id',
+                            'label'         =>  __( 'Expense Category' ),
                             'description'   =>  __( 'Assign the expense to a category' ),
                             'validation'    =>  'required',
-                            'value'     =>  $entry->category_id ?? '',
+                            'value'         =>  $entry->category_id ?? '',
                         ], [
                             'type'          =>  'text',
                             'name'          =>  'value',

@@ -17,9 +17,20 @@ use App\Services\Options;
 
 class ExpensesController extends DashboardController
 {
+    /**
+     * @var ExpenseService
+     */
+    private $expenseService;
+
+    /**
+     * @var Options
+     */
+    private $optionsService;
+
     public function __construct( ExpenseService $expense, Options $options )
     {
         parent::__construct();
+        
         $this->optionsService   =   $options;
         $this->expenseService   =   $expense;
     }

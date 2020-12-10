@@ -370,7 +370,9 @@ class OrdersService
             } else if ($fields['discount_type'] === 'flat') {
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
-                    return $this->currencyService->getRaw( floatval($product['quantity']) * floatval($product['sale_price']) );
+                    return $this->currencyService->define( $product['quantity'] )
+                        ->multiplyBy( floatval($product['sale_price']) )
+                        ->getRaw();
                 })->sum();
 
                 if ( $fields['discount'] > $productsTotal ) {

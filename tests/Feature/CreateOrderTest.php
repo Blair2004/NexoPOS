@@ -38,7 +38,13 @@ class CreateOrderTest extends TestCase
             ]
         ];
 
-        $subtotal   =   collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $subtotal   =   collect( $products )->map( function( $product ) use ($currency) {
+            dump( $product[ 'unit_price' ] );
+            return $currency
+                ->define( $product[ 'unit_price' ] )
+                ->multiplyBy( $product[ 'quantity' ] )
+                ->getRaw();
+        })->sum();
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -73,10 +79,14 @@ class CreateOrderTest extends TestCase
             'status'    =>  'success'
         ]);
 
+        dump( $subtotal );
+
         $discount       =   $currency->define( $discountRate )
             ->multipliedBy( $subtotal )
             ->divideBy( 100 )
             ->getRaw();
+
+        dump( $discount );
 
         $netsubtotal    =   $currency
             ->define( $subtotal )

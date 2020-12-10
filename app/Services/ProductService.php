@@ -21,7 +21,7 @@ use App\Services\ProductCategoryService;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
-use App\ProductGallery;
+use App\Models\ProductGallery;
 
 class ProductService
 {

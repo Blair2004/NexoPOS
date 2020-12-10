@@ -180,7 +180,6 @@ export default {
                         </div>
                         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
-                                <label for="" class="font-medium text-gray-700 pb-1">{{ field.label }}</label>
                                 <ns-field  :field="field"></ns-field>
                             </div>
                         </div>

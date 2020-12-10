@@ -32,7 +32,7 @@
                         </button>
                     </div>
                 </div>
-                <div id="report-printable anim-duration-500 fade-in-entrance">
+                <div id="report-printable" class="anim-duration-500 fade-in-entrance">
                     <div class="flex w-full">
                         <div class="my-4 flex justify-between w-full">
                             <div class="text-gray-600">

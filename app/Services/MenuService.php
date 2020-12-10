@@ -20,15 +20,6 @@ class MenuService
                         'permissions'   =>  [ 'read.dashboard' ],
                         'href'          =>  ns()->url( '/dashboard' ),
                     ],
-                    'updates'           =>  [
-                        'label'         =>  __( 'Updates'),
-                        'permissions'   =>  [ 'update.core' ],
-                        'href'          =>  ns()->url( '/dashboard/updates' )
-                    ], 
-                    'about'             =>  [
-                        'label'         =>  __( 'About'),
-                        'href'          =>  ns()->url( '/dashboard/about' )
-                    ]
                 ]
             ], 
             'pos'   =>  [
@@ -84,11 +75,6 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.create.customers-groups' ],
                         'href'  =>  ns()->url( '/dashboard/customers/groups/create' )
                     ], 
-                    'import-customers'  =>  [
-                        'label' =>  __( 'Import Customers'),
-                        'permissions'   =>  [ 'nexopos.import.customers' ],
-                        'href'  =>  ns()->url( '/dashboard/customers/import' )
-                    ],
                     'list-reward-system'    =>  [
                         'label' =>  __( 'Reward Systems'),
                         'permissions'   =>  [ 'nexopos.read.rewards' ],
@@ -223,10 +209,10 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.create.products-units' ],
                         'href'  =>  ns()->url( '/dashboard/units/groups/create' )
                     ],
-                    'stock-adjustment'   =>  [
-                        'label' =>  __( 'Stock Adjustment'),
-                        'permissions'   =>  [ 'nexopos.make.products-adjustments' ],
-                        'href'  =>  ns()->url( '/dashboard/products/stock-adjustment' )
+                    'stock-adjustment'      =>  [
+                        'label'             =>  __( 'Stock Adjustment'),
+                        'permissions'       =>  [ 'nexopos.make.products-adjustments' ],
+                        'href'              =>  ns()->url( '/dashboard/products/stock-adjustment' )
                     ],
                 ]
             ], 

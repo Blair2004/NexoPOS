@@ -323,7 +323,7 @@ class ProductCrud extends CrudService
                             ]
                         ],
                         'expiracy'      =>  [
-                            'label'     =>  __( 'Expiracy' ),
+                            'label'     =>  __( 'Expiry' ),
                             'fields'    =>  [
                                 [
                                     'type'          =>  'switch',

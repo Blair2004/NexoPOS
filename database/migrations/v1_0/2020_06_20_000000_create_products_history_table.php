@@ -32,7 +32,7 @@ class CreateProductsHistoryTable extends Migration
                 $table->float( 'after_quantity' )->nullable();
                 $table->float( 'unit_price' ); // could be the cost of the procurement, the lost (defective)
                 $table->float( 'total_price' ); // could be the cost of the procurement, the lost (defective)
-                $table->text( 'description' );
+                $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
