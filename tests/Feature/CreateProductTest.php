@@ -33,16 +33,20 @@ class CreateProductTest extends TestCase
          */
         $currency       =   app()->make( CurrencyService::class );
 
+        $faker          =   \Faker\Factory::create();
+
         /**
          * @var TaxService
          */
         $taxService     =   app()->make( TaxService::class );
         $taxType        =   'exclusive';
+        $unitGroup      =   UnitGroup::first();
+        $sale_price     =   $faker->numberBetween(25,30);
 
         $response   = $this
             ->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', '/api/nexopos/v4/products/', [
-            'name'          =>  'Sample Product',
+            'name'          =>  $faker->word,
             'variations'    =>  [
                 [
                     '$primary'  =>  true,
@@ -51,7 +55,7 @@ class CreateProductTest extends TestCase
                         'on_expiration' =>  'prevent_sales',
                     ],
                     'identification'    =>  [
-                        'barcode'           =>  Str::random(10),
+                        'barcode'           =>  $faker->ean13(),
                         'barcode_type'      =>  'ean13',
                         'category_id'       =>  1,
                         'description'       =>  __( 'Created via tests' ),
@@ -66,20 +70,20 @@ class CreateProductTest extends TestCase
                         'tax_type'      =>  $taxType,
                     ],
                     'units'             =>  [
-                        'selling_group' =>  [
-                            [
-                                'sale_price_edit'       =>  10,
-                                'wholesale_price_edit'  =>  9.5,
-                                'unit_id'               =>  UnitGroup::find(2)->units->random()->first()->id
-                            ]
-                        ],
-                        'unit_group'    =>  2
+                        'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                            return [
+                                'sale_price_edit'       =>  $sale_price,
+                                'wholesale_price_edit'  =>  $faker->numberBetween(20,25),
+                                'unit_id'               =>  $unit->id
+                            ];
+                        }),
+                        'unit_group'    =>  $unitGroup->id
                     ]
                 ]
             ]
         ]);
 
-        $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), 10 ) );
+        $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
         $response->assertStatus(200);
     }
 }

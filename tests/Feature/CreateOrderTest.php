@@ -39,7 +39,6 @@ class CreateOrderTest extends TestCase
         ];
 
         $subtotal   =   collect( $products )->map( function( $product ) use ($currency) {
-            dump( $product[ 'unit_price' ] );
             return $currency
                 ->define( $product[ 'unit_price' ] )
                 ->multiplyBy( $product[ 'quantity' ] )
@@ -79,14 +78,10 @@ class CreateOrderTest extends TestCase
             'status'    =>  'success'
         ]);
 
-        dump( $subtotal );
-
         $discount       =   $currency->define( $discountRate )
             ->multipliedBy( $subtotal )
             ->divideBy( 100 )
             ->getRaw();
-
-        dump( $discount );
 
         $netsubtotal    =   $currency
             ->define( $subtotal )

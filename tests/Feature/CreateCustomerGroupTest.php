@@ -5,11 +5,10 @@ namespace Tests\Feature;
 use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CreateUnitGroupTest extends TestCase
+class CreateCustomerGroupTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -24,14 +23,12 @@ class CreateUnitGroupTest extends TestCase
         );
 
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units-groups', [
-                'name'          =>  __( 'Liquids' ),
+            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers-groups', [
+                'name'  =>  __( 'Base Customers' ),
             ]);
 
         $response->assertJson([
             'status'    =>  'success'
         ]);
-                
-        $response->assertStatus(200);
     }
 }

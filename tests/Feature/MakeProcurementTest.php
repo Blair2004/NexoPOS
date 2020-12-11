@@ -16,6 +16,7 @@ use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use Faker\Factory;
 
 class MakeProcurementTest extends TestCase
 {
@@ -31,6 +32,7 @@ class MakeProcurementTest extends TestCase
             ['*']
         );
 
+        $faker          =   Factory::create();
         $product        =   Product::withStockEnabled()->get()->random();
 
         /**
@@ -45,7 +47,6 @@ class MakeProcurementTest extends TestCase
 
         $taxType        =   Arr::random([ 'inclusive', 'exclusive' ]);
         $taxGroup       =   TaxGroup::get()->random();
-        $unitQuantity   =   $product->unit_quantities->random();
         $margin         =   25;
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
@@ -58,41 +59,52 @@ class MakeProcurementTest extends TestCase
                     'author'                =>  Auth::id(),
                     'automatic_approval'    =>  1
                 ], 
-                'products'  =>  [
-                    [
-                        'product_id'            =>  $product->id,
+                'products'  =>  Product::withStockEnabled()
+                    ->with( 'unitGroup' )
+                    ->get()
+                    ->map( function( $product ) {
+                    return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                        return ( object ) [
+                            'unit'      =>  $unit,
+                            'unitQuantity'  =>  $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
+                            'product'   =>  $product
+                        ];
+                    });
+                })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+                    return [
+                        'product_id'            =>  $data->product->id,
                         'gross_purchase_price'  =>  15,
                         'net_purchase_price'    =>  16,
                         'purchase_price'        =>  $taxService->getTaxGroupComputedValue( 
                             $taxType, 
                             $taxGroup, 
-                            $unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $unitQuantity->sale_price,
+                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                                $data->unitQuantity->sale_price,
                                 $margin
                             ) 
                         ),
-                        'quantity'              =>  250,
+                        'quantity'              =>  $faker->numberBetween(20,50),
                         'tax_group_id'          =>  $taxGroup->id,
                         'tax_type'              =>  $taxType,
                         'tax_value'             =>  $taxService->getTaxGroupVatValue( 
                             $taxType, 
                             $taxGroup, 
-                            $unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $unitQuantity->sale_price,
+                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                                $data->unitQuantity->sale_price,
                                 $margin
                             ) 
                         ),
                         'total_purchase_price'  =>  $taxService->getTaxGroupComputedValue( 
                             $taxType, 
                             $taxGroup, 
-                            $unitQuantity->sale_price - $taxService->getPercentageOf(
-                                $unitQuantity->sale_price,
+                            $data->unitQuantity->sale_price - $taxService->getPercentageOf(
+                                $data->unitQuantity->sale_price,
                                 $margin
                             ) 
                         ) * 250,
-                        'unit_id'               =>  $unitQuantity->unit_id,
-                    ]
-                ]
+                        'unit_id'               =>  $data->unit->id,
+                    ];
+                })
             ]);
 
         $response->assertJson([ 'status' => 'success' ]);

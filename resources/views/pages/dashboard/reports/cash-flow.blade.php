@@ -58,34 +58,34 @@
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-700">
-                                    <tr class="bg-gray-50">
+                                    <tr class="bg-gray-50 font-semibold">
                                         <td class="p-2 border border-gray-200">{{ __( 'Cash From Sales' ) }}</td>
                                         <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ 0 | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ report.length > 0 ? report.summary.day_income : 0 | currency }}</td>
+                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ report.summary ? report.summary.day_income : 0 | currency }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> {{ __( 'Total Sales' ) }}</td>
                                         <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ 0 | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ report.length > 0 ? report.summary.day_paid_orders : 0 | currency }}</td>
+                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ report.summary ? report.summary.day_paid_orders : 0 | currency }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> {{ __( 'Total Taxes' ) }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.length > 0 ? report.summary.day_taxes : 0 | currency }}</td>
+                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.summary ? report.summary.day_taxes : 0 | currency }}</td>
                                         <td class="p-2 border text-right border-green-200 bg-green-100">@{{ 0 | currency }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> {{ __( 'Total Discount' ) }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.length > 0 ? report.summary.day_discounts : 0 | currency }}</td>
+                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.summary ? report.summary.day_discounts : 0 | currency }}</td>
                                         <td class="p-2 border text-right border-green-200 bg-green-100">@{{ 0 | currency }}</td>
                                     </tr>
                                     <tr>
                                         <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> {{ __( 'Wasted Goods' ) }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.length > 0 ? report.summary.day_wasted_goods : 0 | currency }}</td>
+                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.summary ? report.summary.day_wasted_goods : 0 | currency }}</td>
                                         <td class="p-2 border text-right border-green-200 bg-green-100">@{{ 0 | currency }}</td>
                                     </tr>
-                                    <tr class="bg-gray-50">
+                                    <tr class="bg-gray-50 font-semibold">
                                         <td class="p-2 border border-gray-200">{{ __( 'Expenses By Category' ) }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.length > 0 ? report.summary.day_expenses : 0 | currency }}</td>
+                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ report.summary ? report.summary.day_expenses : 0 | currency }}</td>
                                         <td class="p-2 border text-right border-green-200 bg-green-100">@{{ 0 | currency }}</td>
                                     </tr>
                                     <tr v-for="expenseGroup of report.expenses">
@@ -97,8 +97,8 @@
                                 <tfoot class="text-gray-700 font-semibold">
                                     <tr>
                                         <td class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right text-gray-700">@{{ totalDebit | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100 text-gray-700">@{{ totalCredit | currency }}</td>
+                                        <td class="p-2 border border-red-200 bg-red-100 text-right text-gray-700">@{{ report.total_debit ? report.total_debit : 0 | currency }}</td>
+                                        <td class="p-2 border text-right border-green-200 bg-green-100 text-gray-700">@{{ report.total_credit ? report.total_credit : 0 | currency }}</td>
                                     </tr>
                                 </tfoot>
                             </table>

@@ -305,6 +305,9 @@ class OrdersService
         }
     }
 
+    /**
+     * @deprecated
+     */
     private function __saveOrderDiscount($order, $fields)
     {
         if (in_array($fields['discount_type'], ['flat', 'percentage'])) {
@@ -1062,7 +1065,10 @@ class OrdersService
         $fields[ 'discount' ]               =   $fields[ 'discount' ] ?? $order->discount ?? 0;
 
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return $this->currencyService->getRaw( ( floatval( $fields[ 'subtotal' ] ) * floatval( $fields[ 'discount_percentage' ] ) ) / 100 );
+            return $this->currencyService->define( $fields[ 'subtotal' ] )
+                ->multiplyBy( $fields[ 'discount_percentage' ] )
+                ->divideBy( 100 )
+                ->getRaw();
         } else {
             return $this->currencyService->getRaw( $fields[ 'discount' ] );
         }
@@ -1513,10 +1519,10 @@ class OrdersService
     {
         $hasDeleted     =   false;
 
-        $order->products->map(function ($product) use ($product_id, &$hasDeleted) {
+        $order->products->map(function ($product) use ( $product_id, &$hasDeleted, $order ) {
             if ($product->id === intval($product_id)) {
 
-                event( new OrderBeforeDeleteProductEvent($product));
+                event( new OrderBeforeDeleteProductEvent( $order, $product));
 
                 $product->delete();
                 $hasDeleted     =   true;

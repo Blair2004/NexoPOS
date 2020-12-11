@@ -58,6 +58,11 @@ class Product extends NsModel
         return $this->hasMany( ProductUnitQuantity::class, 'product_id' );
     }
 
+    public function unitGroup()
+    {
+        return $this->hasOne( UnitGroup::class, 'id', 'unit_group' );
+    }
+
     public function product_taxes()
     {
         return $this->hasMany( ProductTax::class, 'product_id' );

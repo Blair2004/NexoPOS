@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Expense;
@@ -34,6 +35,8 @@ class ExpenseService
         $expense->author        =   Auth::id();
         $expense->save();
 
+        event( new ExpenseAfterCreateEvent( $expense, request() ) );
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The expense has been successfully saved.' ),
@@ -61,10 +64,7 @@ class ExpenseService
             ];
         }
 
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to find the expense using the provided identifier.' )
-        ]);
+        throw new NotFoundException( __( 'Unable to find the expense using the provided identifier.' ) );
     }
 
     /**
@@ -82,10 +82,7 @@ class ExpenseService
         $expense    =   Expense::find( $id );
         
         if ( ! $expense instanceof Expense ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the requested expense using the provided id.' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the requested expense using the provided id.' ) );
         }
 
         return $expense;
@@ -113,10 +110,7 @@ class ExpenseService
         if ( $id !== null ) {
             $category   =   ExpenseCategory::find( $id );
             if ( ! $category instanceof ExpenseCategory ) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the requested expense category using the provided id.' )
-                ]);
+                throw new NotFoundException( __( 'Unable to find the requested expense category using the provided id.' ) );
             }
 
             return $category;
@@ -167,10 +161,7 @@ class ExpenseService
         $expenseCategory    =   ExpenseCategory::find( $id );
         
         if ( ! $expenseCategory instanceof ExpenseCategory ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the expense category using the provided ID.' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the expense category using the provided ID.' ) );
         }
 
         return $expenseCategory;
