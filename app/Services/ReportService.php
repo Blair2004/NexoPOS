@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\DashboardDay;
+use App\Models\DashboardMonth;
 use App\Models\ExpenseHistory;
 use App\Models\Order;
 use App\Models\ProductHistory;
@@ -72,6 +73,64 @@ class ReportService
         $todayReport->save();
 
         return $todayReport;
+    }
+
+    public function computeDashboardMonth( $today = null )
+    {
+        if ( $today === null ) {
+            $todayCarbon    =   $this->dateService->copy()->now();
+        }
+
+        $monthStarts    =   $todayCarbon->startOfMonth()->toDateTimeString();
+        $monthEnds      =   $todayCarbon->endOfMonth()->toDateTimeString();
+
+        $entries        =   DashboardDay::from( $monthStarts )
+            ->to( $monthEnds )
+            ->get();
+
+        $dashboardMonth     =   DashboardMonth::from( $monthStarts )
+            ->to( $monthEnds )
+            ->first();
+
+        if ( ! $dashboardMonth instanceof DashboardMonth ) {
+            $dashboardMonth                 =   new DashboardMonth;
+            $dashboardMonth->range_starts   =   $monthStarts;
+            $dashboardMonth->range_ends     =   $monthEnds;
+            $dashboardMonth->month_of_year  =   $todayCarbon->month;
+            $dashboardMonth->save();
+        }
+
+        $dashboardMonth->month_unpaid_orders                    =   $entries->sum( 'day_unpaid_order' );
+        $dashboardMonth->month_unpaid_orders_count              =   $entries->sum( 'day_unpaid_orders_count' );
+        $dashboardMonth->month_paid_orders                      =   $entries->sum( 'day_paid_orders' );
+        $dashboardMonth->month_paid_orders_count                =   $entries->sum( 'day_paid_orders_count' );
+        $dashboardMonth->month_partially_paid_orders            =   $entries->sum( 'day_partially_paid_orders' );
+        $dashboardMonth->month_partially_paid_orders_count      =   $entries->sum( 'day_partially_paid_orders_count' );
+        $dashboardMonth->month_income                           =   $entries->sum( 'day_income' );
+        $dashboardMonth->month_discounts                        =   $entries->sum( 'day_discounts' );
+        $dashboardMonth->month_taxes                            =   $entries->sum( 'day_taxes' );
+        $dashboardMonth->month_wasted_goods_count               =   $entries->sum( 'day_wasted_goods_count' );
+        $dashboardMonth->month_wasted_goods                     =   $entries->sum( 'day_wasted_goods' );
+        $dashboardMonth->month_expenses                         =   $entries->sum( 'day_expenses' );
+
+        foreach([
+            "total_unpaid_orders",
+            "total_unpaid_orders_count",
+            "total_paid_orders",
+            "total_paid_orders_count",
+            "total_partially_paid_orders",
+            "total_partially_paid_orders_count",
+            "total_income",
+            "total_discounts",
+            "total_taxes",
+            "total_wasted_goods_count",
+            "total_wasted_goods",
+            "total_expenses",
+        ] as $field ) {
+            $dashboardMonth->$field     =   $entries->last()->$field;
+        }
+        
+        $dashboardMonth->save();
     }
 
     public function computeOrdersTaxes( $previousReport, $todayReport )

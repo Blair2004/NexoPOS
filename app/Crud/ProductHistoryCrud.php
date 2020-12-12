@@ -484,7 +484,7 @@ class ProductHistoryCrud extends CrudService
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Descrition' ),
+                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
                 'namespace'     =>      'ns.description',
                 'type'          =>      'POPUP',
             ], 
