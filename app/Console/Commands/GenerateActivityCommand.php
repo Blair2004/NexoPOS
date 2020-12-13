@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Kernel;
 use App\Services\DateService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -52,6 +53,7 @@ class GenerateActivityCommand extends Command
         $bar->start();
 
         $files  =   Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
+        $app    =   app()->make( Kernel::class )->bootstrap();
 
         foreach( $totalDays as $day ) {
             /**
@@ -69,9 +71,10 @@ class GenerateActivityCommand extends Command
                         ->map( fn( $dir ) => ucwords( $dir ) )
                         ->join( '\\' );
                     
-                    $object     =   new $class;
-                    $methods    =   get_class_methods( $object );
-                    $method     =   $methods[0];
+                    $object             =   new $class;
+                    $methods            =   get_class_methods( $object );
+                    $method             =   $methods[0];
+                    $object->createApplication();
                     $object->$method();
                 }
             }

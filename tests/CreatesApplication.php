@@ -19,4 +19,9 @@ trait CreatesApplication
 
         return $app;
     }
+
+    public function defineApp( $app )
+    {
+        $this->app  =   $app;
+    }
 }
