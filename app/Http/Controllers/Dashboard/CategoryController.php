@@ -245,7 +245,10 @@ class CategoryController extends DashboardController
             'products'          =>  [],
             'previousCategory'  =>  false,
             'currentCategory'   =>  false,
-            'categories'        =>  ProductCategory::where( 'parent_id', 0 )
+            'categories'        =>  ProductCategory::where(function( $query ) {
+                    $query->where( 'parent_id', null )
+                        ->orWhere( 'parent_id', 0 );
+                })
                 ->get(),
         ];
     }

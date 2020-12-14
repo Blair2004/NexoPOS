@@ -28,8 +28,8 @@
                     <div class="flex">
                         <button v-if="updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-sync animate-spin"></i>
-                            <span v-if="! updatingModule">{{ __( 'Updating...' ) }}</span>
-                            <span v-if="updatingModule">{{ __( 'Updating Modules...' ) }}</span>
+                            <span v-if="! updatingModule">Updating...</span>
+                            <span v-if="updatingModule">Updating Modules...</span>
                         </button>
                         <a :href="returnLink" v-if="! updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-undo"></i>

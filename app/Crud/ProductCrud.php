@@ -247,10 +247,10 @@ class ProductCrud extends CrudService
                                         'dematerialized'    =>  __( 'Dematerialized Product' ),
                                     ]),
                                     'description'   =>  __( 'Define the product type. Applies to all variations.' ),
-                                    'name'          =>  'product_type',
+                                    'name'          =>  'type',
                                     'validation'    =>  'required',
                                     'label'         =>  __( 'Product Type' ),
-                                    'value'         =>  $entry->product_type ?? 'materialized',
+                                    'value'         =>  $entry->type ?? 'materialized',
                                 ], [
                                     'type'  =>  'text',
                                     'name'  =>  'sku',
@@ -573,7 +573,7 @@ class ProductCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'product_type'  =>  [
+            'type'  =>  [
                 'label'         =>  __( 'Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -607,7 +607,7 @@ class ProductCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
-        $entry->product_type        =   $entry->product_type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
+        $entry->type                =   $entry->product_type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         // you can make changes here

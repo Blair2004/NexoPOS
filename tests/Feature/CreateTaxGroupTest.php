@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CreateTaxGroup extends TestCase
+class CreateTaxGroupTest extends TestCase
 {
     /**
      * A basic feature test example.

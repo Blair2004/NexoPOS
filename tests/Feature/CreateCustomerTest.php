@@ -28,38 +28,23 @@ class CreateCustomerTest extends TestCase
 
         $group  =   CustomerGroup::first();
 
-        /**
-         * Creating a first customer
-         */
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
-                'name'  =>  $faker->firstName,
-                'general'   =>  [
-                    'group_id'  =>  $group->id,
-                    'surname'   =>  $faker->lastName,
-                    'email'     =>  $faker->email
-                ]
+        for( $i = 0 ; $i < 20; $i++ ) {
+            /**
+             * Creating a first customer
+             */
+            $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
+                    'name'  =>  $faker->firstName,
+                    'general'   =>  [
+                        'group_id'  =>  $group->id,
+                        'surname'   =>  $faker->lastName,
+                        'email'     =>  $faker->email
+                    ]
+                ]);
+    
+            $response->assertJson([
+                'status'    =>  'success'
             ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        /**
-         * creating a second customers
-         */
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
-                'name'  =>  $faker->firstName,
-                'general'   =>  [
-                    'group_id'  =>  $group->id,
-                    'surname'   =>  $faker->lastName,
-                    'email'     =>  $faker->email
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        }
     }
 }

@@ -351,31 +351,9 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/reports/cash-flow' )
                     ], 
                     'annulal-sales'  =>  [
-                        'label' =>  __( 'Yearly Sales' ),
+                        'label' =>  __( 'Annual Report' ),
                         'permissions'   =>  [ 'nexopos.reports.yearly' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/yearly-sales' )
-                    ], 
-                    'customers'  =>  [
-                        'label' =>  __( 'Customers' ),
-                        'permissions'   =>  [ 'nexopos.reports.customers' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/customers' )
-                    ], 
-                    'providers'  =>  [
-                        'label' =>  __( 'Providers' ),
-                        'href'  =>  ns()->url( '/dashboard/reports/providers' )
-                    ], 
-                    'inventory-tracking'  =>  [
-                        'label' =>  __( 'Inventory Tracking' ),
-                        'permissions'   =>  [ 'nexopos.reports.inventory' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/inventory-tracking' )
-                    ], 
-                    'activity-log'  =>  [
-                        'label' =>  __( 'Activity Log' ),
-                        'href'  =>  ns()->url( '/dashboard/reports/activity-log' )
-                    ], 
-                    'expenses'  =>  [
-                        'label' =>  __( 'Expenses' ),
-                        'href'  =>  ns()->url( '/dashboard/reports/expenses' )
+                        'href'  =>  ns()->url( '/dashboard/reports/annual-report' )
                     ], 
                 ]
             ],

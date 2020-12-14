@@ -89,6 +89,7 @@ Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);
+Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

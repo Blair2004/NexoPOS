@@ -15,6 +15,11 @@ class DateService extends Carbon
         $this->options  =   app()->make( Options::class );
     }
 
+    public function define( $time, $timeZone = 'Europe/London' )
+    {
+        $this->__construct( $time, $timeZone );
+    }
+
     public function getFormatted( $date, $mode = 'full' )
     {
         switch( $mode ) {
