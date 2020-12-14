@@ -120,9 +120,6 @@ class Setup
         Artisan::call( 'config:cache' );
         Artisan::call( 'migrate --path=/database/migrations/default' );
         Artisan::call( 'migrate --path=/database/migrations/v1_0' );
-        Artisan::call( 'migrate --path=/database/migrations/v1_1' );
-        Artisan::call( 'migrate --path=/database/migrations/v1_2' );
-        Artisan::call( 'migrate --path=/database/migrations/v1_3' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
         
         /**

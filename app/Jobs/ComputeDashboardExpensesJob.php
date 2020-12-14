@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Events\ExpenseAfterCreateEvent;
+use App\Events\ExpenseAfterRefreshEvent;
+use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
 use App\Events\ExpenseHistoryBeforeDeleteEvent;
 use App\Models\DashboardDay;
@@ -82,14 +84,11 @@ class ComputeDashboardExpensesJob implements ShouldQueue
              * the day the expense has been created
              */
             $reports->each( function( $dashboardDay ) use ( &$now ) {
-                RefreshExpenseJob::dispatch( $dashboardDay )
-                    ->delay( $now );
-    
+                event( new ExpenseBeforeRefreshEvent( $dashboardDay, $now ) );
                 $now->addMinute();
             });
 
-            AfterExpenseComputedJob::dispatch( $this->event )
-                ->delay( $now->addSecond( 10 ) );
+            event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds(10 ) ) );
         }
     }
 }

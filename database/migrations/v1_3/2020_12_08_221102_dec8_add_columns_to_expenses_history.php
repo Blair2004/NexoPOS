@@ -15,7 +15,9 @@ class Dec8AddColumnsToExpensesHistory extends Migration
     public function up()
     {
         Schema::table('nexopos_expenses_history', function (Blueprint $table) {
-            $table->string( 'status' )->default( ExpenseHistory::STATUS_ACTIVE );
+            if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'status' ) ) {
+                $table->string( 'status' )->default( ExpenseHistory::STATUS_ACTIVE );
+            }
         });
     }
 
