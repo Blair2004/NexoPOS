@@ -8,10 +8,10 @@ modules/.temp/*
 public/modules/*
 public/storage
 !public/modules/index.html
-public/js/*.js
+# public/js/*.js
 public/js/*.map
 public/js/*.txt
-public/css/*.css
+# public/css/*.css
 public/css/*.map
 public/mix-manifest.json
 composer-lock.json

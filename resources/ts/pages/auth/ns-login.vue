@@ -9,7 +9,7 @@
             <ns-spinner border="4" size="16"></ns-spinner>
         </div>
         <div class="flex w-full items-center justify-center py-4">
-            <a href="/password-lost" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
+            <!-- <a href="/password-lost" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a> -->
         </div>
         <div class="flex justify-between items-center bg-gray-200 p-3">
             <div>
