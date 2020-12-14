@@ -188,10 +188,15 @@ class ReportsController extends DashboardController
         })->values();
     }
 
-    public function yearlySales( Request $request )
+    public function getAnnualReport( Request $request )
     {
-        return $this->view( 'pages.dashboard.reports.yearly-report', [
-            'title'         =>  __( 'Yearly Report' ),
+        return $this->reportService->getYearReportFor( $request->input( 'year' ) );
+    }
+
+    public function annualReport( Request $request )
+    {
+        return $this->view( 'pages.dashboard.reports.annual-report', [
+            'title'         =>  __( 'Annual Report' ),
             'description'   =>  __( 'Provides an overview over the sales during a specific period' )
         ]);        
     }

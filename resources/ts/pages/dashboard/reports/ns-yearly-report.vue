@@ -7,6 +7,7 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 export default {
     name : 'ns-yearly-report',
     mounted() {
+        this.loadReport();
     },
     components: {
         nsDatepicker
@@ -15,7 +16,9 @@ export default {
         return {
             startDate: moment(),
             endDate: moment(),
-            report: []
+            report: [],
+            year: '2020',
+            labels: [ 'month_paid_orders', 'month_taxes', 'month_expenses', 'month_income' ]
         }
     },
     computed: {
@@ -34,16 +37,22 @@ export default {
             this.endDate    =   moment.format();
         },
         printSaleReport() {
-            this.$htmlToPaper( 'yearly-report' );
+            this.$htmlToPaper( 'annual-report' );
+        },
+        sumOf( label ) {
+            if ( Object.values( this.report ).length > 0 ) {
+                return Object.values( this.report ).map( month => parseFloat( month[ label ] ) || 0 )
+                    .reduce( ( b, a ) => b + a );
+            }
+
+            return 0;
         },
         loadReport() {
-            const startDate     =   moment( this.startDate );
-            const endDate       =   moment( this.endDate );
+            const year       =   this.year;
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/cash-flow', { startDate, endDate })
+            nsHttpClient.post( '/api/nexopos/v4/reports/annual-report', { year })
                 .subscribe( result => {
                     this.report     =   result;
-                    console.log( this.report );
                 }, ( error ) => {
                     nsSnackBar
                         .error( error.message )

@@ -56,6 +56,7 @@ class ResetController extends DashboardController
             'nexopos_options',
             'nexopos_dashboard_days',
             'nexopos_dashboard_weeks',
+            'nexopos_dashboard_months',
         ];
 
         foreach( $tables as $table ) {

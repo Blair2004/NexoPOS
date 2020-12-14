@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Console\Kernel;
+use App\Http\Kernel as HttpKernel;
 use App\Services\DateService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -53,7 +54,11 @@ class GenerateActivityCommand extends Command
         $bar->start();
 
         $files  =   Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
-        $app    =   app()->make( Kernel::class )->bootstrap();
+        
+        $app    =   require base_path( 'bootstrap/app.php' );
+        $app->make( HttpKernel::class )->bootstrap();
+
+        dd( $app->session() );
 
         foreach( $totalDays as $day ) {
             /**
@@ -74,7 +79,7 @@ class GenerateActivityCommand extends Command
                     $object             =   new $class;
                     $methods            =   get_class_methods( $object );
                     $method             =   $methods[0];
-                    $object->createApplication();
+                    $object->defineApp( $app );
                     $object->$method();
                 }
             }

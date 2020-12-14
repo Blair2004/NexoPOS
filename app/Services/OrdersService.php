@@ -696,6 +696,7 @@ class OrdersService
          * compute gross total
          */
         $order->net_total     =   $this->currencyService->define( $order->subtotal )
+            ->subtractBy( $order->discount )
             ->subtractBy( $taxes )
             ->get();
 

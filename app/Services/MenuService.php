@@ -351,9 +351,9 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/reports/cash-flow' )
                     ], 
                     'annulal-sales'  =>  [
-                        'label' =>  __( 'Yearly Sales' ),
+                        'label' =>  __( 'Annual Report' ),
                         'permissions'   =>  [ 'nexopos.reports.yearly' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/yearly-sales' )
+                        'href'  =>  ns()->url( '/dashboard/reports/annual-report' )
                     ], 
                 ]
             ],

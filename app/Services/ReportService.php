@@ -75,16 +75,16 @@ class ReportService
         return $todayReport;
     }
 
-    public function computeDashboardMonth( $today = null )
+    public function computeDashboardMonth( $todayCarbon = null )
     {
-        if ( $today === null ) {
+        if ( $todayCarbon === null ) {
             $todayCarbon    =   $this->dateService->copy()->now();
         }
 
         $monthStarts    =   $todayCarbon->startOfMonth()->toDateTimeString();
         $monthEnds      =   $todayCarbon->endOfMonth()->toDateTimeString();
 
-        $entries        =   DashboardDay::from( $monthStarts )
+        $entries            =   DashboardDay::from( $monthStarts )
             ->to( $monthEnds )
             ->get();
 
@@ -127,10 +127,12 @@ class ReportService
             "total_wasted_goods",
             "total_expenses",
         ] as $field ) {
-            $dashboardMonth->$field     =   $entries->last()->$field;
+            $dashboardMonth->$field     =   $entries->last()->$field ?? 0;
         }
         
         $dashboardMonth->save();
+
+        return $dashboardMonth;
     }
 
     public function computeOrdersTaxes( $previousReport, $todayReport )
@@ -202,7 +204,7 @@ class ReportService
         $totalIncome         =   Order::from( $this->dayStarts )
             ->to( $this->dayEnds )
             ->paymentStatus( Order::PAYMENT_PAID )
-            ->sum( 'total' );
+            ->sum( 'net_total' );
 
         $totalExpenses      =   ExpenseHistory::from( $this->dayStarts )
             ->to( $this->dayEnds )
@@ -422,5 +424,34 @@ class ReportService
         return DashboardDay::from( $startDate )
             ->to( $endDate )
             ->get();
+    }
+
+    public function getYearReportFor( $year )
+    {
+        $date           =   $this->dateService->now();
+        $date->year     =   $year >= 2019 && $year <= 2099 ? $year : 2020; // validate the date
+        $startOfYear    =   $date->startOfYear()->copy();
+        $endOfYear      =   $date->endOfYear()->copy();
+
+        $reports        =   [];
+
+        do {
+            $currentMonth   =   $startOfYear->copy();
+
+            $monthReport    =   DashboardMonth::from( $currentMonth->startOfMonth()->toDateTimeString() )
+                ->to( $currentMonth->endOfMonth()->toDateTimeString() )
+                ->first();
+
+            if ( ! $monthReport instanceof DashboardMonth ) {
+                $monthReport    =   $this->computeDashboardMonth( $currentMonth );
+            }
+
+            $reports[ $currentMonth->format( 'm' ) ]       =   $monthReport;
+
+            $startOfYear->addMonth();
+        }
+        while( ! $startOfYear->isSameMonth( $endOfYear->copy()->addMonth() ) );
+
+        return $reports;
     }
 }

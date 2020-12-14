@@ -8,4 +8,4 @@ Route::post( 'reports/sale-report', [ ReportsController::class, 'getSaleReport' 
 Route::post( 'reports/sold-stock-report', [ ReportsController::class, 'getSoldStockReport' ]);
 Route::post( 'reports/profit-report', [ ReportsController::class, 'getProfit' ]);
 Route::post( 'reports/cash-flow', [ ReportsController::class, 'getCashFlow' ]);
-Route::post( 'reports/yearly-sales-report', [ ReportsController::class, 'getYearlySales' ]);
+Route::post( 'reports/annual-report', [ ReportsController::class, 'getAnnualReport' ]);
