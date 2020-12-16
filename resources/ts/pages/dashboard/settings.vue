@@ -1,8 +1,13 @@
 <template>
     <div id="tabbed-card" v-if="formDefined">
         <div id="card-header" class="flex flex-wrap">
-            <div :class="tab.active ? 'bg-white' : 'bg-gray-300'" @click="setActive( tab )" v-bind:key="key" v-for="( tab, key ) of form.tabs" class="text-gray-700 cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
-                {{ tab.label }}
+            <div 
+                :class="tab.active ? 'bg-white' : 'bg-gray-300'" 
+                @click="setActive( tab )" v-bind:key="key" 
+                v-for="( tab, key ) of form.tabs" 
+                class="text-gray-700 cursor-pointer flex items-center px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                <span>{{ tab.label }}</span>
+                <span v-if="tab.errors.length > 0" class="ml-2 rounded-full bg-red-400 text-white text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
             </div>
         </div>
         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow">
@@ -71,11 +76,13 @@ export default {
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
                         this.validation.triggerFieldsErrors( this.form, error );
+                        console.lo( error, this.form );
                         nsSnackBar.error( error.message || 'No error message provided in case the form is not valid.' )
                             .subscribe();
                     })
             }
 
+            console.log( this.form );
             nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || 'No error message provided in case the form is not valid.' )
                 .subscribe();
         },

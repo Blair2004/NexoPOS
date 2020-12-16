@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -13,7 +14,7 @@ class CreateOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_options', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_options' ), function (Blueprint $table) {
             $table->increments('id');
             $table->integer( 'user_id' )->nullable();
             $table->string( 'key' );
@@ -31,6 +32,6 @@ class CreateOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_options');
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_options' ) );
     }
 }

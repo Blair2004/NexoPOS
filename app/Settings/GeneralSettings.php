@@ -30,28 +30,24 @@ class GeneralSettings extends SettingsPage
                             'label' =>  __( 'Store Address' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The actual store address.' ),
-                            'validation'    =>  'sometimes|min:5'                           
                         ], [
                             'name'  =>  'ns_store_city',
                             'value'          =>  $options->get( 'ns_store_city' ),
                             'label' =>  __( 'Store City' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The actual store city.' ),
-                            'validation'    =>  'sometimes|min:5'                           
                         ], [
                             'name'  =>  'ns_store_phone',
                             'value'          =>  $options->get( 'ns_store_phone' ),
                             'label' =>  __( 'Store Phone' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The phone number to reach the store.' ),
-                            'validation'    =>  'sometimes|min:5'                           
                         ], [
                             'name'  =>  'ns_store_email',
                             'value'          =>  $options->get( 'ns_store_email' ),
                             'label' =>  __( 'Store Email' ), 
                             'type'          =>  'text',
                             'description'   =>  __( 'The actual store email. Might be used on invoice or for reports.' ),
-                            'validation'    =>  'sometimes|email'                           
                         ], [
                             'name'  =>  'ns_store_pobox',
                             'value'          =>  $options->get( 'ns_store_pobox' ),

@@ -136,7 +136,10 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
             </div>
             <div id="tabs-container" class="my-5" v-if="disableTabs !== 'true'">
                 <div class="header flex" style="margin-bottom: -1px;">
-                    <div v-for="( tab , identifier ) of form.tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                    <div v-for="( tab , identifier ) of form.tabs" 
+                        @click="toggle( identifier )" 
+                        :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" 
+                        class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
                 <div class="border border-gray-400 p-4 bg-white">
                     <div class="-mx-4 flex flex-wrap">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Classes\Hook;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ class CreateNexoposDashboardMonthsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_dashboard_months', function (Blueprint $table) {
+        Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_months' ), function (Blueprint $table) {
             $table->id();
             $table->float( 'month_taxes' )->default(0);
             $table->float( 'month_unpaid_orders' )->default(0);
@@ -53,6 +54,6 @@ class CreateNexoposDashboardMonthsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nexopos_dashboard_months');
+        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_dashboard_months' ) );
     }
 }
