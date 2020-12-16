@@ -98,7 +98,8 @@ class ModulesService
                 'author'                =>  [ 'uses'    =>  'author' ],
                 'description'           =>  [ 'uses'    =>  'description' ],
                 'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
-                'name'                  =>  [ 'uses'    =>  'name' ]
+                'name'                  =>  [ 'uses'    =>  'name' ],
+                'requires'              =>  [ 'uses'    =>  'requires.module' ],
             ]);
 
             $config[ 'files' ]          =   $files;
@@ -284,6 +285,23 @@ class ModulesService
         
         return $this->modules;
     }
+
+    /**
+     * get a specific module using the provided 
+     * namespace only if that module is enabled
+     * @param string module namespace
+     * @return bool|array
+     */
+    public function getIfEnabled( $namespace )
+    {
+        $module     =   $this->modules[ $namespace ] ?? false;
+
+        if ( $module ) {
+            return $module[ 'enabled' ] === true;
+        }
+
+        return $module;
+    } 
 
     /**
      * Return the list of active module as an array
@@ -870,17 +888,9 @@ class ModulesService
             /**
              * We're now atempting to trigger the module
              */
-            try {
-                $this->autoloadModule( $module );
-                include_once( $module[ 'index-file' ] );
-                $moduleObject   =   new $module[ 'entry-class' ];
-            } catch( Exception $error ) {
-                return [
-                    'status'    =>  'failed',
-                    'message'   =>  $error->getMessage(),
-                    'module'    =>  $module
-                ];
-            }
+            $this->autoloadModule( $module );
+            include_once( $module[ 'index-file' ] );
+            new $module[ 'entry-class' ];
 
             // make sure to enable only once
             if ( ! in_array( $namespace, $enabledModules ) ) {
