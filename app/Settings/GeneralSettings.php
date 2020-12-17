@@ -180,10 +180,11 @@ class GeneralSettings extends SettingsPage
                             'type'          =>  'text',
                             'description'   =>  __( 'This define how the date and times hould be formated. The default format is "Y-m-d H:i".' ),
                         ], [
-                            'label'         =>  __( 'Date TimeZone' ),
+                            'label'         =>  sprintf( __( 'Date TimeZone (Now: %s)' ), ns()->date->getNowFormatted() ),
                             'name'          =>  'ns_datetime_timezone',
                             'value'          =>  $options->get( 'ns_datetime_timezone' ),
-                            'type'          =>  'text',
+                            'type'          =>  'select',
+                            'options'       =>  Helper::kvToJsOptions( config( 'nexopos.timezones' ) ),
                             'description'   =>  __( 'Determine the default timezone of the store.' ),
                         ]
                     ]

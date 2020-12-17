@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\Log;
 class DateService extends Carbon
 {
     private $options;
+    private $timezone;
 
     public function __construct( $time = 'now', $timeZone = 'Europe/London' )
     {
         parent::__construct( $time, $timeZone );
-        
+
+        $this->timezone     =   $timeZone;        
         $this->options  =   app()->make( Options::class );
     }
 
@@ -36,10 +38,10 @@ class DateService extends Carbon
     {
         switch( $mode ) {
             case 'short':
-                return $this->now()->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
+                return $this->now( $this->timezone )->format( $this->options->get( 'ns_date_format', 'Y-m-d' ) );
             break;
             case 'full':
-                return $this->now()->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
+                return $this->now( $this->timezone )->format( $this->options->get( 'ns_datetime_format', 'Y-m-d H:i:s' ) );
             break;
         }
     }
