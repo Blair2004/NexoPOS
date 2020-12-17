@@ -88,8 +88,17 @@ class CreateProductTest extends TestCase
                     ]
                 ]
             ]);
-    
-            $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+
+            if ( $taxType === 'exclusive' ) {
+                $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $response->assertJsonPath( 'data.product.unit_quantities.0.incl_tax_sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $response->assertJsonPath( 'data.product.unit_quantities.0.excl_tax_sale_price', $sale_price );
+            } else {
+                $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $sale_price );
+                $response->assertJsonPath( 'data.product.unit_quantities.0.incl_tax_sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $response->assertJsonPath( 'data.product.unit_quantities.0.excl_tax_sale_price', $sale_price );
+            }
+
             $response->assertStatus(200);
         }
     }

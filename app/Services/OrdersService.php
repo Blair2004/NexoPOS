@@ -306,45 +306,6 @@ class OrdersService
     }
 
     /**
-     * @deprecated
-     */
-    private function __saveOrderDiscount($order, $fields)
-    {
-        if (in_array($fields['discount_type'], ['flat', 'percentage'])) {
-            $order->discount_type   =   $fields['discount_type'];
-        }
-
-        switch ($fields['discount_type']) {
-            case 'flat':
-                $order->discount        =   $this->currencyService->define($fields['discount'])->get();
-                $order->total           =   $this->currencyService->define($order->subtotal)
-                    ->subtractBy($order->discount)
-                    ->get();
-                $order->gross_total     =   $this->currencyService->define($order->subtotal)
-                    ->get();
-                $order->net_total     =   $this->currencyService->define($order->subtotal)
-                    ->subtractBy($order->discount)
-                    ->get();
-                break;
-            case 'percentage':
-                $discountValue      =   $this->currencyService->define($order->subtotal)
-                    ->multipliedBy( $fields['discount_percentage'] )
-                    ->dividedBy(100)
-                    ->get();
-                $order->discount    =   $discountValue;
-                $order->total       =   $this->currencyService->define($order->subtotal)
-                    ->subtractBy($discountValue)
-                    ->get();
-                $order->gross_total =   $this->currencyService->define($order->subtotal)
-                    ->get();
-                $order->net_total =   $this->currencyService->define($order->subtotal)
-                    ->subtractBy($discountValue)
-                    ->get();
-                break;
-        }
-    }
-
-    /**
      * get the current shipping
      * feels
      * @param array fields
@@ -1082,7 +1043,10 @@ class OrdersService
 
     public function computeTotal( $fields, $order )
     {
-        return $this->currencyService->getRaw( ( $order->subtotal - $order->discount ) + $order->shipping );
+        return $this->currencyService->define( $order->subtotal )
+            ->subtractBy( $order->discount )
+            ->additionateBy( $order->shipping )
+            ->getRaw();
     }
 
     public function computeSubTotal( $fields, $order )

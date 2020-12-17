@@ -83,7 +83,7 @@ class MakeProcurementTest extends TestCase
                                 $margin
                             ) 
                         ),
-                        'quantity'              =>  $faker->numberBetween(20,50),
+                        'quantity'              =>  $faker->numberBetween(100,500),
                         'tax_group_id'          =>  $taxGroup->id,
                         'tax_type'              =>  $taxType,
                         'tax_value'             =>  $taxService->getTaxGroupVatValue( 
