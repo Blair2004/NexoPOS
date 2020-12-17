@@ -66,10 +66,10 @@ class ComputeCustomerAccountJob implements ShouldQueue
     {
         switch( $event->order->payment_status ) {
             case 'paid': 
-                $event->customer->purchases_amount      -=  $event->order->total;
+                $event->order->customer->purchases_amount      -=  $event->order->total;
             break;
             case 'partially_paid': 
-                $event->customer->purchases_amount      -=  $event->order->tendered;
+                $event->order->customer->purchases_amount      -=  $event->order->tendered;
             break;
             default:
                 $event->order->customer->owed_amount    -=  $event->order->total;
