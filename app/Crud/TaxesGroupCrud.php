@@ -124,6 +124,8 @@ class TaxesGroupCrud extends CrudService
                     'fields'    =>  [
                         [
                             'name'  =>  'description',
+                            'type'  =>  'textarea',
+                            'value' =>  $entry->description ?? '',
                             'label' =>  __( 'Description' ),
                             'description'   =>  __( 'Provide a short description to the tax group.' ),
                         ]
@@ -283,7 +285,7 @@ class TaxesGroupCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'taxes/groups' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
@@ -346,9 +348,11 @@ class TaxesGroupCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.taxes-groups',
-            'create'    =>  'ns.taxes-groups/create',
-            'edit'      =>  'ns.taxes-groups/edit/#'
+            'list'      => ns()->url( 'dashboard/' . 'taxes/groups' ),
+            'create'    => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups/' . '{id}' ),
         ];
     }
 
