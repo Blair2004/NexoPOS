@@ -22,6 +22,12 @@ class DateService extends Carbon
         $this->__construct( $time, $timeZone );
     }
 
+    /**
+     * Get the defined date format
+     * @param string $date
+     * @param string $mode
+     * @return string formatted string
+     */
     public function getFormatted( $date, $mode = 'full' )
     {
         switch( $mode ) {
@@ -34,6 +40,21 @@ class DateService extends Carbon
         }
     }
 
+    /**
+     * Get the actual date time instance
+     * based on the provided timezone
+     * @return DateService $date
+     */
+    public function getNow()
+    {
+        return $this->now( $this->timezone );
+    }
+
+    /**
+     * Return a formatted string the current date/time
+     * usign a defined format (full or short)
+     * @return string
+     */
     public function getNowFormatted( $mode = 'full' )
     {
         switch( $mode ) {

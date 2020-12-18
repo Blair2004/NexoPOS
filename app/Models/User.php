@@ -3,15 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UserOptions;
+use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 
-class User extends Authenticatable
+class User extends NsRootModel
 {
-    use Notifiable, HasFactory, HasApiTokens;
+    use Notifiable, 
+        HasFactory, 
+        HasApiTokens, 
+        Authenticatable, 
+        Authorizable, 
+        CanResetPassword, 
+        MustVerifyEmail;
 
     protected $table    =   'nexopos_users';
     protected $casts    =   [
@@ -71,7 +80,7 @@ class User extends Authenticatable
 
     /**
      * Relation with permissions
-     * @return object
+     * @return array
      */
     public static function permissions( $user_id = null )
     {
