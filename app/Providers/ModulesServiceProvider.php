@@ -14,8 +14,6 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot( ModulesService $modules )
     {
-        $modules        =   app()->make( ModulesService::class );
-
         collect( $modules->getEnabled() )->each( fn( $module ) => $modules->boot( $module ) );
         
         /**

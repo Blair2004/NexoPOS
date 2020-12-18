@@ -11,10 +11,8 @@ use App\Services\Helper;
 use Laravie\Parser\Xml\Document;
 use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
-use PhpParser\NodeDumper;
 use PhpParser\ParserFactory;
-use App\Exceptions\CoreException;
-use App\Providers\ModulesServiceProvider;
+use App\Exceptions\MissingDependencyException;
 use Exception;
 
 class ModulesService
@@ -58,7 +56,7 @@ class ModulesService
              */
             collect( $directories )->map( function( $module ) {
                 return str_replace( '/', '\\', $module );
-            })->map( function( $module ) {
+            })->each( function( $module ) {
                 $this->__init( $module );
             });
         } else {
@@ -99,8 +97,20 @@ class ModulesService
                 'description'           =>  [ 'uses'    =>  'description' ],
                 'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
                 'name'                  =>  [ 'uses'    =>  'name' ],
-                'requires'              =>  [ 'uses'    =>  'requires.module' ],
             ]);
+
+            $xmlElement                 =   new \SimpleXMLElement( $xmlContent );
+            
+            $config[ 'requires' ]       =   collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function( $module ) {
+                $module     =   ( array ) $module;
+                return [
+                    $module[ '@attributes' ][ 'namespace' ]     =>  [
+                        'min-version'   =>  $module[ '@attributes' ][ 'min-version' ],
+                        'max-version'   =>  $module[ '@attributes' ][ 'max-version' ],
+                        'name'          =>  $module[0],
+                    ]
+                ];
+            })->toArray() ?? [];
 
             $config[ 'files' ]          =   $files;
 
@@ -155,7 +165,7 @@ class ModulesService
                     $moduleConfig       =   [];
 
                     foreach( $files as $file ) {
-                        $info               =     pathinfo( $file );
+                        $info               =   pathinfo( $file );
                         $_config            =   include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
                         $final[ $config[ 'namespace' ] ]    =   [];
                         $final[ $config[ 'namespace' ] ][ $info[ 'filename' ] ]     =   $_config;   
@@ -237,6 +247,63 @@ class ModulesService
     }
 
     /**
+     * Will check for a specific module or all the module
+     * enabled if there is a dependency error.
+     * @param null|array $module
+     * @return void
+     */
+    public function dependenciesCheck( $module = null )
+    {
+        if ( $module === null ) {
+            collect( $this->getEnabled() )->each( function( $module ) {
+                $this->dependenciesCheck( $module );
+            });
+        } else {
+            if ( isset( $module[ 'requires' ] ) ) {
+                collect( $module[ 'requires' ] )->each( function( $dependency, $namespace ) use ( $module ) {
+                    if ( $this->get( $namespace ) === null ) {
+
+                        /**
+                         * The dependency is missing
+                         * let's disable the module
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new MissingDependencyException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is missing. ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ]
+                            )
+                        ) );
+                    }
+
+                    if ( ! $this->get( $namespace )[ 'enabled' ] ) {
+
+                        /**
+                         * The dependency is missing
+                         * let's disable the module
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new MissingDependencyException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is not enabled. ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ]
+                            )
+                        ) );
+                    }
+
+                    /**
+                     * @todo must check module version
+                     */
+                });
+            }
+        }
+    }
+
+    /**
      * Run Modules
      * @return void
      */
@@ -265,6 +332,8 @@ class ModulesService
 
         // include module index file
         include_once( $module[ 'index-file' ] );
+
+        $this->autoloadModule( $module );
         
         // run module entry class
         new $module[ 'entry-class' ];
@@ -864,13 +933,31 @@ class ModulesService
      */
     public function enable( string $namespace )
     {
-        // check if module exists
         if ( $module = $this->get( $namespace ) ) {
-            // @todo sandbox to test if the module runs
+            /**
+             * get all the modules that are 
+             * enabled.
+             */
             $enabledModules     =   ( array ) $this->options->get( 'enabled_modules' );
 
             /**
-             * Let's check if that module can be enabled
+             * @todo we might need to check if this module
+             * has dependencies that are missing.
+             */
+            try {
+                $this->dependenciesCheck( $module );
+            } catch( MissingDependencyException $exception ) {
+                throw new MissingDependencyException( 
+                    sprintf( 
+                        __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
+                        $module[ 'name' ],
+                        collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                    )
+                );
+            }
+
+            /**
+             * Let's check if the main entry file doesn't have an error
              */
             $code       =   file_get_contents( $module[ 'index-file' ] );
             $parser     =   ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
@@ -886,13 +973,14 @@ class ModulesService
             }
 
             /**
-             * We're now atempting to trigger the module
+             * We're now atempting to trigger the module.
              */
-            $this->autoloadModule( $module );
-            include_once( $module[ 'index-file' ] );
-            new $module[ 'entry-class' ];
+            $this->__boot( $module );
 
-            // make sure to enable only once
+            /**
+             * We'll enable the module and make sure it's stored
+             * on the option table only once.
+             */
             if ( ! in_array( $namespace, $enabledModules ) ) {
                 $enabledModules[]   =   $namespace;
                 $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
