@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Events\ExpenseAfterRefreshEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
@@ -87,6 +88,7 @@ class ComputeDashboardExpensesJob implements ShouldQueue
             });
 
             event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds(10 ) ) );
+            event( new DashboardDayAfterUpdatedEvent );
         }
     }
 }

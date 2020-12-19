@@ -1,10 +1,9 @@
 <template>
     <div class="bg-white rounded shadow my-2 overflow-hidden">
         <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
-            <h2 class="text-3xl font-body">Welcome to NexoPOS 4</h2>
-            <p class="text-gray-600 text-sm">Thank you for having choosed NexoPOS 4 for managing your store. This is the installation wizard that will help you having it running fast.</p>
+            <p class="text-gray-600 text-sm">Thank you for having choosed NexoPOS 4 for managing your store. This is the installation wizard that will guide you through the installation.</p>
             <div class="py-2">
-                <h2 class="text-2xl font-body text-gray-700">Remaining Steps</h2>
+                <h2 class="text-xl font-body text-gray-700">Remaining Steps</h2>
                 <ul class="text-gray-600 text-sm">
                     <li><i class="las la-arrow-right"></i> Database Configuration</li>
                     <li><i class="las la-arrow-right"></i> Application Configuration</li>
