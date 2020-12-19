@@ -34,10 +34,11 @@ class UserProfileForm extends SettingsPage
 
         $validator      =   Validator::make( $request->input( 'security' ), []);
 
-        $results         =   [];       
-        $results[]       =   $this->processCredentials( $request, $validator );
-        $results[]       =   $this->processOptions( $request );
-        $results[]       =   $this->processAttribute( $request );
+        $results        =   [];       
+        $results[]      =   $this->processCredentials( $request, $validator );
+        $results[]      =   $this->processOptions( $request );
+        $results[]      =   $this->processAttribute( $request );
+        $results        =   collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values();
 
         return [
             'status'    =>  'success',
@@ -52,21 +53,25 @@ class UserProfileForm extends SettingsPage
             ->map( fn( $field ) => $field[ 'name' ] )
             ->toArray();
 
-        $user           =   UserAttribute::firstOrNew();
-        $user->user_id  =   Auth::id();
-
-        foreach( $request->input( 'attribute' ) as $key => $value ) {
-            if ( in_array( $key, $allowedInputs ) ) {
-                $user->$key     =   $value;
+        if ( ! empty( $allowedInputs ) ) {
+            $user           =   UserAttribute::firstOrNew();
+            $user->user_id  =   Auth::id();
+    
+            foreach( $request->input( 'attribute' ) as $key => $value ) {
+                if ( in_array( $key, $allowedInputs ) ) {
+                    $user->$key     =   $value;
+                }
             }
+    
+            $user->save();
+    
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The user attribute has been saved.' )
+            ];
         }
 
-        $user->save();
-
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The user attribute has been saved.' )
-        ];
+        return [];
     }
 
     public function processOptions( $request )
@@ -90,32 +95,33 @@ class UserProfileForm extends SettingsPage
             ];
         }
 
-        return [
-            'status'    =>  'failed',
-            'message'   =>  __( 'No options was provided.' )
-        ];
+        return [];
     }
 
     public function processCredentials( $request, $validator )
     {
-        if ( ! Hash::check( $request->input( 'security.old_password' ), Auth::user()->password ) ) {  
+        if ( ! empty( $request->input( 'security.old_password' ) ) ) {
 
-            $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
-
-            return  [
-                'status'    =>  'failed',
-                'message'   =>  __( 'Wrong old password provided' )
-            ];
-
-        } else {
-            $user               =   User::find( Auth::id() );
-            $user->password     =   Hash::make( $request->input( 'security.password'  ) );
-            $user->save();
-
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'Password Successfully updated.' )
-            ];
+            if ( ! Hash::check( $request->input( 'security.old_password' ), Auth::user()->password ) ) {  
+    
+                $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
+    
+                return  [
+                    'status'    =>  'failed',
+                    'message'   =>  __( 'Wrong old password provided' )
+                ];
+    
+            } else {
+                $user               =   User::find( Auth::id() );
+                $user->password     =   Hash::make( $request->input( 'security.password'  ) );
+                $user->save();
+    
+                return [
+                    'status'    =>  'success',
+                    'message'   =>  __( 'Password Successfully updated.' )
+                ];
+            }
         }
+        return [];
     }
 }

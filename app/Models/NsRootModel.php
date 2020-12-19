@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Classes\Hook;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class NsRootModel extends Model

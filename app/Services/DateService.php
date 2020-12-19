@@ -6,20 +6,23 @@ use Illuminate\Support\Facades\Log;
 
 class DateService extends Carbon
 {
+    /**
+     * @var Options
+     */
     private $options;
     private $timezone;
 
-    public function __construct( $time = 'now', $timeZone = 'Europe/London' )
+    public function __construct( $time = 'now', $timezone = 'Europe/London' )
     {
-        parent::__construct( $time, $timeZone );
+        parent::__construct( $time, $timezone );
 
-        $this->timezone     =   $timeZone;        
-        $this->options  =   app()->make( Options::class );
+        $this->timezone     =   $timezone;        
+        $this->options      =   app()->make( Options::class );
     }
 
-    public function define( $time, $timeZone = 'Europe/London' )
+    public function define( $time, $timezone = 'Europe/London' )
     {
-        $this->__construct( $time, $timeZone );
+        $this->__construct( $time, $timezone );
     }
 
     /**

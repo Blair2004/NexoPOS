@@ -25,7 +25,6 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->reportService    =   app()->make( ReportService::class );
     }
 
     /**
@@ -35,6 +34,7 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function handle()
     {
+        $this->reportService    =   app()->make( ReportService::class );
         $this->reportService->computeDayReport();
     }
 }

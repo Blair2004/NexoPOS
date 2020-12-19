@@ -37,7 +37,7 @@ class ExpensesEventSubscriber
         $event->listen(
             ExpenseAfterCreateEvent::class,
             function( $event ) {
-                if ( ! $event->expense->recurring ) {
+                if ( ! $event->expense->recurring && $event->expense->active ) {
                     $this->expenseService->triggerExpense( $event->expense );
                 }
             }

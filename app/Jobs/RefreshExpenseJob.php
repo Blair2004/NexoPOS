@@ -43,6 +43,8 @@ class RefreshExpenseJob implements ShouldQueue
         /**
          * as it's not saved from that "refreshFromDashboardDay".
          */
-        $this->dashboardDay->save();
+        DashboardDay::withoutEvents( function() {
+            $this->dashboardDay->save();
+        });
     }
 }

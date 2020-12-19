@@ -122,15 +122,6 @@ class Setup
         Artisan::call( 'migrate --path=/database/migrations/v1_0' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
         
-        /**
-         * We assume so far the application is installed
-         * then we can launch option service
-         */
-        $this->options      =   app()->make( Options::class );
-        $this->options->set( 'ns_store_name', $request->input( 'ns_store_name' ) );
-        $this->options->set( 'allow_registration', false );
-        $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
-        
         $userID             =   rand(1,99);
         $user               =   new User;
         $user->id           =   $userID;
@@ -145,14 +136,6 @@ class Setup
          * The main user is the master
          */
         User::set( $user )->as( 'admin' );
-
-        /**
-         * Send Welcome email 
-         * We're polit right here :)
-         */
-        // Mail::to( $user->email )->queue( 
-        //     new MailSetupComplete()
-        // );
 
         /**
          * Login auth since we would like to create some basic options
@@ -173,19 +156,26 @@ class Setup
         $domain     =   Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain     =   Str::replaceFirst( 'https://', '', $domain );
         DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain );
-
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::save();
+
+        /**
+         * We assume so far the application is installed
+         * then we can launch option service
+         */
+        $this->options      =   app()->make( Options::class );
+        $this->options->set( 'ns_store_name', $request->input( 'ns_store_name' ) );
+        $this->options->set( 'allow_registration', false );
+        $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
 
         /**
          * Clear Cache
          */
         Artisan::call( 'cache:clear' );
         Artisan::call( 'config:clear' );
-
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'Tendoo has been successfuly installed' )
+            'message'   =>  __( 'Tendoo has been successfuly installed.' )
         ];
     }
 

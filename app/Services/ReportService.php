@@ -14,6 +14,7 @@ class ReportService
 {
     private $dayStarts;
     private $dayEnds;
+    private $dateService;
 
     public function __construct(
         DateService $dateService

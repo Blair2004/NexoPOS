@@ -123,11 +123,16 @@ class AuthController extends Controller
             throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
         }
         
+        $intended       =   redirect()->intended()->getTargetUrl();
+        
         return [
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully connected.' ),
             'data'      =>  [
-                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', redirect()->intended()->getTargetUrl() ?? ns()->route( 'ns.dashboard.home' ), redirect()->intended()->getTargetUrl() ? true : false )
+                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', 
+                    ( $intended ) === url('/') ? ns()->route( 'ns.dashboard.home' ) : $intended, 
+                    redirect()->intended()->getTargetUrl() ? true : false 
+                )
             ]
         ];
     }

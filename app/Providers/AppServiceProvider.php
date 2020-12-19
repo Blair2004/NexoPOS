@@ -59,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton( DateService::class, function(){
             $options    =   app()->make( Options::class );
             $timeZone   =   $options->get( 'ns_datetime_timezone', 'Europe/London' );
-            return new DateService( 'now', $timeZone, $options );
+            return new DateService( 'now', $timeZone );
         });
 
         // save Singleton for options
