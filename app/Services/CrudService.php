@@ -494,7 +494,7 @@ class CrudService
      */
     public function getCrudInstance( $namespace )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud

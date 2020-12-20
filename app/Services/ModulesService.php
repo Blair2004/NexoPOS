@@ -13,7 +13,9 @@ use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use App\Exceptions\MissingDependencyException;
+use App\Models\ModuleMigration;
 use Exception;
+use Illuminate\Support\Facades\Schema;
 
 class ModulesService
 {
@@ -1058,6 +1060,12 @@ class ModulesService
         return [];
     }
 
+    public function getAllMigrations( $module )
+    {
+        return Storage::disk( 'ns-modules' )
+            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+    }
+
     /**
      * get module migration without
      * having the modules array built.
@@ -1066,53 +1074,36 @@ class ModulesService
      */
     private function __getModuleMigration( $module )
     {
-        /**
-         * If the last migration is not defined
-         * that means we're running it for the first time
-         * we'll set the migration to 0.0 then.
-         */
-        $lastVersion        =   $this->options->get( strtolower( $module[ 'namespace' ] ) . '_last_migration', '0.0.0' );
-        $currentVersion     =   $module[ 'version' ];
-        $directories        =   Storage::disk( 'ns-modules' )->directories( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
-        $version_names      =   [];
-
-        foreach( $directories as $dir ) {
-            $version        =   basename( $dir );
-
+        if ( Schema::hasTable( 'nexopos_modules_migrations' ) ) {
             /**
-             * the last version should be lower than the looped versions
-             * the current version should greather or equal to the looped versions
+             * If the last migration is not defined
+             * that means we're running it for the first time
+             * we'll set the migration to 0.0 then.
              */
-            if ( 
-                version_compare( $lastVersion, $version, '<' ) && 
-                version_compare( $currentVersion, $version, '>=' )
-            ) {					
-                $files      =   Storage::disk( 'ns-modules' )->allFiles( 
-                    ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $version 
-                );
-
+            $migratedFiles      =   ModuleMigration::namespace( $module[ 'namespace' ] )
+                ->get()
+                ->map( fn( $migration ) => $migration->file )
+                ->values()
+                ->toArray();
+                
+            $files              =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+            $unmigratedFiles    =   [];
+    
+            foreach( $files as $file ) {
+    
                 /**
-                 * add a migration only if there is a file to add.
+                 * the last version should be lower than the looped versions
+                 * the current version should greather or equal to the looped versions
                  */
-                if ( count( $files ) ) {
-                    $version_names[ $version ]    =   $files;
+                if ( ! in_array( $file, $migratedFiles ) ) {
+                    $unmigratedFiles[]      =       $file;
                 }
             }
+    
+            return $unmigratedFiles;
         }
 
-        $version_array     =   array_keys( $version_names );
-
-        usort( $version_array, function( $a, $b ) {
-            return version_compare( $a, $b, '>' );
-        });
-
-        $ordered_versions    =   [];
-
-        foreach( $version_array as $version ) {
-            $ordered_versions[ $version ]   =   $version_names[ $version ];
-        }
-        
-        return $ordered_versions;
+        return [];  
     }
 
     /**
@@ -1122,7 +1113,7 @@ class ModulesService
      * @param string file path
      * @return void
      */
-    public function runMigration( $namespace, $version, $file )
+    public function runMigration( $namespace, $file )
     {
         $module     =   $this->get( $namespace );
         $result     =   $this->__runSingleFile( 'up', $module, $file );
@@ -1132,7 +1123,10 @@ class ModulesService
          * if it's successful
          */
         if ( $result[ 'status' ] === 'success' ) {
-            $this->options->set( strtolower( $namespace ) . '_last_migration', $version );
+            $migration              =   new ModuleMigration;
+            $migration->namespace   =   $namespace;
+            $migration->file        =   $file;
+            $migration->save();
         }
 
         return $result;
@@ -1173,8 +1167,8 @@ class ModulesService
      */
     public function dropAllMigrations( $namespace )
     {
-        $migrations     =   $this->getMigrations( $namespace );
-        if ( $migrations && is_array( $migrations ) ) {
+        $migrations     =   $this->getAllMigrations( $namespace );
+        if ( ! empty( $migrations ) ) {
             foreach( $migrations as $version => $files ) {
                 foreach( $files as $file ) {
                     $this->dropMigration( $namespace, $version, $file );

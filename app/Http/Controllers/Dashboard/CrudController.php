@@ -271,7 +271,7 @@ class CrudController extends DashboardController
      */
     public function crudList( string $namespace )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -292,7 +292,7 @@ class CrudController extends DashboardController
      */
     public function crudBulkActions( String $namespace, Request $request )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -335,7 +335,7 @@ class CrudController extends DashboardController
      */
     public function crudGet( string $namespace, Request $request )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * Let's check it the resource has a method to retreive an item
@@ -356,7 +356,7 @@ class CrudController extends DashboardController
      */
     public function getColumns( string $namespace )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -375,7 +375,7 @@ class CrudController extends DashboardController
      */
     public function getConfig( string $namespace ) 
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -401,7 +401,7 @@ class CrudController extends DashboardController
      */
     public function getFormConfig( string $namespace, $id = null )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
         $resource           =   new $crudClass( compact( 'namespace', 'id' ) );
 
         if ( method_exists( $resource, 'getEntries' ) ) {
@@ -432,7 +432,7 @@ class CrudController extends DashboardController
      */
     public function canAccess( $namespace, Request $request ) 
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'canAccess' ) ) {
