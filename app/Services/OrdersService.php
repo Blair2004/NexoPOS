@@ -1073,18 +1073,17 @@ class OrdersService
         if ( ! in_array( $order->payment_status, [
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_UNPAID,
-            Order::PAYMENT_PAID
+            Order::PAYMENT_PAID,
+            Order::PAYMENT_PARTIALLY_REFUNDED,
         ] ) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __('Unable to proceed a refund on an unpaid order.')
-            ]);
+            throw new NotAllowedException( __('Unable to proceed a refund on an unpaid order.') );
         }
 
         $orderRefund                    =   new OrderRefund();
         $orderRefund->author            =   Auth::id();
         $orderRefund->order_id          =   $order->id;
         $orderRefund->payment_method    =   $fields[ 'payment' ][ 'identifier' ];
+        $orderRefund->shipping          =   ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
         $orderRefund->total             =   $this->currencyService->getRaw( $fields[ 'total' ] );
         $orderRefund->save();
 
@@ -1094,9 +1093,14 @@ class OrdersService
             $results[]   =   $this->refundSingleProduct( $order, OrderProduct::find( $product[ 'id' ] ), $product );
         }
 
-        $availableQuantities    =   $order->products->map( fn( $product ) => $product->quantity )->sum();
-        $order->payment_status  =   $availableQuantities === 0 ? Order::PAYMENT_REFUNDED : Order::PAYMENT_PARTIALLY_REFUNDED;
-        $order->save();
+        /**
+         * if the shipping is refunded
+         * We'll do that here
+         */
+        if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
+            $order->shipping        =       0;
+            $order->save();
+        }
 
         /**
          * check if the payment used is the customer account
@@ -1139,13 +1143,11 @@ class OrdersService
 
         if ( ! in_array( $order->payment_status, [
             Order::PAYMENT_PARTIALLY,
+            Order::PAYMENT_PARTIALLY_REFUNDED,
             Order::PAYMENT_UNPAID,
             Order::PAYMENT_PAID
         ] ) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to proceed a refund on an unpaid order.' )
-            ]);
+            throw new NotAllowedException( __( 'Unable to proceed a refund on an unpaid order.' ) );
         }
 
         /**
@@ -1425,8 +1427,19 @@ class OrdersService
         $order->tax_value       =   $productsTotalTaxes;
         $order->change          =   $order->total - $order->tendered;
 
-        if ( $order->tendered >= $order->total ) {
+        $refunds                =   $order->refund;
+        $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();
+
+        if ( ( float ) $order->total == 0 && $totalRefunds > 0 ) {
+            $order->payment_status      =       Order::PAYMENT_REFUNDED;
+        } else if ( $order->total > 0 && $totalRefunds > 0 ) {
+            $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
+        } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
             $order->payment_status      =       Order::PAYMENT_PAID;
+        } else if ( $order->tendered < $order->total ) {
+            $order->payment_status      =       Order::PAYMENT_PARTIALLY;
+        } else if ( $order->total == 0 && $totalRefunds == 0 ) {
+            $order->payment_status      =       Order::PAYMENT_UNPAID;
         }
 
         $order->save();

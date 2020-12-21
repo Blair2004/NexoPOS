@@ -18,8 +18,19 @@ use App\Services\ProductService;
 
 class OrderEventsSubscriber 
 {
+    /**
+     * @var OrdersService
+     */
     private $ordersService;
+
+    /**
+     * @var ProductService
+     */
     private $productsService;
+
+    /**
+     * @var CustomerService
+     */
     private $customerService;
 
     public function __construct(

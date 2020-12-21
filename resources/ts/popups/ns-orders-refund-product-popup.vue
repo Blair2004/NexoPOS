@@ -63,7 +63,6 @@ export default {
         loadFields() {
             nsHttpClient.get( '/api/nexopos/v4/fields/ns.refund-product' )
                 .subscribe( fields => {
-                    console.log( this.product );
                     this.fields     =   this.formValidation.createFields( fields );
                     this.fields.forEach( field => {
                         field.value     =   this.product[ field.name ] || '';

@@ -484,7 +484,7 @@ class OrderCrud extends CrudService
                 $entry->{ '$cssClass' }             =   'bg-red-200 border-red-300 border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY_REFUNDED : 
-                $entry->{ '$cssClass' }             =   'bg-orange-200 border-orange-300 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-orange-100 border-orange-200 border text-sm';
             break;
         }
 

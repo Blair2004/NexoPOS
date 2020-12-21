@@ -34,6 +34,9 @@ class ComputeDayReportJob implements ShouldQueue
      */
     public function handle()
     {
+        /**
+         * @var ReportService
+         */
         $this->reportService    =   app()->make( ReportService::class );
         $this->reportService->computeDayReport();
     }

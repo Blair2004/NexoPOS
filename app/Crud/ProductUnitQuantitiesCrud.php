@@ -112,6 +112,13 @@ class ProductUnitQuantitiesCrud extends CrudService
         ];
     }
 
+    public function hook( $query )
+    {
+        if ( request()->query( 'product_id' ) ) {
+            $query->where( 'product_id', request()->query( 'product_id' ) );
+        }
+    }
+
     /**
      * Check whether a feature is enabled
      * @return  boolean
@@ -231,6 +238,8 @@ class ProductUnitQuantitiesCrud extends CrudService
     {
         return $request;
     }
+
+    
 
     
     /**
