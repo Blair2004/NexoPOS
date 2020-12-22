@@ -47,7 +47,7 @@ class CreateProductTest extends TestCase
             ->get()
             ->map( fn( $cat ) => $cat->id );
 
-        for( $i = 0; $i < 1000; $i++ ) {
+        for( $i = 0; $i < 30; $i++ ) {
             $response   = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
