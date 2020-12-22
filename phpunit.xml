@@ -15,8 +15,7 @@
       <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateCustomerTest.php">./tests/Feature</directory>
-      
-      <directory suffix="CreateProductTest.php">./tests/Feature</directory>
+      <!--  -->
       <directory suffix="CreateProductTest.php">./tests/Feature</directory>
       <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
@@ -30,8 +29,8 @@
       <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       
-      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory>
-      <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
     </testsuite>
   </testsuites>
   <php>

@@ -47,8 +47,6 @@ class ResetController extends DashboardController
             'nexopos_stores',
             'nexopos_taxes',
             'nexopos_taxes_groups',
-            'nexopos_transfers_products',
-            'nexopos_transfers',
             'nexopos_units_groups',
             'nexopos_notifications',
             'nexopos_units',

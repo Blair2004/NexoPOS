@@ -59,7 +59,9 @@ module.exports = {
     },
     extend: {
       colors: {
-        teal: colors.teal
+        teal: colors.teal,
+        orange: colors.orange,
+        cyan: colors.cyan
       },
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,
@@ -103,9 +105,6 @@ module.exports = {
         '-5': '-2.5em',
         '96': '24rem',
         '128': '32rem',
-      },
-      colors: {
-        cyan: '#9cdbff',
       },
     }
   },

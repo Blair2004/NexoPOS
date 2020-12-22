@@ -54,7 +54,7 @@ class CrudServiceProvider extends ServiceProvider
          * every crud class on the system should be
          * added here in order to be available and supported.
          */
-        Hook::addFilter( 'ns.crud-resource', function( $namespace ) {
+        Hook::addFilter( 'ns-crud-resource', function( $namespace ) {
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.hold-orders': return HoldOrderCrud::class;

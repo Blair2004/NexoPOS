@@ -44,8 +44,6 @@ class CreateExpenseTest extends TestCase
             'status'    =>  'success'
         ]);
 
-        return;
-
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
@@ -75,7 +73,7 @@ class CreateExpenseTest extends TestCase
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
                 'name'          =>  __( 'Store Rent' ),
-                [
+                'general'       =>  [
                     'active'        =>  true,
                     'value'         =>  1500,
                     'recurring'     =>  false,

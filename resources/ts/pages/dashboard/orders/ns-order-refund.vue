@@ -12,8 +12,14 @@
                             <div class="p-2 flex">
                                 <ns-field v-for="(field,index) of selectFields" :field="field" :key="index"></ns-field>
                             </div>
-                            <div class="flex justify-end p-2">
-                                <button @click="addProduct()" class="border-2 rounded-full border-gray-200 px-2 py-1 hover:bg-blue-400 hover:text-white text-gray-700">Add Product</button>
+                            <div class="flex justify-between p-2">
+                                <div class="flex items-center text-gray-700">
+                                    <span v-if="order.shipping > 0" class="mr-2">Refund Shipping</span>
+                                    <ns-checkbox v-if="order.shipping > 0" @change="toggleRefundShipping( $event )" :checked="refundShipping"></ns-checkbox>
+                                </div>
+                                <div>
+                                    <button @click="addProduct()" class="border-2 rounded-full border-gray-200 px-2 py-1 hover:bg-blue-400 hover:text-white text-gray-700">Add Product</button>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -82,6 +88,7 @@ import nsNumpad from "@/components/ns-numpad";
 import { nsSelect } from '@/components/ns-select';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { Popup } from '@/libraries/popup';
 
 export default {
     components: {
@@ -102,10 +109,13 @@ export default {
         total() {
             if ( this.refundables.length > 0 ) {
                 return this.refundables.map( product => parseFloat( product.unit_price ) * parseFloat( product.quantity ) )
-                    .reduce( ( before, after ) => before + after );
+                    .reduce( ( before, after ) => before + after ) + this.shippingFees;
             }
 
-            return 0;
+            return 0 + this.shippingFees;
+        },
+        shippingFees() {
+            return ( this.refundShipping ? this.order.shipping : 0 );
         }
     },
     data() {
@@ -115,6 +125,7 @@ export default {
             refundables: [],
             paymentOptions: [],
             paymentField: [],
+            refundShipping: false,
             selectedPaymentGateway: false,
             screen: 0,
             selectFields: [
@@ -139,31 +150,54 @@ export default {
             this.screen     =   value;
         },
 
+        toggleRefundShipping( event ) {
+            this.refundShipping     =   event;
+
+            if ( this.refundShipping ) {
+
+            }
+        },
+
         proceedPayment() {
             if ( this.selectedPaymentGateway === false ) {
                 return nsSnackBar.error( 'Please select a payment gateway before proceeding.' ).subscribe();
             }
 
-            if ( this.refundables.length === 0 ) {
-                return nsSnackBar.error( 'Please add at list a product for a refund.' ).subscribe();
+            if ( this.total === 0 ) {
+                return nsSnackBar.error( 'There is nothing to refund.' ).subscribe();
             }
 
             if ( this.screenValue === 0 ) {
                 return nsSnackBar.error( 'Please provide a valid payment amount.' ).subscribe();
             }
 
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Your Action',
+                message: 'The refund will be made on the current order.',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.doProceed();
+                    }
+                }
+            });
+        },
+
+        doProceed() {
             const data      =   {
-                products    :   this.refundables,
-                total       :   this.screenValue,
-                payment     :   this.selectedPaymentGateway,
+                products            :   this.refundables,
+                total               :   this.screenValue,
+                payment             :   this.selectedPaymentGateway,
+                refund_shipping     :   this.refundShipping
             }
 
             this.isSubmitting   =   true;
             nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
                 .subscribe( result => {
                     this.isSubmitting   =   false;
-                    nsSnackBar.success( error.message ).subscribe();
+                    this.$emit( 'updated', true );
+                    nsSnackBar.success( result.message ).subscribe();
                 }, error => {
+                    this.isSubmitting   =   false;
                     nsSnackBar.error( error.message ).subscribe();
                 })
         },

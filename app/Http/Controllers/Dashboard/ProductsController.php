@@ -381,9 +381,13 @@ class ProductsController extends DashboardController
      * units
      * @return View
      */
-    public function productUnits()
+    public function productUnits( Product $product )
     {
-        return ProductUnitQuantitiesCrud::table();
+        return ProductUnitQuantitiesCrud::table([
+            'queryParams'   =>  [
+                'product_id'    =>  $product->id
+            ]
+        ]);
     }
 
     /**

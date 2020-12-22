@@ -133,7 +133,7 @@ class CrudService
      */
     public function getEntries()
     {
-        $table              =   Hook::filter( 'ns-model-table', $this->table );
+        $table              =   $this->hookTableName( $this->table );
         $request            =   app()->make( Request::class );
         $query              =   DB::table( $table );
         $columnsLongName    =   [];
@@ -432,7 +432,7 @@ class CrudService
         return $entries;
     }
 
-    private function hookTableName( $tableName )
+    protected function hookTableName( $tableName )
     {
         return Hook::filter( 'ns-model-table', $tableName );
     }
@@ -494,7 +494,7 @@ class CrudService
      */
     public function getCrudInstance( $namespace )
     {
-        $crudClass          =   Hook::filter( 'ns.crud-resource', $namespace );
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -648,7 +648,13 @@ class CrudService
             /**
              * Provided to render the side menu.
              */
-            'menus'         =>  app()->make( MenuService::class )
+            'menus'         =>  app()->make( MenuService::class ),
+
+            /**
+             * to provide custom query params
+             * to every outgoing request on the table
+             */
+            'queryParams'   =>  []
         ], $config ) );
     }
 

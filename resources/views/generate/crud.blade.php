@@ -29,7 +29,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * default slug
      * @param string
      */
-    protected $slug   =   '{{ strtolower( trim( $store_slug ) ) }}';
+    protected $slug   =   '{{ strtolower( trim( $route_name ) ) }}';
 
     /**
      * Define namespace
@@ -385,9 +385,9 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $store_slug ) ) }}' ),
-            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $store_slug ) ) }}/create' ),
-            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $store_slug ) ) }}/edit/' ),
+            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
+            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
             'post'      =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
             'put'       =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
         ];

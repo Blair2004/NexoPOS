@@ -28,6 +28,10 @@ class CoreService
      */
     public $isMultistore    =   false;
     public $storeID;
+
+    /**
+     * @var \Modules\NsMultiStore\Services\StoresService $store
+     */
     public $store;
 
     /**

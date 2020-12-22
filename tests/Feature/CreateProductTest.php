@@ -47,7 +47,7 @@ class CreateProductTest extends TestCase
             ->get()
             ->map( fn( $cat ) => $cat->id );
 
-        for( $i = 0; $i < 5; $i++ ) {
+        for( $i = 0; $i < 30; $i++ ) {
             $response   = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
@@ -66,7 +66,7 @@ class CreateProductTest extends TestCase
                             'description'       =>  __( 'Created via tests' ),
                             'product_type'      =>  'product',
                             'type'              =>  $faker->randomElement([ 'materialized', 'dematerialized' ]),
-                            'sku'               =>  Str::random(5) . '-sku',
+                            'sku'               =>  Str::random(15) . '-sku',
                             'status'            =>  'available',
                             'stock_management'  =>  'enabled',   
                         ],

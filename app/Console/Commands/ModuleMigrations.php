@@ -57,7 +57,6 @@ class ModuleMigrations extends Command
 
         if ( $this->module ) {
             if ( $this->passDeleteMigration() ) {
-                $this->version    =   $this->ask( 'Define the version under which you would like to create a migration' );            
                 $this->createMigration();
             }
         } else {
@@ -101,7 +100,6 @@ class ModuleMigrations extends Command
             case 'migration'     :   
             return view( 'generate.modules.migration', [
                 'module'    =>  $this->module,
-                'version'   =>  $this->version,
                 'migration' =>  $this->migration,
                 'table'     =>  $this->table,
                 'schema'    =>  $this->schema
@@ -132,7 +130,7 @@ class ModuleMigrations extends Command
         $this->schema       =   $this->__getSchema( $this->migration );
         $this->migration    =   $this->__getMigrationName( $this->migration );
 
-        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $this->version . DIRECTORY_SEPARATOR . Str::snake( $this->migration ) . '.php';
+        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::snake( $this->migration ) . '.php';
 
         /**
          * Make sure the migration don't exist yet

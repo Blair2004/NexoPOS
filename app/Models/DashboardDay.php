@@ -7,17 +7,12 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class DashboardDay extends Model
+class DashboardDay extends NsModel
 {
     use HasFactory;
 
     public $timestamps  =   false;
     protected $table    =   'nexopos_' . 'dashboard_days';
-
-    protected $dispatchesEvents   =   [
-        // 'saved'     =>  DashboardDayAfterCreatedEvent::class,
-        // 'updated'   =>  DashboardDayAfterCreatedEvent::class,
-    ];
 
     public function scopeFrom( $query, $param )
     {

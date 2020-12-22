@@ -19,6 +19,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
             $table->integer( 'order_id' );
             $table->integer( 'author' );
             $table->float( 'total' );
+            $table->float( 'shipping' );
             $table->string( 'payment_method' );
             $table->timestamps();
         });

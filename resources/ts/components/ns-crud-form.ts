@@ -84,6 +84,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
             const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( (f:any) => {
                 this.form    =   this.parseForm( f.form );
+                this.$emit( 'updated', this.form );
             });
         },
         parseForm( form ) {
