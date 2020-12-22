@@ -1,5 +1,6 @@
 const mix = require('laravel-mix');
 const tailwindcss = require('tailwindcss');
+const path =    require( 'path' );
 
 /*
  |--------------------------------------------------------------------------
@@ -81,6 +82,7 @@ mix
     .js( 'resources/ts/auth.ts', 'public/js')
     .js( 'resources/ts/setup.ts', 'public/js')
     .js( 'resources/ts/popups.ts', 'public/js/' )
+    .vue()  
     .extract([ 
         // 'vue', 
         // 'lodash', 
