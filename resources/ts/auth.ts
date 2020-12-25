@@ -1,23 +1,23 @@
-import { timeStamp } from 'console';
-import { forkJoin } from 'rxjs';
 import Vue from 'vue';
-import { nsHttpClient, nsSnackBar } from './bootstrap';
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import * as components from './components/components';
 import FormValidation from './libraries/form-validation';
+import nsLogin from '@/pages/auth/ns-login.vue';
+// const nsLogin       =   () => import( '@/pages/auth/ns-login' );
 
-const nsLogin       =   require( '@/pages/auth/ns-login' ).default;
-const nsRegister    =   require( '@/pages/auth/ns-register' ).default;
+console.log( Object.keys( nsLogin ) );
 
-declare const nsState;
-declare const nsScreen;
-declare const nsExtraComponents;
+const nsRegister    =   require( '@/pages/auth/ns-register' );
 
-(<any>window).nsComponents          =   { ...components, ...nsExtraComponents };
-(<any>window).authVueComponent      =   new Vue({
+const nsState               =   window[ 'nsState' ];
+const nsScreen              =   window[ 'nsScreen' ];
+const nsExtraComponents     =   window[ 'nsExtraComponents' ];
+
+(<any>window)[ 'nsComponents' ]          =   Object.assign( components, nsExtraComponents );
+(<any>window)[ 'authVueComponent' ]      =   new Vue({
     el: '#page-container',
-    components: {
+    components: Object.assign({
         nsLogin,
         nsRegister,
-        ...components
-    }
+    }, components )
 });

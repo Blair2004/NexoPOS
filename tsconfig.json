@@ -1,18 +1,12 @@
 {
     "compilerOptions": {
-        "module": "ES2020",
-        "outDir": "./resources/js",
-        "target": "ES5",
+        "target": "es5",
+        "strict": false,
+        "module": "es2015",
         "moduleResolution": "node",
-        "skipLibCheck": true,
-        "esModuleInterop": true,
         "experimentalDecorators": true,
-        "noImplicitAny": false,
-        "sourceMap": true,
-        "lib": [
-            "es2019",
-            "DOM"
-        ],
+        "strictPropertyInitialization": false,
+        "strictNullChecks": false,
         "baseUrl": "./",
         "paths": {
             "@/*": [

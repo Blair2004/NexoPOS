@@ -1,4 +1,4 @@
-    import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
+import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { Product } from "./interfaces/product";
@@ -285,7 +285,7 @@ export class POS {
     submitOrder( orderFields = {} ) {
         return new Promise( async ( resolve, reject ) => {
             const order             =   { 
-                ...<Order>this.order.getValue(),
+                ...<Order>this.order!.getValue(),
                 ...orderFields
             };
 

@@ -13,8 +13,19 @@ import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
+import { VueConstructor } from "vue/types/umd";
 
-declare const window;
+declare global {
+    interface Window {
+        _: Lodash,
+        ChartJS: ChartJS,
+        Vue: VueConstructor<Vue>,
+        moment: moment.Moment,
+        Axios: Axios,
+        VueRouter: VueRouter,
+        nsHooks: any
+    }
+};
 declare const ns;
 
 window._                =   Lodash;

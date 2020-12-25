@@ -40,9 +40,9 @@ import NsConfirmPopup       from './popups/ns-pos-confirm-popup.vue';
 import RawVueApexCharts     from 'vue-apexcharts';
 import VueHtmlToPaper       from 'vue-html-to-paper';
 
-declare const nsState;
-declare const nsScreen;
-declare const nsExtraComponents;
+const nsState               =   window[ 'nsState' ];
+const nsScreen              =   window[ 'nsScreen' ]; 
+const nsExtraComponents     =   window[ 'nsExtraComponents' ];    
 
 const VueHtmlToPaperOptions     =   {
     name: '_blank',
@@ -60,25 +60,27 @@ Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
 
 const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
-(<any>window).nsDashboardAside  =   new Vue({
+const nsDashboardAside  =   new Vue({
     el: '#dashboard-aside',
     data: {
         sidebar: 'visible'
     },
-    components: {...baseComponents},
+    components: baseComponents,
     mounted() {
-        nsState.behaviorState.subscribe(({ object }) => {
+        nsState.behaviorState.subscribe(({ object }:any) => {
             this.sidebar    =   object.sidebar;
         })
     }
 });
 
-(<any>window).nsDashboardOverlay    =   new Vue({
+(<any>window)[ 'nsDashboardAside' ]     =   nsDashboardAside;
+
+(<any>window)[ 'nsDashboardOverlay' ]   =   new Vue({
     el: '#dashboard-overlay',
     data: {
         sidebar: null
     },
-    components: {...baseComponents},
+    components: baseComponents,
     mounted() {
         nsState.behaviorState.subscribe(({ object }) => {
             this.sidebar    =   object.sidebar;
@@ -97,15 +99,12 @@ const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts )
     }
 });
 
-(<any>window).nsDashboardHeader     =   new Vue({
+(<any>window)[ 'nsDashboardHeader' ]     =   new Vue({
     el: '#dashboard-header',
     data: {
         menuToggled: false,
     },
-    components: {
-        ...baseComponents,
-        NsNotifications,
-    },
+    components: Object.assign( baseComponents, { NsNotifications }),
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;
@@ -125,7 +124,7 @@ const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts )
     }
 });
 
-const components    =   {
+const components    =   Object.assign({
     NsModules,
     NsRewardsSystem,
     NsCreateCoupons,
@@ -154,11 +153,12 @@ const components    =   {
     NsConfirmPopup,
     NsOrderInvoice,
     VueApexCharts,
-    ...nsExtraComponents, // add extra components provided by plugins.
-};
+}, nsExtraComponents );
 
-(<any>window).nsComponents          =   { ...components, ...baseComponents };
-(<any>window).nsDashboardContent    =   new Vue({
+console.log( components );
+
+(<any>window)[ 'nsComponents' ]          =   Object.assign( components, baseComponents );
+(<any>window)[ 'nsDashboardContent' ]    =   new Vue({
     el: '#dashboard-content',
     components
 });

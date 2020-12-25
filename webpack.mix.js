@@ -1,6 +1,7 @@
-const mix = require('laravel-mix');
-const tailwindcss = require('tailwindcss');
-const path =    require( 'path' );
+const mix                   = require('laravel-mix');
+const tailwindcss           = require('tailwindcss');
+const path                  = require( 'path' );
+// const { VueLoaderPlugin } = require("vue-loader");
 
 /*
  |--------------------------------------------------------------------------
@@ -13,99 +14,53 @@ const path =    require( 'path' );
  |
  */
 
-mix.extend( 'webpackCustomConfig', new class {
-    webpackRules() {
-        return [
-            {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-                        // the "scss" and "sass" values for the lang attribute to the right configs here.
-                        // other preprocessors should work out of the box, no loader config like this necessary.
-                        'scss': 'vue-style-loader!css-loader!sass-loader',
-                        'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
-                    }
-                    // other vue-loader options go here
-                }
-            }, {
-                test: /\.tsx?$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/,
-                options: {
-                    appendTsSuffixTo: [/\.vue$/],
-                }
-            },
-        ]
-    }
+// mix.disableNotifications();
 
-    webpackConfig( webpackConfig ) {
-        webpackConfig.resolve.alias = {
-            'vue$': 'vue/dist/vue.esm.js',
-            '@': __dirname + '/resources/ts'
-        };
-    }
-});
-// mix.webpackCustomConfig();
 mix
+    .ts( 'resources/ts/app.ts', 'public/js')
+    .ts( 'resources/ts/dashboard.ts', 'public/js')
+    .ts( 'resources/ts/update.ts', 'public/js')
+    .ts( 'resources/ts/pos-init.ts', 'public/js')
+    .ts( 'resources/ts/pos.ts', 'public/js')
+    .ts( 'resources/ts/auth.ts', 'public/js')
+    .ts( 'resources/ts/setup.ts', 'public/js')
+    .ts( 'resources/ts/popups.ts', 'public/js/' )
+    .ts( 'resources/ts/bootstrap.ts', 'public/js')
+    .vue({ version: 2 })
+    .sourceMaps();
+
+mix.sass( 'resources/sass/app.scss', 'public/css' )
     .webpackConfig({
         module: {
             rules: [
                 {
+                    test: /\.vue$/,
+                    loader: 'vue-loader',
+                }, {
                     test: /\.tsx?$/,
-                    loader: "ts-loader",
+                    loader: 'ts-loader',
                     exclude: /node_modules/,
-                    // options: {
-                    //     appendTsSuffixTo: [/\.vue$/]
-                    // }
+                }, {
+                    test: /\.ts$/,
+                    loader: 'ts-loader',
+                    options: { appendTsSuffixTo: [/\.vue$/] }
                 }
             ]
         },
         resolve: {
-            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
+            extensions: [ ".js", "vue", "*", ".jsx", ".ts", ".tsx"],
             alias: {
-                '@': path.resolve(__dirname, 'resources/ts/')
+                '@'     : path.resolve(__dirname, 'resources/ts/'),
+                'vue$'  : 'vue/dist/vue.esm.js',
             }
-        }
-    });
-
-mix.disableNotifications();
-mix.sourceMaps();
-mix
-    .js( 'resources/ts/bootstrap.ts', 'public/js')
-    .js( 'resources/ts/app.ts', 'public/js')
-    .js( 'resources/ts/dashboard.ts', 'public/js')
-    .js( 'resources/ts/update.ts', 'public/js')
-    .js( 'resources/ts/pos-init.ts', 'public/js')
-    .js( 'resources/ts/pos.ts', 'public/js')
-    .js( 'resources/ts/auth.ts', 'public/js')
-    .js( 'resources/ts/setup.ts', 'public/js')
-    .js( 'resources/ts/popups.ts', 'public/js/' )
-    .vue()  
-    .extract([ 
-        // 'vue', 
-        // 'lodash', 
-        // 'vue-apexcharts',
-        // 'chart.js', 
-        // 'axios', 
-        // 'moment', 
-        // 'rxjs', 
-        // 'rx', 
-        // 'vue-router', 
-        // 'dayjs',
-        // 'vue-html-to-paper',
-        // '@wordpress/hooks',
-        // 'numeral',
-        // 'css-loader',
-        // 'autoprefixer',
-        // 'apexcharts',
-        // '@ckeditor/ckeditor5-vue',
-        // 'twitter_cldr',
-        // 'vue-upload-component'
-    ])
-    .sass('resources/sass/app.scss', 'public/css')
+        },
+        // plugins: [
+        //     // new VueLoaderPlugin()
+        // ]
+    })
     .options({
         processCssUrls: false,
-        postCss: [ tailwindcss('./tailwind.config.js') ],
-    })
+        postCss: [
+            tailwindcss( './tailwind.config.js' )
+        ]
+    });
