@@ -24,7 +24,7 @@ class OrderHoldTest extends TestCase
             ['*']
         );
 
-        $product    =   Product::find(1);
+        $product    =   Product::get()->random();
         $unit       =   $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
         $subtotal   =   $unit->sale_price * 5;
 

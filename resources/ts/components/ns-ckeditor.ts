@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import ckeditor from '@ckeditor/ckeditor5-vue';
+import ckeditor from '@ckeditor/ckeditor5-vue2';
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const nsCkeditor    =   Vue.component( 'ns-ckeditor', {

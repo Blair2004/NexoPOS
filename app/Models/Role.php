@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Role extends Model
+class Role extends NsRootModel
 {
     use HasFactory;
         protected $table    =   'nexopos_roles';

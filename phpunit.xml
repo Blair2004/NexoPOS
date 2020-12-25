@@ -7,36 +7,33 @@
   </coverage>
   <testsuites>
     <testsuite name="Feature">
-      <directory suffix="ResetTest.php">./tests/Feature</directory>
-      <directory suffix="CreateUnitGroupTest.php">./tests/Feature</directory>
-      <directory suffix="CreateUnitTest.php">./tests/Feature</directory>
-      <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
-      <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
-      <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
-      <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory>
-      <directory suffix="CreateCustomerTest.php">./tests/Feature</directory>
-      
-      <directory suffix="CreateProductTest.php">./tests/Feature</directory>
-      <directory suffix="CreateProductTest.php">./tests/Feature</directory>
-
-      <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
-      <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
-      <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
-      <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
-      <directory suffix="OrderRefundTest.php">./tests/Feature</directory>
-      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
-      <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
-      <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
-      <directory suffix="CrudTest.php">./tests/Feature</directory>
-      <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
-      <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
-      
-      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory>
-      <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="ResetTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateTaxTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateCategoryTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateCustomerTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateUnitGroupTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateUnitTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateProductTest.php">./tests/Feature</directory>       -->
+      <!-- <directory suffix="CreateProviderTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="MakeProcurementTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateOrderTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="OrderHoldTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="OrderRefundTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="DeletingOrderTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CrudTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateExpenseTest.php">./tests/Feature</directory> -->
+      <!--  -->
+      <directory suffix="StoreRefundOrder.php">./tests/Feature</directory>
+      <directory suffix="TestStoreCrud.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>
-    <server name="APP_ENV" value="production"/>
+    <server name="APP_ENV" value="TESTING"/>
     <server name="BCRYPT_ROUNDS" value="4"/>
     <server name="CACHE_DRIVER" value="array"/>
     <server name="DB_CONNECTION" value="mysql"/>
@@ -44,7 +41,7 @@
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="database"/>
     <server name="SESSION_DRIVER" value="array"/>
-    <server name="TELESCOPE_ENABLED" value="false"/>
+    <server name="TELESCOPE_ENABLED" value="FALSE"/>
     <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
     <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
   </php>

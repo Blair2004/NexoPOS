@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\AfterAppHealthCheckedEvent;
 use App\Events\DashboardDayAfterCreatedEvent;
+use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Jobs\ComputeDashboardMonthReportJob;
 use App\Jobs\InitializeDailyReportJob;
 use App\Models\DashboardDay;
@@ -38,14 +39,17 @@ class CoreEventSubscriber
             DashboardDayAfterCreatedEvent::class,
             [ CoreEventSubscriber::class, 'dispatchMonthReportUpdate' ]
         );
+
+        $event->listen(
+            DashboardDayAfterUpdatedEvent::class,
+            [ CoreEventSubscriber::class, 'dispatchMonthReportUpdate' ]
+        );
     }
 
     public static function dispatchMonthReportUpdate( $event )
     {
-        if ( $event instanceof DashboardDayAfterCreatedEvent ) {
-            ComputeDashboardMonthReportJob::dispatch()
-                ->delay( now()->addSeconds(10) );
-        }
+        ComputeDashboardMonthReportJob::dispatch()
+            ->delay( now()->addSeconds(10) );
     }
 
     public function initializeJobReport()

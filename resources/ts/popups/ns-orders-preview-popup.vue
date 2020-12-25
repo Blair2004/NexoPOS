@@ -75,8 +75,6 @@ const nsOrderPreviewPopup   =   {
                     this.order      =   result[0];
                     this.products   =   result[1];
                     this.payments   =   result[2];
-
-                    console.log( result );
                 });
         },
         deleteOrder() {
@@ -172,7 +170,7 @@ export default nsOrderPreviewPopup;
 
                 <!-- Refund -->
                 <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" label="Refund & Return" identifier="refund" class="flex overflow-y-auto">
-                    <ns-order-refund :order="order"></ns-order-refund>
+                    <ns-order-refund @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
             </ns-tabs>

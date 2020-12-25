@@ -275,6 +275,10 @@ class ExpenseCrud extends CrudService
         return $request;
     }
 
+    public function hook( $query )
+    {
+        $query->orderBy( 'id', 'desc' );
+    }
     
     /**
      * get

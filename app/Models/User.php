@@ -3,20 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use App\Services\UserOptions;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasFactory, HasApiTokens;
+    use Notifiable, 
+        HasFactory, 
+        HasApiTokens;
 
     protected $table    =   'nexopos_users';
     protected $casts    =   [
         'active'    =>  'boolean'
     ];
+
+    /**
+     * While saving model, this will
+     * use the timezone defined on the settings
+     */
+    public function freshTimestamp()
+    {
+        return ns()->date->getNow();
+    }
 
     /**
      * @var App\Services\UserOptions;
@@ -71,7 +83,7 @@ class User extends Authenticatable
 
     /**
      * Relation with permissions
-     * @return object
+     * @return array
      */
     public static function permissions( $user_id = null )
     {

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Events\ExpenseAfterCreateEvent;
+use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Events\ExpenseAfterRefreshEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 class ComputeDashboardExpensesJob implements ShouldQueue
 {
@@ -52,9 +51,9 @@ class ComputeDashboardExpensesJob implements ShouldQueue
         $dateService        =   app()->make( DateService::class );
         
         /**
-         * @var DateService
+         * @var Carbon
          */
-        $now                =   $dateService->copy();
+        $now                =   now();
 
         $todayStart         =   Carbon::parse( $this->event->expenseHistory->created_at )->startOfDay()->toDateTimeString();
         $todayEnd           =   Carbon::parse( $this->event->expenseHistory->created_at )->endOfDay()->toDateTimeString();
@@ -89,6 +88,7 @@ class ComputeDashboardExpensesJob implements ShouldQueue
             });
 
             event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds(10 ) ) );
+            event( new DashboardDayAfterUpdatedEvent );
         }
     }
 }

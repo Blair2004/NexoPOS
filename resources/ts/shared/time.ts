@@ -1,13 +1,17 @@
 import moment from "moment";
 
-declare const ns;
+declare global {
+    interface Window {
+        ns:any;
+    }
+}
 
 /**
  * till will make sure the frontend
  * time remain in sync or almost with
  * the backend date
  */
-ns.date.moment          =   moment( ns.date.current );
+window.ns.date.moment          =   moment( window.ns.date.current );
 
 /**
  * define the interval that will
@@ -15,6 +19,6 @@ ns.date.moment          =   moment( ns.date.current );
  * locally
  * @param {Interval} interval
  */
-ns.date.interval        =   setInterval( () => {
-    ns.date.moment.add( 1, 'seconds' );
+window.ns.date.interval        =   setInterval( () => {
+    window.ns.date.moment.add( 1, 'seconds' );
 }, 1000 );

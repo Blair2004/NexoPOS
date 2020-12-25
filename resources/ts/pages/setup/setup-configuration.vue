@@ -3,11 +3,7 @@
         <ns-spinner size="12" border="4" animation="fast" v-if="fields.length === 0"></ns-spinner>
         <div class="bg-white rounded shadow my-2" v-if="fields.length > 0">
             <div class="welcome-box border-b border-gray-300 p-3 text-gray-700">
-                <ns-input v-for="( field, key ) of fields" v-bind:key="key" :field="field" 
-                    @change="form.validateField( field )">
-                    <span>{{ field.label }}</span>
-                    <template slot="description">{{ field.description }}</template>
-                </ns-input>
+                <ns-field v-for="( field, key ) of fields" :key="key" :field="field"></ns-field>
             </div>
             <div class="bg-gray-200 p-3 flex justify-between items-center">
                 <div>
@@ -47,15 +43,7 @@ export default {
                 }, error => {
                     this.processing     =   false;
                     this.form.enableFields( this.fields );
-                    this.fields.forEach( field => {
-                        if ( error.errors && error.errors[ field.name ] ) {
-                            field.errors    =   [];
-                            field.errors.push({
-                                'identifier'    :   'invalid',
-                                'message'       :   error.errors[ field.name ][0]   
-                            });
-                        }
-                    })
+                    this.form.triggerFieldsErrors( this.fields, error.data );
                     nsSnackBar.error( error.message, 'OK' )
                         .subscribe();
                 });
@@ -67,7 +55,7 @@ export default {
                 this.fields     =   this.form.createFields([
                     {
                         label: 'Application',
-                        description: 'what is the application name',
+                        description: 'That is the application name.',
                         name: 'ns_store_name',
                         validation: 'required',
                     }, {

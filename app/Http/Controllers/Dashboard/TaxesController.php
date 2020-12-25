@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\TaxesGroupCrud;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
@@ -190,12 +191,7 @@ class TaxesController extends DashboardController
      */
     public function taxesGroups()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>  __( 'List of Taxes Groups' ),
-            'createUrl'     =>  ns()->url( '/dashboard/taxes/groups/create' ),
-            'description'   =>  __( 'shows the list of available taxes groups.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' )
-        ]);
+        return TaxesGroupCrud::table();
     }
 
     /**
@@ -204,29 +200,16 @@ class TaxesController extends DashboardController
      */
     public function createTaxGroups()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Create New Tax Group' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/taxes/groups' ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
-            'description'   =>  __( 'Add a new tax group on the system.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
-        ]);
+        return TaxesGroupCrud::form();
     }
 
     /**
      * Edit tax groups
      * @return view
      */
-    public function editTaxGroup()
+    public function editTaxGroup( TaxGroup $group )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Create New Tax Group' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/taxes/groups' ),
-            'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups' ),
-            'description'   =>  __( 'Add a new tax group on the system.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/form-config' )
-        ]);
+        return TaxesGroupCrud::form( $group );
     }
 }
 

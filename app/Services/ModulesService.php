@@ -11,11 +11,11 @@ use App\Services\Helper;
 use Laravie\Parser\Xml\Document;
 use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
-use PhpParser\NodeDumper;
 use PhpParser\ParserFactory;
-use App\Exceptions\CoreException;
-use App\Providers\ModulesServiceProvider;
+use App\Exceptions\MissingDependencyException;
+use App\Models\ModuleMigration;
 use Exception;
+use Illuminate\Support\Facades\Schema;
 
 class ModulesService
 {
@@ -58,7 +58,7 @@ class ModulesService
              */
             collect( $directories )->map( function( $module ) {
                 return str_replace( '/', '\\', $module );
-            })->map( function( $module ) {
+            })->each( function( $module ) {
                 $this->__init( $module );
             });
         } else {
@@ -99,8 +99,20 @@ class ModulesService
                 'description'           =>  [ 'uses'    =>  'description' ],
                 'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
                 'name'                  =>  [ 'uses'    =>  'name' ],
-                'requires'              =>  [ 'uses'    =>  'requires.module' ],
             ]);
+
+            $xmlElement                 =   new \SimpleXMLElement( $xmlContent );
+            
+            $config[ 'requires' ]       =   collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function( $module ) {
+                $module     =   ( array ) $module;
+                return [
+                    $module[ '@attributes' ][ 'namespace' ]     =>  [
+                        'min-version'   =>  $module[ '@attributes' ][ 'min-version' ],
+                        'max-version'   =>  $module[ '@attributes' ][ 'max-version' ],
+                        'name'          =>  $module[0],
+                    ]
+                ];
+            })->toArray() ?? [];
 
             $config[ 'files' ]          =   $files;
 
@@ -155,7 +167,7 @@ class ModulesService
                     $moduleConfig       =   [];
 
                     foreach( $files as $file ) {
-                        $info               =     pathinfo( $file );
+                        $info               =   pathinfo( $file );
                         $_config            =   include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
                         $final[ $config[ 'namespace' ] ]    =   [];
                         $final[ $config[ 'namespace' ] ][ $info[ 'filename' ] ]     =   $_config;   
@@ -237,6 +249,63 @@ class ModulesService
     }
 
     /**
+     * Will check for a specific module or all the module
+     * enabled if there is a dependency error.
+     * @param null|array $module
+     * @return void
+     */
+    public function dependenciesCheck( $module = null )
+    {
+        if ( $module === null ) {
+            collect( $this->getEnabled() )->each( function( $module ) {
+                $this->dependenciesCheck( $module );
+            });
+        } else {
+            if ( isset( $module[ 'requires' ] ) ) {
+                collect( $module[ 'requires' ] )->each( function( $dependency, $namespace ) use ( $module ) {
+                    if ( $this->get( $namespace ) === null ) {
+
+                        /**
+                         * The dependency is missing
+                         * let's disable the module
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new MissingDependencyException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is missing. ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ]
+                            )
+                        ) );
+                    }
+
+                    if ( ! $this->get( $namespace )[ 'enabled' ] ) {
+
+                        /**
+                         * The dependency is missing
+                         * let's disable the module
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new MissingDependencyException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is not enabled. ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ]
+                            )
+                        ) );
+                    }
+
+                    /**
+                     * @todo must check module version
+                     */
+                });
+            }
+        }
+    }
+
+    /**
      * Run Modules
      * @return void
      */
@@ -265,6 +334,8 @@ class ModulesService
 
         // include module index file
         include_once( $module[ 'index-file' ] );
+
+        $this->autoloadModule( $module );
         
         // run module entry class
         new $module[ 'entry-class' ];
@@ -864,13 +935,31 @@ class ModulesService
      */
     public function enable( string $namespace )
     {
-        // check if module exists
         if ( $module = $this->get( $namespace ) ) {
-            // @todo sandbox to test if the module runs
+            /**
+             * get all the modules that are 
+             * enabled.
+             */
             $enabledModules     =   ( array ) $this->options->get( 'enabled_modules' );
 
             /**
-             * Let's check if that module can be enabled
+             * @todo we might need to check if this module
+             * has dependencies that are missing.
+             */
+            try {
+                $this->dependenciesCheck( $module );
+            } catch( MissingDependencyException $exception ) {
+                throw new MissingDependencyException( 
+                    sprintf( 
+                        __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
+                        $module[ 'name' ],
+                        collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                    )
+                );
+            }
+
+            /**
+             * Let's check if the main entry file doesn't have an error
              */
             $code       =   file_get_contents( $module[ 'index-file' ] );
             $parser     =   ( new ParserFactory )->create( ParserFactory::PREFER_PHP7 );
@@ -886,13 +975,14 @@ class ModulesService
             }
 
             /**
-             * We're now atempting to trigger the module
+             * We're now atempting to trigger the module.
              */
-            $this->autoloadModule( $module );
-            include_once( $module[ 'index-file' ] );
-            new $module[ 'entry-class' ];
+            $this->__boot( $module );
 
-            // make sure to enable only once
+            /**
+             * We'll enable the module and make sure it's stored
+             * on the option table only once.
+             */
             if ( ! in_array( $namespace, $enabledModules ) ) {
                 $enabledModules[]   =   $namespace;
                 $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
@@ -970,6 +1060,12 @@ class ModulesService
         return [];
     }
 
+    public function getAllMigrations( $module )
+    {
+        return Storage::disk( 'ns-modules' )
+            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+    }
+
     /**
      * get module migration without
      * having the modules array built.
@@ -978,53 +1074,36 @@ class ModulesService
      */
     private function __getModuleMigration( $module )
     {
-        /**
-         * If the last migration is not defined
-         * that means we're running it for the first time
-         * we'll set the migration to 0.0 then.
-         */
-        $lastVersion        =   $this->options->get( strtolower( $module[ 'namespace' ] ) . '_last_migration', '0.0.0' );
-        $currentVersion     =   $module[ 'version' ];
-        $directories        =   Storage::disk( 'ns-modules' )->directories( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
-        $version_names      =   [];
-
-        foreach( $directories as $dir ) {
-            $version        =   basename( $dir );
-
+        if ( Schema::hasTable( 'nexopos_modules_migrations' ) ) {
             /**
-             * the last version should be lower than the looped versions
-             * the current version should greather or equal to the looped versions
+             * If the last migration is not defined
+             * that means we're running it for the first time
+             * we'll set the migration to 0.0 then.
              */
-            if ( 
-                version_compare( $lastVersion, $version, '<' ) && 
-                version_compare( $currentVersion, $version, '>=' )
-            ) {					
-                $files      =   Storage::disk( 'ns-modules' )->allFiles( 
-                    ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $version 
-                );
-
+            $migratedFiles      =   ModuleMigration::namespace( $module[ 'namespace' ] )
+                ->get()
+                ->map( fn( $migration ) => $migration->file )
+                ->values()
+                ->toArray();
+                
+            $files              =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+            $unmigratedFiles    =   [];
+    
+            foreach( $files as $file ) {
+    
                 /**
-                 * add a migration only if there is a file to add.
+                 * the last version should be lower than the looped versions
+                 * the current version should greather or equal to the looped versions
                  */
-                if ( count( $files ) ) {
-                    $version_names[ $version ]    =   $files;
+                if ( ! in_array( $file, $migratedFiles ) ) {
+                    $unmigratedFiles[]      =       $file;
                 }
             }
+    
+            return $unmigratedFiles;
         }
 
-        $version_array     =   array_keys( $version_names );
-
-        usort( $version_array, function( $a, $b ) {
-            return version_compare( $a, $b, '>' );
-        });
-
-        $ordered_versions    =   [];
-
-        foreach( $version_array as $version ) {
-            $ordered_versions[ $version ]   =   $version_names[ $version ];
-        }
-        
-        return $ordered_versions;
+        return [];  
     }
 
     /**
@@ -1034,7 +1113,7 @@ class ModulesService
      * @param string file path
      * @return void
      */
-    public function runMigration( $namespace, $version, $file )
+    public function runMigration( $namespace, $file )
     {
         $module     =   $this->get( $namespace );
         $result     =   $this->__runSingleFile( 'up', $module, $file );
@@ -1044,7 +1123,10 @@ class ModulesService
          * if it's successful
          */
         if ( $result[ 'status' ] === 'success' ) {
-            $this->options->set( strtolower( $namespace ) . '_last_migration', $version );
+            $migration              =   new ModuleMigration;
+            $migration->namespace   =   $namespace;
+            $migration->file        =   $file;
+            $migration->save();
         }
 
         return $result;
@@ -1085,8 +1167,8 @@ class ModulesService
      */
     public function dropAllMigrations( $namespace )
     {
-        $migrations     =   $this->getMigrations( $namespace );
-        if ( $migrations && is_array( $migrations ) ) {
+        $migrations     =   $this->getAllMigrations( $namespace );
+        if ( ! empty( $migrations ) ) {
             foreach( $migrations as $version => $files ) {
                 foreach( $files as $file ) {
                     $this->dropMigration( $namespace, $version, $file );

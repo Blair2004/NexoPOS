@@ -7,6 +7,7 @@ use App\Events\AfterAppHealthCheckedEvent;
 use App\Jobs\TaskSchedulingPingJob;
 use App\Models\Role;
 use App\Services\DateService;
+use App\Services\ModulesService;
 use App\Services\NotificationService;
 use Carbon\Carbon;
 use Closure;
@@ -46,6 +47,14 @@ class CheckApplicationHealthMiddleware
                 TaskSchedulingPingJob::dispatch()->delay( now() );
             }
         }
+
+        /**
+         * we'll check here is a module is missing a 
+         * dependency to disable it
+         * @var ModulesService
+         */
+        $modules        =   app()->make( ModulesService::class );
+        $modules->dependenciesCheck();
 
         event( new AfterAppHealthCheckedEvent );
 

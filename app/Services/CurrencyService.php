@@ -164,18 +164,7 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        $val    =   floatval( number_format( 
-            ( $value ?? $this->value ), 
-            $this->decimal_precision 
-        ) );
-        
-        /**
-         * @todo need to understand the reason of this
-         */
-        // $val        =   bcmul( ( $value ?? $this->value ), 1, $this->decimal_precision );
-        preg_match( "#^([\+\-]|)([0-9]*)(\.([0-9]*?)|)(0*)$#", trim( $val ), $o );
-        $result     =   $o[1] . sprintf( '%d', $o[2] ) . ( $o[3] != '.' ? $o[3]:'' );
-        return strpos( $result, '.' ) === false ? intval( $result ) : floatval( $result );
+        return $this->bcround( ( $value === null ? $this->value : $value ), $this->decimal_precision );
     }
 
     /**
@@ -258,5 +247,65 @@ class CurrencyService
     {
         $this->value    =   bcadd( floatval( $this->value ), floatval( $number ), $this->decimal_precision );
         return $this;
+    }
+
+    /**
+     * @source https://stackoverflow.com/questions/1642614/how-to-ceil-floor-and-round-bcmath-numbers
+     */
+    public function bcceil( $number )
+    {
+        if ( strpos( $number, '.' ) !== false) {
+            if (preg_match("~\.[0]+$~", $number ) ) {
+                return $this->bcround( $number, 0 );
+            }
+
+            if ( $number[0] != '-') {
+                return bcadd( $number, 1, 0);
+            }
+
+            return bcsub( $number, 0, 0 );
+        }
+
+        return $number;
+    }
+
+    /**
+     * 
+     */
+    public function bcfloor( $number )
+    {
+        if ( strpos( $number, '.' ) !== false) {
+
+            if (preg_match("~\.[0]+$~", $number)) {
+                return $this->bcround($number, 0);
+            } 
+
+            if ($number[0] != '-') {
+                return bcadd($number, 0, 0);
+            }
+
+            return bcsub($number, 1, 0);
+        }
+
+        return $number;
+    }
+
+    public function bcround($number, $precision = 0)
+    {
+        if ( is_float( ( float ) $number ) ) {
+            if ( ( ( string ) $number )[0] != '-') {
+                $value     =   ( float ) bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            } else {
+                $value     =   ( float ) bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+            }
+
+            if ( strpos( ( string ) $value, '.' ) === false ) {
+                return ( int ) $value;
+            }
+            
+            return $value;
+        }
+
+        return $number;
     }
 }

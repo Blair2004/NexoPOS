@@ -3,7 +3,9 @@ import { HttpCrudResponse } from '../interfaces/http-crud-response';
 import { HttpStatusResponse } from '../interfaces/http-status-response';
 import { nsHttpClient, nsSnackBar }   from './../bootstrap';
 
-declare const nsCrudHandler;
+declare global {
+    const nsCrudHandler: any;
+}
 
 const nsCrud    =   Vue.component( 'ns-crud', {
     data: () => {

@@ -1,19 +1,23 @@
 {
     "compilerOptions": {
-        "module": "ES2020",
-        "outDir": "./resources/js",
-        "target": "ES5",
+        "target": "es5",
+        "module": "es2020",
         "moduleResolution": "node",
-        "skipLibCheck": true,
+        "skipLibCheck": false,
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "noImplicitAny": false,
         "sourceMap": true,
+        "strict": false,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": false,
+        "strictPropertyInitialization": false,
+        "strictNullChecks": false,
+        "baseUrl": "./",
         "lib": [
-            "es2019",
+            "es2020",
             "DOM"
         ],
-        "baseUrl": "./",
         "paths": {
             "@/*": [
                 "resources/ts/*"

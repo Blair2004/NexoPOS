@@ -67,13 +67,13 @@ class ExpensesController extends DashboardController
      */
     public function post( Request $request ) // <= need to add a validation
     {
-        $fields     =   $request->only([ 'name', 'category_id', 'description', 'media_id', 'value' ]);
+        $fields     =   $request->only([ 'name', 'active', 'category_id', 'description', 'media_id', 'value' ]);
         return $this->expenseService->create( $fields );
     }
 
     public function putExpenseCategory( Request $request, $id )
     {
-        $fields     =   $request->only([ 'name', 'category_id', 'description', 'media_id', 'value' ]);
+        $fields     =   $request->only([ 'name', 'category_id', 'active', 'description', 'media_id', 'value' ]);
         return $this->expenseService->editCategory( $id, $fields );
     }
 

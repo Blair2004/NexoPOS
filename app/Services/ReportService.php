@@ -14,6 +14,7 @@ class ReportService
 {
     private $dayStarts;
     private $dayEnds;
+    private $dateService;
 
     public function __construct(
         DateService $dateService
@@ -60,12 +61,12 @@ class ReportService
         $todayReport        =   DashboardDay::from( $this->dayStarts )
             ->to( $this->dayEnds )
             ->first();
-        
+
         if ( ! $todayReport instanceof DashboardDay ) {
             $todayReport                =   new DashboardDay;
             $todayReport->day_of_year   =   $this->dateService->dayOfYear;
         }
-        
+
         $this->refreshFromDashboardDay( $todayReport );
 
         $todayReport->range_starts  =   $this->dayStarts;

@@ -52,10 +52,8 @@ class UpdateController extends Controller
          */
         if ( $request->input( 'module' ) ) {
             $module     =   $request->input( 'module' );
-            foreach( $module[ 'migrations' ] as $version => $files ) {
-                foreach( $files as $file ) {
-                    $this->moduleService->runMigration( $module[ 'namespace' ], $version, $file );
-                }
+            foreach( $module[ 'migrations' ] as $file ) {
+                $this->moduleService->runMigration( $module[ 'namespace' ], $file );
             }
         }
 

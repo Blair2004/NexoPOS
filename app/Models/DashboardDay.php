@@ -14,11 +14,6 @@ class DashboardDay extends NsModel
     public $timestamps  =   false;
     protected $table    =   'nexopos_' . 'dashboard_days';
 
-    protected $dispatchesEvents   =   [
-        'saved'     =>  DashboardDayAfterCreatedEvent::class,
-        'updated'   =>  DashboardDayAfterCreatedEvent::class,
-    ];
-
     public function scopeFrom( $query, $param )
     {
         return $query->where( 'range_starts', '>=', $param );

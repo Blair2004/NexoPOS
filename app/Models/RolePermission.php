@@ -8,10 +8,10 @@ use Illuminate\Support\Collection;
 use App\Models\Permission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RolePermission extends Model
+class RolePermission extends NsRootModel
 {
     use HasFactory;
-        protected $table    =   'nexopos_role_permission';
+    protected $table    =   'nexopos_role_permission';
 
     public $timestamps   =   false;
 }

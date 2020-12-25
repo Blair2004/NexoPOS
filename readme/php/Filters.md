@@ -23,7 +23,7 @@ Here is the list off all available filters as long as their purpose and argument
 | ------------------------ | ------------------- | ---------- | ----------- | ------ |
 | {namespace}-catch-action | Catch bulk action of a specific CRUD component. | `boolean`<br>`Illuminate\Http\Request`| 4.0-beta-1 | Valid |
 | {namespace}-crud-actions | Adds actions on each row part of the result.data array. | `Illuminate\Database\Eloquent\Model`| 4.0-beta-1 | Valid |
-| ns-crud-resource         | Used to return relevant CRUD component class when there is a match with the identifier. | `<string>namespace`<br>`<number>?identifier` | 4.0-beta-1 | Valid |
+| ns.crud-resource         | Used to return relevant CRUD component class when there is a match with the identifier. | `<string>namespace`<br>`<number>?identifier` | 4.0-beta-1 | Valid |
 | ns-crud-form             | Used to hold form as defined on the `getForm` on the CRUD component class. | `<array>form`<br> `<string>namespace`<br> `<array>(model, namespace, id)`| 4.0-beta-1 | Valid |
 | ns-validation            | Contains the validation rules for a specific CRUD Component class.      | `<array>validation`| 4.0-beta-1 | Valid |
 | ns-dashboard-menus       | Contains the array where is defined the Dashboard menus.                | `<array>validation`| 4.0-beta-1 | Valid |
