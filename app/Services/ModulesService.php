@@ -958,7 +958,7 @@ class ModulesService
      */
     public function getMigrations( $namespace )
     {
-        $module         =   $this->get( $namespace );
+        $module         =   $this->getIfEnabled( $namespace );
         
         /**
          * if module exists
