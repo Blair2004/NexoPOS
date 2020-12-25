@@ -56,4 +56,4 @@ export class Dashboard {
     }
 }
 
-(<any>window).Dashboard     =   new Dashboard;
+( window as any ).Dashboard     =   new Dashboard;

@@ -1,13 +1,23 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "strict": false,
-        "module": "es2015",
+        "module": "es2020",
         "moduleResolution": "node",
+        "skipLibCheck": false,
+        "esModuleInterop": true,
         "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "strict": false,
+        "allowSyntheticDefaultImports": true,
+        "alwaysStrict": false,
         "strictPropertyInitialization": false,
         "strictNullChecks": false,
         "baseUrl": "./",
+        "lib": [
+            "es2020",
+            "DOM"
+        ],
         "paths": {
             "@/*": [
                 "resources/ts/*"

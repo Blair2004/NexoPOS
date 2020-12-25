@@ -18,23 +18,24 @@ import { VueConstructor } from "vue/types/umd";
 declare global {
     interface Window {
         _: Lodash,
-        ChartJS: ChartJS,
-        Vue: VueConstructor<Vue>,
+        ChartJS: any,
+        Vue: any,
         moment: moment.Moment,
-        Axios: Axios,
+        Axios: any,
         VueRouter: VueRouter,
-        nsHooks: any
+        nsHooks: any,
+        SnackBar: SnackBar
     }
 };
 declare const ns;
 
 window._                =   Lodash;
-window.CharJS           =   ChartJS;
+window.ChartJS          =   ChartJS;
 window.Vue              =   Vue;
-window.moment           =   moment;
+window.moment           =   <any>moment;
 window.Axios            =   Axios;
-window.VueRouter        =   VueRouter;
-window.SnackBar         =   SnackBar;
+window.VueRouter        =   <any>VueRouter;
+window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
@@ -89,19 +90,19 @@ const nsState           =   new State({
 
 nsHttpClient.defineClient( Axios );
 
-window.nsEvent          =   nsEvent;
-window.nsHttpClient     =   nsHttpClient;
-window.nsSnackBar       =   nsSnackBar;
-window.nsCurrency       =   nsCurrency;
-window.nsAbbreviate     =   nsAbbreviate;
-window.nsState          =   nsState;
-window.nsUrl            =   nsUrl;
-window.nsScreen         =   nsScreen;
-window.ChartJS          =   ChartJS;
-window.EventEmitter     =   EventEmitter;
-window.Popup            =   Popup;
-window.RxJS             =   RxJS;
-window.FormValidation   =   FormValidation;
-window.nsCrudHandler    =   nsCrudHandler;
+(window as any ).nsEvent          =   nsEvent;
+(window as any ).nsHttpClient     =   nsHttpClient;
+(window as any ).nsSnackBar       =   nsSnackBar;
+(window as any ).nsCurrency       =   nsCurrency;
+(window as any ).nsAbbreviate     =   nsAbbreviate;
+(window as any ).nsState          =   nsState;
+(window as any ).nsUrl            =   nsUrl;
+(window as any ).nsScreen         =   nsScreen;
+(window as any ).ChartJS          =   ChartJS;
+(window as any ).EventEmitter     =   EventEmitter;
+(window as any ).Popup            =   Popup;
+(window as any ).RxJS             =   RxJS;
+(window as any ).FormValidation   =   FormValidation;
+(window as any ).nsCrudHandler    =   nsCrudHandler;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

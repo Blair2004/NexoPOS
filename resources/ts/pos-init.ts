@@ -759,4 +759,4 @@ export class POS {
     }
 }
 
-(<any>window).POS       =   new POS;
+( window as any ).POS       =   new POS;
