@@ -27,7 +27,7 @@ class CheckMigrationStatus
 
         if ( App::installed() ) {
             $module     =   app()->make( ModulesService::class );
-            $modules    =   collect( $module->get() );
+            $modules    =   collect( $module->getEnabled() );
             $total      =   $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );
             
             if ( $total->count() > 0 ) {

@@ -18,7 +18,7 @@ import { nsMediaInput }         from  './ns-media-input';
 import { nsCloseButton }        from  './ns-close-button';
 import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
-import nsDatepicker   from  './ns-datepicker.vue';
+const nsDatepicker              =   require( './ns-datepicker.vue' );
 
 export { nsMenu };
 export { nsSubmenu };

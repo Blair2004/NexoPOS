@@ -10,7 +10,6 @@ import { Order } from "./interfaces/order";
 import { nsEvent, nsHttpClient, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
-import { timeStamp } from "console";
 import { Responsive } from "./libraries/responsive";
 import { Popup } from "./libraries/popup";
 import { OrderProduct } from "./interfaces/order-product";

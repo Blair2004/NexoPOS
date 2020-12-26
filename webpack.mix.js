@@ -1,7 +1,6 @@
-const mix                   = require('laravel-mix');
-const tailwindcss           = require('tailwindcss');
-const path                  = require( 'path' );
-// const { VueLoaderPlugin } = require("vue-loader");
+const mix = require('laravel-mix');
+const tailwindcss = require('tailwindcss');
+const path = require( 'path' );
 
 /*
  |--------------------------------------------------------------------------
@@ -13,54 +12,64 @@ const path                  = require( 'path' );
  | file for the application as well as bundling up all the JS files.
  |
  */
-
-// mix.disableNotifications();
-
 mix
-    .ts( 'resources/ts/app.ts', 'public/js')
-    .ts( 'resources/ts/dashboard.ts', 'public/js')
-    .ts( 'resources/ts/update.ts', 'public/js')
-    .ts( 'resources/ts/pos-init.ts', 'public/js')
-    .ts( 'resources/ts/pos.ts', 'public/js')
-    .ts( 'resources/ts/auth.ts', 'public/js')
-    .ts( 'resources/ts/setup.ts', 'public/js')
-    .ts( 'resources/ts/popups.ts', 'public/js/' )
-    .ts( 'resources/ts/bootstrap.ts', 'public/js')
-    .vue({ version: 2 })
-    .sourceMaps();
-
-mix.sass( 'resources/sass/app.scss', 'public/css' )
     .webpackConfig({
         module: {
             rules: [
                 {
-                    test: /\.vue$/,
-                    loader: 'vue-loader',
-                }, {
                     test: /\.tsx?$/,
-                    loader: 'ts-loader',
+                    loader: "ts-loader",
                     exclude: /node_modules/,
-                }, {
-                    test: /\.ts$/,
-                    loader: 'ts-loader',
-                    options: { appendTsSuffixTo: [/\.vue$/] }
+                    // options: {
+                    //     appendTsSuffixTo: [/\.vue$/]
+                    // }
                 }
             ]
         },
         resolve: {
-            extensions: [ ".js", "vue", "*", ".jsx", ".ts", ".tsx"],
+            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
             alias: {
-                '@'     : path.resolve(__dirname, 'resources/ts/'),
-                'vue$'  : 'vue/dist/vue.esm.js',
+                '@': path.resolve( __dirname, 'resources/ts/')
             }
-        },
-        // plugins: [
-        //     // new VueLoaderPlugin()
-        // ]
-    })
+        }
+    });
+
+
+mix.disableNotifications();
+mix.sourceMaps();
+mix
+    .js( 'resources/ts/bootstrap.ts', 'public/js')
+    .js( 'resources/ts/app.ts', 'public/js')
+    .js( 'resources/ts/dashboard.ts', 'public/js')
+    .js( 'resources/ts/update.ts', 'public/js')
+    .js( 'resources/ts/pos-init.ts', 'public/js')
+    .js( 'resources/ts/pos.ts', 'public/js')
+    .js( 'resources/ts/auth.ts', 'public/js')
+    .js( 'resources/ts/setup.ts', 'public/js')
+    .js( 'resources/ts/popups.ts', 'public/js/' )
+    .extract([ 
+        // 'vue', 
+        // 'lodash', 
+        // 'vue-apexcharts',
+        // 'chart.js', 
+        // 'axios', 
+        // 'moment', 
+        // 'rxjs', 
+        // 'rx', 
+        // 'vue-router', 
+        // 'dayjs',
+        // 'vue-html-to-paper',
+        // '@wordpress/hooks',
+        // 'numeral',
+        // 'css-loader',
+        // 'autoprefixer',
+        // 'apexcharts',
+        // '@ckeditor/ckeditor5-vue',
+        // 'twitter_cldr',
+        // 'vue-upload-component'
+    ])
+    .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
-        postCss: [
-            tailwindcss( './tailwind.config.js' )
-        ]
-    });
+        postCss: [ tailwindcss('./tailwind.config.js') ],
+    })

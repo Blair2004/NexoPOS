@@ -1,5 +1,7 @@
 import Vue from 'vue';
+import { nsButton, nsCheckbox, nsCkeditor, nsCloseButton, nsCrud, nsCrudForm, nsDate, nsDatepicker, nsField, nsInput, nsLink, nsMediaInput, nsMenu, nsMultiselect, nsSelect, nsSpinner, nsSubmenu, nsSwitch, nsTableRow, nsTabs, nsTabsItem, nsTextarea } from './components/components';
 import * as baseComponents from './components/components';
+
 
 import {
     nsCurrency
@@ -65,7 +67,30 @@ const nsDashboardAside  =   new Vue({
     data: {
         sidebar: 'visible'
     },
-    components: baseComponents,
+    components: {
+        nsButton, 
+        nsCheckbox, 
+        nsCkeditor,
+        nsCloseButton,
+        nsCrud,
+        nsCrudForm,
+        nsDate,
+        nsDatepicker,
+        nsField,
+        nsInput,
+        nsLink,
+        nsMediaInput,
+        nsMenu,
+        nsMultiselect,
+        nsSelect,
+        nsSpinner,
+        nsSubmenu,
+        nsSwitch,
+        nsTableRow,
+        nsTabs,
+        nsTabsItem,
+        nsTextarea
+    },
     mounted() {
         nsState.behaviorState.subscribe(({ object }:any) => {
             this.sidebar    =   object.sidebar;
@@ -80,7 +105,30 @@ const nsDashboardAside  =   new Vue({
     data: {
         sidebar: null
     },
-    components: baseComponents,
+    components: {
+        nsButton, 
+        nsCheckbox, 
+        nsCkeditor,
+        nsCloseButton,
+        nsCrud,
+        nsCrudForm,
+        nsDate,
+        nsDatepicker,
+        nsField,
+        nsInput,
+        nsLink,
+        nsMediaInput,
+        nsMenu,
+        nsMultiselect,
+        nsSelect,
+        nsSpinner,
+        nsSubmenu,
+        nsSwitch,
+        nsTableRow,
+        nsTabs,
+        nsTabsItem,
+        nsTextarea
+    },
     mounted() {
         nsState.behaviorState.subscribe(({ object }) => {
             this.sidebar    =   object.sidebar;
@@ -104,7 +152,32 @@ const nsDashboardAside  =   new Vue({
     data: {
         menuToggled: false,
     },
-    components: Object.assign( baseComponents, { NsNotifications }),
+    components: { 
+        nsButton, 
+        nsCheckbox, 
+        nsCkeditor,
+        nsCloseButton,
+        nsCrud,
+        nsCrudForm,
+        nsDate,
+        nsDatepicker,
+        nsField,
+        nsInput,
+        nsLink,
+        nsMediaInput,
+        nsMenu,
+        nsMultiselect,
+        nsSelect,
+        nsSpinner,
+        nsSubmenu,
+        nsSwitch,
+        nsTableRow,
+        nsTabs,
+        nsTabsItem,
+        nsTextarea,
+        //
+        NsNotifications
+     },
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;
