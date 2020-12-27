@@ -4,6 +4,7 @@ import { default as nsAlertPopup } from '@/popups/ns-alert-popup.vue';
 import { default as nsConfirmPopup } from '@/popups/ns-pos-confirm-popup.vue';
 import { default as nsPromptPopup } from '@/popups/ns-prompt-popup.vue';
 import { default as nsMediaPopup } from '@/pages/dashboard/ns-media.vue';
+import { default as nsProcurementQuantity } from '@/popups/ns-procurement-quantity.vue';
 
 const popups    =   { 
     nsOrderPreview,
@@ -12,6 +13,7 @@ const popups    =   {
     nsConfirmPopup,
     nsPromptPopup,
     nsMediaPopup,
+    nsProcurementQuantity,
 };
 
 for( let index in popups ) {

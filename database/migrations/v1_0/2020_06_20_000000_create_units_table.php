@@ -22,6 +22,7 @@ class CreateUnitsTable extends Migration
             Schema::create( Hook::filter( 'ns-table-prefix', 'nexopos_units' ), function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
+                $table->string( 'identifier' )->unique();
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->integer( 'group_id' );

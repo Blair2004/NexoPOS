@@ -15,6 +15,8 @@ class ProductHistory extends NsModel
     const ACTION_DELETED            =   'deleted';
     const ACTION_TRANSFER_OUT       =   'outgoing-transfer';
     const ACTION_TRANSFER_IN        =   'incoming-transfer';
+    const ACTION_TRANSFER_REJECTED  =   'transfer-rejected';
+    const ACTION_TRANSFER_CANCELED  =   'transfer-canceled';
     const ACTION_REMOVED            =   'removed';
     const ACTION_ADDED              =   'added';
     const ACTION_SOLD               =   'sold';
@@ -47,6 +49,8 @@ class ProductHistory extends NsModel
         ProductHistory::ACTION_TRANSFER_IN,
         ProductHistory::ACTION_STOCKED,
         ProductHistory::ACTION_VOID_RETURN,
+        ProductHistory::ACTION_TRANSFER_REJECTED,
+        ProductHistory::ACTION_TRANSFER_CANCELED,
         ProductHistory::ACTION_ADJUSTMENT_RETURN,
     ];
 

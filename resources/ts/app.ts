@@ -228,8 +228,6 @@ const components    =   Object.assign({
     VueApexCharts,
 }, nsExtraComponents );
 
-console.log( components );
-
 (<any>window)[ 'nsComponents' ]          =   Object.assign( components, baseComponents );
 (<any>window)[ 'nsDashboardContent' ]    =   new Vue({
     el: '#dashboard-content',

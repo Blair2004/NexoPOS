@@ -13,7 +13,6 @@ import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
-import { VueConstructor } from "vue/types/umd";
 
 declare global {
     interface Window {

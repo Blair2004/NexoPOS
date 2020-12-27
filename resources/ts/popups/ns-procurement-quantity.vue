@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-1/5-screen relative">
+    <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
             <h1 class="text-xl font-bold text-gray-700 text-center">Define Quantity</h1>
         </div>

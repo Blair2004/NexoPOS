@@ -125,6 +125,13 @@ class UnitCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
+                            'type'          =>  'text',
+                            'name'          =>  'identifier',
+                            'label'         =>  __( 'Identifier' ),
+                            'description'   =>  __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
+                            'validation'    =>  'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
+                            'value' =>  $entry->identifier ?? '',
+                        ], [
                             'type'  =>  'media',
                             'name'  =>  'preview_url',
                             'label' =>  __( 'Preview URL' ),
@@ -137,7 +144,7 @@ class UnitCrud extends CrudService
                             'description'   =>  __( 'Define the value of the unit.' ),
                             'validation'    =>  'required',
                             'value' =>  $entry->value ?? '',
-                        ], [
+                        ],  [
                             'type'          =>  'select',
                             'name'          =>  'group_id',
                             'validation'    =>  'required',
