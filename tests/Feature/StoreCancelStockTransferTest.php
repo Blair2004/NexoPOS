@@ -12,7 +12,7 @@ use Modules\NsMultiStore\Models\Store;
 use Modules\NsStockTransfers\Models\StockTransfer;
 use Tests\TestCase;
 
-class StoreRejectStockTransferTest extends TestCase
+class StoreCancelStockTransferTest extends TestCase
 {
     /**
      * A basic feature test example.
@@ -61,10 +61,10 @@ class StoreRejectStockTransferTest extends TestCase
 
         $responseData   =   json_decode( $response->getContent(), true );
 
-        ns()->store->setStore( $otherStore );
+        ns()->store->setStore( $store );
 
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'get', 'api/stock-transfers/reject/' . $responseData[ 'data' ][ 'transaction' ][ 'id' ] );
+            ->json( 'get', 'api/stock-transfers/cancel/' . $responseData[ 'data' ][ 'transaction' ][ 'id' ] );
 
         $products->each( function( $product ) use ( $response ) {
             $oldProductQuantity     =   $product->unit_quantities[0]->quantity;
@@ -72,11 +72,10 @@ class StoreRejectStockTransferTest extends TestCase
             $newQuantity            =   $product->unit_quantities[0]->quantity;
 
             if ( $oldProductQuantity !== $newQuantity ) {
-                throw new Exception( sprintf( __( 'After transfect is rejected, the stock is no more the same : before => %s, after => %s'), $oldProductQuantity, $newQuantity ) );
+                throw new Exception( sprintf( __( 'After transfect is canceled, the stock is no more the same : before => %s, after => %s'), $oldProductQuantity, $newQuantity ) );
             }
         });
 
         $response->assertJsonPath( 'status', 'success' );
-
     }
 }

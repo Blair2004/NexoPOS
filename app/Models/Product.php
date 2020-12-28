@@ -41,6 +41,17 @@ class Product extends NsModel
         return $this->scopeFindUsingBarcode( $query, $barcode );
     }
 
+    /**
+     * get a product using a barcode
+     * @param QueryBuilder
+     * @param string barcode
+     * @return QueryBuilder
+     */
+    public function scopeSku( $query, $sku )
+    {
+        return $this->scopeFindUsingSKU( $query, $sku );
+    }
+
 
     /**
      * Filter a product using the SKU
@@ -66,6 +77,11 @@ class Product extends NsModel
     public function product_taxes()
     {
         return $this->hasMany( ProductTax::class, 'product_id' );
+    }
+
+    public function tax_group()
+    {
+        return $this->hasOne( TaxGroup::class, 'id', 'tax_group_id' );
     }
 
     public function variations()
