@@ -172,10 +172,7 @@ class ProductService
         } else if ( $data[ 'product_type' ] === 'variable' ) {
             return $this->createVariableProduct( $data );
         } else {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'Unable to create a product with an unknow type : %s' ), $data[ 'product_type' ] )
-            ]);
+            throw new NotAllowedException( sprintf( __( 'Unable to create a product with an unknow type : %s' ), $data[ 'product_type' ] ) );
         }
     }
 
@@ -575,6 +572,7 @@ class ProductService
      * refresh the price for a specific product
      * @param Product instance of the product
      * @return array response of the operation
+     * @deprecated
      */
     public function refreshPrices( Product $product )
     {
@@ -1126,7 +1124,7 @@ class ProductService
 
     /**
      * returns only variable & product
-     * @return array
+     * @return Collection
      */
     public function getProducts()
     {

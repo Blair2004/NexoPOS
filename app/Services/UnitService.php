@@ -129,6 +129,17 @@ class UnitService
     }
 
     /**
+     * get a unit that uses a specific
+     * identififer
+     * @param string
+     * @return Unit
+     */
+    public function getUsingIdentifier( $identifier )
+    {
+        return Unit::identifier( $identifier )->first();
+    }
+
+    /**
      * update a specific unit
      * using the provided id
      * @param int id
