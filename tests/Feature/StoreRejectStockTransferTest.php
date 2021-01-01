@@ -76,6 +76,7 @@ class StoreRejectStockTransferTest extends TestCase
             }
         });
 
+
         $response->assertJsonPath( 'status', 'success' );
 
     }
