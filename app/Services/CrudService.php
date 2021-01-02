@@ -288,7 +288,7 @@ class CrudService
                              */
                             $relatedTableParts  =   explode( '.', $junction_relation[3] );
                             if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                                $junction_relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[3];
+                                $junction_relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                             }
 
                             if ( count( $hasAlias ) === 2 ) {

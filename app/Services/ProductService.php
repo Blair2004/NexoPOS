@@ -22,6 +22,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
 use App\Models\ProductGallery;
+use App\Models\Unit;
 
 class ProductService
 {
@@ -912,11 +913,16 @@ class ProductService
          * @param int product_id
          * @param float unit_price
          * @param id unit_id
+         * @param float $unit_price
          * @param float total_price
          * @param string $description
          * @param float quantity
+         * @param string sku
+         * @param string $unit_identifier
          */       
-        $product    =   Product::findOrFail( $product_id );
+        $product        =   isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
+        $product_id     =   $product->id;
+        $unit_id        =   isset( $unit_id ) ? $unit_id : Unit::identifier( $unit_identifier )->firstOrFail()->id;
 
         /**
          * let's check the different 
@@ -931,6 +937,8 @@ class ProductService
             ProductHistory::ACTION_RETURNED,
             ProductHistory::ACTION_SOLD,
             ProductHistory::ACTION_TRANSFER_IN,
+            ProductHistory::ACTION_TRANSFER_REJECTED,
+            ProductHistory::ACTION_TRANSFER_CANCELED,
             ProductHistory::ACTION_TRANSFER_OUT,
             ProductHistory::ACTION_LOST,
             ProductHistory::ACTION_VOID_RETURN,
@@ -996,10 +1004,10 @@ class ProductService
 
         $history                                =   new ProductHistory;
         $history->product_id                    =   $product_id;
-        $history->procurement_id                =   @$procurement_id;
-        $history->procurement_product_id        =   @$procurement_product_id;
+        $history->procurement_id                =   $procurement_id ?? null;
+        $history->procurement_product_id        =   $procurement_product_id ?? null;
         $history->unit_id                       =   $unit_id;
-        $history->order_id                      =   @$order_id;
+        $history->order_id                      =   $order_id ?? null;
         $history->operation_type                =   $action;
         $history->unit_price                    =   $unit_price;
         $history->total_price                   =   $total_price;

@@ -17,4 +17,16 @@ class Unit extends NsModel
     {
         return $this->belongsTo( UnitGroup::class, 'group_id' );
     }
+
+    /**
+     * retreive a unit using a defined
+     * identifier 
+     * @param Query $query
+     * @param string $identifier
+     * @return Query
+     */
+    public function scopeIdentifier( $query, $identifier )
+    {
+        return $query->where( 'identifier', $identifier );
+    }
 } 

@@ -46,5 +46,6 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-pos-printing-url | Used to overwrite routes name | Array | 4.0-beta-1 | Valid |
 | ns-reset-table | Determines if a table can be truncated or not. Returns the table name or false to prevent the action. | Array | 4.0-beta-1 | Valid |
 | ns-common-routes | Execute within a middleware that covers all common routes. Common routes excludes system route (modules, users), but instead this gives a way to control the access to certain features. | Array | 4.0-beta-1 | Valid |
+| ns-product-history-operation | Provides an array of possible stock operation on the product history. | Array | 4.0-beta-1 | Valid |
 | ns-login-redirect | returns the default redirection url, where the user is redirected after authentication. The second parameter which is a boolean, defines wether or not the user will be redirected to an intended page. "True" if the user intended to access to a page, "False" if not. | Array | 4.0-beta-1 | Valid |
 

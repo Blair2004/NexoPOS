@@ -32,6 +32,7 @@ class CreateUnitTest extends TestCase
                 'general'       =>  [
                     'base_unit'     =>  true,
                     'value'         =>  1,
+                    'identifier'    =>  'piece',
                     'group_id'      =>  $group->id
                 ]
             ]);
@@ -46,6 +47,7 @@ class CreateUnitTest extends TestCase
                 'general'       =>  [
                     'base_unit'     =>  false,
                     'value'         =>  12,
+                    'identifier'    =>  'dozen',
                     'group_id'      =>  $group->id
                 ]
             ]);
@@ -60,6 +62,7 @@ class CreateUnitTest extends TestCase
                 'general'       =>  [
                     'base_unit'     =>  false,
                     'value'         =>  30,
+                    'identifier'    =>  'thirty',
                     'group_id'      =>  $group->id
                 ]
             ]);
