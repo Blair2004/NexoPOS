@@ -141,9 +141,10 @@ class ModulesService
                  * since by default it's not enabled
                  */
                 if ( ns()->installed() ) {
-                    $modules                =   ( array ) $this->options->get( 'enabled_modules' );
-                    $config[ 'migrations' ] =   $this->__getModuleMigration( $config );
-                    $config[ 'enabled' ]    =   in_array( $config[ 'namespace' ], $modules ) ? true : false;
+                    $modules                        =   ( array ) $this->options->get( 'enabled_modules' );
+                    $config[ 'migrations' ]         =   $this->__getModuleMigration( $config );
+                    $config[ 'all-migrations' ]     =   $this->getAllModuleMigrationFiles( $config );
+                    $config[ 'enabled' ]            =   in_array( $config[ 'namespace' ], $modules ) ? true : false;
                 }
                 
                 /**
@@ -157,8 +158,6 @@ class ModulesService
                  * Service providers are registered when the module is enabled
                  */
                 if ( $config[ 'enabled' ] ) {
-
-                    $this->autoloadModule( $config );
 
                     /**
                      * Load Module Config
@@ -196,34 +195,42 @@ class ModulesService
     public function triggerServiceProviders( $config, $method, $parentClass = false )
     {
         foreach( $config[ 'providers' ] as $service ) {
+            // dump( $service );
             /**
              * @todo run service provider
              */
             $fileInfo   =   pathinfo( $service );
 
             if ( is_file( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
-                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service );
 
                 $className      =   ucwords( $fileInfo[ 'filename' ] );
                 $fullClassName  =   'Modules\\' . $config[ 'namespace' ] . '\\Providers\\' . $className;
                 
                 
-                if ( class_exists( $fullClassName ) ) {
-                    
-                    $config[ 'providers' ][ $className ]   =   new $fullClassName( app() );
+                if ( class_exists( $fullClassName ) ) {   
+                    if ( 
+                        ! isset( $config[ 'providers-booted' ] ) || 
+                        ! isset( $config[ 'providers-booted' ][ $className ] ) || 
+                        $config[ 'providers-booted' ][ $className ]  instanceof $fullClassName 
+                    ) {
+                        $config[ 'providers-booted' ][ $className ]   =   new $fullClassName( app() );
+                    }
                     
                     /**
                      * If a register method exists and the class is an 
                      * instance of ModulesServiceProvider
                      */
-                    if ( $config[ 'providers' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers' ][ $className ], $method ) ) {
-                        call_user_func([ $config[ 'providers' ][ $className ], $method ], $this );
+                    if ( $config[ 'providers-booted' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers-booted' ][ $className ], $method ) ) {
+                        call_user_func([ $config[ 'providers-booted' ][ $className ], $method ], $this );
                     }
                 }
             }
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function autoloadModule( $config )
     {
         /**
@@ -331,11 +338,6 @@ class ModulesService
         if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
             include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
         }
-
-        // include module index file
-        include_once( $module[ 'index-file' ] );
-
-        $this->autoloadModule( $module );
         
         // run module entry class
         new $module[ 'entry-class' ];
@@ -912,7 +914,11 @@ class ModulesService
 
                 return [
                     'status'    =>  'success',
-                    'message'   =>  __( 'The migration run successfully.' )
+                    'message'   =>  __( 'The migration run successfully.' ),
+                    'data'      =>  [
+                        'object'    =>  $object,
+                        'className' =>  $className
+                    ]
                 ];                
             }
 
@@ -1086,7 +1092,7 @@ class ModulesService
                 ->values()
                 ->toArray();
                 
-            $files              =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+            $files              =   $this->getAllModuleMigrationFiles( $module );
             $unmigratedFiles    =   [];
     
             foreach( $files as $file ) {
@@ -1104,6 +1110,18 @@ class ModulesService
         }
 
         return [];  
+    }
+
+    /**
+     * Return all the migration defined
+     * for a specific module
+     * @param array $module
+     * @return array
+     */
+    public function getAllModuleMigrationFiles( $module )
+    {
+        return Storage::disk( 'ns-modules' )
+            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
     }
 
     /**

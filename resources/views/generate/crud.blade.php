@@ -5,7 +5,11 @@ $model          =   explode( '\\', $model_name );
 $lastClassName  =   $model[ count( $model ) - 1 ];
 ?>
 <{{ '?php' }}
+@if( $module )
+namespace Modules\{{ $module[ 'namespace' ] }}\Crud;
+@else
 namespace App\Crud;
+@endif
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
