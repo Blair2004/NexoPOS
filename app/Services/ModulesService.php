@@ -15,6 +15,7 @@ use PhpParser\ParserFactory;
 use App\Exceptions\MissingDependencyException;
 use App\Models\ModuleMigration;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
 class ModulesService
@@ -23,6 +24,8 @@ class ModulesService
     private $xmlParser;
     private $options;
     private $modulesPath;
+    
+    const CACHE_MIGRATION_LABEL         =   'module-migration-';
 
     public function __construct()
     {
@@ -644,6 +647,13 @@ class ModulesService
             }
 
             /**
+             * clear the migration cache
+             * @todo consider clearing the cache for this module
+             * whenever an operation changes the module files (update, delete).
+             */
+            Cache::forget( self::CACHE_MIGRATION_LABEL . $moduleNamespace );
+
+            /**
              * create a symlink directory 
              * only if the module has that folder
              */
@@ -1080,36 +1090,34 @@ class ModulesService
      */
     private function __getModuleMigration( $module )
     {
-        if ( Schema::hasTable( 'nexopos_modules_migrations' ) ) {
-            /**
-             * If the last migration is not defined
-             * that means we're running it for the first time
-             * we'll set the migration to 0.0 then.
-             */
-            $migratedFiles      =   ModuleMigration::namespace( $module[ 'namespace' ] )
+        /**
+         * If the last migration is not defined
+         * that means we're running it for the first time
+         * we'll set the migration to 0.0 then.
+         */
+        $migratedFiles      =   Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function() use ( $module ) {
+            return ModuleMigration::namespace( $module[ 'namespace' ] )
                 ->get()
                 ->map( fn( $migration ) => $migration->file )
                 ->values()
                 ->toArray();
-                
-            $files              =   $this->getAllModuleMigrationFiles( $module );
-            $unmigratedFiles    =   [];
-    
-            foreach( $files as $file ) {
-    
-                /**
-                 * the last version should be lower than the looped versions
-                 * the current version should greather or equal to the looped versions
-                 */
-                if ( ! in_array( $file, $migratedFiles ) ) {
-                    $unmigratedFiles[]      =       $file;
-                }
+        });
+            
+        $files              =   $this->getAllModuleMigrationFiles( $module );
+        $unmigratedFiles    =   [];
+
+        foreach( $files as $file ) {
+
+            /**
+             * the last version should be lower than the looped versions
+             * the current version should greather or equal to the looped versions
+             */
+            if ( ! in_array( $file, $migratedFiles ) ) {
+                $unmigratedFiles[]      =       $file;
             }
-    
-            return $unmigratedFiles;
         }
 
-        return [];  
+        return $unmigratedFiles;
     }
 
     /**
@@ -1140,11 +1148,21 @@ class ModulesService
          * save the migration only 
          * if it's successful
          */
-        if ( $result[ 'status' ] === 'success' ) {
+        $migration       =   ModuleMigration::where([
+            'file'          =>  $file,
+            'namespace'     =>  $namespace
+        ]);
+
+        if ( $result[ 'status' ] === 'success' && ! $migration instanceof ModuleMigration ) {
             $migration              =   new ModuleMigration;
             $migration->namespace   =   $namespace;
             $migration->file        =   $file;
             $migration->save();
+
+            /**
+             * clear the cache to avoid update loop
+             */
+            Cache::forget( self::CACHE_MIGRATION_LABEL . $namespace );
         }
 
         return $result;

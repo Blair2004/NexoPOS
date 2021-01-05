@@ -16,11 +16,14 @@ use App\Events\ProcurementDeliveryEvent;
 use App\Events\ProcurementCancelationEvent;
 use App\Events\ProcurementProductSavedEvent;
 use App\Events\ProcurementAfterDeleteProductEvent;
+use App\Events\ProcurementAfterHandledEvent;
+use App\Events\ProcurementAfterSaveProductEvent;
 use App\Events\ProcurementAfterUpdateEvent;
 use App\Events\ProcurementAfterUpdateProduct;
 use App\Events\ProcurementBeforeCreateEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeDeleteProductEvent;
+use App\Events\ProcurementBeforeHandledEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use App\Events\ProcurementBeforeUpdateProduct;
 use App\Events\ProcurementRefreshedEvent;
@@ -346,6 +349,13 @@ class ProcurementService
         return $data;
     }
 
+    /**
+     * This only save the product
+     * but doesn't affect the stock
+     * @param Procurement $procurement
+     * @param Collection $products
+     * @return Collection $products
+     */
     public function saveProducts( Procurement $procurement, Collection $products )
     {
         /**
@@ -385,6 +395,8 @@ class ProcurementService
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
+            
+            event( new ProcurementAfterSaveProductEvent( $procurement, $procurementProduct, $procuredProduct ) );
 
             return $procurementProduct;
         });
@@ -783,6 +795,8 @@ class ProcurementService
      */
     public function handleProcurement( Procurement $procurement )
     {
+        event( new ProcurementBeforeHandledEvent( $procurement ) );
+
         if ( $procurement->delivery_status === Procurement::DELIVERED ) {
             
             $procurement->products->map( function( ProcurementProduct $product ) {
@@ -817,6 +831,8 @@ class ProcurementService
     
             $this->setDeliveryStatus( $procurement, Procurement::STOCKED );
         }
+
+        event( new ProcurementAfterHandledEvent( $procurement ) );
     }
 
     /**

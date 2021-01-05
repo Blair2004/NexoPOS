@@ -9,9 +9,9 @@
             <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
         </div>
         <ns-procurement
-            submit-url="{{ url( '/api/nexopos/v4/procurements' ) }}"
-            src="{{ url( '/api/nexopos/v4/forms/ns.procurement' ) }}"
-            return-url="{{ url( '/dashboard/procurements' ) }}">
+            submit-url="{{ ns()->url( '/api/nexopos/v4/procurements' ) }}"
+            src="{{ ns()->url( '/api/nexopos/v4/forms/ns.procurement' ) }}"
+            return-url="{{ ns()->url( '/dashboard/procurements' ) }}">
             <template v-slot:title>{{ __( 'Procurement Name' ) }}</template>
         </ns-procurement>
     </div>
