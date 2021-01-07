@@ -43,4 +43,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $orders->namespace      =   'nexopos.make-payment.orders';
     $orders->description    =   __( 'Allow the user to make payments to orders.' );
     $orders->save();
+
+    $permission                 =   new Permission;
+    $permission->namespace      =   'nexopos.make-payment.orders';
+    $permission->name           =   __( 'Make Payment To Orders' );
+    $permission->description    =   __( 'Allow the user to perform additional payment for a specific incomplete order.' );
+    $permission->save();
 }

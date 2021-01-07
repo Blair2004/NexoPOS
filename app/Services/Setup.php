@@ -119,7 +119,7 @@ class Setup
          */
         Artisan::call( 'config:cache' );
         Artisan::call( 'migrate --path=/database/migrations/default' );
-        Artisan::call( 'migrate --path=/database/migrations/v1_0' );
+        Artisan::call( 'migrate --path=/database/migrations/create-tables' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
         
         $userID             =   rand(1,99);

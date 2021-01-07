@@ -1,25 +1,30 @@
 <?php
 namespace App\Crud;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
+use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Register;
+use App\Services\Helper;
 
 class RegisterCrud extends CrudService
 {
     /**
      * define the base table
+     * @param  string
      */
     protected $table      =   'nexopos_registers';
 
     /**
-     * base route name
+     * default slug
+     * @param  string
      */
-    protected $mainRoute      =   'ns.registers';
+    protected $slug   =   'cash-registers';
 
     /**
      * Define namespace
@@ -29,14 +34,52 @@ class RegisterCrud extends CrudService
 
     /**
      * Model Used
+     * @param  string
      */
     protected $model      =   Register::class;
 
     /**
+     * Define permissions
+     * @param  array
+     */
+    protected $permissions  =   [
+        'create'    =>  true,
+        'read'      =>  true,
+        'update'    =>  true,
+        'delete'    =>  true,
+    ];
+
+    /**
      * Adding relation
+     * @param  array
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_registers.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_users as user', 'nexopos_registers.author', '=', 'user.id' ],
+        'leftJoin'  =>  [
+            [ 'nexopos_users as cashier', 'nexopos_registers.used_by', '=', 'cashier.id' ],
+        ]
+    ];
+
+    /**
+     * all tabs mentionned on the tabs relations
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
+    ];
+
+    /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
+    public $pick        =   [
+        'user'      =>  [ 'username' ],
+        'cashier'   =>  [ 'username' ],
     ];
 
     /**
@@ -50,13 +93,6 @@ class RegisterCrud extends CrudService
      * @var  array
      */
     protected $whereIn      =   [];
-
-    protected $permissions = [
-        'create' => 'nexopos.create.registers',
-        'read' => 'nexopos.read.registers',
-        'update' => 'nexopos.update.registers',
-        'delete' => 'nexopos.delete.registers',
-    ];
 
     /**
      * Fields which will be filled during post/put
@@ -113,8 +149,8 @@ class RegisterCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -122,51 +158,23 @@ class RegisterCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
+                            'type'  =>  'select',
+                            'name'  =>  'status',
+                            'label' =>  __( 'Status' ),
+                            'options'   =>  Helper::kvToJsOptions([
+                                Register::STATUS_DISABLED     =>  __( 'Disabled' ),
+                                Register::STATUS_CLOSED     =>  __( 'Closed' ),
+                            ]),
+                            'description'   =>  __( 'Define what is the status of the register.' ),
+                            'value' =>  $entry->status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
+                            'type'  =>  'textarea',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'status',
-                            'label' =>  __( 'Status' ),
-                            'value' =>  $entry->status ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'used_by',
-                            'label' =>  __( 'Used_by' ),
-                            'value' =>  $entry->used_by ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
-                        ],                     ]
+                            'description'   =>  __( 'Provide mode details about this cash register.' )
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -199,7 +207,11 @@ class RegisterCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+        } else {
+            throw new NotAllowedException;
+        }
 
         return $request;
     }
@@ -236,7 +248,11 @@ class RegisterCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+        } else {
+            throw new NotAllowedException;
+        }
 
         return $request;
     }
@@ -251,25 +267,6 @@ class RegisterCrud extends CrudService
     {
         return $request;
     }
-    
-    /**
-     * Protect an access to a specific crud UI
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-    **/
-    public function canAccess( $fields )
-    {
-        $users      =   app()->make( Users::class );
-        
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
 
     /**
      * Before Delete
@@ -277,7 +274,24 @@ class RegisterCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.registers' ) {
-            $this->allowedTo( 'delete' );
+            /**
+             *  Perform an action before deleting an entry
+             *  In case something wrong, this response can be returned
+             *
+             *  return response([
+             *      'status'    =>  'danger',
+             *      'message'   =>  __( 'You\re not allowed to do that.' )
+             *  ], 403 );
+            **/
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
+            if ( $model->status === Register::STATUS_OPENED ) {
+                throw new NotAllowedException( __( 'Unable to delete a register that is currently in use' ) );
+            }
         }
     }
 
@@ -287,26 +301,6 @@ class RegisterCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'author'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'description'  =>  [
-                'label'  =>  __( 'Description' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'id'  =>  [
-                'label'  =>  __( 'Id' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
@@ -317,22 +311,22 @@ class RegisterCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'updated_at'  =>  [
-                'label'  =>  __( 'Updated_at' ),
+            'cashier_username'  =>  [
+                'label'  =>  __( 'Used By' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'used_by'  =>  [
-                'label'  =>  __( 'Used_by' ),
+            'user_username'  =>  [
+                'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'uuid'  =>  [
-                'label'  =>  __( 'Uuid' ),
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-                    ];
+        ];
     }
 
     /**
@@ -344,6 +338,7 @@ class RegisterCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
+        $entry->cashier_username    =   $entry->cashier_username ?: __( 'N/A' );
 
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -351,13 +346,12 @@ class RegisterCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -379,15 +373,18 @@ class RegisterCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -415,9 +412,11 @@ class RegisterCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.registers',
-            'create'    =>  'ns.registers/create',
-            'edit'      =>  'ns.registers/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'cash-registers' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'cash-registers/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'cash-registers/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers/{id}' . '' ),
         ];
     }
 

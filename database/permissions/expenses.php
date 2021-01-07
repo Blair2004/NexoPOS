@@ -37,4 +37,16 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $expenses->namespace      =   'nexopos.delete.expenses-history';
     $expenses->description    =   __( 'Allow to delete an expense history.' );
     $expenses->save();
+
+    $readHistory                 =   Permission::withNamespaceOrNew( 'nexopos.read.expenses-history' );
+    $readHistory->name           =   __( 'Read Expense History' );
+    $readHistory->namespace      =   'nexopos.read.expenses-history';
+    $readHistory->description    =   __( 'Allow to the expense history.' );
+    $readHistory->save();
+
+    $deleteHistory                 =   Permission::withNamespaceOrNew( 'nexopos.delete.expenses-history' );
+    $deleteHistory->name           =   __( 'Delete Expense History' );
+    $deleteHistory->namespace      =   'nexopos.delete.expenses-history';
+    $deleteHistory->description    =   __( 'Allow to delete an expense history.' );
+    $deleteHistory->save();
 }
