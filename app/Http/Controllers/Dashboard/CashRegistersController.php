@@ -14,14 +14,23 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
 use App\Models\Register;
+use App\Services\CashRegistersService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class CashRegistersController extends DashboardController
 {
-    public function __construct()
+    /**
+     * @var CashRegistersService
+     */
+    protected $registersService;
+
+    public function __construct(
+        CashRegistersService $registersService
+    )
     {
         parent::__construct();
+        $this->registersService     =   $registersService;
     }
 
     public function listRegisters()
@@ -50,6 +59,29 @@ class CashRegistersController extends DashboardController
         }
 
         return Register::get();
+    }
+
+    public function openRegister( Request $request, Register $register ) {
+        return $this->registersService->openRegister(
+            $register,
+            $request->input( 'amount' ),
+            $request->input( 'description' )
+        );
+    }
+
+    public function getUsedRegister()
+    {
+        $register   =   Register::usedBy( Auth::id() )->first();
+
+        if ( ! $register instanceof Register ) {
+            throw new Exception( __( 'No register has been opened by the logged user.' ) );
+        }
+        
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The register is opened.' ),
+            'data'      =>  compact( 'register' )
+        ];
     }
 }
 

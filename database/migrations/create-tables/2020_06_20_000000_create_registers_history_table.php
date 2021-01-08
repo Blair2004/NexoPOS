@@ -5,7 +5,7 @@
 **/
 
 use App\Classes\Hook;
-use App\Classes\Schema;;
+use App\Classes\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -25,6 +25,7 @@ class CreateRegistersHistoryTable extends Migration
                 $table->string( 'action' );
                 $table->integer( 'author' );
                 $table->float( 'value' );
+                $table->text( 'description' )->nullable();
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

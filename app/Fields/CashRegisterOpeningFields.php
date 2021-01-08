@@ -14,12 +14,12 @@ class CashRegisterOpeningFields extends FieldsService
                 'description'   =>  __( 'define the amount of the transaction.' ),
                 'validation'    =>  'required',
                 'name'          =>  'amount',
-                'type'          =>  'number',
+                'type'          =>  'hidden',
             ], [
                 'label'         =>  __( 'Description' ),
                 'description'   =>  __( 'Further observation while proceeding.' ),
                 'name'          =>  'description',
-                'type'          =>  'number',
+                'type'          =>  'textarea',
             ],
         ]);
         

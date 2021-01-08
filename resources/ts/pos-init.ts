@@ -47,7 +47,7 @@ export class POS {
         discount_type: null,
         title: '',
         discount: 0,
-        register_id: null,
+        register_id: this.get( 'ns_pos_registers_enabled' ), // everytime it reset, this value will be pulled.
         discount_percentage: 0,
         subtotal: 0,
         total: 0,
@@ -142,8 +142,8 @@ export class POS {
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );     
         this._options           =   new BehaviorSubject({});
-        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
+        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         
         /**
          * Whenever there is a change
@@ -197,7 +197,12 @@ export class POS {
     }
 
     public loaded() {
+        /**
+         * this runs asynchronously
+         */
         this.processInitialQueue();
+
+        // this.reset();
     }
     
     get header() {
@@ -365,6 +370,10 @@ export class POS {
 
             if ( ! this._isSubmitting ) {
                 
+                /**
+                 * @todo do we need to set a new value here
+                 * probably the passed value should be send to the server.
+                 */
                 const order     =   this.order.getValue();
                 const method    =   order.id !== undefined ? 'put' : 'post';
 
@@ -785,6 +794,17 @@ export class POS {
         } else {
             nsSnackBar.error( 'Unable to void an unpaid order.' ).subscribe();
         }
+    }
+
+    set( key, value ) {
+        const settings  =   this.settings.getValue();
+        settings[ key ]     =   value;
+        this.settings.next( settings );
+    }
+
+    get( key ) {
+        const settings  =   this.settings.getValue();
+        return settings[ key ];
     }
 
     destroy() {
