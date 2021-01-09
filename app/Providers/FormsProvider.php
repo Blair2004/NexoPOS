@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Fields\AuthLoginFields;
 use App\Fields\AuthRegisterFields;
 use App\Fields\CashRegisterOpeningFields;
+use App\Fields\CashRegisterClosingFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
 use App\Fields\RefundProductFields;
@@ -67,6 +68,9 @@ class FormsProvider extends ServiceProvider
                 break;    
                 case 'ns.cash-registers-opening':
                     return new CashRegisterOpeningFields;
+                break;            
+                case 'ns.cash-registers-closing':
+                    return new CashRegisterClosingFields;
                 break;            
             }
         }, 10, 2 );

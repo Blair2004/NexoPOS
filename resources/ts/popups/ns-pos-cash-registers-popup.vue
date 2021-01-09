@@ -2,6 +2,7 @@
 import { nsHttpClient, nsSnackBar } from '../bootstrap';
 import { default as nsNumpad } from "@/components/ns-numpad";
 import FormValidation from '@/libraries/form-validation';
+import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
 export default {
     components: {
         nsNumpad
@@ -15,22 +16,43 @@ export default {
             openFields: [],
             validation: new FormValidation,
             amount: 0,
+            settings: null,
+            settingsSubscription: null,
         }
     },
     mounted() {
         this.checkUsedRegister();
+
+        this.settingsSubscription   =   POS.settings.subscribe( settings => {
+            this.settings    =   settings;
+        });
+    },
+    beforeDestroy() {
+        this.settingsSubscription.unsubscribe();
     },
     computed: {
     },
     
     methods: {
-        selectRegister( register ) {
+        async selectRegister( register ) {
             if ( register.status !== 'closed' ) {
                 return nsSnackBar.error( 'Unable to open this register. Only closed register can be opened.' ).subscribe();
             }
 
             this.selectedRegister   =   register;
-            this.loadFields();
+            
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    const title         =   'Open Register';
+                    const action        =   'open';
+                    const identifier    =   'ns.cash-registers-opening'; // fields identifier
+                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action })
+                });
+
+                console.log( response );
+            } catch( exception ) {
+                console.log( exception );
+            }
         },
         checkUsedRegister() {
             this.priorVerification  =   false;
@@ -44,10 +66,6 @@ export default {
                     this.loadRegisters();
                 });
         },
-        returnBack() {
-            this.selectedRegister   =   null;
-            this.loadRegisters();
-        },
         loadRegisters() {
             this.hasLoadedRegisters     =   false;
             nsHttpClient.get( `/api/nexopos/v4/cash-registers` )
@@ -56,29 +74,8 @@ export default {
                     this.hasLoadedRegisters     =   true;
                 })
         },
-        loadFields() {
-            nsHttpClient.get( `/api/nexopos/v4/fields/ns.cash-registers-opening` )
-                .subscribe( result => {
-                    this.openFields     =   result;
-                }, ( error ) => {
-                    return nsSnackBar.error( error.message, 'OKAY', { duration : false }).subscribe();
-                })
-        },
         definedValue( value ) {
             this.amount     =   value;
-        },
-        submit() {
-            const fields    =   this.validation.extractFields( this.openFields );
-            fields.amount   =   this.amount;
-
-            nsHttpClient.post( `/api/nexopos/v4/cash-registers/open/${this.selectedRegister.id}`, fields )
-                .subscribe( result => {
-                    this.$popupParams.resolve( result );
-                    this.$popup.close();
-                    nsSnackBar.success( result.message ).subscribe();
-                }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
-                })
         },
         getClass( register ) {
             switch( register.status ) {
@@ -98,7 +95,7 @@ export default {
 }
 </script>
 <template>
-    <div class="w-95vw h-95vh md:w-2/5-screen md:h-3/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-white' : ''">
+    <div class="w-95vw h-95vh md:w-2/5-screen md:h-4/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-white' : ''">
         <template v-if="priorVerification">
             <div class="title p-2 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="font-semibold">Open The Register</h3>
@@ -121,6 +118,9 @@ export default {
                         <h3 class="text-semibold text-center">{{ register.name }}</h3>
                         <span class="text-sm">({{ register.status }})</span>
                     </div>
+                </div>
+                <div v-if="registers.length === 0" class="p-2 bg-red-400 text-white">
+                    Looks like there is no registers. At least one register is required to proceed. &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">Create Cash Register</a>
                 </div>
             </div>
             <div class="p-2 flex-auto overflow-y-auto" v-if="selectedRegister !== null && openFields.length > 0">
