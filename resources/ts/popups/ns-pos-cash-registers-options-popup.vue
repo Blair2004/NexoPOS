@@ -1,6 +1,6 @@
 <script>
 import popupCloser from '@/libraries/popup-closer'
-import nsPosCashRegistersClosePopupVue from './ns-pos-cash-registers-close-popup.vue';
+import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
 export default {
     mounted() {
         this.popupCloser();
@@ -8,10 +8,20 @@ export default {
     methods: {
         popupCloser,
 
-        closeCashRegister() {
-            Popup.show( nsPosCashRegistersClosePopupVue, {
-                parent: this
-            })
+        async closeCashRegister() {
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosCashRegistersActionPopupVue, {
+                        title: 'Close Register',
+                        action: 'close',
+                        identifier: 'ns.cash-registers-closing',
+                        resolve, 
+                        reject
+                    })
+                });
+            } catch( exception ) {
+                
+            }
         }
     }
 }
