@@ -15,6 +15,7 @@ use PhpParser\ParserFactory;
 use App\Exceptions\MissingDependencyException;
 use App\Models\ModuleMigration;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
 class ModulesService
@@ -23,6 +24,8 @@ class ModulesService
     private $xmlParser;
     private $options;
     private $modulesPath;
+    
+    const CACHE_MIGRATION_LABEL         =   'module-migration-';
 
     public function __construct()
     {
@@ -141,9 +144,10 @@ class ModulesService
                  * since by default it's not enabled
                  */
                 if ( ns()->installed() ) {
-                    $modules                =   ( array ) $this->options->get( 'enabled_modules' );
-                    $config[ 'migrations' ] =   $this->__getModuleMigration( $config );
-                    $config[ 'enabled' ]    =   in_array( $config[ 'namespace' ], $modules ) ? true : false;
+                    $modules                        =   ( array ) $this->options->get( 'enabled_modules' );
+                    $config[ 'migrations' ]         =   $this->__getModuleMigration( $config );
+                    $config[ 'all-migrations' ]     =   $this->getAllModuleMigrationFiles( $config );
+                    $config[ 'enabled' ]            =   in_array( $config[ 'namespace' ], $modules ) ? true : false;
                 }
                 
                 /**
@@ -157,8 +161,6 @@ class ModulesService
                  * Service providers are registered when the module is enabled
                  */
                 if ( $config[ 'enabled' ] ) {
-
-                    $this->autoloadModule( $config );
 
                     /**
                      * Load Module Config
@@ -196,34 +198,42 @@ class ModulesService
     public function triggerServiceProviders( $config, $method, $parentClass = false )
     {
         foreach( $config[ 'providers' ] as $service ) {
+            // dump( $service );
             /**
              * @todo run service provider
              */
             $fileInfo   =   pathinfo( $service );
 
             if ( is_file( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service ) && $fileInfo[ 'extension' ] === 'php' ) {
-                include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $service );
 
                 $className      =   ucwords( $fileInfo[ 'filename' ] );
                 $fullClassName  =   'Modules\\' . $config[ 'namespace' ] . '\\Providers\\' . $className;
                 
                 
-                if ( class_exists( $fullClassName ) ) {
-                    
-                    $config[ 'providers' ][ $className ]   =   new $fullClassName( app() );
+                if ( class_exists( $fullClassName ) ) {   
+                    if ( 
+                        ! isset( $config[ 'providers-booted' ] ) || 
+                        ! isset( $config[ 'providers-booted' ][ $className ] ) || 
+                        $config[ 'providers-booted' ][ $className ]  instanceof $fullClassName 
+                    ) {
+                        $config[ 'providers-booted' ][ $className ]   =   new $fullClassName( app() );
+                    }
                     
                     /**
                      * If a register method exists and the class is an 
                      * instance of ModulesServiceProvider
                      */
-                    if ( $config[ 'providers' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers' ][ $className ], $method ) ) {
-                        call_user_func([ $config[ 'providers' ][ $className ], $method ], $this );
+                    if ( $config[ 'providers-booted' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers-booted' ][ $className ], $method ) ) {
+                        call_user_func([ $config[ 'providers-booted' ][ $className ], $method ], $this );
                     }
                 }
             }
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function autoloadModule( $config )
     {
         /**
@@ -331,11 +341,6 @@ class ModulesService
         if ( is_file( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' ) ) {
             include_once( $module[ 'path' ] . DIRECTORY_SEPARATOR .'vendor' . DIRECTORY_SEPARATOR . 'autoload.php' );
         }
-
-        // include module index file
-        include_once( $module[ 'index-file' ] );
-
-        $this->autoloadModule( $module );
         
         // run module entry class
         new $module[ 'entry-class' ];
@@ -642,6 +647,13 @@ class ModulesService
             }
 
             /**
+             * clear the migration cache
+             * @todo consider clearing the cache for this module
+             * whenever an operation changes the module files (update, delete).
+             */
+            Cache::forget( self::CACHE_MIGRATION_LABEL . $moduleNamespace );
+
+            /**
              * create a symlink directory 
              * only if the module has that folder
              */
@@ -912,7 +924,11 @@ class ModulesService
 
                 return [
                     'status'    =>  'success',
-                    'message'   =>  __( 'The migration run successfully.' )
+                    'message'   =>  __( 'The migration run successfully.' ),
+                    'data'      =>  [
+                        'object'    =>  $object,
+                        'className' =>  $className
+                    ]
                 ];                
             }
 
@@ -1074,36 +1090,46 @@ class ModulesService
      */
     private function __getModuleMigration( $module )
     {
-        if ( Schema::hasTable( 'nexopos_modules_migrations' ) ) {
-            /**
-             * If the last migration is not defined
-             * that means we're running it for the first time
-             * we'll set the migration to 0.0 then.
-             */
-            $migratedFiles      =   ModuleMigration::namespace( $module[ 'namespace' ] )
+        /**
+         * If the last migration is not defined
+         * that means we're running it for the first time
+         * we'll set the migration to 0.0 then.
+         */
+        $migratedFiles      =   Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function() use ( $module ) {
+            return ModuleMigration::namespace( $module[ 'namespace' ] )
                 ->get()
                 ->map( fn( $migration ) => $migration->file )
                 ->values()
                 ->toArray();
-                
-            $files              =   Storage::disk( 'ns-modules' )->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
-            $unmigratedFiles    =   [];
-    
-            foreach( $files as $file ) {
-    
-                /**
-                 * the last version should be lower than the looped versions
-                 * the current version should greather or equal to the looped versions
-                 */
-                if ( ! in_array( $file, $migratedFiles ) ) {
-                    $unmigratedFiles[]      =       $file;
-                }
+        });
+            
+        $files              =   $this->getAllModuleMigrationFiles( $module );
+        $unmigratedFiles    =   [];
+
+        foreach( $files as $file ) {
+
+            /**
+             * the last version should be lower than the looped versions
+             * the current version should greather or equal to the looped versions
+             */
+            if ( ! in_array( $file, $migratedFiles ) ) {
+                $unmigratedFiles[]      =       $file;
             }
-    
-            return $unmigratedFiles;
         }
 
-        return [];  
+        return $unmigratedFiles;
+    }
+
+    /**
+     * Return all the migration defined
+     * for a specific module
+     * @param array $module
+     * @return array
+     */
+    public function getAllModuleMigrationFiles( $module )
+    {
+        return Storage::disk( 'ns-modules' )
+            ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
     }
 
     /**
@@ -1122,11 +1148,21 @@ class ModulesService
          * save the migration only 
          * if it's successful
          */
-        if ( $result[ 'status' ] === 'success' ) {
+        $migration       =   ModuleMigration::where([
+            'file'          =>  $file,
+            'namespace'     =>  $namespace
+        ]);
+
+        if ( $result[ 'status' ] === 'success' && ! $migration instanceof ModuleMigration ) {
             $migration              =   new ModuleMigration;
             $migration->namespace   =   $namespace;
             $migration->file        =   $file;
             $migration->save();
+
+            /**
+             * clear the cache to avoid update loop
+             */
+            Cache::forget( self::CACHE_MIGRATION_LABEL . $namespace );
         }
 
         return $result;

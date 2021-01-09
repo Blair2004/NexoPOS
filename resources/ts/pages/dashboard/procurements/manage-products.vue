@@ -209,6 +209,8 @@ export default {
                                 const index     =   group.indexOf( group_fields );
                                 group.splice( index, 1 );
                                 nsSnackBar.success( result.message ).subscribe();
+                            }, ( error ) => {
+                                nsSnackbar.error( error.message ).subscribe();
                             });
                     }
                 }
@@ -367,8 +369,6 @@ export default {
                     return data;
                 })
             }
-
-            console.log( data );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {

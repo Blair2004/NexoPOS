@@ -112,6 +112,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 this.columns        =   f.columns;
                 this.bulkActions    =   f.bulkActions;
                 this.refresh();
+            }, ( error ) => {
+                nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();
             });
         },
         cancelSearch() {

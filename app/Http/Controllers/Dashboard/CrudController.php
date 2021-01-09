@@ -376,6 +376,14 @@ class CrudController extends DashboardController
     public function getConfig( string $namespace ) 
     {
         $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
+
+        if ( ! class_exists( $crudClass ) ) {
+            throw new Exception( sprintf( 
+                __( 'The class "%s" is not defined. Does that crud class exists ? Make sure you\'ve registered the instance if it\'s the case.' ),
+                $crudClass
+            ) );
+        }
+
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {

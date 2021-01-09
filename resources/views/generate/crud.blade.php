@@ -5,7 +5,11 @@ $model          =   explode( '\\', $model_name );
 $lastClassName  =   $model[ count( $model ) - 1 ];
 ?>
 <{{ '?php' }}
+@if( isset( $module ) )
+namespace Modules\{{ $module[ 'namespace' ] }}\Crud;
+@else
 namespace App\Crud;
+@endif
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -319,12 +323,12 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/{{ strtolower( trim( $namespace ) ) }}/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -385,11 +389,11 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
-            'create'    =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
-            'edit'      =>  url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
-            'post'      =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
-            'put'       =>  url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
+            'list'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
+            'create'    =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . '{{ strtolower( trim( $namespace ) ) }}/{id}' . '' ),
         ];
     }
 

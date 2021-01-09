@@ -12,6 +12,7 @@ export interface Order {
     title: string;
     discount_percentage: number;
     subtotal: number;
+    register_id: number | undefined;
     total: number;
     tendered: number;
     payment_status: 'hold' | 'paid' | 'unpaid' | 'partially_paid' | 'layaway';

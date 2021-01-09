@@ -21,7 +21,7 @@ class ModulesServiceProvider extends ServiceProvider
          * service providers that extends ModulesServiceProvider.
          */
         collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
-            $modules->triggerServiceProviders( $module, 'register', self::class );
+            $modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
         });
 
         /**
@@ -29,7 +29,7 @@ class ModulesServiceProvider extends ServiceProvider
          * service providers that extends ModulesServiceProvider.
          */
         collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
-            $modules->triggerServiceProviders( $module, 'boot', self::class );
+            $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
         });
     }
 

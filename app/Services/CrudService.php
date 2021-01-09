@@ -118,7 +118,7 @@ class CrudService
 
     public function __extractTable( $relation )
     {
-        $parts  =   explode( 'as', $relation[0] );
+        $parts  =   explode( ' as ', $relation[0] );
         if ( count( $parts ) === 2 ) {
             return trim( $parts[0] );
         } else {
@@ -217,7 +217,7 @@ class CrudService
                      */
                     $table          =   $relation[0];
                     $pick           =   $this->pick ?? [];
-                    $hasAlias       =   explode( 'as', $relation[0] ); // if there is an alias, let's just pick the table name
+                    $hasAlias       =   explode( ' as ', $relation[0] ); // if there is an alias, let's just pick the table name
                     $hasAlias[0]    =   $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName      =   $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
                     $columns        =   collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
@@ -237,7 +237,7 @@ class CrudService
                 }
 
                 foreach( $columns as $index => $column ) {
-                    $hasAlias           =   explode( 'as', $relation[0]);
+                    $hasAlias           =   explode( ' as ', $relation[0]);
                     $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
 
                     /**
@@ -269,7 +269,7 @@ class CrudService
                 if ( in_array( $junction, [ 'join', 'leftJoin', 'rightJoin', 'crossJoin' ] ) ) {
                     if ( $junction !== 'join' ) {
                         foreach( $relation as $junction_relation ) {
-                            $hasAlias           =   explode( 'as', $junction_relation[0]);
+                            $hasAlias           =   explode( ' as ', $junction_relation[0]);
                             $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
 
                             /**
@@ -298,9 +298,9 @@ class CrudService
                             }
                         }
                     } else {
-                        $hasAlias           =   explode( 'as', $relation[0]);
+                        $hasAlias           =   explode( ' as ', $relation[0]);
                         $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
-                        
+
                         /**
                          * makes sure the first table can be filtered. We should also check 
                          * if the column are actual column and not aliases

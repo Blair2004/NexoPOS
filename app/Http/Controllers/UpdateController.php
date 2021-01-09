@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AfterMigrationExecutedEvent;
 use App\Services\ModulesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -53,7 +54,8 @@ class UpdateController extends Controller
         if ( $request->input( 'module' ) ) {
             $module     =   $request->input( 'module' );
             foreach( $module[ 'migrations' ] as $file ) {
-                $this->moduleService->runMigration( $module[ 'namespace' ], $file );
+                $response   =   $this->moduleService->runMigration( $module[ 'namespace' ], $file );
+                event( new AfterMigrationExecutedEvent( $module, $response, $file ) );
             }
         }
 

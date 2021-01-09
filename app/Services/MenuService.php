@@ -422,8 +422,9 @@ class MenuService
     public function getMenus()
     {
         $this->buildMenus();
+        $this->menus    =   Hook::filter( 'ns-dashboard-menus', $this->menus );
         $this->toggleActive();
-        return Hook::filter( 'ns-dashboard-menus', $this->menus );
+        return $this->menus;
     }
 
     /**

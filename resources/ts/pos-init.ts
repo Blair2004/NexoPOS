@@ -23,6 +23,7 @@ const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton      =
 const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
 const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
 const NsPosResetButton          =   (<any>window).NsPosResetButton              =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button' ).default;
+const NsPosCashRegister         =   (<any>window).NsPosCashRegister             =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button' ).default;
 const NsAlertPopup              =   (<any>window).NsAlertPopup                 =   require( './popups/ns-' + 'alert' + '-popup' ).default;
 const NsConfirmPopup            =   (<any>window).NsConfirmPopup               =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
 const NsPromptPopup             =   (<any>window).NsPromptPopup               =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
@@ -37,6 +38,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _initialQueue: (() => Promise<{ status: 'success' | 'failed', message: string }>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
@@ -45,6 +47,7 @@ export class POS {
         discount_type: null,
         title: '',
         discount: 0,
+        register_id: this.get( 'ns_pos_registers_enabled' ), // everytime it reset, this value will be pulled.
         discount_percentage: 0,
         subtotal: 0,
         total: 0,
@@ -111,6 +114,10 @@ export class POS {
         return this._breadcrumbs;
     }
 
+    get initialQueue() {
+        return this._initialQueue;
+    }
+
     reset() {
         this._isSubmitting  =   false;
         this._products.next([]);
@@ -122,6 +129,7 @@ export class POS {
          * to reset order details
          */
         this.order.next( this.defaultOrder() );
+        this.processInitialQueue();
     }
 
     public initialize()
@@ -134,8 +142,8 @@ export class POS {
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );     
         this._options           =   new BehaviorSubject({});
-        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
+        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         
         /**
          * Whenever there is a change
@@ -171,20 +179,58 @@ export class POS {
 
         this.defineCurrentScreen();
     }
+
+    /**
+     * This is the first initial queue
+     * that runs when the POS is loaded. 
+     * It also run when the pos is reset.
+     * @return void
+     */
+    public async processInitialQueue() {
+        for( let index in this._initialQueue ) {
+            try {
+                const response  =   await this._initialQueue[ index ]();
+            } catch( exception ) {
+                nsSnackBar.error( exception.message ).subscribe();
+            }
+        }
+    }
+
+    public loaded() {
+        /**
+         * this runs asynchronously
+         */
+        this.processInitialQueue();
+
+        // this.reset();
+    }
     
-    public header   =   {
+    get header() {
         /**
          * As POS object is defined on the
          * header, we can use that to reference the buttons (component)
          * that needs to be rendered dynamically
          */
-        buttons: {
-            NsPosDashboardButton,
-            NsPosPendingOrderButton,
-            NsPosOrderTypeButton,
-            NsPosCustomersButton,
-            NsPosResetButton,
+        const data  =   {
+            buttons: {
+                NsPosDashboardButton,
+                NsPosPendingOrderButton,
+                NsPosOrderTypeButton,
+                NsPosCustomersButton,
+                NsPosResetButton,
+            }
+        };
+
+        /**
+         * if the cash register is enabled
+         * we'll add that button to the list
+         * of button available.
+         */
+        if ( this.options.getValue().ns_pos_registers_enabled === 'yes' ) {
+            data.buttons[ 'NsPosCashRegister' ]  =   NsPosCashRegister;
         }
+
+        return data;
     }
 
     defineOptions( options ) {
@@ -324,6 +370,10 @@ export class POS {
 
             if ( ! this._isSubmitting ) {
                 
+                /**
+                 * @todo do we need to set a new value here
+                 * probably the passed value should be send to the server.
+                 */
                 const order     =   this.order.getValue();
                 const method    =   order.id !== undefined ? 'put' : 'post';
 
@@ -746,6 +796,17 @@ export class POS {
         }
     }
 
+    set( key, value ) {
+        const settings  =   this.settings.getValue();
+        settings[ key ]     =   value;
+        this.settings.next( settings );
+    }
+
+    get( key ) {
+        const settings  =   this.settings.getValue();
+        return settings[ key ];
+    }
+
     destroy() {
         this._products.unsubscribe();
         this._customers.unsubscribe();
@@ -759,3 +820,5 @@ export class POS {
 }
 
 ( window as any ).POS       =   new POS;
+
+export const POSInit    =   <POS>( window as any ).POS;

@@ -225,7 +225,11 @@ class CrudGeneratorCommand extends Command
             if ( $module ) {
                 Storage::disk( 'ns-modules' )->put( 
                     $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
-                    view( 'generate.crud', $this->crudDetails )
+                    view( 'generate.crud', array_merge(
+                        $this->crudDetails, [
+                            'module'    =>  $module
+                        ]
+                    ) )
                 );
             }
         } else {
