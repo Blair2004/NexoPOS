@@ -22,6 +22,7 @@ class CustomerService
         if ( $id === null ) {
             return Customer::with( 'billing' )
                 ->with( 'shipping' )
+                ->where( 'group_id', '<>', null )
                 ->orderBy( 'created_at', 'desc' )->get();
         } else {
             try {
