@@ -42,4 +42,9 @@ class Schema extends ParentSchema
     {
         return parent::dropIfExists( Hook::filter( 'ns-table-name', $table ) );
     }
+
+    public static function drop( $table )
+    {
+        return parent::drop( Hook::filter( 'ns-table-name', $table ) );
+    }
 }
