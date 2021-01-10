@@ -17,6 +17,7 @@ use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
+use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Models\Order;
 use App\Models\Product;
@@ -489,6 +490,8 @@ class OrdersService
         $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
         $orderPayment->author       =   Auth::id();
         $orderPayment->save();
+
+        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
         /**
          * When the customer is making some payment
@@ -1001,6 +1004,7 @@ class OrdersService
         $order->type                    =   $fields['type']['identifier'];
         $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
         $order->total_installments      =   $fields['total_installments' ] ?? 0;
+        $order->register_id             =   $fields['register_id' ] ?? null;
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
@@ -1086,6 +1090,8 @@ class OrdersService
         $orderRefund->shipping          =   ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
         $orderRefund->total             =   $this->currencyService->getRaw( $fields[ 'total' ] );
         $orderRefund->save();
+
+        event( new OrderRefundPaymentAfterCreatedEvent( $orderRefund ) );
 
         $results                =   [];
 

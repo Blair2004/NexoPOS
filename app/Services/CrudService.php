@@ -608,7 +608,7 @@ class CrudService
     public static function table( $config = [] )
     {
         $className  =   get_called_class();
-        $instance   =   new $className;
+        $instance   =   new $className();
 
         /**
          * "manage.profile" is the default permission

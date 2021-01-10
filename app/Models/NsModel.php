@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Classes\Hook;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 abstract class NsModel extends NsRootModel
 {
+    use Notifiable;
+
     public function __construct( $attributes = [] )
     {
         parent::__construct( $attributes );

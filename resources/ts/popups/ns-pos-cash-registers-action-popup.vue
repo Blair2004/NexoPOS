@@ -1,15 +1,20 @@
 <template>
-    <div class="shadow-lg w-95vw h-95vh md:w-2/5-screen md:h-4/5-screen bg-white">
+    <div class="shadow-lg w-95vw md:w-2/5-screen bg-white">
         <div class="border-b border-gray-200 p-2 text-gray-700 flex justify-between items-center">
             <h3 class="font-semibold">{{ title }}</h3>
             <div><ns-close-button @click="close()"></ns-close-button></div>
         </div>
         <div class="p-2">
-            <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right">
-                {{ amount | currency }}
+            <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
+                <span>Balance </span>
+                <span>{{ settings.register.balance | currency }}</span>
+            </div>
+            <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right flex justify-between">
+                <span>Input</span>
+                <span>{{ amount | currency }}</span>
             </div>
             <div class="mb-2">
-                <ns-numpad @next="submit()" :value="0" @changed="definedValue( $event )"></ns-numpad>
+                <ns-numpad @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
             </div>
             <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
         </div>
@@ -17,6 +22,9 @@
 </template>
 <script>
 import nsNumpadVue from '@/components/ns-numpad.vue';
+import FormValidation from '@/libraries/form-validation';
+import popupCloser from '@/libraries/popup-closer';
+import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 export default {
     components: {
         nsNumpad: nsNumpadVue
@@ -26,18 +34,33 @@ export default {
             amount: 0,
             title: null,
             identifier: null,
+            settingsSubscription: null,
+            settings: null,
             action: null,
+            register_id: null, // conditionnally provider
+            validation: new FormValidation,
             fields: [],
         }
     },
     mounted() {
-        this.title          =   this.$popupParams.title;
-        this.identifier     =   this.$popupParams.identifier;
-        this.action         =   this.$popupParams.action;
-        console.log( this.$popupParams );
+        this.title                  =   this.$popupParams.title;
+        this.identifier             =   this.$popupParams.identifier;
+        this.action                 =   this.$popupParams.action;
+        this.register_id            =   this.$popupParams.register_id;
+        this.settingsSubscription   =   POS.settings.subscribe( settings => {
+            this.settings           =   settings;
+        });
         this.loadFields();
     },
+    destroyed() {
+        this.settingsSubscription.unsubscribe();
+    },
     methods: {
+        popupCloser,
+
+        definedValue( value ) {
+            this.amount     =   value;
+        },
         close() {
             this.$popup.close();
         },
@@ -49,22 +72,30 @@ export default {
                     return nsSnackBar.error( error.message, 'OKAY', { duration : false }).subscribe();
                 })
         },
-        submit() {
-            const fields    =   this.validation.extractFields( this.openFields );
+        submit( amount ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: 'Confirm Your Action',
+                message: this.$popupParams.confirmMessage || 'Would you like to confirm your action.',
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.triggerSubmit();
+                    }
+                }
+            })
+        },
+        triggerSubmit() {
+            const fields    =   this.validation.extractFields( this.fields );
             fields.amount   =   this.amount;
 
-            nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.selectedRegister.id}`, fields )
+            nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
                 .subscribe( result => {
                     this.$popupParams.resolve( result );
                     this.$popup.close();
                     nsSnackBar.success( result.message ).subscribe();
                 }, ( error ) => {
                     nsSnackBar.error( error.message ).subscribe();
-                })
+                });
         },
-        setValue( amount ) {
-            this.amount     =   amount;
-        }
     }
 }
 </script>

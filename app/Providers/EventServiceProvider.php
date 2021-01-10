@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Filters\MenusFilter;
+use App\Listeners\CashRegisterEventsSubscriber;
 use App\Listeners\CoreEventSubscriber;
 use App\Listeners\CustomerEventSubscriber;
 use App\Listeners\ExpensesEventSubscriber;
@@ -54,6 +55,7 @@ class EventServiceProvider extends ServiceProvider
             Event::subscribe( ExpensesEventSubscriber::class );
             Event::subscribe( CoreEventSubscriber::class );
             Event::subscribe( CustomerEventSubscriber::class );
+            Event::subscribe( CashRegisterEventsSubscriber::class );
         }
 
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);

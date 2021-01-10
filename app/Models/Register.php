@@ -39,4 +39,9 @@ class Register extends NsModel
     {
         return $query->where( 'used_by', $user );
     }
+
+    public function history()
+    {
+        return $this->hasMany( RegisterHistory::class, 'register_id', 'id' );
+    }
 }

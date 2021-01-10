@@ -28,19 +28,10 @@
 
                     <div :key="product.barcode" class="text-gray-700 flex" v-for="product of products">
                         <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
-                            <h3 class="font-semibold">{{ product.name }} &mdash; {{ product.unit_name }}</h3>
                             <div class="flex justify-between">
-                                <div class="-mx-1 flex">
-                                    <div class="px-1">
-                                        <a
-                                            :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
-                                            class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
-                                        >Price : {{ product.unit_price | currency }}</a>
-                                    </div>
-                                    <div class="px-1"> 
-                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
-                                    </div>
-                                </div>
+                                <h3 class="font-semibold">
+                                    {{ product.name }} &mdash; {{ product.unit_name }}
+                                </h3>
                                 <div class="-mx-1 flex">
                                     <div class="px-1"> 
                                         <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
@@ -51,6 +42,19 @@
                                         <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <div class="-mx-1 flex">
+                                    <div class="px-1">
+                                        <a
+                                            :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                            class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                        >Price : {{ product.unit_price | currency }}</a>
+                                    </div>
+                                    <div class="px-1"> 
+                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                 </div>
                             </div>
@@ -136,8 +140,10 @@
                         <tr class="bg-green-200">
                             <td width="200" class="border border-gray-300 p-2"></td>
                             <td width="200" class="border border-gray-300 p-2">
-                                <span>Total</span>
-                                <span>{{ order.total | currency }}</span>    
+                                <div class="flex justify-between w-full">
+                                    <span>Total</span>
+                                    <span>{{ order.total | currency }}</span>    
+                                </div>
                             </td>
                         </tr>
                     </table>

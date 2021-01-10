@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class RegisterHistory extends NsModel
@@ -27,5 +27,9 @@ class RegisterHistory extends NsModel
         self::ACTION_REFUND,
         self::ACTION_CLOSING,
         self::ACTION_CASHOUT
+    ];
+
+    protected $dispatchesEvents     =   [
+        'created'     =>      CashRegisterHistoryAfterCreatedEvent::class
     ];
 }

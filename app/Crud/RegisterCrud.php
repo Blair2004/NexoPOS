@@ -43,10 +43,10 @@ class RegisterCrud extends CrudService
      * @param  array
      */
     protected $permissions  =   [
-        'create'    =>  true,
-        'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  true,
+        'create'    =>  'nexopos.create.registers',
+        'read'      =>  'nexopos.read.registers',
+        'update'    =>  'nexopos.update.registers',
+        'delete'    =>  'nexopos.delete.registers',
     ];
 
     /**
@@ -316,6 +316,11 @@ class RegisterCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'balance'  =>  [
+                'label'         =>  __( 'Balance' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
@@ -335,10 +340,11 @@ class RegisterCrud extends CrudService
     public function setActions( $entry, $namespace )
     {
         // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
+        $entry->{ '$checked' }      =   false;
+        $entry->{ '$toggled' }      =   false;
+        $entry->{ '$id' }           =   $entry->id;
         $entry->cashier_username    =   $entry->cashier_username ?: __( 'N/A' );
+        $entry->balance             =   ( string ) ns()->currency->define( $entry->balance );
 
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -347,6 +353,11 @@ class RegisterCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
+            ], [
+                'label'         =>      __( 'Register History' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

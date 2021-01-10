@@ -47,6 +47,7 @@ class CreateOrdersTable extends Migration
                 // $table->string( 'payment' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
+                $table->integer( 'register_id' )->nullable();
                 $table->text( 'voidance_reason' )->nullable();
                 $table->timestamps();
             });

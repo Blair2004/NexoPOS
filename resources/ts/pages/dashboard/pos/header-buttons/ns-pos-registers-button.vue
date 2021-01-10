@@ -7,32 +7,42 @@
 <script>
 import { default as nsPosCashRegistersPopupVue } from '@/popups/ns-pos-cash-registers-popup.vue';
 import nsPosCashRegistersOptionsPopupVue from '@/popups/ns-pos-cash-registers-options-popup.vue';
+import { nsSnackBar } from '@/bootstrap';
 export default {
     data() {
         return {
             order: null,
             name: '',
             selectedRegister: null,
+            orderSubscriber: null,
+            settingsSubscriber: null,
         }
     },
     watch: {
-        selectedRegister() {
-            if ( POS.get( 'register_id' ) === undefined ) {
-                this.name   =   'Cash Register';
-            }
-
-            this.name   =   `Cash Register : ${this.selectedRegister.name}`;
-        }
     },
     methods: {
-        openRegisterOptions() {
-            Popup.show( nsPosCashRegistersOptionsPopupVue )
+        async openRegisterOptions() {
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosCashRegistersOptionsPopupVue, { resolve, reject })
+                });
+
+                if ( response.button === 'close_register' ) {
+                    delete this.settings.register;
+                    POS.settings.next( this.settings );
+                    POS.reset();
+                } 
+            } catch( error ) {
+                if ( Object.keys( error ).length > 0 ) {
+                    nsSnackBar.error( error.message ).subscribe();
+                }
+            }
         },
         registerInitialQueue() {
             POS.initialQueue.push( async () => {
                 try {
                     const response  =   await new Promise( ( resolve, reject ) => {
-                        if ( this.order.register_id === undefined ) {
+                        if ( this.settings.register === undefined ) {
                             Popup.show( nsPosCashRegistersPopupVue, { resolve, reject });
                         }
                     });
@@ -41,24 +51,38 @@ export default {
                      * we define here the register that will be used
                      * throughout the orders send to the server
                      */
-                    this.selectedRegister   =   response.data.register;
-                    POS.set( 'register_id', this.selectedRegister.id ); 
-                    
-                    this.openRegisterOptions();
+                    POS.set( 'register', response.data.register ); 
+                    POS.reset();
 
                     return response;
-
                 } catch( exception ) {
                     throw exception;
                 }
-            })
+            });
+        },
+        setButtonName() {
+            if ( this.settings.register === undefined ) {
+                return this.name   =   'Cash Register';
+            }
+
+            this.name   =   `Cash Register : ${this.settings.register.name}`;
         }
+    },
+    destroyed() {
+        this.orderSubscriber.unsubscribe();
+        this.settingsSubscriber.unsubscribe();
     },
     mounted() {
         this.registerInitialQueue();
 
-        POS.order.subscribe( order => {
+        this.orderSubscriber    =   POS.order.subscribe( order => {
             this.order  =   order;
+        });
+
+        this.settingsSubscriber     =   POS.settings.subscribe( settings => {
+            this.settings   =   settings;
+
+            this.setButtonName();
         });
     }
 }

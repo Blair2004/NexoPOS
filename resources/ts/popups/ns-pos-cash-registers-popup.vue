@@ -3,6 +3,7 @@ import { nsHttpClient, nsSnackBar } from '../bootstrap';
 import { default as nsNumpad } from "@/components/ns-numpad";
 import FormValidation from '@/libraries/form-validation';
 import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
+import popupResolver from '@/libraries/popup-resolver';
 export default {
     components: {
         nsNumpad
@@ -10,10 +11,8 @@ export default {
     data() {
         return {
             registers: [],
-            selectedRegister: null,
             priorVerification: false,
             hasLoadedRegisters: false,
-            openFields: [],
             validation: new FormValidation,
             amount: 0,
             settings: null,
@@ -34,22 +33,23 @@ export default {
     },
     
     methods: {
+        popupResolver,
+
         async selectRegister( register ) {
             if ( register.status !== 'closed' ) {
                 return nsSnackBar.error( 'Unable to open this register. Only closed register can be opened.' ).subscribe();
             }
 
-            this.selectedRegister   =   register;
-            
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
-                    const title         =   'Open Register';
+                    const title         =   'Open Register : %s'.replace( '%s', register.name );
                     const action        =   'open';
+                    const register_id   =   register.id;
                     const identifier    =   'ns.cash-registers-opening'; // fields identifier
-                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action })
+                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action, register_id })
                 });
 
-                console.log( response );
+                this.popupResolver( response );                
             } catch( exception ) {
                 console.log( exception );
             }
@@ -74,9 +74,6 @@ export default {
                     this.hasLoadedRegisters     =   true;
                 })
         },
-        definedValue( value ) {
-            this.amount     =   value;
-        },
         getClass( register ) {
             switch( register.status ) {
                 case 'in-use':
@@ -95,42 +92,30 @@ export default {
 }
 </script>
 <template>
-    <div class="w-95vw h-95vh md:w-2/5-screen md:h-4/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-white' : ''">
+    <div class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-white' : ''">
         <template v-if="priorVerification">
             <div class="title p-2 border-b border-gray-200 flex justify-between items-center">
                 <h3 class="font-semibold">Open The Register</h3>
-                <div>
-                    <button v-if="selectedRegister !== null" @click="returnBack()" class="text-sm rounded-lg border border-gray-400 px-3 py-1 hover:bg-red-500 hover:border-red-500 hover:text-white">
-                        <i class="las la-arrow-left"></i>
-                        <span class="pl-2">Return</span>
-                    </button>
+                <div v-if="settings">
+                    <a :href="settings.urls.orders_url" class="hover:bg-red-400 hover:border-red-500 hover:text-white rounded-full border border-gray-200 px-3 text-sm py-1">Exit To Orders</a>
                 </div>
             </div>
-            <div class="p-2 flex-auto overflow-y-auto flex items-center justify-center" v-if="selectedRegister === null && ! hasLoadedRegisters">
+            <div class="p-2 flex-auto overflow-y-auto flex items-center justify-center" v-if="! hasLoadedRegisters">
                 <ns-spinner size="16" border="4"></ns-spinner>
             </div>
-            <div class="flex-auto overflow-y-auto" v-if="selectedRegister === null && hasLoadedRegisters">
+            <div class="flex-auto overflow-y-auto" v-if="hasLoadedRegisters">
                 <div class="grid grid-cols-3">
                     <div @click="selectRegister( register )" v-for="(register, index) of registers" 
                         :class="getClass( register )"
                         :key="index" class="border-b border-r flex items-center justify-center flex-col p-3">
                         <i class="las la-cash-register text-6xl"></i>
                         <h3 class="text-semibold text-center">{{ register.name }}</h3>
-                        <span class="text-sm">({{ register.status }})</span>
+                        <span class="text-sm">({{ register.status_label }})</span>
                     </div>
                 </div>
                 <div v-if="registers.length === 0" class="p-2 bg-red-400 text-white">
                     Looks like there is no registers. At least one register is required to proceed. &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">Create Cash Register</a>
                 </div>
-            </div>
-            <div class="p-2 flex-auto overflow-y-auto" v-if="selectedRegister !== null && openFields.length > 0">
-                <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right">
-                    {{ amount | currency }}
-                </div>
-                <div class="mb-2">
-                    <ns-numpad @next="submit()" :value="0" @changed="definedValue( $event )"></ns-numpad>
-                </div>
-                <ns-field v-for="(field,index) of openFields" :field="field" :key="index"></ns-field>
             </div>
         </template>
         <div v-if="priorVerification === false" class="h-full w-full flex justify-center items-center">

@@ -47,7 +47,7 @@ export class POS {
         discount_type: null,
         title: '',
         discount: 0,
-        register_id: this.get( 'ns_pos_registers_enabled' ), // everytime it reset, this value will be pulled.
+        register_id: this.get( 'register' ) ? this.get( 'register' ).id : undefined, // everytime it reset, this value will be pulled.
         discount_percentage: 0,
         subtotal: 0,
         total: 0,

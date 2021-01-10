@@ -8,7 +8,7 @@ class CashRegisterClosingFields extends FieldsService
 {
     public function get()
     {
-        $fields     =   Hook::filter( 'ns-login-fields', [
+        $fields     =   Hook::filter( 'ns-cash-register-closing-fields', [
             [
                 'label'         =>  __( 'Amount' ),
                 'description'   =>  __( 'define the amount of the transaction.' ),
