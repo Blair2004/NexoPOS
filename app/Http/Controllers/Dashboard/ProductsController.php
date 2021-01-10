@@ -438,17 +438,16 @@ class ProductsController extends DashboardController
     {
         ns()->restrict([ 'nexopos.delete.products-units', 'nexopos.make.products-adjustments' ]);
 
-        $result     =   true;
         if ( $unitQuantity->quantity > 0 ) {
-            $result     =   $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
+            $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
                 'unit_price'    =>  $unitQuantity->sale_price,
+                'unit_id'       =>  $unitQuantity->unit_id,
+                'product_id'    =>  $unitQuantity->product_id,
                 'quantity'      =>  $unitQuantity->quantity,
             ]);
         }
 
-        if ( $result instanceof ProductHistory || $result ) {
-            $unitQuantity->delete();
-        }
+        $unitQuantity->delete();
 
         return [
             'status'    =>  'success',

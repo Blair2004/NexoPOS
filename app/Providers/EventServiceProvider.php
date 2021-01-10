@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Classes\Hook;
+use App\Filters\MenusFilter;
+use App\Listeners\CashRegisterEventsSubscriber;
 use App\Listeners\CoreEventSubscriber;
 use App\Listeners\CustomerEventSubscriber;
 use App\Listeners\ExpensesEventSubscriber;
@@ -43,24 +45,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         /**
-         * @var ModulesService
-         */
-        $modules    =   app()->make( ModulesService::class );
-
-        collect( $modules->getEnabled() )
-            ->each( fn( $module ) => $modules->triggerServiceProviders( $module, 'register', self::class ) );
-
-        parent::boot();
-
-        /**
-         * @param ModulesService
-         */
-        $modules    =   app()->make( ModulesService::class );
-
-        collect( $modules->getEnabled() )
-            ->each( fn( $module ) => $modules->serviceProvider( $module, 'boot', self::class ) );
-
-        /**
          * if something doesn't prevent the subscribers to be registered
          * We'll then register them.
          */
@@ -71,7 +55,10 @@ class EventServiceProvider extends ServiceProvider
             Event::subscribe( ExpensesEventSubscriber::class );
             Event::subscribe( CoreEventSubscriber::class );
             Event::subscribe( CustomerEventSubscriber::class );
+            Event::subscribe( CashRegisterEventsSubscriber::class );
         }
+
+        Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);
     }
 
     public function shouldDiscoverEvents()

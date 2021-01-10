@@ -91,6 +91,28 @@ class TaxService
     }
 
     /**
+     * That will return the first
+     * tax using a specific name
+     * @param string $name
+     * @return Tax
+     */
+    public function getUsingName( $name )
+    {
+        return Tax::where( 'name', $name )->first();
+    }
+    
+    /**
+     * That will return the first
+     * tax using a specific name
+     * @param string $name
+     * @return TaxGroup
+     */
+    public function getTaxGroupUsingName( $name )
+    {
+        return TaxGroup::where( 'name', $name )->first();
+    }
+
+    /**
      * Returns a single instance of a group
      * @param int group id
      * @return TaxGroup
@@ -101,8 +123,49 @@ class TaxService
     }
 
     /**
+     * Create a tax group
+     * @param array $fields
+     * @return array $response
+     */
+    public function createTaxGroup( $fields )
+    {
+        $group  =   new TaxGroup;
+        $group->name    =   $fields[ 'name' ];
+        $group->description    =   $fields[ 'description' ];
+        $group->author    =   Auth::id();
+        $group->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The tax group has been correctly saved.' ),
+            'data'      =>  compact( 'group' )
+        ];
+    }
+
+    /**
+     * creates a tax using provided details
+     */
+    public function createTax( $fields )
+    {
+        $tax                =   new Tax;
+        $tax->name          =   $fields[ 'name' ];
+        $tax->rate          =   $fields[ 'rate' ];
+        $tax->tax_group_id  =   $fields[ 'tax_group_id' ];
+        $tax->description   =   $fields[ 'description' ];
+        $tax->author        =   Auth::id();
+        $tax->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The tax has been correctly created.' ),
+            'data'      =>  compact( 'tax' )
+        ];
+    }
+
+    /**
      * Create a tax using the provided details
      * @param array tax fields
+     * @deprecated
      * @return Tax
      */
     public function create( $fields )

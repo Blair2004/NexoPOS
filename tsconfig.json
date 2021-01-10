@@ -17,7 +17,7 @@
         "baseUrl": "./",
         "paths": {
             "@/*": [
-                "*"
+                "resources/ts/*"
             ]
         },
     },

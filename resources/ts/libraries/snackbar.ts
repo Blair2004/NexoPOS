@@ -3,7 +3,7 @@ import * as rx from 'rx';
 
 declare const window:any;
 
-export interface SnackBarOptions { duration: number, type?: string };
+export interface SnackBarOptions { duration: (number|boolean), type?: string };
 
 export class SnackBar {
     // window.snackbarQueue will be used to stack the snackbars

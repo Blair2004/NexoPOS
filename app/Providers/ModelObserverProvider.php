@@ -25,7 +25,6 @@ use App\Models\RegisterHistory;
 use App\Models\RewardSystem;
 use App\Models\Provider;
 use App\Models\RewardSystemRule;
-use App\Models\Store;
 use App\Models\Transfer;
 use App\Models\TransferProduct;
 use App\Models\Tax;
@@ -72,7 +71,6 @@ class ModelObserverProvider extends ServiceProvider
         RewardSystem::observe( UUIDObserver::class );
         RewardSystem::observe( RewardSystemObserver::class );
         RewardSystemRule::observe( UUIDObserver::class );
-        Store::observe( UUIDObserver::class );
         Transfer::observe( UUIDObserver::class );
         TransferProduct::observe( UUIDObserver::class );
         Tax::observe( UUIDObserver::class );

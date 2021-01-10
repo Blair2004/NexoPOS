@@ -28,6 +28,9 @@
     POS.definedPaymentsType( @json( $paymentTypes ) );
     </script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>
+    <script>
+    POS.loaded();
+    </script>
 @verbatim
 @endverbatim
 @endsection

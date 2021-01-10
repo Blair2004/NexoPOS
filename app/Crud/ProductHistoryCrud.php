@@ -460,6 +460,8 @@ class ProductHistoryCrud extends CrudService
                 $entry->{ '$cssClass' }             =   'bg-blue-100 border-blue-200 border text-sm';
             break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : 
+            case ProductHistory::ACTION_TRANSFER_REJECTED : 
+            case ProductHistory::ACTION_TRANSFER_CANCELED : 
             case ProductHistory::ACTION_ADJUSTMENT_SALE : 
                 $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
             break;
@@ -475,6 +477,8 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_ADDED :             $entry->operation_type      = __( 'Added' ); break;
             case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type      = __( 'Incoming Transfer' ); break;
             case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type      = __( 'Outgoing Transfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_REJECTED : $entry->operation_type      = __( 'Transfer Rejected' ); break;
+            case ProductHistory::ACTION_TRANSFER_CANCELED : $entry->operation_type      = __( 'Transfer Canceled' ); break;
             case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type      = __( 'Void Return' ); break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type      = __( 'Adjustment Return' ); break;
             case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type      = __( 'Adjustment Sale' ); break;

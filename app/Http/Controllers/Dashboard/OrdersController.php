@@ -153,11 +153,15 @@ class OrdersController extends DashboardController
                 'ns_pos_gross_price_used'               =>  $this->optionsService->get( 'ns_pos_gross_price_used', 'no'),
                 'ns_pos_unit_price_ediable'             =>  $this->optionsService->get( 'ns_pos_unit_price_ediable', 'no'),
                 'ns_pos_printing_enabled_for'           =>  $this->optionsService->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
+                'ns_pos_registers_enabled'              =>  $this->optionsService->get( 'ns_pos_registers_enabled', 'no' ),
+                'ns_pos_idle_counter'                   =>  $this->optionsService->get( 'ns_pos_idle_counter', 0 ),
+                'ns_pos_disbursement'                   =>  $this->optionsService->get( 'ns_pos_disbursement', 'no' ),
             ],
             'urls'              =>  [
                 'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
                 'orders_url'    =>      ns()->route( 'ns.dashboard.orders' ),
                 'dashboard_url' =>      ns()->route( 'ns.dashboard.home' ),
+                'registers_url' =>      ns()->route( 'ns.dashboard.registers-create' )
             ],
             'paymentTypes'  =>  $this->paymentTypes
         ]);

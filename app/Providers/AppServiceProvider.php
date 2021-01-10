@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
+use App\Services\CashRegistersService;
 use App\Services\CoreService;
 use App\Services\CrudService;
 use App\Services\CurrencyService;
@@ -70,6 +71,10 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( UserOptions::class, function(){
             return new UserOptions( Auth::id() );
+        });
+
+        $this->app->singleton( CashRegistersService::class, function(){
+            return new CashRegistersService();
         });
 
         // save Singleton for options

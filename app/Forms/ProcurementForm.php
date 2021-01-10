@@ -1,6 +1,7 @@
 <?php
 namespace App\Forms;
 
+use App\Classes\Hook;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Unit;
@@ -28,6 +29,36 @@ class ProcurementForm extends SettingsPage
                 'description'   =>  __( 'Provide a name that will help to identify the procurement.' ),
                 'validation'    =>  'required',
             ],
+            'columns'   =>  Hook::filter( 'ns-procurement-columns', [
+                'name'          =>  [
+                    'label' =>  __( 'Name' ),
+                    'type'  =>  'name',
+                ],
+                'purchase_price_edit'    =>  [
+                    'label' =>  __( 'Unit Price' ),
+                    'type'  =>  'text'
+                ],
+                'tax_group_id'  =>  [
+                    'label' =>  __( 'Tax' ),
+                    'type'  =>  'tax_group_id'
+                ],
+                'tax_value'       =>  [
+                    'label' =>  __( 'Tax Value' ),
+                    'type'  =>  'currency'
+                ],
+                'unit_quantities'       =>  [
+                    'label' =>  __( 'UOM' ),
+                    'type'  =>  'unit_quantities'
+                ],
+                'quantity'      =>  [
+                    'label' =>  __( 'Quantity' ),
+                    'type'  =>  'text'
+                ],
+                'total_purchase_price'   =>  [
+                    'label' =>  __( 'Total Price' ),
+                    'type'  =>  'currency'
+                ],
+            ]),
             'products'          =>  isset( $procurement ) ? $procurement->products->map( function( $_product ) {
                 $product                    =   Product::findOrFail( $_product->product_id );
                 $product->load( 'unit_quantities.unit' )->get();

@@ -374,6 +374,9 @@ class ProcurementCrud extends CrudService
             case Procurement::STOCKED:
                 $entry->delivery_status = __( 'Stocked' );
             break;
+            default:
+                $entry->delivery_status     =   Hook::filter( 'ns-delivery-status', $entry->delivery_status );
+            break;
         }
 
         switch( $entry->payment_status ) {

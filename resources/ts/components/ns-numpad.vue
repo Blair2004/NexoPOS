@@ -62,8 +62,8 @@ export default {
 
             if ( key.identifier === 'next' ) {
                 this.$emit( 'next', this.backValue );
-                this.backValue     =   '0';
-                this.$emit( 'changed', this.backValue );
+                // this.backValue     =   '0';
+                // this.$emit( 'changed', this.backValue );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {

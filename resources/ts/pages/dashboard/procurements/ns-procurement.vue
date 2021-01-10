@@ -242,8 +242,6 @@ export default {
                     });
                 } 
 
-                console.log( result[2] );
-
                 this.form           =   Object.assign( this.form, result[2] );
                 this.form           =   this.formValidation.createForm( this.form );
                 
@@ -483,69 +481,64 @@ export default {
                                 <table class="w-full">
                                     <thead>
                                         <tr>
-                                            <td width="200" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Product</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Unit Price</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Tax Value</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">UOM</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Quantity</td>
-                                            <td width="100" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">Total Price</td>
+                                            <td v-for="( column, key ) of form.columns" width="200" :key="key" class="text-gray-700 p-2 border border-gray-300 bg-gray-200">{{ column.label }}</td>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="( product, index ) of form.products" :key="index" :class="product.procurement.$invalid ? 'bg-red-200 border-2 border-red-500' : 'bg-gray-100'">
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <span class="font-semibold">{{ product.name }}</span>
-                                                <div class="flex justify-between">
-                                                    <div class="flex -mx-1 flex-col">
-                                                        <div class="px-1">
-                                                            <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
+                                            <template v-for="( column, key ) of form.columns" >
+                                                <td :key="key" v-if="column.type === 'name'" class="p-2 text-gray-600 border border-gray-300">
+                                                    <span class="font-semibold">{{ product.name }}</span>
+                                                    <div class="flex justify-between">
+                                                        <div class="flex -mx-1 flex-col">
+                                                            <div class="px-1">
+                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex -mx-1 flex-col">
+                                                            <div class="px-1">
+                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="setProductOptions( index )">Options</span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="flex -mx-1 flex-col">
-                                                        <div class="px-1">
-                                                            <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="setProductOptions( index )">Options</span>
-                                                        </div>
+                                                </td>
+                                                <td :key="key" v-if="column.type === 'text'" class="p-2 w-3 text-gray-600 border border-gray-300">
+                                                    <div class="flex items-start">
+                                                        <input @change="updateLine( index )" type="text" v-model="product.procurement[ key ]" class="w-24 border-2 p-2 border-blue-400 rounded">
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 w-3 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">
-                                                    <input @change="updateLine( index )" type="text" v-model="product.procurement.purchase_price_edit" class="w-24 border-2 p-2 border-blue-400 rounded">
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">
-                                                    <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="rounded border-blue-500 border-2 p-2">
-                                                        <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start flex-col justify-end">
-                                                    <span class="text-sm text-gray-600">{{ product.procurement.tax_value | currency }}</span>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">
-                                                    <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
-                                                        <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">
-                                                    <input @change="updateLine( index )" type="text" v-model="product.procurement.quantity" class="w-24 border-2 p-2 border-blue-400 rounded">
-                                                </div>
-                                            </td>
-                                            <td class="p-2 text-gray-600 border border-gray-300">
-                                                <div class="flex items-start">{{ product.procurement.total_purchase_price | currency }}</div>
-                                            </td>
+                                                </td>
+                                                <td :key="key" v-if="column.type === 'tax_group_id'" class="p-2 text-gray-600 border border-gray-300">
+                                                    <div class="flex items-start">
+                                                        <select @change="updateLine( index )" v-model="product.procurement.tax_group_id" class="rounded border-blue-500 border-2 p-2">
+                                                            <option v-for="option of taxes" :key="option.id" :value="option.id">{{ option.name }}</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td :key="key" v-if="column.type === 'custom_select'" class="p-2 text-gray-600 border border-gray-300">
+                                                    <div class="flex items-start">
+                                                        <select @change="updateLine( index )" v-model="product.procurement[ key ]" class="rounded border-blue-500 border-2 p-2">
+                                                            <option v-for="option of column.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td :key="key" v-if="column.type === 'currency'" class="p-2 text-gray-600 border border-gray-300">
+                                                    <div class="flex items-start flex-col justify-end">
+                                                        <span class="text-sm text-gray-600">{{ product.procurement[ key ] | currency }}</span>
+                                                    </div>
+                                                </td>
+                                                <td :key="key" v-if="column.type === 'unit_quantities'" class="p-2 text-gray-600 border border-gray-300">
+                                                    <div class="flex items-start">
+                                                        <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
+                                                            <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </template>
                                         </tr>
                                         <tr class="bg-gray-100">
-                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="3"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300" :colspan="Object.keys( form.columns ).indexOf( 'tax_value' )"></td>
                                             <td class="p-2 text-gray-600 border border-gray-300">{{ totalTaxValues | currency }}</td>
-                                            <td class="p-2 text-gray-600 border border-gray-300" colspan="2"></td>
+                                            <td class="p-2 text-gray-600 border border-gray-300" :colspan="Object.keys( form.columns ).indexOf( 'total_purchase_price' ) - ( Object.keys( form.columns ).indexOf( 'tax_value' ) + 1 )"></td>
                                             <td class="p-2 text-gray-600 border border-gray-300">{{ totalPurchasePrice | currency }}</td>
                                         </tr>
                                     </tbody>

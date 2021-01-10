@@ -54,7 +54,6 @@ class StoreCreateStockTransfer extends TestCase
                     })
             ]);
 
-        $response->dump();
         $response->assertJsonPath( 'status', 'success' );
     }
 }

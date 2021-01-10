@@ -17,6 +17,7 @@ use App\Http\Controllers\Dashboard\TaxesController;
 use App\Http\Controllers\Dashboard\UnitsController;
 use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Controllers\Dashboard\ReportsController;
+use App\Http\Controllers\Dashboard\CashRegistersController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,12 @@ Route::get( '', [ DashboardController::class, 'home' ])->name( Hook::filter( 'ns
 Route::get( '/orders', [ OrdersController::class, 'listOrders' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders' ) );
 Route::get( '/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
 Route::get( '/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt' ]);
-Route::get( '/pos', [ OrdersController::class, 'showPOS' ]);
+Route::get( '/pos', [ OrdersController::class, 'showPOS' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.pos' ) );
+
+Route::get( '/cash-registers', [ CashRegistersController::class, 'listRegisters' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.registers-list' ) );
+Route::get( '/cash-registers/create', [ CashRegistersController::class, 'createRegister' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.registers-create' ) );
+Route::get( '/cash-registers/edit/{register}', [ CashRegistersController::class, 'editRegister' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.registers-edit' ) );
+Route::get( '/cash-registers/history/{register}', [ CashRegistersController::class, 'getRegisterHistory' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.registers-history' ) );
 
 Route::get( '/customers', [ CustomersController::class, 'listCustomers' ]);
 Route::get( '/customers/create', [ CustomersController::class, 'createCustomer' ]);

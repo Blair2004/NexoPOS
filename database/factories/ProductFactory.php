@@ -35,7 +35,7 @@ class ProductFactory extends Factory
             'stock_management'      =>  $this->faker->randomElement([ 'enabled', 'disabled' ]),
             'barcode_type'          =>  $this->faker->randomElement([ 'ean8', 'ean13' ]),
             'sku'                   =>  $this->faker->word . date( 's' ),
-            'product_type'          =>  $this->faker->randomElement([ 'materialized', 'dematerialized']),
+            'type'                  =>  $this->faker->randomElement([ 'materialized', 'dematerialized']),
             'unit_group'            =>  $unitGroup->id,
             'author'                =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];

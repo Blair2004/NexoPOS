@@ -120,63 +120,6 @@ class CustomersController extends DashboardController
         return $this->customerService->get( $id )->orders;
     }
 
-    /**
-     * Get Model Schema
-     * which describe the field expected on post/put
-     * requests
-     * @return json
-     * @deprecated
-     */
-    public function schema()
-    {
-        return [
-            'post'  =>  [
-                'name'          =>  'string', 
-                'surname'       =>  'string', 
-                'description'   =>  'string', 
-                'gender'        =>  'string[male|female]', 
-                'phone'         =>  'string', 
-                'email'         =>  'string[email]', 
-                'pobox'         =>  'string', 
-                'group_id'      =>  'number',
-                'address'       =>  [
-                    'billing'   =>  [
-                        'name'          =>  'string',
-                        'surname'       =>  'string',
-                        'phone'         =>  'string',
-                        'address_1'     =>  'string',
-                        'address_2'     =>  'string',
-                        'country'       =>  'string',
-                        'city'          =>  'string',
-                        'pobox'         =>  'string',
-                        'company'       =>  'string',
-                    ], 
-                    'shipping'   =>  [
-                        'name'          =>  'string',
-                        'surname'       =>  'string',
-                        'phone'         =>  'string',
-                        'address_1'     =>  'string',
-                        'address_2'     =>  'string',
-                        'country'       =>  'string',
-                        'city'          =>  'string',
-                        'pobox'         =>  'string',
-                        'company'       =>  'string',
-                    ]
-                ]
-            ], 
-            'put'   =>  [
-                'name'          =>  'string', 
-                'surname'       =>  'string', 
-                'description'   =>  'string', 
-                'gender'        =>  'string[male|female]', 
-                'phone'         =>  'string', 
-                'email'         =>  'string[email]', 
-                'pobox'         =>  'string', 
-                'group_id'      =>  'number'
-            ]
-        ];
-    }
-
     public function editCustomer( Customer $customer )
     {
         return $this->view( 'pages.dashboard.crud.form', [

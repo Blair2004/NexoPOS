@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\ProductCategory;
+use Illuminate\Support\Facades\Auth;
 
 class ProductCategoryService
 {
@@ -18,5 +19,38 @@ class ProductCategoryService
             return false;
         }
         return $category;
+    }
+
+    /**
+     * Get a specific category using
+     * a defined name
+     * @param string $name
+     * @return ProductCategory|null
+     */
+    public function getUsingName( $name )
+    {
+        return ProductCategory::where( 'name', $name )->first();
+    }
+
+    /**
+     * create a single category and store
+     * it on the database
+     * @param array details
+     * @return array
+     */
+    public function create( $data )
+    {
+        $category               =   new ProductCategory;
+        $category->author       =   Auth::id();
+        $category->description  =   $data[ 'description' ] ?? '';
+        $category->name         =   $data[ 'name' ];
+        $category->parent_id    =   $data[ 'parent_id' ] ?? null;
+        $category->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The category has been created' ),
+            'data'      =>  compact( 'category' )
+        ];
     }
 }

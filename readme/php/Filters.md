@@ -44,6 +44,7 @@ Here is the list off all available filters as long as their purpose and argument
 | ns-media-path | Determine the path where uploaded images are saved | Array | 4.0-beta-1 | Valid |
 | ns-route-name | Used to overwrite routes name | Array | 4.0-beta-1 | Valid |
 | ns-pos-printing-url | Used to overwrite routes name | Array | 4.0-beta-1 | Valid |
+| ns-delivery-status | Allow override on the procurement delivery status. | Array | 4.0-beta-1 | Valid |
 | ns-reset-table | Determines if a table can be truncated or not. Returns the table name or false to prevent the action. | Array | 4.0-beta-1 | Valid |
 | ns-common-routes | Execute within a middleware that covers all common routes. Common routes excludes system route (modules, users), but instead this gives a way to control the access to certain features. | Array | 4.0-beta-1 | Valid |
 | ns-product-history-operation | Provides an array of possible stock operation on the product history. | Array | 4.0-beta-1 | Valid |

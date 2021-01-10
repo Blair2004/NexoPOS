@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use App\Models\Role;
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -26,6 +27,9 @@ class StoreRejectStockTransferTest extends TestCase
         );
 
         $store          =   Store::first();
+        $products       =   Product::withStockEnabled()
+            ->get()
+            ->take(2);
         $otherStore     =   Store::where( 'id', '<>',  $store->id )->first();
 
         ns()->store->setStore( $store );
@@ -39,9 +43,7 @@ class StoreRejectStockTransferTest extends TestCase
                     'type'          =>  StockTransfer::TYPE_TRANSFER,
                     'status'        =>  StockTransfer::STATUS_PENDING,
                 ],
-                'products'      =>  Product::withStockEnabled()
-                    ->get()
-                    ->take(2)
+                'products'      =>  $products
                     ->map( function( $product ) {
                         return [
                             'name'          =>  $product->name,
@@ -64,6 +66,18 @@ class StoreRejectStockTransferTest extends TestCase
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'get', 'api/stock-transfers/reject/' . $responseData[ 'data' ][ 'transaction' ][ 'id' ] );
 
+        $products->each( function( $product ) use ( $response ) {
+            $oldProductQuantity     =   $product->unit_quantities[0]->quantity;
+            $product->fresh();
+            $newQuantity            =   $product->unit_quantities[0]->quantity;
+
+            if ( $oldProductQuantity !== $newQuantity ) {
+                throw new Exception( sprintf( __( 'After transfect is rejected, the stock is no more the same : before => %s, after => %s'), $oldProductQuantity, $newQuantity ) );
+            }
+        });
+
+
         $response->assertJsonPath( 'status', 'success' );
+
     }
 }

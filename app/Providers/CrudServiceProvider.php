@@ -25,6 +25,7 @@ use App\Crud\ProcurementCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Crud\RegisterCrud;
+use App\Crud\RegisterHistoryCrud;
 use App\Crud\RolesCrud;
 use App\Crud\UnpaidOrderCrud;
 use App\Models\ExpenseHistory;
@@ -80,6 +81,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.taxes-groups': return TaxesGroupCrud::class;
                 case 'ns.users': return UserCrud::class;
                 case 'ns.registers': return RegisterCrud::class;
+                case 'ns.registers-hitory': return RegisterHistoryCrud::class;
                 case 'ns.procurements': return ProcurementCrud::class;
                 case 'ns.roles': return RolesCrud::class;
             }
