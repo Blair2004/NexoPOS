@@ -686,7 +686,7 @@ class ModulesService
      */
     public function createSymLink( $moduleNamespace )
     {
-        Storage::disk( 'public' )->makeDirectory( 'modules' );
+        Storage::disk( 'ns-public' )->makeDirectory( 'modules' );
 
         /**
          * checks if a public directory exists and create a 
@@ -699,7 +699,7 @@ class ModulesService
             $target         =   base_path( 'modules/' . $moduleNamespace . '/Public' );
 
             if ( ! \windows_os() ) {
-                Storage::disk( 'public' )->makeDirectory( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace );
+                Storage::disk( 'ns-public' )->makeDirectory( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace );
                 $link           =   @\symlink( $target, public_path( '/modules/' . strtolower( $moduleNamespace ) ) );
             } else {
                 $mode       =   'J';

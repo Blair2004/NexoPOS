@@ -1,5 +1,6 @@
 .env
 vendor
+error.log
 node_modules
 modules/*
 !modules/.temp
