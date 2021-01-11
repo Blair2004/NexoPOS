@@ -675,6 +675,8 @@ class CrudService
          */
         if ( $instance->getPermission( $permissionType ) !== false ) {
             ns()->restrict([ $instance->getPermission( $permissionType ) ]);
+        } else {
+            throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
         }
         
         /**

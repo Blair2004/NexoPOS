@@ -93,7 +93,6 @@ class CreatePermissions extends Migration
         include_once( dirname( __FILE__ ) . '/../../permissions/products.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/registers.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/rewards.php' );
-        include_once( dirname( __FILE__ ) . '/../../permissions/stores.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/taxes.php' );
         include_once( dirname( __FILE__ ) . '/../../permissions/reports.php' );
     }
