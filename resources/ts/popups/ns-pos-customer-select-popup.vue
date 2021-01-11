@@ -3,41 +3,46 @@
         <div id="header" class="border-b border-gray-200 text-center font-semibold text-2xl text-gray-700 py-2">
             <h2>Select Customer</h2>
         </div>
-        <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
-            <span>Selected : </span>
-            <div class="flex items-center justify-between">
-                <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
-                <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
-                    <i class="las la-eye"></i>
-                </button>
+        <div class="relative">
+            <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
+                <span>Selected : </span>
+                <div class="flex items-center justify-between">
+                    <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
+                    <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
+                        <i class="las la-eye"></i>
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
-            <input
-                ref="searchField" 
-                @keydown.enter="attemptToChoose()"
-                v-model="searchCustomerValue"
-                placeholder="Search Customer" 
-                type="text" 
-                class="rounded border-2 border-blue-400 bg-gray-100 w-full p-2">
-        </div>
-        <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto">
-            <ul>
-                <li class="p-2 text-center text-gray-600" v-if="customers && customers.length === 0">
-                    No customer match your query...
-                </li>
-                <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200 text-gray-600 flex justify-between items-center">
-                    <span>{{ customer.name }}</span>
-                    <p class="flex items-center">
-                        <span v-if="customer.owe_amount > 0" class="text-red-600">-{{ customer.owe_amount | currency }}</span>
-                        <span v-if="customer.owe_amount > 0">/</span>
-                        <span class="text-green-600">{{ customer.purchases_amount | currency }}</span>
-                        <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
-                            <i class="las la-eye"></i>
-                        </button>
-                    </p>
-                </li>
-            </ul>
+            <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
+                <input
+                    ref="searchField" 
+                    @keydown.enter="attemptToChoose()"
+                    v-model="searchCustomerValue"
+                    placeholder="Search Customer" 
+                    type="text" 
+                    class="rounded border-2 border-blue-400 bg-gray-100 w-full p-2">
+            </div>
+            <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto">
+                <ul>
+                    <li class="p-2 text-center text-gray-600" v-if="customers && customers.length === 0">
+                        No customer match your query...
+                    </li>
+                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200 text-gray-600 flex justify-between items-center">
+                        <span>{{ customer.name }}</span>
+                        <p class="flex items-center">
+                            <span v-if="customer.owe_amount > 0" class="text-red-600">-{{ customer.owe_amount | currency }}</span>
+                            <span v-if="customer.owe_amount > 0">/</span>
+                            <span class="text-green-600">{{ customer.purchases_amount | currency }}</span>
+                            <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
+                                <i class="las la-eye"></i>
+                            </button>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+            <div v-if="isLoading" class="z-10 top-0 absolute w-full h-full flex items-center justify-center">
+                <ns-spinner size="24" border="8"></ns-spinner>
+            </div>
         </div>
     </div>
 </template>
@@ -54,7 +59,8 @@ export default {
             orderSubscription: null,
             order: {},
             debounceSearch: null,
-            customers: []
+            customers: [],
+            isLoading: false,
         }
     },
     computed: {
@@ -117,8 +123,13 @@ export default {
              * define the customer using the default
              * POS object;
              */
-            POS.selectCustomer( customer );
-            this.resolveIfQueued( customer );
+            this.isLoading      =   true;
+            POS.selectCustomer( customer ).then( resolve => {
+                this.isLoading  =   false;
+                this.resolveIfQueued( customer );
+            }).catch( error => {
+                this.isLoading  =   false;
+            });
         },
         searchCustomer( value ) {
             nsHttpClient.post( '/api/nexopos/v4/customers/search', {

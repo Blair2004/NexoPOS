@@ -493,20 +493,27 @@ export class POS {
     }
 
     selectCustomer( customer ) {
-        const order         =   this.order.getValue();
-        order.customer      =   customer;
-        order.customer_id   =   customer.id
-        this.order.next( order );
-
-        /**
-         * asynchronously we can load
-         * customer meta data
-         */
-        nsHttpClient.get( `/api/nexopos/v4/customers/${customer.id}/group` )
-            .subscribe( group => {
-                order.customer.group      =   group;
-                this.order.next( order );
-            });
+        return new Promise( ( resolve, reject ) => {
+            const order         =   this.order.getValue();
+            order.customer      =   customer;
+            order.customer_id   =   customer.id
+            this.order.next( order );
+    
+            /**
+             * asynchronously we can load
+             * customer meta data
+             */
+            if ( customer.group === undefined || customer.group === null ) {
+                nsHttpClient.get( `/api/nexopos/v4/customers/${customer.id}/group` )
+                    .subscribe( group => {
+                        order.customer.group      =   group;
+                        this.order.next( order );
+                        resolve( order );
+                    }, ( error ) => {
+                        reject( error );
+                    });
+            }
+        });
     }
 
     updateCart( current, update ) {

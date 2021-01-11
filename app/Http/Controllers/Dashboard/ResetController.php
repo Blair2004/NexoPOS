@@ -44,7 +44,6 @@ class ResetController extends DashboardController
             'nexopos_registers',
             'nexopos_rewards_system_rules',
             'nexopos_rewards_system',
-            'nexopos_stores',
             'nexopos_taxes',
             'nexopos_taxes_groups',
             'nexopos_units_groups',
