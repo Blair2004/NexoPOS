@@ -39,7 +39,7 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->save();
 
     $permission                 =   new Permission;
-    $permission->namespace      =   $this->permission;
+    $permission->namespace      =   'nexopos.customers.manage-account-history';
     $permission->name           =   __( 'Manage Customer Account' );
     $permission->description    =   __( 'Can add, deduct amount from each customers account.' );
     $permission->save();
