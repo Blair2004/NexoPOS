@@ -130,7 +130,7 @@ class ModuleMigrations extends Command
         $this->schema       =   $this->__getSchema( $this->migration );
         $this->migration    =   $this->__getMigrationName( $this->migration );
 
-        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::snake( $this->migration ) . '.php';
+        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::studly( $this->migration ) . '.php';
 
         /**
          * Make sure the migration don't exist yet
