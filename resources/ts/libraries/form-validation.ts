@@ -4,7 +4,7 @@ export default class FormValidation {
     validateFields( fields ) {
         return fields.map( field => {
             this.checkField( field );
-            return field.errors.length === 0;
+            return field.errors ? field.errors.length === 0 : 0;
         }).filter( f => f === false ).length === 0;
     }
 

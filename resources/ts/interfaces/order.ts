@@ -1,3 +1,4 @@
+import { Tax } from "@/libraries/tax";
 import { Address } from "cluster";
 import { Customer } from "./customer";
 import { OrderProduct } from "./order-product";
@@ -23,10 +24,16 @@ export interface Order {
     customer_id: number;
     tax_value: number;
     shipping: number;
+    tax_groups: any[],
     shipping_rate: number;
     shipping_type: 'flat' | 'percentage';
     products: OrderProduct[], 
     payments: Payment[],
+    note: string;
+    note_visibility: 'hidden' | 'visible';
+    tax_group_id: number,
+    tax_type: 'inclusive' | 'exclusive'
+    taxes: any[],
     expected_payment_date?: string;
     total_installments?: number;
     addresses: {

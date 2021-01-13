@@ -1,9 +1,11 @@
 <?php
 namespace App\Crud;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
+use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
@@ -15,13 +17,15 @@ class TaxCrud extends CrudService
 {
     /**
      * define the base table
+     * @param  string
      */
     protected $table      =   'nexopos_taxes';
 
     /**
-     * base route name
+     * default slug
+     * @param  string
      */
-    protected $mainRoute      =   'ns.taxes';
+    protected $slug   =   'taxes';
 
     /**
      * Define namespace
@@ -31,27 +35,46 @@ class TaxCrud extends CrudService
 
     /**
      * Model Used
+     * @param  string
      */
     protected $model      =   Tax::class;
 
     /**
-     * Adding relation
+     * Define permissions
+     * @param  array
      */
+    protected $permissions  =   [
+        'create'    =>  true,
+        'read'      =>  true,
+        'update'    =>  true,
+        'delete'    =>  true,
+    ];
+
     public $relations   =  [
         [ 'nexopos_users as user', 'nexopos_taxes.author', '=', 'user.id' ],
         [ 'nexopos_taxes_groups as parent', 'nexopos_taxes.tax_group_id', '=', 'parent.id' ]
     ];
 
+    /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
     protected $pick     =   [
         'user'      =>  [ 'username' ],
         'parent'    =>  [ 'name' ],
     ];
 
-    protected $permissions = [
-        'create' => 'nexopos.create.taxes',
-        'read' => 'nexopos.read.taxes',
-        'update' => 'nexopos.update.taxes',
-        'delete' => 'nexopos.delete.taxes',
+    /**
+     * all tabs mentionned on the tabs relations
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
@@ -182,7 +205,11 @@ class TaxCrud extends CrudService
      */
     public function beforePost( $request )
     {
-        $this->allowedTo( 'create' );
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+        } else {
+            throw new NotAllowedException;
+        }
 
         return $request;
     }
@@ -219,7 +246,11 @@ class TaxCrud extends CrudService
      */
     public function beforePut( $request, $entry )
     {
-        $this->allowedTo( 'update' );
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+        } else {
+            throw new NotAllowedException;
+        }
 
         return $request;
     }
@@ -234,25 +265,6 @@ class TaxCrud extends CrudService
     {
         return $request;
     }
-    
-    /**
-     * Protect an access to a specific crud UI
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-    **/
-    public function canAccess( $fields )
-    {
-        $users      =   app()->make( Users::class );
-        
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
-            ];
-        }
-
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
-    }
 
     /**
      * Before Delete
@@ -260,7 +272,20 @@ class TaxCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.taxes' ) {
-            $this->allowedTo( 'delete' );
+            /**
+             *  Perform an action before deleting an entry
+             *  In case something wrong, this response can be returned
+             *
+             *  return response([
+             *      'status'    =>  'danger',
+             *      'message'   =>  __( 'You\re not allowed to do that.' )
+             *  ], 403 );
+            **/
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
         }
     }
 
@@ -316,13 +341,12 @@ class TaxCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -344,15 +368,18 @@ class TaxCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
@@ -380,9 +407,11 @@ class TaxCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.taxes',
-            'create'    =>  'ns.taxes/create',
-            'edit'      =>  'ns.taxes/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'taxes' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'taxes/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'taxes/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes/{id}' . '' ),
         ];
     }
 

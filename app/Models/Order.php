@@ -57,6 +57,11 @@ class Order extends NsModel
         return $this->hasOne( Customer::class, 'id', 'customer_id' );
     }
 
+    public function taxes()
+    {
+        return $this->hasMany( OrderTax::class, 'order_id', 'id' );
+    }
+
     public function shipping_address()
     {
         return $this->hasOne( OrderShippingAddress::class );

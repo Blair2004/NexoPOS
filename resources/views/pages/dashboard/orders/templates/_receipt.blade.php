@@ -67,6 +67,11 @@
                     </tr>
                 </tbody>
             </table>
+            @if( $order->note_visibility === 'visible' )
+            <div class="pt-6 pb-4 text-center text-gray-800 text-sm">
+                <strong>{{ __( 'Note: ' ) }}</strong> {{ $order->note }}
+            </div>
+            @endif
             <div class="pt-6 pb-4 text-center text-gray-800 text-sm">
                 {{ $optionsService->get( 'ns_invoice_receipt_footer' ) }}
             </div>

@@ -43,32 +43,42 @@ export class POS {
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting       =   false;
-    private defaultOrder        =   (): Order => ({
-        discount_type: null,
-        title: '',
-        discount: 0,
-        register_id: this.get( 'register' ) ? this.get( 'register' ).id : undefined, // everytime it reset, this value will be pulled.
-        discount_percentage: 0,
-        subtotal: 0,
-        total: 0,
-        tendered: 0,
-        payment_status: undefined,
-        customer_id: undefined,
-        change: 0,
-        total_products: 0,
-        shipping: 0,
-        tax_value: 0,
-        shipping_rate: 0,
-        shipping_type: undefined,
-        customer: undefined,
-        type: undefined,
-        products: [],
-        payments: [],
-        addresses: {
-            shipping: undefined,
-            billing: undefined
+    private defaultOrder        =   (): Order => {
+        const order: Order     =   {
+            discount_type: null,
+            title: '',
+            discount: 0,
+            register_id: this.get( 'register' ) ? this.get( 'register' ).id : undefined, // everytime it reset, this value will be pulled.
+            discount_percentage: 0,
+            subtotal: 0,
+            total: 0,
+            tendered: 0,
+            note: '',
+            note_visibility: 'hidden',
+            tax_group_id: undefined,
+            tax_type: undefined,
+            taxes: [], 
+            tax_groups: [],
+            payment_status: undefined,
+            customer_id: undefined,
+            change: 0,
+            total_products: 0,
+            shipping: 0,
+            tax_value: 0,
+            shipping_rate: 0,
+            shipping_type: undefined,
+            customer: undefined,
+            type: undefined,
+            products: [],
+            payments: [],
+            addresses: {
+                shipping: undefined,
+                billing: undefined
+            }
         }
-    })
+
+        return order;
+    }
 
     constructor() {
         this.initialize();
@@ -120,15 +130,17 @@ export class POS {
 
     reset() {
         this._isSubmitting  =   false;
-        this._products.next([]);
-        this._customers.next([]);
-        this._breadcrumbs.next([]);
-        this.defineCurrentScreen();
 
         /**
          * to reset order details
          */
         this.order.next( this.defaultOrder() );
+        this._products.next([]);
+        this._customers.next([]);
+        this._breadcrumbs.next([]);
+        this.defineCurrentScreen();
+
+        
         this.processInitialQueue();
     }
 
@@ -288,6 +300,88 @@ export class POS {
         }
     }
 
+    getNetPrice( value, rate, type ) {
+        if ( type === 'inclusive' ) {
+            return ( value / ( rate + 100 ) ) * 100;
+        } else if( type === 'exclusive' ) {
+            return ( ( value / 100 ) * ( rate + 100 ) );
+        }
+    }
+
+    getVatValue( value, rate, type ) {
+        if ( type === 'inclusive' ) {
+            return value - this.getNetPrice( value, rate, type );
+        } else if( type === 'exclusive' ) {
+            return this.getNetPrice( value, rate, type ) - value;
+        }
+    }
+
+    computeTaxes( order ) {
+        return new Promise( ( resolve, reject ) => {
+            if ( order.tax_group_id === undefined ) {
+                return reject( false );
+            }
+
+            const groups    =   order.tax_groups;
+
+            /**
+             * if the tax group is already cached
+             * we'll pull that rather than doing a new request.
+             */
+            if ( groups && groups[ order.tax_group_id ] !== undefined ) {
+                const taxes         =   order.taxes.map( tax => {
+                    tax.tax_value   =   this.getVatValue( order.subtotal, tax.rate, order.tax_type );
+                    return tax;
+                });
+
+                order               =   {
+                    ...order,
+                    taxes
+                }
+
+                return resolve({
+                    status: 'success',
+                    data: { tax : groups[ order.tax_group_id ] }
+                });
+            }
+
+            nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
+                .subscribe( (tax:any) => {
+                    const total         =   order.subtotal;
+                    const tax_type      =   order.tax_type;
+                    const tax_groups    =   order.tax_groups || [];
+                    const taxes         =   tax.taxes.map( tax => {
+                        return {
+                            tax_id      :   tax.id,
+                            tax_name    :   tax.name,
+                            rate        :   parseFloat( tax.rate ),
+                            tax_value   :   this.getVatValue( total, tax.rate, tax_type )
+                        };
+                    });
+
+                    /**
+                     * this is set to cache the 
+                     * tax group to avoid subsequent request
+                     * to the server.
+                     */
+                    tax_groups[ tax.id ]    =   tax;                    
+                    
+                    order   =   {
+                        ...order,
+                        taxes,
+                        tax_groups
+                    }
+
+                    resolve({ 
+                        status: 'success',
+                        data : { tax }
+                    })
+                }, ( error ) => {
+                    reject( error );
+                })
+        })
+    }
+
     /**
      * This will check if the order can be saved as layway.
      * might request additionnal information through a popup.
@@ -374,7 +468,6 @@ export class POS {
                  * @todo do we need to set a new value here
                  * probably the passed value should be send to the server.
                  */
-                const order     =   this.order.getValue();
                 const method    =   order.id !== undefined ? 'put' : 'post';
 
                 return nsHttpClient[ method ]( `/api/nexopos/v4/orders${ order.id !== undefined ? '/' + order.id : '' }`, order )
@@ -395,6 +488,9 @@ export class POS {
     loadOrder( order_id ) {
         nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
             .subscribe( ( order: any ) => {
+
+                order       =   { ...this.defaultOrder(), ...order };
+
                 /**
                  * We'll rebuilt the product
                  */
@@ -439,7 +535,7 @@ export class POS {
     }
 
     buildOrder( order ) {
-        this.order .next( order );
+        this.order.next( order );
     }
 
     buildProducts( products ) {
@@ -533,7 +629,8 @@ export class POS {
         this.refreshCart();
     }
 
-    refreshCart() {
+    async refreshCart() {
+
         const products      =   this.products.getValue();
         const order         =   this.order.getValue();
         const productTotal  =   products
@@ -560,6 +657,13 @@ export class POS {
                 .subscribe();
         }
 
+        try {
+            await this.computeTaxes( order );
+        } catch( exeption ) {
+            console.log( exeption );
+            // throw exeption;
+        }
+
         const totalTaxes        =   products.map( ( product: OrderProduct ) => product.tax_value );
 
         /**
@@ -567,12 +671,18 @@ export class POS {
          * applie to the items.
          */
         order.tax_value         =   0;
+        const vatType           =   this.options.getValue().ns_pos_vat;
 
-        if ( totalTaxes.length > 0 ) {
+        if( vatType === 'products_vat' && totalTaxes.length > 0 ) {
             order.tax_value     =   totalTaxes.reduce( ( b, a ) => b + a );
+        } else if ( vatType === 'variable_vat' && order.taxes && order.taxes.length > 0 ) {
+            order.tax_value     =   order.taxes
+                .map( tax => tax.tax_value )
+                .reduce( ( before, after ) => before + after );
         }
 
-        order.total             =   ( order.subtotal + order.shipping ) - order.discount;
+
+        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount;
         order.products          =   products;
         order.total_products    =   products.length
 

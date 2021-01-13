@@ -39,11 +39,15 @@ class CreateOrdersTable extends Migration
                 $table->float( 'net_total' )->default(0);
                 $table->float( 'total' )->default(0);
                 $table->float( 'tax_value' )->default(0);
+                $table->integer( 'tax_group_id' )->nullable();
+                $table->string( 'tax_type' )->nullable();;
                 $table->float( 'tendered' )->default(0);
                 $table->float( 'change' )->default(0);
                 $table->datetime( 'expected_payment_date' )->nullable();
                 $table->integer( 'total_installments' )->default(0);
                 $table->integer( 'customer_id' );
+                $table->string( 'note' )->nullable();
+                $table->string( 'note_visibility' )->nullable();
                 // $table->string( 'payment' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
@@ -66,6 +70,7 @@ class CreateOrdersTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'tax_id' )->nullable();
                 $table->integer( 'order_id' )->nullable();
+                $table->float( 'rate' );
                 $table->string( 'tax_name' )->nullable();
                 $table->float( 'tax_value' )->default(0);
             });

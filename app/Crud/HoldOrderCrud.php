@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
+use App\Models\OrderTax;
 
 class HoldOrderCrud extends CrudService
 {

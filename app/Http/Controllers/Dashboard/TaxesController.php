@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
@@ -136,7 +137,7 @@ class TaxesController extends DashboardController
             return TaxGroup::with( 'taxes' )->get();
         }
 
-        return TaxGroup::findOrFail( $taxId )->with( 'taxes' );
+        return TaxGroup::findOrFail( $taxId )->with( 'taxes' )->first();
     }
 
     /**
@@ -145,12 +146,7 @@ class TaxesController extends DashboardController
      */
     public function listTaxes()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>  __( 'List of Taxes' ),
-            'createUrl'    =>  url( '/dashboard/taxes/create' ),
-            'description'   =>  __( 'shows the list of available taxes.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes' )
-        ]);
+        return TaxCrud::table();
     }
 
     /**
@@ -159,13 +155,7 @@ class TaxesController extends DashboardController
      */
     public function createTax()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Create New Tax' ),
-            'returnUrl'    =>  url( '/dashboard/taxes' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes' ),
-            'description'   =>  __( 'add a new tax to the system.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config' )
-        ]);
+        return TaxCrud::form();
     }
 
     /**
@@ -175,14 +165,7 @@ class TaxesController extends DashboardController
      */
     public function editTax( Tax $tax )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Edit Tax' ),
-            'returnUrl'     =>  url( '/dashboard/taxes' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/crud/ns.taxes/' . $tax->id ),
-            'submitMethod'  =>  'PUT',
-            'description'   =>  __( 'adjust an existing tax.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.taxes/form-config/' . $tax->id )
-        ]);
+        return TaxCrud::form( $tax );
     }
 
     /**

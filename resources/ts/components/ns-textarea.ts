@@ -34,6 +34,7 @@ const nsTextarea    =   Vue.component( 'ns-textarea', {
                 </span>
             </div>
             <textarea 
+                :rows="field.data ? ( field.data.rows || 10 ) : 10"
                 :disabled="field.disabled" 
                 v-model="field.value" 
                 @blur="$emit( 'blur', this )" 

@@ -30,6 +30,7 @@ use App\Models\Notification;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
+use App\Models\OrderTax;
 use App\Models\ProcurementProduct;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
@@ -108,7 +109,7 @@ class OrdersService
          */
         if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
             $fields[ 'products' ]      =   $this->__checkProductStock( $fields['products'] );
-        } 
+        }
 
         /**
          * check discount validity and throw an
@@ -131,6 +132,11 @@ class OrdersService
          * should be made prior this section
          */
         $order      =   $this->__initOrder( $fields, $paymentStatus, $order );
+
+        /**
+         * register taxes for the order
+         */
+        $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
         /**
          * if we're editing an order. We need to loop the products in order
@@ -176,6 +182,33 @@ class OrdersService
             'message'   =>  __( 'The order has been placed.' ),
             'data'      =>  compact( 'order' )
         ];
+    }
+
+    /**
+     * Assign taxes to the processed order
+     * @param Order $order
+     * @param array $taxes
+     * @return void
+     */
+    public function __registerTaxes( Order $order, $taxes )
+    {
+        /**
+         * if previous taxes had been registered,
+         * we need to clear them
+         */
+        OrderTax::where( 'order_id', $order->id )->delete();
+
+        if ( count( $taxes ) > 0 ) {
+            foreach( $taxes as $tax ) {
+                $orderTax   =   new OrderTax;
+                $orderTax->tax_name     =   $tax[ 'tax_name' ];
+                $orderTax->tax_value    =   $tax[ 'tax_value' ];
+                $orderTax->rate         =   $tax[ 'rate' ];
+                $orderTax->tax_id       =   $tax[ 'tax_id' ];
+                $orderTax->order_id     =   $order->id;
+                $orderTax->save();
+            }
+        }
     }
 
     /**
@@ -684,76 +717,77 @@ class OrdersService
              * this should run only if the product looped doesn't include an identifier.
              * Usually if it's the case, the product is supposed to have been already handled before.
              */
-            if ( empty( $product[ 'id' ] ) ) {
-                /**
-                 * storing the product
-                 * history as a sale
-                 */
-                $history                    =   [
-                    'order_id'      =>  $order->id,
-                    'unit_id'       =>  $product[ 'unit_id' ],
-                    'product_id'    =>  $product[ 'product' ]->id,
-                    'quantity'      =>  $product[ 'quantity' ],
-                    'unit_price'    =>  $this->currencyService->getRaw( $product[ 'unit_price' ] ),
-                    'total_price'   =>  $this->currencyService->define($product[ 'unit_price' ])
-                        ->multiplyBy($product['quantity'])
-                        ->get()
-                ];
-    
-                /**
-                 * if the product id is provided
-                 * then we can use that id as a reference. 
-                 */            
-                if ( isset( $product[ 'id' ] ) ) {
-                    $orderProduct           =   OrderProduct::find( $product[ 'id' ] );
-                } else {
-                    $orderProduct           =   new OrderProduct;
-                }
-    
-                $orderProduct->order_id                     =   $order->id;
-                $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
-                $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
-                $orderProduct->unit_id                      =   $product[ 'unit_id' ];
-                $orderProduct->product_id                   =   $product[ 'product' ]->id;
-                $orderProduct->name                         =   $product[ 'product' ]->name;
-                $orderProduct->quantity                     =   $history[ 'quantity'];
-    
-                /**
-                 * We might need to have another consideration
-                 * on how we do compute the taxes
-                 */
-                if ( $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
-                    $orderProduct->tax_group_id         =   $product[ 'product' ]->tax_group_id;
-                    $orderProduct->tax_type             =   $product[ 'product' ]->tax_type;
-                    $orderProduct->tax_value            =   $product[ 'tax_value' ];
-                }
-    
-                $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
-                $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price )->getRaw();
-                $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price )->getRaw();
-                $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
-                $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
-                $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
-                $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
-                    ->subtractBy( $orderProduct->discount )
-                    // ->subtractBy( $orderProduct->tax_value ?? 0 ) maybe we need to create a gross_purchase_price and net_purchase_price fields
-                    ->getRaw();
-    
-                $this->computeOrderProduct( $orderProduct );
-    
-                $orderProduct->save();
+            // if ( empty( $product[ 'id' ] ) ) {
+            // }
+            
+            /**
+             * storing the product
+             * history as a sale
+             */
+            $history                    =   [
+                'order_id'      =>  $order->id,
+                'unit_id'       =>  $product[ 'unit_id' ],
+                'product_id'    =>  $product[ 'product' ]->id,
+                'quantity'      =>  $product[ 'quantity' ],
+                'unit_price'    =>  $this->currencyService->getRaw( $product[ 'unit_price' ] ),
+                'total_price'   =>  $this->currencyService->define($product[ 'unit_price' ])
+                    ->multiplyBy($product['quantity'])
+                    ->get()
+            ];
 
-                $subTotal  =   $this->currencyService->define($subTotal)
-                    ->additionateBy($orderProduct->total_price)
-                    ->get();
-    
-                $taxes  =   $this->currencyService->define($taxes)
-                    ->additionateBy($product[ 'tax_value' ])
-                    ->get();
-    
-                if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
-                    $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
-                }
+            /**
+             * if the product id is provided
+             * then we can use that id as a reference. 
+             */            
+            if ( isset( $product[ 'id' ] ) ) {
+                $orderProduct           =   OrderProduct::find( $product[ 'id' ] );
+            } else {
+                $orderProduct           =   new OrderProduct;
+            }
+
+            $orderProduct->order_id                     =   $order->id;
+            $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
+            $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
+            $orderProduct->unit_id                      =   $product[ 'unit_id' ];
+            $orderProduct->product_id                   =   $product[ 'product' ]->id;
+            $orderProduct->name                         =   $product[ 'product' ]->name;
+            $orderProduct->quantity                     =   $history[ 'quantity'];
+
+            /**
+             * We might need to have another consideration
+             * on how we do compute the taxes
+             */
+            if ( $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
+                $orderProduct->tax_group_id         =   $product[ 'product' ]->tax_group_id;
+                $orderProduct->tax_type             =   $product[ 'product' ]->tax_type;
+                $orderProduct->tax_value            =   $product[ 'tax_value' ];
+            }
+
+            $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
+            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price )->getRaw();
+            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price )->getRaw();
+            $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
+            $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
+            $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
+            $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
+                ->subtractBy( $orderProduct->discount )
+                // ->subtractBy( $orderProduct->tax_value ?? 0 ) maybe we need to create a gross_purchase_price and net_purchase_price fields
+                ->getRaw();
+
+            $this->computeOrderProduct( $orderProduct );
+
+            $orderProduct->save();
+
+            $subTotal  =   $this->currencyService->define($subTotal)
+                ->additionateBy($orderProduct->total_price)
+                ->get();
+
+            $taxes  =   $this->currencyService->define($taxes)
+                ->additionateBy($product[ 'tax_value' ])
+                ->get();
+
+            if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+                $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
             }
         });
 
@@ -884,7 +918,7 @@ class OrdersService
     public function computeProduct( $fields, Product $product, ProductUnitQuantity $productUnitQuantity )
     {
         $sale_price     =   ( $fields[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
-        
+
         /**
          * if the discount value wasn't provided, it would have
          * been calculated based on the "discount_percentage" & "discount_type"
@@ -1005,6 +1039,10 @@ class OrdersService
         $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
         $order->total_installments      =   $fields['total_installments' ] ?? 0;
         $order->register_id             =   $fields['register_id' ] ?? null;
+        $order->note                    =   $fields['note'] ?? null;
+        $order->note_visibility         =   $fields['note_visibility' ] ?? null;
+        $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
+        $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
@@ -1321,6 +1359,7 @@ class OrdersService
                 ->with( 'payments' )
                 ->with( 'shipping_address' )
                 ->with( 'billing_address' )
+                ->with( 'taxes' )   
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
                 ->with( 'customer' )

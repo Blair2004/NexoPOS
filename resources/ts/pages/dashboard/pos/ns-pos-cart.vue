@@ -11,6 +11,25 @@
         </div>
         <div class="rounded shadow bg-white flex-auto flex overflow-hidden">
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
+                <div class="w-full p-2 border-b border-gray-300">
+                    <div class="border border-gray-300 rounded overflow-hidden">
+                        <div class="flex">
+                            <div>
+                                <button @click="openNotePopup()" class="h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none">
+                                    <i class="las la-comment"></i>
+                                    <span class="ml-1 hidden md:inline-block">Comments</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button @click="selectTaxGroup()" class="h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                    <i class="las la-balance-scale-left"></i>
+                                    <span class="ml-1 hidden md:inline-block">Taxes</span>
+                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.taxes.length }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="w-full text-gray-700 font-semibold flex">
                     <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
                     <div class="w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
@@ -98,7 +117,9 @@
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
                         <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Tax : {{ order.tax_value | currency }}</a>
+                            </td>
                             <td width="200" class="border border-gray-300 p-2">Total</td>
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
@@ -138,7 +159,9 @@
                             </td>
                         </tr>
                         <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-300 p-2"></td>
+                            <td width="200" class="border border-gray-300 p-2">
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Tax : {{ order.tax_value | currency }}</a>
+                            </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between w-full">
                                     <span>Total</span>
@@ -189,6 +212,8 @@ import switchTo from "@/libraries/pos-section-switch";
 import nsPosShippingPopupVue from '@/popups/ns-pos-shipping-popup.vue';
 import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
 import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
+import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
+import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -239,6 +264,57 @@ export default {
     methods: {
         switchTo,
 
+        async openNotePopup() {
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    const note              =   this.order.note;
+                    const note_visibility   =   this.order.note_visibility;
+                    Popup.show( nsPosNotePopupVue, { resolve, reject, note, note_visibility });
+                });
+
+                const order     =   { ...this.order, ...response };
+                POS.order.next( order );
+            } catch( exception ) {
+                if ( exception !== false ) {
+                    nsSnackBar.error( exception.message ).subscribe();
+                }
+            }
+        },
+
+        async selectTaxGroup( activeTab = 'settings' ) {
+            try {
+                const response              =   await new Promise( ( resolve, reject ) => {
+                    const taxes             =   this.order.taxes;
+                    const tax_group_id      =   this.order.tax_group_id;
+                    const tax_type          =   this.order.tax_type;
+                    Popup.show( nsPosTaxPopupVue, { resolve, reject, taxes, tax_group_id, tax_type, activeTab })
+                });
+
+                console.log( 'runs...' );
+                const order             =   { ...this.order, ...response };
+                POS.order.next( order );
+                
+                this.computeTaxes();
+            } catch( exception ) {
+                console.log( exception );
+            }
+        },
+
+        openTaxSummary() {
+            this.selectTaxGroup( 'summary' );
+        },
+
+        async computeTaxes() {
+            try {
+                await POS.computeTaxes();
+                POS.refreshCart();
+            } catch( exception ) {
+                if ( exception !== false ) {
+                    nsSnackBar.error( exception.message ).subscribe();
+                }
+            }
+        },
+
         voidOngoingOrder() {
             POS.voidOrder( this.order );
         },
@@ -275,7 +351,6 @@ export default {
             promise.then( result => {
                 this.order.title            =   result.title;
                 this.order.payment_status   =   'hold';
-                
                 POS.order.next( this.order );
 
                 const popup     =   Popup.show( nsPosLoadingPopupVue );
