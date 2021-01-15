@@ -290,11 +290,11 @@ export default {
                     Popup.show( nsPosTaxPopupVue, { resolve, reject, taxes, tax_group_id, tax_type, activeTab })
                 });
 
-                console.log( 'runs...' );
                 const order             =   { ...this.order, ...response };
-                POS.order.next( order );
                 
-                this.computeTaxes();
+                POS.order.next( order );
+                POS.refreshCart();
+
             } catch( exception ) {
                 console.log( exception );
             }
@@ -302,17 +302,6 @@ export default {
 
         openTaxSummary() {
             this.selectTaxGroup( 'summary' );
-        },
-
-        async computeTaxes() {
-            try {
-                await POS.computeTaxes();
-                POS.refreshCart();
-            } catch( exception ) {
-                if ( exception !== false ) {
-                    nsSnackBar.error( exception.message ).subscribe();
-                }
-            }
         },
 
         voidOngoingOrder() {

@@ -16,7 +16,7 @@ $fields     =   [
             'variable_vat'              =>  __( 'Flexible Rate' ),
             'products_vat'              =>  __( 'Products Vat' ),
             'products_flat_vat'         =>  __( 'Products & Flat Rate' ),
-            'products_variables_vat'    =>  __( 'Products & Flexible Rate' ),
+            'products_variable_vat'     =>  __( 'Products & Flexible Rate' ),
         ])
     ]
 ];
@@ -28,7 +28,19 @@ if ( in_array( $options->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_vat' 
         'value'     =>  $options->get( 'ns_pos_tax_group' ),
         'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
         'label'     =>  __( 'Tax Group' ),
-        'description'   =>  __( 'Define the tax group that applies to the sales' )
+        'description'   =>  __( 'Define the tax group that applies to the sales.' )
+    ];
+
+    $fields[]       =   [
+        'type'      =>  'select',
+        'name'      =>  'ns_pos_tax_type',
+        'value'     =>  $options->get( 'ns_pos_tax_type' ),
+        'options'   =>  Helper::kvToJsOptions([
+            'inclusive'     =>      __( 'Inclusive' ),
+            'exclusive'     =>      __( 'Exclusive' )
+        ]),
+        'label'     =>  __( 'Tax Type' ),
+        'description'   =>  __( 'Define how the tax is computed on sales.' )
     ];
 }
 

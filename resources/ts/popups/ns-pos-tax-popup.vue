@@ -8,7 +8,7 @@
         </div>
         <div class="p-2 bg-gray-50">
             <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
-                <ns-tabs-item label="Settings" identifier="settings" :active="true">
+                <ns-tabs-item padding="0" label="Settings" identifier="settings" :active="true">
                     <div class="p-2 border-b border-gray-200">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
                     </div>
@@ -16,14 +16,14 @@
                         <ns-button @click="saveTax()" type="info">Save</ns-button>
                     </div>
                 </ns-tabs-item>
-                <ns-tabs-item label="Summary" identifier="summary" :active="false">
-                    <template v-if="order">
+                <ns-tabs-item padding="0" label="Summary" identifier="summary" :active="false">
+                    <div class="p-2" v-if="order">
                         <div v-for="tax of order.taxes" :key="tax.id" class="border-blue-200 mb-2 border bg-blue-100 shadow p-2 w-full flex justify-between items-center text-gray-700">
                             <span>{{ tax.tax_name }}</span>
                             <span>{{ tax.tax_value | currency  }}</span>
                         </div>
                         <div class="p-2 text-center text-gray-600" v-if="order.taxes.length === 0">No tax is active</div>
-                    </template>
+                    </div>
                 </ns-tabs-item>
             </ns-tabs>
         </div>
@@ -42,6 +42,8 @@ export default {
             tax_group: [],
             order: null,
             orderSubscriber: null,
+            optionsSubscriber: null,
+            options: {},
             tax_groups: [],
             activeTab: '',
             group_fields: [
@@ -50,11 +52,13 @@ export default {
                     name: 'tax_group_id',
                     description: 'Define the tax that apply to the sale.',
                     type: 'select',
+                    disabled: true,
                     value: '',
                     options: []
                 }, {
                     label: 'Type',
                     name: 'tax_type',
+                    disabled: true,
                     value: '',
                     description: 'Define how the tax is computed',
                     type: 'select',
@@ -82,9 +86,22 @@ export default {
         this.orderSubscriber    =   POS.order.subscribe( order => {
             this.order      =   order;
         });
+
+        this.optionsSubscriber  =   POS.options.subscribe( options => {
+            this.options    =   options;
+
+            /**
+             * only if the options allow it, the change 
+             * on the vat used is allowed.
+             */
+            if ( [ 'variable_vat', 'products_variable_vat' ].includes( this.options.ns_pos_vat ) ) {
+                this.group_fields.forEach( field => field.disabled = false );
+            }
+        });
     },
     destroyed() {
         this.orderSubscriber.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
     },
     methods: {
         popupCloser,

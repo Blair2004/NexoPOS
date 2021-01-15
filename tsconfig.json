@@ -22,7 +22,8 @@
         },
     },
     "files": [
-        "./vue-shims.d.ts"
+        "./vue-shims.d.ts", 
+        "./resources/ts/status-response.ts"
     ],
     "include": [
         "resources/ts/**/*.ts",

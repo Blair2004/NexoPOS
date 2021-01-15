@@ -157,6 +157,8 @@ class OrdersController extends DashboardController
                 'ns_pos_idle_counter'                   =>  ns()->option->get( 'ns_pos_idle_counter', 0 ),
                 'ns_pos_disbursement'                   =>  ns()->option->get( 'ns_pos_disbursement', 'no' ),
                 'ns_pos_vat'                            =>  ns()->option->get( 'ns_pos_vat', 'disabled' ),
+                'ns_pos_tax_group'                      =>  ns()->option->get( 'ns_pos_tax_group', false ),
+                'ns_pos_tax_type'                       =>  ns()->option->get( 'ns_pos_tax_type', false ),
             ],
             'urls'              =>  [
                 'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),

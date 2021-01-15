@@ -13,6 +13,7 @@ import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
 import { Popup } from "./libraries/popup";
 import { OrderProduct } from "./interfaces/order-product";
+import { StatusResponse } from "./status-response";
 
 /**
  * these are dynamic component
@@ -38,7 +39,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
-    private _initialQueue: (() => Promise<{ status: 'success' | 'failed', message: string }>)[]     =   [];
+    private _initialQueue: (() => Promise<StatusResponse>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
@@ -140,8 +141,8 @@ export class POS {
         this._breadcrumbs.next([]);
         this.defineCurrentScreen();
 
-        
         this.processInitialQueue();
+        this.refreshCart();
     }
 
     public initialize()
@@ -156,6 +157,27 @@ export class POS {
         this._options           =   new BehaviorSubject({});
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
+
+        /**
+         * This initial process will try to detect
+         * if there is a tax group assigned on the settings
+         * and set it as default tax group.
+         */
+        this.initialQueue.push( () => new Promise( ( resolve, reject ) => {
+            const options   =   this.options.getValue();
+            const order     =   this.order.getValue();
+
+            if ( options.ns_pos_tax_group !== false ) {
+                order.tax_group_id  =   options.ns_pos_tax_group;
+                order.tax_type      =   options.ns_pos_tax_type;
+                this.order.next( order );
+            }
+
+            return resolve({
+                status: 'success',
+                message: 'tax group assignated'
+            });
+        } ) );
         
         /**
          * Whenever there is a change
@@ -173,7 +195,7 @@ export class POS {
         this.types.subscribe( types => {
             const selected  =   types.filter( type => type.selected );
 
-            if ( selected.length > 0  ) {
+            if ( selected.length > 0 ) {
                 const order     =   this.order.getValue();
                 order.type      =   selected[0];
                 this.order.next( order );
@@ -206,15 +228,6 @@ export class POS {
                 nsSnackBar.error( exception.message ).subscribe();
             }
         }
-    }
-
-    public loaded() {
-        /**
-         * this runs asynchronously
-         */
-        this.processInitialQueue();
-
-        // this.reset();
     }
     
     get header() {
@@ -250,7 +263,7 @@ export class POS {
     }
 
     defineCurrentScreen() {
-        this._visibleSection.next([ 'xs', 'sm' ].includes( <string>this._responsive.is() ) ? 'grid' : 'both' );
+        this._visibleSection.next( [ 'xs', 'sm' ].includes( <string>this._responsive.is() ) ? 'grid' : 'both' );
         this._screen.next( <string>this._responsive.is() );
     }
 
@@ -316,8 +329,10 @@ export class POS {
         }
     }
 
-    computeTaxes( order ) {
+    computeTaxes() {
         return new Promise( ( resolve, reject ) => {
+            const order     =   this.order.getValue();
+
             if ( order.tax_group_id === undefined ) {
                 return reject( false );
             }
@@ -329,33 +344,27 @@ export class POS {
              * we'll pull that rather than doing a new request.
              */
             if ( groups && groups[ order.tax_group_id ] !== undefined ) {
-                const taxes         =   order.taxes.map( tax => {
+                order.taxes         =   order.taxes.map( tax => {
                     tax.tax_value   =   this.getVatValue( order.subtotal, tax.rate, order.tax_type );
                     return tax;
                 });
 
-                order               =   {
-                    ...order,
-                    taxes
-                }
 
                 return resolve({
                     status: 'success',
-                    data: { tax : groups[ order.tax_group_id ] }
+                    data: { tax : groups[ order.tax_group_id ], order }
                 });
             }
 
             nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
                 .subscribe( (tax:any) => {
-                    const total         =   order.subtotal;
-                    const tax_type      =   order.tax_type;
-                    const tax_groups    =   order.tax_groups || [];
-                    const taxes         =   tax.taxes.map( tax => {
+                    order.tax_groups    =   order.tax_groups || [];
+                    order.taxes         =   tax.taxes.map( tax => {
                         return {
                             tax_id      :   tax.id,
                             tax_name    :   tax.name,
                             rate        :   parseFloat( tax.rate ),
-                            tax_value   :   this.getVatValue( total, tax.rate, tax_type )
+                            tax_value   :   this.getVatValue( order.subtotal, tax.rate, order.tax_type )
                         };
                     });
 
@@ -364,20 +373,14 @@ export class POS {
                      * tax group to avoid subsequent request
                      * to the server.
                      */
-                    tax_groups[ tax.id ]    =   tax;                    
-                    
-                    order   =   {
-                        ...order,
-                        taxes,
-                        tax_groups
-                    }
+                    order.tax_groups[ tax.id ]    =   tax; 
 
-                    resolve({ 
+                    return resolve({ 
                         status: 'success',
-                        data : { tax }
+                        data : { tax, order }
                     })
                 }, ( error ) => {
-                    reject( error );
+                    return reject( error );
                 })
         })
     }
@@ -630,9 +633,8 @@ export class POS {
     }
 
     async refreshCart() {
-
         const products      =   this.products.getValue();
-        const order         =   this.order.getValue();
+        let order           =   this.order.getValue();
         const productTotal  =   products
             .map( product => product.total_price );
         
@@ -657,13 +659,27 @@ export class POS {
                 .subscribe();
         }
 
+        /**
+         * save actual change to ensure
+         * all listener are up to date.
+         */
+        this.order.next( order );
+
+        /**
+         * will compute the taxes based on 
+         * the actual state of the order
+         */
         try {
-            await this.computeTaxes( order );
-        } catch( exeption ) {
-            console.log( exeption );
-            // throw exeption;
+            const response  =   await this.computeTaxes();
+            order           =   response[ 'data' ].order;
+        } catch( exception ) {
+            console.log( exception );
         }
 
+        /**
+         * retreive all products taxes
+         * and sum the total.
+         */
         const totalTaxes        =   products.map( ( product: OrderProduct ) => product.tax_value );
 
         /**
@@ -673,14 +689,15 @@ export class POS {
         order.tax_value         =   0;
         const vatType           =   this.options.getValue().ns_pos_vat;
 
-        if( vatType === 'products_vat' && totalTaxes.length > 0 ) {
-            order.tax_value     =   totalTaxes.reduce( ( b, a ) => b + a );
-        } else if ( vatType === 'variable_vat' && order.taxes && order.taxes.length > 0 ) {
-            order.tax_value     =   order.taxes
+        if( [ 'products_vat', 'products_flat_vat', 'products_variable_vat' ].includes( vatType ) && totalTaxes.length > 0 ) {
+            order.tax_value    +=   totalTaxes.reduce( ( b, a ) => b + a );
+        } 
+        
+        if ( [ 'flat_vat', 'variable_vat', 'products_variable_vat' ].includes( vatType ) && order.taxes && order.taxes.length > 0 ) {
+            order.tax_value     +=   order.taxes
                 .map( tax => tax.tax_value )
                 .reduce( ( before, after ) => before + after );
         }
-
 
         order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount;
         order.products          =   products;
@@ -873,7 +890,6 @@ export class POS {
     }
 
     voidOrder( order ) {
-        console.log( order.id );
         if ( order.id !== undefined ) {
             if ( [ 'hold' ].includes( order.payment_status ) ) {
                 Popup.show( NsConfirmPopup, {

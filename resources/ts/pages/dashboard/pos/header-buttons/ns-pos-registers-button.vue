@@ -52,7 +52,6 @@ export default {
                      * throughout the orders send to the server
                      */
                     POS.set( 'register', response.data.register ); 
-                    POS.reset();
 
                     return response;
                 } catch( exception ) {

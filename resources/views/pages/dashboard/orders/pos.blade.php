@@ -29,7 +29,7 @@
     </script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>
     <script>
-    POS.loaded();
+    POS.reset();
     </script>
 @verbatim
 @endverbatim
