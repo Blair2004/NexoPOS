@@ -60,6 +60,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
 
     /**
      * Adding relation
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
      * @param array
      */
     public $relations   =  [
