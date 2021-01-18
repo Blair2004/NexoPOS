@@ -4,7 +4,7 @@
             <h3 class="font-semibold">{{ title }}</h3>
             <div><ns-close-button @click="close()"></ns-close-button></div>
         </div>
-        <div class="p-2">
+        <div class="p-2" v-if="loaded">
             <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
                 <span>Balance </span>
                 <span>{{ settings.register.balance | currency }}</span>
@@ -17,6 +17,9 @@
                 <ns-numpad @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
             </div>
             <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
+        </div>
+        <div class="flex items-center justify-center" v-if="! loaded">
+            <ns-spinner></ns-spinner>
         </div>
     </div>
 </template>
@@ -37,6 +40,7 @@ export default {
             settingsSubscription: null,
             settings: null,
             action: null,
+            loaded: false,
             register_id: null, // conditionnally provider
             validation: new FormValidation,
             fields: [],
@@ -65,10 +69,13 @@ export default {
             this.$popup.close();
         },
         loadFields() {
+            this.loaded     =   false;
             nsHttpClient.get( `/api/nexopos/v4/fields/${this.identifier}` )
                 .subscribe( result => {
+                    this.loaded     =   true;
                     this.fields     =   result;
                 }, ( error ) => {
+                    this.loaded     =   true;
                     return nsSnackBar.error( error.message, 'OKAY', { duration : false }).subscribe();
                 })
         },

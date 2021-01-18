@@ -56,7 +56,7 @@ class MakeProcurementTest extends TestCase
                     'provider_id'           =>  Provider::get()->random()->id,
                     'payment_status'        =>  Procurement::PAYMENT_PAID,
                     'delivery_status'       =>  Procurement::DELIVERED,
-                    'author'                =>  Auth::id(),
+                    'author'                =>  Auth::id(), // @todo is that required
                     'automatic_approval'    =>  1
                 ], 
                 'products'  =>  Product::withStockEnabled()

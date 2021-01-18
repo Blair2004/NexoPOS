@@ -15,6 +15,7 @@ class Output
     public function addView( $view, $options = [])
     {
         $this->output[]     =   View::make( $view, $options );
+        return $this;
     }
 
     public function clear()
