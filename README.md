@@ -11,7 +11,8 @@ NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue a
 We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS 4.x.
 
 ## Demo
-- Address : https://v4.nexopos.com
+- Regular : https://v4.nexopos.com
+- MultiStore : https://multistore-v4.nexopos.com
 - Username : demouser
 - Password : 123456
 
