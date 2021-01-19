@@ -83,6 +83,11 @@ class CoreService
         return Hook::filter( 'ns-route', false, $route, $params ) ?: route( $route, $params );
     }
 
+    public function routeName( $name )
+    {
+        return Hook::filter( 'ns-route-name', $name );
+    }
+
     public function url( $url )
     {
         return url( Hook::filter( 'ns-url', $url ) );

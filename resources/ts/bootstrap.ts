@@ -23,7 +23,7 @@ declare global {
         Axios: any,
         VueRouter: VueRouter,
         nsHooks: any,
-        SnackBar: SnackBar
+        SnackBar: SnackBar,
     }
 };
 declare const ns;

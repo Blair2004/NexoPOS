@@ -20,6 +20,9 @@ class ModuleSymlinkCommand extends Command
 
     public function handle()
     {
+        /**
+         * @var ModulesService
+         */
         $moduleService     =   app()->make( ModulesService::class );
         $optionsService    =   app()->make( Options::class );
 

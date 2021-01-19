@@ -324,7 +324,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
