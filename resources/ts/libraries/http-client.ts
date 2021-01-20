@@ -53,7 +53,7 @@ export class HttpClient {
                 observer.complete();
                 this._subject.next({ identifier: 'async.stop' });
             }).catch( error => {
-                observer.error( error.response.data );
+                observer.error( error.response.data || error.response );
                 this._subject.next({ identifier: 'async.stop' });
             });
         })

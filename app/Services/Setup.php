@@ -16,6 +16,7 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Services\Options;
 use App\Services\UserOptions;
+use Illuminate\Support\Facades\Cookie;
 
 class Setup
 {
@@ -155,8 +156,11 @@ class Setup
          */
         $domain     =   Str::replaceFirst( 'http://', '', url( '/' ) );
         $domain     =   Str::replaceFirst( 'https://', '', $domain );
-        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain );
+
+        DotenvEditor::load();
+        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'http://localhost', 'http://127.0.0.1', 'http://127.0.0.1:8000' ])->join(',') );
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
+        DotenvEditor::setKey( 'SESSION_DOMAIN', '.' . Str::replaceFirst( 'http://', '', $domain ) );
         DotenvEditor::save();
 
         /**
@@ -173,6 +177,11 @@ class Setup
          */
         Artisan::call( 'cache:clear' );
         Artisan::call( 'config:clear' );
+        Artisan::call( 'key:generate' );
+
+        Cookie::queue( Cookie::forget( env( 'SESSION_COOKIE' ) ) );
+        Cookie::queue( Cookie::forget( 'XSRF-TOKEN' ) );
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'Tendoo has been successfuly installed.' )
