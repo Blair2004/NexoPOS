@@ -50,7 +50,8 @@ Route::middleware([
     Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
     Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
     Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
-    Route::get( '/database-update/', 'UpdateController@updateDatabase' )->withoutMiddleware([ CheckMigrationStatus::class ])
+    Route::get( '/database-update/', 'UpdateController@updateDatabase' )
+        ->withoutMiddleware([ CheckMigrationStatus::class ])
         ->name( 'ns.database-update' );
 
     Route::middleware([ 

@@ -55,7 +55,6 @@ Route::prefix( 'nexopos/v4' )->group( function() {
     });
 
     include_once( dirname( __FILE__ ) . '/api/update.php' );
-
     Route::prefix( 'setup' )->group( function() {
         Route::post( 'database', 'SetupController@checkDatabase' );
         Route::get( 'database', 'SetupController@checkDbConfigDefined' );

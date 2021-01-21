@@ -43,8 +43,6 @@ class ResetCommand extends Command
         Artisan::call( 'migrate:reset --path=/database/migrations/create-tables' );
         
         DotenvEditor::deleteKey( 'NS_VERSION' );
-        DotenvEditor::deleteKey( 'SANCTUM_STATEFUL_DOMAINS' );
-        DotenvEditor::deleteKey( 'SESSION_DOMAIN' );
         DotenvEditor::save();
 
         Artisan::call( 'key:generate' );
