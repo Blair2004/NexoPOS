@@ -16,6 +16,8 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Services\Options;
 use App\Services\UserOptions;
+use Exception;
+use Illuminate\Support\Facades\Cookie;
 
 class Setup
 {
@@ -117,7 +119,7 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        Artisan::call( 'config:cache' );
+        // Artisan::call( 'config:cache' );
         Artisan::call( 'migrate --path=/database/migrations/default' );
         Artisan::call( 'migrate --path=/database/migrations/create-tables' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
@@ -137,25 +139,7 @@ class Setup
          */
         User::set( $user )->as( 'admin' );
 
-        /**
-         * Login auth since we would like to create some basic options
-         */
-        Auth::loginUsingId( $user->id );
-
-        /**
-         * define option for the admin
-         */
-        $this->userOptions  =   app()->make( UserOptions::class );
-        $this->userOptions->set( 'theme_class', 'dark-theme' ); 
-
-        Auth::logout();
-        
-        /**
-         * Set version to close setup
-         */
-        $domain     =   Str::replaceFirst( 'http://', '', url( '/' ) );
-        $domain     =   Str::replaceFirst( 'https://', '', $domain );
-        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain );
+        DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::save();
 
@@ -171,11 +155,16 @@ class Setup
         /**
          * Clear Cache
          */
-        Artisan::call( 'cache:clear' );
-        Artisan::call( 'config:clear' );
+        // Artisan::call( 'cache:clear' );
+        // Artisan::call( 'config:clear' );
+        // Artisan::call( 'key:generate' );
+
+        // Cookie::queue( Cookie::forget( env( 'SESSION_COOKIE' ) ) );
+        // Cookie::queue( Cookie::forget( 'XSRF-TOKEN' ) );
+
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'Tendoo has been successfuly installed.' )
+            'message'   =>  __( 'NexoPOS has been successfuly installed.' )
         ];
     }
 

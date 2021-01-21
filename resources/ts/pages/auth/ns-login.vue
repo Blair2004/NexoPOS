@@ -27,7 +27,7 @@
 <script>
 import { forkJoin } from 'rxjs';
 import FormValidation from '@/libraries/form-validation';
-import { nsHooks, nsHttpClient } from '@/bootstrap';
+import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
 
 export default {
     name: 'ns-login',
@@ -53,6 +53,8 @@ export default {
              * when the component is mounted
              */
             setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
+        }, ( error ) => {
+            nsSnackBar.error( error.message || 'An unexpected error occured.', 'OK', { duration: 0 }).subscribe();
         });
     },
     methods: {

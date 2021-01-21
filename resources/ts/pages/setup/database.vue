@@ -20,7 +20,7 @@ import { nsRouter } from './../../setup';
 export default {
     data: () => ({
         form: new FormValidation,
-        fields: []
+        fields: [],
     }),
     methods: {
         validate() {
