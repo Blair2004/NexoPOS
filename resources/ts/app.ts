@@ -44,7 +44,7 @@ import VueHtmlToPaper       from 'vue-html-to-paper';
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
-const nsExtraComponents     =   window[ 'nsExtraComponents' ];    
+const nsExtraComponents     =   (<any>window)[ 'nsExtraComponents' ];    
 
 const VueHtmlToPaperOptions     =   {
     name: '_blank',
