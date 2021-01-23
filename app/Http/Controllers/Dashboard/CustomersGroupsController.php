@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CustomerGroupCrud;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
@@ -28,24 +29,17 @@ class CustomersGroupsController extends DashboardController
 
     public function listCustomersGroups()
     {
-        return $this->view( 'pages.dashboard.customers-groups.list', [
-            'title'     =>  __( 'Customers Groups' )
-        ]);
+        return CustomerGroupCrud::table();
     }
 
     public function createCustomerGroup()
     {
-        return $this->view( 'pages.dashboard.customers-groups.create', [
-            'title'     =>  __( 'Customers Groups' )
-        ]);
+        return CustomerGroupCrud::form();
     }
 
     public function editCustomerGroup( CustomerGroup $group )
     {
-        return $this->view( 'pages.dashboard.customers-groups.edit', [
-            'title'     =>  sprintf( __( 'Edit Group %s' ), $group->name ),
-            'group'     =>  $group
-        ]);
+        return CustomerGroupCrud::form( $group );
     }
 
     /**

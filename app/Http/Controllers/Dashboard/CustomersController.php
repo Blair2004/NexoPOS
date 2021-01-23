@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Models\Customer;
@@ -37,9 +38,7 @@ class CustomersController extends DashboardController
 
     public function createCustomer()
     {
-        return $this->view( 'pages.dashboard.customers.create', [
-            'title'     =>  __( 'Customers' )
-        ]);
+        return CustomerCrud::form();
     }
 
     /**
@@ -153,12 +152,7 @@ class CustomersController extends DashboardController
 
     public function listCoupons()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>      __( 'Coupons List' ),
-            'description'   =>  __( 'Manage all created coupons.' ),
-            'createUrl'    =>  ns()->url( '/dashboard/customers/coupons/create' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons' )
-        ]);
+        return CouponCrud::table();
     }
 
     public function createCoupon()

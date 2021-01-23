@@ -20,13 +20,13 @@ class CustomerGroupCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.customers-group.index';
+    protected $mainRoute      =   '/dashboard/customers/groups';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.customers-group';
+    protected $namespace  =   'ns.customers-groups';
 
     /**
      * Model Used
@@ -38,6 +38,14 @@ class CustomerGroupCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users', 'nexopos_customers_groups.author', '=', 'nexopos_users.id' ],
+        'leftJoin'  =>  [
+            [ 'nexopos_rewards_system as reward', 'reward.id', '=', 'nexopos_customers_groups.reward_system_id' ]
+        ]
+    ];
+
+    public $pick    =   [
+        'nexopos_users'     =>  [ 'username' ],
+        'reward'            =>  [ 'name' ]
     ];
 
     /**
@@ -83,15 +91,15 @@ class CustomerGroupCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'CustomerGroups List' ),
-            'list_description'      =>  __( 'Display all customergroups.' ),
-            'no_entry'              =>  __( 'No customergroups has been registered' ),
-            'create_new'            =>  __( 'Add a new customergroup' ),
-            'create_title'          =>  __( 'Create a new customergroup' ),
-            'create_description'    =>  __( 'Register a new customergroup and save it.' ),
-            'edit_title'            =>  __( 'Edit customergroup' ),
-            'edit_description'      =>  __( 'Modify  Customergroup.' ),
-            'back_to_list'          =>  __( 'Return to CustomerGroups' ),
+            'list_title'            =>  __( 'Customer Groups List' ),
+            'list_description'      =>  __( 'Display all Customers Groups.' ),
+            'no_entry'              =>  __( 'No Customers Groups has been registered' ),
+            'create_new'            =>  __( 'Add a new Customers Group' ),
+            'create_title'          =>  __( 'Create a new Customers Group' ),
+            'create_description'    =>  __( 'Register a new Customers Group and save it.' ),
+            'edit_title'            =>  __( 'Edit Customers Group' ),
+            'edit_description'      =>  __( 'Modify Customers group.' ),
+            'back_to_list'          =>  __( 'Return to Customers Groups' ),
         ];
     }
 
@@ -230,7 +238,7 @@ class CustomerGroupCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id ) {
-        if ( $namespace == 'ns.customers-group' ) {
+        if ( $namespace == 'ns.customers-groups' ) {
             $this->allowedTo( 'delete' );
         }
     }
@@ -260,7 +268,7 @@ class CustomerGroupCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false,
             ],
-            'reward_system_id'  =>  [
+            'reward_name'  =>  [
                 'label'  =>  __( 'Reward System' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false,
@@ -296,13 +304,14 @@ class CustomerGroupCrud extends CrudService
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       => ns()->url( '/api/nexopos/v4/customers/groups/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                     'title'     =>  __( 'Delete a licence' )
                 ]
             ]
         ];
+        $entry->reward_name     =   $entry->reward_name ?: __( 'N/A' );
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
@@ -359,9 +368,11 @@ class CustomerGroupCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.customers-group.index',
-            'create'    =>  'ns.customers-group.index/create',
-            'edit'      =>  'ns.customers-group.index/edit/#'
+            'list'      =>  ns()->url(  'dashboard/customers/groups' ),
+            'create'    =>  ns()->url(  'dashboard/customers/groups/create' ),
+            'edit'      =>  ns()->url(  'dashboard/customers/groups/edit' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-groups/{id}' . '' ),
         ];
     }
 

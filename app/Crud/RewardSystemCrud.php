@@ -163,10 +163,12 @@ class RewardSystemCrud extends CrudService
                             'name'  =>  'coupon_id',
                             'value'         =>  $entry->coupon_id ?? '',
                             'label' =>  __( 'Coupon' ),
+                            'validation'    =>  'required',
                             'description'   =>  __( 'Decide which coupon you would apply to the system' ),
                         ], [
                             'type'  =>  'number',
                             'name'  =>  'target',
+                            'validation'    =>  'required',
                             'value'         =>  $entry->target ?? '',
                             'label' =>  __( 'Target' ),
                             'description'   =>  __( 'This is the objective that the user should reach to trigger the reward.' ),

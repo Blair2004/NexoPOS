@@ -62,11 +62,11 @@ export default {
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    nsSnackBar.error( error.data.message, undefined, {
-                        duration: 5000
-                    }).subscribe();
                     this.formValidation.triggerError( this.form, error.response.data );
                     this.formValidation.enableForm( this.form );
+                    nsSnackBar.error( error.data.message || 'An unexpected error has occured', undefined, {
+                        duration: 5000
+                    }).subscribe();
                 })
         },
         handleGlobalChange( event ) {

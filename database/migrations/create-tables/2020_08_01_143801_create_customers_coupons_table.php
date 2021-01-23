@@ -17,6 +17,7 @@ class CreateCustomersCouponsTable extends Migration
         Schema::createIfMissing( 'nexopos_customers_coupons', function (Blueprint $table) {
             $table->id();
             $table->string( 'name' );
+            $table->string( 'code' );
             $table->string( 'type' )->default( 'discount' ); // percentage_discount, flat_discount, giveaway
             $table->float( 'discount_value' )->default(0); // flat value or percentage
             $table->datetime( 'valid_until' )->nullable(); // unlimited

@@ -573,7 +573,9 @@ class CustomerCrud extends CrudService
         return  [
             'list'      =>  ns()->url( '/dashboard/customers' ),
             'create'    =>  ns()->url( '/dashboard/customers/create' ),
-            'edit'      =>  ns()->url( '/dashboard/customers/edit/{id}' )
+            'edit'      =>  ns()->url( '/dashboard/customers/edit/{id}' ),
+            'post'      =>  ns()->url( '/api/nexopos/v4/crud/ns.customers' ),
+            'put'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/{id}' ),
         ];
     }
 

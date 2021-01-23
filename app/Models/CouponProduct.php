@@ -9,7 +9,7 @@ class CouponProduct extends NsModel
 {
     use HasFactory;
     
-    protected $table    =   'nexopos_' . 'customers_coupons_products';
+    protected $table    =   'nexopos_' . 'coupons_products';
 
     public function coupon()
     {

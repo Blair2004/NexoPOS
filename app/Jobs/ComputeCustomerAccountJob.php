@@ -36,6 +36,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
     {
         if ( $this->event instanceof OrderAfterCreatedEvent ) {
             $this->handleIncrease( $this->event );
+            $this->handleCustomerReward( $this->event );
         } else if ( $this->event instanceof OrderBeforeDeleteEvent ) {
             $this->handleDeletion( $this->event );
         } else if ( $this->event instanceof OrderAfterRefundedEvent ) {
@@ -46,11 +47,11 @@ class ComputeCustomerAccountJob implements ShouldQueue
     private function handleIncrease( OrderAfterCreatedEvent $event )
     {  
         if ( $event->order->payment_status === 'paid' ) {
-            $event->order->customer->purchases_amount    +=  $event->order->total;
+            $event->order->customer->purchases_amount   +=  $event->order->total;
         } else if ( $event->order->payment_status === 'partially_paid' ) {
-            $event->order->customer->purchases_amount    +=  $event->order->tendered;
+            $event->order->customer->purchases_amount   +=  $event->order->tendered;
         } else {
-            $event->order->customer->owed_amount     +=  $event->order->total;
+            $event->order->customer->owed_amount        +=  $event->order->total;
         }
         
         $event->order->customer->save();
