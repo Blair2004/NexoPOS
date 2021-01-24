@@ -9,5 +9,5 @@ class CustomerReward extends NsModel
 {
     use HasFactory;
     
-    protected $table    =   'nexopos_' . 'customers_rewarads';
+    protected $table    =   'nexopos_' . 'customers_rewards';
 }

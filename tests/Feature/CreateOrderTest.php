@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
 use App\Models\Role;
 use App\Services\CurrencyService;
+use Exception;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Faker\Factory;
@@ -25,7 +27,7 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
-        for( $i = 0; $i < 20; $i++ ) {
+        for( $i = 0; $i < 1; $i++ ) {
             /**
              * @var CurrencyService
              */
@@ -45,6 +47,13 @@ class CreateOrderTest extends TestCase
                 ];
             });
 
+            /**
+             * testing customer balance
+             */
+            $customer                   =   Customer::first();
+            $customerFirstPurchases     =   $customer->purchases_amount;
+            $customerFirstOwed          =   $customer->owed_amount;
+
             $subtotal   =   ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
@@ -54,7 +63,7 @@ class CreateOrderTest extends TestCase
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
-                    'customer_id'           =>  1,
+                    'customer_id'           =>  $customer->id,
                     'type'                  =>  [ 'identifier' => 'takeaway' ],
                     'discount_type'         =>  'percentage',
                     'discount_percentage'   =>  $discountRate,
@@ -81,7 +90,8 @@ class CreateOrderTest extends TestCase
                     ]
                 ]);
             
-            $response->assertJson([
+            
+                $response->assertJson([
                 'status'    =>  'success'
             ]);
 
@@ -94,6 +104,10 @@ class CreateOrderTest extends TestCase
                 ->define( $subtotal )
                 ->subtractBy( $discount )
                 ->getRaw();
+
+            $total          =   $currency->define( $netsubtotal )
+                ->additionateBy( $shippingFees )
+                ->getRaw() ;
 
             $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
             
@@ -111,7 +125,26 @@ class CreateOrderTest extends TestCase
 
             $responseData   =   json_decode( $response->getContent(), true );
 
-            if ( $faker->randomElement([true,false,false]) === true ) {
+            /**
+             * test if the order has updated
+             * correctly the customer account
+             */
+            $customer->refresh();
+            $customerSecondPurchases    =   $customer->purchases_amount;
+            $customerSecondOwed         =   $customer->owed_amount;
+
+            if ( $customerFirstPurchases + $responseData[ 'data' ][ 'order' ][ 'tendered' ] != $customerSecondPurchases ) {
+                throw new Exception( 
+                    sprintf(
+                        __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
+                        $customerFirstPurchases + $total,
+                        $customerSecondPurchases,
+                        $total
+                    )
+                );
+            }
+
+            if ( $faker->randomElement([ true, false, false ]) === true ) {
                 /**
                  * We'll keep original products amounts and quantity
                  * this means we're doing a full refund of price and quantities

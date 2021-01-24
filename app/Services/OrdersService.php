@@ -151,7 +151,11 @@ class OrdersService
          * if the order has a valid payment 
          * method, then we can save that and attach it the ongoing order.
          */
-        if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+        if ( in_array( $paymentStatus, [ 
+            Order::PAYMENT_PAID, 
+            Order::PAYMENT_PARTIALLY, 
+            Order::PAYMENT_UNPAID 
+        ] ) ) {
             $this->__saveOrderPayments( $order, $payments, $customer );
         }
 
@@ -343,9 +347,8 @@ class OrdersService
      * get the current shipping
      * feels
      * @param array fields
-     * @return float;
      */
-    private function __getShippingFee($fields)
+    private function __getShippingFee($fields): float
     {
         return $this->currencyService->getRaw( $fields['shipping'] ?? 0 );
     }
@@ -481,9 +484,7 @@ class OrdersService
      * @return array
      */
     public function makeOrderSinglePayment( $payment, Order $order )
-    {
-        event( new OrderBeforePaymentCreatedEvent( $payment, $order->customer ) );
-        
+    {        
         $orderPayment   =   $this->__saveOrderSinglePayment( $payment, $order );
         
         /**
@@ -493,8 +494,6 @@ class OrdersService
         $order->refresh();
         
         $this->refreshOrder( $order );
-
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
         return [
             'status'    =>  'success',
@@ -512,6 +511,8 @@ class OrdersService
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
+        event( new OrderBeforePaymentCreatedEvent( $payment, $order->customer ) );
+
         $orderPayment       =  isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
 
         if ( ! $orderPayment instanceof OrderPayment ) {
@@ -524,8 +525,6 @@ class OrdersService
         $orderPayment->author       =   Auth::id();
         $orderPayment->save();
 
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
-
         /**
          * When the customer is making some payment
          * we store it on his history.
@@ -537,6 +536,8 @@ class OrdersService
                 $payment[ 'value' ] 
             );
         }
+
+        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
         return $orderPayment;
     }
@@ -1164,7 +1165,7 @@ class OrdersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The order has been successfully refunded.' ),
-            'data'      =>  compact( 'results' )
+            'data'      =>  compact( 'results', 'order', 'orderRefund' )
         ];
     }
 

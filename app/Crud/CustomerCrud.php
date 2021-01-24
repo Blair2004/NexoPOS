@@ -465,6 +465,9 @@ class CustomerCrud extends CrudService
             'owed_amount'  =>  [
                 'label'  =>  __( 'Owed Amount' )
             ],
+            'purchases_amount'  =>  [
+                'label'  =>  __( 'Purchase Amount' )
+            ],
             'gender'  =>  [
                 'label'  =>  __( 'Gender' )
             ],
@@ -482,8 +485,9 @@ class CustomerCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        $entry->owed_amount     =   ( string ) ns()->currency->define( $entry->owed_amount );
-        $entry->account_amount  =   ( string ) ns()->currency->define( $entry->account_amount );
+        $entry->owed_amount         =   ( string ) ns()->currency->define( $entry->owed_amount );
+        $entry->account_amount      =   ( string ) ns()->currency->define( $entry->account_amount );
+        $entry->purchases_amount    =   ( string ) ns()->currency->define( $entry->purchases_amount );
         
         $entry->{'$actions'}    =   [
             [
@@ -496,6 +500,16 @@ class CustomerCrud extends CrudService
                 'namespace'     =>      'customers_orders',
                 'type'          =>      'GOTO',
                 'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
+            ], [
+                'label'         =>      __( 'Rewards' ),
+                'namespace'     =>      'customers_rewards',
+                'type'          =>      'GOTO',
+                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' )
+            ], [
+                'label'         =>      __( 'Coupons' ),
+                'namespace'     =>      'customers_rewards',
+                'type'          =>      'GOTO',
+                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' )
             ], [
                 'label'     =>      __( 'Delete' ),
                 'namespace' =>      'delete',

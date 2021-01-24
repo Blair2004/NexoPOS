@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
+use App\Events\CustomerRewardAfterCouponIssuedEvent;
+use App\Events\CustomerRewardAfterCreatedEvent;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Customer;
@@ -10,6 +12,10 @@ use App\Models\CustomerAddress;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerCoupon;
+use App\Models\CustomerReward;
+use App\Models\Order;
+use App\Models\RewardSystem;
 
 class CustomerService
 {
@@ -313,6 +319,70 @@ class CustomerService
     {
         if ( $customer->account_amount - $value < 0 ) {
             throw new NotAllowedException( __( 'The customer account doesn\'t have enough funds to proceed.' ) );
+        }
+    }
+
+    /**
+     * compute a reward assigned to a customer group
+     * and issue a coupon if necessary
+     * @param Order $order
+     * @param Customer $customer
+     * @return void
+     */
+    public function computeReward( Order $order, Customer $customer )
+    {
+        $reward     =   $customer->group->reward;
+
+        if ( $reward instanceof RewardSystem ) {
+            $points      =   0;
+            $reward->rules->each( function( $rule ) use ( $order, &$points ) {
+                if ( $order->total >= $rule->from && $order->total <= $rule->to ) {
+                    $points  +=  ( float ) $rule->reward;
+                }
+            });
+
+            $currentReward      =   CustomerReward::where( 'reward_id', $reward->id )
+                ->where( 'customer_id', $customer->id )
+                ->first();
+
+            if ( ! $currentReward instanceof CustomerReward ) {
+                $currentReward                  =   new CustomerReward;
+                $currentReward->customer_id     =   $customer->id;
+                $currentReward->reward_id       =   $reward->id;
+                $currentReward->points          =   0;
+                $currentReward->target          =   $reward->target;
+                $currentReward->reward_name     =   $reward->name;
+            }
+
+            $currentReward->points      +=  $points;
+            $currentReward->save();
+
+            event( new CustomerRewardAfterCreatedEvent( $currentReward, $customer, $reward ) );
+        }
+    }
+
+    public function applyReward( CustomerReward $customerReward, Customer $customer, RewardSystem $reward )
+    {
+        /**
+         * the user has reached or exceeded the reward.
+         * we'll issue a new coupon and update the customer
+         * point counter
+         */
+        if ( $customerReward->points - $customerReward->target >= 0 ) {
+            $coupon                         =   $reward->coupon;
+
+            $customerCoupon                 =   new CustomerCoupon();
+            $customerCoupon->coupon_id      =   $coupon->id;
+            $customerCoupon->name           =   $coupon->name;
+            $customerCoupon->customer_id    =   $customer->id;
+            $customerCoupon->limit          =   $coupon->limit_usage;
+            $customerCoupon->author         =   0;
+            $customerCoupon->save();
+
+            $customerReward->points         =   abs( $customerReward->points - $customerReward->target );
+            $customerReward->save();
+
+            event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
         }
     }
 }

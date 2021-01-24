@@ -526,9 +526,11 @@ class CouponCrud extends CrudService
         switch ($entry->type) {
             case 'percentage_discount':
                 $entry->type = __('Percentage Discount');
+                $entry->discount_value      =   $entry->discount_value . '%';
                 break;
             case 'flat_discount':
-                $entry->type = __('Flat Discount');
+                $entry->type                =   __('Flat Discount');
+                $entry->discount_value      =   ( string ) ns()->currency->define( $entry->discount_value );
                 break;
             default:
                 $entry->type = __('N/A');

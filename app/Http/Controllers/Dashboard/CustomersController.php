@@ -8,8 +8,10 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CouponCrud;
+use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
+use App\Crud\CustomerRewardCrud;
 use App\Models\Customer;
 
 use Illuminate\Http\Request;
@@ -219,6 +221,24 @@ class CustomersController extends DashboardController
     {
         return CustomerOrderCrud::table([
             'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'queryParams'   =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
+    }
+
+    public function getCustomersRewards( Customer $customer )
+    {
+        return CustomerRewardCrud::table([
+            'queryParams'    =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
+    }
+
+    public function getCustomersCoupons( Customer $customer )
+    {
+        return CustomerCouponCrud::table([
             'queryParams'   =>  [
                 'customer_id'   =>  $customer->id
             ]

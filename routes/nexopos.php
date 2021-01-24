@@ -36,7 +36,9 @@ Route::get( '/cash-registers/history/{register}', [ CashRegistersController::cla
 Route::get( '/customers', [ CustomersController::class, 'listCustomers' ]);
 Route::get( '/customers/create', [ CustomersController::class, 'createCustomer' ]);
 Route::get( '/customers/edit/{customer}', [ CustomersController::class, 'editCustomer' ]);
+Route::get( '/customers/{customer}/rewards', [ CustomersController::class, 'getCustomersRewards' ]);
 Route::get( '/customers/{customer}/orders', [ CustomersController::class, 'getCustomersOrders' ]);
+Route::get( '/customers/{customer}/coupons', [ CustomersController::class, 'getCustomersCoupons' ]);
 Route::get( '/customers/groups', [ CustomersGroupsController::class, 'listCustomersGroups' ]);
 Route::get( '/customers/groups/create', [ CustomersGroupsController::class, 'createCustomerGroup' ]);
 Route::get( '/customers/groups/edit/{group}', [ CustomersGroupsController::class, 'editCustomerGroup' ]);

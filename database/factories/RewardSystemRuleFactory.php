@@ -15,9 +15,9 @@ class RewardSystemRuleFactory extends Factory
     public function definition()
     {
         return [
-            'from'          =>  $this->faker->numberBetween(5,10),
-            'to'            =>  $this->faker->numberBetween(40,80),
-            'reward'        =>  $this->faker->numberBetween(100, 200 ),
+            'from'          =>  0,
+            'to'            =>  $this->faker->numberBetween(100,500),
+            'reward'        =>  $this->faker->numberBetween(100,200),
             'author'        =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];
     }
