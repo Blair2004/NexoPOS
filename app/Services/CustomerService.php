@@ -7,6 +7,7 @@ use App\Events\CustomerRewardAfterCouponIssuedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Exceptions\NotFoundException;
@@ -374,6 +375,8 @@ class CustomerService
             $customerCoupon                 =   new CustomerCoupon();
             $customerCoupon->coupon_id      =   $coupon->id;
             $customerCoupon->name           =   $coupon->name;
+            $customerCoupon->active         =   true;
+            $customerCoupon->code           =   $coupon->code . '-' . Str::rand(0,9) . Str::rand(0,9) . Str::rand(0,9) . Str::rand(0,9);
             $customerCoupon->customer_id    =   $customer->id;
             $customerCoupon->limit          =   $coupon->limit_usage;
             $customerCoupon->author         =   0;
@@ -384,5 +387,40 @@ class CustomerService
 
             event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
         }
+    }
+
+    /**
+     * load specific coupon using a code and optionnaly 
+     * the customer id for verification purpose.
+     * @param string $code
+     * @param string $customer_id
+     * @return array
+     */
+    public function loadCoupon( $code, $customer_id = null )
+    {
+        $query  =   CustomerCoupon::code( $code );
+
+        if ( $customer_id !== null ) {
+            $query->customer( $customer_id );
+        }
+        
+        $coupon     =   $query->with( 'coupon' )->first();
+
+        if ( $coupon instanceof CustomerCoupon ) {
+
+            if ( $coupon->customer_id !== 0 ) {
+                if ( $customer_id === null ) {
+                    throw new Exception( __( 'The coupon is issued for a customer.' ) );
+                }
+
+                if ( ( int ) $coupon->customer_id !== ( int ) $customer_id ) {
+                    throw new Exception( __( 'The coupon is not issued for the selected customer.' ) );
+                }
+            }
+
+            return $coupon;
+        }
+        
+        throw new Exception( __( 'Unable to find a coupon with the provided code.' ) );
     }
 }

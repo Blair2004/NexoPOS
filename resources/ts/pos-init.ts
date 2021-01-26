@@ -14,6 +14,7 @@ import { Responsive } from "./libraries/responsive";
 import { Popup } from "./libraries/popup";
 import { OrderProduct } from "./interfaces/order-product";
 import { StatusResponse } from "./status-response";
+import { __ } from "./libraries/lang";
 
 /**
  * these are dynamic component
@@ -53,6 +54,8 @@ export class POS {
             discount_percentage: 0,
             subtotal: 0,
             total: 0,
+            coupons: [],
+            total_coupons : 0,
             tendered: 0,
             note: '',
             note_visibility: 'hidden',
@@ -228,6 +231,23 @@ export class POS {
                 nsSnackBar.error( exception.message ).subscribe();
             }
         }
+    }
+
+    pushCoupon( coupon ) {
+        const order     =   this.order.getValue();
+
+        order.coupons.forEach( _coupon => {
+            if ( _coupon.code === coupon.code ) {
+                const message   =   __( 'This coupon is already added to the cart' );
+                nsSnackBar.error( message )
+                    .subscribe();
+                throw message;
+            }
+        })
+
+        order.coupons.push( coupon );
+        this.order.next( order );
+        this.refreshCart();
     }
     
     get header() {
@@ -602,10 +622,10 @@ export class POS {
              * asynchronously we can load
              * customer meta data
              */
-            if ( customer.group === undefined || customer.group === null ) {
+            if ( customer.group === undefined || customer.group === null ) {                              
                 nsHttpClient.get( `/api/nexopos/v4/customers/${customer.id}/group` )
                     .subscribe( group => {
-                        order.customer.group      =   group;
+                        order.customer.group        =   group;
                         this.order.next( order );
                         resolve( order );
                     }, ( error ) => {
@@ -642,6 +662,22 @@ export class POS {
             order.subtotal  =   productTotal.reduce( ( b, a ) => b + a );
         } else {
             order.subtotal  =   0;
+        }
+
+        /**
+         * we'll compute here the value
+         * of the coupons
+         */
+        const totalValue    =   order.coupons.map( customerCoupon => {
+            if ( customerCoupon.coupon.type === 'percentage_discount' ) {
+                return ( order.subtotal * customerCoupon.coupon.discount_value ) / 100;
+            } 
+            return order.subtotal - customerCoupon.coupon.discount_value;
+        });
+
+        if ( totalValue.length > 0 ) {
+            order.total_coupons     =   totalValue.reduce( ( before, after ) => before + after );
+            order.subtotal          =   order.subtotal - order.total_coupons;
         }
 
         if ( order.discount_type === 'percentage' ) {

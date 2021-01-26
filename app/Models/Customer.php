@@ -20,6 +20,11 @@ class Customer extends NsModel
         return $this->belongsTo( CustomerGroup::class, 'group_id' );
     }
 
+    public function coupons()
+    {
+        return $this->hasMany( CustomerCoupon::class, 'customer_id' );
+    }
+
     /**
      * define the relationship
      * @return Model\RelationShip

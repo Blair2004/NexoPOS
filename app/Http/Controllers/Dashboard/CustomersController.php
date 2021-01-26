@@ -244,5 +244,15 @@ class CustomersController extends DashboardController
             ]
         ]);
     }
+
+    public function getCustomerCoupons( Customer $customer )
+    {
+        return $customer->coupons;
+    }
+
+    public function loadCoupons( Request $request, $code )
+    {
+        return $this->customerService->loadCoupon( $code, $request->input( 'customer_id' ) );
+    }
 }
 

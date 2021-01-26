@@ -11,6 +11,11 @@ export interface Customer {
     surname?: string;
     pobox?: string;
     group_id?: number;
+    coupons?: {
+        name: string;
+        discount_type: 'percentage_discount' | 'flat_discount';
+        discount_value: number;
+    }[]
     group?: {
         name?: string;
         id?: number;
