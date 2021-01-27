@@ -133,8 +133,7 @@
                     </table>
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'cart'">
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2 flex justify-between">
-                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
+                            <td width="200" class="border border-gray-300 p-2">
                                 <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">

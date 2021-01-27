@@ -21,10 +21,17 @@ class CreateOrdersCouponsTable extends Migration
         if ( ! Schema::hasTable( 'nexopos_orders_coupons' ) ) {
             Schema::createIfMissing( 'nexopos_orders_coupons', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
-                $table->integer( 'coupon_id' );
+                $table->string( 'code' );
+                $table->string( 'name' );
+                $table->integer( 'customer_coupon_id' );
                 $table->integer( 'order_id' );
+                $table->string( 'type' ); // discount_percentage, flat_percentage
+                $table->float( 'discount_value' );
+                $table->float( 'minimum_cart_value' )->default(0);
+                $table->float( 'maximum_cart_value' )->default(0);
+                $table->integer( 'limit_usage' )->default(0);
+                $table->float( 'value' )->default(0);
                 $table->integer( 'author' );
-                $table->float( 'value' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

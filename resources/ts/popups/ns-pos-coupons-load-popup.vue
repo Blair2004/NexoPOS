@@ -40,6 +40,10 @@
                                     <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Discount Value' ) }}</td>
                                     <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
                                 </tr>
+                                <tr>
+                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Usage' ) }}</td>
+                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + customerCoupon.limit }}</td>
+                                </tr>
                             </thead>
                         </table>
                     </div>
@@ -50,7 +54,7 @@
                             <div class="flex-auto">
                                 <h3 class="font-semibold text-gray-700 p-2 flex justify-between">
                                     <span>{{ customerCoupon.name }}</span>
-                                    <span>{{ getDiscountValue( customerCoupon.coupon ) }}</span>
+                                    <span>{{ getDiscountValue( customerCoupon ) }}</span>
                                 </h3>
                             </div>
                             <div>
@@ -129,11 +133,25 @@ export default {
             try {
                 const customerCoupon    =   this.customerCoupon;
                 this.cancel();
-                POS.pushCoupon( customerCoupon );
+
+                const coupon    =   {
+                    active: customerCoupon.coupon.active,
+                    customer_coupon_id   :   customerCoupon.id,
+                    minimum_cart_value: customerCoupon.coupon.minimum_cart_value,
+                    maximum_cart_value: customerCoupon.coupon.maximum_cart_value,
+                    name: customerCoupon.coupon.name,
+                    type: customerCoupon.coupon.type,
+                    value: 0,
+                    limit_usage: customerCoupon.coupon.limit_usage,
+                    code: customerCoupon.coupon.code,
+                    discount_value: customerCoupon.coupon.discount_value
+                }
+
+                POS.pushCoupon( coupon );
                 this.activeTab  =   'active-coupons';
                 
                 setTimeout( () => {
-                    this.popupResolver( customerCoupon );
+                    this.popupResolver( coupon );
                 }, 500 );
 
                 nsSnackBar.success( __( 'The coupon has applied to the cart.' ) )

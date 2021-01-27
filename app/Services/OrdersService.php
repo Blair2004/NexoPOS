@@ -26,7 +26,9 @@ use App\Models\OrderPayment;
 use App\Models\OrderProduct;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerCoupon;
 use App\Models\Notification;
+use App\Models\OrderCoupon;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
@@ -101,6 +103,12 @@ class OrdersService
          * @param string $paymentStatus
          */
         extract( $this->__checkOrderPayments( $fields, $order, $customer ) );
+
+        /**
+         * We'll now check the attached coupon
+         * and determin wether they can be processed.
+         */
+        $this->__checkAttachedCoupons( $fields[ 'coupons' ] ?? [] );
         
         /**
          * As no payment might be provided
@@ -160,6 +168,11 @@ class OrdersService
         }
 
         /**
+         * save order coupons
+         */
+        $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
+
+        /**
          * @var Order $order
          * @var float $taxes
          * @var float $subTotal
@@ -186,6 +199,57 @@ class OrdersService
             'message'   =>  __( 'The order has been placed.' ),
             'data'      =>  compact( 'order' )
         ];
+    }
+
+    public function __checkAttachedCoupons( $coupons )
+    {
+        collect( $coupons )->each( function( $coupon ) {
+            $customerCoupon     =   CustomerCoupon::find( $coupon[ 'customer_coupon_id' ] );
+
+            if ( ! $customerCoupon instanceof CustomerCoupon ) {
+                throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $coupon[ 'name' ] ?? __( 'N/A' ) ) );
+            }
+
+            if ( ! $customerCoupon->active ) {
+                throw new NotFoundException( sprintf( __( 'The provider coupon "%s", can no longer be used' ), $customerCoupon->name ) );
+            }
+        });
+    }
+
+    public function __saveOrderCoupons( Order $order, $coupons )
+    {
+        $savedCoupons       =   [];
+
+        foreach( $coupons as $coupon ) {
+            $existingCoupon     =   OrderCoupon::find( $coupon[ 'id' ] ?? null );
+
+            if ( ! $existingCoupon instanceof OrderCoupon ) {
+                $existingCoupon                         =   new OrderCoupon;
+                $existingCoupon->order_id               =   $order->id;
+                $existingCoupon->customer_coupon_id     =   $coupon[ 'customer_coupon_id' ];
+                $existingCoupon->minimum_cart_value     =   $coupon[ 'minimum_cart_value' ] ?: 0;
+                $existingCoupon->maximum_cart_value     =   $coupon[ 'maximum_cart_value' ] ?: 0;
+                $existingCoupon->name                   =   $coupon[ 'name' ] ?: 0;
+                $existingCoupon->type                   =   $coupon[ 'type' ] ?: 0;
+                $existingCoupon->limit_usage            =   $coupon[ 'limit_usage' ] ?: 0;
+                $existingCoupon->code                   =   $coupon[ 'code' ];
+                $existingCoupon->author                 =   Auth::id();
+                $existingCoupon->discount_value         =   $coupon[ 'discount_value' ] ?: 0;
+            }
+
+            $existingCoupon->value                      =   $coupon[ 'value' ];
+            $existingCoupon->save();
+
+            $savedCoupons[]     =   $existingCoupon->id;
+        }
+
+        /**
+         * Every coupon that is not processed
+         * should be deleted.
+         */
+        OrderCoupon::where( 'order_id', $order->id )
+            ->whereNotIn( 'id', $savedCoupons )
+            ->delete();
     }
 
     /**
@@ -1044,6 +1108,7 @@ class OrdersService
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
+        $order->total_coupons           =   $fields['total_coupons'] ?? 0;
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
@@ -1361,6 +1426,7 @@ class OrdersService
                 ->with( 'shipping_address' )
                 ->with( 'billing_address' )
                 ->with( 'taxes' )   
+                ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
                 ->with( 'customer' )
@@ -1785,5 +1851,28 @@ class OrdersService
             ->get();
 
         return $products;
+    }
+
+    public function trackOrderCoupons( Order $order )
+    {
+        $order->coupons->each( function( OrderCoupon $orderCoupon ) {
+            $customerCoupon     =   CustomerCoupon::find( $orderCoupon->customer_coupon_id );
+            
+            if ( ! $customerCoupon instanceof CustomerCoupon ) {
+                throw new NotFoundException( sprintf( 
+                    __( 'Unable to find a reference of the provided coupon : %s' ),
+                    $orderCoupon->name
+                ) );
+            }
+
+            if ( $customerCoupon->usage + 1 < $customerCoupon->limit ) {
+                $customerCoupon->usage      +=  1;
+                $customerCoupon->save();
+            } else if ( $customerCoupon->usage + 1 === $customerCoupon->limit ) {
+                $customerCoupon->usage      +=  1;
+                $customerCoupon->active     =   false;
+                $customerCoupon->save();
+            }
+        });
     }
 }

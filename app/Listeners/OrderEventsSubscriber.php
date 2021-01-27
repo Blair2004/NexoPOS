@@ -138,4 +138,9 @@ class OrderEventsSubscriber
         $this->ordersService->refreshOrder( $event->order );
         $this->handleOrderUpdate( $event );
     }
+
+    public function handleOrderAfterCreatedForCoupons( OrderAfterCreatedEvent $event ) 
+    {
+        $this->ordersService->trackOrderCoupons( $event->order );
+    }
 }

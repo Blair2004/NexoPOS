@@ -11,6 +11,10 @@ class CustomerCoupon extends NsModel
     
     protected $table    =   'nexopos_' . 'customers_coupons';
 
+    public $casts    =   [
+        'active'    =>  'boolean'
+    ];
+
     public function scopeActive( $query )
     {
         return $query->where( 'active', true );

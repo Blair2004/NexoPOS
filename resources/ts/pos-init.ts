@@ -376,32 +376,39 @@ export class POS {
                 });
             }
 
-            nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
-                .subscribe( (tax:any) => {
-                    order.tax_groups    =   order.tax_groups || [];
-                    order.taxes         =   tax.taxes.map( tax => {
-                        return {
-                            tax_id      :   tax.id,
-                            tax_name    :   tax.name,
-                            rate        :   parseFloat( tax.rate ),
-                            tax_value   :   this.getVatValue( order.subtotal, tax.rate, order.tax_type )
-                        };
-                    });
-
-                    /**
-                     * this is set to cache the 
-                     * tax group to avoid subsequent request
-                     * to the server.
-                     */
-                    order.tax_groups[ tax.id ]    =   tax; 
-
-                    return resolve({ 
-                        status: 'success',
-                        data : { tax, order }
+            if( order.tax_group_id !== null ) {
+                nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
+                    .subscribe( (tax:any) => {
+                        order.tax_groups    =   order.tax_groups || [];
+                        order.taxes         =   tax.taxes.map( tax => {
+                            return {
+                                tax_id      :   tax.id,
+                                tax_name    :   tax.name,
+                                rate        :   parseFloat( tax.rate ),
+                                tax_value   :   this.getVatValue( order.subtotal, tax.rate, order.tax_type )
+                            };
+                        });
+    
+                        /**
+                         * this is set to cache the 
+                         * tax group to avoid subsequent request
+                         * to the server.
+                         */
+                        order.tax_groups[ tax.id ]    =   tax; 
+    
+                        return resolve({ 
+                            status: 'success',
+                            data : { tax, order }
+                        })
+                    }, ( error ) => {
+                        return reject( error );
                     })
-                }, ( error ) => {
-                    return reject( error );
+            } else {
+                return reject({
+                    status: 'failed',
+                    message: __( 'No tax group assigned to the order' )
                 })
+            }
         })
     }
 
@@ -669,10 +676,13 @@ export class POS {
          * of the coupons
          */
         const totalValue    =   order.coupons.map( customerCoupon => {
-            if ( customerCoupon.coupon.type === 'percentage_discount' ) {
-                return ( order.subtotal * customerCoupon.coupon.discount_value ) / 100;
+            if ( customerCoupon.type === 'percentage_discount' ) {
+                customerCoupon.value    =   ( order.subtotal * customerCoupon.discount_value ) / 100;
+                return customerCoupon.value;
             } 
-            return order.subtotal - customerCoupon.coupon.discount_value;
+            
+            customerCoupon.value    =   customerCoupon.discount_value;
+            return customerCoupon.value;
         });
 
         if ( totalValue.length > 0 ) {

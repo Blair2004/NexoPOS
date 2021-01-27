@@ -64,6 +64,14 @@ export default {
                     }
 
                     this.unitsQuantities  =   result;
+
+                    /**
+                     * This will automatically
+                     * select a unit if there is only one unit available.
+                     */
+                    if ( this.unitsQuantities.length === 1 ) {
+                        this.selectUnit( this.unitsQuantities[0] );
+                    }
                 })
         },
         /**

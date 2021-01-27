@@ -19,18 +19,15 @@ export interface Order {
     total_products: number;
     customer: Customer | undefined;
     coupons: {
-        name?: string;
         code?: string;
-        coupon?: {
-            type?: 'percentage_discount' | 'flat_discount';
-            name: string;
-            limit_usage?: number;
-            discount_value?: number;
-            code?: string;
-            minimum_cart_value?: number;
-            maximum_cart_value?: number;
-        }
+        type?: 'percentage_discount' | 'flat_discount';
+        name: string;
+        customer_coupon_id?: number;
+        limit_usage?: number;
+        minimum_cart_value?: number;
+        maximum_cart_value?: number;
         customer_id?: number;
+        value?: number;
         created_at?: string;
         usage?: number;
         active?: number;

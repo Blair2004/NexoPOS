@@ -408,6 +408,10 @@ class CustomerService
 
         if ( $coupon instanceof CustomerCoupon ) {
 
+            if ( ! $coupon->active ) {
+                throw new Exception( __( 'The request coupon no longer be used as it\'s no more active.' ) );
+            }
+
             if ( $coupon->customer_id !== 0 ) {
                 if ( $customer_id === null ) {
                     throw new Exception( __( 'The coupon is issued for a customer.' ) );

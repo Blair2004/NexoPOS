@@ -57,7 +57,8 @@ class CustomerCouponCrud extends CrudService
         'leftJoin'  =>  [
             [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_coupons.author' ]
         ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ]
+        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_coupons.customer_id' ],
+        [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_customers_coupons.coupon_id' ],
     ];
 
     /**
@@ -79,7 +80,8 @@ class CustomerCouponCrud extends CrudService
      */
     public $pick        =   [
         'user'      =>  [ 'username' ],
-        'customer'  =>  [ 'name' ]
+        'customer'  =>  [ 'name' ],
+        'coupon'    =>  [ 'type', 'discount_value' ],
     ];
 
     /**
@@ -340,6 +342,16 @@ class CustomerCouponCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'coupon_type'  =>  [
+                'label'         =>  __( 'Type' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'coupon_discount_value'  =>  [
+                'label'         =>  __( 'Value' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'usage'  =>  [
                 'label'  =>  __( 'Usage' ),
                 '$direction'    =>  '',
@@ -356,7 +368,7 @@ class CustomerCouponCrud extends CrudService
                 '$sort'         =>  false
             ],
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
+                'label'  =>  __( 'Date' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -373,6 +385,18 @@ class CustomerCouponCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
         $entry->user_username    =   $entry->user_username ?: __( 'N/A' );
+
+        switch( $entry->coupon_type ) {
+            case 'percentage_discount':
+                $entry->coupon_discount_value = $entry->coupon_discount_value . '%';
+            break;
+            case 'flat_discount':
+                $entry->coupon_discount_value = ns()->currency->define( $entry->coupon_discount_value );
+            break;
+        }
+        
+        $entry->coupon_type     =   $entry->coupon_type === 'percentage_discount' ? __( 'Percentage' ) : __( 'Flat' );
+
 
         // you can make changes here
         $entry->{'$actions'}    =   [

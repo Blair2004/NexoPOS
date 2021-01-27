@@ -37,6 +37,7 @@ class CreateOrdersTable extends Migration
                 $table->float( 'gross_total' )->default(0);
                 $table->float( 'subtotal' )->default(0);
                 $table->float( 'net_total' )->default(0);
+                $table->float( 'total_coupons' )->default(0);
                 $table->float( 'total' )->default(0);
                 $table->float( 'tax_value' )->default(0);
                 $table->integer( 'tax_group_id' )->nullable();
@@ -48,7 +49,6 @@ class CreateOrdersTable extends Migration
                 $table->integer( 'customer_id' );
                 $table->string( 'note' )->nullable();
                 $table->string( 'note_visibility' )->nullable();
-                // $table->string( 'payment' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->integer( 'register_id' )->nullable();
