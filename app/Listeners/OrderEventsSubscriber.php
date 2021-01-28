@@ -16,29 +16,29 @@ use App\Services\CustomerService;
 use App\Services\OrdersService;
 use App\Services\ProductService;
 
-class OrderEventsSubscriber 
+class OrderEventsSubscriber
 {
     /**
      * @var OrdersService
      */
-    private $ordersService;
+    protected $ordersService;
 
     /**
      * @var ProductService
      */
-    private $productsService;
+    protected $productsService;
 
     /**
      * @var CustomerService
      */
-    private $customerService;
+    protected $customerService;
 
     public function __construct(
         OrdersService $ordersService,
         ProductService $productsService,
         CustomerService $customerService
     ) {
-        $this->ordersService    =   app()->make( OrdersService::class );
+        $this->ordersService    =   $ordersService;
         $this->productsService  =   $productsService;
         $this->customerService  =   $customerService;
     }
@@ -49,7 +49,6 @@ class OrderEventsSubscriber
             OrderAfterProductRefundedEvent::class,
             [ OrderEventsSubscriber::class, 'refreshOrder' ]
         );
-
 
         $events->listen(
             OrderBeforeDeleteEvent::class,

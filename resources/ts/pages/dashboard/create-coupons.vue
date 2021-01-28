@@ -3,6 +3,7 @@ import FormValidation from '../../libraries/form-validation';
 import { Subject, BehaviorSubject } from "rxjs";
 import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
+import { __ } from '@/libraries/lang';
 export default { 
     name: 'ns-create-coupons',
     mounted() {
@@ -80,10 +81,14 @@ export default {
                     }
                     this.formValidation.enableForm( this.form );
                 }, ( error ) => {
-                    nsSnackBar.error( error.message, undefined, {
+                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), undefined, {
                         duration: 5000
                     }).subscribe();
-                    this.formValidation.triggerError( this.form, error.response.data );
+                    
+                    if ( error.response ) {
+                        this.formValidation.triggerError( this.form, error.response.data );
+                    }
+
                     this.formValidation.enableForm( this.form );
                 })
         },

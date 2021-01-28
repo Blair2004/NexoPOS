@@ -439,7 +439,7 @@ class CustomerService
         if ( $customerCoupon->count() === 0 ) {
             $customerCoupon                     =   new CustomerCoupon;
             $customerCoupon->name               =   $coupon->name;
-            $customerCoupon->limit_usage        =   $fields[ 'general' ][ 'limit_usage' ];
+            $customerCoupon->limit_usage        =   $coupon->limit_usage;
             $customerCoupon->code               =   $coupon->code;
             $customerCoupon->coupon_id          =   $coupon->id;
             $customerCoupon->customer_id        =   0; // $fields[ 'customer_id' ];
@@ -451,7 +451,7 @@ class CustomerService
             $customerCoupon
                 ->each( function( $customerCoupon ) use ( $coupon, $fields ) {
                     $customerCoupon->name                   =   $coupon->name;
-                    $customerCoupon->limit_usage            =   $fields[ 'general' ][ 'limit_usage' ];
+                    $customerCoupon->limit_usage            =   $coupon->limit_usage;
                     $customerCoupon->code                   =   $coupon->code;
                     $customerCoupon->coupon_id              =   $coupon->id;
                     $customerCoupon->customer_id            =   0; // $fields[ 'general' ][ 'customer_id' ];
