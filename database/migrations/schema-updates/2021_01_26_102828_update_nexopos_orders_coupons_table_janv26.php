@@ -30,19 +30,19 @@ class UpdateNexoposOrdersCouponsTableJanv26 extends Migration
                 $table->string( 'type' );
             }
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'discount_value' ) ) {
-                $table->float( 'discount_value' );
+                $table->float( 'discount_value' )->default(0);
             }
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'minimum_cart_value' ) ) {
-                $table->float( 'minimum_cart_value' );
+                $table->float( 'minimum_cart_value' )->default(0);
             }
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'maximum_cart_value' ) ) {
-                $table->float( 'maximum_cart_value' );
+                $table->float( 'maximum_cart_value' )->default(0);
             }
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'limit_usage' ) ) {
-                $table->integer( 'limit_usage' );
+                $table->integer( 'limit_usage' )->default(0);
             }
             if ( ! Schema::hasColumn( 'nexopos_orders_coupons', 'value' ) ) {
-                $table->float( 'value' );
+                $table->float( 'value' )->default(0);
             }
         });
     }

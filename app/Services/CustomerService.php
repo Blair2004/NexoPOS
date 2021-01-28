@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Crud\CustomerCouponCrud;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerRewardAfterCouponIssuedEvent;
@@ -12,6 +13,7 @@ use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
+use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
@@ -376,9 +378,9 @@ class CustomerService
             $customerCoupon->coupon_id      =   $coupon->id;
             $customerCoupon->name           =   $coupon->name;
             $customerCoupon->active         =   true;
-            $customerCoupon->code           =   $coupon->code . '-' . Str::rand(0,9) . Str::rand(0,9) . Str::rand(0,9) . Str::rand(0,9);
+            $customerCoupon->code           =   $coupon->code . '-' . Str::random(0,9) . Str::random(0,9) . Str::random(0,9) . Str::random(0,9);
             $customerCoupon->customer_id    =   $customer->id;
-            $customerCoupon->limit          =   $coupon->limit_usage;
+            $customerCoupon->limit_usage    =   $coupon->limit_usage;
             $customerCoupon->author         =   0;
             $customerCoupon->save();
 
@@ -426,5 +428,65 @@ class CustomerService
         }
         
         throw new Exception( __( 'Unable to find a coupon with the provided code.' ) );
+    }
+
+    public function setCoupon( $fields, Coupon $coupon )
+    {
+        $customerCoupon                         =   CustomerCoupon::where([
+            'coupon_id'     =>      $coupon->id,
+        ])->get();        
+
+        if ( $customerCoupon->count() === 0 ) {
+            $customerCoupon                     =   new CustomerCoupon;
+            $customerCoupon->name               =   $coupon->name;
+            $customerCoupon->limit_usage        =   $fields[ 'general' ][ 'limit_usage' ];
+            $customerCoupon->code               =   $coupon->code;
+            $customerCoupon->coupon_id          =   $coupon->id;
+            $customerCoupon->customer_id        =   0; // $fields[ 'customer_id' ];
+            $customerCoupon->author             =   Auth::id();
+            $customerCoupon->save();
+
+            $this->setActiveStatus( $customerCoupon );
+        } else {
+            $customerCoupon
+                ->each( function( $customerCoupon ) use ( $coupon, $fields ) {
+                    $customerCoupon->name                   =   $coupon->name;
+                    $customerCoupon->limit_usage            =   $fields[ 'general' ][ 'limit_usage' ];
+                    $customerCoupon->code                   =   $coupon->code;
+                    $customerCoupon->coupon_id              =   $coupon->id;
+                    $customerCoupon->customer_id            =   0; // $fields[ 'general' ][ 'customer_id' ];
+                    $customerCoupon->author                 =   Auth::id();
+                    $customerCoupon->save();
+
+                    $this->setActiveStatus( $customerCoupon );
+                });
+        }
+
+        return [
+            'status'    =>  'sucess',
+            'message'   =>  __( 'The coupon has been updated.' )
+        ];        
+    }
+
+    public function setActiveStatus( CustomerCoupon $coupon )
+    {
+        if ( $coupon->limit_usage > $coupon->usage ) {
+            $coupon->active     =   true;
+        }
+
+        if ( ( int ) $coupon->limit_usage === 0 ) {
+            $coupon->active     =   true;
+        }
+
+        $coupon->save();
+    }
+
+    public function deleteRelatedCustomerCoupon( Coupon $coupon )
+    {
+        CustomerCoupon::couponID( $coupon->id )
+            ->get()
+            ->each( function( $coupon ) {
+                $coupon->delete();
+            });
     }
 }

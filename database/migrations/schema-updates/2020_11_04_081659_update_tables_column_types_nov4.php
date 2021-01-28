@@ -147,10 +147,10 @@ class UpdateTablesColumnTypesNov4 extends Migration
                     'maximum_cart_value',
                     'limit_usage',
                 ]) ) {
-                    $table->float( 'discount_value', 11, 5 )->change();
-                    $table->float( 'minimum_cart_value', 11, 5 )->change();
-                    $table->float( 'maximum_cart_value', 11, 5 )->change();
-                    $table->float( 'limit_usage', 11, 5 )->change();
+                    $table->float( 'discount_value', 11, 5 )->default(0)->change();
+                    $table->float( 'minimum_cart_value', 11, 5 )->default(0)->change();
+                    $table->float( 'maximum_cart_value', 11, 5 )->default(0)->change();
+                    $table->float( 'limit_usage', 11, 5 )->default(0)->change();
                 }
             });
         }

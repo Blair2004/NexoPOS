@@ -220,6 +220,8 @@ class OrdersService
     {
         $savedCoupons       =   [];
 
+        $order->total_coupons   =   0;
+
         foreach( $coupons as $coupon ) {
             $existingCoupon     =   OrderCoupon::find( $coupon[ 'id' ] ?? null );
 
@@ -237,7 +239,18 @@ class OrdersService
                 $existingCoupon->discount_value         =   $coupon[ 'discount_value' ] ?: 0;
             }
 
-            $existingCoupon->value                      =   $coupon[ 'value' ];
+            $existingCoupon->value                      =   $coupon[ 'value' ] ?: ( 
+                $coupon[ 'discount_type' ] === 'percentage_discount' ? 
+                    $this->computeDiscountValues( $coupon[ 'discount_value' ], $order->subtotal ) : 
+                    $coupon[ 'discount_value' ]
+            );
+
+            /**
+             * that should compute
+             * the coupons value automatically
+             */
+            $order->total_coupons   +=  $existingCoupon->value;
+
             $existingCoupon->save();
 
             $savedCoupons[]     =   $existingCoupon->id;
@@ -741,6 +754,7 @@ class OrdersService
          */
         $order->total           =   $this->currencyService->define( $order->subtotal )
             ->additionateBy( $order->shipping )
+            ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->discount )
             ->get();
 
@@ -759,6 +773,7 @@ class OrdersService
          */
         $order->net_total     =   $this->currencyService->define( $order->subtotal )
             ->subtractBy( $order->discount )
+            ->subtractBy( $order->total_coupons )
             ->subtractBy( $taxes )
             ->get();
 
@@ -1865,13 +1880,18 @@ class OrdersService
                 ) );
             }
 
-            if ( $customerCoupon->usage + 1 < $customerCoupon->limit ) {
-                $customerCoupon->usage      +=  1;
-                $customerCoupon->save();
-            } else if ( $customerCoupon->usage + 1 === $customerCoupon->limit ) {
-                $customerCoupon->usage      +=  1;
-                $customerCoupon->active     =   false;
-                $customerCoupon->save();
+            /**
+             * if a limit_usage is set to 0, that means there is no limit.
+             */
+            if ( $customerCoupon->limit_usage > 0 ) {
+                if ( $customerCoupon->usage + 1 < $customerCoupon->limit_usage ) {
+                    $customerCoupon->usage      +=  1;
+                    $customerCoupon->save();
+                } else if ( $customerCoupon->usage + 1 === $customerCoupon->limit_usage ) {
+                    $customerCoupon->usage      +=  1;
+                    $customerCoupon->active     =   false;
+                    $customerCoupon->save();
+                }
             }
         });
     }

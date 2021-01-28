@@ -42,7 +42,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Usage' ) }}</td>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + customerCoupon.limit }}</td>
+                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
                                 </tr>
                             </thead>
                         </table>

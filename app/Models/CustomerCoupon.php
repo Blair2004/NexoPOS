@@ -25,6 +25,11 @@ class CustomerCoupon extends NsModel
         return $query->where( 'code', $code );
     }
 
+    public function scopeCouponID( $query, $couponID )
+    {
+        return $query->where( 'coupon_id', $couponID );
+    }
+
     public function scopeCustomer( $query, $customer_id )
     {
         return $query->where( 'customer_id', $customer_id );

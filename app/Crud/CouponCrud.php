@@ -14,6 +14,7 @@ use App\Models\CouponCategory;
 use App\Models\CouponProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\CustomerService;
 use App\Services\Helper;
 
 class CouponCrud extends CrudService
@@ -279,13 +280,26 @@ class CouponCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Coupon $entry )
     {
-        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+        $inputs     =   collect( $inputs )->map( function( $field, $key ) {
             if ( ( in_array( $key, [ 
                 'minimum_cart_value',
                 'maximum_cart_value',
                 'assigned',
                 'limit_usage',
             ]) && empty( $field ) ) || is_array( $field ) ) {
+                return ! is_array( $field ) ? ( $field ?: 0 ) : $field;
+            }
+
+            return $field;
+        });
+
+        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+            if ( ( in_array( $key, [ 
+                'minimum_cart_value',
+                'maximum_cart_value',
+                'assigned',
+                'limit_usage',
+            ]) && empty( $field ) && $field === null ) || is_array( $field ) ) {
                 return false;
             }
             return true;
@@ -346,6 +360,12 @@ class CouponCrud extends CrudService
             $categoryRelation->category_id  =   $category_id;
             $categoryRelation->save();
         }
+
+        /**
+         * @var CustomerService
+         */
+        $customersService   =   app()->make( CustomerService::class );
+        $customersService->setCoupon( $request->all(), $coupon );
         
         return $request;
     }
@@ -442,6 +462,12 @@ class CouponCrud extends CrudService
             $categoryRelation->save();
         }
 
+        /**
+         * @var CustomerService
+         */
+        $customersService   =   app()->make( CustomerService::class );
+        $customersService->setCoupon( $request->all(), $coupon );
+        
         return $request;
     }
 
@@ -450,27 +476,17 @@ class CouponCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $coupon ) {
-        if ( $namespace == 'ns.customers-coupons' ) {
+        ns()->restrict( $this->permissions[ 'delete' ] );
+
+        if ($namespace == 'ns.coupons') {
             /**
-             *  Perform an action before deleting an entry
-             *  In case something wrong, this response can be returned
-             *
-             *  return response([
-             *      'status'    =>  'danger',
-             *      'message'   =>  __( 'You\re not allowed to do that.' )
-             *  ], 403 );
-            **/
-            if ( $this->permissions[ 'delete' ] !== false ) {
-                ns()->restrict( $this->permissions[ 'delete' ] );
+             * @var CustomerService
+             */
+            $customerService    =   app()->make( CustomerService::class );
+            $customerService->deleteRelatedCustomerCoupon( $coupon );
 
-                if ($namespace == 'ns.coupons') {
-                    $coupon->categories()->delete();
-                    $coupon->products()->delete();
-                }
-
-            } else {
-                throw new NotAllowedException;
-            }
+            $coupon->categories()->delete();
+            $coupon->products()->delete();
         }
     }
 
@@ -537,7 +553,7 @@ class CouponCrud extends CrudService
                 break;
         }
 
-        $entry->valid_until     =   $entry->valid_until ?? __('Unlimited');
+        $entry->valid_until     =   $entry->valid_until ?? __('Undefined');
 
         // you can make changes here
         $entry->{'$actions'}    =   [
@@ -595,6 +611,7 @@ class CouponCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof Coupon ) {
+                    $this->beforeDelete( $this->namespace, null, $entity );
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

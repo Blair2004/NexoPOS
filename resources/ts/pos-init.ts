@@ -685,9 +685,9 @@ export class POS {
             return customerCoupon.value;
         });
 
+        order.total_coupons         =   0;
         if ( totalValue.length > 0 ) {
             order.total_coupons     =   totalValue.reduce( ( before, after ) => before + after );
-            order.subtotal          =   order.subtotal - order.total_coupons;
         }
 
         if ( order.discount_type === 'percentage' ) {
@@ -699,7 +699,7 @@ export class POS {
          * than the subtotal, the discount amount
          * will be set to the order.subtotal
          */
-        if ( order.discount > order.subtotal ) {
+        if ( order.discount > order.subtotal && order.total_coupons === 0 ) {
             order.discount = order.subtotal;
             nsSnackBar.info( 'The discount has been set to the cart subtotal' )
                 .subscribe();
@@ -745,7 +745,7 @@ export class POS {
                 .reduce( ( before, after ) => before + after );
         }
 
-        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount;
+        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;
         order.total_products    =   products.length
 

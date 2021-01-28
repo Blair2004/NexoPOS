@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\CustomerCoupon;
 use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
@@ -61,6 +62,22 @@ class CreateOrderTest extends TestCase
                     ->getRaw();
             })->sum() );
 
+            $customerCoupon     =   CustomerCoupon::get()->last();
+            $allCoupons         =   [
+                [
+                    'customer_coupon_id'    =>  $customerCoupon->id,
+                    'coupon_id'             =>  $customerCoupon->coupon_id,
+                    'name'                  =>  $customerCoupon->name,
+                    'type'                  =>  'percentage_discount',
+                    'code'                  =>  $customerCoupon->code,
+                    'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
+                    'value'                 =>  ( $customerCoupon->coupon->discount_value * $subtotal ) / 100,
+                    'discount_value'        =>  $customerCoupon->coupon->discount_value,
+                    'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
+                    'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                ]
+            ];
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
                     'customer_id'           =>  $customer->id,
@@ -79,6 +96,7 @@ class CreateOrderTest extends TestCase
                             'country'       =>  'United State Seattle',
                         ]
                     ],
+                    'coupons'               =>  $allCoupons,
                     'subtotal'              =>  $subtotal,
                     'shipping'              =>  $shippingFees,
                     'products'              =>  $products->toArray(),
@@ -95,6 +113,8 @@ class CreateOrderTest extends TestCase
                 'status'    =>  'success'
             ]);
 
+            $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+
             $discount       =   $currency->define( $discountRate )
                 ->multipliedBy( $subtotal )
                 ->divideBy( 100 )
@@ -102,11 +122,13 @@ class CreateOrderTest extends TestCase
 
             $netsubtotal    =   $currency
                 ->define( $subtotal )
+                ->additionateBy( $totalCoupons )
                 ->subtractBy( $discount )
                 ->getRaw();
 
             $total          =   $currency->define( $netsubtotal )
                 ->additionateBy( $shippingFees )
+                ->additionateBy( $totalCoupons )
                 ->getRaw() ;
 
             $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
@@ -186,6 +208,8 @@ class CreateOrderTest extends TestCase
                     'status'    =>  'success'
                 ]);
             }
+
+            $response->dump();
         }
     }
 }

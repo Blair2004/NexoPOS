@@ -18,7 +18,7 @@ class CreateCustomersCouponsTable extends Migration
             $table->id();
             $table->string( 'name' );
             $table->integer( 'usage' )->default(0);
-            $table->integer( 'limit' );
+            $table->integer( 'limit_usage' );
             $table->boolean( 'active' )->default( true );
             $table->string( 'code' );
             $table->integer( 'coupon_id' );
