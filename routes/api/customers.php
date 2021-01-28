@@ -10,9 +10,11 @@ Route::get( 'customers/{customer?}', [ CustomersController::class, 'get' ])->whe
 Route::get( 'customers/{customer}/orders', [ CustomersController::class, 'getOrders' ]);
 Route::get( 'customers/{customer}/addresses', [ CustomersController::class, 'getAddresses' ]);
 Route::get( 'customers/{customer}/group', [ CustomersController::class, 'getGroup' ]);
+Route::get( 'customers/{customer}/coupons', [ CustomersController::class, 'getCustomerCoupons' ]);
 Route::get( 'customers/schema', [ CustomersController::class, 'schema' ]);
 Route::post( 'customers', [ CustomersController::class, 'post' ]);
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);
+Route::post( 'customers/coupons/{coupon}', [ CustomersController::class, 'loadCoupons' ]);
 Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ]);
 
 Route::post( 'customers/{customer}/account-history', [ CustomersController::class, 'accountTransaction' ])

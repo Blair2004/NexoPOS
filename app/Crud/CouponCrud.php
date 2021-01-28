@@ -1,29 +1,35 @@
 <?php
 namespace App\Crud;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Helper;
+use App\Services\Users;
+use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Coupon;
-use App\Models\CouponProduct;
 use App\Models\CouponCategory;
+use App\Models\CouponProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\CustomerService;
+use App\Services\Helper;
 
 class CouponCrud extends CrudService
 {
     /**
      * define the base table
+     * @param  string
      */
-    protected $table      =   'nexopos_customers_coupons';
+    protected $table      =   'nexopos_coupons';
 
     /**
-     * base route name
+     * default slug
+     * @param  string
      */
-    protected $mainRoute      =   'ns.coupons';
+    protected $slug   =   'customers/coupons';
 
     /**
      * Define namespace
@@ -33,15 +39,48 @@ class CouponCrud extends CrudService
 
     /**
      * Model Used
+     * @param  string
      */
     protected $model      =   Coupon::class;
 
     /**
+     * Define permissions
+     * @param  array
+     */
+    protected $permissions  =   [
+        'create'    =>  true,
+        'read'      =>  true,
+        'update'    =>  true,
+        'delete'    =>  true,
+    ];
+
+    /**
      * Adding relation
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * @param  array
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_customers_coupons.author', '=', 'nexopos_users.id' ]
+        [ 'nexopos_users', 'nexopos_coupons.author', '=', 'nexopos_users.id' ],
     ];
+
+    /**
+     * all tabs mentionned on the tabs relations
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
+    ];
+
+    /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
+    public $pick        =   [];
 
     /**
      * Define where statement
@@ -79,15 +118,15 @@ class CouponCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Customer Coupons List' ),
-            'list_description'      =>  __( 'Display all customer coupons.' ),
-            'no_entry'              =>  __( 'No customer coupons has been registered' ),
-            'create_new'            =>  __( 'Add a new customer coupon' ),
-            'create_title'          =>  __( 'Create a new customer coupon' ),
-            'create_description'    =>  __( 'Register a new customer coupon and save it.' ),
-            'edit_title'            =>  __( 'Edit customer coupon' ),
-            'edit_description'      =>  __( 'Modify  Customer Coupon.' ),
-            'back_to_list'          =>  __( 'Return to Customer Coupons' ),
+            'list_title'            =>  __( 'Coupons List' ),
+            'list_description'      =>  __( 'Display all coupons.' ),
+            'no_entry'              =>  __( 'No coupons has been registered' ),
+            'create_new'            =>  __( 'Add a new coupon' ),
+            'create_title'          =>  __( 'Create a new coupon' ),
+            'create_description'    =>  __( 'Register a new coupon and save it.' ),
+            'edit_title'            =>  __( 'Edit coupon' ),
+            'edit_description'      =>  __( 'Modify  Coupon.' ),
+            'back_to_list'          =>  __( 'Return to Coupons' ),
         ];
     }
 
@@ -112,6 +151,7 @@ class CouponCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
+                'validation'    =>  'required',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -120,8 +160,15 @@ class CouponCrud extends CrudService
                     'active'    =>  false,
                     'fields'    =>  [
                         [
+                            'type'  =>  'text',
+                            'name'  =>  'code',
+                            'label' =>  __( 'Coupon Code' ),
+                            'description'   =>  __( 'Might be used while printing the coupon.' ),
+                            'value' =>  $entry->code ?? '',
+                        ], [
                             'type'  =>  'select',
                             'name'  =>  'type',
+                            'validation'    =>  'required',
                             'options'   =>  Helper::kvToJsOptions([
                                 'percentage_discount'   =>  __( 'Percentage Discount' ),
                                 'flat_discount'         =>  __( 'Flat Discount' ),
@@ -226,61 +273,6 @@ class CouponCrud extends CrudService
         return $inputs;
     }
 
-    public function beforePost( Request $request )
-    {
-        $this->allowedTo( 'create' );
-
-        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
-            $product    =   Product::find( $product_id );
-            if ( ! $product instanceof Product ) {
-                throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
-            }
-        }
-
-        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
-            $category    =   ProductCategory::find( $category_id );
-            if ( ! $category instanceof ProductCategory ) {
-                throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
-            }
-        }
-    }
-
-    public function beforePut( Request $request )
-    {
-        $this->allowedTo( 'update' );
-        
-        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
-            $product    =   Product::find( $product_id );
-            if ( ! $product instanceof Product ) {
-                throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
-            }
-        }
-
-        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
-            $category    =   ProductCategory::find( $category_id );
-            if ( ! $category instanceof ProductCategory ) {
-                throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
-            }
-        }
-    }
-
-    public function afterPost( Request $request, Coupon $coupon )
-    {
-        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
-            $productRelation                =   new CouponProduct;
-            $productRelation->coupon_id     =   $coupon->id;
-            $productRelation->product_id    =   $product_id;
-            $productRelation->save();
-        }
-
-        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
-            $categoryRelation                =   new CouponCategory;
-            $categoryRelation->coupon_id     =   $coupon->id;
-            $categoryRelation->category_id  =   $category_id;
-            $categoryRelation->save();
-        }
-    }
-
     /**
      * Filter PUT input fields
      * @param  array of fields
@@ -288,13 +280,26 @@ class CouponCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Coupon $entry )
     {
-        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+        $inputs     =   collect( $inputs )->map( function( $field, $key ) {
             if ( ( in_array( $key, [ 
                 'minimum_cart_value',
                 'maximum_cart_value',
                 'assigned',
                 'limit_usage',
             ]) && empty( $field ) ) || is_array( $field ) ) {
+                return ! is_array( $field ) ? ( $field ?: 0 ) : $field;
+            }
+
+            return $field;
+        });
+
+        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+            if ( ( in_array( $key, [ 
+                'minimum_cart_value',
+                'maximum_cart_value',
+                'assigned',
+                'limit_usage',
+            ]) && empty( $field ) && $field === null ) || is_array( $field ) ) {
                 return false;
             }
             return true;
@@ -302,6 +307,69 @@ class CouponCrud extends CrudService
 
         return $inputs;
     }
+
+    /**
+     * Before saving a record
+     * @param  Request $request
+     * @return  void
+     */
+    public function beforePost( $request )
+    {
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+
+            foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+                $product    =   Product::find( $product_id );
+                if ( ! $product instanceof Product ) {
+                    throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
+                }
+            }
+    
+            foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+                $category    =   ProductCategory::find( $category_id );
+                if ( ! $category instanceof ProductCategory ) {
+                    throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
+                }
+            }
+
+        } else {
+            throw new NotAllowedException;
+        }
+
+        return $request;
+    }
+
+    /**
+     * After saving a record
+     * @param  Request $request
+     * @param  Coupon $entry
+     * @return  void
+     */
+    public function afterPost( $request, Coupon $coupon )
+    {
+        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+            $productRelation                =   new CouponProduct();
+            $productRelation->coupon_id     =   $coupon->id;
+            $productRelation->product_id    =   $product_id;
+            $productRelation->save();
+        }
+
+        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+            $categoryRelation                =   new CouponCategory();
+            $categoryRelation->coupon_id     =   $coupon->id;
+            $categoryRelation->category_id  =   $category_id;
+            $categoryRelation->save();
+        }
+
+        /**
+         * @var CustomerService
+         */
+        $customersService   =   app()->make( CustomerService::class );
+        $customersService->setCoupon( $request->all(), $coupon );
+        
+        return $request;
+    }
+
     
     /**
      * get
@@ -316,11 +384,43 @@ class CouponCrud extends CrudService
     }
 
     /**
-     * After Crud PUT
+     * Before updating a record
+     * @param  Request $request
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, Coupon $coupon )
+    public function beforePut( $request, $entry )
+    {
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+
+            foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+                $product    =   Product::find( $product_id );
+                if ( ! $product instanceof Product ) {
+                    throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
+                }
+            }
+    
+            foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+                $category    =   ProductCategory::find( $category_id );
+                if ( ! $category instanceof ProductCategory ) {
+                    throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
+                }
+            }
+        } else {
+            throw new NotAllowedException;
+        }
+
+        return $request;
+    }
+
+    /**
+     * After updating a record
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
+     */
+    public function afterPut( $request, $coupon )
     {
         $coupon->categories->each( function( $category ) use ( $request ) {
             if ( ! in_array( $category->id, $request->input( 'selected_categories.categories' ) ) ) {
@@ -361,35 +461,30 @@ class CouponCrud extends CrudService
             $categoryRelation->category_id   =   $category_id;
             $categoryRelation->save();
         }
-    }
-    
-    /**
-     * Protect an access to a specific crud UI
-     * @param  array { namespace, id, type }
-     * @return  array | throw Exception
-    **/
-    public function canAccess( $fields )
-    {
-        $users      =   app()->make( Users::class );
-        
-        if ( $users->is([ 'admin' ]) ) {
-            return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
-            ];
-        }
 
-        throw new Exception( __( 'You don\'t have access to that ressource' ) );
+        /**
+         * @var CustomerService
+         */
+        $customersService   =   app()->make( CustomerService::class );
+        $customersService->setCoupon( $request->all(), $coupon );
+        
+        return $request;
     }
 
     /**
      * Before Delete
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, Coupon $coupon ) {
-        $this->allowedTo( 'delete' );
+    public function beforeDelete( $namespace, $id, $coupon ) {
+        ns()->restrict( $this->permissions[ 'delete' ] );
 
-        if ( $namespace == 'ns.coupons' ) {
+        if ($namespace == 'ns.coupons') {
+            /**
+             * @var CustomerService
+             */
+            $customerService    =   app()->make( CustomerService::class );
+            $customerService->deleteRelatedCustomerCoupon( $coupon );
+
             $coupon->categories()->delete();
             $coupon->products()->delete();
         }
@@ -402,32 +497,32 @@ class CouponCrud extends CrudService
     public function getColumns() {
         return [
             'name'  =>  [
-                'label'         =>  __( 'Name' ),
+                'label'         =>  __('Name'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'type'              =>  [
-                'label'         =>  __( 'Type' ),
+                'label'         =>  __('Type'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'discount_value'  =>  [
-                'label'         =>  __( 'Discount Value' ),
+                'label'         =>  __('Discount Value'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'valid_until'  =>  [
-                'label'         =>  __( 'Valid Until' ),
+                'label'         =>  __('Valid Until'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'nexopos_users_username'        =>  [
-                'label'         =>  __( 'Author' ),
+                'label'         =>  __('Author'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'created_at'    =>  [
-                'label'         =>  __( 'Created At' ),
+                'label'         =>  __('Created At'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -440,35 +535,43 @@ class CouponCrud extends CrudService
     public function setActions( $entry, $namespace )
     {
         // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-        
-        switch( $entry->type ) {
-            case 'percentage_discount': $entry->type = __( 'Percentage Discount' ); break;
-            case 'flat_discount':       $entry->type = __( 'Flat Discount' ); break;
-            default:                    $entry->type = __( 'N/A' ); break;
+        $entry->{'$checked'}  =   false;
+        $entry->{'$toggled'}  =   false;
+        $entry->{'$id'}       =   $entry->id;
+
+        switch ($entry->type) {
+            case 'percentage_discount':
+                $entry->type = __('Percentage Discount');
+                $entry->discount_value      =   $entry->discount_value . '%';
+                break;
+            case 'flat_discount':
+                $entry->type                =   __('Flat Discount');
+                $entry->discount_value      =   ( string ) ns()->currency->define( $entry->discount_value );
+                break;
+            default:
+                $entry->type = __('N/A');
+                break;
         }
 
-        $entry->valid_until     =   $entry->valid_until ?? __( 'Unlimited' );
+        $entry->valid_until     =   $entry->valid_until ?? __('Undefined');
 
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      __( 'Edit' ),
+                'label'         =>      __('Edit'),
                 'namespace'     =>      'edit.licence',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/customers/coupons/edit/' . $entry->id )
+                'url'           =>     ns()->url('/dashboard/customers/coupons/edit/' . $entry->id)
             ], [
-                'label'     =>  __( 'Delete' ),
+                'label'     =>  __('Delete'),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
                 'index'     =>  'id',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $entry->id ),
+                'url'       => ns()->url('/api/nexopos/v4/crud/ns.coupons/' . $entry->id),
                 'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
+                    'message'  =>  __('Would you like to delete this ?'),
+                    'title'     =>  __('Delete a licence')
                 ]
             ]
         ];
@@ -488,23 +591,27 @@ class CouponCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
             ];
 
-            foreach ( $request->input( 'entries_id' ) as $id ) {
+            foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof Coupon ) {
+                    $this->beforeDelete( $this->namespace, null, $entity );
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -524,9 +631,11 @@ class CouponCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.coupons',
-            'create'    =>  'ns.coupons/create',
-            'edit'      =>  'ns.coupons/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'customers/coupons' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'customers/coupons/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'customers/coupons/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' . '' ),
         ];
     }
 
@@ -538,8 +647,7 @@ class CouponCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Coupons' ),
-                'confirm'       =>  __( 'Would you like to delete selected coupons?' ),
+                'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace

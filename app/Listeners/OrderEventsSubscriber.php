@@ -50,10 +50,6 @@ class OrderEventsSubscriber
             [ OrderEventsSubscriber::class, 'refreshOrder' ]
         );
 
-        $events->listen(
-            OrderAfterRefundedEvent::class,
-            [ OrderEventsSubscriber::class, 'handleRefundEvent' ]
-        );
 
         $events->listen(
             OrderBeforeDeleteEvent::class,
@@ -67,6 +63,11 @@ class OrderEventsSubscriber
 
         $events->listen(
             OrderAfterCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
+        );
+
+        $events->listen(
+            OrderAfterPaymentCreatedEvent::class,
             [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
         );
 
@@ -136,5 +137,10 @@ class OrderEventsSubscriber
     {
         $this->ordersService->refreshOrder( $event->order );
         $this->handleOrderUpdate( $event );
+    }
+
+    public function handleOrderAfterCreatedForCoupons( OrderAfterCreatedEvent $event ) 
+    {
+        $this->ordersService->trackOrderCoupons( $event->order );
     }
 }

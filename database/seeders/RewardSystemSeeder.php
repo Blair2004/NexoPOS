@@ -20,6 +20,7 @@ class RewardSystemSeeder extends Seeder
         return RewardSystem::factory()
             ->count(20)
             ->hasRules(4)
+            ->hasCoupon(1)
             ->create();
     }
 }

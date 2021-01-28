@@ -2,6 +2,7 @@
 namespace App\Crud;
 
 use App\Http\Requests\CrudPostRequest;
+use App\Models\Coupon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -10,6 +11,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\RewardSystem;
 use App\Models\RewardSystemRule;
+use App\Services\Helper;
 
 class RewardSystemCrud extends CrudService
 {
@@ -38,7 +40,13 @@ class RewardSystemCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users', 'nexopos_rewards_system.author', '=', 'nexopos_users.id' ]
+        [ 'nexopos_users', 'nexopos_rewards_system.author', '=', 'nexopos_users.id' ],
+        [ 'nexopos_coupons as coupon', 'coupon.id', '=', 'nexopos_rewards_system.coupon_id' ],
+    ];
+
+    public $pick        =   [
+        'nexopos_users'     =>  [ 'username' ],
+        'coupon'            =>  [ 'name' ]
     ];
 
     /**
@@ -162,11 +170,15 @@ class RewardSystemCrud extends CrudService
                             'type'  =>  'select',
                             'name'  =>  'coupon_id',
                             'value'         =>  $entry->coupon_id ?? '',
-                            'label' =>  __( 'Coupon' ),
-                            'description'   =>  __( 'Decide which coupon you would apply to the system' ),
+                            'label'         =>  __( 'Coupon' ),
+                            'options'       =>  Helper::toJsOptions( Coupon::get(), [ 'id', 'name' ]),
+                            'validation'    =>  'required',
+                            'description'   =>  __( 'Decide which coupon you would apply to the system.' )
+                            ,
                         ], [
                             'type'  =>  'number',
                             'name'  =>  'target',
+                            'validation'    =>  'required',
                             'value'         =>  $entry->target ?? '',
                             'label' =>  __( 'Target' ),
                             'description'   =>  __( 'This is the objective that the user should reach to trigger the reward.' ),
@@ -345,7 +357,7 @@ class RewardSystemCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'coupon_id'  =>  [
+            'coupon_name'  =>  [
                 'label'  =>  __( 'Coupon' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false

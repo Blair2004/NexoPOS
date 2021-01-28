@@ -16,6 +16,16 @@ return [
             ]),
             'description'       =>  __( 'Enable sound effect on the POS.' ),
         ], [
+            'name'              =>  'ns_pos_show_quantity',
+            'value'             =>  $options->get( 'ns_pos_show_quantity' ),
+            'label'             =>  __( 'Show Quantity' ), 
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' )
+            ]),
+            'description'       =>  __( 'Will show the quantity selector while choosing a product. Otherwise the default quantity is set to 1.' ),
+        ], [
             'name'              =>  'ns_pos_customers_creation_enabled',
             'value'             =>  $options->get( 'ns_pos_customers_creation_enabled' ),
             'label'             =>  __( 'Allow Customer Creation' ), 

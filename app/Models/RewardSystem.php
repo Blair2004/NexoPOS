@@ -14,4 +14,9 @@ class RewardSystem extends NsModel
     {
         return $this->hasMany( RewardSystemRule::class, 'reward_id' );
     }
+
+    public function coupon()
+    {
+        return $this->hasOne( Coupon::class, 'id', 'coupon_id' );
+    }
 }

@@ -1,15 +1,24 @@
 <?php
 namespace App\Services;
 
+use App\Crud\CustomerCouponCrud;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
+use App\Events\CustomerRewardAfterCouponIssuedEvent;
+use App\Events\CustomerRewardAfterCreatedEvent;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Customer;
 use App\Models\CustomerAddress;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
+use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerCoupon;
+use App\Models\CustomerReward;
+use App\Models\Order;
+use App\Models\RewardSystem;
 
 class CustomerService
 {
@@ -314,5 +323,170 @@ class CustomerService
         if ( $customer->account_amount - $value < 0 ) {
             throw new NotAllowedException( __( 'The customer account doesn\'t have enough funds to proceed.' ) );
         }
+    }
+
+    /**
+     * compute a reward assigned to a customer group
+     * and issue a coupon if necessary
+     * @param Order $order
+     * @param Customer $customer
+     * @return void
+     */
+    public function computeReward( Order $order, Customer $customer )
+    {
+        $reward     =   $customer->group->reward;
+
+        if ( $reward instanceof RewardSystem ) {
+            $points      =   0;
+            $reward->rules->each( function( $rule ) use ( $order, &$points ) {
+                if ( $order->total >= $rule->from && $order->total <= $rule->to ) {
+                    $points  +=  ( float ) $rule->reward;
+                }
+            });
+
+            $currentReward      =   CustomerReward::where( 'reward_id', $reward->id )
+                ->where( 'customer_id', $customer->id )
+                ->first();
+
+            if ( ! $currentReward instanceof CustomerReward ) {
+                $currentReward                  =   new CustomerReward;
+                $currentReward->customer_id     =   $customer->id;
+                $currentReward->reward_id       =   $reward->id;
+                $currentReward->points          =   0;
+                $currentReward->target          =   $reward->target;
+                $currentReward->reward_name     =   $reward->name;
+            }
+
+            $currentReward->points      +=  $points;
+            $currentReward->save();
+
+            event( new CustomerRewardAfterCreatedEvent( $currentReward, $customer, $reward ) );
+        }
+    }
+
+    public function applyReward( CustomerReward $customerReward, Customer $customer, RewardSystem $reward )
+    {
+        /**
+         * the user has reached or exceeded the reward.
+         * we'll issue a new coupon and update the customer
+         * point counter
+         */
+        if ( $customerReward->points - $customerReward->target >= 0 ) {
+            $coupon                         =   $reward->coupon;
+
+            $customerCoupon                 =   new CustomerCoupon();
+            $customerCoupon->coupon_id      =   $coupon->id;
+            $customerCoupon->name           =   $coupon->name;
+            $customerCoupon->active         =   true;
+            $customerCoupon->code           =   $coupon->code . '-' . Str::random(0,9) . Str::random(0,9) . Str::random(0,9) . Str::random(0,9);
+            $customerCoupon->customer_id    =   $customer->id;
+            $customerCoupon->limit_usage    =   $coupon->limit_usage;
+            $customerCoupon->author         =   0;
+            $customerCoupon->save();
+
+            $customerReward->points         =   abs( $customerReward->points - $customerReward->target );
+            $customerReward->save();
+
+            event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
+        }
+    }
+
+    /**
+     * load specific coupon using a code and optionnaly 
+     * the customer id for verification purpose.
+     * @param string $code
+     * @param string $customer_id
+     * @return array
+     */
+    public function loadCoupon( $code, $customer_id = null )
+    {
+        $query  =   CustomerCoupon::code( $code );
+
+        if ( $customer_id !== null ) {
+            $query->customer( $customer_id );
+        }
+        
+        $coupon     =   $query->with( 'coupon' )->first();
+
+        if ( $coupon instanceof CustomerCoupon ) {
+
+            if ( ! $coupon->active ) {
+                throw new Exception( __( 'The request coupon no longer be used as it\'s no more active.' ) );
+            }
+
+            if ( $coupon->customer_id !== 0 ) {
+                if ( $customer_id === null ) {
+                    throw new Exception( __( 'The coupon is issued for a customer.' ) );
+                }
+
+                if ( ( int ) $coupon->customer_id !== ( int ) $customer_id ) {
+                    throw new Exception( __( 'The coupon is not issued for the selected customer.' ) );
+                }
+            }
+
+            return $coupon;
+        }
+        
+        throw new Exception( __( 'Unable to find a coupon with the provided code.' ) );
+    }
+
+    public function setCoupon( $fields, Coupon $coupon )
+    {
+        $customerCoupon                         =   CustomerCoupon::where([
+            'coupon_id'     =>      $coupon->id,
+        ])->get();        
+
+        if ( $customerCoupon->count() === 0 ) {
+            $customerCoupon                     =   new CustomerCoupon;
+            $customerCoupon->name               =   $coupon->name;
+            $customerCoupon->limit_usage        =   $fields[ 'general' ][ 'limit_usage' ];
+            $customerCoupon->code               =   $coupon->code;
+            $customerCoupon->coupon_id          =   $coupon->id;
+            $customerCoupon->customer_id        =   0; // $fields[ 'customer_id' ];
+            $customerCoupon->author             =   Auth::id();
+            $customerCoupon->save();
+
+            $this->setActiveStatus( $customerCoupon );
+        } else {
+            $customerCoupon
+                ->each( function( $customerCoupon ) use ( $coupon, $fields ) {
+                    $customerCoupon->name                   =   $coupon->name;
+                    $customerCoupon->limit_usage            =   $fields[ 'general' ][ 'limit_usage' ];
+                    $customerCoupon->code                   =   $coupon->code;
+                    $customerCoupon->coupon_id              =   $coupon->id;
+                    $customerCoupon->customer_id            =   0; // $fields[ 'general' ][ 'customer_id' ];
+                    $customerCoupon->author                 =   Auth::id();
+                    $customerCoupon->save();
+
+                    $this->setActiveStatus( $customerCoupon );
+                });
+        }
+
+        return [
+            'status'    =>  'sucess',
+            'message'   =>  __( 'The coupon has been updated.' )
+        ];        
+    }
+
+    public function setActiveStatus( CustomerCoupon $coupon )
+    {
+        if ( $coupon->limit_usage > $coupon->usage ) {
+            $coupon->active     =   true;
+        }
+
+        if ( ( int ) $coupon->limit_usage === 0 ) {
+            $coupon->active     =   true;
+        }
+
+        $coupon->save();
+    }
+
+    public function deleteRelatedCustomerCoupon( Coupon $coupon )
+    {
+        CustomerCoupon::couponID( $coupon->id )
+            ->get()
+            ->each( function( $coupon ) {
+                $coupon->delete();
+            });
     }
 }

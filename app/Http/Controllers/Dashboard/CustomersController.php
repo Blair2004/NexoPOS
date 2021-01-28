@@ -7,8 +7,11 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\CouponCrud;
+use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
+use App\Crud\CustomerRewardCrud;
 use App\Models\Customer;
 
 use Illuminate\Http\Request;
@@ -37,9 +40,7 @@ class CustomersController extends DashboardController
 
     public function createCustomer()
     {
-        return $this->view( 'pages.dashboard.customers.create', [
-            'title'     =>  __( 'Customers' )
-        ]);
+        return CustomerCrud::form();
     }
 
     /**
@@ -153,12 +154,7 @@ class CustomersController extends DashboardController
 
     public function listCoupons()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>      __( 'Coupons List' ),
-            'description'   =>  __( 'Manage all created coupons.' ),
-            'createUrl'    =>  ns()->url( '/dashboard/customers/coupons/create' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons' )
-        ]);
+        return CouponCrud::table();
     }
 
     public function createCoupon()
@@ -229,6 +225,34 @@ class CustomersController extends DashboardController
                 'customer_id'   =>  $customer->id
             ]
         ]);
+    }
+
+    public function getCustomersRewards( Customer $customer )
+    {
+        return CustomerRewardCrud::table([
+            'queryParams'    =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
+    }
+
+    public function getCustomersCoupons( Customer $customer )
+    {
+        return CustomerCouponCrud::table([
+            'queryParams'   =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
+    }
+
+    public function getCustomerCoupons( Customer $customer )
+    {
+        return $customer->coupons;
+    }
+
+    public function loadCoupons( Request $request, $code )
+    {
+        return $this->customerService->loadCoupon( $code, $request->input( 'customer_id' ) );
     }
 }
 

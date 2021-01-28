@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
+use App\Models\CustomerCoupon;
 use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
 use App\Models\Role;
 use App\Services\CurrencyService;
+use Exception;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Faker\Factory;
@@ -25,7 +28,7 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
-        for( $i = 0; $i < 20; $i++ ) {
+        for( $i = 0; $i < 1; $i++ ) {
             /**
              * @var CurrencyService
              */
@@ -45,6 +48,13 @@ class CreateOrderTest extends TestCase
                 ];
             });
 
+            /**
+             * testing customer balance
+             */
+            $customer                   =   Customer::first();
+            $customerFirstPurchases     =   $customer->purchases_amount;
+            $customerFirstOwed          =   $customer->owed_amount;
+
             $subtotal   =   ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
                 return $currency
                     ->define( $product[ 'unit_price' ] )
@@ -52,9 +62,28 @@ class CreateOrderTest extends TestCase
                     ->getRaw();
             })->sum() );
 
+            $customerCoupon     =   CustomerCoupon::get()->last();
+            $allCoupons         =   [
+                [
+                    'customer_coupon_id'    =>  $customerCoupon->id,
+                    'coupon_id'             =>  $customerCoupon->coupon_id,
+                    'name'                  =>  $customerCoupon->name,
+                    'type'                  =>  'percentage_discount',
+                    'code'                  =>  $customerCoupon->code,
+                    'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
+                    'value'                 =>  ( $customerCoupon->coupon->discount_value * $subtotal ) / 100,
+                    'discount_value'        =>  $customerCoupon->coupon->discount_value,
+                    'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
+                    'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                ]
+            ];
+
+            $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            $discountValue  =   ( $discountRate * $subtotal ) / 100;
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
-                    'customer_id'           =>  1,
+                    'customer_id'           =>  $customer->id,
                     'type'                  =>  [ 'identifier' => 'takeaway' ],
                     'discount_type'         =>  'percentage',
                     'discount_percentage'   =>  $discountRate,
@@ -70,18 +99,27 @@ class CreateOrderTest extends TestCase
                             'country'       =>  'United State Seattle',
                         ]
                     ],
+                    'coupons'               =>  $allCoupons,
                     'subtotal'              =>  $subtotal,
                     'shipping'              =>  $shippingFees,
                     'products'              =>  $products->toArray(),
                     'payments'              =>  [
                         [
                             'identifier'    =>  'cash-payment',
-                            'value'         =>  $subtotal + $shippingFees
+                            'value'         =>  $currency->define( $subtotal )
+                                ->additionateBy( $shippingFees )
+                                ->subtractBy( 
+                                    $currency->define( $discountValue )
+                                        ->additionateBy( $allCoupons[0][ 'value' ] )
+                                        ->getRaw()
+                                ) 
+                                ->getRaw()
                         ]
                     ]
                 ]);
             
-            $response->assertJson([
+            
+                $response->assertJson([
                 'status'    =>  'success'
             ]);
 
@@ -92,8 +130,13 @@ class CreateOrderTest extends TestCase
 
             $netsubtotal    =   $currency
                 ->define( $subtotal )
+                ->subtractBy( $totalCoupons )
                 ->subtractBy( $discount )
                 ->getRaw();
+
+            $total          =   $currency->define( $netsubtotal )
+                ->additionateBy( $shippingFees )
+                ->getRaw() ;
 
             $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
             
@@ -102,16 +145,33 @@ class CreateOrderTest extends TestCase
                 ->getRaw() 
             );
 
-            $response->assertJsonPath( 'data.order.change',     $currency->define( $netsubtotal )
-                ->additionateBy( $shippingFees )
-                ->subtractBy( $currency->define( $netsubtotal )->additionateBy( $shippingFees )->getRaw() )
-                ->additionateBy( $discount )
+            $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
+                ->subtractBy( $subtotal + $shippingFees - ( $discountRate + $allCoupons[0][ 'value' ] ) )
                 ->getRaw() 
             );
 
             $responseData   =   json_decode( $response->getContent(), true );
 
-            if ( $faker->randomElement([true,false,false]) === true ) {
+            /**
+             * test if the order has updated
+             * correctly the customer account
+             */
+            $customer->refresh();
+            $customerSecondPurchases    =   $customer->purchases_amount;
+            $customerSecondOwed         =   $customer->owed_amount;
+
+            if ( $customerFirstPurchases + $total != $customerSecondPurchases ) {
+                throw new Exception( 
+                    sprintf(
+                        __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
+                        $customerFirstPurchases + $total,
+                        $customerSecondPurchases,
+                        $total
+                    )
+                );
+            }
+
+            if ( $faker->randomElement([ true, false, false ]) === true ) {
                 /**
                  * We'll keep original products amounts and quantity
                  * this means we're doing a full refund of price and quantities

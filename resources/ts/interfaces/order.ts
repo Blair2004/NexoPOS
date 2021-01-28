@@ -10,9 +10,7 @@ export interface Order {
     id?: number;
     discount_type: 'flat' | 'percentage';
     discount: number;
-    title: string;
     discount_percentage: number;
-    subtotal: number;
     register_id: number | undefined;
     total: number;
     tendered: number;
@@ -20,13 +18,25 @@ export interface Order {
     change: number;
     total_products: number;
     customer: Customer | undefined;
+    coupons: {
+        code?: string;
+        type?: 'percentage_discount' | 'flat_discount';
+        name: string;
+        customer_coupon_id?: number;
+        limit_usage?: number;
+        minimum_cart_value?: number;
+        maximum_cart_value?: number;
+        customer_id?: number;
+        value?: number;
+        created_at?: string;
+        usage?: number;
+        active?: number;
+        author?: number;
+        discount_value?: number;
+    }[];
+    total_coupons: number;
     type: OrderType,
     customer_id: number;
-    tax_value: number;
-    shipping: number;
-    tax_groups: any[],
-    shipping_rate: number;
-    shipping_type: 'flat' | 'percentage';
     products: OrderProduct[], 
     payments: Payment[],
     note: string;
@@ -39,5 +49,12 @@ export interface Order {
     addresses: {
         shipping: Address,
         billing: Address,
-    }
+    };
+    tax_value: number;
+    tax_groups: any[],
+    shipping: number;
+    shipping_rate: number;
+    shipping_type: 'flat' | 'percentage';
+    subtotal: number;
+    title: string;
 }

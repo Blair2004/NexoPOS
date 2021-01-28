@@ -13,18 +13,25 @@
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
                 <div class="w-full p-2 border-b border-gray-300">
                     <div class="border border-gray-300 rounded overflow-hidden">
-                        <div class="flex">
+                        <div class="flex flex-wrap">
                             <div>
-                                <button @click="openNotePopup()" class="h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none">
+                                <button @click="openNotePopup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none">
                                     <i class="las la-comment"></i>
                                     <span class="ml-1 hidden md:inline-block">Comments</span>
                                 </button>
                             </div>
                             <div>
-                                <button @click="selectTaxGroup()" class="h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                <button @click="selectTaxGroup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
                                     <i class="las la-balance-scale-left"></i>
                                     <span class="ml-1 hidden md:inline-block">Taxes</span>
                                     <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.taxes.length }}</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button @click="selectCoupon()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                    <i class="las la-tags"></i>
+                                    <span class="ml-1 hidden md:inline-block">Coupons</span>
+                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
                         </div>
@@ -214,6 +221,8 @@ import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
 import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
+import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
+import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -239,6 +248,9 @@ export default {
         },
         customerName() {
             return this.order.customer ? this.order.customer.name : 'N/A';
+        },
+        couponName() {
+            return 'Apply Coupon'
         }
     },
     mounted() {
@@ -263,6 +275,16 @@ export default {
     },
     methods: {
         switchTo,
+
+        async selectCoupon() {
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosCouponsLoadPopupVue, { resolve, reject })
+                })
+            } catch( exception ) {
+                
+            }
+        },
 
         async openNotePopup() {
             try {

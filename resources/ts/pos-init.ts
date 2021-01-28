@@ -14,6 +14,7 @@ import { Responsive } from "./libraries/responsive";
 import { Popup } from "./libraries/popup";
 import { OrderProduct } from "./interfaces/order-product";
 import { StatusResponse } from "./status-response";
+import { __ } from "./libraries/lang";
 
 /**
  * these are dynamic component
@@ -43,8 +44,9 @@ export class POS {
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
-    private _isSubmitting       =   false;
-    private defaultOrder        =   (): Order => {
+    private _isSubmitting           =   false;
+    private _processingAddQueue     =   false;
+    private defaultOrder            =   (): Order => {
         const order: Order     =   {
             discount_type: null,
             title: '',
@@ -53,6 +55,8 @@ export class POS {
             discount_percentage: 0,
             subtotal: 0,
             total: 0,
+            coupons: [],
+            total_coupons : 0,
             tendered: 0,
             note: '',
             note_visibility: 'hidden',
@@ -127,6 +131,10 @@ export class POS {
 
     get initialQueue() {
         return this._initialQueue;
+    }
+
+    get processingAddQueue() {
+        return this._processingAddQueue;
     }
 
     reset() {
@@ -228,6 +236,23 @@ export class POS {
                 nsSnackBar.error( exception.message ).subscribe();
             }
         }
+    }
+
+    pushCoupon( coupon ) {
+        const order     =   this.order.getValue();
+
+        order.coupons.forEach( _coupon => {
+            if ( _coupon.code === coupon.code ) {
+                const message   =   __( 'This coupon is already added to the cart' );
+                nsSnackBar.error( message )
+                    .subscribe();
+                throw message;
+            }
+        })
+
+        order.coupons.push( coupon );
+        this.order.next( order );
+        this.refreshCart();
     }
     
     get header() {
@@ -356,32 +381,39 @@ export class POS {
                 });
             }
 
-            nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
-                .subscribe( (tax:any) => {
-                    order.tax_groups    =   order.tax_groups || [];
-                    order.taxes         =   tax.taxes.map( tax => {
-                        return {
-                            tax_id      :   tax.id,
-                            tax_name    :   tax.name,
-                            rate        :   parseFloat( tax.rate ),
-                            tax_value   :   this.getVatValue( order.subtotal, tax.rate, order.tax_type )
-                        };
-                    });
-
-                    /**
-                     * this is set to cache the 
-                     * tax group to avoid subsequent request
-                     * to the server.
-                     */
-                    order.tax_groups[ tax.id ]    =   tax; 
-
-                    return resolve({ 
-                        status: 'success',
-                        data : { tax, order }
+            if( order.tax_group_id !== null ) {
+                nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${order.tax_group_id}` )
+                    .subscribe( (tax:any) => {
+                        order.tax_groups    =   order.tax_groups || [];
+                        order.taxes         =   tax.taxes.map( tax => {
+                            return {
+                                tax_id      :   tax.id,
+                                tax_name    :   tax.name,
+                                rate        :   parseFloat( tax.rate ),
+                                tax_value   :   this.getVatValue( order.subtotal, tax.rate, order.tax_type )
+                            };
+                        });
+    
+                        /**
+                         * this is set to cache the 
+                         * tax group to avoid subsequent request
+                         * to the server.
+                         */
+                        order.tax_groups[ tax.id ]    =   tax; 
+    
+                        return resolve({ 
+                            status: 'success',
+                            data : { tax, order }
+                        })
+                    }, ( error ) => {
+                        return reject( error );
                     })
-                }, ( error ) => {
-                    return reject( error );
+            } else {
+                return reject({
+                    status: 'failed',
+                    message: __( 'No tax group assigned to the order' )
                 })
+            }
         })
     }
 
@@ -602,10 +634,10 @@ export class POS {
              * asynchronously we can load
              * customer meta data
              */
-            if ( customer.group === undefined || customer.group === null ) {
+            if ( customer.group === undefined || customer.group === null ) {                              
                 nsHttpClient.get( `/api/nexopos/v4/customers/${customer.id}/group` )
                     .subscribe( group => {
-                        order.customer.group      =   group;
+                        order.customer.group        =   group;
                         this.order.next( order );
                         resolve( order );
                     }, ( error ) => {
@@ -644,6 +676,25 @@ export class POS {
             order.subtotal  =   0;
         }
 
+        /**
+         * we'll compute here the value
+         * of the coupons
+         */
+        const totalValue    =   order.coupons.map( customerCoupon => {
+            if ( customerCoupon.type === 'percentage_discount' ) {
+                customerCoupon.value    =   ( order.subtotal * customerCoupon.discount_value ) / 100;
+                return customerCoupon.value;
+            } 
+            
+            customerCoupon.value    =   customerCoupon.discount_value;
+            return customerCoupon.value;
+        });
+
+        order.total_coupons         =   0;
+        if ( totalValue.length > 0 ) {
+            order.total_coupons     =   totalValue.reduce( ( before, after ) => before + after );
+        }
+
         if ( order.discount_type === 'percentage' ) {
             order.discount   =   ( order.discount_percentage * order.subtotal ) / 100;
         }
@@ -653,7 +704,7 @@ export class POS {
          * than the subtotal, the discount amount
          * will be set to the order.subtotal
          */
-        if ( order.discount > order.subtotal ) {
+        if ( order.discount > order.subtotal && order.total_coupons === 0 ) {
             order.discount = order.subtotal;
             nsSnackBar.info( 'The discount has been set to the cart subtotal' )
                 .subscribe();
@@ -699,7 +750,7 @@ export class POS {
                 .reduce( ( before, after ) => before + after );
         }
 
-        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount;
+        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;
         order.total_products    =   products.length
 
@@ -765,6 +816,12 @@ export class POS {
             $original           : () => product
         };
 
+        /**
+         * will determin if the 
+         * script is processing the add queue
+         */
+        this._processingAddQueue    =   true;
+
         for( let index in this.addToCartQueue ) {
 
             /**
@@ -789,10 +846,16 @@ export class POS {
                  * been broken, therefore we need to stop the queue.
                  */
                 if ( brokenPromise === false ) {
+                    this._processingAddQueue    =   false;
                     return false;
                 }
             }
         }
+        
+        /**
+         * end proceesing add queue
+         */
+        this._processingAddQueue    =   false;
 
         /**
          * Let's combien the built product

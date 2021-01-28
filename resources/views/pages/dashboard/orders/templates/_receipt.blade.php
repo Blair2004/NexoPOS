@@ -47,6 +47,14 @@
                         </td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->discount ) }}</td>
                     </tr>
+                    @if ( $order->total_coupons > 0 )
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                            <span>{{ __( 'Coupons' ) }}</span>
+                        </td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total_coupons ) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Shipping' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->shipping ) }}</td>

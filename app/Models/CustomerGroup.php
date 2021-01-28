@@ -18,4 +18,9 @@ class CustomerGroup extends NsModel
     {
         return $this->hasMany( Customer::class, 'group_id' );
     }
+
+    public function reward()
+    {
+        return $this->hasOne( RewardSystem::class, 'id', 'reward_system_id' );
+    }
 }

@@ -26,7 +26,9 @@ use App\Models\OrderPayment;
 use App\Models\OrderProduct;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerCoupon;
 use App\Models\Notification;
+use App\Models\OrderCoupon;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
@@ -101,6 +103,12 @@ class OrdersService
          * @param string $paymentStatus
          */
         extract( $this->__checkOrderPayments( $fields, $order, $customer ) );
+
+        /**
+         * We'll now check the attached coupon
+         * and determin wether they can be processed.
+         */
+        $this->__checkAttachedCoupons( $fields[ 'coupons' ] ?? [] );
         
         /**
          * As no payment might be provided
@@ -151,9 +159,18 @@ class OrdersService
          * if the order has a valid payment 
          * method, then we can save that and attach it the ongoing order.
          */
-        if ( in_array( $paymentStatus, [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+        if ( in_array( $paymentStatus, [ 
+            Order::PAYMENT_PAID, 
+            Order::PAYMENT_PARTIALLY, 
+            Order::PAYMENT_UNPAID 
+        ] ) ) {
             $this->__saveOrderPayments( $order, $payments, $customer );
         }
+
+        /**
+         * save order coupons
+         */
+        $this->__saveOrderCoupons( $order, $fields[ 'coupons' ] ?? [] );
 
         /**
          * @var Order $order
@@ -182,6 +199,79 @@ class OrdersService
             'message'   =>  __( 'The order has been placed.' ),
             'data'      =>  compact( 'order' )
         ];
+    }
+
+    public function __checkAttachedCoupons( $coupons )
+    {
+        collect( $coupons )->each( function( $coupon ) {
+            $customerCoupon     =   CustomerCoupon::find( $coupon[ 'customer_coupon_id' ] );
+
+            if ( ! $customerCoupon instanceof CustomerCoupon ) {
+                throw new NotFoundException( sprintf( __( 'Unable to find a reference to the attached coupon : %s' ), $coupon[ 'name' ] ?? __( 'N/A' ) ) );
+            }
+
+            if ( ! $customerCoupon->active ) {
+                throw new NotFoundException( sprintf( __( 'The provider coupon "%s", can no longer be used' ), $customerCoupon->name ) );
+            }
+        });
+    }
+
+    private function __computeOrderCoupons( $fields, $value )
+    {
+        if ( isset( $fields[ 'coupons' ] ) ) {
+            return collect( $fields[ 'coupons' ] )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+        }
+
+        return 0;
+    }
+
+    public function __saveOrderCoupons( Order $order, $coupons )
+    {
+        $savedCoupons       =   [];
+
+        $order->total_coupons   =   0;
+
+        foreach( $coupons as $coupon ) {
+            $existingCoupon     =   OrderCoupon::find( $coupon[ 'id' ] ?? null );
+
+            if ( ! $existingCoupon instanceof OrderCoupon ) {
+                $existingCoupon                         =   new OrderCoupon;
+                $existingCoupon->order_id               =   $order->id;
+                $existingCoupon->customer_coupon_id     =   $coupon[ 'customer_coupon_id' ];
+                $existingCoupon->minimum_cart_value     =   $coupon[ 'minimum_cart_value' ] ?: 0;
+                $existingCoupon->maximum_cart_value     =   $coupon[ 'maximum_cart_value' ] ?: 0;
+                $existingCoupon->name                   =   $coupon[ 'name' ] ?: 0;
+                $existingCoupon->type                   =   $coupon[ 'type' ] ?: 0;
+                $existingCoupon->limit_usage            =   $coupon[ 'limit_usage' ] ?: 0;
+                $existingCoupon->code                   =   $coupon[ 'code' ];
+                $existingCoupon->author                 =   Auth::id();
+                $existingCoupon->discount_value         =   $coupon[ 'discount_value' ] ?: 0;
+            }
+
+            $existingCoupon->value                      =   $coupon[ 'value' ] ?: ( 
+                $coupon[ 'discount_type' ] === 'percentage_discount' ? 
+                    $this->computeDiscountValues( $coupon[ 'discount_value' ], $order->subtotal ) : 
+                    $coupon[ 'discount_value' ]
+            );
+
+            /**
+             * that should compute
+             * the coupons value automatically
+             */
+            $order->total_coupons   +=  $existingCoupon->value;
+
+            $existingCoupon->save();
+
+            $savedCoupons[]     =   $existingCoupon->id;
+        }
+
+        /**
+         * Every coupon that is not processed
+         * should be deleted.
+         */
+        OrderCoupon::where( 'order_id', $order->id )
+            ->whereNotIn( 'id', $savedCoupons )
+            ->delete();
     }
 
     /**
@@ -343,9 +433,8 @@ class OrdersService
      * get the current shipping
      * feels
      * @param array fields
-     * @return float;
      */
-    private function __getShippingFee($fields)
+    private function __getShippingFee($fields): float
     {
         return $this->currencyService->getRaw( $fields['shipping'] ?? 0 );
     }
@@ -481,9 +570,7 @@ class OrdersService
      * @return array
      */
     public function makeOrderSinglePayment( $payment, Order $order )
-    {
-        event( new OrderBeforePaymentCreatedEvent( $payment, $order->customer ) );
-        
+    {        
         $orderPayment   =   $this->__saveOrderSinglePayment( $payment, $order );
         
         /**
@@ -493,8 +580,6 @@ class OrdersService
         $order->refresh();
         
         $this->refreshOrder( $order );
-
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
         return [
             'status'    =>  'success',
@@ -512,6 +597,8 @@ class OrdersService
      */
     private function __saveOrderSinglePayment( $payment, Order $order ): OrderPayment
     {
+        event( new OrderBeforePaymentCreatedEvent( $payment, $order->customer ) );
+
         $orderPayment       =  isset( $payment[ 'id' ] ) ? OrderPayment::find( $payment[ 'id' ] ) : false;
 
         if ( ! $orderPayment instanceof OrderPayment ) {
@@ -524,8 +611,6 @@ class OrdersService
         $orderPayment->author       =   Auth::id();
         $orderPayment->save();
 
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
-
         /**
          * When the customer is making some payment
          * we store it on his history.
@@ -537,6 +622,8 @@ class OrdersService
                 $payment[ 'value' ] 
             );
         }
+
+        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
         return $orderPayment;
     }
@@ -587,9 +674,16 @@ class OrdersService
         
         $totalPayments  =   0;
 
-        $total          =   $this->currencyService->getRaw( collect( $fields[ 'products' ] )->map(function ($product) {
+        $subtotal       =   collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum() + $this->__getShippingFee($fields) ) - floatval( $fields[ 'discount' ] ?? 0 );
+        })->sum();
+
+        $total          =   $this->currencyService->define( 
+                $subtotal + $this->__getShippingFee($fields) 
+            )
+            ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
+            ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
+            ->getRaw();
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
@@ -676,6 +770,7 @@ class OrdersService
          */
         $order->total           =   $this->currencyService->define( $order->subtotal )
             ->additionateBy( $order->shipping )
+            ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->discount )
             ->get();
 
@@ -694,6 +789,7 @@ class OrdersService
          */
         $order->net_total     =   $this->currencyService->define( $order->subtotal )
             ->subtractBy( $order->discount )
+            ->subtractBy( $order->total_coupons )
             ->subtractBy( $taxes )
             ->get();
 
@@ -782,9 +878,15 @@ class OrdersService
                 ->additionateBy($orderProduct->total_price)
                 ->get();
 
-            $taxes  =   $this->currencyService->define($taxes)
-                ->additionateBy($product[ 'tax_value' ])
-                ->get();
+            /**
+             * if the settins allow computing product taxes
+             * we the increment the taxes value accordingly
+             */
+            if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'products_vat', 'products_flat_vat', 'products_variable_vat' ] ) ) {
+                $taxes  =   $this->currencyService->define($taxes)
+                    ->additionateBy($product[ 'tax_value' ])
+                    ->get();
+            }
 
             if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -806,7 +908,7 @@ class OrdersService
             });
             
             $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
-            
+
             $orderProduct           =   $this->__buildOrderProduct(
                 $orderProduct,
                 $productUnitQuantity,
@@ -1043,6 +1145,7 @@ class OrdersService
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
+        $order->total_coupons           =   $fields['total_coupons'] ?? 0;
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
@@ -1164,7 +1267,7 @@ class OrdersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The order has been successfully refunded.' ),
-            'data'      =>  compact( 'results' )
+            'data'      =>  compact( 'results', 'order', 'orderRefund' )
         ];
     }
 
@@ -1312,7 +1415,11 @@ class OrdersService
      */
     public function computeDiscountValues( $rate, $value )
     {
-        return ( $value * $rate ) / 100;
+        if ( $rate > 0 ) {
+            return ( $value * $rate ) / 100;
+        }
+
+        return 0;
     }
 
     /**
@@ -1360,6 +1467,7 @@ class OrdersService
                 ->with( 'shipping_address' )
                 ->with( 'billing_address' )
                 ->with( 'taxes' )   
+                ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
                 ->with( 'customer' )
@@ -1784,5 +1892,33 @@ class OrdersService
             ->get();
 
         return $products;
+    }
+
+    public function trackOrderCoupons( Order $order )
+    {
+        $order->coupons->each( function( OrderCoupon $orderCoupon ) {
+            $customerCoupon     =   CustomerCoupon::find( $orderCoupon->customer_coupon_id );
+            
+            if ( ! $customerCoupon instanceof CustomerCoupon ) {
+                throw new NotFoundException( sprintf( 
+                    __( 'Unable to find a reference of the provided coupon : %s' ),
+                    $orderCoupon->name
+                ) );
+            }
+
+            /**
+             * if a limit_usage is set to 0, that means there is no limit.
+             */
+            if ( $customerCoupon->limit_usage > 0 ) {
+                if ( $customerCoupon->usage + 1 < $customerCoupon->limit_usage ) {
+                    $customerCoupon->usage      +=  1;
+                    $customerCoupon->save();
+                } else if ( $customerCoupon->usage + 1 === $customerCoupon->limit_usage ) {
+                    $customerCoupon->usage      +=  1;
+                    $customerCoupon->active     =   false;
+                    $customerCoupon->save();
+                }
+            }
+        });
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
 use App\Models\Role;
 use App\Services\CurrencyService;
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -26,7 +28,14 @@ class OrderRefundTest extends TestCase
             ['*']
         );
 
+        /**
+         * @var CurrencyService
+         */
         $currency       =   app()->make( CurrencyService::class );
+        
+        $firstFetchCustomer     =   Customer::first();        
+        $firstFetchCustomer->save();
+
         $product        =   Product::withStockEnabled()->with( 'unit_quantities' )->first();
         $shippingFees   =   150;
         $discountRate   =   3.5;
@@ -40,10 +49,11 @@ class OrderRefundTest extends TestCase
         ];
 
         $subtotal   =   collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
+        $netTotal   =   $subtotal   +   $shippingFees;
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  1,
+                'customer_id'           =>  $firstFetchCustomer->id,
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
                 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  $discountRate,
@@ -65,16 +75,31 @@ class OrderRefundTest extends TestCase
                 'payments'              =>  [
                     [
                         'identifier'    =>  OrderPayment::PAYMENT_CASH,
-                        'value'         =>  $subtotal
+                        'value'         =>  $netTotal
                     ]
                 ]
             ]);
         
-        $response->assertJson([
+        
+            $response->assertJson([
             'status'    =>  'success'
         ]);
 
-        $responseData   =   json_decode( $response->getContent(), true );
+        $responseData           =   json_decode( $response->getContent(), true );
+        
+        $secondFetchCustomer    =   $firstFetchCustomer->fresh();
+
+        if ( $currency->define( $secondFetchCustomer->purchases_amount )
+            ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
+            ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
+            throw new Exception( 
+                sprintf(
+                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
+                    $secondFetchCustomer->purchases_amount - ( float ) $responseData[ 'data' ][ 'order' ][ 'tendered' ],
+                    $firstFetchCustomer->purchases_amount
+                )
+            );
+        }
 
         /**
          * We'll keep original products amounts and quantity
@@ -92,6 +117,24 @@ class OrderRefundTest extends TestCase
                 'total'     =>  $responseData[ 'data' ][ 'order' ][ 'total' ],
                 'products'  =>  $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
+
+        $responseData           =   json_decode( $response->getContent(), true );
+
+        $thirdFetchCustomer      =   $secondFetchCustomer->fresh();
+
+        if ( 
+            $currency->define( $thirdFetchCustomer->purchases_amount )
+                ->additionateBy( $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] )
+                ->getRaw() !== $currency->getRaw( $secondFetchCustomer->purchases_amount ) ) {
+
+            throw new Exception( 
+                sprintf(
+                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
+                    $secondFetchCustomer->purchases_amount,
+                    $thirdFetchCustomer->purchases_amount + ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ]
+                )
+            );
+        }
         
         $response->assertJson([
             'status'    =>  'success'
