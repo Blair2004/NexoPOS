@@ -30,6 +30,7 @@ use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\ReportService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -203,6 +204,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(191);
+        
         config([ 'nexopos.orders.statuses'      => [
             Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
             Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),

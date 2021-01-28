@@ -159,6 +159,7 @@ class OrdersController extends DashboardController
                 'ns_pos_vat'                            =>  ns()->option->get( 'ns_pos_vat', 'disabled' ),
                 'ns_pos_tax_group'                      =>  ns()->option->get( 'ns_pos_tax_group', false ),
                 'ns_pos_tax_type'                       =>  ns()->option->get( 'ns_pos_tax_type', false ),
+                'ns_pos_show_quantity'                  =>  ns()->option->get( 'ns_pos_show_quantity', 'no' ) === 'no' ? false : true,
             ],
             'urls'              =>  [
                 'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),

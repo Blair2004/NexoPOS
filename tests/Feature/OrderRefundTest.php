@@ -28,6 +28,9 @@ class OrderRefundTest extends TestCase
             ['*']
         );
 
+        /**
+         * @var CurrencyService
+         */
         $currency       =   app()->make( CurrencyService::class );
         
         $firstFetchCustomer     =   Customer::first();        
@@ -86,7 +89,9 @@ class OrderRefundTest extends TestCase
         
         $secondFetchCustomer    =   $firstFetchCustomer->fresh();
 
-        if ( $secondFetchCustomer->purchases_amount - ( float ) $responseData[ 'data' ][ 'order' ][ 'tendered' ] != $firstFetchCustomer->purchases_amount ) {
+        if ( $currency->define( $secondFetchCustomer->purchases_amount )
+            ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
+            ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
             throw new Exception( 
                 sprintf(
                     __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
@@ -117,7 +122,11 @@ class OrderRefundTest extends TestCase
 
         $thirdFetchCustomer      =   $secondFetchCustomer->fresh();
 
-        if ( $thirdFetchCustomer->purchases_amount + $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] != $secondFetchCustomer->purchases_amount ) {
+        if ( 
+            $currency->define( $thirdFetchCustomer->purchases_amount )
+                ->additionateBy( $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] )
+                ->getRaw() !== $currency->getRaw( $secondFetchCustomer->purchases_amount ) ) {
+
             throw new Exception( 
                 sprintf(
                     __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),

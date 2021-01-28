@@ -216,6 +216,15 @@ class OrdersService
         });
     }
 
+    private function __computeOrderCoupons( $fields, $value )
+    {
+        if ( isset( $fields[ 'coupons' ] ) ) {
+            return collect( $fields[ 'coupons' ] )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+        }
+
+        return 0;
+    }
+
     public function __saveOrderCoupons( Order $order, $coupons )
     {
         $savedCoupons       =   [];
@@ -665,9 +674,16 @@ class OrdersService
         
         $totalPayments  =   0;
 
-        $total          =   $this->currencyService->getRaw( collect( $fields[ 'products' ] )->map(function ($product) {
+        $subtotal       =   collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum() + $this->__getShippingFee($fields) ) - floatval( $fields[ 'discount' ] ?? 0 );
+        })->sum();
+
+        $total          =   $this->currencyService->define( 
+                $subtotal + $this->__getShippingFee($fields) 
+            )
+            ->subtractBy( ( $fields[ 'discount' ] ?? $this->computeDiscountValues( $fields[ 'discount_percentage' ] ?? 0, $subtotal ) ) )
+            ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
+            ->getRaw();
 
         $allowedPaymentsGateways    =   config('nexopos.pos.payments');
 
@@ -862,9 +878,15 @@ class OrdersService
                 ->additionateBy($orderProduct->total_price)
                 ->get();
 
-            $taxes  =   $this->currencyService->define($taxes)
-                ->additionateBy($product[ 'tax_value' ])
-                ->get();
+            /**
+             * if the settins allow computing product taxes
+             * we the increment the taxes value accordingly
+             */
+            if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'products_vat', 'products_flat_vat', 'products_variable_vat' ] ) ) {
+                $taxes  =   $this->currencyService->define($taxes)
+                    ->additionateBy($product[ 'tax_value' ])
+                    ->get();
+            }
 
             if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -886,7 +908,7 @@ class OrdersService
             });
             
             $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
-            
+
             $orderProduct           =   $this->__buildOrderProduct(
                 $orderProduct,
                 $productUnitQuantity,
@@ -1393,7 +1415,11 @@ class OrdersService
      */
     public function computeDiscountValues( $rate, $value )
     {
-        return ( $value * $rate ) / 100;
+        if ( $rate > 0 ) {
+            return ( $value * $rate ) / 100;
+        }
+
+        return 0;
     }
 
     /**

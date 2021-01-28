@@ -78,6 +78,9 @@ class CreateOrderTest extends TestCase
                 ]
             ];
 
+            $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            $discountValue  =   ( $discountRate * $subtotal ) / 100;
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
                     'customer_id'           =>  $customer->id,
@@ -103,7 +106,14 @@ class CreateOrderTest extends TestCase
                     'payments'              =>  [
                         [
                             'identifier'    =>  'cash-payment',
-                            'value'         =>  $subtotal + $shippingFees
+                            'value'         =>  $currency->define( $subtotal )
+                                ->additionateBy( $shippingFees )
+                                ->subtractBy( 
+                                    $currency->define( $discountValue )
+                                        ->additionateBy( $allCoupons[0][ 'value' ] )
+                                        ->getRaw()
+                                ) 
+                                ->getRaw()
                         ]
                     ]
                 ]);
@@ -113,8 +123,6 @@ class CreateOrderTest extends TestCase
                 'status'    =>  'success'
             ]);
 
-            $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
-
             $discount       =   $currency->define( $discountRate )
                 ->multipliedBy( $subtotal )
                 ->divideBy( 100 )
@@ -122,13 +130,12 @@ class CreateOrderTest extends TestCase
 
             $netsubtotal    =   $currency
                 ->define( $subtotal )
-                ->additionateBy( $totalCoupons )
+                ->subtractBy( $totalCoupons )
                 ->subtractBy( $discount )
                 ->getRaw();
 
             $total          =   $currency->define( $netsubtotal )
                 ->additionateBy( $shippingFees )
-                ->additionateBy( $totalCoupons )
                 ->getRaw() ;
 
             $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
@@ -138,10 +145,8 @@ class CreateOrderTest extends TestCase
                 ->getRaw() 
             );
 
-            $response->assertJsonPath( 'data.order.change',     $currency->define( $netsubtotal )
-                ->additionateBy( $shippingFees )
-                ->subtractBy( $currency->define( $netsubtotal )->additionateBy( $shippingFees )->getRaw() )
-                ->additionateBy( $discount )
+            $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
+                ->subtractBy( $subtotal + $shippingFees - ( $discountRate + $allCoupons[0][ 'value' ] ) )
                 ->getRaw() 
             );
 
@@ -155,7 +160,7 @@ class CreateOrderTest extends TestCase
             $customerSecondPurchases    =   $customer->purchases_amount;
             $customerSecondOwed         =   $customer->owed_amount;
 
-            if ( $customerFirstPurchases + $responseData[ 'data' ][ 'order' ][ 'tendered' ] != $customerSecondPurchases ) {
+            if ( $customerFirstPurchases + $total != $customerSecondPurchases ) {
                 throw new Exception( 
                     sprintf(
                         __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
@@ -208,8 +213,6 @@ class CreateOrderTest extends TestCase
                     'status'    =>  'success'
                 ]);
             }
-
-            $response->dump();
         }
     }
 }

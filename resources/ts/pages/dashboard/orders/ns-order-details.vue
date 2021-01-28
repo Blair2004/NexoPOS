@@ -34,11 +34,13 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-yellow-400 text-gray-700">
+                    <div class="p-2 flex justify-between items-start bg-red-400 text-white">
                         <div>
-                            <h4 class="text-semibold ">Taxes</h4>
+                            <h4 class="text-semibold">
+                                <span>Coupons</span>
+                            </h4>
                         </div>
-                        <div class="font-semibold">{{ order.tax_value | currency }}</div>
+                        <div class="font-semibold">{{ order.total_coupons | currency }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -50,11 +52,11 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-teal-500 text-white">
+                    <div class="p-2 flex justify-between items-start bg-yellow-400 text-gray-700">
                         <div>
-                            <h4 class="text-semibold">Paid</h4>
+                            <h4 class="text-semibold ">Taxes</h4>
                         </div>
-                        <div class="font-semibold">{{ order.tendered | currency }}</div>
+                        <div class="font-semibold">{{ order.tax_value | currency }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -63,6 +65,14 @@
                             <h4 class="text-semibold">Change</h4>
                         </div>
                         <div class="font-semibold">{{ order.change | currency }}</div>
+                    </div>
+                </div>
+                <div class="mb-2 w-full md:w-1/2 px-4">
+                    <div class="p-2 flex justify-between items-start bg-teal-500 text-white">
+                        <div>
+                            <h4 class="text-semibold">Paid</h4>
+                        </div>
+                        <div class="font-semibold">{{ order.tendered | currency }}</div>
                     </div>
                 </div>
             </div>

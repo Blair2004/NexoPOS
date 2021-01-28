@@ -111,17 +111,21 @@
                                     <span>{{ order.expected_payment_date }}</span>
                                 </div>
                             </td>
-                            <td class="p-2 border border-gray-200 text-center text-gray-700">{{ __( 'Coupons' ) }}</td>
-                            <td class="p-2 border border-gray-200 text-center text-gray-700">{{ order.total_coupons | currency }}</td>
+                            <td class="p-2 border border-gray-200 text-center text-gray-700" colspan="2"></td>
                             <td class="p-2 border border-gray-200 text-gray-700 text-left">{{ __( 'Sub Total' ) }}</td>
                             <td class="p-2 border border-gray-200 text-right text-gray-700">{{ order.subtotal | currency }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="order.discount > 0">
                             <td class="p-2 border border-gray-200 text-center text-gray-700" colspan="4"></td>
                             <td class="p-2 border border-gray-200 text-gray-700 text-left">{{ __( 'Discount' ) }}</td>
-                            <td class="p-2 border border-gray-200 text-right text-gray-700">{{ order.discount | currency }}</td>
+                            <td class="p-2 border border-gray-200 text-right text-gray-700">{{ - order.discount | currency }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="order.total_coupons > 0">
+                            <td class="p-2 border border-gray-200 text-center text-gray-700" colspan="4"></td>
+                            <td class="p-2 border border-gray-200 text-left text-gray-700">{{ __( 'Coupons' ) }}</td>
+                            <td class="p-2 border border-gray-200 text-right text-gray-700">{{ - order.total_coupons | currency }}</td>
+                        </tr>
+                        <tr v-if="order.shipping > 0">
                             <td class="p-2 border border-gray-200 text-center text-gray-700" colspan="4"></td>
                             <td class="p-2 border border-gray-200 text-gray-700 text-left">{{ __( 'Shipping' ) }}</td>
                             <td class="p-2 border border-gray-200 text-right text-gray-700">{{ order.shipping | currency }}</td>

@@ -44,8 +44,9 @@ export class POS {
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
-    private _isSubmitting       =   false;
-    private defaultOrder        =   (): Order => {
+    private _isSubmitting           =   false;
+    private _processingAddQueue     =   false;
+    private defaultOrder            =   (): Order => {
         const order: Order     =   {
             discount_type: null,
             title: '',
@@ -130,6 +131,10 @@ export class POS {
 
     get initialQueue() {
         return this._initialQueue;
+    }
+
+    get processingAddQueue() {
+        return this._processingAddQueue;
     }
 
     reset() {
@@ -811,6 +816,12 @@ export class POS {
             $original           : () => product
         };
 
+        /**
+         * will determin if the 
+         * script is processing the add queue
+         */
+        this._processingAddQueue    =   true;
+
         for( let index in this.addToCartQueue ) {
 
             /**
@@ -835,10 +846,16 @@ export class POS {
                  * been broken, therefore we need to stop the queue.
                  */
                 if ( brokenPromise === false ) {
+                    this._processingAddQueue    =   false;
                     return false;
                 }
             }
         }
+        
+        /**
+         * end proceesing add queue
+         */
+        this._processingAddQueue    =   false;
 
         /**
          * Let's combien the built product
