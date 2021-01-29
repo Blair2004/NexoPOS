@@ -26,7 +26,7 @@ jobs:
                     password: ${{ secrets.GRANTPASSWORD }}
                     port: ${{ secrets.GRANTSPORT }}
                     script: 
-                        cd /var/www/html/${{ secrets.GRANTSPATH }}/ && git pull && composer update;
+                        cd /var/www/html/${{ secrets.GRANTSPATH }}/ && git pull && composer update && cd modules/NsMultiStore && git pull;
             -   name: Deploy To AHD
                 uses: appleboy/ssh-action@master
                 with:
@@ -35,4 +35,4 @@ jobs:
                     password: ${{ secrets.GRANTPASSWORD }}
                     port: ${{ secrets.GRANTSPORT }}
                     script:
-                        cd /var/www/html/${{ secrets.AHDPATH }}/ && git pull && composer update;
+                        cd /var/www/html/${{ secrets.AHDPATH }}/ && git pull && composer update && cd modules/NsMultiStore && git pull;
