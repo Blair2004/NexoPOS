@@ -1473,15 +1473,12 @@ class OrdersService
                 ->with( 'customer' )
                 ->first();
 
-            if (!$order instanceof Order) {
-                throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  sprintf(
-                        __('Unable to find the requested order using "%s" as pivot and "%s" as identifier'),
-                        $as,
-                        $identifier
-                    )
-                ]);
+            if ( ! $order instanceof Order ) {
+                throw new NotFoundException( sprintf(
+                    __('Unable to find the requested order using "%s" as pivot and "%s" as identifier'),
+                    $as,
+                    $identifier
+                ) );
             }
 
             $order->products;

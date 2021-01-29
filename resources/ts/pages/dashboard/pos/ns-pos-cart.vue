@@ -34,6 +34,7 @@
                                     <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
+                            <div class="flex-auto"><button class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center" disabled></button></div>
                         </div>
                     </div>
                 </div>

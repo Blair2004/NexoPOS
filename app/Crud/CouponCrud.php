@@ -258,13 +258,26 @@ class CouponCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+        $inputs     =   collect( $inputs )->map( function( $field, $key ) {
             if ( ( in_array( $key, [ 
                 'minimum_cart_value',
                 'maximum_cart_value',
                 'assigned',
                 'limit_usage',
             ]) && empty( $field ) ) || is_array( $field ) ) {
+                return ! is_array( $field ) ? ( $field ?: 0 ) : $field;
+            }
+
+            return $field;
+        });
+
+        $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
+            if ( ( in_array( $key, [ 
+                'minimum_cart_value',
+                'maximum_cart_value',
+                'assigned',
+                'limit_usage',
+            ]) && empty( $field ) && $field === null ) || is_array( $field ) ) {
                 return false;
             }
             return true;
