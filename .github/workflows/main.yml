@@ -18,3 +18,21 @@ jobs:
                     port: ${{ secrets.PORT }}
                     script: 
                         cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update;
+            -   name: Deploy To Grants
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.GRANTSHOST }}
+                    username: ${{ secrets.GRANTSUSER }}
+                    password: ${{ secrets.GRANTPASSWORD }}
+                    port: ${{ secrets.GRANTSPORT }}
+                    script: 
+                        cd /var/www/html/${{ secrets.GRANTSPATH }}/ && git pull && composer update;
+            -   name: Deploy To AHD
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.GRANTSHOST }}
+                    username: ${{ secrets.GRANTSUSER }}
+                    password: ${{ secrets.GRANTPASSWORD }}
+                    port: ${{ secrets.GRANTSPORT }}
+                    script:
+                        cd /var/www/html/${{ secrets.AHDPATH }}/ && git pull && composer update;
