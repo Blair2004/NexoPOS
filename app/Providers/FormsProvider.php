@@ -79,7 +79,10 @@ class FormsProvider extends ServiceProvider
                 break;            
                 case 'ns.cash-registers-cashout':
                     return new CashRegisterCashoutFields;
-                break;            
+                break;     
+                default:
+                    return $class;
+                break;       
             }
         }, 10, 2 );
     }

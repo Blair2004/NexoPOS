@@ -31,7 +31,7 @@
                             <span v-if="! updatingModule">Updating...</span>
                             <span class="mr-1" v-if="! updatingModule">{{ index }}/{{ files.length }}</span>
                             <span v-if="updatingModule">Updating Modules...</span>
-                            <span class="mr-1" v-if="updatingModule">{{ index }}/{{ modules.length }}</span>
+                            <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
                         </button>
                         <a :href="returnLink" v-if="! updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-undo"></i>
@@ -59,6 +59,11 @@ export default {
             error: false,
             lastErrorMessage: '',
             index: 0,
+        }
+    },
+    computed: {
+        totalModules() {
+            return Object.values( this.modules ).length;
         }
     },
     mounted() {
@@ -97,12 +102,15 @@ export default {
                 }
             }
 
+            this.index                  =   0;
             if ( Object.values( this.modules ).length > 0 ) {
                 this.updatingModule     =   true;
+                let iterator            =   0;
 
                 for( let index in this.modules ) {
                     try {
-                        this.index      =   ( parseInt( index ) + 1 );
+                        iterator        +=  1;
+                        this.index      =   iterator;
                         const response  =   await new Promise( ( resolve, reject ) => {
                             nsHttpClient.post( '/api/nexopos/v4/update', {
                                 module: this.modules[ index ]
