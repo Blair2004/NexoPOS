@@ -40,11 +40,12 @@ class ProductCategoryService
      */
     public function create( $data )
     {
-        $category               =   new ProductCategory;
-        $category->author       =   Auth::id();
-        $category->description  =   $data[ 'description' ] ?? '';
-        $category->name         =   $data[ 'name' ];
-        $category->parent_id    =   $data[ 'parent_id' ] ?? null;
+        $category                   =   new ProductCategory;
+        $category->author           =   Auth::id();
+        $category->description      =   $data[ 'description' ] ?? '';
+        $category->name             =   $data[ 'name' ];
+        $category->parent_id        =   $data[ 'parent_id' ] ?? null;
+        $category->displays_on_pos  =   $data[ 'displays_on_pos' ] ?? true;
         $category->save();
 
         return [
