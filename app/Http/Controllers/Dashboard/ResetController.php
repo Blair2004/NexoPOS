@@ -36,7 +36,6 @@ class ResetController extends DashboardController
 
             'nexopos_medias',
             'nexopos_notifications',
-            'nexopos_options',
             
             'nexopos_orders',
             'nexopos_orders_addresses',

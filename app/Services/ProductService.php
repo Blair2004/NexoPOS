@@ -112,16 +112,16 @@ class ProductService
 
     /**
      * Get Product using sku
-     * @param string barcode
+     * @param string sku
      * @return Product|false
      */
-    public function getProductUsingSKU( $barcode ) 
+    public function getProductUsingSKU( $sku ) 
     {
         /**
          * checks if a similar product already
          * exists and throw an error if it's the case
          */
-        $product    =   Product::findUsingSKU( $barcode )
+        $product    =   Product::findUsingSKU( $sku )
             ->first();
 
         if ( $product instanceof Product ) {
@@ -134,12 +134,12 @@ class ProductService
     /**
      * retrive a product using a SKU or fail
      * if the product is not found
-     * @param string barcoe
+     * @param string sku
      * @return Product
      */
-    public function getProductUsingSKUOrFail( $barcode )
+    public function getProductUsingSKUOrFail( $sku )
     {
-        $product    =   $this->getProductUsingSKU( $barcode );
+        $product    =   $this->getProductUsingSKU( $sku );
 
         if ( ! $product instanceof Product ) {
             throw new Exception( __( 'Unable to find the requested product using the provided SKU.' ) );

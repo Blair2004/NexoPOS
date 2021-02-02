@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { nsButton, nsCheckbox, nsCkeditor, nsCloseButton, nsCrud, nsCrudForm, nsDate, nsDatepicker, nsField, nsInput, nsLink, nsMediaInput, nsMenu, nsMultiselect, nsSelect, nsSpinner, nsSubmenu, nsSwitch, nsTableRow, nsTabs, nsTabsItem, nsTextarea } from './components/components';
+import { nsButton, nsCheckbox, nsCkeditor, nsIconButton, nsCloseButton, nsCrud, nsCrudForm, nsDate, nsDatepicker, nsField, nsInput, nsLink, nsMediaInput, nsMenu, nsMultiselect, nsSelect, nsSpinner, nsSubmenu, nsSwitch, nsTableRow, nsTabs, nsTabsItem, nsTextarea } from './components/components';
 import * as baseComponents from './components/components';
 
 
@@ -72,6 +72,7 @@ const nsDashboardAside  =   new Vue({
         nsCheckbox, 
         nsCkeditor,
         nsCloseButton,
+        nsIconButton,
         nsCrud,
         nsCrudForm,
         nsDate,
@@ -110,6 +111,7 @@ const nsDashboardAside  =   new Vue({
         nsCheckbox, 
         nsCkeditor,
         nsCloseButton,
+        nsIconButton,
         nsCrud,
         nsCrudForm,
         nsDate,
@@ -157,6 +159,7 @@ const nsDashboardAside  =   new Vue({
         nsCheckbox, 
         nsCkeditor,
         nsCloseButton,
+        nsIconButton,
         nsCrud,
         nsCrudForm,
         nsDate,

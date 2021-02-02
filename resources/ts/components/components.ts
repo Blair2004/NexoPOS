@@ -16,8 +16,10 @@ import { nsSwitch }             from  './ns-switch';
 import { nsDate }               from  './ns-date';
 import { nsMediaInput }         from  './ns-media-input';
 import { nsCloseButton }        from  './ns-close-button';
+import { nsIconButton }         from  './ns-icon-button';
 import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
+
 const nsDatepicker              =   require( './ns-datepicker.vue' );
 
 export { nsMenu };
@@ -38,6 +40,7 @@ export { nsSwitch };
 export { nsDate };
 export { nsMediaInput };
 export { nsCloseButton };
+export { nsIconButton };
 export { nsCkeditor };
 export { nsTabs, nsTabsItem };
 export { nsDatepicker }

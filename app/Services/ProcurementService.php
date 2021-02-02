@@ -385,6 +385,7 @@ class ProcurementService
             $procurementProduct->gross_purchase_price       =   $procuredProduct[ 'gross_purchase_price' ];
             $procurementProduct->net_purchase_price         =   $procuredProduct[ 'net_purchase_price' ];
             $procurementProduct->procurement_id             =   $procurement->id;
+            $procurementProduct->barcode                    =   $procuredProduct[ 'barcode' ] ?? $product->barcode;
             $procurementProduct->product_id                 =   $procuredProduct[ 'product_id' ];
             $procurementProduct->purchase_price             =   $procuredProduct[ 'purchase_price' ];
             $procurementProduct->quantity                   =   $procuredProduct[ 'quantity' ];
