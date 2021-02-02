@@ -152,16 +152,6 @@ class Setup
         $this->options->set( 'allow_registration', false );
         $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
 
-        /**
-         * Clear Cache
-         */
-        // Artisan::call( 'cache:clear' );
-        // Artisan::call( 'config:clear' );
-        // Artisan::call( 'key:generate' );
-
-        // Cookie::queue( Cookie::forget( env( 'SESSION_COOKIE' ) ) );
-        // Cookie::queue( Cookie::forget( 'XSRF-TOKEN' ) );
-
         return [
             'status'    =>  'success',
             'message'   =>  __( 'NexoPOS has been successfuly installed.' )

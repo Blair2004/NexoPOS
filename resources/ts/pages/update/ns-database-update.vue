@@ -29,7 +29,9 @@
                         <button v-if="updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-sync animate-spin"></i>
                             <span v-if="! updatingModule">Updating...</span>
+                            <span class="mr-1" v-if="! updatingModule">{{ index }}/{{ files.length }}</span>
                             <span v-if="updatingModule">Updating Modules...</span>
+                            <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
                         </button>
                         <a :href="returnLink" v-if="! updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-undo"></i>
@@ -42,6 +44,7 @@
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang';
 import { nsHttpClient, nsSnackBar } from '../../../ts/bootstrap';
 export default {
     name: 'ns-database-update',
@@ -55,6 +58,12 @@ export default {
             updatingModule: false,
             error: false,
             lastErrorMessage: '',
+            index: 0,
+        }
+    },
+    computed: {
+        totalModules() {
+            return Object.values( this.modules ).length;
         }
     },
     mounted() {
@@ -74,6 +83,7 @@ export default {
 
             for( let index in this.files ) {
                 try {
+                    this.index      =   ( parseInt( index ) + 1 );
                     const response  =   await new Promise( ( resolve, reject ) => {
                         nsHttpClient.post( '/api/nexopos/v4/update', {
                             file: this.files[ index ]
@@ -86,17 +96,21 @@ export default {
                 } catch( exception ) {
                     this.updating           =   false;
                     this.error              =   true;
-                    this.lastErrorMessage   =   exception.message;
+                    this.lastErrorMessage   =   exception.message || __( 'An unexpected error occured' );
 
                     return nsSnackBar.error( exception.message ).subscribe();
                 }
             }
 
+            this.index                  =   0;
             if ( Object.values( this.modules ).length > 0 ) {
                 this.updatingModule     =   true;
+                let iterator            =   0;
 
                 for( let index in this.modules ) {
                     try {
+                        iterator        +=  1;
+                        this.index      =   iterator;
                         const response  =   await new Promise( ( resolve, reject ) => {
                             nsHttpClient.post( '/api/nexopos/v4/update', {
                                 module: this.modules[ index ]
@@ -109,7 +123,7 @@ export default {
                     } catch( exception ) {
                         this.updating           =   false;
                         this.error              =   true;
-                        this.lastErrorMessage   =   exception.message;
+                        this.lastErrorMessage   =   exception.message || __( 'An unexpected error occured' );
 
                         return nsSnackBar.error( exception.message ).subscribe();
                     }
