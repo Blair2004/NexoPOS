@@ -10,6 +10,7 @@ class CouponCategory extends NsModel
     use HasFactory;
 
     protected $table    =   'nexopos_' . 'coupons_categories';
+    public $timestamps  =   false;
 
     public function coupon()
     {

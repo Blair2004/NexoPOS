@@ -264,7 +264,7 @@ export default class FormValidation {
     }
 
     triggerFieldsErrors( fields, data ) {
-        if ( data.errors ) {
+        if ( data && data.errors ) {
             for( let fieldName in data.errors ) {
                 /**
                  * if the validation path
