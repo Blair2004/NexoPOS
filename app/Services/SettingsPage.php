@@ -2,12 +2,16 @@
 namespace App\Services;
 
 use App\Events\SettingsSavedEvent;
+use App\Services\MenuService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class SettingsPage
 {
-    protected $form     =   [];
+    protected $form         =   [];
+    protected $labels       =   [];
+    protected $identifier;
 
     /**
      * returns the defined form
@@ -16,6 +20,43 @@ class SettingsPage
     public function getForm()
     {
         return $this->form;
+    }
+
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    public static function renderForm()
+    {
+        $className  =   get_called_class();
+        $form       =   new $className();
+
+        return View::make( 'pages.dashboard.settings.form', [
+            'title'         =>      $form->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
+
+            /**
+             * retrive the description provided on the SettingsPage instance.
+             * Otherwhise a default settings is used .
+             */
+            'description'   =>      $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
+            
+            /**
+             * retreive the identifier of the form if it's defined.
+             * this is used to load the form asynchronously.
+             */
+            'identifier'    =>      $form->getIdentifier(),
+            
+            /**
+             * Provided to render the side menu.
+             */
+            'menus'         =>  app()->make( MenuService::class ),
+        ]);
     }
 
     /**

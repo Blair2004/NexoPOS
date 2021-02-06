@@ -31,6 +31,4 @@
     <script>
     POS.reset();
     </script>
-@verbatim
-@endverbatim
 @endsection

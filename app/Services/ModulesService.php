@@ -373,7 +373,7 @@ class ModulesService
         $module     =   $this->modules[ $namespace ] ?? false;
 
         if ( $module ) {
-            return $module[ 'enabled' ] === true;
+            return $module[ 'enabled' ] === true ? $module : false;
         }
 
         return $module;

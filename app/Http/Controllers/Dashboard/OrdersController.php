@@ -7,15 +7,15 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Crud\CustomerCrud;
+use Illuminate\Http\Request;
 use App\Events\OrderAfterPrintedEvent;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Http\Request;
+use App\Crud\CustomerCrud;
 use App\Services\OrdersService;
 use App\Services\Options;
 use App\Fields\OrderPaymentFields;
-use App\Http\Requests\OrderPaymentRequest;
 use App\Models\Order;
+use App\Http\Requests\OrderPaymentRequest;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class OrdersController extends DashboardController
@@ -125,6 +125,10 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
+        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) {
+            Hook::action( 'ns-dashboard-pos-footer', $output );
+        }, 15 );
+
         return $this->view( 'pages.dashboard.orders.pos', [
             'title'         =>  __( 'Proceeding Order &mdash; NexoPOS' ),
             'orderTypes'    =>  [

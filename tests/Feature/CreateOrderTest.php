@@ -63,22 +63,29 @@ class CreateOrderTest extends TestCase
             })->sum() );
 
             $customerCoupon     =   CustomerCoupon::get()->last();
-            $allCoupons         =   [
-                [
-                    'customer_coupon_id'    =>  $customerCoupon->id,
-                    'coupon_id'             =>  $customerCoupon->coupon_id,
-                    'name'                  =>  $customerCoupon->name,
-                    'type'                  =>  'percentage_discount',
-                    'code'                  =>  $customerCoupon->code,
-                    'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
-                    'value'                 =>  ( $customerCoupon->coupon->discount_value * $subtotal ) / 100,
-                    'discount_value'        =>  $customerCoupon->coupon->discount_value,
-                    'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
-                    'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
-                ]
-            ];
 
-            $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            if ( $customerCoupon instanceof CustomerCoupon ) {
+                $allCoupons         =   [
+                    [
+                        'customer_coupon_id'    =>  $customerCoupon->id,
+                        'coupon_id'             =>  $customerCoupon->coupon_id,
+                        'name'                  =>  $customerCoupon->name,
+                        'type'                  =>  'percentage_discount',
+                        'code'                  =>  $customerCoupon->code,
+                        'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
+                        'value'                 =>  ( $customerCoupon->coupon->discount_value * $subtotal ) / 100,
+                        'discount_value'        =>  $customerCoupon->coupon->discount_value,
+                        'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
+                        'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                    ]
+                ];
+    
+                $totalCoupons   =   collect( $allCoupons )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
+            } else {
+                $allCoupons             =   [];
+                $totalCoupons           =   0;
+            }
+
             $discountValue  =   ( $discountRate * $subtotal ) / 100;
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )

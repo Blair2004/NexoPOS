@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use App\Models\Product;
+use App\Models\ProductCategory;
 
 class CreateCouponTest extends TestCase
 {
@@ -27,18 +29,24 @@ class CreateCouponTest extends TestCase
 
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'post', 'api/nexopos/v4/crud/ns.coupons', [
-                'name'          =>  __( 'Sample Coupon' ),
+                'name'          =>  $this->faker->name,
                 'general'       =>  [
                     'type'              =>  'percentage_discount',
-                    'code'              =>  $this->faker->name,
+                    'code'              =>  'cp-' . $this->faker->numberBetween(0,9) . $this->faker->numberBetween(0,9),
                     'discount_value'    =>  $this->faker->randomElement([ 10, 15, 20, 25 ]),
                     'limit_usage'       =>  $this->faker->randomElement([ 1, 5, 10 ]),        
                 ],
                 'selected_products'     =>  [
-                    'products'      =>  [],
+                    'products'      =>  Product::select( 'id' )
+                        ->get()
+                        ->map( fn( $product ) => $product->id )
+                        ->toArray()
                 ],
                 'selected_categories'     =>  [
-                    'categories'      =>  [],
+                    'categories'      =>  ProductCategory::select( 'id' )
+                        ->get()
+                        ->map( fn( $product ) => $product->id )
+                        ->toArray(),
                 ]
             ]);
 

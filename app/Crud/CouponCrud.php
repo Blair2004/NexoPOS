@@ -230,7 +230,7 @@ class CouponCrud extends CrudService
                             'name'  =>  'products',
                             'options'   =>  Helper::toJsOptions( Product::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Products' ),
-                            'value'     =>  $entry->products->map( fn( $product ) => $product->product_id )->toArray(),
+                            'value'     =>  $entry instanceof Product ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
                             'description'   =>  __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' )
                         ], 
                     ]
@@ -244,7 +244,7 @@ class CouponCrud extends CrudService
                             'name'  =>  'categories',
                             'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Categories' ),
-                            'value'         =>  $entry->categories->map( fn( $category ) => $category->category_id )->toArray(),
+                            'value'         =>  $entry instanceof ProductCategory ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
                             'description'   =>  __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' )
                         ], 
                     ]

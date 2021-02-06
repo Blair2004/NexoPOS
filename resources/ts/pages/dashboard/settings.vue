@@ -25,7 +25,7 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '../../bootstrap';
+import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
 import FormValidation from '../../libraries/form-validation';
 
 export default {
@@ -72,17 +72,19 @@ export default {
                             });
                         }
 
+                        nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
                         nsSnackBar.success( result.message ).subscribe();
                     }, ( error ) => {
                         this.validation.enableForm( this.form );
                         this.validation.triggerFieldsErrors( this.form, error );
-                        console.lo( error, this.form );
+                        
+                        nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
+
                         nsSnackBar.error( error.message || 'No error message provided in case the form is not valid.' )
                             .subscribe();
                     })
             }
 
-            console.log( this.form );
             nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || 'No error message provided in case the form is not valid.' )
                 .subscribe();
         },
@@ -91,6 +93,7 @@ export default {
                 this.form.tabs[ tab ].active     =   false;
             }
             tab.active  =   true;
+            nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this });
         },
         loadSettingsForm() {
             nsHttpClient.get( this.url ).subscribe( form => {
@@ -114,6 +117,7 @@ export default {
                 }
 
                 this.form  =    this.validation.createForm( form );
+                nsHooks.doAction( 'ns-settings-loaded', this );
             })
         }
     }
