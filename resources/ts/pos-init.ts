@@ -7,7 +7,7 @@ import { OrderType } from "./interfaces/order-type";
 import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
-import { nsEvent, nsHttpClient, nsSnackBar } from "./bootstrap";
+import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
 import { Payment } from "./interfaces/payment";
 import { Responsive } from "./libraries/responsive";
@@ -504,15 +504,26 @@ export class POS {
                  * probably the passed value should be send to the server.
                  */
                 const method    =   order.id !== undefined ? 'put' : 'post';
+                
+                this._isSubmitting  =   true;
 
                 return nsHttpClient[ method ]( `/api/nexopos/v4/orders${ order.id !== undefined ? '/' + order.id : '' }`, order )
                     .subscribe( result => {
-                        this._isSubmitting  =   true;
                         resolve( result );
                         this.reset();
-                    }, error => {
+                        
+                        /**
+                         * will trigger an acction when
+                         * the order has been successfully submitted
+                         */
+                        nsHooks.doAction( 'ns-order-submit-successful', result );
+
+                        this._isSubmitting  =   false;
+                    }, ( error: any ) => {
                         this._isSubmitting  =   false;
                         reject( error );
+
+                        nsHooks.doAction( 'ns-order-submit-failed', error );
                     })
             }
 
@@ -724,7 +735,9 @@ export class POS {
             const response  =   await this.computeTaxes();
             order           =   response[ 'data' ].order;
         } catch( exception ) {
-            console.log( exception );
+            if ( exception !== false && exception.message !== undefined ) {
+                throw exception.message;
+            }
         }
 
         /**
