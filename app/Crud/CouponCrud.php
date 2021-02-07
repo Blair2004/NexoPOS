@@ -201,13 +201,13 @@ class CouponCrud extends CrudService
                             'description'   =>  __( 'The value above which the current coupon can\'t apply.' ),
                             'value' =>  $entry->maximum_cart_value ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'datetimepicker',
                             'name'  =>  'valid_hours_start',
                             'label' =>  __( 'Valid Hours Start' ),
                             'description'   =>  __( 'Define form which hour during the day the coupons is valid.' ),
                             'value' =>  $entry->valid_hours_start ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'datetimepicker',
                             'name'  =>  'valid_hours_end',
                             'label' =>  __( 'Valid Hours End' ),
                             'description'   =>  __( 'Define to which hour during the day the coupons end stop valid.' ),

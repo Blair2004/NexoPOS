@@ -11,7 +11,7 @@
         </div>
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
-                <div class="border-b border-blue-400 w-full py-2" v-for="order of orders" :key="order.id">
+                <div :data-order-id="order.id" class="border-b border-blue-400 w-full py-2" v-for="order of orders" :key="order.id">
                     <h3 class="text-gray-700">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end w-full mt-2">
-                        <div class="flex rounded-lg overflow-hidden">
+                        <div class="flex rounded-lg overflow-hidden buttons-container">
                             <button @click="proceedOpenOrder( order )" class="text-white bg-green-400 outline-none px-2 py-1"><i class="las la-lock-open"></i> Open</button>
                             <button @click="previewOrder( order )" class="text-white bg-blue-400 outline-none px-2 py-1"><i class="las la-eye"></i> Products</button>
                         </div>
@@ -42,12 +42,21 @@
     </div>
 </template>
 <script>
+import { nsHooks } from '@/bootstrap';
 export default {
     props: [ 'orders' ],
     data() {
         return {
             searchField: '',
         }
+    },
+    watch: {
+        orders() {
+            nsHooks.doAction( 'ns-pos-pending-orders-refreshed', this.orders );
+        }
+    },
+    mounted() {
+
     },
     name: "ns-pos-pending-order",
     methods: {
