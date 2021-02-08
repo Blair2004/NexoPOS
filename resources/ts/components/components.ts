@@ -19,9 +19,9 @@ import { nsCloseButton }        from  './ns-close-button';
 import { nsIconButton }         from  './ns-icon-button';
 import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
+import { nsDateTimePicker }     from  './ns-date-time-picker';
 
 const nsDatepicker              =   require( './ns-datepicker.vue' ).default;
-const nsDatetimepicker          =   require( './ns-datetimepicker.vue' ).default;
 
 export { nsMenu };
 export { nsSubmenu };
@@ -45,4 +45,4 @@ export { nsIconButton };
 export { nsCkeditor };
 export { nsTabs, nsTabsItem };
 export { nsDatepicker };
-export { nsDatetimepicker };
+export { nsDateTimePicker };

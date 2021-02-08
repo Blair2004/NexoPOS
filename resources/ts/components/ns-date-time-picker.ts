@@ -1,14 +1,19 @@
-<template>
-    <div class="picker">
+import Vue from "vue";
+import moment from "moment";
+
+const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
+    template: `
+    <div class="picker mb-2">
+        <label class="my-1 block leading-5 font-medium text-gray-700">{{ field.label }}</label>
         <div @click="visible = !visible" class="rounded cursor-pointer bg-white shadow px-1 py-1 flex items-center text-gray-700">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm">
-                <span>{{ field.label || 'Date' }} : </span>
                 <span v-if="currentDay">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
                 <span v-if="currentDay === null">N/A</span>
             </span>
         </div>
-        <div class="relative h-0 w-0 -mb-2" v-if="visible">
+        <p class="text-sm text-gray-500">{{ field.descrition }}</p>
+        <div class="relative z-10 h-0 w-0 -mb-2" v-if="visible">
             <div class="w-72 mt-2 shadow rounded bg-white anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto">
                     <div class="p-2 flex items-center">
@@ -43,8 +48,6 @@
                     <div class="-mx-2 flex justify-between">
                         <div class="px-2">
                             <div class="flex rounded overflow-hidden">
-                                <button @click="switchTo( 'AM' )" :class="mode === 'AM' ? 'bg-blue-400 text-white border-blue-500' : 'bg-white'" class="px-2 py-1 border">AM</button>
-                                <button @click="switchTo( 'PM' )" :class="mode === 'PM' ? 'bg-blue-400 text-white border-blue-500' : 'bg-white'" class="px-2 py-1 border">PM</button>
                             </div>
                         </div>
                         <div class="px-2">
@@ -59,11 +62,7 @@
             </div>
         </div>
     </div>
-</template>
-<script>
-import moment from "moment";
-export default {
-    name: "ns-datetimepicker",
+    `,
     props: [ 'field' ],
     data() {
         return {
@@ -71,7 +70,6 @@ export default {
             hours: 0,
             minutes: 0,
             currentDay: null,
-            mode: null,
             daysOfWeek: (new Array(7)).fill('').map( ( _, i ) => i ),
             calendar: [
                 [], // first week
@@ -94,8 +92,9 @@ export default {
     },
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
-        this.currentDay     =   [ undefined, null ].includes( this.field.value ) ? moment() : moment( this.field.value );
-        console.log( this.currentDay );
+        this.currentDay     =   [ undefined, null, '' ].includes( this.field.value ) ? moment() : moment( this.field.value );
+        this.hours          =   this.currentDay.format( 'HH' );
+        this.minutes        =   this.currentDay.format( 'mm' );
         this.build();        
     },
     methods: {
@@ -103,8 +102,8 @@ export default {
             if ( parseFloat( this.hours ) < 0 ) {
                 this.hours  =   0;
             }
-            if ( parseFloat( this.hours ) > 12 ) {
-                this.hours  =   12;
+            if ( parseFloat( this.hours ) > 23 ) {
+                this.hours  =   23;
             }
             this.updateDateTime();
         },
@@ -120,20 +119,7 @@ export default {
         updateDateTime() {
             this.currentDay.hours( this.hours );
             this.currentDay.minutes( this.minutes );
-        },
-        refreshMode() {
-            this.mode   =   this.currentDay.format( 'A' );
-        },
-        switchTo( mode ) {
-            const currentMode   =   this.currentDay.format( 'A' );
-
-            if ( currentMode === 'AM' && mode === 'PM' ) {
-                this.currentDay.add( 12, 'hours' );
-            } else if ( currentMode === 'PM' && mode === 'AM' ) {
-                this.currentDay.subtract( 12, 'hours' );
-            }
-
-            this.refreshMode();
+            this.selectDate( this.currentDay );
         },
         checkClickedItem( event ) {
             let clickChildrens;
@@ -146,8 +132,9 @@ export default {
         },
         selectDate( date ) {
             this.currentDay     =   date;
-            this.visible        =   false;
-            this.field.value    =   this.currentDay;
+            this.currentDay.hours( this.hours );
+            this.currentDay.minutes( this.minutes );
+            this.field.value    =   this.currentDay.format( 'YYYY-MM-DD HH:mm' );
             this.$emit( 'change', this.field );
         },
         subMonth() {
@@ -192,5 +179,6 @@ export default {
             }
         }
     }
-}
-</script>
+})
+
+export { nsDateTimePicker };

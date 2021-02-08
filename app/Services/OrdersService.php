@@ -211,7 +211,7 @@ class OrdersService
             }
 
             if ( ! $customerCoupon->active ) {
-                throw new NotFoundException( sprintf( __( 'The provider coupon "%s", can no longer be used' ), $customerCoupon->name ) );
+                throw new NotFoundException( sprintf( __( 'The provided coupon "%s", can no longer be used' ), $customerCoupon->name ) );
             }
         });
     }

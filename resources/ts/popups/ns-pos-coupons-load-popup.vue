@@ -13,7 +13,7 @@
                     padding="p-2"
                     identifier="apply-coupon">
                     <div class="border-2 border-blue-400 rounded flex">
-                        <input v-model="couponCode" type="text" class="w-full p-2" :placeholder="placeHolder">
+                        <input ref="coupon" v-model="couponCode" type="text" class="w-full p-2" :placeholder="placeHolder">
                         <button @click="loadCoupon()" class="bg-blue-400 text-white px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
@@ -25,27 +25,49 @@
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
                         <p class="p-2 text-center bg-green-100 text-green-600">{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</p>
                     </div>
-                    <div class="pt-2 fade-in-entrance anim-duration-500" v-if="customerCoupon">
-                        <table class="w-full">
-                            <thead>
-                                <tr>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Coupon Name' ) }}</td>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.name }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Discount Type' ) }}</td>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ getCouponType( customerCoupon.coupon.type ) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Discount Value' ) }}</td>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Usage' ) }}</td>
-                                    <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
-                                </tr>
-                            </thead>
-                        </table>
+                    <div class="overflow-hidden">
+                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto h-64" v-if="customerCoupon">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Coupon Name' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.name }}</td>
+                                    </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Usage' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Valid From' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.coupon.valid_hours_start }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Valid Till' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.coupon.valid_hours_end }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Categories' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">
+                                            <ul>
+                                                <li class="rounded-full px-3 py-1 border border-gray-200" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Products' ) }}</td>
+                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">
+                                            <ul>
+                                                <li class="rounded-full px-3 py-1 border border-gray-200" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item :label="__( 'Active Coupons' )" padding="p-1" identifier="active-coupons">
@@ -99,6 +121,7 @@ export default {
     },
     mounted() {
         this.popupCloser();
+        this.$refs[ 'coupon' ].select();
         this.orderSubscriber    =   POS.order.subscribe( order => {
             this.order = order;
             
@@ -132,6 +155,47 @@ export default {
         apply() {
             try {
                 const customerCoupon    =   this.customerCoupon;
+
+                if ( 
+                    ! ns.date.moment.isAfter( this.customerCoupon.coupon.valid_hours_start ) && 
+                    this.customerCoupon.coupon.valid_hours_start.length > 0
+                ) {
+                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
+                        .subscribe();
+                }
+
+                if ( 
+                    ! ns.date.moment.isBefore( this.customerCoupon.coupon.valid_hours_end ) &&
+                    this.customerCoupon.coupon.valid_hours_end.length > 0 
+                ) {
+                    return nsSnackBar.error( __( 'The coupon is out from validity date range.' ) )
+                        .subscribe();
+                }
+
+                const requiredProducts      =   this.customerCoupon.coupon.products;
+
+                if ( 
+                    requiredProducts.length > 0
+                ) {
+                    const productIds    =   requiredProducts.map( p => p.product_id );
+                    if ( this.order.products.filter( p => productIds.includes( p.product_id ) ).length === 0 ) {
+                        return nsSnackBar.error( __( 'This coupon requires products that aren\'t available on the cart at the moment.' ) )
+                            .subscribe();
+                    }
+                }
+
+                const requiredCategories      =   this.customerCoupon.coupon.categories;
+
+                if ( 
+                    requiredCategories.length > 0
+                ) {
+                    const categoriesIds    =   requiredCategories.map( p => p.category_id );
+                    if ( this.order.products.filter( p => categoriesIds.includes( p.$original().category_id ) ).length === 0 ) {
+                        return nsSnackBar.error( __( 'This coupon requires products that belongs to specific categories that aren\'t included at the moment.' ).replace( '%s', ) )
+                            .subscribe();
+                    }
+                }
+
                 this.cancel();
 
                 const coupon    =   {
@@ -144,7 +208,9 @@ export default {
                     value: 0,
                     limit_usage: customerCoupon.coupon.limit_usage,
                     code: customerCoupon.coupon.code,
-                    discount_value: customerCoupon.coupon.discount_value
+                    discount_value: customerCoupon.coupon.discount_value,
+                    categories: customerCoupon.coupon.categories,
+                    products: customerCoupon.coupon.products,
                 }
 
                 POS.pushCoupon( coupon );

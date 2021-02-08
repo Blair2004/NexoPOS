@@ -87,6 +87,9 @@ class CreateOrderTest extends TestCase
             }
 
             $discountValue  =   ( $discountRate * $subtotal ) / 100;
+            $discountCoupons    =   $currency->define( $discountValue )
+                ->additionateBy( $allCoupons[0][ 'value' ] )
+                ->getRaw();
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -116,9 +119,7 @@ class CreateOrderTest extends TestCase
                             'value'         =>  $currency->define( $subtotal )
                                 ->additionateBy( $shippingFees )
                                 ->subtractBy( 
-                                    $currency->define( $discountValue )
-                                        ->additionateBy( $allCoupons[0][ 'value' ] )
-                                        ->getRaw()
+                                    $discountCoupons
                                 ) 
                                 ->getRaw()
                         ]
@@ -167,7 +168,7 @@ class CreateOrderTest extends TestCase
             $customerSecondPurchases    =   $customer->purchases_amount;
             $customerSecondOwed         =   $customer->owed_amount;
 
-            if ( $customerFirstPurchases + $total != $customerSecondPurchases ) {
+            if ( ( float ) ( $customerFirstPurchases + $total ) != ( float ) $customerSecondPurchases ) {
                 throw new Exception( 
                     sprintf(
                         __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),

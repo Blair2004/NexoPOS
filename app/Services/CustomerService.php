@@ -406,7 +406,9 @@ class CustomerService
             $query->customer( $customer_id );
         }
         
-        $coupon     =   $query->with( 'coupon' )->first();
+        $coupon     =   $query->with( 'coupon.products.product' )
+            ->with( 'coupon.categories.category' )
+            ->first();
 
         if ( $coupon instanceof CustomerCoupon ) {
 
