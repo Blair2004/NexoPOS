@@ -8,6 +8,7 @@ use App\Settings\InvoiceSettings;
 use App\Settings\NotificationsSettings;
 use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
+use App\Settings\ReportsSettings;
 use App\Settings\StoresSettings;
 use App\Settings\SuppliesDeliveriesSettings;
 use App\Settings\WorkersSettings;
@@ -46,6 +47,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.invoice-settings': return new InvoiceSettings; break;
                 case 'ns.notifications': return new NotificationsSettings; break;
                 case 'ns.workers': return new WorkersSettings; break;
+                case 'ns.reports': return new ReportsSettings; break;
             }
             return $class;
         }, 10, 2 );
