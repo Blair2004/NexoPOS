@@ -32,6 +32,22 @@ export interface Order {
         usage?: number;
         active?: number;
         author?: number;
+        products?: {
+            product_id?: number;
+            coupon_id?: number;
+            product?: {
+                name?: string;
+                id?: number;
+            }
+        }[];
+        categories?: {
+            category_id?: number;
+            coupon_id?: number;
+            category?: {
+                name?: string;
+                id?: number;
+            }
+        }[]
         discount_value?: number;
     }[];
     total_coupons: number;

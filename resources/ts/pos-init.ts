@@ -238,6 +238,20 @@ export class POS {
         }
     }
 
+    /**
+     * This methods run as part of the verification
+     * of the cart refreshing. Cannot refresh the cart.
+     * @param coupon coupon
+     */
+    removeCoupon( coupon ) {
+        const order     =   this.order.getValue();
+        const coupons   =   order.coupons;
+        const index     =   coupons.indexOf( coupon );
+        coupons.splice( index, 1 );
+        order.coupons   =   coupons;
+        this.order.next( order );
+    }
+
     pushCoupon( coupon ) {
         const order     =   this.order.getValue();
 
@@ -675,7 +689,78 @@ export class POS {
         this.refreshCart();
     }
 
+    /**
+     * everytime the cart
+     * refreshed, we might need
+     * to perform some verification
+     */
+    checkCart() {
+        const order                 =   this.order.getValue();
+        const unmatchedConditions   =   [];
+
+        order.coupons.forEach( coupon => {
+            /**
+             * by default we'll bypass
+             * the product if it's not available
+             */
+            let isProductValid  =   true;
+
+            /**
+             * if the coupon includes products
+             * we make sure the products are included on the cart
+             */
+            if ( coupon.products.length > 0 ) {
+                isProductValid  =   order.products.filter( product => {
+                    return coupon.products.map( p => p.product_id ).includes( product.product_id );
+                }).length > 0;
+
+                if ( ! isProductValid && unmatchedConditions.indexOf( coupon ) === -1 ) {
+                    unmatchedConditions.push( coupon );
+                }
+            }
+
+            /**
+             * by default we'll bypass
+             * the product if it's not available
+             */
+            let isCategoryValid  =   true;
+
+            /**
+             * if the coupon includes products
+             * we make sure the products are included on the cart
+             */
+            if ( coupon.categories.length > 0 ) {
+                isCategoryValid  =   order.products.filter( product => {
+                    return coupon.categories.map( p => p.category_id ).includes( product.$original().category_id );
+                }).length > 0;
+
+                if ( ! isCategoryValid && unmatchedConditions.indexOf( coupon ) === -1 ) {
+                    unmatchedConditions.push( coupon );
+                }
+            }
+        });
+
+        unmatchedConditions.forEach( coupon => {
+            nsSnackBar.error( 
+                __( 'The coupons "%s" has been removed from the cart, as it\'s required conditions are no more meet.' )
+                    .replace( '%s', coupon.name ), 
+                __( 'Okay' ), {
+                    duration: 6000
+                }
+            ).subscribe();
+
+            this.removeCoupon( coupon );
+        });
+    }
+
     async refreshCart() {
+        /**
+         * check if according to the product
+         * available on the cart the coupons must 
+         * remains the same.
+         */
+        this.checkCart();
+
         const products      =   this.products.getValue();
         let order           =   this.order.getValue();
         const productTotal  =   products

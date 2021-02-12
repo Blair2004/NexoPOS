@@ -19,6 +19,9 @@
                     <div class="px-2">
                         <ns-datepicker :date="endDate" @change="setEndDate( $event )"></ns-datepicker>
                     </div>
+                    <!-- <div class="px-2">
+                        <ns-datetimepicker :field="field" @change="setEndDate( $event )"></ns-datetimepicker>
+                    </div> -->
                     <div class="px-2">
                         <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-sync-alt text-xl"></i>

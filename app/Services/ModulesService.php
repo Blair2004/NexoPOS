@@ -460,6 +460,7 @@ class ModulesService
 
                     exec( "mkdir $path" );
                     exec( "mv $originalPath/* $path" );
+                    exec( "mv $originalPath/.* $path" );
                 }
             }
 
@@ -515,6 +516,7 @@ class ModulesService
             if ( ! empty( $exclusionFolders ) ) {
                 foreach( $exclusionFolders as $destination => $source ) {
                     exec( 'mv ' . $source . '/* ' . $destination );
+                    exec( 'mv ' . $source . '/.* ' . $destination );
                     exec( "rm -rf $source" );
                 }
             }

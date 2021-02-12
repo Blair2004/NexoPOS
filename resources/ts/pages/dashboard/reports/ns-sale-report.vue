@@ -4,18 +4,26 @@
 <script>
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
+// import nsDatetimepicker from "@/components/ns-datetimepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+
 export default {
     name: 'ns-sale-report',
     data() {
         return {
             startDate: moment(),
             endDate: moment(),
-            orders: []
+            orders: [],
+            field: {
+                type: 'datetimepicker',
+                value: '2021-02-07',
+                name: 'date'
+            }
         }
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        // nsDatetimepicker,
     },
     computed: {
         totalDiscounts() {
