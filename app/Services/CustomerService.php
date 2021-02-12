@@ -16,6 +16,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
+use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
@@ -490,5 +491,36 @@ class CustomerService
             ->each( function( $coupon ) {
                 $coupon->delete();
             });
+    }
+
+    /**
+     * Create customer group using
+     * provided fields
+     * @param array $fields
+     * @param array $group
+     * @return array $response
+     */
+    public function createGroup( $fields, CustomerGroup $group = null )
+    {
+        if ( $group === null ) {
+            $group      =   CustomerGroup::where( 'name', $fields[ 'name' ] )->first();
+        }
+
+        if ( ! $group instanceof CustomerGroup ) {
+            $group  =   new CustomerGroup;
+        }
+
+        foreach( $fields as $name => $value ) {
+            $group->$name   =   $value;
+        }
+
+        $group->author      =   Auth::id();
+        $group->save();
+
+        return [
+            'status'    =>  'sucecss',
+            'message'   =>  __( 'The group has been created.' ),
+            'data'      =>  compact( 'group' )
+        ];
     }
 }
