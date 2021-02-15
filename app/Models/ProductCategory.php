@@ -12,6 +12,11 @@ class ProductCategory extends NsModel
 
     protected $table    =   'nexopos_' . 'products_categories';
 
+    public function scopeDisplayOnPOS( $query, $attribute = true )
+    {
+        return $query->where( 'displays_on_pos', $attribute );
+    }
+
     public function products()
     {
         return $this->hasMany( Product::class, 'category_id' );

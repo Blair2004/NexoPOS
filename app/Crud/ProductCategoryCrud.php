@@ -149,7 +149,7 @@ class ProductCategoryCrud extends CrudService
                             'description'   =>  __( 'If clicked to no, all products assigned to this category or all sub categories, won\'t appear at the POS.' ),
                             'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                             'validation'    =>  'required',
-                            'value'         =>  ( $entry !== null && $entry->displays_on_pos ? ( int ) $entry->displays_on_pos : 1 ),
+                            'value'         =>  $entry->displays_on_pos ?? 1, // ( $entry !== null && $entry->displays_on_pos ? ( int ) $entry->displays_on_pos : 1 ),
                         ], [
                             'type'          =>  'select',
                             'options'       =>  Helper::toJsOptions( $parents, [ 'id', 'name' ]),
@@ -244,6 +244,19 @@ class ProductCategoryCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
+        /**
+         * If the category is not visible on the POS
+         * the products aren't searchable.
+         */
+        $entry->products->each( function( $product ) use ( $entry ) {
+            if ( ! $entry->display_on_pos ) {
+                $product->searchable    =   false;
+            } else {
+                $product->searchable    =   true;
+            }
+            $product->save();
+        });
+
         return $request;
     }
     

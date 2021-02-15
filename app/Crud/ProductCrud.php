@@ -233,6 +233,16 @@ class ProductCrud extends CrudService
                                     'validation'    =>  'required',
                                     'value' =>  $entry->barcode_type ?? 'ean8',
                                 ], [
+                                    'type'  =>  'switch',
+                                    'description'   =>  __( 'Determine if the product can be searched on the POS.' ),
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        true      =>  __( 'Yes' ),
+                                        false     =>  __( 'No' ),
+                                    ]),
+                                    'name'  =>  'searchable',
+                                    'label' =>  __( 'Searchable' ),
+                                    'value' =>  $entry->searchable ?? true,
+                                ], [
                                     'type'          =>  'select',
                                     'description'   =>  __( 'Select to which category the item is assigned.' ),
                                     'options'       =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
@@ -242,10 +252,10 @@ class ProductCrud extends CrudService
                                     'value'         =>  $entry->category_id ?? '',
                                 ], [
                                     'type'          =>  'select',
-                                    'options'       =>  Helper::kvToJsOptions([
+                                    'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
                                         'materialized'      =>  __( 'Materialized Product' ),
                                         'dematerialized'    =>  __( 'Dematerialized Product' ),
-                                    ]),
+                                    ] ) ),
                                     'description'   =>  __( 'Define the product type. Applies to all variations.' ),
                                     'name'          =>  'type',
                                     'validation'    =>  'required',

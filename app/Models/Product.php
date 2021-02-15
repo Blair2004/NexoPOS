@@ -113,4 +113,14 @@ class Product extends NsModel
     {
         return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
     }
+
+    /**
+     * Filter product that are searchable
+     * @param Query 
+     * @return Query
+     */
+    public function scopeSearchable( $query, $attribute = true )
+    {
+        return $query->where( 'searchable', $attribute );
+    }
 }
