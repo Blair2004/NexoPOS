@@ -43,6 +43,7 @@ class ProductCategoryService
         $category                   =   new ProductCategory;
         $category->author           =   Auth::id();
         $category->description      =   $data[ 'description' ] ?? '';
+        $category->preview_url      =   $data[ 'preview_url' ] ?? '';
         $category->name             =   $data[ 'name' ];
         $category->parent_id        =   $data[ 'parent_id' ] ?? null;
         $category->displays_on_pos  =   $data[ 'displays_on_pos' ] ?? true;

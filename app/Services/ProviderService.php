@@ -123,7 +123,7 @@ class ProviderService
             ];
 
         } catch( Exception $exception ) {
-            throw new Exception( __( 'Unable to find the provider using the specified identifier.' ) );
+            throw new Exception( sprintf( __( 'An error occured: %s.' ), $exception->getMessage() ) );
         }
     }
 

@@ -558,6 +558,17 @@ class ProductCrud extends CrudService
         if ( $namespace == 'ns.products' ) {
             $this->allowedTo( 'create' );
         }
+
+        $this->deleteProductAttachedRelation( $model );
+    }
+
+    public function deleteProductAttachedRelation( $model )
+    {
+        $model->galleries->each( fn( $gallery ) => $gallery->delete() );
+        $model->variations->each( fn( $variation ) => $variation->delete() );
+        $model->product_taxes->each( fn( $product_taxes ) => $product_taxes->delete() );
+        $model->unitGroup instanceof UnitGroup ? $model->unitGroup->delete() : null;
+        $model->unit_quantities->each( fn( $unitQuantity ) => $unitQuantity->delete() );
     }
 
     /**
@@ -689,6 +700,7 @@ class ProductCrud extends CrudService
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
                 if ( $entity instanceof Product ) {
+                    $this->deleteProductAttachedRelation( $entity );
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {

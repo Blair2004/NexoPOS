@@ -186,6 +186,33 @@ export class POS {
                 message: 'tax group assignated'
             });
         } ) );
+
+        /**
+         * this initial process will select the default
+         * customer and assign him to the POS
+         */
+        this.initialQueue.push( () => new Promise( ( resolve, reject ) => {
+            const options   =   this.options.getValue();
+            const order     =   this.order.getValue();
+
+            if ( options.ns_customers_default !== false ) {
+                nsHttpClient.get( `/api/nexopos/v4/customers/${options.ns_customers_default}` )
+                    .subscribe( customer => {
+                        this.selectCustomer( customer );
+                        resolve({ 
+                            status: 'success',
+                            message: __( 'The customer has been loaded' )
+                        });
+                    }, ( error ) => {
+                        reject( error );
+                    });
+            }
+
+            return resolve({
+                status: 'success',
+                message: 'tax group assignated'
+            });
+        } ) );
         
         /**
          * Whenever there is a change
