@@ -191,7 +191,7 @@ class ProductCrud extends CrudService
             ]
         ];
 
-        return [
+        return Hook::filter( 'ns-products-crud-form', [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
@@ -417,7 +417,7 @@ class ProductCrud extends CrudService
                     ]
                 ]
             ]
-        ];
+        ], $entry );
     }
 
     /**

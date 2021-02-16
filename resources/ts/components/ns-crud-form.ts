@@ -85,6 +85,8 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
             request.subscribe( (f:any) => {
                 this.form    =   this.parseForm( f.form );
                 this.$emit( 'updated', this.form );
+            }, ( error ) => {
+                nsSnackBar.error( error.message, 'OKAY', { duration: 0 }).subscribe();
             });
         },
         parseForm( form ) {

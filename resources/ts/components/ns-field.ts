@@ -50,6 +50,12 @@ const nsField       =   Vue.component( 'ns-field', {
 
             option.selected     =   true;
 
+            const index         =   this.field.options.indexOf( option );
+            
+            this.field.options.splice( index, 1 );
+
+            this.field.options.unshift( option );
+
             this.refreshMultiselect();
 
             this.$emit( 'change', { action: 'addOption', option })
@@ -58,8 +64,6 @@ const nsField       =   Vue.component( 'ns-field', {
             this.field.value    =   this.field.options
                 .filter( option => option.selected )
                 .map( option => option.value );
-
-            console.log( this.field.options );
         },
         removeOption( option ) {
             option.selected     =   false;
