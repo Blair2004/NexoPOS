@@ -905,7 +905,7 @@ export class POS {
      * cart. That will help to mutate the product before 
      * it's added the cart.
      */
-    private addToCartQueue  =   [
+    addToCartQueue  =   [
         ProductUnitPromise,
         ProductQuantityPromise
     ];

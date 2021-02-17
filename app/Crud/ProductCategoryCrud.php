@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -248,14 +250,15 @@ class ProductCategoryCrud extends CrudService
          * If the category is not visible on the POS
          * the products aren't searchable.
          */
-        $entry->products->each( function( $product ) use ( $entry ) {
-            if ( ! $entry->display_on_pos ) {
-                $product->searchable    =   false;
-            } else {
-                $product->searchable    =   true;
-            }
-            $product->save();
-        });
+        if ( ! $entry->display_on_pos ) {
+            Product::where( 'category_id', $entry->id )->update([
+                'searchable'    =>  false
+            ]);
+        } else {
+            Product::where( 'category_id', $entry->id )->update([
+                'searchable'    =>  true
+            ]);
+        }
 
         return $request;
     }

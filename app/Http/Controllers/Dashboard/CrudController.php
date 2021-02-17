@@ -81,8 +81,17 @@ class CrudController extends DashboardController
         $inputs         =   $request->getPlainData( $namespace );
 
         if ( method_exists( $resource, 'filterPostInputs' ) ) {
-            $inputs     =   $resource->filterPostInputs( $inputs );
+            $inputs     =   $resource->filterPostInputs( $inputs, $entry );
         }
+
+        /**
+         * this trigger a global filter
+         * on the actual crud instance
+         */
+        $inputs     =   Hook::filter( 
+            get_class( $resource ) . '@filterPostInputs', 
+            $inputs
+        );
 
         if ( method_exists( $resource, 'beforePost' ) ) {
             $resource->beforePost( $request );
@@ -186,6 +195,11 @@ class CrudController extends DashboardController
         if ( method_exists( $resource, 'filterPutInputs' ) ) {
             $inputs     =   $resource->filterPutInputs( $inputs, $entry );
         }
+
+        $inputs     =   Hook::filter( 
+            get_class( $resource ) . '@filterPutInputs', 
+            $inputs
+        );
 
         if ( method_exists( $resource, 'beforePut' ) ) {
             $resource->beforePut( $request, $entry );
@@ -360,7 +374,10 @@ class CrudController extends DashboardController
         $resource           =   new $crudClass;
 
         if ( method_exists( $resource, 'getEntries' ) ) {
-            return $resource->getColumns();
+            return Hook::filter( 
+                get_class( $resource ) . '@getColumns', 
+                $resource->getColumns()
+            );;
         } 
 
         return response()->json([
@@ -388,7 +405,10 @@ class CrudController extends DashboardController
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return [
-                'columns'               =>  $resource->getColumns(),
+                'columns'               =>  Hook::filter( 
+                    get_class( $resource ) . '@getColumns', 
+                    $resource->getColumns()
+                ),
                 'labels'                =>  $resource->getLabels(),
                 'links'                 =>  $resource->getLinks() ?? [],
                 'bulkActions'           =>  $resource->getBulkActions(),

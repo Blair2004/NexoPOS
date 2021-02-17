@@ -73,7 +73,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         <td class="text-gray-700 font-sans border-gray-200 p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
-        <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2">{{ row[ identifier ] }}</td>
+        <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2" v-html="row[ identifier ]"></td>
         <td class="text-gray-700 font-sans border-gray-200 p-2 flex flex-col items-start justify-center">
             <button @click="toggleMenu( $event )" class="outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
             <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>

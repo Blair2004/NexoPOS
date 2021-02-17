@@ -76,6 +76,13 @@ class ProductsController extends DashboardController
         unset( $primary[ '$primary' ] );
 
         /**
+         * As foreign fields aren't handled with 
+         * they are complex (array), this methods allow
+         * external script to reinject those complex fields.
+         */
+        $primary        =   Hook::filter( 'ns-create-products-inputs', $primary, $source );
+
+        /**
          * the method "create" is capable of 
          * creating either a product or a variable product
          */
@@ -127,6 +134,13 @@ class ProductsController extends DashboardController
         $primary[ 'units' ]                 =   $source[ 'units' ];
         
         unset( $primary[ '$primary' ] );
+
+        /**
+         * As foreign fields aren't handled with 
+         * they are complex (array), this methods allow
+         * external script to reinject those complex fields.
+         */
+        $primary        =   Hook::filter( 'ns-update-products-inputs', $primary, $source, $product );
 
         /**
          * the method "create" is capable of 
@@ -322,7 +336,11 @@ class ProductsController extends DashboardController
     public function createSingleVariation( $product_id, Request $request )
     {
         $product    =   $this->productService->get( $product_id );
-        return $this->productService->createProductVariation( $product, $request->all() );
+
+        return $this->productService->createProductVariation( 
+            $product, 
+            $request->all() 
+        );
     }
 
     public function editSingleVariation( $parent_id, $variation_id, Request $request )
