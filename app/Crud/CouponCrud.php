@@ -16,6 +16,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Services\CustomerService;
 use App\Services\Helper;
+use Carbon\Carbon;
 
 class CouponCrud extends CrudService
 {
@@ -201,13 +202,13 @@ class CouponCrud extends CrudService
                             'description'   =>  __( 'The value above which the current coupon can\'t apply.' ),
                             'value' =>  $entry->maximum_cart_value ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'datetimepicker',
                             'name'  =>  'valid_hours_start',
                             'label' =>  __( 'Valid Hours Start' ),
                             'description'   =>  __( 'Define form which hour during the day the coupons is valid.' ),
                             'value' =>  $entry->valid_hours_start ?? '',
                         ], [
-                            'type'  =>  'text',
+                            'type'  =>  'datetimepicker',
                             'name'  =>  'valid_hours_end',
                             'label' =>  __( 'Valid Hours End' ),
                             'description'   =>  __( 'Define to which hour during the day the coupons end stop valid.' ),
@@ -230,7 +231,7 @@ class CouponCrud extends CrudService
                             'name'  =>  'products',
                             'options'   =>  Helper::toJsOptions( Product::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Products' ),
-                            'value'     =>  $entry instanceof Product ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
+                            'value'     =>  $entry instanceof Coupon ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
                             'description'   =>  __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' )
                         ], 
                     ]
@@ -244,7 +245,7 @@ class CouponCrud extends CrudService
                             'name'  =>  'categories',
                             'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
                             'label'     =>  __( 'Select Categories' ),
-                            'value'         =>  $entry instanceof ProductCategory ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
+                            'value'         =>  $entry instanceof Coupon ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
                             'description'   =>  __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' )
                         ], 
                     ]
@@ -285,6 +286,14 @@ class CouponCrud extends CrudService
             return true;
         });
 
+        if ( ! empty( $inputs[ 'valid_hours_end' ] ) ) {
+            $inputs[ 'valid_hours_end' ]    =   Carbon::parse( $inputs[ 'valid_hours_end' ] )->toDateTimeString();
+        }
+
+        if ( ! empty( $inputs[ 'valid_hours_start' ] ) ) {
+            $inputs[ 'valid_hours_start' ]  =   Carbon::parse( $inputs[ 'valid_hours_start' ] )->toDateTimeString();
+        }
+
         return $inputs;
     }
 
@@ -319,6 +328,14 @@ class CouponCrud extends CrudService
             }
             return true;
         });
+
+        if ( ! empty( $inputs[ 'valid_hours_end' ] ) ) {
+            $inputs[ 'valid_hours_end' ]    =   Carbon::parse( $inputs[ 'valid_hours_end' ] )->toDateTimeString();
+        }
+
+        if ( ! empty( $inputs[ 'valid_hours_start' ] ) ) {
+            $inputs[ 'valid_hours_start' ]  =   Carbon::parse( $inputs[ 'valid_hours_start' ] )->toDateTimeString();
+        }
 
         return $inputs;
     }
@@ -438,13 +455,13 @@ class CouponCrud extends CrudService
     public function afterPut( $request, $coupon )
     {
         $coupon->categories->each( function( $category ) use ( $request ) {
-            if ( ! in_array( $category->id, $request->input( 'selected_categories.categories' ) ) ) {
+            if ( ! in_array( $category->category_id, $request->input( 'selected_categories.categories' ) ) ) {
                 $category->delete();
             }
         });
 
         $coupon->products->each( function( $product ) use ( $request ) {
-            if ( ! in_array( $product->id, $request->input( 'selected_products.products' ) ) ) {
+            if ( ! in_array( $product->product_id, $request->input( 'selected_products.products' ) ) ) {
                 $product->delete();
             }
         });
@@ -526,8 +543,13 @@ class CouponCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'valid_until'  =>  [
-                'label'         =>  __('Valid Until'),
+            'valid_hours_start'  =>  [
+                'label'         =>  __('Valid From'),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'valid_hours_end'  =>  [
+                'label'         =>  __('Valid Till'),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],

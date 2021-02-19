@@ -161,6 +161,7 @@ class OrdersController extends DashboardController
                 'ns_pos_registers_enabled'              =>  ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
                 'ns_pos_idle_counter'                   =>  ns()->option->get( 'ns_pos_idle_counter', 0 ),
                 'ns_pos_disbursement'                   =>  ns()->option->get( 'ns_pos_disbursement', 'no' ),
+                'ns_customers_default'                  =>  ns()->option->get( 'ns_customers_default', false ),
                 'ns_pos_vat'                            =>  ns()->option->get( 'ns_pos_vat', 'disabled' ),
                 'ns_pos_tax_group'                      =>  ns()->option->get( 'ns_pos_tax_group', false ),
                 'ns_pos_tax_type'                       =>  ns()->option->get( 'ns_pos_tax_type', false ),

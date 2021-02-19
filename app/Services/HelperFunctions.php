@@ -165,7 +165,7 @@ class UseThisChain  {
  * @param string
  * @return stdClass class
  */
-function useThis( string $class ) {
+function useThis( string $class ): UseThisChain {
     return new UseThisChain( $class );
 }
 

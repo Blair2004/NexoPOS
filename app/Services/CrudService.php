@@ -427,6 +427,7 @@ class CrudService
              * @hook crud.entry
              */
             $entry  =   Hook::filter( $this->namespace . '-crud-actions', $entry );
+            $entry  =   Hook::filter( get_class( $this )::method( 'setActions' ), $entry );
         }
 
         return $entries;
@@ -749,5 +750,10 @@ class CrudService
     public function getPermission( $name ) 
     {
         return $this->permissions[ $name ] ?? false;
+    }
+
+    public static function method( $methodName )
+    {
+        return get_called_class() . '@' . $methodName;
     }
 }

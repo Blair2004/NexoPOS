@@ -482,7 +482,7 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_VOID_RETURN :       $entry->operation_type      = __( 'Void Return' ); break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : $entry->operation_type      = __( 'Adjustment Return' ); break;
             case ProductHistory::ACTION_ADJUSTMENT_SALE :   $entry->operation_type      = __( 'Adjustment Sale' ); break;
-            default: Hook::filter( 'ns-product-history-operation', $entry->operation_type );break;
+            default: Hook::filter( 'ns-products-history-operation', $entry->operation_type );break;
         }
 
         // you can make changes here

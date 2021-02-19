@@ -34,6 +34,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isCkEditor() {
             return [ 'ckeditor' ].includes( this.field.type );
         },
+        isDateTimePicker() {
+            return [ 'datetimepicker' ].includes( this.field.type );
+        },
         isCustom() {
             return [ 'custom' ].includes( this.field.type );
         },
@@ -47,6 +50,12 @@ const nsField       =   Vue.component( 'ns-field', {
 
             option.selected     =   true;
 
+            const index         =   this.field.options.indexOf( option );
+            
+            this.field.options.splice( index, 1 );
+
+            this.field.options.unshift( option );
+
             this.refreshMultiselect();
 
             this.$emit( 'change', { action: 'addOption', option })
@@ -55,8 +64,6 @@ const nsField       =   Vue.component( 'ns-field', {
             this.field.value    =   this.field.options
                 .filter( option => option.selected )
                 .map( option => option.value );
-
-            console.log( this.field.options );
         },
         removeOption( option ) {
             option.selected     =   false;
@@ -70,6 +77,10 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-input>
+        <ns-date-time-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateTimePicker">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date-time-picker>
         <ns-date @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateField">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

@@ -229,13 +229,16 @@ class CategoryController extends DashboardController
     {
         if ( $id !== '0' ) {
             $category       =   ProductCategory::where( 'id', $id )
+                ->displayOnPOS()
                 ->with( 'subCategories' )
                 ->with( 'products.galleries' )
                 ->first();
 
             return [
                 'products'          =>  $category->products,
-                'categories'        =>  $category->subCategories,
+                'categories'        =>  $category->subCategories()
+                    ->displayOnPOS()
+                    ->get(),
                 'previousCategory'  =>  ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
                 'currentCategory'   =>  $category, // means should return to the root
             ];
@@ -249,6 +252,7 @@ class CategoryController extends DashboardController
                     $query->where( 'parent_id', null )
                         ->orWhere( 'parent_id', 0 );
                 })
+                ->displayOnPOS()
                 ->get(),
         ];
     }

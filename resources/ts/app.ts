@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import { nsButton, nsCheckbox, nsCkeditor, nsIconButton, nsCloseButton, nsCrud, nsCrudForm, nsDate, nsDatepicker, nsField, nsInput, nsLink, nsMediaInput, nsMenu, nsMultiselect, nsSelect, nsSpinner, nsSubmenu, nsSwitch, nsTableRow, nsTabs, nsTabsItem, nsTextarea } from './components/components';
 import * as baseComponents from './components/components';
 
 
@@ -62,36 +61,47 @@ Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
 
 const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
+
+
+const components    =   Object.assign({
+    NsModules,
+    NsRewardsSystem,
+    NsCreateCoupons,
+    NsManageProducts,
+    NsSettings,
+    NsReset,
+    NsPermissions,
+    NsProcurement,
+    NsProcurementInvoice,
+    NsMedia,
+    NsDashboardCards,
+    NsBestCustomers,
+    NsBestCashiers,
+    NsOrdersSummary,
+    NsOrdersChart,
+    NsNotifications,
+
+    NsSaleReport,
+    NsSoldStockReport,
+    NsProfitReport,
+    NsCashFlowReport,
+    NsYearlyReport,
+
+    NsStockAdjustment,
+    NsPromptPopup,
+    NsAlertPopup,
+    NsConfirmPopup,
+    NsOrderInvoice,
+    VueApexCharts,
+    ...baseComponents
+}, nsExtraComponents );
+
 const nsDashboardAside  =   new Vue({
     el: '#dashboard-aside',
     data: {
         sidebar: 'visible'
     },
-    components: {
-        nsButton, 
-        nsCheckbox, 
-        nsCkeditor,
-        nsCloseButton,
-        nsIconButton,
-        nsCrud,
-        nsCrudForm,
-        nsDate,
-        nsDatepicker,
-        nsField,
-        nsInput,
-        nsLink,
-        nsMediaInput,
-        nsMenu,
-        nsMultiselect,
-        nsSelect,
-        nsSpinner,
-        nsSubmenu,
-        nsSwitch,
-        nsTableRow,
-        nsTabs,
-        nsTabsItem,
-        nsTextarea
-    },
+    components,
     mounted() {
         nsState.behaviorState.subscribe(({ object }:any) => {
             this.sidebar    =   object.sidebar;
@@ -106,31 +116,7 @@ const nsDashboardAside  =   new Vue({
     data: {
         sidebar: null
     },
-    components: {
-        nsButton, 
-        nsCheckbox, 
-        nsCkeditor,
-        nsCloseButton,
-        nsIconButton,
-        nsCrud,
-        nsCrudForm,
-        nsDate,
-        nsDatepicker,
-        nsField,
-        nsInput,
-        nsLink,
-        nsMediaInput,
-        nsMenu,
-        nsMultiselect,
-        nsSelect,
-        nsSpinner,
-        nsSubmenu,
-        nsSwitch,
-        nsTableRow,
-        nsTabs,
-        nsTabsItem,
-        nsTextarea
-    },
+    components,
     mounted() {
         nsState.behaviorState.subscribe(({ object }) => {
             this.sidebar    =   object.sidebar;
@@ -154,33 +140,7 @@ const nsDashboardAside  =   new Vue({
     data: {
         menuToggled: false,
     },
-    components: { 
-        nsButton, 
-        nsCheckbox, 
-        nsCkeditor,
-        nsCloseButton,
-        nsIconButton,
-        nsCrud,
-        nsCrudForm,
-        nsDate,
-        nsDatepicker,
-        nsField,
-        nsInput,
-        nsLink,
-        nsMediaInput,
-        nsMenu,
-        nsMultiselect,
-        nsSelect,
-        nsSpinner,
-        nsSubmenu,
-        nsSwitch,
-        nsTableRow,
-        nsTabs,
-        nsTabsItem,
-        nsTextarea,
-        //
-        NsNotifications
-     },
+    components,
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;
@@ -199,37 +159,6 @@ const nsDashboardAside  =   new Vue({
         })
     }
 });
-
-const components    =   Object.assign({
-    NsModules,
-    NsRewardsSystem,
-    NsCreateCoupons,
-    NsManageProducts,
-    NsSettings,
-    NsReset,
-    NsPermissions,
-    NsProcurement,
-    NsProcurementInvoice,
-    NsMedia,
-    NsDashboardCards,
-    NsBestCustomers,
-    NsBestCashiers,
-    NsOrdersSummary,
-    NsOrdersChart,
-
-    NsSaleReport,
-    NsSoldStockReport,
-    NsProfitReport,
-    NsCashFlowReport,
-    NsYearlyReport,
-
-    NsStockAdjustment,
-    NsPromptPopup,
-    NsAlertPopup,
-    NsConfirmPopup,
-    NsOrderInvoice,
-    VueApexCharts,
-}, nsExtraComponents );
 
 (<any>window)[ 'nsComponents' ]          =   Object.assign( components, baseComponents );
 (<any>window)[ 'nsDashboardContent' ]    =   new Vue({

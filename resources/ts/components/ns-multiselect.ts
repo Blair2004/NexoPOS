@@ -50,7 +50,18 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             }
         }
     },
-    mounted() {},
+    mounted() {
+        if ( this.field.value ) {
+            const values     =   this.field.value.reverse();
+            values.forEach( value => {
+                const option     =   this.field.options.filter( option => option.value === value );
+
+                if ( option.length >= 0 ) {
+                    this.addOption( option[0] );
+                }
+            })
+        }
+    },
     template: `
     <div class="flex flex-col">
         <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
