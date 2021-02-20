@@ -108,7 +108,7 @@
                                     <span>
                                         {{ __( 'Expiration Date' ) }}
                                     </span>
-                                    <span>{{ order.expected_payment_date }}</span>
+                                    <span>{{ order.final_payment_date }}</span>
                                 </div>
                             </td>
                             <td class="p-2 border border-gray-200 text-center text-gray-700" colspan="2"></td>

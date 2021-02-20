@@ -1138,8 +1138,8 @@ class OrdersService
         $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
-        $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
-        $order->total_installments      =   $fields['total_installments' ] ?? 0;
+        $order->final_payment_date      =   $fields['final_payment_date' ] ?? null; // when the order is not saved as laid away
+        $order->total_instalments       =   $fields['total_instalments' ] ?? 0;
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;

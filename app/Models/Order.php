@@ -26,7 +26,7 @@ class Order extends NsModel
 
     public $casts    =   [
         'created_at'                =>  DateCast::class,
-        'expected_payment_date'     =>  DateCast::class,
+        'final_payment_date'        =>  DateCast::class,
     ];
 
     public function products()
@@ -103,7 +103,7 @@ class Order extends NsModel
 
         return $query
             ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
-            ->where( 'expected_payment_date', '<>', null )
-            ->where( 'expected_payment_date', '<', $date->now()->toDateTimeString() );
+            ->where( 'final_payment_date', '<>', null )
+            ->where( 'final_payment_date', '<', $date->now()->toDateTimeString() );
     }
 }

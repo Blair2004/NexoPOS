@@ -75,6 +75,7 @@ export class POS {
             customer: undefined,
             type: undefined,
             products: [],
+            instalments: [],
             payments: [],
             addresses: {
                 shipping: undefined,
@@ -472,7 +473,7 @@ export class POS {
              * checking order details
              * installments & payment date
              */
-            if ( order.expected_payment_date === undefined ) {
+            if ( order.final_payment_date === undefined ) {
                 try {
                     await new Promise( ( resolve, reject ) => {
                         Popup.show( NsLayawayPopup, { order, reject, resolve });
@@ -515,9 +516,10 @@ export class POS {
                     if ( this.options.getValue().ns_orders_allow_unpaid === 'no' ) {
                         const message   =   'Please provide a payment before proceeding.';
                         return reject({ status: 'failed', message  });
-                    } else if ( minimalPayment > 0 ) {
+                    } else if ( minimalPayment >= 0 ) {
                         try {
-                            await this.canProceedAsLaidAway( order );
+                            const result    =   await this.canProceedAsLaidAway( order );
+                            console.log( result );
                         } catch( exception ) {
                             return reject( exception );
                         }
@@ -528,9 +530,10 @@ export class POS {
                     if ( this.options.getValue().ns_orders_allow_partial === 'no' ) {
                         const message   =   'Partially paid orders are disabled.';
                         return reject({ status: 'failed', message });
-                    } else if ( minimalPayment > 0 ) {
+                    } else if ( minimalPayment >= 0 ) {
                         try {
-                            await this.canProceedAsLaidAway( order );
+                            const result    =   await this.canProceedAsLaidAway( order );
+                            console.log( result );
                         } catch( exception ) {
                             return reject( exception );
                         }

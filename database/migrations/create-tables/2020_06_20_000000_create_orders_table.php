@@ -44,8 +44,8 @@ class CreateOrdersTable extends Migration
                 $table->string( 'tax_type' )->nullable();;
                 $table->float( 'tendered' )->default(0);
                 $table->float( 'change' )->default(0);
-                $table->datetime( 'expected_payment_date' )->nullable();
-                $table->integer( 'total_installments' )->default(0);
+                $table->datetime( 'final_payment_date' )->nullable();
+                $table->integer( 'total_instalments' )->default(0);
                 $table->integer( 'customer_id' );
                 $table->string( 'note' )->nullable();
                 $table->string( 'note_visibility' )->nullable();

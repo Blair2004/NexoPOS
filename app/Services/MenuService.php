@@ -382,10 +382,6 @@ class MenuService
                         'label'     =>  __( 'Orders'),
                         'href'      =>  ns()->url( '/dashboard/settings/orders' )
                     ],
-                    'stores'        =>  [
-                        'label'     =>  __( 'Stores'),
-                        'href'      =>  ns()->url( '/dashboard/settings/stores' )
-                    ],
                     'reports'       =>  [
                         'label'     =>  __( 'Reports'),
                         'href'      =>  ns()->url( '/dashboard/settings/reports' )
