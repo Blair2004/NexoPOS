@@ -32,10 +32,11 @@
                             <ns-field :field="instalment.payment"></ns-field>
                         </div>
                     </div>
-                    <div class="my-2" v-if="instalments.length === 0">
+                    <div class="my-2" v-if="order.instalments.length === 0">
                         <p class="p-2 bg-gray-200 text-gray-700 text-center">{{ __( 'There is not instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
                     </div>
                 </div>
+                {{ order.instalments }}
             </div>
         </div>
         <div class="p-2 flex border-t justify-between flex-shrink-0">
@@ -100,16 +101,18 @@ export default {
                             type: 'date',
                             name: 'date',
                             label: 'Date',
+                            value: '',
                         },
                         payment: {
                             type: 'number',
                             name: 'payment',
-                            label: 'Payment'
+                            label: 'Payment',
+                            value: '',
                         }
                     }
                 });
 
-            console.log( this.order.instalments );
+            this.$forceUpdate();
         },
         close() {
             this.$popupParams.reject({ status: 'failed', message: __( 'You must define layaway settings before proceeding.' ) });
@@ -122,22 +125,30 @@ export default {
                 return nsSnackBar.error( __( 'Unable to procee the form is not valid' ) ).subscribe();
             }
 
-            const instalments           =   this.instalments.map( instalment => {
+            this.$forceUpdate();
+
+            const instalments           =   this.order.instalments.map( instalment => {
                 return {
                     payment : instalment.payment.value,
                     date    : instalment.date.value,
                 }
             });
 
+            const totalInstalments      =   instalments.reduce( (before, after) => parseFloat( before.payment ) + parseFloat( after.payment ) );
+
             if ( instalments.filter( instalment => instalment.date === undefined ).length > 0 ) {
-                return nsSnackBar.error( __( 'One ore more instalments has an invalid date.' ) ).subscribe();
+                return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) ).subscribe();
             }
 
             if ( instalments.filter( instalment => ! ( instalment.payment > 0 ) ).length > 0 ) {
-                return nsSnackBar.error( __( 'One ore more instalments has an invalid payment.' ) ).subscribe();
+                return nsSnackBar.error( __( 'One or more instalments has an invalid payment.' ) ).subscribe();
             }
 
-            if ( instalments.reduce( (before, after) => before.payment + after.payment ) !== this.order.total ) {
+            if ( instalments.filter( instalment => moment( instalment.date ).isBefore( ns.date.moment.startOf( 'day' ) ) ).length > 0 ) {
+                return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) ).subscribe();
+            }
+
+            if ( totalInstalments != this.order.total ) {
                 return nsSnackBar.error( __( 'Total instalments must be equal to the order total.' ) ).subscribe();
             }
 
@@ -156,13 +167,11 @@ export default {
 
             const fields                =   this.formValidation.extractFields( this.fields );
 
-            fields.final_payment_date   =   instalments.reverse()[0];
+            fields.final_payment_date   =   instalments.reverse()[0].date;
             fields.total_instalments    =   instalments.length;
 
             const order                 =   { ...this.$popupParams.order, ...fields, instalments };
             const { resolve, reject }   =   this.$popupParams;
-
-            POS.order.next( order ); // refresh order globally
 
             this.$popup.close();
             
