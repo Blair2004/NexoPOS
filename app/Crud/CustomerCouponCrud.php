@@ -347,6 +347,11 @@ class CustomerCouponCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'code'  =>  [
+                'label'         =>  __( 'Code' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'coupon_discount_value'  =>  [
                 'label'         =>  __( 'Value' ),
                 '$direction'    =>  '',

@@ -157,6 +157,7 @@ export default {
                 const customerCoupon    =   this.customerCoupon;
 
                 if ( 
+                    this.customerCoupon.coupon.valid_hours_start !== null &&
                     ! ns.date.moment.isAfter( this.customerCoupon.coupon.valid_hours_start ) && 
                     this.customerCoupon.coupon.valid_hours_start.length > 0
                 ) {
@@ -165,6 +166,7 @@ export default {
                 }
 
                 if ( 
+                    this.customerCoupon.coupon.valid_hours_end !== null &&
                     ! ns.date.moment.isBefore( this.customerCoupon.coupon.valid_hours_end ) &&
                     this.customerCoupon.coupon.valid_hours_end.length > 0 
                 ) {

@@ -61,8 +61,6 @@ Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
 
 const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
-
-
 const components    =   Object.assign({
     NsModules,
     NsRewardsSystem,

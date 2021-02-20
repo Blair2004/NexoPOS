@@ -48,11 +48,25 @@ class NotificationService
             collect( $role )->each( function( $role ) {
                 $this->dispatchForGroup( $role );
             });
+        } else if ( $role instanceof Collection ) {
+            $role->each( function( $role ) {
+                $this->dispatchForGroup( $role );
+            });
         } else {
             $role->users->map( function( $user ) {
                 $this->__makeNotificationFor( $user );
             });
         }
+    }
+
+    /**
+     * Dispatch notification for specific
+     * groups using array of group namespace provided
+     * @param array $namespaces
+     */
+    public function dispatchForGroupNamespaces( array $namespaces )
+    {
+        $this->dispatchForGroup( Role::in( $namespaces )->get() );
     }
 
     private function __makeNotificationFor( $user )

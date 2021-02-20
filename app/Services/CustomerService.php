@@ -20,6 +20,7 @@ use App\Models\CustomerGroup;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use App\Models\RewardSystem;
+use App\Models\Role;
 
 class CustomerService
 {
@@ -373,22 +374,38 @@ class CustomerService
          * point counter
          */
         if ( $customerReward->points - $customerReward->target >= 0 ) {
-            $coupon                         =   $reward->coupon;
+            $coupon                             =   $reward->coupon;
 
-            $customerCoupon                 =   new CustomerCoupon();
-            $customerCoupon->coupon_id      =   $coupon->id;
-            $customerCoupon->name           =   $coupon->name;
-            $customerCoupon->active         =   true;
-            $customerCoupon->code           =   $coupon->code . '-' . Str::random(0,9) . Str::random(0,9) . Str::random(0,9) . Str::random(0,9);
-            $customerCoupon->customer_id    =   $customer->id;
-            $customerCoupon->limit_usage    =   $coupon->limit_usage;
-            $customerCoupon->author         =   0;
-            $customerCoupon->save();
-
-            $customerReward->points         =   abs( $customerReward->points - $customerReward->target );
-            $customerReward->save();
-
-            event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
+            if ( $coupon instanceof Coupon ) {
+                $customerCoupon                 =   new CustomerCoupon();
+                $customerCoupon->coupon_id      =   $coupon->id;
+                $customerCoupon->name           =   $coupon->name;
+                $customerCoupon->active         =   true;
+                $customerCoupon->code           =   $coupon->code . '-' . ns()->date->format( 'dmi' );
+                $customerCoupon->customer_id    =   $customer->id;
+                $customerCoupon->limit_usage    =   $coupon->limit_usage;
+                $customerCoupon->author         =   0;
+                $customerCoupon->save();
+    
+                $customerReward->points         =   abs( $customerReward->points - $customerReward->target );
+                $customerReward->save();
+    
+                event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
+            } else {
+                /**
+                 * @var NotificationService
+                 */
+                $notify     =   app()->make( NotificationService::class );
+                $notify->create([
+                    'title'         =>  __( 'Issuing Coupon Failed' ),
+                    'description'   =>  sprintf( 
+                        __( 'Unable to apply a coupon attached to the reward "%s". It looks like the coupon no more exists.' ),
+                        $reward->name
+                    ),
+                    'identifier'    =>  'coupon-issuing-issue-' . $reward->id,
+                    'url'           =>  ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ]),
+                ])->dispatchForGroupNamespaces([ 'admin', 'nexopos.store.administrator' ]);
+            }
         }
     }
 

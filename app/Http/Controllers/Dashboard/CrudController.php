@@ -116,7 +116,14 @@ class CrudController extends DashboardController
             }
         }
         
-        $entry->author      =   Auth::id();
+        /**
+         * If fillable is empty or if "author" it's explicitely
+         * mentionned on the fillable array.
+         */
+        if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            $entry->author      =   Auth::id();
+        }
+
         $entry->save();
 
         /**
@@ -224,7 +231,14 @@ class CrudController extends DashboardController
             }
         }
         
-        $entry->author      =   Auth::id();
+        /**
+         * If fillable is empty or if "author" it's explicitely
+         * mentionned on the fillable array.
+         */
+        if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            $entry->author      =   Auth::id();
+        }
+        
         $entry->save();
 
         /**

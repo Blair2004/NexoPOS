@@ -546,7 +546,7 @@ class CrudService
         $form   =   $resource->getForm( $entry );
         $data   =   [];
 
-        if ( isset( $form[ 'main' ] ) ) {
+        if ( isset( $form[ 'main' ][ 'name' ] ) ) {
             $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
         }
 

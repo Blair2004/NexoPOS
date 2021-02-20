@@ -14,6 +14,7 @@
 </template>
 <script>
 export default {
+    name: 'ns-numpad',
     props: [ 'value', 'currency' ],
     data() {
         return {
