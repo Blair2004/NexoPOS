@@ -1,0 +1,34 @@
+<?php
+
+use App\Classes\Schema;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateOrdersInstalmentsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::createIfMissing( 'nexopos_orders_instalments', function( Blueprint $table ) {
+            $table->bigIncrements( 'id' );
+            $table->float( 'amount' )->default(0);
+            $table->integer( 'order_id' )->nullable();
+            $table->boolean( 'paid' )->default(false);
+            $table->datetime( 'date' );
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists( 'nexopos_orders_instalments' );
+    }
+}

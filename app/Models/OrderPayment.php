@@ -23,4 +23,13 @@ class OrderPayment extends NsModel
     {
         return $query->where( 'order_id', $order_id );
     }
+
+    public function getPaymentLabelAttribute()
+    {
+        $paymentTypes   =   collect( config( 'nexopos.pos.payments' ) )->mapWithKeys( function( $payment ) {
+            return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
+        });
+
+        return $paymentTypes[ $this->identifier ] ?? __( 'Unknown Payment' );
+    }
 }

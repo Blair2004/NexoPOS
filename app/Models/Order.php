@@ -67,6 +67,11 @@ class Order extends NsModel
         return $this->hasMany( OrderCoupon::class, 'order_id', 'id' );
     }
 
+    public function instalments()
+    {
+        return $this->hasMany( OrderInstalment::class, 'order_id', 'id' );
+    }
+
     public function shipping_address()
     {
         return $this->hasOne( OrderShippingAddress::class );

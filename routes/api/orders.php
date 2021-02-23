@@ -8,6 +8,7 @@ Route::get( 'orders/payments', [ OrdersController::class, 'getSupportedPayments'
 Route::get( 'orders/{id}/pos', [ OrdersController::class, 'getPosOrder' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/products', [ OrdersController::class, 'getOrderProducts' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/payments', [ OrdersController::class, 'getOrderPayments' ])->where( 'id', '[0-9]+');
+Route::get( 'orders/{order}/instalments', [ OrdersController::class, 'getOrderInstalments' ])->where( 'id', '[0-9]+')->middleware( 'ns.restrict:nexopos.read.orders-instalments' );
 Route::get( 'orders/{order}/print/{doc?}', [ OrdersController::class, 'printOrder' ])->where( 'id', '[0-9]+');
 
 /**
@@ -20,6 +21,7 @@ Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->m
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 Route::post( 'orders/{order}/payments', [ OrdersController::class, 'addPayment' ])->middleware( 'ns.restrict:nexopos.make-payment.orders' );
+Route::post( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'updateInstalment' ])->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
 Route::post( 'orders/{order}/refund', [ OrdersController::class, 'makeOrderRefund' ])->middleware( 'ns.restrict:nexopos.refund.orders' );
 
 Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);

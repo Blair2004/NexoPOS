@@ -3,12 +3,16 @@
         <div class="p-2 border-b flex justify-between items-center">
             <h3 class="font-semibold">{{ __( 'Layaway Parameters' ) }}</h3>
             <div>
-                <ns-close-button></ns-close-button>
+                <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
         <div class="p-2 flex-auto flex flex-col relative overflow-y-auto">
             <div v-if="fields.length === 0" class="absolute h-full w-full flex items-center justify-center">
                 <ns-spinner></ns-spinner>
+            </div>
+            <div class="p-2 text-white bg-blue-400 mb-2 text-center text-2xl font-bold flex justify-between">
+                <span>{{ __( 'Minimum Payment' ) }}</span>
+                <span>{{ expectedPayment | currency }}</span>
             </div>
             <div>
                 <ns-field v-for="( field, index ) of fields" :field="field" :key="index"></ns-field>
@@ -17,7 +21,12 @@
                 <div class="border-b border-gray-200">
                     <h3 class="text-2xl flex justify-between py-2 text-gray-700">
                         <span>{{ __( 'Instalments & Payments' ) }}</span>
-                        <span>{{ order.total | currency }}</span>
+                        <p>
+                            <span class="text-sm">({{ totalPayments | currency }})</span>
+                            <span>
+                            {{ order.total | currency }}
+                            </span>
+                        </p>
                     </h3>
                     <p class="p-2 mb-2 text-center bg-green-200 text-green-700">
                         {{ __( 'The final payment date must be the last within the instalments.' ) }}
@@ -26,17 +35,16 @@
                 <div class="flex-auto overflow-y-auto">
                     <div class="flex w-full -mx-1 py-2" :key="key" v-for="(instalment, key) of order.instalments">
                         <div class="px-1 w-full md:w-1/2">
-                            <ns-field :field="instalment.date"></ns-field>
+                            <ns-field @change="refreshTotalPayments()" :field="instalment.date"></ns-field>
                         </div>
                         <div class="px-1 w-full md:w-1/2">
-                            <ns-field :field="instalment.payment"></ns-field>
+                            <ns-field @change="refreshTotalPayments()" :field="instalment.amount"></ns-field>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
                         <p class="p-2 bg-gray-200 text-gray-700 text-center">{{ __( 'There is not instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
                     </div>
                 </div>
-                {{ order.instalments }}
             </div>
         </div>
         <div class="p-2 flex border-t justify-between flex-shrink-0">
@@ -63,7 +71,8 @@ export default {
             fields: [],
             instalments: [],
             formValidation: new FormValidation,
-            subscription: null
+            subscription: null,
+            totalPayments: 0
         }
     },
     mounted() {
@@ -83,42 +92,67 @@ export default {
         }, 200 );
     },
     computed: {
+        expectedPayment() {
+            const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
+            return ( this.order.total * minimalPaymentPercent ) / 100;
+        },
         order() {
             return this.$popupParams.order;
-        }
+        },
     },
     destroyed() {
         this.subscription.unsubscribe();
     },
     methods: {
         __,
+        refreshTotalPayments() {
+            if ( this.order.instalments.length > 0 ) {
+                const totalInstalments      =   this.order.instalments
+                    .map( i => i.amount.value || 0 )
+                    .reduce( ( before, after ) => {
+                        return parseFloat( before ) + parseFloat( after );
+                    });
+                this.totalPayments          =    this.order.total - totalInstalments;
+            } else {
+                this.totalPayments  =   0;
+            }
+
+            console.log( this.totalPayments );
+        },
         generatePaymentFields( totalInstalments ) {
             this.order.instalments    =   ( new Array( parseInt( totalInstalments ) ) )
                 .fill('')
-                .map( _ => {
+                .map( ( _, index ) => {
                     return {
                         date: {
                             type: 'date',
                             name: 'date',
                             label: 'Date',
-                            value: '',
+                            disabled: this.expectedPayment > 0 && index === 0 ? true: false,
+                            value: index === 0 ? ns.date.moment.format( 'YYYY-MM-DD' ) : '',
                         },
-                        payment: {
+                        amount: {
                             type: 'number',
-                            name: 'payment',
-                            label: 'Payment',
-                            value: '',
+                            name: 'amount',
+                            label: 'Amount',
+                            disabled: this.expectedPayment > 0 && index === 0 ? true: false,
+                            value: index === 0 ? this.expectedPayment : 0,
                         }
                     }
                 });
 
             this.$forceUpdate();
+            this.refreshTotalPayments();
         },
         close() {
             this.$popupParams.reject({ status: 'failed', message: __( 'You must define layaway settings before proceeding.' ) });
             this.$popup.close();
         },
         updateOrder() {
+            if ( this.order.instalments.length === 0 ) {
+                return nsSnackBar.error( __( 'Please provide instalments before proceeding.' ) ).subscribe();
+            }
+            
             this.fields.forEach( field => this.formValidation.validateField( field ) );
 
             if ( ! this.formValidation.fieldsValid( this.fields ) ) {
@@ -129,19 +163,19 @@ export default {
 
             const instalments           =   this.order.instalments.map( instalment => {
                 return {
-                    payment : instalment.payment.value,
+                    amount  : instalment.amount.value,
                     date    : instalment.date.value,
                 }
             });
 
-            const totalInstalments      =   instalments.reduce( (before, after) => parseFloat( before.payment ) + parseFloat( after.payment ) );
+            const totalInstalments      =   instalments.reduce( (before, after) => parseFloat( before.amount ) + parseFloat( after.amount ) );
 
-            if ( instalments.filter( instalment => instalment.date === undefined ).length > 0 ) {
+            if ( instalments.filter( instalment => instalment.date === undefined || instalment.date === '' ).length > 0 ) {
                 return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) ).subscribe();
             }
 
-            if ( instalments.filter( instalment => ! ( instalment.payment > 0 ) ).length > 0 ) {
-                return nsSnackBar.error( __( 'One or more instalments has an invalid payment.' ) ).subscribe();
+            if ( instalments.filter( instalment => ! ( instalment.amount > 0 ) ).length > 0 ) {
+                return nsSnackBar.error( __( 'One or more instalments has an invalid amount.' ) ).subscribe();
             }
 
             if ( instalments.filter( instalment => moment( instalment.date ).isBefore( ns.date.moment.startOf( 'day' ) ) ).length > 0 ) {
@@ -174,6 +208,8 @@ export default {
             const { resolve, reject }   =   this.$popupParams;
 
             this.$popup.close();
+            
+            POS.order.next( order );
             
             return resolve( order );
         },

@@ -18,6 +18,8 @@ use App\Fields\OrderPaymentFields;
 use App\Models\Order;
 use App\Http\Requests\OrderPaymentRequest;
 use App\Classes\Hook;
+use App\Crud\OrderInstalmentCrud;
+use App\Models\OrderInstalment;
 
 class OrdersController extends DashboardController
 {
@@ -254,6 +256,25 @@ class OrdersController extends DashboardController
             'status'    =>  'success',
             'message'   =>  __( 'The printing event has been successfully dispatched.' )
         ];
+    }
+
+    public function listInstalments()
+    {
+        return OrderInstalmentCrud::table();
+    }
+
+    public function getOrderInstalments( Order $order )
+    {
+        return $order->instalments;
+    }
+
+    public function updateInstalment( Order $order, OrderInstalment $instalment, Request $request )
+    {
+        return $this->ordersService->updateInstalment( 
+            $order, 
+            $instalment, 
+            $request->input( 'instalment' ) 
+        );
     }
 }
 
