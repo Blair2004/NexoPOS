@@ -2057,6 +2057,13 @@ class OrdersService
         }
     }
 
+    /**
+     * Will update an existing instalment
+     * @param Order $order
+     * @param OrderInstalment $orderInstalement
+     * @param array $fields
+     * @return array
+     */
     public function updateInstalment( Order $order, OrderInstalment $instalment, $fields )
     {
         if ( $instalment->paid ) {
@@ -2075,6 +2082,55 @@ class OrdersService
             'status'    =>  'success',
             'message'   =>  __( 'The instalment has been saved.' ),
             'data'      =>  compact( 'instalment' )
+        ];
+    }
+
+    /**
+     * Will delete an instalment.
+     * @param OrderInstlament $instalment
+     * @return array
+     */
+    public function deleteInstalment( OrderInstalment $instalment )
+    {
+        $instalment->save();
+
+        return [
+            'status'    =>  'sucess',
+            'message'   =>  __( 'The instalment has been deleted.' )
+        ];
+    }
+
+
+    /**
+     * Creates an instalments
+     * @param Order $order
+     * @param array $fields
+     * @return array
+     */
+    public function createInstalment( Order $order, $fields )
+    {
+        $totalInstalment    =   $order->instalments->map( fn( $instalment ) => $instalment->amount )->sum();
+
+        if ( Currency::raw( $fields[ 'amount' ] ) <= 0 ) {
+            throw new NotAllowedException( __( 'The defined amount is not valid.' ) );
+        }
+
+        if ( Currency::raw( $totalInstalment ) >= $order->total ) {
+            throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );
+        }
+
+        $orderInstalment                =   new OrderInstalment;
+        $orderInstalment->order_id      =   $order->id;
+        $orderInstalment->amount        =   $fields[ 'amount' ];
+        $orderInstalment->date          =   $fields[ 'date' ];
+        $orderInstalment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The instalment has been created.' ),
+            'data'      =>  [
+                'instalment'    =>  $orderInstalment
+            ]
         ];
     }
 }

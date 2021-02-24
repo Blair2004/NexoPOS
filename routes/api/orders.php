@@ -21,10 +21,14 @@ Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->m
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 Route::post( 'orders/{order}/payments', [ OrdersController::class, 'addPayment' ])->middleware( 'ns.restrict:nexopos.make-payment.orders' );
-Route::post( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'updateInstalment' ])->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
-Route::post( 'orders/{order}/refund', [ OrdersController::class, 'makeOrderRefund' ])->middleware( 'ns.restrict:nexopos.refund.orders' );
+Route::post( 'orders/{order}/refund', [ OrdersController::class, 'makeOrderRefund' ])
+->middleware( 'ns.restrict:nexopos.refund.orders' );
+Route::post( 'orders/{order}/instalments', [ OrdersController::class, 'createInstalment' ])->middleware( 'ns.restrict:nexopos.create.orders-instalments' );
 
+Route::put( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'updateInstalment' ])->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
 Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);
 
+Route::delete( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'updateInstalment' ])
+    ->middleware( 'ns.restrict:nexopos.delete.orders-instalments' );
 Route::delete( 'orders/{order}', [ OrdersController::class, 'deleteOrder' ])->middleware( 'ns.restrict:nexopos.delete.orders' );
 Route::delete( 'orders/{id}/products/{product_id}', [ OrdersController::class, 'deleteOrderProduct' ])->where('id', '[0-9]+');

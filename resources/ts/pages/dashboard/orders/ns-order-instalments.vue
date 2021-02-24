@@ -6,7 +6,7 @@
                     <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Instalments' ) }}</h3>
                 </div>
                 <div class="px-4">
-                    <ul>
+                    <ul class="border-gray-400 border-t text-gray-700">
                         <li :class="instalment.paid ? 'bg-green-200 border-green-400' : 'bg-gray-200 border-blue-400'"
                             class="border-b border-l flex justify-between" 
                             :key="instalment.id" 
@@ -29,18 +29,39 @@
                                             @blur="togglePriceEdition( instalment )" type="text" class="border border-blue-400 p-1">
                                     </span>
                                 </span>
-                                <span v-if="!instalment.paid" :class="instalment.paid ? 'border-green-400' : 'border-blue-400'" class="w-28 justify-center flex items-center px-2 h-full border-r">
-                                    <button @click="updateInstalment( instalment )" :class="instalment.paid ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-400'" class="rounded-full px-3 py-1 text-white">{{ __( 'Update' ) }}</button>
-                                </span>
-                                <span v-if="instalment.paid" class="w-28 border-green-400 justify-center flex items-center px-2 h-full border-r">
+                                <div v-if="!instalment.paid && instalment.id" :class="instalment.paid ? 'border-green-400' : 'border-blue-400'" class="w-36 justify-center flex items-center px-2 h-full border-r">
+                                    <div class="px-2">
+                                        <ns-icon-button buttonClass="bg-blue-400 hover:bg-blue-500 text-white hover:text-white hover:border-blue-600" @click="updateInstalment( instalment )" className="la-save"></ns-icon-button>
+                                    </div>
+                                    <div class="px-2">
+                                        <ns-icon-button buttonClass="bg-red-400 text-white hover:border hover:border-blue-400 hover:bg-red-500" @click="deleteInstalment( instalment )" className="la-trash-alt"></ns-icon-button>
+                                    </div>
+                                </div>
+                                <div v-if="!instalment.paid && !instalment.id" :class="instalment.paid ? 'border-green-400' : 'border-blue-400'" class="w-36 justify-center flex items-center px-2 h-full border-r">
+                                    <div class="px-2">
+                                        <button @click="createInstalment( instalment )" class="px-3 py-1 rounded-full bg-blue-400 text-white">
+                                            <i class="las la-plus"></i>
+                                            {{ __( 'Create' ) }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <span v-if="instalment.paid" class="w-36 border-green-400 justify-center flex items-center px-2 h-full border-r">
                                     {{ __( 'Paid' ) }}
                                 </span>
                             </div>
                         </li>
-                        <li class="flex justify-end p-2 bg-gray-200 border-r border-b border-l border-gray-400">
+                        <li class="flex justify-between p-2 bg-gray-200 border-r border-b border-l border-gray-400">
+                            <div class="flex items-center justify-center">
+                                <span>
+                                    {{ __( 'Total :' ) }} {{ order.total | currency }}
+                                </span>
+                                <span class="ml-1 text-sm">
+                                    ({{ __( 'Remaining :' ) }} {{ order.total - totalInstalments | currency }})
+                                </span>
+                            </div>
                             <div class="-mx-2 flex flex-wrap items-center">
                                 <span class="px-2">
-                                    {{ order.total | currency }}
+                                    {{ __( 'Instalments:' ) }} {{ totalInstalments | currency }}
                                 </span>
                                 <span class="px-2">
                                     <button @click="addInstalment()" class="rounded-full px-3 py-1 bg-blue-400 text-white">{{ __( 'Add Instalment' ) }}</button>
@@ -71,6 +92,16 @@ export default {
     mounted() {
         this.loadInstalments();
     },
+    computed: {
+        totalInstalments() {
+            if ( this.instalments.length > 0 ) {
+                return this.instalments
+                    .map( instalment => instalment.amount )
+                    .reduce( ( before, after ) => parseFloat( before ) + parseFloat( after ) );
+            }
+            return 0;
+        }
+    },
     methods: {
         __,
         loadInstalments() {
@@ -84,6 +115,48 @@ export default {
                         return instalment;
                     });
                 })
+        },
+        addInstalment() {
+            this.instalments.push({
+                date: ns.date.moment.format( 'YYYY-MM-DD' ),
+                amount: this.order.total - this.totalInstalments,
+                paid: false
+            });
+        },
+        createInstalment( instalment ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to create this instalment ?' ),
+                onAction: action => {
+                    if ( action ) {
+                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments`, { instalment })
+                            .subscribe( result => {
+                                instalment.id  =   result.data.instalment.id;
+                                nsSnackBar.success( result.message ).subscribe();
+                            }, error => {
+                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            })
+                    }
+                }
+            })
+        },
+        deleteInstalment( instalment ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to delete this instalment ?' ),
+                onAction: action => {
+                    if ( action ) {
+                        nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}` )
+                            .subscribe( result => {
+                                const index     =   this.instalments.indexOf( instalment );
+                                this.instalments.splice( index, 1 );
+                                nsSnackBar.success( result.message ).subscribe();
+                            }, error => {
+                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            })
+                    }
+                }
+            })
         },
         togglePriceEdition( instalment ) {
             if ( ! instalment.paid ) {
@@ -111,7 +184,7 @@ export default {
                 message: __( 'Would you like to update that instalment ?' ),
                 onAction: action => {
                     if ( action ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
+                        nsHttpClient.put( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
                             .subscribe( result => {
                                 nsSnackBar.success( result.message ).subscribe();
                             }, error => {

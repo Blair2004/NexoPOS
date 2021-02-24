@@ -19,6 +19,7 @@ use App\Models\Order;
 use App\Http\Requests\OrderPaymentRequest;
 use App\Classes\Hook;
 use App\Crud\OrderInstalmentCrud;
+use App\Exceptions\NotAllowedException;
 use App\Models\OrderInstalment;
 
 class OrdersController extends DashboardController
@@ -275,6 +276,20 @@ class OrdersController extends DashboardController
             $instalment, 
             $request->input( 'instalment' ) 
         );
+    }
+
+    public function deleteInstalment( Order $order, OrderInstalment $instalment )
+    {
+        if ( $order->id !== $instalment->order_id ) {
+            throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
+        }
+
+        return $this->ordersService->deleteInstalment( $instalment );
+    }
+
+    public function createInstalment( Order $order, Request $request )
+    {
+        return $this->ordersService->createInstalment( $order, $request->input( 'instalment' ) );
     }
 }
 
