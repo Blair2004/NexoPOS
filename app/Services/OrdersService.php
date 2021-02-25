@@ -242,7 +242,7 @@ class OrdersService
      */
     public function __checkProvidedInstalments( $fields )
     {
-        if ( isset( $fields[ 'instalments' ] ) ) {
+        if ( isset( $fields[ 'instalments' ] ) && ! empty( $fields[ 'instalments' ] ) ) {
             $instalments    =   collect( $fields[ 'instalments' ] );
             $total          =   $instalments->sum( 'amount' );
             $customer       =   Customer::find( $fields[ 'customer_id' ] );
@@ -2053,6 +2053,11 @@ class OrdersService
         });
     }
 
+    /**
+     * Will resolve instalments attached to an order
+     * @param Order $order
+     * @return void
+     */
     public function resolveInstalments( Order $order )
     {
         if ( in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {
