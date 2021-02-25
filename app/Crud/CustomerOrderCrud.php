@@ -150,9 +150,9 @@ class CustomerOrderCrud extends OrderCrud
                             'value' =>  $entry->discount_type ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'expected_payment_date',
-                            'label' =>  __( 'Expected_payment_date' ),
-                            'value' =>  $entry->expected_payment_date ?? '',
+                            'name'  =>  'final_payment_date',
+                            'label' =>  __( 'final_payment_date' ),
+                            'value' =>  $entry->final_payment_date ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'gross_total',
@@ -220,9 +220,9 @@ class CustomerOrderCrud extends OrderCrud
                             'value' =>  $entry->total ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'total_installments',
+                            'name'  =>  'total_instalments',
                             'label' =>  __( 'Total_installments' ),
-                            'value' =>  $entry->total_installments ?? '',
+                            'value' =>  $entry->total_instalments ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'type',

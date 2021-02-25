@@ -75,6 +75,7 @@ export class POS {
             customer: undefined,
             type: undefined,
             products: [],
+            instalments: [],
             payments: [],
             addresses: {
                 shipping: undefined,
@@ -463,32 +464,31 @@ export class POS {
      * might request additionnal information through a popup.
      * @param order Order
      */
-    canProceedAsLaidAway( order: Order ) {
+    canProceedAsLaidAway( _order: Order ): { status: string, message: string, data: { order: Order } } | any {
         return new Promise( async ( resolve, reject ) => {
-            const minimalPaymentPercent     =   order.customer.group.minimal_credit_payment;
-            const expected                  =   ( order.total * minimalPaymentPercent ) / 100;
+            const minimalPaymentPercent     =   _order.customer.group.minimal_credit_payment;
+            const expected                  =   ( _order.total * minimalPaymentPercent ) / 100;
 
             /**
              * checking order details
              * installments & payment date
              */
-            if ( order.expected_payment_date === undefined ) {
-                try {
-                    await new Promise( ( resolve, reject ) => {
-                        Popup.show( NsLayawayPopup, { order, reject, resolve });
-                    });
-                } catch( exception ) {
-                    return reject( exception );
+            try {
+                const order    =   await new Promise<Order>( ( resolve, reject ) => {
+                    Popup.show( NsLayawayPopup, { order: _order, reject, resolve });
+                });
+
+                if ( order.tendered < expected ) {
+                    const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
+                    Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
+                    return reject({ status: 'failed', message });
                 }
-            }
 
-            if ( order.tendered < expected ) {
-                const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
-                Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
-                return reject({ status: 'failed', message });
-            }
+                return resolve({ status: 'success', message: __( 'Layaway defined' ), data: { order } });
 
-            return resolve({ status: 'success', message: 'Can Proceed as layaway' });
+            } catch( exception ) {
+                return reject( exception );
+            }
         });
     }
 
@@ -499,7 +499,7 @@ export class POS {
      */
     submitOrder( orderFields = {} ) {
         return new Promise( async ( resolve, reject ) => {
-            const order             =   { 
+            var order             =   { 
                 ...<Order>this.order!.getValue(),
                 ...orderFields
             };
@@ -511,26 +511,19 @@ export class POS {
              * order is not "hold".
              */
             if ( order.payment_status !== 'hold' ) {
-                if ( order.payments.length  === 0 ) {
-                    if ( this.options.getValue().ns_orders_allow_unpaid === 'no' ) {
-                        const message   =   'Please provide a payment before proceeding.';
-                        return reject({ status: 'failed', message  });
-                    } else if ( minimalPayment > 0 ) {
-                        try {
-                            await this.canProceedAsLaidAway( order );
-                        } catch( exception ) {
-                            return reject( exception );
-                        }
-                    }
-                }
-    
-                if ( order.total > order.tendered ) {
+                if ( order.payments.length  === 0 || order.total > order.tendered ) {
                     if ( this.options.getValue().ns_orders_allow_partial === 'no' ) {
                         const message   =   'Partially paid orders are disabled.';
                         return reject({ status: 'failed', message });
-                    } else if ( minimalPayment > 0 ) {
+                    } else if ( minimalPayment >= 0 ) {
                         try {
-                            await this.canProceedAsLaidAway( order );
+                            const result    =   await this.canProceedAsLaidAway( order );
+
+                            /**
+                             * the order might have been updated
+                             * by the layaway popup.
+                             */
+                            order           =   result.data.order;
                         } catch( exception ) {
                             return reject( exception );
                         }

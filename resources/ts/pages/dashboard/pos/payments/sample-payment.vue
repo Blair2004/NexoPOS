@@ -182,10 +182,6 @@ export default {
                 }
             } 
 
-            // this.finalValue     =   parseFloat( this.backValue ) / number || 0;
-
-            // console.log( this.finalValue, this.backValue );
-
             if ( ( this.backValue ) === "0" ) {
                 this.backValue      =   '';
             }

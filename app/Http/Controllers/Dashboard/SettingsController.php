@@ -46,7 +46,7 @@ class SettingsController extends DashboardController
             case 'reports'; return $this->reportsSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
-            case 'stores'; return $this->storesSettings(); break;
+
             case 'reset'; return $this->resetSettings(); break;
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
@@ -154,14 +154,6 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.service-providers', [
             'title'     =>      __( 'Services Providers Settings' ),
             'description'   =>  __( 'Configure the services providers settings.' )
-        ]);
-    }
-    
-    public function storesSettings()
-    {
-        return $this->view( 'pages.dashboard.settings.stores', [
-            'title'     =>      __( 'Stores Settings' ),
-            'description'   =>  __( 'Configure the stores settings.' )
         ]);
     }
 

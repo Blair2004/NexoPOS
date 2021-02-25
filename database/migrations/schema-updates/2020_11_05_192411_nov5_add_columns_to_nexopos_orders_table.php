@@ -14,11 +14,8 @@ class Nov5AddColumnsToNexoposOrdersTable extends Migration
     public function up()
     {
         Schema::table('nexopos_orders', function (Blueprint $table) {
-            if ( ! Schema::hasColumn( 'nexopos_orders', 'expected_payment_date' ) ) {
-                $table->datetime( 'expected_payment_date' )->nullable();
-            }
-            if ( ! Schema::hasColumn( 'nexopos_orders', 'total_installments' ) ) {
-                $table->integer( 'total_installments' )->nullable();
+            if ( ! Schema::hasColumn( 'nexopos_orders', 'total_instalments' ) ) {
+                $table->integer( 'total_instalments' )->nullable();
             }
         });
     }
@@ -31,12 +28,8 @@ class Nov5AddColumnsToNexoposOrdersTable extends Migration
     public function down()
     {
         Schema::table('nexopos_orders', function (Blueprint $table) {
-            if ( Schema::hasColumn( 'nexopos_orders', 'expected_payment_date' ) ) {
-                $table->dropColumn( 'expected_payment_date' );
-            }
-
-            if ( Schema::hasColumn( 'nexopos_orders', 'total_installments' ) ) {
-                $table->dropColumn( 'total_installments' );
+            if ( Schema::hasColumn( 'nexopos_orders', 'total_instalments' ) ) {
+                $table->dropColumn( 'total_instalments' );
             }
         });
     }

@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="cursor-pointer">
-                        <h3 class="text-sm p-2 flex items-center justify-center hover:bg-red-100 w-full text-red-400 font-semibold hover:text-red-500">Clear All</h3>
+                        <h3 @click="deleteAll()" class="text-sm p-2 flex items-center justify-center hover:bg-red-100 w-full text-red-400 font-semibold hover:text-red-500">{{ __( 'Clear All' ) }}</h3>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,9 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 export default {
     name: 'ns-notifications',
     data() {
@@ -61,6 +63,21 @@ export default {
         clearInterval( this.interval );
     },
     methods: {
+        __,
+        deleteAll() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to clear all the notifications ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        nsHttpClient.delete( `/api/nexopos/v4/notifications/all` )
+                            .subscribe( result => {
+                                nsSnackBar.success( result.message ).subscribe();
+                            })
+                    }
+                }
+            })
+        },
         checkClickedItem( event ) {
             let clickChildrens;
 

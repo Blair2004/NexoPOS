@@ -7,6 +7,7 @@ import nsPromptPopupVue from "./ns-prompt-popup.vue";
 import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
 import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
 import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
+import nsOrderInstalments from "@/pages/dashboard/orders/ns-order-instalments.vue";
 
 /**
  * @var {ExtendedVue}
@@ -27,7 +28,8 @@ const nsOrderPreviewPopup   =   {
     components: {
         nsOrderRefund,
         nsOrderPayment,
-        nsOrderDetails
+        nsOrderDetails,
+        nsOrderInstalments,
     },
     computed: {
         isVoidable() {
@@ -153,7 +155,7 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-hidden bg-gray-100 flex flex-auto">
+        <div class="p-2 overflow-auto bg-gray-100 flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item label="Details" identifier="details" class="overflow-y-auto">
@@ -173,6 +175,12 @@ export default nsOrderPreviewPopup;
                     <ns-order-refund @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
+
+                <!-- Instalment -->
+                <ns-tabs-item v-if="[ 'partially_paid' ].includes( order.payment_status )" label="Instalments" identifier="instalments" class="flex overflow-y-auto">
+                    <ns-order-instalments @changed="refresh()" :order="order"></ns-order-instalments>
+                </ns-tabs-item>
+                <!-- End Instalment -->
             </ns-tabs>
             <div v-if="! order.id" class="h-full w-full flex items-center justify-center">
                 <ns-spinner></ns-spinner>

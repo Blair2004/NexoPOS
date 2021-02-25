@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 Route::get( '', [ DashboardController::class, 'home' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.home' ) );
     
 Route::get( '/orders', [ OrdersController::class, 'listOrders' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders' ) );
+Route::get( '/orders/instalments', [ OrdersController::class, 'listInstalments' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders-instalments' ) );
 Route::get( '/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
 Route::get( '/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt' ]);
 Route::get( '/pos', [ OrdersController::class, 'showPOS' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.pos' ) );
