@@ -155,7 +155,7 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-hidden bg-gray-100 flex flex-auto">
+        <div class="p-2 overflow-auto bg-gray-100 flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item label="Details" identifier="details" class="overflow-y-auto">

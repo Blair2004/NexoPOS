@@ -284,12 +284,21 @@ class OrdersController extends DashboardController
             throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
         }
 
-        return $this->ordersService->deleteInstalment( $instalment );
+        return $this->ordersService->deleteInstalment( $order, $instalment );
     }
 
     public function createInstalment( Order $order, Request $request )
     {
         return $this->ordersService->createInstalment( $order, $request->input( 'instalment' ) );
+    }
+
+    public function markInstalmentAs( Order $order, OrderInstalment $instalment )
+    {
+        if ( $order->id !== $instalment->order_id ) {
+            throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
+        }
+
+        return $this->ordersService->markInstalmentAsPaid( $order, $instalment );
     }
 }
 

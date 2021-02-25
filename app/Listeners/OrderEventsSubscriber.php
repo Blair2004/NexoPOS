@@ -154,7 +154,7 @@ class OrderEventsSubscriber
         $this->ordersService->trackOrderCoupons( $event->order );
     }
 
-    public function handleInstalmentPayment( OrderAfterCreatedEvent $event )
+    public function handleInstalmentPayment( $event )
     {
         $this->ordersService->resolveInstalments( $event->order );
     }

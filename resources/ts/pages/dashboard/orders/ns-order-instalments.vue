@@ -31,6 +31,9 @@
                                 </span>
                                 <div v-if="!instalment.paid && instalment.id" :class="instalment.paid ? 'border-green-400' : 'border-blue-400'" class="w-36 justify-center flex items-center px-2 h-full border-r">
                                     <div class="px-2">
+                                        <ns-icon-button buttonClass="bg-green-400 hover:bg-green-500 text-white hover:text-white hover:border-green-600" @click="markAsPaid( instalment )" className="la-money-bill-wave-alt"></ns-icon-button>
+                                    </div>
+                                    <div class="px-2">
                                         <ns-icon-button buttonClass="bg-blue-400 hover:bg-blue-500 text-white hover:text-white hover:border-blue-600" @click="updateInstalment( instalment )" className="la-save"></ns-icon-button>
                                     </div>
                                     <div class="px-2">
@@ -131,7 +134,7 @@ export default {
                     if ( action ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments`, { instalment })
                             .subscribe( result => {
-                                instalment.id  =   result.data.instalment.id;
+                                this.loadInstalments();
                                 nsSnackBar.success( result.message ).subscribe();
                             }, error => {
                                 nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
@@ -158,6 +161,23 @@ export default {
                 }
             })
         },
+        markAsPaid( instalment ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to make this as paid ?' ),
+                onAction: action => {
+                    if ( action ) {
+                        nsHttpClient.get( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}/paid` )
+                            .subscribe( result => {
+                                this.loadInstalments();
+                                nsSnackBar.success( result.message ).subscribe();
+                            }, error => {
+                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            })
+                    }
+                }
+            })
+        },
         togglePriceEdition( instalment ) {
             if ( ! instalment.paid ) {
                 instalment.price_clicked = ! instalment.price_clicked;
@@ -170,15 +190,6 @@ export default {
             }
         },
         updateInstalment( instalment ) {
-            // const index             =   this.instalments.indexOf( instalment );
-            // const totalInstalment   =   this.instalments
-            //     .map( instalment => parseFloat( instalments.amount ) )
-            //     .reduce( ( before, after ) => before + after );
-
-            // if ( totalInstalment !== this.order.total ) {
-            //     this.instalments[ index ].amount    =   parseFloat( this.original[ index ].amount );
-            //     nsSnackBar.error( __( 'The defined amount'))
-            // }
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Your Action' ),
                 message: __( 'Would you like to update that instalment ?' ),

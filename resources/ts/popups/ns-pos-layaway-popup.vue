@@ -34,11 +34,18 @@
                 </div>
                 <div class="flex-auto overflow-y-auto">
                     <div class="flex w-full -mx-1 py-2" :key="key" v-for="(instalment, key) of order.instalments">
-                        <div class="px-1 w-full md:w-1/2">
-                            <ns-field @change="refreshTotalPayments()" :field="instalment.date"></ns-field>
+                        <div class="flex flex-auto">
+                            <div class="px-1 w-full md:w-1/2">
+                                <ns-field @change="refreshTotalPayments()" :field="instalment.date"></ns-field>
+                            </div>
+                            <div class="px-1 w-full md:w-1/2">
+                                <ns-field @change="refreshTotalPayments()" :field="instalment.amount"></ns-field>
+                            </div>
                         </div>
-                        <div class="px-1 w-full md:w-1/2">
-                            <ns-field @change="refreshTotalPayments()" :field="instalment.amount"></ns-field>
+                        <div class="flex items-center">
+                            <button class="items-center flex justify-center h-8 w-8 rounded border border-gray-200 hover:bg-red-400 hover:border-red-400 hover:text-white">
+                                <i class="las la-times"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
@@ -54,7 +61,7 @@
                     <ns-button @click="close()" type="danger">{{ __( 'Cancel' ) }}</ns-button>
                 </div>
                 <div class="px-1">
-                    <ns-button @click="updateOrder()" type="info">{{ __( 'Save' ) }}</ns-button>
+                    <ns-button @click="updateOrder()" type="info">{{ __( 'Proceed' ) }}</ns-button>
                 </div>
             </div>
         </div>
@@ -89,6 +96,9 @@ export default {
                 const totalInstalments    =   this.formValidation.extractFields( this.fields ).total_instalments;
                 this.generatePaymentFields( totalInstalments );
             });
+            document.querySelector( '.is-popup #total_instalments' ).addEventListener( 'focus', () => {
+                document.querySelector( '.is-popup #total_instalments' ).select();
+            });
         }, 200 );
     },
     computed: {
@@ -97,6 +107,48 @@ export default {
             return ( this.order.total * minimalPaymentPercent ) / 100;
         },
         order() {
+            this.$popupParams.order.instalments     =   this.$popupParams.order.instalments.map( instalment => {
+                for( let name in instalment ) {
+                    /**
+                     * to avoid performing
+                     * this operation multiple time
+                     */
+                    if ( typeof instalment[ name ] !== 'object' ) {
+                        if ( name === 'date' ) {
+                            const field    =   {
+                                type: 'date',
+                                name,
+                                label: __( 'Date' ),
+                                disabled: instalment.paid === 1 ? true : false,
+                                value: moment( instalment.date ).format( 'YYYY-MM-DD' )
+                            };
+    
+                            instalment[ name ]    =   field;
+                        } else if ( name === 'amount' ) {
+                            const field    =   {
+                                type: 'number',
+                                name,
+                                label: __( 'Amount' ),
+                                disabled: instalment.paid === 1 ? true : false,
+                                value: instalment.amount
+                            };
+    
+                            instalment[ name ]    =   field;
+                        } else if ( ! [ 'paid', 'id' ].includes( name ) ) {
+                            const field    =   {
+                                type: 'hidden',
+                                name,
+                                value: instalment[ name ]
+                            };
+    
+                            instalment[ name ]    =   field;
+                        }
+                    }
+                }
+
+                return instalment;
+            });
+
             return this.$popupParams.order;
         },
     },
@@ -116,8 +168,6 @@ export default {
             } else {
                 this.totalPayments  =   0;
             }
-
-            console.log( this.totalPayments );
         },
         generatePaymentFields( totalInstalments ) {
             this.order.instalments    =   ( new Array( parseInt( totalInstalments ) ) )
@@ -163,12 +213,14 @@ export default {
 
             const instalments           =   this.order.instalments.map( instalment => {
                 return {
-                    amount  : instalment.amount.value,
+                    amount  : parseFloat( instalment.amount.value ),
                     date    : instalment.date.value,
                 }
             });
 
-            const totalInstalments      =   instalments.reduce( (before, after) => parseFloat( before.amount ) + parseFloat( after.amount ) );
+            const totalInstalments      =   instalments
+                .map( p => p.amount )
+                .reduce( (before, after) => parseFloat( before ) + parseFloat( after ) );
 
             if ( instalments.filter( instalment => instalment.date === undefined || instalment.date === '' ).length > 0 ) {
                 return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) ).subscribe();
@@ -181,6 +233,8 @@ export default {
             if ( instalments.filter( instalment => moment( instalment.date ).isBefore( ns.date.moment.startOf( 'day' ) ) ).length > 0 ) {
                 return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) ).subscribe();
             }
+
+            console.log( instalments, totalInstalments, this.order );
 
             if ( totalInstalments != this.order.total ) {
                 return nsSnackBar.error( __( 'Total instalments must be equal to the order total.' ) ).subscribe();
@@ -214,9 +268,14 @@ export default {
             return resolve( order );
         },
         loadFields() {
-            nsHttpClient.get( '/api/nexopos/v4/fields/ns.layaway' )
+            nsHttpClient.get( `/api/nexopos/v4/fields/ns.layaway` )
                 .subscribe( fields => {
                     this.fields     =   this.formValidation.createFields( fields );
+                    this.fields.forEach( field => {
+                        if ( field.name === 'total_instalments' ) {
+                            field.value     =   this.order.total_instalments || 0;
+                        }
+                    });
                 })
         }
     }
