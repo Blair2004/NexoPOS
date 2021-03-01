@@ -9,16 +9,6 @@ jobs:
         name: Build and Deploy
         runs-on: ubuntu-latest
         steps:               
-            -   name: Deploy To Server
-                uses: appleboy/ssh-action@master
-                continue-on-error: true
-                with:
-                    host: ${{ secrets.HOST }}
-                    username: ${{ secrets.USERNAME }}
-                    password: ${{ secrets.PASSWORD }}
-                    port: ${{ secrets.PORT }}
-                    script: 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update;
             -   name: Deploy To Grants
                 uses: appleboy/ssh-action@master
                 continue-on-error: true
@@ -29,6 +19,16 @@ jobs:
                     port: ${{ secrets.GRANTSPORT }}
                     script: 
                         cd /var/www/html/${{ secrets.GRANTSPATH }}/ && git pull && composer update && cd modules/NsMultiStore && git pull;
+            -   name: Deploy To Server
+                uses: appleboy/ssh-action@master
+                continue-on-error: true
+                with:
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    password: ${{ secrets.PASSWORD }}
+                    port: ${{ secrets.PORT }}
+                    script: 
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update;
             -   name: Deploy To AHD
                 uses: appleboy/ssh-action@master
                 continue-on-error: true
