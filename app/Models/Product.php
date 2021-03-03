@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Models\ProductGallery;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -94,21 +95,43 @@ class Product extends NsModel
         return $this->hasMany( ProductGallery::class, 'product_id', 'id' );
     }
 
+    /**
+     * Filter query by getting products that are variations
+     * @param QueryBuilder $query
+     * @return QueryBuilder;
+     */
     public function scopeOnlyVariations( $query )
     {
         return $query->where( 'product_type', 'variation' );
     }
 
+    /**
+     * Filter query by getting products that aren't variations
+     * @param QueryBuilder $query
+     * @return QueryBuilder;
+     */
     public function scopeExcludeVariations( $query )
     {
         return $query->where( 'product_type', '!=', 'variation' );
     }
 
+    /**
+     * Filter query by getting product with
+     * stock management enabled
+     * @param QueryBuilder $query
+     * @return QueryBuilder;
+     */
     public function scopeWithStockEnabled( $query )
     {
         return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_ENABLED );
     }
 
+    /**
+     * Filter query by getting product with
+     * stock management disabled
+     * @param QueryBuilder $query
+     * @return QueryBuilder;
+     */
     public function scopeWithStockDisabled( $query )
     {
         return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
@@ -116,8 +139,8 @@ class Product extends NsModel
 
     /**
      * Filter product that are searchable
-     * @param Query 
-     * @return Query
+     * @param QueryBuilder 
+     * @return QueryBuilder
      */
     public function scopeSearchable( $query, $attribute = true )
     {

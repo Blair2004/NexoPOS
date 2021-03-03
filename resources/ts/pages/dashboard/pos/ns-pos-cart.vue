@@ -53,9 +53,9 @@
                         </div>
                     </div>
 
-                    <div :key="product.barcode" class="text-gray-700 flex" v-for="product of products">
+                    <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products">
                         <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
-                            <div class="flex justify-between">
+                            <div class="flex justify-between product-details">
                                 <h3 class="font-semibold">
                                     {{ product.name }} &mdash; {{ product.unit_name }}
                                 </h3>
@@ -72,7 +72,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex justify-between">
+                            <div class="flex justify-between product-controls">
                                 <div class="-mx-1 flex">
                                     <div class="px-1">
                                         <a

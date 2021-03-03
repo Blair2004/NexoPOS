@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "ES2020",
         "outDir": "./resources/js",
-        "target": "ES5",
+        "target": "ES6",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "esModuleInterop": true,

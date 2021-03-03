@@ -400,7 +400,7 @@ export class POS {
         return new Promise( ( resolve, reject ) => {
             const order     =   this.order.getValue();
 
-            if ( order.tax_group_id === undefined ) {
+            if ( order.tax_group_id === undefined || order.tax_group_id === null ) {
                 return reject( false );
             }
 
@@ -610,7 +610,7 @@ export class POS {
                 this.buildProducts( products );
                 this.selectCustomer( order.customer );
                 // this.refreshProducts( this.products.getValue() );
-                // this.refreshCart();
+                this.refreshCart();
             });
     }
 
@@ -873,6 +873,8 @@ export class POS {
         order.total_products    =   products.length
 
         this.order.next( order );
+
+        nsHooks.doAction( 'ns-cart-after-refreshed', order );
     }
 
     /**
@@ -1017,9 +1019,9 @@ export class POS {
         this._products.next( products );
     }
 
-    updateProduct( product, data ) {
-        const products                      =   this._products.getValue();
-        const index                         =   products.indexOf( product );
+    updateProduct( product, data, index = null ) {
+        const products      =   this._products.getValue();
+        index               =   index === null ? products.indexOf( product ) : index;
 
         /**
          * to ensure Vue updates accordingly.
@@ -1060,6 +1062,8 @@ export class POS {
         }
 
         product.total_price         =   ( product.unit_price * product.quantity ) - product.discount;
+
+        nsHooks.doAction( 'ns-after-product-computed', product );
     }
 
     loadCustomer( id ) {

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Classes\Currency;
+use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -19,6 +20,7 @@ use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
+use App\Events\OrderProductAfterSavedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Models\Order;
@@ -934,7 +936,7 @@ class OrdersService
      */
     private function __saveOrderProducts($order, $products)
     {
-        $subTotal          =   0;
+        $subTotal       =   0;
         $taxes          =   0;
         $gross          =   0;
 
@@ -1022,6 +1024,8 @@ class OrdersService
             if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
             }
+
+            event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
         });
 
         return compact('subTotal', 'taxes', 'order');
@@ -1614,6 +1618,8 @@ class OrdersService
             }
 
             $order->products;
+
+            Hook::action( 'ns-load-order', $order );
 
             return $order;
         }
