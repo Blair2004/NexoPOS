@@ -167,8 +167,8 @@ export default {
                         </ul>
                     </div>
                 </div>
-                <div class="flex w-full bg-gray-300 justify-between p-2">
-                    <div class="flex">
+                <div class="flex flex-col lg:flex-row w-full bg-gray-300 justify-between p-2">
+                    <div class="flex mb-1">
                         <div class="flex items-center lg:hidden">
                             <h3 class="font-semibold mr-2">Select Payment</h3>
                             <select @change="selectPaymentAsActive( $event )" class="p-2 rounded border-2 border-blue-400 bg-white shadow">
@@ -177,7 +177,7 @@ export default {
                             </select>
                         </div>
                     </div>
-                    <div>
+                    <div class="flex justify-end">
                         <ns-button v-if="order.tendered >= order.total" @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
                             <span ><i class="las la-cash-register"></i> Submit Payment</span>
                         </ns-button>

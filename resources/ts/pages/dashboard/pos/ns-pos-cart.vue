@@ -39,9 +39,9 @@
                     </div>
                 </div>
                 <div class="w-full text-gray-700 font-semibold flex">
-                    <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
-                    <div class="w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
-                    <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
+                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
                 </div>
                 <div class="flex flex-auto flex-col overflow-auto">
                     
@@ -54,12 +54,12 @@
                     </div>
 
                     <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products">
-                        <div class="w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
-                            <div class="flex justify-between product-details">
+                        <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                            <div class="flex justify-between product-details mb-1">
                                 <h3 class="font-semibold">
                                     {{ product.name }} &mdash; {{ product.unit_name }}
                                 </h3>
-                                <div class="-mx-1 flex">
+                                <div class="-mx-1 flex product-options">
                                     <div class="px-1"> 
                                         <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
                                             <i class="las la-trash text-xl"></i>
@@ -73,23 +73,29 @@
                                 </div>
                             </div>
                             <div class="flex justify-between product-controls">
-                                <div class="-mx-1 flex">
-                                    <div class="px-1">
+                                <div class="-mx-1 flex flex-wrap">
+                                    <div class="px-1 w-1/2 md:w-auto mb-1">
                                         <a
                                             :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
                                         >Price : {{ product.unit_price | currency }}</a>
                                     </div>
-                                    <div class="px-1"> 
+                                    <div class="px-1 w-1/2 md:w-auto mb-1"> 
                                         <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                    </div>
+                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Quantity : {{ product.quantity }}</a>
+                                    </div>
+                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                        <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Total : {{ product.total_price | currency }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div @click="changeQuantity( product )" class="w-1/6 p-2 border-b border-gray-200 flex items-center justify-center cursor-pointer hover:bg-blue-100">
+                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-gray-200 items-center justify-center cursor-pointer hover:bg-blue-100">
                             <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
                         </div>
-                        <div class="w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 flex items-center justify-center">{{ product.total_price | currency }}</div>
+                        <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
                     
                     <!-- End Loop -->

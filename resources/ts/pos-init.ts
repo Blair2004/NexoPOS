@@ -336,6 +336,11 @@ export class POS {
 
     changeVisibleSection( section ) {
         if ([ 'both', 'cart', 'grid' ].includes( section ) ) {
+
+            if ([ 'cart', 'both' ].includes( section ) ) {
+                this.refreshCart();
+            }
+
             this._visibleSection.next( section );
         }
     }
