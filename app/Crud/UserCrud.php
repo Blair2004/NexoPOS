@@ -40,7 +40,9 @@ class UserCrud extends CrudService
      * Adding relation
      */
     public $relations   =  [
-        [ 'nexopos_users as author', 'nexopos_users.author', '=', 'author.id' ],
+        'leftJoin' =>  [
+            [ 'nexopos_users as author', 'nexopos_users.author', '=', 'author.id' ],
+        ],
         [ 'nexopos_roles as role', 'nexopos_users.role_id', '=', 'role.id' ],
     ];
 

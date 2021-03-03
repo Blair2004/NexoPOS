@@ -609,8 +609,6 @@ export class POS {
                 this.buildOrder( order );
                 this.buildProducts( products );
                 this.selectCustomer( order.customer );
-                // this.refreshProducts( this.products.getValue() );
-                this.refreshCart();
             });
     }
 
@@ -619,6 +617,7 @@ export class POS {
     }
 
     buildProducts( products ) {
+        this.refreshProducts( products );
         this.products.next( products );
     }
 
