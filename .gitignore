@@ -22,3 +22,7 @@ composer.lock
 .phpunit.result.cache
 worker.log
 storage/module.zip
+.idea
+
+public/js/*
+public/css/*
