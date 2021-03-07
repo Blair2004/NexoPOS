@@ -176,7 +176,7 @@ class Options
                 ) {
                     $this->value  =  $json;
                 } else {
-                    $this->value  =  empty( $option->value ) ? $default : $option->value;
+                    $this->value  =  empty( $option->value ) && $option->value === null ? $default : $option->value;
                 }
             }
         });

@@ -10,7 +10,7 @@
         <div class="flex border-t border-gray-200 text-gray-700">
             <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">Ok</button>
             <hr class="border-r border-gray-200">
-            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( false )">Cancel</button>
+            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="reject( false )">Cancel</button>
         </div>
     </div>
 </template>
@@ -34,7 +34,7 @@ export default {
         this.message        =   this.$popupParams.message;
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
-                this.$popupParams.onAction( false );
+                this.$popupParams.reject( false );
                 this.$popup.close();
             }
         })
@@ -42,6 +42,10 @@ export default {
     methods: {
         emitAction( action ) {
             this.$popupParams.onAction( action ? this.input : action );
+            this.$popup.close();
+        },
+        reject( action ) {
+            this.$popupParams.reject( action );
             this.$popup.close();
         }
     }

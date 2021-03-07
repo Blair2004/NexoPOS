@@ -43,28 +43,18 @@ export default {
             const index     =   this.types.indexOf( type );
             this.types.forEach( type => type.selected = false );
             this.types[ index ].selected    =   true;
+            const selectedType  =   this.types[ index ];
 
-            console.log( this.types );
-
-            /**
-             * that's hardcoded
-             */
             POS.types.next( this.types );
 
-            if ( type.identifier === 'delivery' ) {
-                this.$popup.close();
-                new Promise( ( resolve, reject ) => {
-                    Popup.show( 
-                        nsPosShippingPopupVue, { 
-                            resolve : this.$popupParams.resolve, 
-                            reject : this.$popupParams.reject 
-                        }
-                    );
-                });
-            } else {
-                this.resolveIfQueued( this.types );
-            }
+            /**
+             * treat all the promises
+             * that are registered within 
+             * the orderType queue
+             */
+            POS.triggerOrderTypeSelection( selectedType );
 
+            this.resolveIfQueued( selectedType );
         }
     }
 }
