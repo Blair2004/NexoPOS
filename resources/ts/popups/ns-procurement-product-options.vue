@@ -23,7 +23,7 @@ export default {
             rawFields: [
                 {
                     label: 'Expiration Date',
-                    name: 'expiration',
+                    name: 'expiration_date',
                     description: 'Define when that specific product should expire.',
                     type: 'date',
                 }, {
@@ -67,8 +67,8 @@ export default {
         });
 
         const fields    =   this.rawFields.map( field => {
-            if ( field.name === 'expiration' ) {
-                field.value    =   this.$popupParams.product.procurement.expiration
+            if ( field.name === 'expiration_date' ) {
+                field.value    =   this.$popupParams.product.procurement.expiration_date
             }
 
             if ( field.name === 'tax_type' ) {

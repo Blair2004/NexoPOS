@@ -179,6 +179,11 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.create.products' ],
                         'href'  =>  ns()->url( '/dashboard/products/create' )
                     ], 
+                    'labels-printing'   =>  [
+                        'label'         =>  __( 'Print Labels' ),
+                        'href'          =>  ns()->url( '/dashboard/products/label-printing' ),
+                        'permissions'   =>  [ 'nexopos.create.products-labels' ]
+                    ],
                     'categories'   =>  [
                         'label' =>  __( 'Categories'),
                         'permissions'   =>  [ 'nexopos.read.categories' ],

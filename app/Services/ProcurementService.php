@@ -298,7 +298,7 @@ class ProcurementService
     /**
      * This helps to compute the unit value and the total cost 
      * of a procurement product. It return various value as an array of
-     * the product updated as long as an array of errors
+     * the product updated along with an array of errors
      * @param array [ procurementProduct, storedUnitReference, procurement, itemsToSave, item ]
      * @return array<$itemsToSave,$errors>
      */
@@ -391,6 +391,7 @@ class ProcurementService
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
+            $procurementProduct->expiration_date            =   $procuredProduct[ 'expiration_date' ] ?? null;
             $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();

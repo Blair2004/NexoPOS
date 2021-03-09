@@ -537,5 +537,13 @@ class ProductsController extends DashboardController
 
         throw new NotFoundException( __( 'The product request cannot be found.' ) );
     }
+
+    public function printLabels()
+    {
+        $this->view( 'pages.dashboard.products.print-labels', [
+            'title'         =>  __( 'Edit a product' ),
+            'description'   =>  __( 'Makes modifications to a product' ),
+        ]);
+    }
 }
 
