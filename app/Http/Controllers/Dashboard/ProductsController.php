@@ -10,6 +10,7 @@ use App\Classes\Hook;
 use App\Classes\Output;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
+use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use App\Models\ProcurementProduct;
@@ -25,6 +26,7 @@ use App\Models\ProductHistory;
 use App\Models\Unit;
 use App\Models\ProductUnitQuantity;
 use App\Services\CrudService;
+use App\Services\DateService;
 use App\Services\Helper;
 use App\Services\ProductService;
 use App\Services\Options;
@@ -37,13 +39,20 @@ class ProductsController extends DashboardController
     /** @var ProductService */
     protected $productService;
 
+    /**
+     * @var DateService
+     */
+    protected $dateService;
+
     public function __construct( 
-        ProductService $productService
+        ProductService $productService,
+        DateService $dateService
     )
     {
         parent::__construct();
 
         $this->productService   =   $productService;
+        $this->dateService      =   $dateService;
     }
 
     public function saveProduct( Request $request )
@@ -523,10 +532,39 @@ class ProductsController extends DashboardController
 
     public function searchUsingArgument( $reference )
     {
-        $product        =   Product::barcode( $reference )
-            ->searchable()
-            ->with( 'unit_quantities' )
-            ->first();
+        $procurementProduct     =   ProcurementProduct::barcode( $reference )->first();
+
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            $product    =   $procurementProduct->product;
+            
+            /**
+             * check if the product has expired
+             * and the sales are disallowed.
+             */
+            if ( 
+                $this->dateService->copy()->greaterThan( $procurementProduct->expiration_date ) && 
+                $product->expires && 
+                $product->on_expiration === Product::EXPIRES_PREVENT_SALES ) {
+                    throw new NotAllowedException( __( 'Unable to add the product to the cart as it has expired.' ) );
+                }
+
+            /**
+             * We need to add  a reference of the procurement product
+             * in order to deplete the available quantity accordingly.
+             * Will also be helpful to track how products are sold.
+             */
+            $product->procurement_product_id       =   $procurementProduct->id;
+
+        } else {
+            $product        =   Product::barcode( $reference )
+                ->searchable()
+                ->with( 'unit_quantities' )
+                ->first();
+
+            if ( $product->accurate_tracking ) {
+                throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );
+            }
+        }        
 
         if ( $product instanceof Product ) {
             return [
@@ -540,7 +578,7 @@ class ProductsController extends DashboardController
 
     public function printLabels()
     {
-        $this->view( 'pages.dashboard.products.print-labels', [
+        return $this->view( 'pages.dashboard.products.print-labels', [
             'title'         =>  __( 'Edit a product' ),
             'description'   =>  __( 'Makes modifications to a product' ),
         ]);

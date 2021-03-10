@@ -1,11 +1,14 @@
 <?php
 namespace App\Listeners;
 
+use App\Events\ProductAfterCreatedEvent;
 use App\Services\ProductService;
 use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
+use App\Events\ProductAfterUpdatedEvent;
 use App\Events\ProductBeforeDeleteEvent;
 use App\Jobs\HandleStockAdjustmentJob;
+use App\Services\BarcodeService;
 use App\Services\ProcurementService;
 use App\Services\ReportService;
 
@@ -20,14 +23,19 @@ class ProductEventsSubscriber
     /** @var ReportService */
     protected $reportService;
 
+    /** @var BarcodeService */
+    protected $barcodeService;
+
     public function __construct(
         ProductService $productService,
         ProcurementService $procurementService,
-        ReportService $reportService
+        ReportService $reportService,
+        BarcodeService $barcodeService
     ) {
         $this->productService       =   $productService;
         $this->procurementService   =   $procurementService;
         $this->reportService        =   $reportService;
+        $this->barcodeService       =   $barcodeService;
     }
 
     public function subscribe( $events )
@@ -45,6 +53,16 @@ class ProductEventsSubscriber
         $events->listen(
             ProductAfterStockAdjustmentEvent::class,
             [ ProductEventsSubscriber::class, 'afterStockAdjustment' ]
+        );
+
+        $events->listen(
+            ProductAfterCreatedEvent::class,
+            [ ProductEventsSubscriber::class, 'generateBarcode' ]
+        );
+
+        $events->listen(
+            ProductAfterUpdatedEvent::class,
+            [ ProductEventsSubscriber::class, 'generateBarcode' ]
         );
     }
 
@@ -65,6 +83,14 @@ class ProductEventsSubscriber
              */
             $this->productService->deleteVariations( $variation );
         });
+    }
+
+    public function generateBarcode( $event )
+    {
+        $this->barcodeService->generateBarcode(
+            $event->product->barcode,
+            $event->product->barcode_type
+        );
     }
 
     public function afterStockAdjustment( ProductAfterStockAdjustmentEvent $event )

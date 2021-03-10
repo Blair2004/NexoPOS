@@ -27,6 +27,12 @@ export default {
                     description: 'Define when that specific product should expire.',
                     type: 'datetimepicker',
                 }, {
+                    label: 'Barcode',
+                    name: 'barcode',
+                    description: 'Renders the automatically generated barcode.',
+                    type: 'text',
+                    disabled: true,
+                }, {
                     label: 'Tax Type',
                     name: 'tax_type',
                     description: 'Adjust how tax is calculated on the item.',
@@ -75,10 +81,12 @@ export default {
                 field.value    =   this.$popupParams.product.procurement.tax_type
             }
 
+            if ( field.name === 'barcode' ) {
+                field.value    =   this.$popupParams.product.procurement.barcode
+            }
+
             return field;
         });
-
-        console.log( fields );
 
         this.fields     =   this.validation.createFields( fields );
     }

@@ -19,7 +19,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) *
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /var/www/html/NexoPOS-4x/resources/ts/dashboard.ts */"./resources/ts/dashboard.ts");
+module.exports = __webpack_require__(/*! /var/www/html/NexoPOS-v4/resources/ts/dashboard.ts */"./resources/ts/dashboard.ts");
 
 
 /***/ })

@@ -40,12 +40,18 @@ class ProcurementService
     protected $productService;
     protected $currency;
 
+    /** 
+     * @param BarcodeService $barcodeservice
+     **/
+    protected $barcodeService;
+
     public function __construct( 
         ProviderService $providerService,
         UnitService $unitService,
         ProductService $productService,
         CurrencyService $currency,
-        DateService $dateService
+        DateService $dateService,
+        BarcodeService $barcodeService
     )
     {
         $this->providerService      =   $providerService;
@@ -53,6 +59,7 @@ class ProcurementService
         $this->productService       =   $productService;
         $this->dateService          =   $dateService;
         $this->currency             =   $currency;
+        $this->barcodeService       =   $barcodeService;
     }
 
     /**
@@ -396,6 +403,9 @@ class ProcurementService
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
+            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->id;
+            $procurementProduct->save();
+
             
             event( new ProcurementAfterSaveProductEvent( $procurement, $procurementProduct, $procuredProduct ) );
 
@@ -827,6 +837,11 @@ class ProcurementService
                     ->additionateBy( $product->quantity )
                     ->get();
 
+                /**
+                 * will generate a unique barcode for the procured product
+                 */
+                $this->generateBarcode( $product );
+
                 $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
             });
     
@@ -834,6 +849,14 @@ class ProcurementService
         }
 
         event( new ProcurementAfterHandledEvent( $procurement ) );
+    }
+
+    public function generateBarcode( ProcurementProduct $procurementProduct )
+    {
+        $this->barcodeService->generateBarcode(
+            $procurementProduct->barcode,
+            $procurementProduct->product->barcode_type
+        );
     }
 
     /**

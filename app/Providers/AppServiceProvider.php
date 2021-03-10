@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
+use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
 use App\Services\CoreService;
 use App\Services\CrudService;
@@ -98,6 +99,10 @@ class AppServiceProvider extends ServiceProvider
             return new CrudService;
         });
 
+        $this->app->singleton( BarcodeService::class, function() {
+            return new BarcodeService;
+        });
+
         $this->app->singleton( ReportService::class, function() {
             return new ReportService(
                 app()->make( DateService::class )
@@ -146,7 +151,8 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( ProductCategoryService::class ),
                 $app->make( TaxService::class ),
                 $app->make( CurrencyService::class ),
-                $app->make( UnitService::class )
+                $app->make( UnitService::class ),
+                $app->make( BarcodeService::class ),
             );
         });
 
@@ -193,6 +199,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( ProductService::class ),
                 $app->make( CurrencyService::class ),
                 $app->make( DateService::class ),
+                $app->make( BarcodeService::class ),
             );
         });
     }

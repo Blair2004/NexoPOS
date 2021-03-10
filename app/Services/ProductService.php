@@ -1,14 +1,14 @@
 <?php 
 namespace App\Services;
 
-use App\Crud\ProductHistoryCrud;
+use App\Events\ProductAfterCreatedEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Events\ProductResetEvent;
 use App\Events\ProductAfterDeleteEvent;
+use App\Events\ProductAfterUpdatedEvent;
 use App\Events\ProductBeforeDeleteEvent;
 use App\Models\ProductHistory;
 use App\Models\Product;
@@ -18,7 +18,6 @@ use App\Services\TaxService;
 use App\Services\UnitService;
 use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
-use App\Exceptions\NotFoundException;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
 use App\Models\ProductGallery;
@@ -42,13 +41,15 @@ class ProductService
         ProductCategoryService $category,
         TaxService $tax,
         CurrencyService $currency,
-        UnitService $unit
+        UnitService $unit,
+        BarcodeService $barcodeService
     )
     {
         $this->categoryService      =   $category;
         $this->taxService           =   $tax;
         $this->unitService          =   $unit;
         $this->currency             =   $currency;
+        $this->barcodeService       =   $barcodeService;
     }
 
     /**
@@ -281,6 +282,8 @@ class ProductService
          */
         $this->saveGallery( $product, $fields[ 'images' ]);
 
+        event( new ProductAfterCreatedEvent( $product ) );
+
         return [
             'status'    =>      'success',
             'message'   =>      __( 'The product has been saved.' ),
@@ -381,6 +384,8 @@ class ProductService
          * save product images
          */
         $this->saveGallery( $product, $fields[ 'images' ]);
+
+        event( new ProductAfterUpdatedEvent( $product ) );
 
         return [
             'status'    =>  'success',
@@ -530,7 +535,8 @@ class ProductService
         if ( ! in_array( $field, [ 'units', 'images' ]) && ! is_array( $value ) ) {
             $product->$field    =   $value;
         } else if ( $field === 'units' ) {
-            $product->unit_group    =   $fields[ 'units' ][ 'unit_group' ];
+            $product->unit_group            =   $fields[ 'units' ][ 'unit_group' ];
+            $product->accurate_tracking     =   $fields[ 'units' ][ 'accurate_tracking' ];
         }
     }
 

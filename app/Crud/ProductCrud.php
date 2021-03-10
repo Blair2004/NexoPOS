@@ -310,7 +310,7 @@ class ProductCrud extends CrudService
                                     ]),
                                     'name'  =>  'accurate_tracking',
                                     'label' =>  __( 'Accurate Tracking' ),
-                                    'value' =>  $entry->accurate_tracking ?? true,
+                                    'value' =>  $entry->accurate_tracking ?? false,
                                 ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
