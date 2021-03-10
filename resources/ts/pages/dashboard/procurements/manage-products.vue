@@ -84,6 +84,7 @@
                             <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                 <div class="px-4 w-full md:w-1/2 lg:w-1/3">
                                     <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[0]"></ns-field>
+                                    <ns-field @change="loadAvailableUnits( getActiveTab( variation.tabs ) )" :field="getActiveTab( variation.tabs ).fields[1]"></ns-field>
                                 </div>
                                 <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
                                     <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
@@ -177,7 +178,7 @@ export default {
          * we might need confirmation before proceeding.
          */
         removeUnitPriceGroup( group_fields, group ) {
-            const hasIdField    =   group_fields.filter( field => field.name === 'id' );
+            const hasIdField    =   group_fields.filter( field => field.name === 'id' && field.value !== undefined );
                 Popup.show( nsPosConfirmPopupVue, {
                     title: 'Confirm Your Action',
                     message: 'Would you like to delete this group ?',
@@ -239,7 +240,7 @@ export default {
          * for every groups. Validation should prevent duplicated units.
          */
         loadAvailableUnits( unit_section ) {
-            nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_section.fields[0].value ) )
+            nsHttpClient.get( this.unitsUrl.replace( '{id}', unit_section.fields.filter( f => f.name === 'unit_group' )[0].value ) )
                 .subscribe( result => {
 
                     /**

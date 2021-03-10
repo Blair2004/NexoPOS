@@ -25,7 +25,7 @@ export default {
                     label: 'Expiration Date',
                     name: 'expiration_date',
                     description: 'Define when that specific product should expire.',
-                    type: 'date',
+                    type: 'datetimepicker',
                 }, {
                     label: 'Tax Type',
                     name: 'tax_type',
@@ -77,6 +77,9 @@ export default {
 
             return field;
         });
+
+        console.log( fields );
+
         this.fields     =   this.validation.createFields( fields );
     }
 }

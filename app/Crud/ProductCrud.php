@@ -302,6 +302,16 @@ class ProductCrud extends CrudService
                             'label' =>  __( 'Units' ),
                             'fields'    =>  [
                                 [
+                                    'type'  =>  'switch',
+                                    'description'   =>  __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
+                                    'options'   =>  Helper::kvToJsOptions([
+                                        true      =>  __( 'Yes' ),
+                                        false     =>  __( 'No' ),
+                                    ]),
+                                    'name'  =>  'accurate_tracking',
+                                    'label' =>  __( 'Accurate Tracking' ),
+                                    'value' =>  $entry->accurate_tracking ?? true,
+                                ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
                                     'name'          =>  'unit_group',
