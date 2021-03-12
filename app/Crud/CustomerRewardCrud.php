@@ -23,7 +23,7 @@ class CustomerRewardCrud extends CrudService
      * default slug
      * @param  string
      */
-    protected $slug   =   'customers/rewards';
+    protected $slug         =   'customers/{customer_id}/rewards';
 
     /**
      * Define namespace
@@ -44,7 +44,7 @@ class CustomerRewardCrud extends CrudService
     protected $permissions  =   [
         'create'    =>  false,
         'read'      =>  true,
-        'update'    =>  false,
+        'update'    =>  true,
         'delete'    =>  false,
     ];
 
@@ -93,7 +93,7 @@ class CustomerRewardCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable    =   [ 'target', 'points' ];
 
     /**
      * Define Constructor
@@ -155,26 +155,6 @@ class CustomerRewardCrud extends CrudService
                     'fields'    =>  [
                         [
                             'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
-                            'value' =>  $entry->customer_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'reward_id',
-                            'label' =>  __( 'Reward_id' ),
-                            'value' =>  $entry->reward_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'reward_name',
-                            'label' =>  __( 'Reward_name' ),
-                            'value' =>  $entry->reward_name ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'points',
                             'label' =>  __( 'Points' ),
                             'value' =>  $entry->points ?? '',
@@ -183,17 +163,8 @@ class CustomerRewardCrud extends CrudService
                             'name'  =>  'target',
                             'label' =>  __( 'Target' ),
                             'value' =>  $entry->target ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ],                     ]
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -365,7 +336,7 @@ class CustomerRewardCrud extends CrudService
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . $this->getSlug() . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
@@ -378,6 +349,11 @@ class CustomerRewardCrud extends CrudService
         ];
 
         return $entry;
+    }
+
+    public function getSlug()
+    {
+        return str_replace( '{customer_id}', request()->query( 'customer_id' ), $this->slug );
     }
 
     
@@ -431,9 +407,9 @@ class CustomerRewardCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'customers/rewards' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'customers/rewards/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'customers/rewards/edit/' ),
+            'list'      =>  'javascript:void(0)',
+            'create'    =>  'javascript:void(0)',
+            'edit'      =>  ns()->url( 'dashboard/' . $this->getSlug() . '/edit/' ),
             'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards' ),
             'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-rewards/{id}' . '' ),
         ];

@@ -1,3 +1,6 @@
+<?php
+use App\Models\Order;
+?>
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
         <div class="flex items-center justify-center">
@@ -55,6 +58,14 @@
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total_coupons ) }}</td>
                     </tr>
                     @endif
+                    @if ( $order->tax_value > 0 )
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
+                            <span>{{ __( 'Taxes' ) }}</span>
+                        </td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Shipping' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->shipping ) }}</td>
@@ -69,10 +80,20 @@
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Paid' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                     </tr>
-                    <tr>
-                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Change' ) }}</td>
-                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->change ) }}</td>
-                    </tr>
+                    @switch( $order->payment_status )
+                        @case( Order::PAYMENT_PAID )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Change' ) }}</td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->change ) }}</td>
+                        </tr>
+                        @break
+                        @case( Order::PAYMENT_PARTIALLY )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Due' ) }}</td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( abs( $order->change ) ) }}</td>
+                        </tr>
+                        @break
+                    @endswitch
                 </tbody>
             </table>
             @if( $order->note_visibility === 'visible' )

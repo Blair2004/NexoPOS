@@ -13,6 +13,7 @@ use App\Crud\ExpenseCrud;
 use App\Crud\ExpenseHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
+use App\Crud\OrderInstalmentCrud;
 use App\Crud\PartiallyPaidOrderCrud;
 use App\Crud\ProviderCrud;
 use App\Crud\RewardSystemCrud;
@@ -60,6 +61,7 @@ class CrudServiceProvider extends ServiceProvider
         Hook::addFilter( 'ns-crud-resource', function( $namespace ) {
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
+                case 'ns.orders-instalments': return OrderInstalmentCrud::class;
                 case 'ns.hold-orders': return HoldOrderCrud::class;
                 case 'ns.unpaid-orders': return UnpaidOrderCrud::class;
                 case 'ns.partially-paid-orders': return PartiallyPaidOrderCrud::class;

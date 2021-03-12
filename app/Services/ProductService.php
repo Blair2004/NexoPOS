@@ -367,7 +367,6 @@ class ProductService
         foreach( $fields as $field => $value ) {
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
-
         
         $product->author        =   Auth::id();
         $product->save();

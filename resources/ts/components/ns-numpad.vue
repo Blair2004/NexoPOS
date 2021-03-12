@@ -14,7 +14,8 @@
 </template>
 <script>
 export default {
-    props: [ 'value', 'currency' ],
+    name: 'ns-numpad',
+    props: [ 'value', 'currency', 'floating' ],
     data() {
         return {
             backValue: '0',
@@ -61,9 +62,7 @@ export default {
             );
 
             if ( key.identifier === 'next' ) {
-                this.$emit( 'next', this.backValue );
-                // this.backValue     =   '0';
-                // this.$emit( 'changed', this.backValue );
+                this.$emit( 'next', this.floating && this.backValue.length > 0 ? parseFloat( this.backValue / this.number ) : this.backValue );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
@@ -89,7 +88,7 @@ export default {
                 this.backValue      =   '';
             }
 
-            this.$emit( 'changed', this.backValue );
+            this.$emit( 'changed', this.floating && this.backValue.length > 0 ? parseFloat( this.backValue / this.number ) : this.backValue );
         }
     }
 }

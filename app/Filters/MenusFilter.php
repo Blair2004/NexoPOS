@@ -30,6 +30,27 @@ class MenusFilter
             unset( $menus[ 'pos' ] );
         }
 
+        if ( ns()->option->get( 'ns_orders_allow_unpaid' ) === 'yes' ) {
+            $menus      =   array_insert_after( $menus, 'orders', [
+                'orders'     =>      [
+                    'label'     =>  __( 'Orders' ),
+                    'icon'      =>  'la-list-ol',
+                    'childrens' =>  [
+                        'regular-orders'       =>  [
+                            'label' =>  __( 'Orders' ),
+                            'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                            'icon'  =>  'la-list-ol',
+                            'href'  =>  ns()->url( '/dashboard/orders' )
+                        ],
+                        'instalments'    =>  [
+                            'label'     =>  __( 'Instalments' ),
+                            'href'      =>  ns()->route( 'ns.dashboard.orders-instalments' ),
+                        ],
+                    ]
+                ]
+            ]);
+        }
+
         return $menus;
     }
 }

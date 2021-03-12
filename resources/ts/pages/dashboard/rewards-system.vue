@@ -24,7 +24,7 @@ export default {
             }
 
             if ( this.form.rules.filter( rule => {
-                return rule.filter( field => ! field.value && field.type !== 'hidden' ).length > 0;
+                return rule.filter( field => ! ( field.value >= 0 ) && field.type !== 'hidden' ).length > 0;
             }).length > 0 ) {
                 return nsSnackBar.error( this.$slots[ 'error-no-valid-rules' ] ? this.$slots[ 'error-no-valid-rules' ] : 'No error message is defined when no valid rules is provided' )
                     .subscribe();
@@ -83,8 +83,6 @@ export default {
             form.main.value     =   form.main.value === undefined ? '' : form.main.value;
             form.main           =   this.formValidation.createFields([ form.main ])[0];
             let index           =   0;
-
-            console.log( form );
 
             for( let key in form.tabs ) {
                 if ( index === 0 ) {

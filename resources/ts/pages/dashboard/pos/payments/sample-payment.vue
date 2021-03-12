@@ -120,13 +120,22 @@ export default {
                     .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
-                        POS.addPayment({
-                            value: this.order.total,
-                            identifier: this.identifier,
-                            selected: false,
-                            label: this.label,
-                            readonly: false,
-                        });
+                        const order     =   POS.order.getValue();
+
+                        /**
+                         * to avoid inputing
+                         * new amount when first payment fails.
+                         */
+                        if ( order.tendered < order.total ) {
+                            POS.addPayment({
+                                value: this.order.total - order.tendered,
+                                identifier: this.identifier,
+                                selected: false,
+                                label: this.label,
+                                readonly: false,
+                            });
+                        }
+
                         this.$emit( 'submit' );
                         this.backValue     =   '0';
                     }
@@ -181,10 +190,6 @@ export default {
                     }
                 }
             } 
-
-            // this.finalValue     =   parseFloat( this.backValue ) / number || 0;
-
-            // console.log( this.finalValue, this.backValue );
 
             if ( ( this.backValue ) === "0" ) {
                 this.backValue      =   '';

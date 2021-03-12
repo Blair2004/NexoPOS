@@ -55,13 +55,14 @@ export interface Order {
     customer_id: number;
     products: OrderProduct[], 
     payments: Payment[],
+    instalments?: { date: string, payment: number }[],
     note: string;
     note_visibility: 'hidden' | 'visible';
     tax_group_id: number,
     tax_type: 'inclusive' | 'exclusive'
     taxes: any[],
-    expected_payment_date?: string;
-    total_installments?: number;
+    final_payment_date?: string;
+    total_instalments?: number;
     addresses: {
         shipping: Address,
         billing: Address,

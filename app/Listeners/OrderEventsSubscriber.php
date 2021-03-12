@@ -5,6 +5,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterRefundedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
@@ -63,6 +64,16 @@ class OrderEventsSubscriber
         $events->listen(
             OrderAfterCreatedEvent::class,
             [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
+        );
+
+        $events->listen(
+            OrderAfterCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleInstalmentPayment' ]
+        );
+
+        $events->listen(
+            OrderAfterUpdatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleInstalmentPayment' ]
         );
 
         $events->listen(
@@ -141,5 +152,10 @@ class OrderEventsSubscriber
     public function handleOrderAfterCreatedForCoupons( OrderAfterCreatedEvent $event ) 
     {
         $this->ordersService->trackOrderCoupons( $event->order );
+    }
+
+    public function handleInstalmentPayment( $event )
+    {
+        $this->ordersService->resolveInstalments( $event->order );
     }
 }

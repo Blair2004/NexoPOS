@@ -72,6 +72,17 @@ class Role extends NsRootModel
     }
 
     /**
+     * Filter group matching the array provided as an argument
+     * @param Query
+     * @param array $arguments
+     * @return Query
+     */
+    public function scopeIn( $query, $arguments )
+    {
+        return $query->whereIn( 'namespace', $arguments );
+    }
+
+    /**
      * Add permission to an existing role
      * @param array|string Permissions
      * @param boolean silent

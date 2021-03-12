@@ -1,3 +1,4 @@
+import { __ } from '@/libraries/lang';
 import Vue from 'vue';
 import { HttpCrudResponse } from '../interfaces/http-crud-response';
 import { HttpStatusResponse } from '../interfaces/http-status-response';
@@ -75,6 +76,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         }
     },
     methods: {
+        __,
         getQueryParams() {
             if ( this.queryParams ) {
                 return ( Object.keys( this.queryParams )
@@ -201,14 +203,14 @@ const nsCrud    =   Vue.component( 'ns-crud', {
     },
     template: `
     <div id="crud-table" class="w-full rounded-lg bg-white" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b border-gray-200 flex justify-between flex-wrap" v-if="mode !== 'light'">
-            <div id="crud-search-box" class="w-full md:w-auto -mx-2 flex">
+        <div id="crud-table-header" class="p-2 border-b border-gray-200 flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+            <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 bg-gray-200 flex">
-                        <input v-model="searchInput" type="text" class="bg-transparent outline-none px-2">
+                        <input v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 bg-white outline-none hover:bg-blue-400 hover:text-white"><i class="las la-search"></i></button>
                         <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-red-400 text-white outline-none hover:bg-red-500 hover:text-white"><i class="las la-times"></i></button>
                     </div>
@@ -219,13 +221,10 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
                 <div class="px-1 flex">
-                    <button class="flex justify-center items-center rounded-full text-sm h-10 w-10 bg-teal-400 outline-none text-white font-semibold"><i class="las la-download"></i></button>
+                    <button class="flex justify-center items-center rounded-full text-sm h-10 px-3 bg-teal-400 outline-none text-white font-semibold"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
                 </div>
                 <div class="px-1 flex">
-                    <button class="flex justify-center items-center rounded-full text-sm h-10 w-10 bg-green-400 outline-none text-white font-semibold"><i class="las la-upload"></i></button>
-                </div>
-                <div class="px-1 flex">
-                    <button class="flex justify-center items-center rounded-full text-sm h-10 w-10 hover:border-blue-400 hover:text-white hover:bg-blue-400 outline-none border-gray-400 border text-gray-700"><i class="las la-filter"></i></button>
+                    <button class="flex justify-center items-center rounded-full text-sm h-10 px-3 hover:border-blue-400 hover:text-white hover:bg-blue-400 outline-none border-gray-400 border text-gray-700"><i class="las la-filter"></i> {{ __( 'Filter' ) }}</button>
                 </div>
             </div>
         </div>
@@ -260,8 +259,8 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 </table>
             </div>
         </div>
-        <div class="p-2 flex justify-between">
-            <div v-if="bulkActions.length > 0" id="grouped-actions" class="flex justify-between rounded-full bg-gray-200 p-1">
+        <div class="p-2 flex flex-col md:flex-row justify-between">
+            <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full bg-gray-200 p-1">
                 <select class="text-gray-800 outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option selected value=""><slot name="bulk-label">bulk-label</slot></option>
                     <option v-for="action of bulkActions" :value="action.identifier">{{ action.label }}</option>

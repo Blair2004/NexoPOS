@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Classes\Currency;
+use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
@@ -15,8 +17,10 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterRefundedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
+use App\Events\OrderProductAfterSavedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Models\Order;
@@ -29,6 +33,7 @@ use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
 use App\Models\Notification;
 use App\Models\OrderCoupon;
+use App\Models\OrderInstalment;
 use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
@@ -132,6 +137,12 @@ class OrdersService
         $this->__checkAddressesInformations( $fields );
 
         /**
+         * Check if instalments are provided and if they are all
+         * valid regarding the total order price
+         */
+        $this->__checkProvidedInstalments( $fields );
+
+        /**
          * ------------------------------------------
          *                  WARNING
          * ------------------------------------------
@@ -140,6 +151,11 @@ class OrdersService
          * should be made prior this section
          */
         $order      =   $this->__initOrder( $fields, $paymentStatus, $order );
+
+        /**
+         * save order instalments
+         */
+        $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
 
         /**
          * register taxes for the order
@@ -192,7 +208,7 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        event( new OrderAfterCreatedEvent( $order ) );
+        event( new OrderAfterCreatedEvent( $order, $fields ) );
 
         return [
             'status'    =>  'success',
@@ -201,6 +217,88 @@ class OrdersService
         ];
     }
 
+    public function __saveOrderInstalments( Order $order, $instalments = [] )
+    {
+        if ( ! empty( $instalments ) ) {
+            /**
+             * delete previous instalments
+             */
+            $order->instalments->each( fn( $instalment ) => $instalment->delete() );
+
+            foreach( $instalments as $instalment ) {
+                $newInstalment              =   new OrderInstalment;
+                $newInstalment->amount      =   $instalment[ 'amount' ];
+                $newInstalment->order_id    =   $order->id;
+                $newInstalment->date        =   Carbon::parse( $instalment[ 'date' ] )->toDateTimeString();
+                $newInstalment->save();
+            }
+        }
+    }
+
+    /**
+     * check if the provided instalments are
+     * valid and verify it allong with the order
+     * total.
+     * @param array $fields
+     * @return void
+     */
+    public function __checkProvidedInstalments( $fields )
+    {
+        if ( isset( $fields[ 'instalments' ] ) && ! empty( $fields[ 'instalments' ] ) ) {
+            $instalments    =   collect( $fields[ 'instalments' ] );
+            $total          =   $instalments->sum( 'amount' );
+            $customer       =   Customer::find( $fields[ 'customer_id' ] );
+
+            if ( $customer->group->minimal_credit_payment > 0 ) {
+                $minimal        =   Currency::define( $fields[ 'total' ] )
+                    ->multipliedBy( $customer->group->minimal_credit_payment )
+                    ->dividedBy( 100 )
+                    ->getRaw();
+
+                /**
+                 * if the minimal provided
+                 * amount thoses match the required amount.
+                 */
+                if ( $minimal > Currency::raw( $fields[ 'tendered' ] ) ) {
+                    throw new NotAllowedException( 
+                        sprintf(
+                            __( 'The minimal payment of %s has\'nt been provided.' ),
+                            ( string ) Currency::define( $minimal )
+                        )
+                    );
+                }
+            }
+            
+            if ( $total < ( float ) $fields[ 'total' ] ) {
+                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts that doesn\'t match the order total.' ) );
+            }
+
+            $instalments->each( function( $instalment ) {
+                if ( ns()->date->copy()->startOfDay()->greaterThan( Carbon::parse( $instalment[ 'date' ] ) ) ) {
+                    throw new NotAllowedException( 
+                        sprintf( __( 'An instalment has an invalid date of %s, which shouldn\'t be prior the current day.' ), $instalment[ 'date' ] ) 
+                    );
+                }
+            });
+
+            $paidToday      =   $instalments->map( function( $instalment ) {
+                if ( ns()->date->copy()->isSameDay( Carbon::parse( $instalment[ 'date' ] ) ) ) {
+                    return ( float ) $instalment[ 'amount' ];
+                }
+                return 0;
+            });
+
+            if ( Currency::raw( $paidToday->sum() ) !== Currency::raw( $fields[ 'tendered' ] ) ) {
+                throw new NotAllowedException( __( 'The total amount to be paid today is different from the tendered amount.' ) );
+            }
+        }
+    }
+
+    /**
+     * Checks wether the attached coupons are valid
+     * @param array $coupons
+     * @return void
+     */
     public function __checkAttachedCoupons( $coupons )
     {
         collect( $coupons )->each( function( $coupon ) {
@@ -216,7 +314,13 @@ class OrdersService
         });
     }
 
-    private function __computeOrderCoupons( $fields, $value )
+    /**
+     * Computes the total of the provided coupons
+     * @param array $fields
+     * @param float $subtotal
+     * @return float
+     */
+    private function __computeOrderCoupons( $fields, $subtotal )
     {
         if ( isset( $fields[ 'coupons' ] ) ) {
             return collect( $fields[ 'coupons' ] )->map( fn( $coupon ) => $coupon[ 'value' ] )->sum();
@@ -225,6 +329,12 @@ class OrdersService
         return 0;
     }
 
+    /**
+     * Save the coupons by attaching them to the processed order
+     * @param Order $order
+     * @param array $coupons
+     * @return void
+     */
     public function __saveOrderCoupons( Order $order, $coupons )
     {
         $savedCoupons       =   [];
@@ -570,8 +680,31 @@ class OrdersService
      * @return array
      */
     public function makeOrderSinglePayment( $payment, Order $order )
-    {        
-        $orderPayment   =   $this->__saveOrderSinglePayment( $payment, $order );
+    {
+        if( $order->instalments->count() > 0 ) {
+            $paymentToday    =   $order->instalments()
+                ->where( 'paid', false )
+                ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
+                ->where( 'date', '<=', ns()->date->copy()->endOfDay()->toDateTimeString() )
+                ->get();
+    
+            if ( $paymentToday->count() === 0 ) {
+                throw new NotFoundException( __( 'No payment is expected at the moment. If the customer want to pay early, consider adjusting instalment payments date.' ) );
+            }
+
+            if ( 
+                ns()->currency->getRaw( $paymentToday->sum( 'amount' ) ) !== 
+                ns()->currency->getRaw( $payment[ 'value' ] ) ) {
+                throw new NotAllowedException( 
+                    sprintf(
+                        __( 'The provided payment doesn\'t match the expected payment : %s. If the customer want to pay a different amount, consider adjusting the instalment amount.' ),
+                        ( string ) Currency::define( $paymentToday->sum( 'amount' ) )
+                    )
+                );
+            }
+        }        
+
+        $this->__saveOrderSinglePayment( $payment, $order );
         
         /**
          * let's refresh the order to check wether the 
@@ -803,7 +936,7 @@ class OrdersService
      */
     private function __saveOrderProducts($order, $products)
     {
-        $subTotal          =   0;
+        $subTotal       =   0;
         $taxes          =   0;
         $gross          =   0;
 
@@ -891,6 +1024,8 @@ class OrdersService
             if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
             }
+
+            event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
         });
 
         return compact('subTotal', 'taxes', 'order');
@@ -1138,8 +1273,8 @@ class OrdersService
         $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
-        $order->expected_payment_date   =   $fields['expected_payment_date' ] ?? null; // when the order is not saved as laid away
-        $order->total_installments      =   $fields['total_installments' ] ?? 0;
+        $order->final_payment_date      =   $fields['final_payment_date' ] ?? null; // when the order is not saved as laid away
+        $order->total_instalments       =   $fields['total_instalments' ] ?? 0;
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
@@ -1467,6 +1602,7 @@ class OrdersService
                 ->with( 'shipping_address' )
                 ->with( 'billing_address' )
                 ->with( 'taxes' )   
+                ->with( 'instalments' )
                 ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
@@ -1482,6 +1618,8 @@ class OrdersService
             }
 
             $order->products;
+
+            Hook::action( 'ns-load-order', $order );
 
             return $order;
         }
@@ -1575,7 +1713,7 @@ class OrdersService
         $order->discount        =   $this->computeOrderDiscount( $order );
         $order->total           =   $productTotal + $orderShipping;
         $order->tax_value       =   $productsTotalTaxes;
-        $order->change          =   $order->total - $order->tendered;
+        $order->change          =   $order->tendered - $order->total;
 
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();
@@ -1593,6 +1731,8 @@ class OrdersService
         }
 
         $order->save();
+
+        event( new OrderAfterUpdatedEvent( $order ) );
 
         return [
             'status'    =>  'success',
@@ -1917,5 +2057,149 @@ class OrdersService
                 }
             }
         });
+    }
+
+    /**
+     * Will resolve instalments attached to an order
+     * @param Order $order
+     * @return void
+     */
+    public function resolveInstalments( Order $order )
+    {
+        if ( in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {
+            
+            $orderInstalments       =   $order->instalments()
+                ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
+                ->where( 'date', '<=', ns()->date->copy()->endOfDay()->toDateTimeString() )
+                ->where( 'paid', false )
+                ->get();
+    
+            $paidInstalments        =   $order->instalments()->where( 'paid', true )->sum( 'amount' );
+            $otherInstalments       =   $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
+            $dueInstalments         =   Currency::raw( $orderInstalments->sum( 'amount' ) );
+    
+            if ( $orderInstalments->count() > 0 ) {
+                $payableDifference  =   Currency::define( $order->tendered )
+                    ->subtractBy( $paidInstalments )
+                    ->subtractBy( $otherInstalments )
+                    ->getRaw();
+
+                if ( $dueInstalments === abs( $payableDifference ) ) {
+                    $orderInstalments
+                        ->each( function( $instalment ) {
+                            $instalment->paid   =   true;
+                            $instalment->save();
+                    });
+                }
+            }
+        }
+    }
+
+    /**
+     * Will update an existing instalment
+     * @param Order $order
+     * @param OrderInstalment $orderInstalement
+     * @param array $fields
+     * @return array
+     */
+    public function updateInstalment( Order $order, OrderInstalment $instalment, $fields )
+    {
+        if ( $instalment->paid ) {
+            throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
+        }
+
+        foreach( $fields as $field => $value ) {
+            if ( in_array( $field, [ 'date', 'amount' ] ) ) {
+                $instalment->$field     =   $value;
+            }
+        }
+
+        $instalment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The instalment has been saved.' ),
+            'data'      =>  compact( 'instalment' )
+        ];
+    }
+
+    /**
+     * Will make an instalment as paid
+     * @param Order $order
+     * @param OrderInstalment $instalment
+     * @return array
+     */
+    public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment )
+    {
+        if ( $instalment->paid ) {
+            throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
+        }
+
+        $instalment->paid   =   true;
+        $instalment->save();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The instalment has been saved.' ),
+            'data'      =>  compact( 'instalment' )
+        ];
+    }
+
+    /**
+     * Will delete an instalment.
+     * @param OrderInstlament $instalment
+     * @return array
+     */
+    public function deleteInstalment( Order $order, OrderInstalment $instalment )
+    {
+        $this->refreshInstalmentCount( $order );
+
+        $instalment->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The instalment has been deleted.' )
+        ];
+    }
+
+    public function refreshInstalmentCount( Order $order )
+    {
+        $order->total_instalments       =   $order->instalments()->count();
+        $order->save();
+    }
+
+    /**
+     * Creates an instalments
+     * @param Order $order
+     * @param array $fields
+     * @return array
+     */
+    public function createInstalment( Order $order, $fields )
+    {
+        $totalInstalment    =   $order->instalments->map( fn( $instalment ) => $instalment->amount )->sum();
+
+        if ( Currency::raw( $fields[ 'amount' ] ) <= 0 ) {
+            throw new NotAllowedException( __( 'The defined amount is not valid.' ) );
+        }
+
+        if ( Currency::raw( $totalInstalment ) >= $order->total ) {
+            throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );
+        }
+
+        $orderInstalment                =   new OrderInstalment;
+        $orderInstalment->order_id      =   $order->id;
+        $orderInstalment->amount        =   $fields[ 'amount' ];
+        $orderInstalment->date          =   $fields[ 'date' ];
+        $orderInstalment->save();
+
+        $this->refreshInstalmentCount( $order );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The instalment has been created.' ),
+            'data'      =>  [
+                'instalment'    =>  $orderInstalment
+            ]
+        ];
     }
 }

@@ -20,16 +20,17 @@ import { __ } from "./libraries/lang";
  * these are dynamic component
  * that are loaded conditionally
  */
-const NsPosDashboardButton      =   (<any>window).NsPosDashboardButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-dashboard-button' ).default;
-const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton      =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button' ).default;
-const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
-const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton         =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
+const NsPosDashboardButton      =   (<any>window).NsPosDashboardButton          =   require( './pages/dashboard/pos/header-buttons/ns-pos-dashboard-button' ).default;
+const NsPosPendingOrderButton   =   (<any>window).NsPosPendingOrderButton       =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button' ).default;
+const NsPosOrderTypeButton      =   (<any>window).NsPosOrderTypeButton          =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button' ).default;
+const NsPosCustomersButton      =   (<any>window).NsPosCustomersButton          =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button' ).default;
 const NsPosResetButton          =   (<any>window).NsPosResetButton              =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button' ).default;
 const NsPosCashRegister         =   (<any>window).NsPosCashRegister             =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button' ).default;
-const NsAlertPopup              =   (<any>window).NsAlertPopup                 =   require( './popups/ns-' + 'alert' + '-popup' ).default;
-const NsConfirmPopup            =   (<any>window).NsConfirmPopup               =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
-const NsPromptPopup             =   (<any>window).NsPromptPopup               =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
-const NsLayawayPopup            =   (<any>window).NsLayawayPopup               =   require( './popups/ns-pos-' + 'layaway' + '-popup' ).default;
+const NsAlertPopup              =   (<any>window).NsAlertPopup                  =   require( './popups/ns-' + 'alert' + '-popup' ).default;
+const NsConfirmPopup            =   (<any>window).NsConfirmPopup                =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
+const NsPromptPopup             =   (<any>window).NsPromptPopup                 =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
+const NsLayawayPopup            =   (<any>window).NsLayawayPopup                =   require( './popups/ns-pos-' + 'layaway' + '-popup' ).default;
+const NSPosShippingPopup        =   (<any>window).NsLayawayPopup                =   require( './popups/ns-pos-' + 'shipping' + '-popup' ).default;
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -37,6 +38,7 @@ export class POS {
     private _customers: BehaviorSubject<Customer[]>;
     private _settings: BehaviorSubject<{ [ key: string] : any}>;
     private _types: BehaviorSubject<OrderType[]>;
+    private _orderTypeProcessQueue: { identifier: string, promise: ( selectedType: OrderType ) => Promise<StatusResponse> }[]     =   [];
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
@@ -75,6 +77,7 @@ export class POS {
             customer: undefined,
             type: undefined,
             products: [],
+            instalments: [],
             payments: [],
             addresses: {
                 shipping: undefined,
@@ -121,6 +124,10 @@ export class POS {
         return this._options;
     }
 
+    get orderTypeQueue() {
+        return this._orderTypeProcessQueue;
+    }
+
     get settings() {
         return this._settings;
     }
@@ -165,6 +172,18 @@ export class POS {
         this._options           =   new BehaviorSubject({});
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
+        this._orderTypeProcessQueue =   [
+            {
+                identifier : 'handle.delivery-order',
+                promise     : ( selectedType: OrderType ) => new Promise<StatusResponse>( ( resolve, reject ) => {
+                    if ( selectedType.identifier === 'delivery' ) {
+                        return Popup.show( NSPosShippingPopup, { resolve, reject } );
+                    }
+
+                    reject( false );
+                })
+            }
+        ]
 
         /**
          * This initial process will try to detect
@@ -321,6 +340,12 @@ export class POS {
             data.buttons[ 'NsPosCashRegister' ]  =   NsPosCashRegister;
         }
 
+        /**
+         * expose the pos header data, for allowing
+         * custom button injection.
+         */
+        nsHooks.doAction( 'ns-pos-header', data );
+
         return data;
     }
 
@@ -335,6 +360,11 @@ export class POS {
 
     changeVisibleSection( section ) {
         if ([ 'both', 'cart', 'grid' ].includes( section ) ) {
+
+            if ([ 'cart', 'both' ].includes( section ) ) {
+                this.refreshCart();
+            }
+
             this._visibleSection.next( section );
         }
     }
@@ -399,7 +429,7 @@ export class POS {
         return new Promise( ( resolve, reject ) => {
             const order     =   this.order.getValue();
 
-            if ( order.tax_group_id === undefined ) {
+            if ( order.tax_group_id === undefined || order.tax_group_id === null ) {
                 return reject( false );
             }
 
@@ -463,32 +493,31 @@ export class POS {
      * might request additionnal information through a popup.
      * @param order Order
      */
-    canProceedAsLaidAway( order: Order ) {
+    canProceedAsLaidAway( _order: Order ): { status: string, message: string, data: { order: Order } } | any {
         return new Promise( async ( resolve, reject ) => {
-            const minimalPaymentPercent     =   order.customer.group.minimal_credit_payment;
-            const expected                  =   ( order.total * minimalPaymentPercent ) / 100;
+            const minimalPaymentPercent     =   _order.customer.group.minimal_credit_payment;
+            const expected                  =   ( _order.total * minimalPaymentPercent ) / 100;
 
             /**
              * checking order details
              * installments & payment date
              */
-            if ( order.expected_payment_date === undefined ) {
-                try {
-                    await new Promise( ( resolve, reject ) => {
-                        Popup.show( NsLayawayPopup, { order, reject, resolve });
-                    });
-                } catch( exception ) {
-                    return reject( exception );
+            try {
+                const order    =   await new Promise<Order>( ( resolve, reject ) => {
+                    Popup.show( NsLayawayPopup, { order: _order, reject, resolve });
+                });
+
+                if ( order.tendered < expected ) {
+                    const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
+                    Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
+                    return reject({ status: 'failed', message });
                 }
-            }
 
-            if ( order.tendered < expected ) {
-                const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
-                Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
-                return reject({ status: 'failed', message });
-            }
+                return resolve({ status: 'success', message: __( 'Layaway defined' ), data: { order } });
 
-            return resolve({ status: 'success', message: 'Can Proceed as layaway' });
+            } catch( exception ) {
+                return reject( exception );
+            }
         });
     }
 
@@ -499,7 +528,7 @@ export class POS {
      */
     submitOrder( orderFields = {} ) {
         return new Promise( async ( resolve, reject ) => {
-            const order             =   { 
+            var order             =   { 
                 ...<Order>this.order!.getValue(),
                 ...orderFields
             };
@@ -511,26 +540,19 @@ export class POS {
              * order is not "hold".
              */
             if ( order.payment_status !== 'hold' ) {
-                if ( order.payments.length  === 0 ) {
-                    if ( this.options.getValue().ns_orders_allow_unpaid === 'no' ) {
-                        const message   =   'Please provide a payment before proceeding.';
-                        return reject({ status: 'failed', message  });
-                    } else if ( minimalPayment > 0 ) {
-                        try {
-                            await this.canProceedAsLaidAway( order );
-                        } catch( exception ) {
-                            return reject( exception );
-                        }
-                    }
-                }
-    
-                if ( order.total > order.tendered ) {
+                if ( order.payments.length  === 0 || order.total > order.tendered ) {
                     if ( this.options.getValue().ns_orders_allow_partial === 'no' ) {
                         const message   =   'Partially paid orders are disabled.';
                         return reject({ status: 'failed', message });
-                    } else if ( minimalPayment > 0 ) {
+                    } else if ( minimalPayment >= 0 ) {
                         try {
-                            await this.canProceedAsLaidAway( order );
+                            const result    =   await this.canProceedAsLaidAway( order );
+
+                            /**
+                             * the order might have been updated
+                             * by the layaway popup.
+                             */
+                            order           =   result.data.order;
                         } catch( exception ) {
                             return reject( exception );
                         }
@@ -616,8 +638,6 @@ export class POS {
                 this.buildOrder( order );
                 this.buildProducts( products );
                 this.selectCustomer( order.customer );
-                // this.refreshProducts( this.products.getValue() );
-                // this.refreshCart();
             });
     }
 
@@ -626,6 +646,7 @@ export class POS {
     }
 
     buildProducts( products ) {
+        this.refreshProducts( products );
         this.products.next( products );
     }
 
@@ -880,6 +901,8 @@ export class POS {
         order.total_products    =   products.length
 
         this.order.next( order );
+
+        nsHooks.doAction( 'ns-cart-after-refreshed', order );
     }
 
     /**
@@ -1024,9 +1047,9 @@ export class POS {
         this._products.next( products );
     }
 
-    updateProduct( product, data ) {
-        const products                      =   this._products.getValue();
-        const index                         =   products.indexOf( product );
+    updateProduct( product, data, index = null ) {
+        const products      =   this._products.getValue();
+        index               =   index === null ? products.indexOf( product ) : index;
 
         /**
          * to ensure Vue updates accordingly.
@@ -1067,6 +1090,8 @@ export class POS {
         }
 
         product.total_price         =   ( product.unit_price * product.quantity ) - product.discount;
+
+        nsHooks.doAction( 'ns-after-product-computed', product );
     }
 
     loadCustomer( id ) {
@@ -1114,6 +1139,17 @@ export class POS {
             }            
         } else {
             nsSnackBar.error( 'Unable to void an unpaid order.' ).subscribe();
+        }
+    }
+
+    async triggerOrderTypeSelection( selectedType ) {
+        for( let i = 0; i < this.orderTypeQueue.length; i++ ) {
+            try {
+                const result    =   await this.orderTypeQueue[i].promise( selectedType );
+                console.log( result );
+            } catch( exception ) {
+                console.log( exception );
+            }
         }
     }
 

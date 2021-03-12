@@ -233,12 +233,18 @@ class CrudGeneratorCommand extends Command
                 );
             }
         } else {
+            $fileName   =   'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php';
+
             Storage::disk( 'ns' )->put( 
-                'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
+                $fileName, 
                 view( 'generate.crud', $this->crudDetails )
             );
         }
 
-        return $this->info( __( 'The CRUD resource has been published' ) );
+        return $this->info( sprintf(
+            __( 'The CRUD resource "%" has been generated at %' ),
+            $this->crudDetails[ 'model_name' ],
+            $fileName 
+        ) );
     }
 }

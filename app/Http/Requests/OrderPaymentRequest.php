@@ -25,7 +25,7 @@ class OrderPaymentRequest extends FormRequest
     {
         return [
             'identifier'    =>  'required',
-            'value'         =>  'required|integer',
+            'value'         =>  'required|numeric',
         ];
     }
 }

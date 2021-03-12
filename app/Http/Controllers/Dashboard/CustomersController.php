@@ -20,6 +20,7 @@ use App\Services\CustomerService;
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerReward;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
@@ -231,6 +232,16 @@ class CustomersController extends DashboardController
     {
         return CustomerRewardCrud::table([
             'queryParams'    =>  [
+                'customer_id'   =>  $customer->id
+            ]
+        ]);
+    }
+
+    public function editCustomerReward( Customer $customer, CustomerReward $reward )
+    {
+        return CustomerRewardCrud::form( $reward, [
+            'returnUrl'     =>  ns()->route( 'ns.dashboard.customers-rewards', [ 'customer' => $customer->id ]),
+            'queryParams'   =>  [
                 'customer_id'   =>  $customer->id
             ]
         ]);

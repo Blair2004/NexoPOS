@@ -10,7 +10,8 @@ class Permission extends Model
 {
     use HasFactory;
     
-    protected $table    =   'nexopos_permissions';
+    protected $table        =   'nexopos_permissions';
+    protected $fillable     =   [ 'namespace' ];
 
     public function scopeWithNamespace( $query, $param ) {
         return $query->where( 'namespace', $param );
