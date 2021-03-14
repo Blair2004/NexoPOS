@@ -340,6 +340,12 @@ export class POS {
             data.buttons[ 'NsPosCashRegister' ]  =   NsPosCashRegister;
         }
 
+        /**
+         * expose the pos header data, for allowing
+         * custom button injection.
+         */
+        nsHooks.doAction( 'ns-pos-header', data );
+
         return data;
     }
 

@@ -208,7 +208,7 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        event( new OrderAfterCreatedEvent( $order ) );
+        event( new OrderAfterCreatedEvent( $order, $fields ) );
 
         return [
             'status'    =>  'success',

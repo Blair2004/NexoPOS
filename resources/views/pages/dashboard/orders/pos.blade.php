@@ -29,6 +29,8 @@
     </script>
     <script src="{{ asset( 'js/pos.js' ) }}"></script>
     <script>
-    POS.reset();
+    document.addEventListener( 'DOMContentLoaded', () => {
+        POS.reset();
+    });
     </script>
 @endsection

@@ -7,7 +7,7 @@
 
 namespace Modules\{{ $module[ 'namespace' ] }}\Migrations;
 
-use Illuminate\Support\Facades\Schema;
+use App\Classes\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
