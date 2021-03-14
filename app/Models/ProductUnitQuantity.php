@@ -13,6 +13,12 @@ class ProductUnitQuantity extends NsModel
     
     protected $table    =   'nexopos_' . 'products_unit_quantities';
 
+    /**
+     * Fetch products unique a barcode filter
+     * @param QueryBuilder $query
+     * @param string $reference
+     * @return QueryBuilder
+    **/
     public function scopeBarcode( $query, $reference )
     {
         return $query->where( 'barcode', $reference );
