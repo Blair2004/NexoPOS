@@ -403,7 +403,7 @@ class ProcurementService
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
-            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->id;
+            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->unit_id . '-' . $procurementProduct->id;
             $procurementProduct->save();
 
             

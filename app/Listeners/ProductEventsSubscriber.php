@@ -91,6 +91,16 @@ class ProductEventsSubscriber
             $event->product->barcode,
             $event->product->barcode_type
         );
+
+        /**
+         * save barcode for unit quantities
+         */
+        $event->product->unit_quantities->each( function( $unitQuantity ) use ( $event ) {
+            $this->barcodeService->generateBarcode(
+                $unitQuantity->barcode,
+                $event->product->barcode_type
+            );
+        });
     }
 
     public function afterStockAdjustment( ProductAfterStockAdjustmentEvent $event )

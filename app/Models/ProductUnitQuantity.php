@@ -13,6 +13,11 @@ class ProductUnitQuantity extends NsModel
     
     protected $table    =   'nexopos_' . 'products_unit_quantities';
 
+    public function scopeBarcode( $query, $reference )
+    {
+        return $query->where( 'barcode', $reference );
+    }
+
     public function unit()
     {
         return $this->hasOne( Unit::class, 'id', 'unit_id' );

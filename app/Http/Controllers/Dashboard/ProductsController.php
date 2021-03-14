@@ -533,8 +533,13 @@ class ProductsController extends DashboardController
     public function searchUsingArgument( $reference )
     {
         $procurementProduct     =   ProcurementProduct::barcode( $reference )->first();
+        $productUnitQuantity    =   ProductUnitQuantity::barcode( $reference )->first();
+        $product                =   Product::barcode( $reference )
+            ->searchable()
+            ->first();
 
         if ( $procurementProduct instanceof ProcurementProduct ) {
+
             $product    =   $procurementProduct->product;
             
             /**
@@ -555,11 +560,21 @@ class ProductsController extends DashboardController
              */
             $product->procurement_product_id       =   $procurementProduct->id;
 
-        } else {
-            $product        =   Product::barcode( $reference )
-                ->searchable()
-                ->with( 'unit_quantities' )
-                ->first();
+        } else if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
+            
+            /**
+             * if a product unit quantity is loaded. Then we make sure to return the parent
+             * product with the selected unit quantity.
+             */
+            $productUnitQuantity->load( 'unit' );
+            
+            $product      =   Product::find( $productUnitQuantity->product_id );
+            $product->load( 'unit_quantities' );
+            $product->selectedUnitQuantity  =   $productUnitQuantity;
+
+        } else if ( $product instanceof Product ) {
+
+            $product->load( 'unit_quantities' );
 
             if ( $product->accurate_tracking ) {
                 throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );
@@ -573,14 +588,14 @@ class ProductsController extends DashboardController
             ];
         }
 
-        throw new NotFoundException( __( 'The product request cannot be found.' ) );
+        throw new NotFoundException( __( 'There is no products matching the current request.' ) );
     }
 
     public function printLabels()
     {
         return $this->view( 'pages.dashboard.products.print-labels', [
-            'title'         =>  __( 'Edit a product' ),
-            'description'   =>  __( 'Makes modifications to a product' ),
+            'title'         =>  __( 'Print Labels' ),
+            'description'   =>  __( 'Customize and print products labels.' ),
         ]);
     }
 }

@@ -267,7 +267,7 @@ class ProductService
 
         /**
          * this will calculate the unit quantities
-         * for the creaed product. This also comute taxes
+         * for the created product. This also comute taxes
          */
         $this->__computeUnitQuantities( $fields, $product );
 
@@ -536,7 +536,7 @@ class ProductService
             $product->$field    =   $value;
         } else if ( $field === 'units' ) {
             $product->unit_group            =   $fields[ 'units' ][ 'unit_group' ];
-            $product->accurate_tracking     =   $fields[ 'units' ][ 'accurate_tracking' ];
+            $product->accurate_tracking     =   $fields[ 'units' ][ 'accurate_tracking' ] ?? false;
         }
     }
 
@@ -570,6 +570,12 @@ class ProductService
                 $fields[ 'tax_group_id' ], 
                 $fields[ 'tax_type' ] 
             );
+
+            /**
+             * save custom barcode for the created unit quantity
+             */
+            $unitQuantity->barcode      =       $product->barcode . '-' . $unitQuantity->id;
+            $unitQuantity->save();
         }
     }
 
@@ -627,6 +633,7 @@ class ProductService
      * a specific set of product informations
      * @param array product informations to handle
      * @return array response of the process.
+     * @return void
      */
     private function __saveProcurementHistory( $data )
     {
@@ -1291,5 +1298,20 @@ class ProductService
     {
         $product->unit_quantities->each( fn( $quantity ) => $quantity->load( 'unit' ) );
         return $product->unit_quantities;
+    }
+
+    public function generateProductBarcode( Product $product )
+    {
+        $this->barcodeService->generateBarcode(
+            $product->barcode,
+            $product->barcode_type
+        );
+
+        $product->unit_quantities->each( function( $unitQuantity ) use ( $product ) {
+            $this->barcodeService->generateBarcode(
+                $unitQuantity->barcode,
+                $product->barcode_type
+            );
+        });
     }
 }

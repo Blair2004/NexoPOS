@@ -26,6 +26,7 @@ class CreateProductsUnitQuantities extends Migration
                 $table->string( 'preview_url' )->nullable(); 
                 $table->datetime( 'expiration_date' )->nullable(); 
                 $table->integer( 'unit_id' );
+                $table->string( 'barcode' )->nullable();
                 $table->float( 'quantity' );
                 $table->float( 'sale_price' )->default(0); // could be 0 if the product support variations
                 $table->float( 'sale_price_edit' )->default(0); // to let the system consider the price sent by the client

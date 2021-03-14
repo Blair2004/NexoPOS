@@ -6,11 +6,12 @@ const nsCheckbox    =   Vue.component( 'ns-checkbox', {
     },
     props: [ 'checked', 'field', 'label' ],
     template: `
-    <div class="flex items-center justify-center">
-        <div @click="toggleIt()" class="w-6 h-6 flex bg-white border-2 items-center justify-center cursor-pointer">
+    <div class="flex items-center justify-center cursor-pointer" @click="toggleIt()">
+        <div class="w-6 h-6 flex bg-white border-2 items-center justify-center cursor-pointer">
             <i v-if="isChecked" class="las la-check"></i>   
         </div>
         <span v-if="label" class="mx-2">{{ label }}</span>
+        <span v-if="field.label" class="mx-2">{{ field.label }}</span>
     </div>
     `,
     computed: {
