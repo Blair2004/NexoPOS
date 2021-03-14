@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col">
+    <div class="bg-white w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col" v-if="loadsUnits">
         <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
             <h3 class="font-bold text-gray-700">Choose Selling Unit</h3>
         </div>
@@ -29,7 +29,8 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 export default {
     data() {
         return {
-            unitsQuantities: []
+            unitsQuantities: [],
+            loadsUnits: false,
         }
     },
     mounted() {
@@ -51,7 +52,17 @@ export default {
             }
         });
 
-        this.loadUnits();
+        /**
+         * If there is a default selected unit quantity
+         * provided, we assume the product was added using the unit
+         * quantity barcode.
+         */
+        if ( this.$popupParams.product.$original().selectedUnitQuantity !== undefined ) {
+            this.selectUnit( this.$popupParams.product.$original().selectedUnitQuantity );
+        } else {
+            this.loadsUnits     =   true;
+            this.loadUnits();
+        }
     },
     methods: {
         loadUnits() {

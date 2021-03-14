@@ -113,7 +113,7 @@ export default {
             clearTimeout( this.searchTimeout );
             this.searchTimeout  =   setTimeout( () => {
                 this.submitSearch( this.barcode );
-            }, 1000 );
+            }, 200 );
         }
     },
     mounted() {

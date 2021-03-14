@@ -40,12 +40,18 @@ class ProcurementService
     protected $productService;
     protected $currency;
 
+    /** 
+     * @param BarcodeService $barcodeservice
+     **/
+    protected $barcodeService;
+
     public function __construct( 
         ProviderService $providerService,
         UnitService $unitService,
         ProductService $productService,
         CurrencyService $currency,
-        DateService $dateService
+        DateService $dateService,
+        BarcodeService $barcodeService
     )
     {
         $this->providerService      =   $providerService;
@@ -53,6 +59,7 @@ class ProcurementService
         $this->productService       =   $productService;
         $this->dateService          =   $dateService;
         $this->currency             =   $currency;
+        $this->barcodeService       =   $barcodeService;
     }
 
     /**
@@ -298,7 +305,7 @@ class ProcurementService
     /**
      * This helps to compute the unit value and the total cost 
      * of a procurement product. It return various value as an array of
-     * the product updated as long as an array of errors
+     * the product updated along with an array of errors
      * @param array [ procurementProduct, storedUnitReference, procurement, itemsToSave, item ]
      * @return array<$itemsToSave,$errors>
      */
@@ -391,10 +398,14 @@ class ProcurementService
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
+            $procurementProduct->expiration_date            =   $procuredProduct[ 'expiration_date' ] ?? null;
             $procurementProduct->total_purchase_price       =   $procuredProduct[ 'total_purchase_price' ];
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
+            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->unit_id . '-' . $procurementProduct->id;
+            $procurementProduct->save();
+
             
             event( new ProcurementAfterSaveProductEvent( $procurement, $procurementProduct, $procuredProduct ) );
 
@@ -826,6 +837,11 @@ class ProcurementService
                     ->additionateBy( $product->quantity )
                     ->get();
 
+                /**
+                 * will generate a unique barcode for the procured product
+                 */
+                $this->generateBarcode( $product );
+
                 $this->productService->setQuantity( $product->product_id, $product->unit_id, $newQuantity, $product->id );
             });
     
@@ -833,6 +849,14 @@ class ProcurementService
         }
 
         event( new ProcurementAfterHandledEvent( $procurement ) );
+    }
+
+    public function generateBarcode( ProcurementProduct $procurementProduct )
+    {
+        $this->barcodeService->generateBarcode(
+            $procurementProduct->barcode,
+            $procurementProduct->product->barcode_type
+        );
     }
 
     /**
