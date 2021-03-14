@@ -12,12 +12,35 @@ class Product extends NsModel
 
     const STOCK_MANAGEMENT_ENABLED      =   'enabled';
     const STOCK_MANAGEMENT_DISABLED     =   'disabled';
+
+    const EXPIRES_PREVENT_SALES         =   'prevent_sales';
+    const EXPIRES_ALLOW_SALES           =   'allow_sales';
     
-    protected $table    =   'nexopos_' . 'products';
+    protected $table                    =   'nexopos_' . 'products';
 
     public function category()
     {
         return $this->belongsTo( ProductCategory::class, 'category_id', 'id' );
+    }
+
+    /**
+     * get products having accurate tracking enabled
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeTrackingEnabled( $query )
+    {
+        return $query->where( 'accurate_tracking', true );
+    }
+
+    /**
+     * get products having accurate tracking disabled
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeTrackingDisabled( $query )
+    {
+        return $query->where( 'accurate_tracking', false );
     }
 
     /**

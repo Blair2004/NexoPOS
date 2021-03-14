@@ -231,12 +231,15 @@ class CategoryController extends DashboardController
             $category       =   ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
                 ->with( 'subCategories' )
-                ->with( 'products.galleries' )
                 ->first();
 
             return [
-                'products'          =>  $category->products,
-                'categories'        =>  $category->subCategories()
+                'products'          =>  $category->products()
+                    ->with( 'galleries' )
+                    ->trackingDisabled()
+                    ->get(),
+                'categories'        =>  $category
+                    ->subCategories()
                     ->displayOnPOS()
                     ->get(),
                 'previousCategory'  =>  ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root

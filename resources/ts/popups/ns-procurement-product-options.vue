@@ -23,9 +23,15 @@ export default {
             rawFields: [
                 {
                     label: 'Expiration Date',
-                    name: 'expiration',
+                    name: 'expiration_date',
                     description: 'Define when that specific product should expire.',
-                    type: 'date',
+                    type: 'datetimepicker',
+                }, {
+                    label: 'Barcode',
+                    name: 'barcode',
+                    description: 'Renders the automatically generated barcode.',
+                    type: 'text',
+                    disabled: true,
                 }, {
                     label: 'Tax Type',
                     name: 'tax_type',
@@ -67,16 +73,21 @@ export default {
         });
 
         const fields    =   this.rawFields.map( field => {
-            if ( field.name === 'expiration' ) {
-                field.value    =   this.$popupParams.product.procurement.expiration
+            if ( field.name === 'expiration_date' ) {
+                field.value    =   this.$popupParams.product.procurement.expiration_date
             }
 
             if ( field.name === 'tax_type' ) {
                 field.value    =   this.$popupParams.product.procurement.tax_type
             }
 
+            if ( field.name === 'barcode' ) {
+                field.value    =   this.$popupParams.product.procurement.barcode
+            }
+
             return field;
         });
+
         this.fields     =   this.validation.createFields( fields );
     }
 }

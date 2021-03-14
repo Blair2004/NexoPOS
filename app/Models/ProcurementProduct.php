@@ -7,6 +7,7 @@ use App\Events\ProcurementProductAfterUpdateEvent;
 use App\Events\ProcurementProductBeforeCreateEvent;
 use App\Events\ProcurementProductBeforeDeleteEvent;
 use App\Events\ProcurementProductBeforeUpdateEvent;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -50,5 +51,17 @@ class ProcurementProduct extends NsModel
     public function scopeGetByProcurement( $query, $param )
     {
         return $query->where( 'procurement_id', $param );
+    }
+
+    /**
+     * Fetch product from a procurement 
+     * using as specific barcode
+     * @param QueryBuilder $query
+     * @param string $barcode
+     * @return QueryBuilder
+     */
+    public function scopeBarcode( $query, $barcode )
+    {
+        return $query->where( 'barcode', $barcode );
     }
 }

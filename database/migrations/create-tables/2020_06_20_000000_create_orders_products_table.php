@@ -23,6 +23,7 @@ class CreateOrdersProductsTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'product_id' );
+                $table->integer( 'procurement_product_id' )->nullable();
                 $table->integer( 'unit_id' );
                 $table->integer( 'unit_quantity_id' );
                 $table->integer( 'order_id' );

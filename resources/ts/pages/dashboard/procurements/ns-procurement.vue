@@ -309,7 +309,7 @@ export default {
             product.procurement.total_price                 =   0;
             product.procurement.total_purchase_price        =   0;
             product.procurement.quantity                    =   1;
-            product.procurement.expiration                  =   null;
+            product.procurement.expiration_date             =   null;
             product.procurement.tax_group_id                =   0;
             product.procurement.tax_type                    =   'inclusive';
             product.procurement.unit_id                     =   0;

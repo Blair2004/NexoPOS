@@ -49,7 +49,7 @@ class CheckApplicationHealthMiddleware
         }
 
         /**
-         * we'll check here is a module is missing a 
+         * we'll check here is a module has a missing 
          * dependency to disable it
          * @var ModulesService
          */
