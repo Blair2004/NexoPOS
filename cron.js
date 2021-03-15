@@ -4,7 +4,7 @@
  */
 
 const child_process     =   require( 'child_process' );
-const process           =   child_process.exec( 'php artisan queue:work' );
+const process           =   child_process.exec( `php ${__dirname}\\artisan queue:work` );
 
 console.info( 'Starting the cron job. Press CTRL+C to exit...' );
 
