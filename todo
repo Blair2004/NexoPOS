@@ -1,16 +1,19 @@
 * Check if deleting an procurement computes correctly the stock
 * Check if changing the status to "delivered" computes correctly the stock
-- Implement Stock Adjustment
-- Implement Product importation
-    -   Include stock Adjustment
-- implementing POS
-    -   handle post saving
-    -   check how the stock is handled
-- Add order mamangement
-    -   Change order status
-    -   Refundable order (with returning items)
-- Add multi store
-    - create dedicated and customizable login
-    - dispatch events on creating & deleting a stock
-    - proper store access restriction
-- Add stock transfer
+* Implement Stock Adjustment
+* Implement Product importation
+    *   Include stock Adjustment
+* implementing POS
+    *   handle post saving
+    *   check how the stock is handled
+* Add order mamangement
+    *   Change order status
+    *   Refundable order (with returning items)
+* Add multi store
+    * create dedicated and customizable login
+    * dispatch events on creating & deleting a stock
+    * proper store access restriction
+* Add stock transfer
+- Add profile
+- Export table
+- Remove filter (added by a module)
