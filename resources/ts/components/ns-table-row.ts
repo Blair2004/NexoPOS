@@ -54,6 +54,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         },
         handleChanged( event ) {
             this.row.$checked   =   event;
+            this.$emit( 'updated', this.row );
         },
         triggerAsync( action ) {
             if ( action.confirm ) {
@@ -62,7 +63,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                         .subscribe( response => {
                             nsSnackBar.success( response.message )
                                 .subscribe();
-                            this.$emit( 'updated', true );
+                            this.$emit( 'updated', this.row );
                         }, ( response ) => {
                             this.toggleMenu();
                             nsSnackBar.error( response.message ).subscribe();

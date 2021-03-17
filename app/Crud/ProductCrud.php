@@ -746,6 +746,7 @@ class ProductCrud extends CrudService
             [
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
+                'confirm'       =>  __( 'Would you like to delete selected entries ?' ),
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])

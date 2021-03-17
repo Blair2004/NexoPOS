@@ -1,8 +1,10 @@
 import { __ } from '@/libraries/lang';
+import { Popup } from '@/libraries/popup';
 import Vue from 'vue';
 import { HttpCrudResponse } from '../interfaces/http-crud-response';
 import { HttpStatusResponse } from '../interfaces/http-status-response';
 import { nsHttpClient, nsSnackBar }   from './../bootstrap';
+import { default as nsConfirmPopup } from "@/popups/ns-pos-confirm-popup.vue";
 
 declare global {
     const nsCrudHandler: any;
@@ -19,6 +21,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             bulkAction: '',
             bulkActions: [],
             columns: [],
+            selectedEntries:[],
             globallyChecked: false,
             result: {
                 current_page: null,
@@ -97,6 +100,52 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             return result.filter( f => f > 0 || typeof f === 'string' );
         },
 
+        downloadContent() {
+            nsHttpClient.post( `${this.src}/export?${this.getQueryParams()}`, { entries : this.selectedEntries })
+                .subscribe( result => {
+
+                }, error => {
+                    nsSnackBar
+                        .error( error.message || __( 'Unexpected error occured.' ) )
+                        .subscribe();
+                })
+        },
+
+        clearSelectedEntries() {
+            Popup.show( nsConfirmPopup, {
+                title: __( 'Clear Selected Entries ?' ),
+                message: __( 'Would you like to clear all selected entries ?' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        this.selectedEntries    =   [];
+                    }
+                }
+            });
+        },
+
+        /**
+         * Will select a row and add it to a virtual storage
+         * that will ensure that while browsing to pages, these
+         * entries remains selected.
+         * @param row actual row
+         */
+        refreshRow( row ) {
+            if ( row.$checked === true ) {
+                const result    =   this.selectedEntries.filter( e => e.$id === row.$id );
+
+                if ( result.length  === 0 ) {
+                    this.selectedEntries.push( row );
+                }
+            } else {
+                const result    =   this.selectedEntries.filter( e => e.$id === row.$id );
+
+                if ( result.length > 0 ) {
+                    const index     =   this.selectedEntries.indexOf( result[0] );
+                    this.selectedEntries.splice( index, 1 );
+                }
+            }
+        },
+
         handleShowOptions( e ) {
             this.result.data.forEach( row => {
                 if ( row.$id !== e.$id ) {
@@ -106,7 +155,10 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         },
         handleGlobalChange( event ) {
             this.globallyChecked    =   event;
-            this.result.data.forEach( r => r.$checked = event );
+            this.result.data.forEach( r => {
+                r.$checked = event;
+                this.refreshRow( r );
+            });
         },
         loadConfig() {
             const request   =   nsHttpClient.get( `${this.src}/config?${this.getQueryParams()}` );
@@ -165,13 +217,15 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         },
         bulkDo() {
             if ( this.bulkAction ) {
-                if ( this.result.data.filter( row => row.$checked ).length > 0 ) {
+                if ( this.selectedEntries.length > 0 ) {
+                    console.log( this.getSelectedAction );
                     if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || 'No bulk confirmation message provided on the CRUD class.' ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
-                            entries: this.result.data.filter( row => row.$checked ).map( r => r.$id )
+                            entries: this.selectedEntries.map( r => r.$id )
                         }).subscribe( (result: HttpStatusResponse ) => {
                             nsSnackBar.info( result.message ).subscribe();
+                            this.selectedEntries    =   [];
                             this.refresh();
                         }, ( error ) => {
                             nsSnackBar.error( error.message )
@@ -189,9 +243,24 @@ const nsCrud    =   Vue.component( 'ns-crud', {
 
         },
         refresh() {
-            this.isRefreshing   =   true;
-            const request   =   nsHttpClient.get( `${this.getParsedSrc}` );
+            this.globallyChecked    =   false;
+            this.isRefreshing       =   true;
+            const request           =   nsHttpClient.get( `${this.getParsedSrc}` );
             request.subscribe( (f:HttpCrudResponse) => {
+                /**
+                 * if the entries were already
+                 * checked, we'll make sure to restore the checked status.
+                 */
+                f.data          =   f.data.map( entry => {
+                    const selected  =   this.selectedEntries.filter( e => e.$id === entry.$id ).length > 0;
+                    
+                    if( selected ) {
+                        entry.$checked  =   true;
+                    }
+
+                    return entry;
+                });
+
                 this.isRefreshing   =   false;
                 this.result     =   f;
                 this.page       =   f.current_page;
@@ -220,8 +289,13 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
+                <div class="px-1 flex" v-if="selectedEntries.length > 0">
+                    <button @click="clearSelectedEntries()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 hover:border-blue-400 hover:text-white hover:bg-blue-400 outline-none border-gray-400 border text-gray-700">
+                        <i class="lar la-check-square"></i> {{ __( '{entries} entries selected' ).replace( '{entries}', selectedEntries.length ) }}
+                    </button>
+                </div>
                 <div class="px-1 flex">
-                    <button class="flex justify-center items-center rounded-full text-sm h-10 px-3 bg-teal-400 outline-none text-white font-semibold"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
+                    <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 bg-teal-400 outline-none text-white font-semibold"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
                 </div>
                 <div class="px-1 flex">
                     <button class="flex justify-center items-center rounded-full text-sm h-10 px-3 hover:border-blue-400 hover:text-white hover:bg-blue-400 outline-none border-gray-400 border text-gray-700"><i class="las la-filter"></i> {{ __( 'Filter' ) }}</button>
@@ -250,7 +324,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                     </thead>
                     <tbody>
                         <template v-if="result.data !== undefined && result.data.length > 0">
-                            <ns-table-row @updated="refresh()" v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
+                            <ns-table-row @updated="refreshRow( $event )" v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
                             <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">There is nothing to display...</td>

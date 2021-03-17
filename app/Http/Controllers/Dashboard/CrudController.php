@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Exception;
 use App\Http\Controllers\DashboardController;
@@ -14,6 +15,8 @@ use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class CrudController extends DashboardController
 {
@@ -480,6 +483,25 @@ class CrudController extends DashboardController
             'status'    =>  'failed',
             'message'   =>  __( 'Unable to proceed. No matching CRUD resource has been found.' )
         ], 403 );
+    }
+
+    public function exportCrud( $namespace, Request $request )
+    {
+        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
+        $resource           =   new $crudClass;
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Hello World !');
+
+        $fileName           =   Str::slug( $resource->getLabels()[ 'list_title' ] ) . '.xlsx';
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save( $fileName );
+
+        return [
+            'url'   =>  asset( $fileName )
+        ];
     }
 
     /**

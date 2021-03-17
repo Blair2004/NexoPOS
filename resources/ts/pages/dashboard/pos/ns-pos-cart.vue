@@ -348,9 +348,7 @@ export default {
                 CustomerQueue,
                 TypeQueue,
             ]);
-
-            console.log( queues );
-
+            
             for( let index in queues ) {
                 try {
                     const promise   =   new queues[ index ]( this.order );
