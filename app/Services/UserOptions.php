@@ -22,6 +22,13 @@ class UserOptions extends Options
     public function beforeSave( $option )
     {
         $option->user_id    =   $this->user_id;
+        
+        /**
+        * sanitizing input to remove
+        * all script tags
+        */
+        $option->value      =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $option->value );   
+
         return $option;
     }
 }

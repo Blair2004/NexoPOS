@@ -107,6 +107,10 @@ class SettingsPage
     public function saveForm( Request $request )
     {
         $service        =   new CrudService;
+
+        /**
+         * @var Options
+         */
         $options        =   app()->make( Options::class );
 
         foreach( $service->getPlainData( $this, $request ) as $key => $value ) {

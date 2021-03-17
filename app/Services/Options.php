@@ -61,7 +61,7 @@ class Options
     {
         $this->hasFound     =   false;
         $storedOption       =   null;
-        
+
         /**
          * if an option has been found,
          * it will save the new value and update
@@ -150,6 +150,12 @@ class Options
 
     public function beforeSave( $option )
     {
+        /**
+        * sanitizing input to remove
+        * all script tags
+        */
+        $option->value      =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $option->value );
+
         return $option;
     }
 

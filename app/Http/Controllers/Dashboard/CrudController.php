@@ -114,6 +114,12 @@ class CrudController extends DashboardController
                     $entry->$name   =   $value;
                 }
             }
+
+            /**
+             * sanitizing input to remove
+             * all script tags
+             */
+            $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $entry->$name );
         }
         
         /**
@@ -229,6 +235,12 @@ class CrudController extends DashboardController
                     $entry->$name   =   $value;
                 }
             }
+
+            /**
+             * sanitizing input to remove
+             * all script tags
+             */
+            $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $entry->$name );
         }
         
         /**

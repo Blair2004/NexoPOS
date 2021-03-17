@@ -11,7 +11,7 @@ const nsCheckbox    =   Vue.component( 'ns-checkbox', {
             <i v-if="isChecked" class="las la-check"></i>   
         </div>
         <span v-if="label" class="mx-2">{{ label }}</span>
-        <span v-if="field.label" class="mx-2">{{ field.label }}</span>
+        <span v-if="field" class="mx-2">{{ field.label }}</span>
     </div>
     `,
     computed: {

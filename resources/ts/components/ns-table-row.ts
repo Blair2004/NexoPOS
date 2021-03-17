@@ -14,6 +14,16 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
     mounted() {
     },
     methods: {
+        sanitizeHTML(s) {
+            var div         = document.createElement('div');
+            div.innerHTML   = s;
+            var scripts     = div.getElementsByTagName('script');
+            var i           = scripts.length;
+            while (i--) {
+              scripts[i].parentNode.removeChild(scripts[i]);
+            }
+            return div.innerHTML;
+        },
         getElementOffset(el) {
             const rect = el.getBoundingClientRect();
             
@@ -28,7 +38,6 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
 
             if ( this.row.$toggled ) {
                 setTimeout(() => {
-                    console.log(  );
                     const dropdown                  =   this.$el.querySelectorAll( '.relative > .absolute' )[0];
                     const parent                    =   this.$el.querySelectorAll( '.relative' )[0];
                     const offset                    =   this.getElementOffset( parent );
@@ -73,7 +82,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         <td class="text-gray-700 font-sans border-gray-200 p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
-        <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2" v-html="row[ identifier ]"></td>
+        <td v-for="(column, identifier) of columns" class="text-gray-700 font-sans border-gray-200 p-2" v-html="sanitizeHTML( row[ identifier ] )"></td>
         <td class="text-gray-700 font-sans border-gray-200 p-2 flex flex-col items-start justify-center">
             <button @click="toggleMenu( $event )" class="outline-none rounded-full w-24 text-sm p-1 border border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
             <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
@@ -82,8 +91,8 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                     <div class="rounded-md bg-white shadow-xs">
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             <template v-for="action of row.$actions">
-                                <a :href="action.url" v-if="action.type === 'GOTO'" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="action.label"></a>
-                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="action.label"></a>
+                                <a :href="action.url" v-if="action.type === 'GOTO'" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="block px-4 py-2 text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                             </template>
                         </div>
                     </div>

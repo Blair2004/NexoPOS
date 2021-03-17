@@ -59,7 +59,7 @@ class UserProfileForm extends SettingsPage
     
             foreach( $request->input( 'attribute' ) as $key => $value ) {
                 if ( in_array( $key, $allowedInputs ) ) {
-                    $user->$key     =   $value;
+                    $user->$key     =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $value );
                 }
             }
     
@@ -76,6 +76,9 @@ class UserProfileForm extends SettingsPage
 
     public function processOptions( $request )
     {
+        /**
+         * @var UserOptions
+         */
         $userOptions    =   app()->make( UserOptions::class );
 
         if ( $request->input( 'options' ) ) {
