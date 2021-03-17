@@ -59,7 +59,7 @@ class UserProfileForm extends SettingsPage
     
             foreach( $request->input( 'attribute' ) as $key => $value ) {
                 if ( in_array( $key, $allowedInputs ) ) {
-                    $user->$key     =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $value );
+                    $user->$key     =   strip_tags( $value );
                 }
             }
     

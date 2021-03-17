@@ -27,7 +27,7 @@ class UserOptions extends Options
         * sanitizing input to remove
         * all script tags
         */
-        $option->value      =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $option->value );   
+        $option->value      =   strip_tags( $option->value );   
 
         return $option;
     }

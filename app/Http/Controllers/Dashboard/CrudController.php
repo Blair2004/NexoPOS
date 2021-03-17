@@ -120,7 +120,7 @@ class CrudController extends DashboardController
              * all script tags
              */
             if ( ! empty( $entry->$name ) ) {
-                $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', null, $entry->$name );
+                $entry->$name       =   strip_tags( $entry->$name );
             }
         }
         
@@ -243,7 +243,7 @@ class CrudController extends DashboardController
              * all script tags
              */
             if ( ! empty( $entry->$name ) ) {
-                $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', null, $entry->$name );
+                $entry->$name       =   strip_tags( $entry->$name );
             }
         }
         
