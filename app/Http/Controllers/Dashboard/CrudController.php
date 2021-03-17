@@ -119,7 +119,9 @@ class CrudController extends DashboardController
              * sanitizing input to remove
              * all script tags
              */
-            $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $entry->$name );
+            if ( ! empty( $entry->$name ) ) {
+                $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', null, $entry->$name );
+            }
         }
         
         /**
@@ -240,7 +242,9 @@ class CrudController extends DashboardController
              * sanitizing input to remove
              * all script tags
              */
-            $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $entry->$name );
+            if ( ! empty( $entry->$name ) ) {
+                $entry->$name       =   preg_replace( '#<script(.*?)>(.*?)</script>#is', null, $entry->$name );
+            }
         }
         
         /**

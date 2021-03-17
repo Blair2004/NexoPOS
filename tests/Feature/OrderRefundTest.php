@@ -21,7 +21,7 @@ class OrderRefundTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testRefund()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
