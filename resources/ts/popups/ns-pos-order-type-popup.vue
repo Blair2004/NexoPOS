@@ -39,7 +39,7 @@ export default {
     methods: {
         resolveIfQueued,
 
-        select( type ) {
+        async select( type ) {
             const index     =   this.types.indexOf( type );
             this.types.forEach( type => type.selected = false );
             this.types[ index ].selected    =   true;
@@ -52,7 +52,7 @@ export default {
              * that are registered within 
              * the orderType queue
              */
-            POS.triggerOrderTypeSelection( selectedType );
+            await POS.triggerOrderTypeSelection( selectedType );
 
             this.resolveIfQueued( selectedType );
         }

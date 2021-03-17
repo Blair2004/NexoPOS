@@ -186,19 +186,19 @@
                     </table>
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-gray-200">
-                    <div @click="payOrder()" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
+                    <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-cash-register"></i> 
                         <span class="text-lg lg:text-2xl">Pay</span>
                     </div>
-                    <div @click="holdOrder()" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
+                    <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-pause"></i> 
                         <span class="text-lg lg:text-2xl">Hold</span>
                     </div>
-                    <div @click="openDiscountPopup( order, 'cart' )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
+                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
                         <i class="mr-2 text-xl lg:text-3xl las la-percent"></i> 
                         <span class="text-lg lg:text-2xl">Discount</span>
                     </div>
-                    <div @click="voidOngoingOrder( order )" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
+                    <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-trash"></i> 
                         <span class="text-lg lg:text-2xl">Void</span>
                     </div>
@@ -216,7 +216,7 @@ import nsPosQuantityPopupVue from '@/popups/ns-pos-quantity-popup.vue';
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
 import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
 import nsPosOrderTypePopupVue from '@/popups/ns-pos-order-type-popup.vue';
-import { nsSnackBar } from '@/bootstrap';
+import { nsHooks, nsSnackBar } from '@/bootstrap';
 import nsPosCustomerPopupVue from '@/popups/ns-pos-customer-select-popup.vue';
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
@@ -343,11 +343,13 @@ export default {
                 return nsSnackBar.error( 'Unable to hold an order which payment status has been updated already.' ).subscribe();
             }
 
-            const queues    =   [
+            const queues    =   nsHooks.applyFilters( 'ns-hold-queue', [
                 ProductsQueue,
                 CustomerQueue,
                 TypeQueue,
-            ];
+            ]);
+
+            console.log( queues );
 
             for( let index in queues ) {
                 try {
@@ -362,25 +364,34 @@ export default {
                 }
             }
 
-            const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsPosHoldOrdersPopupVue, { resolve, reject, order : this.order });
+            /**
+             * overriding hold popup
+             * This will be useful to inject custom 
+             * hold popup.
+             */
+            const popup     =   nsHooks.applyFilters( 'ns-override-hold-popup', () => {
+                const promise   =   new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosHoldOrdersPopupVue, { resolve, reject, order : this.order });
+                });
+
+                promise.then( result => {
+                    this.order.title            =   result.title;
+                    this.order.payment_status   =   'hold';
+                    POS.order.next( this.order );
+
+                    const popup     =   Popup.show( nsPosLoadingPopupVue );
+                    
+                    POS.submitOrder().then( result => {
+                        popup.close();
+                        nsSnackBar.success( result.message ).subscribe();
+                    }, ( error ) => {
+                        popup.close();
+                        nsSnackBar.error( error.message ).subscribe();
+                    });
+                })
             });
 
-            promise.then( result => {
-                this.order.title            =   result.title;
-                this.order.payment_status   =   'hold';
-                POS.order.next( this.order );
-
-                const popup     =   Popup.show( nsPosLoadingPopupVue );
-                
-                POS.submitOrder().then( result => {
-                    popup.close();
-                    nsSnackBar.success( result.message ).subscribe();
-                }, ( error ) => {
-                    popup.close();
-                    nsSnackBar.error( error.message ).subscribe();
-                });
-            })
+            popup();
         },
 
         openDiscountPopup( reference, type ) {
