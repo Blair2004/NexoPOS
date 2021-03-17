@@ -131,7 +131,7 @@ class CrudService
      * @param crud config
      * @return entries
      */
-    public function getEntries()
+    public function getEntries( $config = [] )
     {
         $table              =   $this->hookTableName( $this->table );
         $request            =   app()->make( Request::class );
@@ -380,7 +380,7 @@ class CrudService
         /**
          * let's make the "perPage" value adjustable
          */
-        $perPage    =   20;
+        $perPage    =   $config[ 'per_page' ] ?? 20;
         if ( $request->query( 'per_page' ) ) {
             $perPage    =   $request->query( 'per_page' );
         }
@@ -400,7 +400,23 @@ class CrudService
             });
         }
 
-        $entries    =   $query->paginate( $perPage )->toArray();
+        /**
+         * if some enties ID are provided. These 
+         * reference will only be part of the result.
+         */
+        if ( isset( $config[ 'pick' ] ) ) {
+            $query->whereIn( $this->hookTableName( $this->table ) . ".id", $config[ 'pick' ] );
+        }
+
+        /**
+         * if $perPage is not defined
+         * probably we're trying to return all the entries.
+         */
+        if ( $perPage ) {
+            $entries    =   $query->paginate( $perPage )->toArray();
+        } else {
+            $entries    =   $query->get()->toArray();
+        }
 
         /**
          * looping entries to provide inline 

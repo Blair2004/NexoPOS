@@ -8,6 +8,8 @@ modules/.temp/*
 !modules/index.html
 public/modules/*
 public/storage
+public/export/*
+!public/export/index.html
 !public/modules/index.html
 # public/js/*.js
 public/js/*.map

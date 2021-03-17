@@ -17,6 +17,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 class CrudController extends DashboardController
 {
@@ -410,7 +411,7 @@ class CrudController extends DashboardController
             return Hook::filter( 
                 get_class( $resource ) . '@getColumns', 
                 $resource->getColumns()
-            );;
+            );
         } 
 
         return response()->json([
@@ -489,14 +490,55 @@ class CrudController extends DashboardController
     {
         $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
         $resource           =   new $crudClass;
+        $spreadsheet        =   new Spreadsheet();
+        $sheet              =   $spreadsheet->getActiveSheet();
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('A1', 'Hello World !');
+        $columns            =   Hook::filter( 
+            get_class( $resource ) . '@getColumns', 
+            $resource->getColumns()
+        );
 
-        $fileName           =   Str::slug( $resource->getLabels()[ 'list_title' ] ) . '.xlsx';
+        $sheetColumns       =   [ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' ];
 
-        $writer = new Xlsx($spreadsheet);
+        if ( count( array_values( $columns ) ) > count( $sheetColumns ) ) {
+            throw new Exception( __( 'The crud columns exceed the maximum column that can be exported (27)' ) );
+        }
+
+        foreach( array_values( $columns ) as $index => $column ) {
+            $sheet->setCellValue( $sheetColumns[ $index ] . '1', $column[ 'label' ] );
+        } 
+
+        $config     =   [ 'perPage' => false ];
+
+        /**
+         * let's check if the request include
+         * specific entries to export
+         */        
+        if ( $request->input( 'entries' ) ) {
+            $config[ 'pick' ]   = $request->input( 'entries' );
+        }
+
+        $entries         =   $resource->getEntries( $config );
+
+        foreach( $entries[ 'data' ] as $rowIndex => $entry ) {
+            $sheetIndex     =   0;
+            foreach( $columns as $columnName => $column ) {
+                $sheet->setCellValue( $sheetColumns[ $sheetIndex ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
+                $sheetIndex++;
+            }
+        }
+
+        /**
+         * let's define what will be the output name
+         * of the exported file.
+         */
+        $fileName           =   'export/' . Str::slug( $resource->getLabels()[ 'list_title' ] ) . '.csv';
+
+        /**
+         * We'll prepare the writer
+         * and output the file.
+         */
+        $writer             = new Csv($spreadsheet);
         $writer->save( $fileName );
 
         return [

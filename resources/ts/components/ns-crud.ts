@@ -101,9 +101,12 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         },
 
         downloadContent() {
-            nsHttpClient.post( `${this.src}/export?${this.getQueryParams()}`, { entries : this.selectedEntries })
-                .subscribe( result => {
-
+            nsHttpClient.post( `${this.src}/export?${this.getQueryParams()}`, { entries : this.selectedEntries.map( e => e.$id ) })
+                .subscribe( (result: any) => {
+                    setTimeout( () => document.location   =   result.url, 300 );
+                    nsSnackBar
+                        .success( __( 'The document has been generated.' ) )
+                        .subscribe()
                 }, error => {
                     nsSnackBar
                         .error( error.message || __( 'Unexpected error occured.' ) )
