@@ -28,7 +28,7 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update;
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update;php artisan test;
             -   name: Deploy To AHD
                 uses: appleboy/ssh-action@master
                 continue-on-error: true
