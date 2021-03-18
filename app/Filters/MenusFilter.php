@@ -42,9 +42,10 @@ class MenusFilter
                             'icon'  =>  'la-list-ol',
                             'href'  =>  ns()->url( '/dashboard/orders' )
                         ],
-                        'instalments'    =>  [
-                            'label'     =>  __( 'Instalments' ),
-                            'href'      =>  ns()->route( 'ns.dashboard.orders-instalments' ),
+                        'instalments'       =>  [
+                            'label'         =>  __( 'Instalments' ),
+                            'permissions'   =>  [ 'nexopos.read.orders-instalments' ],
+                            'href'          =>  ns()->route( 'ns.dashboard.orders-instalments' ),
                         ],
                     ]
                 ]

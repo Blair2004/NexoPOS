@@ -27,7 +27,7 @@ class CreateProductsTable extends Migration
                 $table->float( 'tax_value' )->default(0); // computed automatically
                 $table->string( 'product_type' )->default( 'product' ); // product, variation, variable
                 $table->string( 'type' )->default( 'tangible' ); // intangible, tangible (or any other extended types)
-                $table->boolean( 'accurate_stock' )->default(0); // @since db 1.3
+                $table->boolean( 'accurate_tracking' )->default(0); // @since db 1.3
                 $table->string( 'status' )->default( 'available' ); // available, unavailable
                 $table->string( 'stock_management' )->default( 'enabled' ); // enabled, disabled
                 $table->string( 'barcode' ); // works if the product type is "product"

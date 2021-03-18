@@ -22,7 +22,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
                     </template>
                 </div>
                 <input 
-                    v-if="! field.data || field.data.type === 'undefined'"
+                    v-if="! field.data || field.data.type === 'undefined' || field.data.type === 'url'"
                     v-model="field.value" 
                     @blur="$emit( 'blur', this )" 
                     @change="$emit( 'change', this )" 
@@ -71,7 +71,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
     methods: {
         toggleMedia() {
             const promise   =   new Promise( ( resolve, reject ) => {
-                Popup.show( nsMedia, { resolve, reject });
+                Popup.show( nsMedia, { resolve, reject, ...( this.field.data || {} )});
             });
 
             promise.then( (action:any) => {

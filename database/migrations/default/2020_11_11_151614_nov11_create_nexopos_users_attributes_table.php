@@ -19,6 +19,7 @@ class Nov11CreateNexoposUsersAttributesTable extends Migration
             $table->string( 'first_name' )->nullable();
             $table->string( 'second_name' )->nullable();
             $table->string( 'phone' )->nullable();
+            $table->string( 'avatar_link' )->nullable();
             $table->string( 'address_1' )->nullable();
             $table->string( 'address_2' )->nullable();
             $table->string( 'country' )->nullable();

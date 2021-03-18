@@ -89,6 +89,8 @@ class CreateProductTest extends TestCase
                 ]
             ]);
 
+            return $response->dump();
+
             if ( $taxType === 'exclusive' ) {
                 $response->assertJsonPath( 'data.product.unit_quantities.0.sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
                 $response->assertJsonPath( 'data.product.unit_quantities.0.incl_tax_sale_price', $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );

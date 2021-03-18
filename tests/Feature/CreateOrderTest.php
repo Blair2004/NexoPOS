@@ -28,7 +28,7 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
-        for( $i = 0; $i < 1; $i++ ) {
+        for( $i = 0; $i < 30; $i++ ) {
             /**
              * @var CurrencyService
              */
@@ -168,7 +168,7 @@ class CreateOrderTest extends TestCase
             $customerSecondPurchases    =   $customer->purchases_amount;
             $customerSecondOwed         =   $customer->owed_amount;
 
-            if ( ( float ) ( $customerFirstPurchases + $total ) != ( float ) $customerSecondPurchases ) {
+            if ( ( float ) trim( $customerFirstPurchases + $total ) != ( float ) trim( $customerSecondPurchases ) ) {
                 throw new Exception( 
                     sprintf(
                         __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),

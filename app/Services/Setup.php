@@ -114,7 +114,7 @@ class Setup
      * @param Http Request
      * @return void
      */
-    public function runMigration( Request $request )
+    public function runMigration( $fields )
     {
         /**
          * Let's create the tables. The DB is supposed to be set
@@ -127,9 +127,9 @@ class Setup
         $userID             =   rand(1,99);
         $user               =   new User;
         $user->id           =   $userID;
-        $user->username     =   $request->input( 'admin_username' );
-        $user->password     =   bcrypt( $request->input( 'password' ) );
-        $user->email        =   $request->input( 'admin_email' );
+        $user->username     =   $fields[ 'admin_username' ];
+        $user->password     =   bcrypt( $fields[ 'password' ] );
+        $user->email        =   $fields[ 'admin_email' ];
         $user->author       =   $userID;
         $user->active       =   true; // first user active by default;
         $user->save();
@@ -148,7 +148,7 @@ class Setup
          * then we can launch option service
          */
         $this->options      =   app()->make( Options::class );
-        $this->options->set( 'ns_store_name', $request->input( 'ns_store_name' ) );
+        $this->options->set( 'ns_store_name', $fields[ 'ns_store_name' ] );
         $this->options->set( 'allow_registration', false );
         $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
 

@@ -39,7 +39,7 @@ class SetupController extends Controller
     public function saveConfiguration( ApplicationConfigRequest $request )
     {
         $setup      =   new Setup;
-        return $setup->runMigration( $request );
+        return $setup->runMigration( $request->all() );
     }
 }
 

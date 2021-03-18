@@ -61,17 +61,19 @@ class CreateNewInstalmentsPermissions extends Migration
      */
     public function down()
     {
-        collect([
-            'nexopos.create.orders-instalments',
-            'nexopos.update.orders-instalments',
-            'nexopos.read.orders-instalments',
-            'nexopos.delete.orders-instalments',
-        ])->each( function( $identifier ) {
-            $permission     =   Permission::where( 'namespace', $identifier 
-                )->first();
-
-            $permission->removeFromRoles();
-            $permission->delete();
-        });
+        if( Schema::hasTable( 'nexopos_permissions' ) && Schema::hasTable( 'nexopos_roles' ) ) {
+            collect([
+                'nexopos.create.orders-instalments',
+                'nexopos.update.orders-instalments',
+                'nexopos.read.orders-instalments',
+                'nexopos.delete.orders-instalments',
+            ])->each( function( $identifier ) {
+                $permission     =   Permission::where( 'namespace', $identifier 
+                    )->first();
+    
+                $permission->removeFromRoles();
+                $permission->delete();
+            });
+        }
     }
 }

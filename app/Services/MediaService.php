@@ -199,7 +199,20 @@ class MediaService
     public function loadAjax()
     {
         $per_page   =   request()->query( 'per_page' ) ?? 50;
-        $medias     =   Media::with( 'user' )->orderBy( 'updated_at', 'desc' )->paginate($per_page);
+        $user_id     =   request()->query( 'user_id' );
+
+        $mediaQuery     =   Media::with( 'user' )
+            ->orderBy( 'updated_at', 'desc' );
+
+        /**
+         * We'll only load the medias that has
+         * been uploaded by the logged user.
+         */
+        if ( ! empty( $user_id ) ) {
+            $mediaQuery->where( 'user_id', $user_id );
+        }
+        
+        $medias    =    $mediaQuery->paginate($per_page);
         
         /**
          * populating the media

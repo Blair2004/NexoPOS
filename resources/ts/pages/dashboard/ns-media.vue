@@ -90,6 +90,9 @@ export default {
         },
         isPopup() {
             return typeof this.$popup !== 'undefined';
+        },
+        user_id() {
+            return this.isPopup ? ( this.$popupParams.user_id || 0 ) : 0;
         }
     },
     methods: {
@@ -148,7 +151,7 @@ export default {
         loadGallery( page = null ) {
             page = page === null ? this.queryPage : page;
             this.queryPage  =   page;
-            nsHttpClient.get( `/api/nexopos/v4/medias?page=${page}` )
+            nsHttpClient.get( `/api/nexopos/v4/medias?page=${page}&user_id=${this.user_id}` )
                 .subscribe( result => {
                     // define default selection status
                     result.data.forEach( resource => resource.selected = false );
@@ -232,11 +235,13 @@ export default {
             <div class="flex flex-auto overflow-hidden">
                 <div id="grid" class="bg-white shadow content flex flex-auto flex-col overflow-y-auto">
                     <div class="flex flex-auto">
-                        <div class="p-2 flex flex-wrap overflow-x-auto">
-                            <div v-for="(resource, index) of response.data" :key="index" class="flex -m-2 flex-wrap">
-                                <div class="p-2">
-                                    <div @click="selectResource( resource )" :class="resource.selected ? 'ring-4 ring-blue-500 ring-opacity-50' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
-                                        <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
+                        <div class="p-2 overflow-x-auto">
+                            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6">
+                                <div v-for="(resource, index) of response.data" :key="index" class="">
+                                    <div class="p-2">
+                                        <div @click="selectResource( resource )" :class="resource.selected ? 'ring-4 ring-blue-500 ring-opacity-50' : ''" class="rounded-lg w-32 h-32 bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
+                                            <img class="object-cover h-full" :src="resource.sizes.thumb" :alt="resource.name">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
