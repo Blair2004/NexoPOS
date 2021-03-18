@@ -16,16 +16,19 @@ class HardResetTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testHardResetSystem()
     {
-        // Artisan::call( 'ns:reset' );
-        $exitCode   =   Artisan::call( 'ns:setup', [ 
-            '--admin_username'  =>  'blair2004',
-            '--admin_email'     =>  'contact@nexopos.com',
-            '--password'        =>  '123456',
-            '--store_name'      =>  'NexoPOS 4.x'
+        Artisan::call( 'ns:reset' );
+        
+        Artisan::call( 'ns:setup', [ 
+            '--admin_username'  =>  env( 'NS_RESET_USERNAME', 'admin' ),
+            '--admin_email'     =>  env( 'NS_RESET_MAIL', 'contact@nexopos.com' ),
+            '--password'        =>  env( 'NS_RESET_PASSWORD', 123456 ),
+            '--store_name'      =>  env( 'NS_RESET_APPNAME', 'NexoPOS 4.x' )
         ]);
 
-        dump( $exitCode );
+        Artisan::call( 'migrate' );
+
+        return $this->assertTrue( true );
     }
 }

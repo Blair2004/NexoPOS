@@ -84,14 +84,15 @@ class SetupCommand extends Command
         $this->setupAdminPassword();
         $this->setupAdminEmail();
 
-        $answer   =   $this->ask( 'Everything seems ready. Would you like to proceed ? [Y]/[N]' );
-
+        $answer         =   'n';
+        if ( $this->requireConfirmation !== false ) {
+            $answer   =   $this->ask( 'Everything seems ready. Would you like to proceed ? [Y]/[N]' );
+        }
 
         if ( in_array( strtolower( $answer ), [ 'y', 'yes' ] ) || $this->requireConfirmation === false ) {
             /**
              * @var Setup $service
              */
-            dump( 'ok' );
             $service        =   app()->make( Setup::class );
             $service->runMigration([
                 'admin_username'    =>  $this->admin_username,

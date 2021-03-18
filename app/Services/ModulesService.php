@@ -13,6 +13,7 @@ use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use App\Exceptions\MissingDependencyException;
+use App\Exceptions\NotAllowedException;
 use App\Models\ModuleMigration;
 use Exception;
 use Illuminate\Support\Facades\Cache;
@@ -426,6 +427,8 @@ class ModulesService
      */
     public function extract( $namespace )
     {
+        $this->preventManagement();
+
         if ( $module  = $this->get( $namespace ) ) {
             $zipFile        =   storage_path() . DIRECTORY_SEPARATOR . 'module.zip';
             // unlink old module zip
@@ -535,6 +538,8 @@ class ModulesService
      */
     public function upload( $file )
     {
+        $this->preventManagement();
+
         if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' ) ) {
             mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' );
         }
@@ -688,6 +693,8 @@ class ModulesService
      */
     public function createSymLink( $moduleNamespace )
     {
+        $this->preventManagement();
+
         Storage::disk( 'public' )->makeDirectory( 'modules' );
 
         /**
@@ -719,6 +726,8 @@ class ModulesService
      */
     public function removeSymLink( $moduleNamespace )
     {
+        $this->preventManagement();
+
         $path       =   base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace;
 
         if ( is_link( $path ) ) {
@@ -826,6 +835,8 @@ class ModulesService
      */
     public function delete( string $namespace )
     {
+        $this->preventManagement();
+
         /**
          * Check if module exists first
          */
@@ -952,6 +963,8 @@ class ModulesService
      */
     public function enable( string $namespace )
     {
+        $this->preventManagement();
+
         if ( $module = $this->get( $namespace ) ) {
             /**
              * get all the modules that are 
@@ -1030,6 +1043,8 @@ class ModulesService
      */
     public function disable( string $namespace )
     {
+        $this->preventManagement();
+
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
             // @todo sandbox to test if the module runs
@@ -1224,5 +1239,17 @@ class ModulesService
                 $provider->$method( $params );
             }
         });
+    }
+
+    /**
+     * Prevent module management when 
+     * it's explicitely disabled from the settings
+     * @return void
+     */
+    public function preventManagement()
+    {
+        if ( env( 'NS_MODULES_MANAGEMENT_DISABLED', false ) ) {
+            throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );
+        }
     }
 }
