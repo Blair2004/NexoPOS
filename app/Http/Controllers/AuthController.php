@@ -11,8 +11,13 @@ use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
+use App\Mail\ActivateYourAccountMail;
+use App\Mail\UserRegisteredMail;
+use App\Mail\WelcomeMail;
+use App\Models\Role;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 
@@ -23,6 +28,8 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -153,17 +160,49 @@ class AuthController extends Controller
             throw new Exception( __( 'No role has been define for registration. Please contact the administrators.' ) );
         }
 
-        $user               =   new User;
-        $user->username     =   $request->input( 'username' );
-        $user->email        =   $request->input( 'email' );
-        $user->password     =   Hash::make( $request->input( 'password' ) );
-        $user->role_id      =   $role;
+        $user                           =   new User;
+        $user->username                 =   $request->input( 'username' );
+        $user->email                    =   $request->input( 'email' );
+        $user->password                 =   Hash::make( $request->input( 'password' ) );
+        $user->activation_token         =   Str::random(20);
+        $user->activation_expiration    =   now()->addHours(2);
+        $user->role_id                  =   $role;
 
         if ( $registration_validated === 'no' ) {
             $user->active   =   true;
         }
 
         $user->save();
+
+        /**
+         * let's try to email the new user with 
+         * the details regarding his new created account.
+         */
+        try {
+            /**
+             * if the account validation is required, we'll
+             * send an email to ask the user to validate his account. 
+             * Otherwise, we'll notify him about his new account.
+             */
+            if ( $registration_validated === 'no' ) {
+                Mail::to( $user->email )
+                    ->queue( new WelcomeMail( $user ) );
+            } else {
+                Mail::to( $user->email )
+                    ->queue( new ActivateYourAccountMail( $user ) );
+            }
+
+            /**
+             * The administrator might be aware
+             * of the user having created their account.
+             */
+            Role::namespace( 'admin' )->users->each( function( $admin ) use ( $user ) {
+                Mail::to( $admin->email )
+                    ->queue( new UserRegisteredMail( $admin, $user ) );
+            });
+        } catch( Exception $exception ) {
+            Log::error( $exception->getMessage() );
+        }
 
         if ( $request->expectsJson() ) {
             return [

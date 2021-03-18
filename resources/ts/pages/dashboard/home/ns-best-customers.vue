@@ -18,7 +18,9 @@
                             <th class="p-2">
                                 <div class="-mx-1 flex justify-start items-center">
                                     <div class="px-1">
-                                        <div class="rounded-full bg-gray-600 h-6 w-6 "></div>
+                                        <div class="rounded-full bg-gray-200 h-6 w-6 ">
+                                            <img src="/images/user.png"/>
+                                        </div>
                                     </div>
                                     <div class="px-1 justify-center">
                                         <h3 class="font-semibold text-gray-600 items-center">{{ customer.name }}</h3>

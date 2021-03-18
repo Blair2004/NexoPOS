@@ -219,6 +219,16 @@ class GeneralSettings extends SettingsPage
                             'label' =>  __( 'Requires Validation' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Force account validation after the registration.' ),
+                        ], [
+                            'name'          =>  'ns_recovery_enabled',
+                            'value'         =>  $options->get( 'ns_recovery_enabled' ),
+                            'options'         =>  Helper::kvToJsOptions([
+                                'yes'       =>  __( 'Yes' ),
+                                'no'        =>  __( 'No' )
+                            ]),
+                            'label' =>  __( 'Allow Recovery' ), 
+                            'type'          =>  'switch',
+                            'description'   =>  __( 'Allow any user to recover his account.' ),
                         ], 
                     ]
                 ],

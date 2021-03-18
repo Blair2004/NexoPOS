@@ -40,7 +40,7 @@ const nsCkeditor    =   Vue.component( 'ns-ckeditor', {
                 {{ leading }}
                 </span>
             </div>
-            <ckeditor :editor="editor" v-model="field.value"></ckeditor>
+            <ckeditor class="w-full" :editor="editor" v-model="field.value"></ckeditor>
         </div>
         <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">

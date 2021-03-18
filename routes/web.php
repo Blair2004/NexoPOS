@@ -43,6 +43,7 @@ Route::middleware([
     SubstituteBindings::class 
 ])->group( function() {
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
+    Route::get( '/auth/activate/{user}/{token}', [ AuthController::class, 'activateAccount' ])->name( 'ns.activate-account' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
     Route::get( '/new-password', 'AuthController@newPassword' );
@@ -75,7 +76,7 @@ Route::middleware([
 
             Route::get( '/users', [ UsersController::class, 'listUsers' ]);
             Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
-            Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ]);
+            Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ])->name( 'ns.dashboard.users.edit' );
             Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
             Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
             Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);

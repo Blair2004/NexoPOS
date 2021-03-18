@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Exceptions\NotAllowedException;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Services\Options;
 
@@ -16,7 +17,11 @@ class SignUpRequest extends FormRequest
     {
         $options    =   app()->make( Options::class );
 
-        return $options->get( 'ns_registration_enabled' ) === 'yes';
+        if ( $options->get( 'ns_registration_enabled' ) !== 'yes' ) {
+            throw new NotAllowedException( __( 'Unable to register. The registration is closed.' ) );
+        }
+
+        return true;
     }
 
     /**
