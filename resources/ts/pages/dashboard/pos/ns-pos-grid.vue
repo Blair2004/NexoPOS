@@ -168,38 +168,43 @@ export default {
         },
 
         cellSizeAndPositionGetter(item, index) {
-            // compute size and position
-            // console.log( item, index );
             const responsive    =   {
                 xs: {
                     width: this.gridItemsWidth / 2,
                     items: 2,
+                    height: 200,
                 },
                 sm: {
                     width: this.gridItemsWidth / 2,
                     items: 2,
+                    height: 200,
                 },
                 md: {
                     width: this.gridItemsWidth / 3,
                     items: 3,
+                    height: 150,
                 },
                 lg: {
                     width: this.gridItemsWidth / 4,
                     items: 4,
+                    height: 150,
                 },
                 xl: {
                     width: this.gridItemsWidth / 6,
                     items: 6,
+                    height: 150,
                 }
             }
 
             const wrapperWidth  =   responsive[ POS.responsive.screenIs ].width;
+            const wrapperHeight =   responsive[ POS.responsive.screenIs ].height;
+            const scrollWidth   =   0; // ( 50 / responsive[ POS.responsive.screenIs ].items );            
 
             return {
-                width: wrapperWidth,
-                height: 150,
-                x: ( index % responsive[ POS.responsive.screenIs ].items ) * ( wrapperWidth ),
-                y: parseInt( index / responsive[ POS.responsive.screenIs ].items ) * 150
+                width: wrapperWidth - scrollWidth,
+                height: wrapperHeight,
+                x: ( ( index % responsive[ POS.responsive.screenIs ].items ) * ( wrapperWidth ) ) - scrollWidth,
+                y: parseInt( index / responsive[ POS.responsive.screenIs ].items ) * wrapperHeight
             }
         },
 
