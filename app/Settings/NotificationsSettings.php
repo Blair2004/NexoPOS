@@ -16,7 +16,7 @@ class NotificationsSettings extends SettingsPage
             'tabs'  =>  [
                 'products'      =>  include( dirname( __FILE__ ) . '/notifications/products.php' ),
                 'orders'        =>  include( dirname( __FILE__ ) . '/notifications/orders.php' ),
-                'expenses'      =>  include( dirname( __FILE__ ) . '/notifications/expenses.php' ),
+                // 'expenses'      =>  include( dirname( __FILE__ ) . '/notifications/expenses.php' ),
                 'registration'  =>  include( dirname( __FILE__ ) . '/notifications/registration.php' ),
             ]
         ];
