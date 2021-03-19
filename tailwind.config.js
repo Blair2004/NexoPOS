@@ -67,7 +67,7 @@ module.exports = {
       height: heightDims,
       minHeight: heightDims,
       width: {
-          ...widthDims
+        ...widthDims
       },
       spacing: {
           '72': '18rem',
@@ -77,7 +77,7 @@ module.exports = {
           '120': '30rem',
       },
       screens: {
-        'print': {'raw': 'print'},
+        'print': { 'raw': 'print'},
       },
       inset: {
           '-5': '-2.5em',
