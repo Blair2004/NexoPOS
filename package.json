@@ -53,7 +53,8 @@
     "vue-apexcharts": "^1.6.0",
     "vue-html-to-paper": "^1.3.1",
     "vue-router": "^3.4.3",
-    "vue-upload-component": "^2.8.20"
+    "vue-upload-component": "^2.8.20",
+    "vue-virtual-collection": "^1.5.0"
   },
   "name": "NexoPOS-4x"
 }
