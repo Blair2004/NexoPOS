@@ -16,7 +16,7 @@ export class Responsive {
 		} else if ( window.innerWidth >= 992 && window.innerWidth < 1200 ) {
 			this.screenIs         =   'lg';
 		} else if ( window.innerWidth >= 1200 ) {
-			this.screenIs         =   'xg';
+			this.screenIs         =   'xl';
 		}
 	}
 

@@ -140,6 +140,10 @@ export class POS {
         return this._initialQueue;
     }
 
+    get responsive() {
+        return this._responsive;
+    }
+
     get processingAddQueue() {
         return this._processingAddQueue;
     }
