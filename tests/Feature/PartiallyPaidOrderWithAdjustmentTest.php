@@ -64,7 +64,6 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
                 'products'              =>  $products,
                 'payments'              =>  []
             ]);
-        
         $response->assertJson([
             'status'    =>  'success'
         ]);

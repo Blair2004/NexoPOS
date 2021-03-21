@@ -75,11 +75,11 @@ class CreateDashboardTable extends Migration
                 }
     
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_starts' ) ) {
-                    $table->datetime( 'range_starts' );                    
+                    $table->datetime( 'range_starts' )->nullable();                    
                 }
                 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_ends' ) ) {
-                    $table->datetime( 'range_ends' );
+                    $table->datetime( 'range_ends' )->nullable();
                 }
             });
         }
@@ -110,11 +110,11 @@ class CreateDashboardTable extends Migration
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_starts' ) ) {
-                    $table->datetime( 'range_starts' );
+                    $table->datetime( 'range_starts' )->nullable();
                 }
 
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'range_ends' ) ) {
-                    $table->datetime( 'range_ends' );
+                    $table->datetime( 'range_ends' )->nullable();
                 }
             });
         }
