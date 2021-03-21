@@ -199,7 +199,6 @@ class ModulesService
     public function triggerServiceProviders( $config, $method, $parentClass = false )
     {
         foreach( $config[ 'providers' ] as $service ) {
-            // dump( $service );
             /**
              * @todo run service provider
              */
@@ -454,7 +453,6 @@ class ModulesService
             $exclusionFolders  =   [];
 
             if ( $manifest && $manifest[ 'exclude' ] ) {
-                // dd( $module );
                 foreach( $manifest[ 'exclude' ] as $file ) {
                     $hash                                   =   date( 'y' ) . '-' . date( 'm' ) . '-' . date( 'i' ) . '-' . Str::random( 20 );
                     $path                                   =   base_path( 'storage/app/' . $hash );

@@ -9,16 +9,20 @@ namespace App\Http\Controllers;
 
 use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
+use App\Http\Requests\PostPasswordLostRequest;
+use App\Http\Requests\PostNewPasswordRequest;
 use App\Mail\ActivateYourAccountMail;
 use App\Mail\UserRegisteredMail;
 use App\Mail\WelcomeMail;
+use App\Mail\ResetPasswordMail;
 use App\Models\Role;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Events\PasswordAfterRecoveredEvent;
 
 
 use Tendoo\Core\Exceptions\CoreException;
@@ -26,6 +30,7 @@ use Tendoo\Core\Exceptions\CoreException;
 use App\Services\Options;
 use App\Models\User;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -33,6 +38,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -52,12 +58,28 @@ class AuthController extends Controller
 
     public function passwordLost()
     {
-        return view( 'pages.password-lost' );
+        return view( 'pages.password-lost', [
+            'title'     =>      __( 'Password Lost' )
+        ]);
     }
 
-    public function newPassword()
+    public function newPassword( $userId, $token )
     {
-        return view( 'pages.new-password' );
+        $user       =   User::find( $userId );
+
+        if ( $user->activation_token !== $token ) {
+            throw new NotAllowedException( __( 'Unable to proceed as the token provided is invalid.' ) );
+        }
+
+        if ( Carbon::parse( $user->activation_expiration )->lessThan( now() ) ) {
+            throw new NotAllowedException( __( 'The token has expired. Please request a new activation token.' ) );
+        }
+
+        return view( 'pages.new-password', [
+            'title'     =>      __( 'Set New Password' ),
+            'user'      =>      $userId,
+            'token'     =>      $token
+        ]);
     }
 
     public function signOut( Request $request )
@@ -144,6 +166,33 @@ class AuthController extends Controller
         ];
     }
 
+    public function postPasswordLost( PostPasswordLostRequest $request )
+    {
+        $user       =   User::where( 'email', $request->input( 'email' ) )->first();
+
+        if ( $user instanceof User ) {
+            $user->activation_token         =   Str::random(20);
+            $user->activation_expiration    =   now()->addMinutes(30);
+            $user->save();
+
+            Mail::to( $user )
+                ->queue( new ResetPasswordMail( $user ) );
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  __( 'The recovery email has been send to your inbox.' ),
+                'data'      =>  [
+                    'redirectTo'    =>  route( 'ns.intermediate', [
+                        'route'     =>  'ns.login',
+                        'from'      =>  'ns.password-lost'
+                    ])
+                ]
+            ];
+        }
+
+        throw new NotFoundException( __( 'Unable to find a record matching your entry.' ) );
+    }
+
     /**
      * Process user registration
      * @param SignUpRequest $request
@@ -157,7 +206,7 @@ class AuthController extends Controller
         $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );
 
         if ( empty( $role ) ) {
-            throw new Exception( __( 'No role has been define for registration. Please contact the administrators.' ) );
+            throw new Exception( __( 'No role has been defined for registration. Please contact the administrators.' ) );
         }
 
         $user                           =   new User;
@@ -165,7 +214,7 @@ class AuthController extends Controller
         $user->email                    =   $request->input( 'email' );
         $user->password                 =   Hash::make( $request->input( 'password' ) );
         $user->activation_token         =   Str::random(20);
-        $user->activation_expiration    =   now()->addHours(2);
+        $user->activation_expiration    =   now()->addMinutes(30);
         $user->role_id                  =   $role;
 
         if ( $registration_validated === 'no' ) {
@@ -222,6 +271,41 @@ class AuthController extends Controller
                     __( 'Your Account has been created but requires email validation.' )
             ]);
         }
+    }
+
+    public function postNewPassword( PostNewPasswordRequest $request, $userID, $token )
+    {
+        $user       =   User::find( $userID );
+
+        if ( ! $user instanceof User ) {
+            throw new NotFoundException( __( 'Unable to find the requested user.' ) );
+        }
+
+        if ( $user->activation_token !== $token ) {
+            throw new NotAllowedException( __( 'Unable to proceed, the provided token is not valid.' ) );
+        }
+
+        if ( Carbon::parse( $user->activation_expiration )->lessThan( now() ) ) {
+            throw new NotAllowedException( __( 'Unable to proceed, the token has expired.' ) );
+        }
+
+        $user->password                 =       Hash::make( $request->input( 'password' ) );
+        $user->activation_token         =   null;
+        $user->activation_expiration    =   now()->toDateTimeString();
+        $user->save();
+
+        event( new PasswordAfterRecoveredEvent( $user ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'Your password has been updated.' ),
+            'data'      =>  [
+                'redirectTo'    =>  route( 'ns.intermediate', [
+                    'route'     =>  'ns.login',
+                    'from'      =>  'ns.password-updated'
+                ])
+            ]
+        ];
     }
 }
 

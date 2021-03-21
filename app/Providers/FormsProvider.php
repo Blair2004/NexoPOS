@@ -8,6 +8,8 @@ use App\Fields\CashRegisterCashingFields;
 use App\Fields\CashRegisterCashoutFields;
 use App\Fields\CashRegisterOpeningFields;
 use App\Fields\CashRegisterClosingFields;
+use App\Fields\PasswordLostFields;
+use App\Fields\NewPasswordFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
 use App\Fields\RefundProductFields;
@@ -55,6 +57,12 @@ class FormsProvider extends ServiceProvider
             switch( $class ) {
                 case 'ns.login' :
                     return new AuthLoginFields;
+                break;
+                case 'ns.password-lost' :
+                    return new PasswordLostFields;
+                break;
+                case 'ns.new-password' :
+                    return new NewPasswordFields;
                 break;
                 case 'ns.register' :
                     return new AuthRegisterFields;

@@ -2,7 +2,7 @@
     <div class="container mx-auto flex-auto items-center justify-center flex">
         <div id="sign-in-box" class="w-full md:w-2/3 lg:w-1/3">
             <div class="flex justify-center items-center py-6">
-                <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-indigo-500 bg-gradient-to-br">NexoPOS</h2>
+                <img class="w-32" src="/svg/nexopos-variant-1.svg" alt="NexoPOS">
             </div>
             <div class="my-3 rounded shadow bg-white">
                 <div class="border-b border-gray-200 py-4 flex items-center justify-center">

@@ -5,7 +5,7 @@
     <div class="container mx-auto p-4 md:p-0 flex-auto items-center justify-center flex">
         <div id="setup" class="w-full md:w-3/5 lg:w-2/5">
             <div class="flex flex-shrink-0 justify-center items-center py-6">
-                <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-400 to-purple-400 bg-gradient-to-br">NexoPOS</h2>
+                <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
             </div>
             <router-view></router-view>
         </div>

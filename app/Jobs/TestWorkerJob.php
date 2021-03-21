@@ -38,7 +38,6 @@ class TestWorkerJob implements ShouldQueue
         
         if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
             $options->set( 'ns_workers_enabled', 'yes' );
-            dump( $this->notification_id );
             $notification->deleteHavingIdentifier( $this->notification_id );
         }
     }

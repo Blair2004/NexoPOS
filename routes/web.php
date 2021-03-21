@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
 use App\Http\Controllers\Dashboard\ProductsController;
 use App\Http\Controllers\Dashboard\OrdersController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
@@ -37,6 +38,8 @@ Route::get('/', function () {
     ]);
 });
 
+include_once( dirname( __FILE__ ) . '/intermediate.php' );
+
 Route::middleware([ 
     InstalledStateMiddleware::class, 
     CheckMigrationStatus::class, 
@@ -46,10 +49,12 @@ Route::middleware([
     Route::get( '/auth/activate/{user}/{token}', [ AuthController::class, 'activateAccount' ])->name( 'ns.activate-account' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
     Route::get( '/password-lost', 'AuthController@passwordLost' );
-    Route::get( '/new-password', 'AuthController@newPassword' );
+    Route::get( '/new-password/{user}/{token}', [ AuthController::class, 'newPassword' ])->name( 'ns.new-password' );
 
     Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
     Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
+    Route::post( '/auth/password-lost', [ AuthController::class, 'postPasswordLost' ])->name( 'ns.password-lost' );
+    Route::post( '/auth/new-password/{user}/{token}', [ AuthController::class, 'postNewPassword' ])->name( 'ns.post.new-password' );
     Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
     Route::get( '/database-update/', 'UpdateController@updateDatabase' )
         ->withoutMiddleware([ CheckMigrationStatus::class ])

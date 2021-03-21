@@ -11,7 +11,7 @@ use App\Classes\Hook;
         <div class="container mx-auto p-4 md:p-0 flex-auto items-center justify-center flex">
             <div id="sign-in-box" class="w-full md:w-3/5 lg:w-2/5">
                 <div class="flex justify-center items-center py-6">
-                    <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-purple-400 bg-gradient-to-br">NexoPOS</h2>
+                    <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
                 </div>
                 <ns-register></ns-register>
             </div>
