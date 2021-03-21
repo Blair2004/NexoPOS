@@ -8,20 +8,19 @@ on:
 
 jobs:
   laravel-tests:
-
+    
     runs-on: ubuntu-latest
+    services:
+      mysql:
+          image: mysql:5.7
+          env:
+              MYSQL_ALLOW_EMPTY_PASSWORD: yes
+              MYSQL_DATABASE: laravel_tags
+          ports:
+              - 3306
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    steps:
-    - uses: mirromutth/mysql-action@v1.1
-      with:
-        host port: 3306 # Optional, default value is 3306. The port of host
-        character set server: 'utf8' # Optional, default value is 'utf8mb4'. The '--character-set-server' option for mysqld
-        collation server: 'utf8_general_ci' # Optional, default value is 'utf8mb4_general_ci'. The '--collation-server' option for mysqld
-        mysql version: '5.7' # Optional, default value is "latest". The version of the MySQL
-        mysql database: 'nexopos' # Optional, default value is "test". The specified database which will be create
-        mysql root password: ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
-        mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-        mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
+    steps:  
     - uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
       with:
         php-version: '8.0'
