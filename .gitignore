@@ -25,3 +25,4 @@ composer.lock
 worker.log
 storage/module.zip
 public/mapping.json
+# tests/database.sqlite
