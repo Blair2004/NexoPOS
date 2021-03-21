@@ -18,6 +18,8 @@ class HardResetTest extends TestCase
      */
     public function testHardResetSystem()
     {
+        file_put_contents( 'tests/database.sqlite', '' );
+
         Artisan::call( 'ns:reset' );
         
         Artisan::call( 'ns:setup', [ 

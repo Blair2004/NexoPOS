@@ -18,8 +18,8 @@ eval("// removed by extract-text-webpack-plugin//# sourceURL=[module]\n//# sourc
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/html/v4.nexopos.com/resources/ts/bootstrap.ts */"./resources/ts/bootstrap.ts");
-module.exports = __webpack_require__(/*! /var/www/html/v4.nexopos.com/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\laragon\www\NexoPOS-4x\resources\ts\bootstrap.ts */"./resources/ts/bootstrap.ts");
+module.exports = __webpack_require__(/*! D:\laragon\www\NexoPOS-4x\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
