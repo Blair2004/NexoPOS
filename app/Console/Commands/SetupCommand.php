@@ -69,11 +69,11 @@ class SetupCommand extends Command
         }
 
         if ( 
-            ! DotenvEditor::keyExists( 'DB_HOST' ) || 
-            ! DotenvEditor::keyExists( 'DB_DATABASE' ) || 
-            ! DotenvEditor::keyExists( 'DB_USERNAME' ) || 
-            ! DotenvEditor::keyExists( 'DB_PASSWORD' ) || 
-            ! DotenvEditor::keyExists( 'DB_PREFIX' )
+            env( 'DB_HOST', null  ) === null || 
+            env( 'DB_DATABASE', null  ) === null || 
+            env( 'DB_USERNAME', null  ) === null || 
+            env( 'DB_PASSWORD', null  ) === null || 
+            env( 'DB_PREFIX', null  ) === null
         ) {
             return $this->error( __( 'Unable to proceed, looks like the database can\'t be used.' ) );
         }

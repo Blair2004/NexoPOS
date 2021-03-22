@@ -54,6 +54,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
         include( dirname( __FILE__ ) . '/api/users.php' );
     });
 
+    include( dirname( __FILE__ ) . '/api/hard-reset.php' );
     include_once( dirname( __FILE__ ) . '/api/update.php' );
 
     Route::prefix( 'setup' )->group( function() {

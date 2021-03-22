@@ -73,7 +73,10 @@ class CreateOrderTest extends TestCase
                         'type'                  =>  'percentage_discount',
                         'code'                  =>  $customerCoupon->code,
                         'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
-                        'value'                 =>  ( $customerCoupon->coupon->discount_value * $subtotal ) / 100,
+                        'value'                 =>  $currency->define( $customerCoupon->coupon->discount_value )
+                            ->multiplyBy( $subtotal )
+                            ->divideBy( 100 )
+                            ->getRaw(),
                         'discount_value'        =>  $customerCoupon->coupon->discount_value,
                         'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
                         'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
@@ -86,7 +89,11 @@ class CreateOrderTest extends TestCase
                 $totalCoupons           =   0;
             }
 
-            $discountValue  =   ( $discountRate * $subtotal ) / 100;
+            $discountValue  =   $currency->define( $discountRate )
+                ->multiplyBy( $subtotal )
+                ->divideBy( 100 )
+                ->getRaw();
+
             $discountCoupons    =   $currency->define( $discountValue )
                 ->additionateBy( $allCoupons[0][ 'value' ] )
                 ->getRaw();

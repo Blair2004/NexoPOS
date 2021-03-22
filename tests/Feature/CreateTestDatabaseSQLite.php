@@ -19,7 +19,8 @@ class CreateTestDatabaseSQLite extends TestCase
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::save();
 
-        \file_put_contents( dirname( __FILE__ ) . '/../database.sqlite', '' );
+        file_put_contents( dirname( __FILE__ ) . '/../database.sqlite', '' );
+        
         $this->assertTrue(true);
     }
 }

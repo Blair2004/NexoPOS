@@ -17,18 +17,29 @@ class ResetTest extends TestCase
      */
     public function testExample()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
+        if ( ns()->installed() ) {
+            Sanctum::actingAs(
+                Role::namespace( 'admin' )->users->first(),
+                ['*']
+            );
 
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/reset', []);
+            $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/reset', []);
+            
+            $response->assertJson([
+                'status'    =>  'success'
+            ]);
+    
+            $response->assertStatus(200);
+        } else {
+            $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/hard-reset', [
+                    'authorization' =>  env( 'NS_AUTHORIZATION' )
+                ]);
         
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        $response->assertStatus(200);
+            $response->assertJson([
+                'status'    =>  'success'
+            ]);
+        }
     }
 }

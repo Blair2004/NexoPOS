@@ -141,6 +141,7 @@ class Setup
 
         DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
+        DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotenvEditor::save();
 
         /**

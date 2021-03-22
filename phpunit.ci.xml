@@ -8,7 +8,7 @@
   <testsuites>
     <testsuite name="Feature">
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
-      <directory suffix="ResetTest.php">./tests/Feature</directory>
+      <directory suffix="HardResetTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
@@ -48,6 +48,10 @@
     <server name="CACHE_DRIVER" value="array"/>
     <server name="DB_CONNECTION" value="sqlite"/>
     <server name="DB_DATABASE" value="tests/database.sqlite"/>
+    <server name="DB_HOST" value=""/>
+    <server name="DB_USERNAME" value=""/>
+    <server name="DB_PASSWORD" value=""/>
+    <server name="DB_PREFIX" value="nexopos_"/>
     <server name="MAIL_MAILER" value="array"/>
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>

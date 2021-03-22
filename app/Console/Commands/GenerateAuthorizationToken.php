@@ -3,23 +3,24 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
-class DotEnvSetCommand extends Command
+class GenerateAuthorizationToken extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'env:set {key} {--v=}';
+    protected $signature = 'ns:authorization';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Set an environment value on the .env file';
+    protected $description = 'Generate new authorization token.';
 
     /**
      * Create a new command instance.
@@ -34,17 +35,12 @@ class DotEnvSetCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return mixed
+     * @return int
      */
     public function handle()
     {
-        if ( in_array( strtoupper( $this->argument( 'key' ) ), [ 'NS_AUTHORIZATION' ] ) ) {
-            return $this->error( __( 'The authorization token can\'t be changed manually.' ) );
-        }
-
-        DotenvEditor::setKey( strtoupper( $this->argument( 'key' ) ), $this->option( 'v' ) );
+        DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotEnvEditor::save();
-
-        $this->info( 'The environment value has been set.' );
+        $this->info( 'The authorization token has been refreshed.' );
     }
 }

@@ -7,11 +7,22 @@ use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Exception;
 
 
 class ResetController extends DashboardController
 {
-    public function truncateAllTables()
+    public function hardReset( Request $request )
+    {
+        if ( $request->input( 'authorization' ) !== env( 'NS_AUTHORIZATION' ) ) {
+            throw new Exception( __( 'Invalid authorization code provided.' ) );
+        }
+
+        return $this->truncateAllTables( $request );
+    }
+
+    public function truncateAllTables( Request $request )
     {
         $tables     =   [
             'nexopos_coupons',
@@ -76,7 +87,7 @@ class ResetController extends DashboardController
         ];
 
         foreach( $tables as $table ) {
-            if ( Hook::filter( 'ns-reset-table', $table ) !== false ) {
+            if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
                 DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
             }
         }
