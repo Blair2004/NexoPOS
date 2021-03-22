@@ -280,7 +280,7 @@ class OrdersController extends DashboardController
 
     public function deleteInstalment( Order $order, OrderInstalment $instalment )
     {
-        if ( $order->id !== $instalment->order_id ) {
+        if ( ( int ) $order->id !== ( int ) $instalment->order_id ) {
             throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
         }
 
@@ -294,7 +294,7 @@ class OrdersController extends DashboardController
 
     public function markInstalmentAs( Order $order, OrderInstalment $instalment )
     {
-        if ( $order->id !== $instalment->order_id ) {
+        if ( ( int ) $order->id !== ( int) $instalment->order_id ) {
             throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
         }
 
