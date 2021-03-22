@@ -148,7 +148,10 @@ class ProcurementService
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The provider has been created.' ),
+            'message'   =>  __( 'The procurement has been created.' ),
+            'data'      =>  [
+                'products'      =>  $procurement->products
+            ]
         ];
     }
 

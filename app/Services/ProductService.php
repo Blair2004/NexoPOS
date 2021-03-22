@@ -408,7 +408,7 @@ class ProductService
          * @todo should be tested
          */
         $manyPrimary    =   collect( $groups )->map( function( $fields ) {
-            return isset( $fields[ 'primary' ] ) && $fields[ 'primary' ] === 1;
+            return isset( $fields[ 'primary' ] ) && ( int ) $fields[ 'primary' ] === 1;
         })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
@@ -600,7 +600,7 @@ class ProductService
     {
         $unitQuantities     =   $this->get( $product_id )->unit_quantities;
         $filtredQuantities  =   $unitQuantities->filter( function( $quantity ) use ( $unit_id ) {
-            return $quantity->unit_id === $unit_id;
+            return ( int ) $quantity->unit_id === ( int ) $unit_id;
         });
 
         /**
@@ -992,7 +992,7 @@ class ProductService
                  * stock on the current item
                  */
                 if ( $diffQuantity < 0 ) {
-                    throw new NotAllowedException( sprintf( __( 'Unable to proceed, this action will cause negative stock (%s) Old Quantity : (%s),  Quantity : (%s).' ), $diffQuantity, $oldQuantity, $quantity ) );
+                    throw new NotAllowedException( sprintf( __( 'Unable to proceed, this action will cause negative stock (%s). Old Quantity : (%s),  Quantity : (%s).' ), $diffQuantity, $oldQuantity, $quantity ) );
                 }
     
                 /**

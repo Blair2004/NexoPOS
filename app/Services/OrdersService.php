@@ -1122,9 +1122,11 @@ class OrdersService
                 if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
                     throw new \Exception( 
                         sprintf( 
-                            __( 'Unable to proceed, there is not enough stock for %s using the unit %s' ),
+                            __( 'Unable to proceed, there is not enough stock for %s using the unit %s. Requested : %s, available %s' ),
                             $product->name,
-                            $productUnitQuantity->unit->name
+                            $productUnitQuantity->unit->name, 
+                            $orderProduct[ 'quantity' ],
+                            $productUnitQuantity->quantity - $storageQuantity
                         )
                     );
                 }

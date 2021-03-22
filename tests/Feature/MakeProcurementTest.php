@@ -66,7 +66,7 @@ class MakeProcurementTest extends TestCase
                     return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
                         return ( object ) [
                             'unit'      =>  $unit,
-                            'unitQuantity'  =>  $product->unit_quantities->filter( fn( $q ) => $q->unit_id === $unit->id )->first(),
+                            'unitQuantity'  =>  $product->unit_quantities->filter( fn( $q ) => ( int ) $q->unit_id === ( int ) $unit->id )->first(),
                             'product'   =>  $product
                         ];
                     });
