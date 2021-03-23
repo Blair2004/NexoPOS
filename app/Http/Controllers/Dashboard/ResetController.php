@@ -100,7 +100,7 @@ class ResetController extends DashboardController
 
     public function truncateWithDemo( Request $request )
     {
-        $this->truncateAllTables();
+        $this->truncateAllTables( $request );
 
         switch( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
