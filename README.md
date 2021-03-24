@@ -8,6 +8,8 @@ The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecany
 - Access to NexoPOS 4.x marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
+- 
+Therefore, __No refunds are allowed__ if the customer discovered later on the free version.
 
 [![Latest Stable Version](https://poser.pugx.org/blair2004/nexopos/v)](//packagist.org/packages/blair2004/nexopos) [![Total Downloads](https://poser.pugx.org/blair2004/nexopos/downloads)](//packagist.org/packages/blair2004/nexopos) [![Latest Unstable Version](https://poser.pugx.org/blair2004/nexopos/v/unstable)](//packagist.org/packages/blair2004/nexopos) [![License](https://poser.pugx.org/blair2004/nexopos/license)](//packagist.org/packages/blair2004/nexopos)
 
