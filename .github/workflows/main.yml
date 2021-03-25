@@ -11,11 +11,10 @@ jobs:
         steps:               
             -   name: Deploy To Server
                 uses: appleboy/ssh-action@master
-                continue-on-error: true
                 with:
                     host: ${{ secrets.HOST }}
                     username: ${{ secrets.USERNAME }}
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update; php artisan test; npm run prod;
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update; php artisan test; /root/.nvm/versions/node/v15.3.0/bin/npm run prod;
