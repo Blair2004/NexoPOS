@@ -9,6 +9,8 @@ modules/.temp/*
 public/modules/*
 public/storage
 public/export/*
+public/js/*.js
+public/css/*.css
 !public/export/index.html
 !public/modules/index.html
 # public/js/*.js
@@ -23,6 +25,7 @@ composer.lock
 .env.testing
 .phpunit.result.cache
 worker.log
+*.log
 storage/module.zip
 public/mapping.json
 tests/database.sqlite
