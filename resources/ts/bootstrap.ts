@@ -13,6 +13,7 @@ import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
+import { __ } from "./libraries/lang";
 
 declare global {
     interface Window {
@@ -24,6 +25,7 @@ declare global {
         VueRouter: VueRouter,
         nsHooks: any,
         SnackBar: SnackBar,
+        __: any
     }
 };
 declare const ns;
@@ -33,6 +35,7 @@ window.ChartJS          =   ChartJS;
 window.Vue              =   Vue;
 window.moment           =   <any>moment;
 window.Axios            =   Axios;
+window.__               =   __;
 window.VueRouter        =   <any>VueRouter;
 window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
