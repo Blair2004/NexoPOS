@@ -17,4 +17,6 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update; php artisan test; /root/.nvm/versions/node/v15.3.0/bin/npm run prod;
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update
+                        php artisan test
+                        npm run prod
