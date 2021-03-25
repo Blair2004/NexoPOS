@@ -17,9 +17,11 @@ jobs:
                     password: ${{ secrets.PASSWORD }}
                     port: ${{ secrets.PORT }}
                     script: 
-                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && git pull && composer update
-                        php artisan test
-                        php artisan modules:enable Demo
-                        php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=true
-                        php artisan config:clear
+                        cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && 
+                        git pull && 
+                        composer update &&
+                        php artisan test &&
+                        php artisan modules:enable Demo &&
+                        php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=true &&
+                        php artisan config:clear &&
                         npm run prod
