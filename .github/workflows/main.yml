@@ -20,6 +20,8 @@ jobs:
                         git pull && 
                         composer update &&
                         php artisan test &&
+                        php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=false &&
+                        php artisan config:clear &&
                         php artisan modules:enable Demo &&
                         php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=true &&
                         php artisan config:clear &&
