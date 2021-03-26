@@ -300,5 +300,16 @@ class OrdersController extends DashboardController
 
         return $this->ordersService->markInstalmentAsPaid( $order, $instalment );
     }
+
+    /**
+     * Will change the order processing status
+     * @param Request $request
+     * @param Order $order
+     * @return string json response
+     */
+    public function changeOrderProcessingStatus( Request $request, Order $order )
+    {
+        return $this->ordersService->changeProcessingStatus( $order, $request->input( 'process_status' ) );
+    }
 }
 

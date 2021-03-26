@@ -1,3 +1,7 @@
+<?php
+use App\Services\Helper;
+?>
+
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
@@ -20,6 +24,13 @@
 @section( 'layout.dashboard.footer' )
     @parent
 <script>
+const processingStatus  =   <?php echo json_encode( Helper::kvToJsOptions([
+    'pending'   =>  __( 'Pending' ),
+    'failed'    =>  __( 'Failed' ),
+    'ongoing'   =>  __( 'Ongoing' ),
+    'ready'     =>  __( 'Ready' )
+]));?>;
+
 document.addEventListener( 'DOMContentLoaded', () => {
     nsEvent.subject().subscribe( event => {
         if ( 

@@ -2204,4 +2204,32 @@ class OrdersService
             ]
         ];
     }
+
+    /**
+     * Changes the order processing status
+     * @param Order $order
+     * @param string $status
+     * @return array
+     */
+    public function changeProcessingStatus( Order $order, $status )
+    {
+        if ( ! in_array( $status, [
+            Order::PROCESSING_PENDING,
+            Order::PROCESSING_ONGOING,
+            Order::PROCESSING_READY,
+            Order::PROCESSING_FAILED,
+        ] ) ) {
+            throw new NotAllowedException( __( 'The provided status is not supported.' ) );
+        }
+
+        $order->process_status      =   $status;
+        $order->save();
+
+        event( new OrderAfterUpdatedEvent( $order ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The order has been successfully updated.' )
+        ];
+    }
 }

@@ -24,6 +24,16 @@ class Order extends NsModel
     const PAYMENT_REFUNDED                  =   'refunded';
     const PAYMENT_PARTIALLY_REFUNDED        =   'partially_refunded';
 
+    const PROCESSING_PENDING                =   'pending';
+    const PROCESSING_ONGOING                =   'ongoing';
+    const PROCESSING_READY                  =   'ready';
+    const PROCESSING_FAILED                 =   'failed';
+
+    const DELIVERY_PENDING                  =   'pending';
+    const DELIVERY_ONGOING                  =   'ongoing';
+    const DELIVERY_FAILED                   =   'failed';
+    const DELIVERY_COMPLETED                =   'completed';
+
     public $casts    =   [
         'created_at'                =>  DateCast::class,
         'final_payment_date'        =>  DateCast::class,

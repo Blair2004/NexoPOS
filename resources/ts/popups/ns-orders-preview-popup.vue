@@ -146,7 +146,7 @@ window.nsOrderPreviewPopup      =   nsOrderPreviewPopup;
 export default nsOrderPreviewPopup;
 </script>
 <template>
-    <div class="h-6/7-screen w-6/7-screen shadow-xl bg-white flex flex-col">
+    <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl bg-white flex flex-col">
         <div class="border-b border-gray-300 p-3 flex items-center justify-between">
             <div>
                 <h3>Order Options</h3>
@@ -155,7 +155,7 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-auto bg-gray-100 flex flex-auto">
+        <div class="p-2 overflow-scroll bg-gray-100 flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item label="Details" identifier="details" class="overflow-y-auto">

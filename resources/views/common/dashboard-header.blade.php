@@ -17,7 +17,7 @@
                     <span class="md:hidden text-gray-600 px-2">{{ sprintf( __( '%s' ), Auth::user()->username ) }}</span>
                     <div class="px-2">
                         <div class="w-8 h-8 rounded-full bg-gray-100">
-                            <img src="{{ Auth::user()->attribute ? Auth::user()->attribute->avatar_link : asset( 'images/user.png' ) }}" class="w-8 h-8" alt="{{ Auth::user()->username }}" srcset="">
+                            <img src="{{ Auth::user()->attribute ? Auth::user()->attribute->avatar_link : asset( 'images/user.png' ) }}" class="w-8 h-8 overflow-hidden rounded-full" alt="{{ Auth::user()->username }}" srcset="">
                         </div>
                     </div>
                 </div>
