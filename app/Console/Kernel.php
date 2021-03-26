@@ -72,14 +72,6 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__.'/Commands');
 
-        $modules    =   app()->make( ModulesService::class );
-
-        collect( $modules->getEnabled() )->each( function( $module ) {
-            if ( is_dir( $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Commands' ) ) {
-                $this->load( $module[ 'path' ] . DIRECTORY_SEPARATOR . 'Commands' );
-            }
-        });
-
         require base_path('routes/console.php');
     }
 }

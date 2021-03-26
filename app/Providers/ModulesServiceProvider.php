@@ -7,6 +7,8 @@ use App\Events\ModulesLoadedEvent;
 
 class ModulesServiceProvider extends ServiceProvider
 {
+    protected $modulesCommands  =   [];
+
     /**
      * Bootstrap the application services.
      *
@@ -21,6 +23,14 @@ class ModulesServiceProvider extends ServiceProvider
          * service providers that extends ModulesServiceProvider.
          */
         collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+            /**
+             * register module commands
+             */
+            $this->modulesCommands    =   array_merge(
+                $this->modulesCommands,
+                array_keys( $module[ 'commands' ] )
+            );
+
             $modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
         });
 
@@ -31,6 +41,8 @@ class ModulesServiceProvider extends ServiceProvider
         collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
             $modules->triggerServiceProviders( $module, 'boot', ServiceProvider::class );
         });
+
+        $this->commands( $this->modulesCommands );
     }
 
     /**

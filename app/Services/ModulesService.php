@@ -157,6 +157,16 @@ class ModulesService
                  */
                 $config[ 'entry-class' ]    =  'Modules\\' . $config[ 'namespace' ] . '\\' . $config[ 'namespace' ] . 'Module'; 
                 $config[ 'providers' ]      =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
+                $config[ 'commands' ]       =   collect( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands' ) )
+                    ->mapWithKeys( function( $file ) {
+                        $className      =   str_replace(
+                            ['/', '.php'],
+                            ['\\', ''],
+                            $file
+                        );
+                        return [ 'Modules\\' . $className => $file ];
+                    })
+                    ->toArray();
 
                 /**
                  * Service providers are registered when the module is enabled
