@@ -2,23 +2,6 @@
 vendor
 error.log
 node_modules
-modules/*
-!modules/.temp
-modules/.temp/*
-!modules/index.html
-public/modules/*
-public/storage
-public/export/*
-public/js/*.js
-public/css/*.css
-!public/export/index.html
-!public/modules/index.html
-# public/js/*.js
-public/js/*.map
-public/js/*.txt
-# public/css/*.css
-public/css/*.map
-public/mix-manifest.json
 composer-lock.json
 package-lock.json
 composer.lock
@@ -26,7 +9,22 @@ composer.lock
 .phpunit.result.cache
 worker.log
 *.log
-storage/module.zip
+modules/*
+!modules/.temp
+modules/.temp/*
+!modules/index.html
+public/modules/*
+public/storage
+public/export/*
+!public/export/index.html
+!public/modules/index.html
+public/js/*.js
+public/css/*.css
+public/js/*.map
+public/js/*.txt
+public/css/*.map
+public/mix-manifest.json
 public/mapping.json
+storage/module.zip
 tests/database.sqlite
 tests/database.sqlite-journal
