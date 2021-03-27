@@ -114,14 +114,18 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
 
-            // if module has a web route file
+            /**
+             * will load all web.php file as dashboard routes.
+             */
             if ( $module[ 'routes-file' ] !== false ) {
-                Route::prefix( 'dashboard' )
-                    ->middleware([ 'web', 'ns.installed', 'ns.check-application-health' ])
+                Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'routes-file' ] );
             }
 
+            /**
+             * will load api.php file has api file
+             */
             if ( $module[ 'api-file' ] !== false ) {
                 Route::prefix('api')
                     ->middleware([ 'ns.installed', 'api' ])
