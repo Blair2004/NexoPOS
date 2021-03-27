@@ -21,6 +21,11 @@ class BarcodeService
             case 'ean8' : $realType     =   $generator::TYPE_EAN_8; break;
             case 'ean13' : $realType    =   $generator::TYPE_EAN_13; break;
             case 'codabar' : $realType  =   $generator::TYPE_CODABAR; break;
+            case 'code128' : $realType  =   $generator::TYPE_CODE_128; break;
+            case 'code39' : $realType   =   $generator::TYPE_CODE_39; break;
+            case 'code11' : $realType   =   $generator::TYPE_CODE_11; break;
+            case 'upca' : $realType     =   $generator::TYPE_UPC_A; break;
+            case 'upce' : $realType     =   $generator::TYPE_UPC_E; break;
             default : $realType         =   $generator::TYPE_EAN_8; break;
         }
 

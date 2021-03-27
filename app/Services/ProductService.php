@@ -28,6 +28,9 @@ class ProductService
     /** @param TaxService */
     protected $taxService;
 
+    /** @param BarcodeService */
+    protected $barcodeService;
+
     /** @param ProductCategoryService */
     protected $categoryService;
 
