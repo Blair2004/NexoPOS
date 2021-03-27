@@ -10,6 +10,7 @@ class ProductCategory extends NsModel
 {
     use HasFactory;
 
+    protected $guarded  =   [];
     protected $table    =   'nexopos_' . 'products_categories';
 
     public function scopeDisplayOnPOS( $query, $attribute = true )
