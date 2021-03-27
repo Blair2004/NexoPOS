@@ -13,6 +13,8 @@ class Unit extends NsModel
         'base_unit'     =>  'boolean'
     ];
 
+    protected $guarded  =   [];
+
     public function group()
     {
         return $this->belongsTo( UnitGroup::class, 'group_id' );

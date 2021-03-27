@@ -8,6 +8,8 @@ class UnitGroup extends NsModel
 {
     use HasFactory;
     
+    protected $guarded  =   [];
+    
     protected $table = 'nexopos_units_groups';
 
     public function units()

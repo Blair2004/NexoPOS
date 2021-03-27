@@ -10,7 +10,8 @@ class Provider extends NsModel
     use HasFactory;
     
     protected $table    =   'nexopos_' . 'providers';
-
+    protected $guarded  =   [];
+    
     public function procurements()
     {
         return $this->hasMany( Procurement::class );
