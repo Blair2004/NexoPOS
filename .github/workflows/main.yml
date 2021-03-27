@@ -25,4 +25,7 @@ jobs:
                         php artisan modules:enable Demo &&
                         php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=true &&
                         php artisan config:clear &&
+                        php artisan ns:reset && 
+                        php artisan db:seed --class=DefaultSeeder
+                        php artisan ns:bulkimport /storage/app/products.csv --email=${{ secrets.SECRET_EMAIL }} --config=/storage/app/import-config.json
                         npm run prod
