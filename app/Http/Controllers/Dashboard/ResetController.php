@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
 use App\Http\Controllers\DashboardController;
+use App\Services\ResetService;
+use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -13,94 +15,40 @@ use Exception;
 
 class ResetController extends DashboardController
 {
+    /**
+     * @var ResetService $resetService
+     */
+    protected $resetService;
+
+    public function __construct(
+        ResetService $resetService
+    )
+    {
+        $this->resetService     =   $resetService;
+    }
+
+    /**
+     * perform a hard reset
+     * @param Request $request
+     * @return array $array
+     */
     public function hardReset( Request $request )
     {
         if ( $request->input( 'authorization' ) !== env( 'NS_AUTHORIZATION' ) ) {
             throw new Exception( __( 'Invalid authorization code provided.' ) );
         }
 
-        return $this->truncateAllTables( $request );
+        return $this->resetService->hardReset();
     }
 
-    public function truncateAllTables( Request $request )
-    {
-        $tables     =   [
-            'nexopos_coupons',
-            'nexopos_coupons_products',
-            'nexopos_coupons_categories',
-
-            'nexopos_customers',
-            'nexopos_customers_account_history',
-            'nexopos_customers_addresses',
-            'nexopos_customers_coupons',
-            'nexopos_customers_groups',
-            'nexopos_customers_metas',
-            'nexopos_customers_rewards',
-
-            'nexopos_dashboard_days',
-            'nexopos_dashboard_weeks',
-            'nexopos_dashboard_months',
-
-            'nexopos_expenses',
-            'nexopos_expenses_categories',
-            'nexopos_expenses_history',
-
-            'nexopos_medias',
-            'nexopos_notifications',
-            
-            'nexopos_orders',
-            'nexopos_orders_addresses',
-            'nexopos_orders_count',
-            'nexopos_orders_coupons',
-            'nexopos_orders_metas',
-            'nexopos_orders_payments',
-            'nexopos_orders_products',
-            'nexopos_orders_products_refunds',
-            'nexopos_orders_refunds',
-            'nexopos_orders_storage',
-            'nexopos_orders_taxes',
-
-            'nexopos_procurements',
-            'nexopos_procurements_products',
-
-            'nexopos_products',
-            'nexopos_products_categories',
-            'nexopos_products_histories',
-            'nexopos_products_galleries',
-            'nexopos_products_metas',
-            'nexopos_products_taxes',
-            'nexopos_products_unit_quantities',
-
-            'nexopos_providers',
-
-            'nexopos_registers',
-            'nexopos_registers_history',
-
-            'nexopos_rewards_system',
-            'nexopos_rewards_system_rules',
-
-            'nexopos_taxes',
-            'nexopos_taxes_groups',
-
-            'nexopos_units',
-            'nexopos_units_groups',
-        ];
-
-        foreach( $tables as $table ) {
-            if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
-                DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
-            }
-        }
-        
-        return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The table has been truncated.' )
-        ];
-    }
-
+    /**
+     * Will truncate the database and seed
+     * @param Request $request
+     * @return array
+     */
     public function truncateWithDemo( Request $request )
     {
-        $this->truncateAllTables( $request );
+        $this->resetService->softReset( $request );
 
         switch( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
@@ -110,13 +58,13 @@ class ResetController extends DashboardController
                 ( new FirstDemoSeeder )->run();
             break;
             default:
-                // nothing run if a mode is not defined
+                ( new DefaultSeeder )->run();
             break;
         }
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The database has been purged' )
+            'message'   =>  __( 'The database has been successfully seeded.' )
         ];
     }
 }

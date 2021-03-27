@@ -30,6 +30,7 @@ use App\Services\Validation;
 use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\ReportService;
+use App\Services\ResetService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -101,6 +102,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton( BarcodeService::class, function() {
             return new BarcodeService;
+        });
+
+        $this->app->singleton( ResetService::class, function() {
+            return new ResetService;
         });
 
         $this->app->singleton( ReportService::class, function() {

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\ResetService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
@@ -13,7 +14,7 @@ class ResetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:reset';
+    protected $signature = 'ns:reset {--mode=soft}';
 
     /**
      * The console command description.
@@ -23,13 +24,23 @@ class ResetCommand extends Command
     protected $description = 'Will wipe the database and force reinstallation. Cannot be undone.';
 
     /**
+     * Reset service
+     * @var ResetService $resetService
+     */
+    private $resetService;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(
+        ResetService $resetService
+    )
     {
         parent::__construct();
+
+        $this->resetService     =   $resetService;
     }
 
     /**
@@ -39,16 +50,35 @@ class ResetCommand extends Command
      */
     public function handle()
     {    
-        Artisan::call( 'migrate:reset --path=/database/migrations/default' );
-        Artisan::call( 'migrate:reset --path=/database/migrations/create-tables' );
-        
-        DotenvEditor::deleteKey( 'NS_VERSION' );
-        DotenvEditor::save();
+        switch( $this->option( 'mode' ) ) {
+            case 'soft':
+                return $this->softReset();
+            break;
+            case 'hard':
+                return $this->hardReset();
+            break;
+        }
+    }
 
-        Artisan::call( 'key:generate' );
-
-        exec( 'rm -rf public/storage' );
+    /**
+     * Proceed hard reset
+     * @return void 
+     */
+    private function hardReset()
+    {
+        $this->resetService->hardReset();
 
         $this->info( 'The database has been cleared' );
+    }
+
+    /**
+     * Proceed soft reset
+     * @return void
+     */
+    private function softReset()
+    {
+        $result         =   $this->resetService->softReset();
+        
+        return $this->info( $result[ 'message' ] );
     }
 }
