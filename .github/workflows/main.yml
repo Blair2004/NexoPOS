@@ -19,10 +19,10 @@ jobs:
                         cd /var/www/html/${{ secrets.DEPLOYHOST }}/ && 
                         git pull && 
                         composer update &&
-                        php artisan test &&
                         php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=false &&
                         php artisan config:clear &&
-                        php artisan modules:enable Demo &&
+                        php artisan modules:enable NsDemo &&
+                        php artisan modules:enable NsBulkImporter &&
                         php artisan env:set NS_MODULES_MANAGEMENT_DISABLED --v=true &&
                         php artisan config:clear &&
                         php artisan ns:reset && 
