@@ -28,5 +28,6 @@ jobs:
                         php artisan ns:reset && 
                         php artisan db:seed --class=DefaultSeeder &&
                         php artisan queue:restart &&
+                        php artisan storage:link &&
                         php artisan ns:bulkimport /storage/app/products.csv --email=${{ secrets.SECRET_EMAIL }} --config=/storage/app/import-config.json &&
                         npm run prod
