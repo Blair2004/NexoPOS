@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\CheckMigrationStatus;
 use App\Services\ModulesService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -118,7 +119,7 @@ class RouteServiceProvider extends ServiceProvider
              * will load all web.php file as dashboard routes.
              */
             if ( $module[ 'routes-file' ] !== false ) {
-                Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health' ])
+                Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'routes-file' ] );
             }
