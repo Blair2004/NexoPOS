@@ -23,8 +23,8 @@ class CreateProcurementsTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->integer( 'provider_id' );
-                $table->float( 'value' )->default(0);
-                $table->float( 'tax_value' )->default(0);
+                $table->float( 'value', 11, 5 )->default(0);
+                $table->float( 'tax_value', 11, 5 )->default(0);
                 $table->string( 'invoice_reference' )->nullable();
                 $table->boolean( 'automatic_approval' )->default(false)->nullable();
                 $table->datetime( 'delivery_time' )->nullable();

@@ -23,7 +23,7 @@ class CreateTaxesTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
                 $table->text( 'description' )->nullable();
-                $table->float( 'rate' );
+                $table->float( 'rate', 11, 5 );
                 $table->integer( 'tax_group_id' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();

@@ -25,8 +25,8 @@ class CreateProductsTaxesTable extends Migration
                 $table->integer( 'unit_quantity_id' );
                 $table->string( 'tax_id' ); // grouped, simple
                 $table->string( 'name' );
-                $table->float( 'rate' );
-                $table->float( 'value' ); // actual computed tax value
+                $table->float( 'rate', 11, 5 );
+                $table->float( 'value', 11, 5 ); // actual computed tax value
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

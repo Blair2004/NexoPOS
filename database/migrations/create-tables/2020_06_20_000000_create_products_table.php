@@ -24,7 +24,7 @@ class CreateProductsTable extends Migration
                 $table->string( 'name' );
                 $table->string( 'tax_type' )->nullable(); // inclusive, exclusive
                 $table->integer( 'tax_group_id' )->nullable(); 
-                $table->float( 'tax_value' )->default(0); // computed automatically
+                $table->float( 'tax_value', 11, 5 )->default(0); // computed automatically
                 $table->string( 'product_type' )->default( 'product' ); // product, variation, variable
                 $table->string( 'type' )->default( 'tangible' ); // intangible, tangible (or any other extended types)
                 $table->boolean( 'accurate_tracking' )->default(0); // @since db 1.3

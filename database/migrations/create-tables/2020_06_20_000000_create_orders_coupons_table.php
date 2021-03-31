@@ -26,11 +26,11 @@ class CreateOrdersCouponsTable extends Migration
                 $table->integer( 'customer_coupon_id' );
                 $table->integer( 'order_id' );
                 $table->string( 'type' ); // discount_percentage, flat_percentage
-                $table->float( 'discount_value' );
-                $table->float( 'minimum_cart_value' )->default(0);
-                $table->float( 'maximum_cart_value' )->default(0);
+                $table->float( 'discount_value', 11, 5 );
+                $table->float( 'minimum_cart_value', 11, 5 )->default(0);
+                $table->float( 'maximum_cart_value', 11, 5 )->default(0);
                 $table->integer( 'limit_usage' )->default(0);
-                $table->float( 'value' )->default(0);
+                $table->float( 'value', 11, 5 )->default(0);
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

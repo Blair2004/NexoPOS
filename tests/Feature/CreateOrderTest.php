@@ -16,6 +16,8 @@ use Faker\Factory;
 
 class CreateOrderTest extends TestCase
 {
+    protected $count    =   30;
+
     /**
      * A basic feature test example.
      *
@@ -28,7 +30,7 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
-        for( $i = 0; $i < 30; $i++ ) {
+        for( $i = 0; $i < $this->count; $i++ ) {
             /**
              * @var CurrencyService
              */
@@ -95,7 +97,7 @@ class CreateOrderTest extends TestCase
                 ->getRaw();
 
             $discountCoupons    =   $currency->define( $discountValue )
-                ->additionateBy( $allCoupons[0][ 'value' ] )
+                ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
                 ->getRaw();
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
@@ -161,7 +163,7 @@ class CreateOrderTest extends TestCase
             );
 
             $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
-                ->subtractBy( $subtotal + $shippingFees - ( $discountRate + $allCoupons[0][ 'value' ] ) )
+                ->subtractBy( $subtotal + $shippingFees - ( $discountRate + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
                 ->getRaw() 
             );
 

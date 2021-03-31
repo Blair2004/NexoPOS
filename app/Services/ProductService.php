@@ -568,11 +568,17 @@ class ProductService
             $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
             $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
 
-            $this->taxService->computeTax( 
-                $unitQuantity, 
-                $fields[ 'tax_group_id' ], 
-                $fields[ 'tax_type' ] 
-            );
+            /**
+             * Let's compute the tax only
+             * when the tax group is provided.
+             */
+            if ( isset( $fields[ 'tax_group_id' ] ) ) {
+                $this->taxService->computeTax( 
+                    $unitQuantity, 
+                    $fields[ 'tax_group_id' ], 
+                    $fields[ 'tax_type' ] 
+                );
+            }
 
             /**
              * save custom barcode for the created unit quantity

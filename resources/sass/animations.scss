@@ -54,6 +54,18 @@
     }
 }
 
+@keyframes FadeOutExit {
+    0% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
 .zoom-out-entrance {
     animation: ZoomOutEntrance 500ms;
 }
@@ -68,6 +80,9 @@
 }
 .fade-in-entrance {
     animation: FadeInEntrance;
+}
+.fade-out-exit {
+    animation: FadeOutExit;
 }
 
 @for $i from 100 through 1000 {

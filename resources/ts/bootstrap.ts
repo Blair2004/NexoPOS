@@ -14,6 +14,8 @@ import { nsCurrency, nsAbbreviate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
 import { __ } from "./libraries/lang";
+import popupResolver from "./libraries/popup-resolver";
+import popupCloser from "./libraries/popup-closer";
 
 declare global {
     interface Window {
@@ -25,7 +27,9 @@ declare global {
         VueRouter: VueRouter,
         nsHooks: any,
         SnackBar: SnackBar,
-        __: any
+        __: any,
+        popupResolver: any,
+        popupCloser: any,
     }
 };
 declare const ns;
@@ -39,6 +43,8 @@ window.__               =   __;
 window.VueRouter        =   <any>VueRouter;
 window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
+window.popupResolver    =   popupResolver,
+window.popupCloser      =   popupCloser,
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
 

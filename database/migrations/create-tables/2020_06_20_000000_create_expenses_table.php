@@ -25,7 +25,7 @@ class CreateExpensesTable extends Migration
                 $table->integer( 'category_id' );
                 $table->text( 'description' )->nullable();
                 $table->integer( 'media_id' )->default(0);
-                $table->float( 'value' )->default(0);
+                $table->float( 'value', 11, 5 )->default(0);
                 $table->boolean( 'recurring' )->default(false);
                 $table->boolean( 'active' )->default(false);
                 $table->integer( 'group_id' )->nullable();

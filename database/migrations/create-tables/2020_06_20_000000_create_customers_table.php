@@ -30,9 +30,9 @@ class CreateCustomersTable extends Migration
                 $table->string( 'email' )->unique()->nullable();
                 $table->string( 'pobox' )->nullable();
                 $table->integer( 'group_id' );
-                $table->float( 'purchases_amount' )->default(0);
-                $table->float( 'owed_amount' )->default(0);
-                $table->float( 'account_amount' )->default(0);
+                $table->float( 'purchases_amount', 11, 5 )->default(0);
+                $table->float( 'owed_amount', 11, 5 )->default(0);
+                $table->float( 'account_amount', 11, 5 )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });

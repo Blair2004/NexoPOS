@@ -24,7 +24,7 @@ class CreateRegistersHistoryTable extends Migration
                 $table->integer( 'register_id' );
                 $table->string( 'action' );
                 $table->integer( 'author' );
-                $table->float( 'value' );
+                $table->float( 'value', 11, 5 );
                 $table->text( 'description' )->nullable();
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

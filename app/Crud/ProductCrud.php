@@ -577,7 +577,6 @@ class ProductCrud extends CrudService
         $model->galleries->each( fn( $gallery ) => $gallery->delete() );
         $model->variations->each( fn( $variation ) => $variation->delete() );
         $model->product_taxes->each( fn( $product_taxes ) => $product_taxes->delete() );
-        $model->unitGroup instanceof UnitGroup ? $model->unitGroup->delete() : null;
         $model->unit_quantities->each( fn( $unitQuantity ) => $unitQuantity->delete() );
     }
 
@@ -638,7 +637,7 @@ class ProductCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
-        $entry->type                =   $entry->product_type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
+        $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         // you can make changes here
@@ -679,6 +678,11 @@ class ProductCrud extends CrudService
         ];
 
         return $entry;
+    }
+
+    public function hook( $query )
+    {
+        return $query->orderBy( 'updated_at', 'desc' );
     }
 
     

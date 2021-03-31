@@ -18,13 +18,13 @@ class CreateCouponsTable extends Migration
             $table->string( 'name' );
             $table->string( 'code' );
             $table->string( 'type' )->default( 'discount' ); // percentage_discount, flat_discount, giveaway
-            $table->float( 'discount_value' )->default(0); // flat value or percentage
+            $table->float( 'discount_value', 11, 5 )->default(0); // flat value or percentage
             $table->datetime( 'valid_until' )->nullable(); // unlimited
-            $table->float( 'minimum_cart_value' )->default(0)->nullable();
-            $table->float( 'maximum_cart_value' )->default(0)->nullable();
+            $table->float( 'minimum_cart_value', 11, 5 )->default(0)->nullable();
+            $table->float( 'maximum_cart_value', 11, 5 )->default(0)->nullable();
             $table->datetime( 'valid_hours_start' )->nullable();
             $table->datetime( 'valid_hours_end' )->nullable();
-            $table->float( 'limit_usage' )->default(0); // unlimited
+            $table->float( 'limit_usage', 11, 5 )->default(0); // unlimited
             $table->integer( 'author' );
             $table->timestamps();
         });

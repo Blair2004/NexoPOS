@@ -979,6 +979,7 @@ class OrdersService
             $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
             $orderProduct->unit_id                      =   $product[ 'unit_id' ];
             $orderProduct->product_id                   =   $product[ 'product' ]->id;
+            $orderProduct->product_category_id          =   $product[ 'product' ]->category_id;
             $orderProduct->name                         =   $product[ 'product' ]->name;
             $orderProduct->quantity                     =   $history[ 'quantity'];
 

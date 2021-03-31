@@ -18,8 +18,8 @@ class CreateCustomersRewardsTable extends Migration
             $table->integer( 'customer_id' );
             $table->integer( 'reward_id' );
             $table->string( 'reward_name' );
-            $table->float( 'points' );
-            $table->float( 'target' );
+            $table->float( 'points', 11, 5 );
+            $table->float( 'target', 11, 5 );
             $table->timestamps();
         });
     }

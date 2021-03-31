@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" bootstrap="vendor/autoload.php" colors="true">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Feature">
+      <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
+      <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
+      <directory suffix="OrderWithInstalment.php">./tests/Feature</directory>
+      <directory suffix="OrderRefundTest.php">./tests/Feature</directory>
+      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
+      <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
+      <directory suffix="CrudTest.php">./tests/Feature</directory>
+      <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
+      <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
+      <!--  -->
+      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreApproveStockRequestTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreApproveStockTransferTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreRejectStockTransferTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreCancelStockTransferTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreCreateStockTransfer.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="StoreCreatePendingStockTransfer.php">./tests/Feature</directory> -->
+    </testsuite>
+  </testsuites>
+  <php>
+    <server name="APP_ENV" value="TESTING"/>
+    <server name="BCRYPT_ROUNDS" value="4"/>
+    <server name="CACHE_DRIVER" value="array"/>
+    <server name="DB_CONNECTION" value="mysql"/>
+    <server name="MAIL_MAILER" value="array"/>
+    <server name="QUEUE_CONNECTION" value="sync"/>
+    <server name="SESSION_DRIVER" value="array"/>
+    <server name="TELESCOPE_ENABLED" value="FALSE"/>
+    <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
+    <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
+  </php>
+</phpunit>

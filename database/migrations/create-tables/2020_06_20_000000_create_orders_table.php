@@ -28,22 +28,22 @@ class CreateOrdersTable extends Migration
                 $table->string( 'payment_status' ); // paid, unpaid, partially_paid
                 $table->string( 'process_status' )->default( 'pending' ); // complete, ongoing, pending
                 $table->string( 'delivery_status' )->default( 'pending' ); // pending, shipped, delivered, 
-                $table->float( 'discount' )->default(0);
+                $table->float( 'discount', 11, 5 )->default(0);
                 $table->string( 'discount_type' )->nullable();
-                $table->float( 'discount_percentage' )->nullable();
-                $table->float( 'shipping' )->default(0); // could be set manually or computed based on shipping_rate and shipping_type
-                $table->float( 'shipping_rate' )->default(0);
+                $table->float( 'discount_percentage', 11, 5 )->nullable();
+                $table->float( 'shipping', 11, 5 )->default(0); // could be set manually or computed based on shipping_rate and shipping_type
+                $table->float( 'shipping_rate', 11, 5 )->default(0);
                 $table->string( 'shipping_type' )->nullable(); // "flat" | "percentage" (based on the order total)
-                $table->float( 'gross_total' )->default(0);
-                $table->float( 'subtotal' )->default(0);
-                $table->float( 'net_total' )->default(0);
-                $table->float( 'total_coupons' )->default(0);
-                $table->float( 'total' )->default(0);
-                $table->float( 'tax_value' )->default(0);
+                $table->float( 'gross_total', 11, 5 )->default(0);
+                $table->float( 'subtotal', 11, 5 )->default(0);
+                $table->float( 'net_total', 11, 5 )->default(0);
+                $table->float( 'total_coupons', 11, 5 )->default(0);
+                $table->float( 'total', 11, 5 )->default(0);
+                $table->float( 'tax_value', 11, 5 )->default(0);
                 $table->integer( 'tax_group_id' )->nullable();
                 $table->string( 'tax_type' )->nullable();;
-                $table->float( 'tendered' )->default(0);
-                $table->float( 'change' )->default(0);
+                $table->float( 'tendered', 11, 5 )->default(0);
+                $table->float( 'change', 11, 5 )->default(0);
                 $table->datetime( 'final_payment_date' )->nullable();
                 $table->integer( 'total_instalments' )->default(0);
                 $table->integer( 'customer_id' );
