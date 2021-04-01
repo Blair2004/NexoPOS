@@ -66,6 +66,7 @@ module.exports = {
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,
       minHeight: heightDims,
+      maxHeight: heightDims,
       width: {
         ...widthDims
       },

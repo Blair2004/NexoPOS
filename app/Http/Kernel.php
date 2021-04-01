@@ -46,7 +46,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             EnsureFrontendRequestsAreStateful::class,
-            'throttle:80,1',
+            // 'throttle:80,1',
         ],
     ];
 

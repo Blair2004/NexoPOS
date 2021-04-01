@@ -308,4 +308,19 @@ class CurrencyService
 
         return $number;
     }
+
+    public function getPercentageValue( $value, $percentage, $operation = 'additionate' )
+    {
+        $percentage     =   CurrencyService::define( $value )
+            ->multiplyBy( $percentage )
+            ->dividedBy(100);
+
+        if ( $operation === 'additionate' ) {
+            return $value + $percentage;
+        } else if ( $operation === 'subtract' ) {
+            return $value - $percentage;
+        }
+
+        return $value;       
+    }
 }
