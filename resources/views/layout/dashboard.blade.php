@@ -28,10 +28,12 @@ use App\Services\DateService;
          * store the server date
          * @param {string}
          */
-        ns.date                     =   {
+        window.ns.date  =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
         }
+
     </script>
+@include( 'common.header-socket' )
 </head>
 <body>
     <div class="h-full w-full flex flex-col">

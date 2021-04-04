@@ -54,9 +54,21 @@ export default {
     },
     mounted() {
         document.addEventListener( 'click', this.checkClickedItem );
-        this.interval   =   setInterval( () => {
-            this.loadNotifications();
-        }, 15000 );
+        
+        if ( ns.websocket.enabled ) {
+            Echo.private( `ns.notifications` )
+                .listen( 'NotificationDispatchedEvent', (e) => {
+                    this.pushNotificationIfNew( e.notification );
+                })
+                .listen( 'NotificationDeletedEvent', (e) => {
+                    this.deleteNotificationIfExists( e.notification );
+                });
+        } else {
+            this.interval   =   setInterval( () => {
+                this.loadNotifications();
+            }, 15000 );
+        }
+
         this.loadNotifications();
     },
     destroyed() {
@@ -64,6 +76,23 @@ export default {
     },
     methods: {
         __,
+        pushNotificationIfNew( notification ) {
+            const exists     =   this.notifications.filter( _notification => _notification.id === notification.id ).length > 0;
+
+            console.log( notification );
+
+            if ( ! exists ) {
+                this.notifications.push( notification );
+            }
+        },
+        deleteNotificationIfExists( notification ) {
+            const exists     =   this.notifications.filter( _notification => _notification.id === notification.id );
+
+            if ( ! exists.length > 0 ) {
+                const index     =   this.notifications.indexOf( exists[0] );
+                this.notifications.splice( index, 1 );
+            }
+        },
         deleteAll() {
             Popup.show( nsPosConfirmPopupVue, {
                 title: __( 'Confirm Your Action' ),

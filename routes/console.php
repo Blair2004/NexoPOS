@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Role;
+use App\Services\NotificationService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,3 +19,17 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Artisan::command('notify', function () {
+    $notificationService    =   app()->make( NotificationService::class );
+
+    $notificationService->create([
+        'title'         =>  __( 'Unpaid Orders Turned Due' ),
+        'identifier'    =>  '123456789',
+        'url'           =>  ns()->route( 'ns.dashboard.orders' ),
+        'description'   =>  sprintf( __( '%s order(s) either unpaid or partially paid has turned due. This occurs if none has been completed before the expected payment date.' ), 10 )
+    ])->dispatchForGroup([
+        Role::namespace( 'admin' ),
+        Role::namespace( 'nexopos.store.administrator' )
+    ]);
+})->describe('test notification');

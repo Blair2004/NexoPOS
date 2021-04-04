@@ -91,7 +91,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
         }
     },
     mounted() {
-        document.addEventListener( 'click', this.checkClickedItem );
+        document.addEventListener( 'mousedown', ( e ) => this.checkClickedItem( e ) );
         this.currentDay     =   [ undefined, null, '' ].includes( this.field.value ) ? moment() : moment( this.field.value );
         this.hours          =   this.currentDay.format( 'HH' );
         this.minutes        =   this.currentDay.format( 'mm' );

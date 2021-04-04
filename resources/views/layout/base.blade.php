@@ -31,6 +31,7 @@ use App\Services\DateService;
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
         }
     </script>
+@include( 'common.header-socket' )
 </head>
 <body>
     @yield( 'layout.base.body' )

@@ -2,6 +2,8 @@
 namespace App\Services;
 
 use App\Enums\NotificationsEnums;
+use App\Events\NotificationDeletedEvent;
+use App\Events\NotificationDispatchedEvent;
 use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
@@ -98,6 +100,9 @@ class NotificationService
             $notification->url              =   $this->url;
             $notification->save();
         }
+
+        NotificationDispatchedEvent::dispatch( $notification );
+        // event( new NotificationDispatchedEvent( $notification ) );
     }
 
     public function dispatchForUsers( Collection $users ) 
@@ -127,11 +132,23 @@ class NotificationService
 
     public function deleteSingleNotification( $id )
     {
-        Notification::find( $id )->delete();
+        $notification       =   Notification::find( $id );
+                                                                  
+        NotificationDeletedEvent::dispatch( $notification );
+        // event( new NotificationDeletedEvent( $notification ) );
+
+        $notification->delete();
     }
 
     public function deleteNotificationsFor( User $user )
     {
-        Notification::for( $user->id )->delete();
+        
+        Notification::for( $user->id )
+            ->get()
+            ->each( function( $notification ) {
+                NotificationDeletedEvent::dispatch( $notification );
+                // event( new NotificationDeletedEvent( $notification ) );    
+                $notification->delete();        
+            });
     }
 }

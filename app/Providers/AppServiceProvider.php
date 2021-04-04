@@ -31,6 +31,7 @@ use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\ReportService;
 use App\Services\ResetService;
+use App\Services\WebSocketService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -183,6 +184,10 @@ class AppServiceProvider extends ServiceProvider
             return new ExpenseService(
                 app()->make( DateService::class )
             );
+        });
+
+        $this->app->singleton( WebSocketService::class, function( $app ) {
+            return new WebSocketService();
         });
 
         $this->app->singleton( OrdersService::class, function( $app ) {

@@ -16,6 +16,10 @@ import { createHooks } from '@wordpress/hooks';
 import { __ } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
+import Echo from "laravel-echo";
+const Pusher    =   require('pusher-js');
+
+
 
 declare global {
     interface Window {
@@ -30,12 +34,16 @@ declare global {
         __: any,
         popupResolver: any,
         popupCloser: any,
+        Pusher:any,
+        Echo: any
     }
 };
+
 declare const ns;
 
 window._                =   Lodash;
 window.ChartJS          =   ChartJS;
+window.Pusher           =   Pusher;
 window.Vue              =   Vue;
 window.moment           =   <any>moment;
 window.Axios            =   Axios;
@@ -47,6 +55,17 @@ window.popupResolver    =   popupResolver,
 window.popupCloser      =   popupCloser,
 window.Axios.defaults.headers.common['x-requested-with']    =   'XMLHttpRequest';
 window.Axios.defaults.withCredentials                       =   true;
+
+if ( ns.websocket.enabled ) {
+    window.Echo             =   new Echo({
+        broadcaster: 'pusher',
+        key: ns.websocket.key,
+        wsHost: window.location.hostname,
+        wsPort: ns.websocket.port,
+        forceTLS: false,
+        disableStats: true,
+    })
+}
 
 const nsEvent           =   new EventEmitter;
 const nsHttpClient      =   new HttpClient;
