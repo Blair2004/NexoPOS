@@ -36,6 +36,6 @@ class ExpenseAfterRefreshEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('ns.main-socket');
     }
 }

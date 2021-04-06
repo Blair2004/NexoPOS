@@ -2,9 +2,11 @@
 namespace App\Events;
 
 use App\Models\Order;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class OrderAfterCreatedEvent
+class OrderAfterCreatedEvent implements ShouldBroadcast
 {
     use SerializesModels;
 
@@ -15,5 +17,15 @@ class OrderAfterCreatedEvent
     {
         $this->order    =   $order;
         $this->fields   =   $fields;
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn()
+    {
+        return new PrivateChannel( 'ns.main-socket' );
     }
 }

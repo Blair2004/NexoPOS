@@ -61,6 +61,7 @@ if ( ns.websocket.enabled ) {
         broadcaster: 'pusher',
         key: ns.websocket.key,
         wsHost: window.location.hostname,
+        namespace: '',
         wsPort: ns.websocket.port,
         forceTLS: false,
         disableStats: true,

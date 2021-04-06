@@ -102,7 +102,6 @@ class NotificationService
         }
 
         NotificationDispatchedEvent::dispatch( $notification );
-        // event( new NotificationDispatchedEvent( $notification ) );
     }
 
     public function dispatchForUsers( Collection $users ) 
@@ -125,9 +124,12 @@ class NotificationService
 
     public function deleteHavingIdentifier( $identifier )
     {
-        $notification   =   Notification::identifiedBy( $identifier )
+        Notification::identifiedBy( $identifier )
             ->get()
-            ->map( fn( $notification ) => $notification->delete() );
+            ->map( function( $notification ) {
+                NotificationDeletedEvent::dispatch( $notification );
+                $notification->delete();
+            });        
     }
 
     public function deleteSingleNotification( $id )
@@ -135,7 +137,6 @@ class NotificationService
         $notification       =   Notification::find( $id );
                                                                   
         NotificationDeletedEvent::dispatch( $notification );
-        // event( new NotificationDeletedEvent( $notification ) );
 
         $notification->delete();
     }
@@ -147,7 +148,6 @@ class NotificationService
             ->get()
             ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
-                // event( new NotificationDeletedEvent( $notification ) );    
                 $notification->delete();        
             });
     }

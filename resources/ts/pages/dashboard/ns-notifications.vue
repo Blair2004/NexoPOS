@@ -56,11 +56,11 @@ export default {
         document.addEventListener( 'click', this.checkClickedItem );
         
         if ( ns.websocket.enabled ) {
-            Echo.private( `ns.notifications` )
-                .listen( 'NotificationDispatchedEvent', (e) => {
+            Echo.private( `ns.main-socket` )
+                .listen( 'App\\Events\\NotificationDispatchedEvent', (e) => {
                     this.pushNotificationIfNew( e.notification );
                 })
-                .listen( 'NotificationDeletedEvent', (e) => {
+                .listen( 'App\\Events\\NotificationDeletedEvent', (e) => {
                     this.deleteNotificationIfExists( e.notification );
                 });
         } else {
@@ -88,7 +88,7 @@ export default {
         deleteNotificationIfExists( notification ) {
             const exists     =   this.notifications.filter( _notification => _notification.id === notification.id );
 
-            if ( ! exists.length > 0 ) {
+            if ( exists.length > 0 ) {
                 const index     =   this.notifications.indexOf( exists[0] );
                 this.notifications.splice( index, 1 );
             }

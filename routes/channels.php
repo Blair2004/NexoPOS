@@ -19,4 +19,4 @@ use Illuminate\Support\Facades\Log;
 //     return (int) $user->id === (int) $id;
 // });
 
-Broadcast::channel( 'ns.notifications', NotificationsChannel::class );
+Broadcast::channel( 'ns.main-socket', NotificationsChannel::class );

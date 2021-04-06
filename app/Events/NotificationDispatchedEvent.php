@@ -34,6 +34,6 @@ class NotificationDispatchedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.notifications');
+        return new PrivateChannel('ns.main-socket');
     }
 }
