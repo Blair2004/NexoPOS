@@ -56,7 +56,7 @@ export default {
         document.addEventListener( 'click', this.checkClickedItem );
         
         if ( ns.websocket.enabled ) {
-            Echo.private( `ns.main-socket` )
+            Echo.private( `ns.private-channel` )
                 .listen( 'App\\Events\\NotificationDispatchedEvent', (e) => {
                     this.pushNotificationIfNew( e.notification );
                 })

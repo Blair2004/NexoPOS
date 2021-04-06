@@ -4,7 +4,7 @@ namespace App\Broadcasting;
 
 use App\Models\User;
 
-class NotificationsChannel
+class PrivateChannel
 {
     /**
      * Create a new channel instance.

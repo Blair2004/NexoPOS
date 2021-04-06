@@ -16,6 +16,7 @@ use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
@@ -1069,7 +1070,7 @@ class OrdersService
          * we'll also populate the unit for the item 
          * so that it can be reused 
          */
-        return collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
+        $items  =  collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
             $this->__checkQuantityAvailability( 
                 $orderProduct[ 'product' ], 
                 $orderProduct[ 'unitQuantity' ],
@@ -1079,6 +1080,10 @@ class OrdersService
 
             return $orderProduct;
         });
+
+        OrderAfterProductStockCheckedEvent::dispatch( $items );
+
+        return $items;
     }
 
     /**

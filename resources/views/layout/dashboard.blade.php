@@ -30,6 +30,7 @@ use App\Services\DateService;
          */
         window.ns.date  =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
+            serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
         }
 
     </script>

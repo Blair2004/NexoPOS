@@ -36,6 +36,6 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.main-socket');
+        return new PrivateChannel('ns.private-channel');
     }
 }

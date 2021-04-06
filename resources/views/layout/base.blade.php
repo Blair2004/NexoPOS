@@ -15,20 +15,21 @@ use App\Services\DateService;
          * global custom components
          * @param {Object}
          */
-        const nsExtraComponents     =   new Object;
+        window.nsExtraComponents     =   new Object;
 
         /**
          * describe a global NexoPOS object
          * @param {object} ns
          */
-        const ns =   { nsExtraComponents };
+        window.ns =   { nsExtraComponents };
 
         /**
          * store the server date
          * @param {string}
          */
-        ns.date                     =   {
+        window.ns.date                     =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
+            serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
         }
     </script>
 @include( 'common.header-socket' )
