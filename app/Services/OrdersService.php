@@ -148,7 +148,7 @@ class OrdersService
          *                  WARNING
          * ------------------------------------------
          * all what follow will proceed database 
-         * modification. All verification on current order
+         * modification. All verifications on current order
          * should be made prior this section
          */
         $order      =   $this->__initOrder( $fields, $paymentStatus, $order );
@@ -1071,7 +1071,7 @@ class OrdersService
          * so that it can be reused 
          */
         $items  =  collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
-            $this->__checkQuantityAvailability( 
+            $this->checkQuantityAvailability( 
                 $orderProduct[ 'product' ], 
                 $orderProduct[ 'unitQuantity' ],
                 $orderProduct,
@@ -1081,7 +1081,7 @@ class OrdersService
             return $orderProduct;
         });
 
-        OrderAfterProductStockCheckedEvent::dispatch( $items );
+        OrderAfterProductStockCheckedEvent::dispatch( $items, $session_identifier );
 
         return $items;
     }
@@ -1109,7 +1109,7 @@ class OrdersService
         return $orderProduct;
     }
 
-    public function __checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
+    public function checkQuantityAvailability( $product, $productUnitQuantity, $orderProduct, $session_identifier )
     {
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
 

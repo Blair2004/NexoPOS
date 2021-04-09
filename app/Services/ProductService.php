@@ -1269,6 +1269,14 @@ class ProductService
         ];
     }
 
+    /**
+     * Update product variation
+     * 
+     * @param Product $parent
+     * @param int $id
+     * @param array $fields
+     * @return array
+     */
     public function updateProductVariation( $parent, $id, $fields )
     {
         $product    =   Product::find( $id );
@@ -1303,12 +1311,25 @@ class ProductService
         ];
     }
 
+    /**
+     * Will return the Product Unit Quantities 
+     * for the provided product
+     * @param Product $product
+     * @return array
+     */
     public function getProductUnitQuantities( Product $product )
     {
         $product->unit_quantities->each( fn( $quantity ) => $quantity->load( 'unit' ) );
         return $product->unit_quantities;
     }
 
+    /**
+     * Generate product barcode using product 
+     * configurations.
+     * 
+     * @param Product $product
+     * @return void
+     */
     public function generateProductBarcode( Product $product )
     {
         $this->barcodeService->generateBarcode(
