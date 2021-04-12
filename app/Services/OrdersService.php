@@ -1256,7 +1256,7 @@ class OrdersService
 
         $carbon     =   $this->dateService->now();
 
-        return $carbon->year . '-' . str_pad($carbon->month, 2, STR_PAD_LEFT) . '-' . str_pad($carbon->day, 2, STR_PAD_LEFT) . '-' . str_pad($count, 3, 0, STR_PAD_LEFT);
+        return $carbon->format( 'y' ) . $carbon->format( 'm' ) . $carbon->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
     }
 
     private function __initOrder( $fields, $paymentStatus, $order )
