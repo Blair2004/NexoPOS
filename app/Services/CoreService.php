@@ -73,21 +73,50 @@ class CoreService
         $this->option       =   $option;
     }
 
+    /**
+     * Returns a boolean if the system
+     * is installed or not. returns "true" if the system is installed
+     * and "false" if it's not.
+     * 
+     * @return boolean
+     */
     public function installed()
     {
         return Helper::installed();
     }
 
+    /**
+     * Returns a filtered route to which apply
+     * the filter "ns-route".
+     * 
+     * @param string $route
+     * @param array $params
+     * @return string
+     */
     public function route( $route, $params = [])
     {
         return Hook::filter( 'ns-route', false, $route, $params ) ?: route( $route, $params );
     }
 
+    /**
+     * Returns a filtred route name to which apply
+     * the filter "ns-route-name".
+     * 
+     * @param string $name
+     * @return string $name
+     */
     public function routeName( $name )
     {
         return Hook::filter( 'ns-route-name', $name );
     }
 
+    /**
+     * Returns a filtred URL to which
+     * apply the filter "ns-url" hook.
+     * 
+     * @param string $url
+     * @return string $url
+     */
     public function url( $url )
     {
         return url( Hook::filter( 'ns-url', $url ) );
@@ -107,6 +136,12 @@ class CoreService
         }
     }    
 
+    /**
+     * Will determine if a user is allowed
+     * to perform a specific action (using a permission)
+     * @param array $permissions
+     * @return boolean;
+     */
     public function allowedTo( $permissions ): bool
     {
         $passed     =   false;
@@ -124,5 +159,15 @@ class CoreService
         });
 
         return $passed;
+    }
+
+    /**
+     * check if the logged user has a specific role.
+     * @param string $role 
+     * @return boolean
+     */
+    public function hasRole( $role )
+    {
+        return Auth::user()->role->namespace === $role;
     }
 }

@@ -37,10 +37,10 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => false,
-                'host'  => env( 'SESSION_DOMAIN' ),
-                'port'  =>  6001,
-                'scheme' => 'http'
+                'useTLS' => env( 'NS_SOCKET_SECURED' ) ? true : false,
+                'host'  => env( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) ),
+                'port'  =>  env( 'NS_SOCKET_PORT', 6001 ),
+                'scheme' => env( 'NS_SOCKET_SCHEME', 'http' )
             ],
         ],
 

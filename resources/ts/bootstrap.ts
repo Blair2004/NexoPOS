@@ -60,11 +60,15 @@ if ( ns.websocket.enabled ) {
     window.Echo             =   new Echo({
         broadcaster: 'pusher',
         key: ns.websocket.key,
-        wsHost: window.location.hostname,
-        namespace: '',
+        wsHost: ns.websocket.host,
         wsPort: ns.websocket.port,
-        forceTLS: false,
+        wssPort: ns.websocket.port,
+        namespace: '',
+        forceTLS: ns.websocket.secured,
         disableStats: true,
+        encrypted: ns.websocket.secured,
+        enabledTransports: ns.websocket.secured ? [ 'ws', 'wss' ] : [ 'ws' ],
+        disabledTransports: ns.websocket.secured ? ['sockjs', 'xhr_polling', 'xhr_streaming'] : []
     })
 }
 
