@@ -136,6 +136,7 @@ const nsDashboardAside  =   new Vue({
     el: '#dashboard-header',
     data: {
         menuToggled: false,
+        sidebar: 'visible',
     },
     components,
     methods: {
@@ -144,7 +145,7 @@ const nsDashboardAside  =   new Vue({
         },
         toggleSideMenu() {
             if ([ 'lg', 'xl' ].includes( nsScreen.breakpoint ) ) {
-                nsState.setState({ sidebar: this.sidebar === 'collapsed' ? 'visible': 'collapsed' });    
+                nsState.setState({ sidebar: this.sidebar === 'hidden' ? 'visible': 'hidden' });    
             } else {
                 nsState.setState({ sidebar: this.sidebar === 'hidden' ? 'visible': 'hidden' });
             }
