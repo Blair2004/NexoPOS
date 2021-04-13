@@ -7,6 +7,6 @@ ns.websocket                =   {
     port: `{{ env( 'NS_SOCKET_PORT' ) }}`,
     host: `{{ env( 'NS_SOCKET_DOMAIN' ) }}`,
     enabled: <?php echo env( 'NS_SOCKET_ENABLED' ) ? 'true' : 'false' ;?>,
-    secured: <?php echo env( 'NS_SOCKET_SECURED', false ) ? 'false' : 'true';?> 
+    secured: <?php echo env( 'NS_SOCKET_SECURED', false ) ? 'true' : 'false';?> 
 }
 </script>
