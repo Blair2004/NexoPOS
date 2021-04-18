@@ -33,7 +33,7 @@ class ProductFactory extends Factory
             'tax_type'              =>  $taxType,
             'tax_group_id'          =>  $taxGroup->id, // assuming there is only one group
             'stock_management'      =>  $this->faker->randomElement([ 'enabled', 'disabled' ]),
-            'barcode_type'          =>  $this->faker->randomElement([ 'ean8', 'ean13' ]),
+            'barcode_type'          =>  $this->faker->randomElement([ 'ean13' ]),
             'sku'                   =>  $this->faker->word . date( 's' ),
             'type'                  =>  $this->faker->randomElement([ 'materialized', 'dematerialized']),
             'unit_group'            =>  $unitGroup->id,

@@ -64,13 +64,16 @@ class MakeProcurementTest extends TestCase
                     ->get()
                     ->map( function( $product ) {
                     return $product->unitGroup->units->map( function( $unit ) use ( $product ) {
+                        $unitQuantity       =   $product->unit_quantities->filter( fn( $q ) => ( int ) $q->unit_id === ( int ) $unit->id )->first();
+
                         return ( object ) [
                             'unit'      =>  $unit,
-                            'unitQuantity'  =>  $product->unit_quantities->filter( fn( $q ) => ( int ) $q->unit_id === ( int ) $unit->id )->first(),
+                            'unitQuantity'  =>  $unitQuantity,
                             'product'   =>  $product
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
+
                     return [
                         'product_id'            =>  $data->product->id,
                         'gross_purchase_price'  =>  15,
@@ -81,7 +84,7 @@ class MakeProcurementTest extends TestCase
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
                                 $data->unitQuantity->sale_price,
                                 $margin
-                            ) 
+                            )
                         ),
                         'quantity'              =>  $faker->numberBetween(500,1000),
                         'tax_group_id'          =>  $taxGroup->id,

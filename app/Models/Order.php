@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Order extends NsModel
 {
     use HasFactory;
+
+    public $timestamps   =   false;
     
     protected $table    =   'nexopos_' . 'orders';
 

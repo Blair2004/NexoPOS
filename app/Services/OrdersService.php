@@ -1234,29 +1234,28 @@ class OrdersService
      * @todo we need to be able to
      * change the code format
      */
-    public function generateOrderCode()
+    public function generateOrderCode( $order )
     {
-        $now        =   $this->dateService->now()->toDateString();
+        $now        =   Carbon::parse( $order->created_at );
+        $today      =   $now->toDateString();
         $count      =   DB::table('nexopos_orders_count')
-            ->where('date', $now)
+            ->where('date', $today)
             ->value('count');
 
         if ($count === null) {
             $count  =   1;
             DB::table('nexopos_orders_count')
                 ->insert([
-                    'date'      =>  $now,
+                    'date'      =>  $today,
                     'count'     =>  $count
                 ]);
         }
 
         DB::table('nexopos_orders_count')
-            ->where('date', $now)
+            ->where('date', $today)
             ->increment('count');
 
-        $carbon     =   $this->dateService->now();
-
-        return $carbon->format( 'y' ) . $carbon->format( 'm' ) . $carbon->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
+        return $now->format( 'y' ) . $now->format( 'm' ) . $now->format( 'd' ) . '-' . str_pad( $count, 3, 0, STR_PAD_LEFT );
     }
 
     private function __initOrder( $fields, $paymentStatus, $order )
@@ -1266,7 +1265,13 @@ class OrdersService
          * a new instance is initialized.
          */
         if ( ! $order instanceof Order ) {
-            $order                      =   new Order;
+            $order                  =   new Order;
+
+            /**
+             * if the order has just been created
+             * then we'll define the "created_at" column.
+             */
+            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d' );
         }
 
         /**
@@ -1286,6 +1291,7 @@ class OrdersService
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
+        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d' );
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;
@@ -1295,8 +1301,14 @@ class OrdersService
         $order->author                  =   Auth::id();
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 ) ?: $this->computeOrderTaxValue( $fields, $order );
-        $order->code                    =   $order->code ?? $this->generateOrderCode(); // to avoid generating a new code
+        $order->code                    =   $order->code ?: ''; // to avoid generating a new code
         $order->save();
+
+        if ( $order->code === '' ) {
+            $order->code                    =   $this->generateOrderCode( $order ); // to avoid generating a new code
+            $order->save();
+        }
+
 
         return $order;
     }

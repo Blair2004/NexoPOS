@@ -30,6 +30,7 @@
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
+      <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
       <!--  -->
       <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
       <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->

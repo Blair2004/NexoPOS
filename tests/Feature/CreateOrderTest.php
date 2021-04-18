@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Services\CurrencyService;
 use Exception;
 use Laravel\Sanctum\Sanctum;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 use Faker\Factory;
 
@@ -30,7 +31,17 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
+        $dates          =   [];
+        $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDay();
+
+        for( $i = 0; $i < 7; $i++ ) {
+            $dates[]    =   $startOfWeek->addDay()->clone();
+        }
+
         for( $i = 0; $i < $this->count; $i++ ) {
+
+            $currentDate    =   Arr::random( $dates );
+
             /**
              * @var CurrencyService
              */
@@ -40,7 +51,7 @@ class CreateOrderTest extends TestCase
             $shippingFees   =   $faker->randomElement([100,150,200,250,300,350,400]);
             $discountRate   =   $faker->numberBetween(0,5);
 
-            $products       =   $products->map( function( $product ) use ( $faker ) {
+            $products           =   $products->map( function( $product ) use ( $faker ) {
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
                 return [
                     'product_id'            =>  $product->id,
@@ -100,11 +111,16 @@ class CreateOrderTest extends TestCase
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
                 ->getRaw();
 
+            $dateString         =   $currentDate->startOfDay()->addHours( 
+                $faker->numberBetween( 0,23 ) 
+            )->format( 'Y-m-d H:m:s' );
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
                     'customer_id'           =>  $customer->id,
                     'type'                  =>  [ 'identifier' => 'takeaway' ],
                     'discount_type'         =>  'percentage',
+                    'created_at'            =>  $dateString,
                     'discount_percentage'   =>  $discountRate,
                     'addresses'             =>  [
                         'shipping'          =>  [

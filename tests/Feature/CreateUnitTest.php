@@ -17,7 +17,7 @@ class CreateUnitTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateUnits()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
