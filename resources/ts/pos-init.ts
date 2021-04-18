@@ -449,7 +449,6 @@ export class POS {
                     return tax;
                 });
 
-
                 return resolve({
                     status: 'success',
                     data: { tax : groups[ order.tax_group_id ], order }
@@ -873,8 +872,9 @@ export class POS {
             order           =   response[ 'data' ].order;
         } catch( exception ) {
             if ( exception !== false && exception.message !== undefined ) {
-                throw exception.message;
+                nsSnackBar.error( exception.message || __( 'An unexpected error has occured while fecthing taxes.' ), __( 'OKAY' ), { duration: 0 }).subscribe();
             }
+            console.log( exception );
         }
 
         /**
@@ -899,6 +899,8 @@ export class POS {
                 .map( tax => tax.tax_value )
                 .reduce( ( before, after ) => before + after );
         }
+
+        console.log( order.total_coupons );
 
         order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;

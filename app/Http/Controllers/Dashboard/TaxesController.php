@@ -13,11 +13,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-use Tendoo\Core\Exceptions\NotFoundException;
-use Tendoo\Core\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 
 use App\Models\Tax;
 use App\Models\TaxGroup;
@@ -137,7 +133,18 @@ class TaxesController extends DashboardController
             return TaxGroup::with( 'taxes' )->get();
         }
 
-        return TaxGroup::findOrFail( $taxId )->with( 'taxes' )->first();
+        $taxGroup    =   TaxGroup::find( $taxId );
+
+        if ( ! $taxGroup instanceof TaxGroup ) {
+            throw new NotFoundException( sprintf(
+                __( 'Unable to retreive the requested tax group using the provided identifier "%s".' ),
+                $taxId
+            ) );
+        }
+
+        $taxGroup->with( 'taxes' );
+        
+        return $taxGroup;
     }
 
     /**

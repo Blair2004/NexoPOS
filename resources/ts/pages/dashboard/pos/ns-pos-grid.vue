@@ -156,7 +156,7 @@ export default {
         this.orderSubscription.unsubscribe();
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
-        this.this.screenSubscriber.unsubscribe();
+        this.screenSubscriber.unsubscribe();
         clearInterval( this.interval );
     },
     methods: {
@@ -254,7 +254,6 @@ export default {
         },
 
         updateBreadCrumb( parent ) {
-            console.log( parent );
             if ( parent ) {
                 const index     =   this.breadcrumb.filter( bread => bread.id === parent.id );
     
