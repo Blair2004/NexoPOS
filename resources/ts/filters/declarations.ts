@@ -1,4 +1,4 @@
 import { nsAbbreviate } from './abbreviate';
-import { nsCurrency } from './currency';
+import { nsCurrency, nsRawCurrency } from './currency';
 
-export { nsCurrency, nsAbbreviate };
+export { nsCurrency, nsAbbreviate, nsRawCurrency };

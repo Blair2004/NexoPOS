@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Classes\Hook;
 use App\Exceptions\NotEnoughPermissionException;
 use App\Services\Helpers\App;
+use App\Services\UpdateService;
 use Illuminate\Support\Facades\Auth;
 
 class CoreService
@@ -35,7 +36,7 @@ class CoreService
     public $store;
 
     /**
-     * @param UpdateService
+     * @var UpdateService $update
      */
     public $update;
 

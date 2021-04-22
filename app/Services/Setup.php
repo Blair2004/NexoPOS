@@ -13,6 +13,7 @@ use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 use App\Mails\SetupComplete;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Migration;
 use App\Models\Permission;
 use App\Services\Options;
 use App\Services\UserOptions;
@@ -119,11 +120,27 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        // Artisan::call( 'config:cache' );
         Artisan::call( 'migrate --path=/database/migrations/default' );
         Artisan::call( 'migrate --path=/database/migrations/create-tables' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
-        
+
+        /**
+         * we'll register all "schema-updates" migration
+         * as already run as these migration are supposed
+         * to be integrated ton "create-tables" files.
+         */
+        ns()->update
+            ->getMigrations()
+            ->each( function( $file ) {
+                $migration 	=	Migration::where( 'migration', $file )->first();
+                if ( ! $migration instanceof Migration ) {
+                    $migration 	            =	new Migration;
+                    $migration->migration 	=	$file;
+                    $migration->batch 	    =	0;
+                    $migration->save();
+                }
+            });
+
         $userID             =   rand(1,99);
         $user               =   new User;
         $user->id           =   $userID;
@@ -143,7 +160,7 @@ class Setup
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotenvEditor::setKey( 'NS_SOCKET_PORT', 6001 );
-        DotenvEditor::setKey( 'NS_SOCKET_ENABLED', false );
+        DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
         DotenvEditor::save();
 
         /**
@@ -152,8 +169,7 @@ class Setup
          */
         $this->options      =   app()->make( Options::class );
         $this->options->set( 'ns_store_name', $fields[ 'ns_store_name' ] );
-        $this->options->set( 'allow_registration', false );
-        $this->options->set( 'db_version', config( 'nexopos.db_version' ) );
+        $this->options->set( 'ns_registration_enabled', false );
 
         return [
             'status'    =>  'success',

@@ -142,7 +142,7 @@ class TaxesController extends DashboardController
             ) );
         }
 
-        $taxGroup->with( 'taxes' );
+        $taxGroup->load( 'taxes' );
         
         return $taxGroup;
     }

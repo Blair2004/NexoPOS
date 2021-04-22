@@ -15,9 +15,17 @@ class UpdateService
      * @param void
      * @return Collection
      */
-    public function getMigrations(): Collection
+    public function getMigrations( $ignoreMigrations = false ): Collection
     {
-        $migrations         =   Migration::get()->map( fn( $migration ) => $migration->migration );
+        /**
+         * in case the option ignoreMigration
+         * is set to "true".
+         */
+        $migrations         =   collect([]);
+        
+        if ( $ignoreMigrations === false ) {
+            $migrations         =   Migration::get()->map( fn( $migration ) => $migration->migration );
+        }
 
         $files              =   collect( Storage::disk( 'ns' )->allFiles( 'database/migrations' ) )->map( function( $file ) {
             $fileInfo       =   pathinfo( $file );

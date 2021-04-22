@@ -104,7 +104,7 @@ export default {
     computed: {
         expectedPayment() {
             const minimalPaymentPercent     =   this.order.customer.group.minimal_credit_payment;
-            return ( this.order.total * minimalPaymentPercent ) / 100;
+            return nsRawCurrency( ( this.order.total * minimalPaymentPercent ) / 100 );
         },
         order() {
             this.$popupParams.order.instalments     =   this.$popupParams.order.instalments.map( instalment => {
@@ -159,11 +159,11 @@ export default {
         __,
         refreshTotalPayments() {
             if ( this.order.instalments.length > 0 ) {
-                const totalInstalments      =   this.order.instalments
-                    .map( i => i.amount.value || 0 )
+                const totalInstalments      =   nsRawCurrency( this.order.instalments
+                    .map( i => parseFloat( i.amount.value ) || 0 )
                     .reduce( ( before, after ) => {
                         return parseFloat( before ) + parseFloat( after );
-                    });
+                    }) );
                 this.totalPayments          =    this.order.total - totalInstalments;
             } else {
                 this.totalPayments  =   0;
@@ -187,7 +187,12 @@ export default {
                             label: 'Amount',
                             disabled: this.expectedPayment > 0 && index === 0 ? true: false,
                             value: index === 0 ? this.expectedPayment : 0,
-                        }
+                        },
+                        readonly : {
+                            type: 'hidden',
+                            name: 'readonly',
+                            value: this.expectedPayment > 0 && index === 0 ? true: false
+                        },
                     }
                 });
 
@@ -218,9 +223,9 @@ export default {
                 }
             });
 
-            const totalInstalments      =   instalments
+            const totalInstalments      =   nsRawCurrency( instalments
                 .map( p => p.amount )
-                .reduce( (before, after) => parseFloat( before ) + parseFloat( after ) );
+                .reduce( (before, after) => parseFloat( before ) + parseFloat( after ) ) );
 
             if ( instalments.filter( instalment => instalment.date === undefined || instalment.date === '' ).length > 0 ) {
                 return nsSnackBar.error( __( 'One or more instalments has an invalid date.' ) ).subscribe();

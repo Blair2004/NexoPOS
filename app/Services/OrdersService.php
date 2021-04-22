@@ -247,7 +247,7 @@ class OrdersService
     {
         if ( isset( $fields[ 'instalments' ] ) && ! empty( $fields[ 'instalments' ] ) ) {
             $instalments    =   collect( $fields[ 'instalments' ] );
-            $total          =   $instalments->sum( 'amount' );
+            $total          =   Currency::define( $instalments->sum( 'amount' ) )->getRaw();
             $customer       =   Customer::find( $fields[ 'customer_id' ] );
 
             if ( $customer->group->minimal_credit_payment > 0 ) {
@@ -271,7 +271,7 @@ class OrdersService
             }
             
             if ( $total < ( float ) $fields[ 'total' ] ) {
-                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts that doesn\'t match the order total.' ) );
+                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which addionnated is not equal to the order total.' ) );
             }
 
             $instalments->each( function( $instalment ) {
@@ -2097,20 +2097,22 @@ class OrdersService
             $paidInstalments        =   $order->instalments()->where( 'paid', true )->sum( 'amount' );
             $otherInstalments       =   $order->instalments()->whereNotIn( 'id', $orderInstalments->only( 'id' )->toArray() )->sum( 'amount' );
             $dueInstalments         =   Currency::raw( $orderInstalments->sum( 'amount' ) );
+
     
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference  =   Currency::define( $order->tendered )
                     ->subtractBy( $paidInstalments )
-                    ->subtractBy( $otherInstalments )
+                    // ->subtractBy( $otherInstalments )
                     ->getRaw();
 
-                if ( $dueInstalments === abs( $payableDifference ) ) {
-                    $orderInstalments
-                        ->each( function( $instalment ) {
+                $orderInstalments
+                    ->each( function( $instalment ) use ( &$payableDifference ) {
+                        if ( $payableDifference - $instalment->amount >= 0 )  {
                             $instalment->paid   =   true;
                             $instalment->save();
-                    });
-                }
+                            $payableDifference 	-=	$instalment->amount;
+                        }
+                });
             }
         }
     }
