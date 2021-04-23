@@ -38,10 +38,22 @@ export default {
         return {
             order: {},
             title: '',
+            show: true,
         }
     },
     mounted() {
         this.popupCloser();
+        
+        this.show   =   POS.getHoldPopupEnabled(); // if the popup is enabled, it will be displayed.
+
+        /**
+         * if the popup won't show
+         * we'll resolve immediately
+         */
+        if ( ! this.show ) {
+            this.$popupParams.resolve({ title: this.title });
+        }
+
         this.$refs[ 'reference' ].focus();
         this.$refs[ 'reference' ].select();
         this.order  =   this.$popupParams.order;

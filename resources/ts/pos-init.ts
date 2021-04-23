@@ -42,6 +42,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _holdPopupEnabled       =   true;
     private _initialQueue: (() => Promise<StatusResponse>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
@@ -159,6 +160,7 @@ export class POS {
         this._customers.next([]);
         this._breadcrumbs.next([]);
         this.defineCurrentScreen();
+        this.setHoldPopupEnabled(true);
 
         this.processInitialQueue();
         this.refreshCart();
@@ -270,6 +272,16 @@ export class POS {
         });
 
         this.defineCurrentScreen();
+    }
+
+    public setHoldPopupEnabled( status = true )
+    {
+        this._holdPopupEnabled  =   status;
+    }
+
+    public getHoldPopupEnabled()
+    {
+        return this._holdPopupEnabled;
     }
 
     /**
@@ -900,9 +912,7 @@ export class POS {
                 .reduce( ( before, after ) => before + after );
         }
 
-        console.log( order.total_coupons );
-
-        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
+        order.total             =   ( order.subtotal + ( order.shipping || 0 ) + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;
         order.total_products    =   products.length
 
@@ -1152,7 +1162,6 @@ export class POS {
         for( let i = 0; i < this.orderTypeQueue.length; i++ ) {
             try {
                 const result    =   await this.orderTypeQueue[i].promise( selectedType );
-                console.log( result );
             } catch( exception ) {
                 console.log( exception );
             }
