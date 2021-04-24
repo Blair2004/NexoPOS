@@ -42,7 +42,7 @@ class CreateProductTest extends TestCase
         $taxService     =   app()->make( TaxService::class );
         $taxType        =   $faker->randomElement([ 'exclusive', 'inclusive' ]);
         $unitGroup      =   UnitGroup::first();
-        $sale_price     =   $faker->numberBetween(25,30);
+        $sale_price     =   $faker->numberBetween(5,10);
         $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
             ->get()
             ->map( fn( $cat ) => $cat->id );
