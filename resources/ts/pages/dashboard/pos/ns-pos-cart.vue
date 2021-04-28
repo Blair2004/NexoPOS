@@ -11,7 +11,7 @@
         </div>
         <div class="rounded shadow bg-white flex-auto flex overflow-hidden">
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
-                <div class="w-full p-2 border-b border-gray-300">
+                <div id="cart-toolbox" class="w-full p-2 border-b border-gray-300">
                     <div class="border border-gray-300 rounded overflow-hidden">
                         <div class="flex flex-wrap">
                             <div>
@@ -38,12 +38,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="w-full text-gray-700 font-semibold flex">
+                <div id="cart-table-header" class="w-full text-gray-700 font-semibold flex">
                     <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
                     <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
                     <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
                 </div>
-                <div class="flex flex-auto flex-col overflow-auto">
+                <div id="cart-products-table" class="flex flex-auto flex-col overflow-auto">
                     
                     <!-- Loop Procuts On Cart -->
 
@@ -101,7 +101,7 @@
                     <!-- End Loop -->
 
                 </div>
-                <div class="flex">
+                <div id="cart-products-summary" class="flex">
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'both'">
                         <tr>
                             <td width="200" class="border border-gray-300 p-2">
@@ -185,7 +185,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="h-16 flex flex-shrink-0 border-t border-gray-200">
+                <div class="h-16 flex flex-shrink-0 border-t border-gray-200" id="cart-bottom-buttons">
                     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
                         <i class="mr-2 text-xl lg:text-3xl las la-cash-register"></i> 
                         <span class="text-lg lg:text-2xl">Pay</span>

@@ -123,4 +123,9 @@ class Order extends NsModel
             ->where( 'final_payment_date', '<>', null )
             ->where( 'final_payment_date', '<', $date->now()->toDateTimeString() );
     }
+
+    public function scopePaymentStatusIn( $query, array $statuses )
+    {
+        return $query->whereIn( 'payment_status', $statuses );
+    }
 }

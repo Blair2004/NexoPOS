@@ -24,6 +24,6 @@ class {{ $name }} extends DashboardController
     **/
     public function index()
     {
-        return View::make( '{{ $module[ 'namespace' ] }}::index' );
+        return $this->view( '{{ $module[ 'namespace' ] }}::index' );
     }
 }
