@@ -163,8 +163,10 @@ export default {
         switchTo,
 
         computeGridWidth() {
-            this.gridItemsWidth     =   document.getElementById( 'grid-items' ).offsetWidth;
-            this.gridItemsHeight    =   document.getElementById( 'grid-items' ).offsetHeight;
+            if ( document.getElementById( 'grid-items' ) !== null ) {
+                this.gridItemsWidth     =   document.getElementById( 'grid-items' ).offsetWidth;
+                this.gridItemsHeight    =   document.getElementById( 'grid-items' ).offsetHeight;
+            }
         },
 
         cellSizeAndPositionGetter(item, index) {

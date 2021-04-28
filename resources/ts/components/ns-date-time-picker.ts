@@ -134,7 +134,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
             this.currentDay     =   date;
             this.currentDay.hours( this.hours );
             this.currentDay.minutes( this.minutes );
-            this.field.value    =   this.currentDay.format( 'YYYY-MM-DD HH:mm' );
+            this.field.value    =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
             this.$emit( 'change', this.field );
         },
         subMonth() {
