@@ -38,6 +38,7 @@ import NsOrderInvoice       from './pages/dashboard/orders/ns-order-invoice.vue'
 import NsPromptPopup        from './popups/ns-prompt-popup.vue';
 import NsAlertPopup         from './popups/ns-alert-popup.vue';
 import NsConfirmPopup       from './popups/ns-pos-confirm-popup.vue';
+import NsPOSLoadingPopup    from './popups/ns-pos-loading-popup.vue';
 import RawVueApexCharts     from 'vue-apexcharts';
 import VueHtmlToPaper       from 'vue-html-to-paper';
 
@@ -88,6 +89,7 @@ const components    =   Object.assign({
     NsPromptPopup,
     NsAlertPopup,
     NsConfirmPopup,
+    NsPOSLoadingPopup,
     NsOrderInvoice,
     VueApexCharts,
     ...baseComponents

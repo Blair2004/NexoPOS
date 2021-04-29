@@ -134,20 +134,8 @@ class OrdersController extends DashboardController
         }, 15 );
 
         return $this->view( 'pages.dashboard.orders.pos', [
-            'title'         =>  __( 'Proceeding Order &mdash; NexoPOS' ),
-            'orderTypes'    =>  [
-                [
-                    'identifier'    =>  'takeaway',
-                    'label'         =>  'Take Away',
-                    'icon'          =>  '/images/groceries.png',
-                    'selected'      =>  false
-                ], [
-                    'identifier'    =>  'delivery',
-                    'label'         =>  'Delivery',
-                    'icon'          =>  '/images/delivery.png',
-                    'selected'      =>  false
-                ]
-            ],
+            'title'             =>  __( 'Proceeding Order &mdash; NexoPOS' ),
+            'orderTypes'        =>  config( 'nexopos.orders.types' ),
             'options'           =>  [
                 'ns_pos_printing_document'              =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial'               =>  ns()->option->get( 'ns_orders_allow_partial', 'no' ),

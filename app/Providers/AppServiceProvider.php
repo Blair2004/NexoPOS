@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Classes\Hook;
+use App\Events\ModulesBootedEvent;
+use App\Events\ModulesLoadedEvent;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
@@ -33,6 +36,7 @@ use App\Services\ReportService;
 use App\Services\ResetService;
 use App\Services\WebSocketService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -212,6 +216,14 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( BarcodeService::class ),
             );
         });
+
+        /**
+         * When the module has started, 
+         * we can load the configuration.
+         */
+        Event::listen( function( ModulesBootedEvent $event ) {
+            $this->loadConfiguration();
+        });
     }
 
     /**
@@ -222,7 +234,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        
+    }
+
+    /**
+     * will trigger when the module
+     * are fully loaded to ensure
+     * they can modify the defined values.
+     */
+    protected function loadConfiguration()
+    {
         config([ 'nexopos.orders.statuses'      => [
             Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
             Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
@@ -232,5 +252,25 @@ class AppServiceProvider extends ServiceProvider
             Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
             Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
         ]]);
+
+        config([ 'nexopos.orders.types'         =>  Hook::filter( 'ns-orders-types', [
+            'takeaway'          =>  [
+                'identifier'    =>  'takeaway',
+                'label'         =>  'Take Away',
+                'icon'          =>  '/images/groceries.png',
+                'selected'      =>  false
+            ], 
+            'delivery'          =>  [
+                'identifier'    =>  'delivery',
+                'label'         =>  'Delivery',
+                'icon'          =>  '/images/delivery.png',
+                'selected'      =>  false
+            ]
+        ])]);
+
+        config([ 
+            'nexopos.orders.types-labels' =>   collect( config( 'nexopos.orders.types' ) )
+                ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
+        ]);
     }
 }
