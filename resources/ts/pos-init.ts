@@ -28,6 +28,7 @@ const NsPosResetButton          =   (<any>window).NsPosResetButton              
 const NsPosCashRegister         =   (<any>window).NsPosCashRegister             =   require( './pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button' ).default;
 const NsAlertPopup              =   (<any>window).NsAlertPopup                  =   require( './popups/ns-' + 'alert' + '-popup' ).default;
 const NsConfirmPopup            =   (<any>window).NsConfirmPopup                =   require( './popups/ns-pos-' + 'confirm' + '-popup' ).default;
+const NsPOSLoadingPopup         =   (<any>window).NsPOSLoadingPopup             =   require( './popups/ns-pos-' + 'loading' + '-popup' ).default;
 const NsPromptPopup             =   (<any>window).NsPromptPopup                 =   require( './popups/ns-' + 'prompt' + '-popup' ).default;
 const NsLayawayPopup            =   (<any>window).NsLayawayPopup                =   require( './popups/ns-pos-' + 'layaway' + '-popup' ).default;
 const NSPosShippingPopup        =   (<any>window).NsLayawayPopup                =   require( './popups/ns-pos-' + 'shipping' + '-popup' ).default;
@@ -251,7 +252,7 @@ export class POS {
          * the order accordingly
          */
         this.types.subscribe( types => {
-            const selected  =   types.filter( type => type.selected );
+            const selected  =   Object.values( types ).filter( type => type.selected );
 
             if ( selected.length > 0 ) {
                 const order     =   this.order.getValue();
@@ -618,7 +619,7 @@ export class POS {
                 /**
                  * we'll redefine the order type
                  */
-                order.type          =   this.types.getValue().filter( type => type.identifier === order.type )[0];
+                order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
 
                 /**
                  * the address is provided differently
@@ -874,7 +875,6 @@ export class POS {
             if ( exception !== false && exception.message !== undefined ) {
                 nsSnackBar.error( exception.message || __( 'An unexpected error has occured while fecthing taxes.' ), __( 'OKAY' ), { duration: 0 }).subscribe();
             }
-            console.log( exception );
         }
 
         /**
@@ -899,8 +899,6 @@ export class POS {
                 .map( tax => tax.tax_value )
                 .reduce( ( before, after ) => before + after );
         }
-
-        console.log( order.total_coupons );
 
         order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;
@@ -1152,7 +1150,6 @@ export class POS {
         for( let i = 0; i < this.orderTypeQueue.length; i++ ) {
             try {
                 const result    =   await this.orderTypeQueue[i].promise( selectedType );
-                console.log( result );
             } catch( exception ) {
                 console.log( exception );
             }

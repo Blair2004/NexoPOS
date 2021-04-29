@@ -4,7 +4,7 @@
             <h3 class="font-bold text-gray-700">Define The Order Type</h3>
         </div>
         <div class="grid grid-flow-row grid-cols-2 grid-rows-2">
-            <div @click="select( type )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'bg-blue-100' : ''" class="hover:bg-blue-100 h-56 flex items-center justify-center flex-col cursor-pointer border border-gray-200">
+            <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'bg-blue-100' : ''" class="hover:bg-blue-100 h-56 flex items-center justify-center flex-col cursor-pointer border border-gray-200">
                 <img :src="type.icon" alt="" class="w-32 h-32">
                 <h4 class="font-semibold text-xl my-2 text-gray-700">{{ type.label }}</h4>
             </div>
@@ -40,10 +40,11 @@ export default {
         resolveIfQueued,
 
         async select( type ) {
-            const index     =   this.types.indexOf( type );
-            this.types.forEach( type => type.selected = false );
-            this.types[ index ].selected    =   true;
-            const selectedType  =   this.types[ index ];
+            Object.values( this.types )
+                .forEach( _type => _type.selected = false );
+            
+            this.types[ type ].selected     =   true;
+            const selectedType              =   this.types[ type ];
 
             POS.types.next( this.types );
 

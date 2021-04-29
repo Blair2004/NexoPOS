@@ -4,6 +4,7 @@ namespace App\Providers;
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
 use App\Events\ModulesLoadedEvent;
+use App\Events\ModulesBootedEvent;
 
 class ModulesServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,12 @@ class ModulesServiceProvider extends ServiceProvider
         });
 
         $this->commands( $this->modulesCommands );
+
+        /**
+         * trigger an event when all the module
+         * has successfully booted.
+         */
+        ModulesBootedEvent::dispatch();
     }
 
     /**
