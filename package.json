@@ -47,7 +47,7 @@
     "numeral": "^2.0.6",
     "postcss": "^8.1.10",
     "rx": "^4.1.0",
-    "rxjs": "^6.6.3",
+    "rxjs": "^7.0.0",
     "tailwindcss": "^2.0.4",
     "twitter_cldr": "^2.2.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
