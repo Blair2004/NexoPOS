@@ -94,6 +94,12 @@ class OrdersService
         $this->taxService       =   $taxService;
     }
 
+    /**
+     * Create an order on NexoPOS.
+     * @param array $fields
+     * @param Order|null $order (optional)
+     * @return array
+     */
     public function create( $fields, Order $order = null )
     {
         $customer               =   $this->__customerIsDefined($fields);
@@ -218,6 +224,13 @@ class OrdersService
         ];
     }
 
+    /**
+     * Will save order installments if 
+     * it's provider
+     * @param Order $order
+     * @param array $instalments
+     * @return void
+     */
     public function __saveOrderInstalments( Order $order, $instalments = [] )
     {
         if ( ! empty( $instalments ) ) {
@@ -887,6 +900,12 @@ class OrdersService
         ];
     }
 
+    /**
+     * Compute an order total based
+     * on provided data
+     * @param array $data
+     * @return array $order
+     */
     private function __computeOrderTotal($data)
     {
         /**
