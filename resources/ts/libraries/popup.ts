@@ -93,7 +93,7 @@ export class Popup {
         });
 
         /**
-         * Let's intanciaate the component
+         * Let's intanciate the component
          * and mount it
          */
         this.instance.template          =   component?.options?.template || undefined;
