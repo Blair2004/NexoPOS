@@ -1290,7 +1290,7 @@ class OrdersService
              * if the order has just been created
              * then we'll define the "created_at" column.
              */
-            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d' );
+            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d h:m:s' );
         }
 
         /**
@@ -1310,7 +1310,7 @@ class OrdersService
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
-        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d' );
+        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d h:m:s' );
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;

@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Enums\NotificationsEnums;
+use App\Events\NotificationCreatedEvent;
 use App\Events\NotificationDeletedEvent;
 use App\Events\NotificationDispatchedEvent;
 use App\Models\Notification;
@@ -19,6 +20,7 @@ class NotificationService
     private $url;
     private $identifier;
     private $source;
+    private $notification;
     
     public function create( $config ) 
     {
@@ -59,6 +61,8 @@ class NotificationService
                 $this->__makeNotificationFor( $user );
             });
         }
+
+        NotificationCreatedEvent::dispatch();
     }
 
     /**
@@ -73,7 +77,7 @@ class NotificationService
 
     private function __makeNotificationFor( $user )
     {
-        $notification                   =   Notification::identifiedBy( $this->identifier )
+        $this->notification                   =   Notification::identifiedBy( $this->identifier )
             ->for( $user->id )
             ->first();
 
@@ -82,26 +86,26 @@ class NotificationService
          * has already been issued for the user, we should avoid
          * issuing new notification.
          */
-        if ( ! $notification instanceof Notification ) {
-            $notification                   =   new Notification;
-            $notification->user_id          =   $user->id;
-            $notification->title            =   $this->title;
-            $notification->description      =   $this->description;
-            $notification->dismissable      =   $this->dismissable;
-            $notification->source           =   $this->source;
-            $notification->url              =   $this->url;
-            $notification->identifier       =   $this->identifier;
-            $notification->save();
+        if ( ! $this->notification instanceof Notification ) {
+            $this->notification                   =   new Notification;
+            $this->notification->user_id          =   $user->id;
+            $this->notification->title            =   $this->title;
+            $this->notification->description      =   $this->description;
+            $this->notification->dismissable      =   $this->dismissable;
+            $this->notification->source           =   $this->source;
+            $this->notification->url              =   $this->url;
+            $this->notification->identifier       =   $this->identifier;
+            $this->notification->save();
         } else {
-            $notification->title            =   $this->title;
-            $notification->description      =   $this->description;
-            $notification->dismissable      =   $this->dismissable;
-            $notification->source           =   $this->source;
-            $notification->url              =   $this->url;
-            $notification->save();
+            $this->notification->title            =   $this->title;
+            $this->notification->description      =   $this->description;
+            $this->notification->dismissable      =   $this->dismissable;
+            $this->notification->source           =   $this->source;
+            $this->notification->url              =   $this->url;
+            $this->notification->save();
         }
 
-        NotificationDispatchedEvent::dispatch( $notification );
+        NotificationDispatchedEvent::dispatch( $this->notification );
     }
 
     public function dispatchForUsers( Collection $users ) 
