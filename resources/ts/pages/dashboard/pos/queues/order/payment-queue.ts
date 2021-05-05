@@ -12,3 +12,5 @@ export class PaymentQueue implements Queue {
         })
     }
 }
+
+(<any>window).PaymentQueue    =   PaymentQueue;

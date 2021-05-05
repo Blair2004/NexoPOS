@@ -187,20 +187,20 @@
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-gray-200" id="cart-bottom-buttons">
                     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
-                        <i class="mr-2 text-xl lg:text-3xl las la-cash-register"></i> 
-                        <span class="text-lg lg:text-2xl">Pay</span>
+                        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
+                        <span class="text-lg hidden md:inline lg:text-2xl">Pay</span>
                     </div>
                     <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
-                        <i class="mr-2 text-xl lg:text-3xl las la-pause"></i> 
-                        <span class="text-lg lg:text-2xl">Hold</span>
+                        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
+                        <span class="text-lg hidden md:inline lg:text-2xl">Hold</span>
                     </div>
                     <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
-                        <i class="mr-2 text-xl lg:text-3xl las la-percent"></i> 
-                        <span class="text-lg lg:text-2xl">Discount</span>
+                        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
+                        <span class="text-lg hidden md:inline lg:text-2xl">Discount</span>
                     </div>
                     <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
-                        <i class="mr-2 text-xl lg:text-3xl las la-trash"></i> 
-                        <span class="text-lg lg:text-2xl">Void</span>
+                        <i class="mr-2 text-2xl lg:text-xl las la-trash"></i> 
+                        <span class="text-lg hidden md:inline lg:text-2xl">Void</span>
                     </div>
                 </div>
             </div>

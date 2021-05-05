@@ -16,3 +16,5 @@ export class ProductsQueue implements Queue {
         })
     }
 }
+
+(<any>window).ProductsQueue    =   ProductsQueue;

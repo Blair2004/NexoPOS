@@ -15,3 +15,5 @@ export class CustomerQueue implements Queue {
         });
     }
 }
+
+(<any>window).CustomerQueue    =   CustomerQueue;
