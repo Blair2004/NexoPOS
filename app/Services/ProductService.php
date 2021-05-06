@@ -564,6 +564,7 @@ class ProductService
              * available on the group variable, that's why we define
              * explicitely how everything is saved here.
              */
+            $unitQuantity->sale_price               =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
             $unitQuantity->sale_price_edit          =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
             $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
             $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
