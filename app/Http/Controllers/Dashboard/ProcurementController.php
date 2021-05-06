@@ -20,6 +20,8 @@ use App\Services\ProcurementService;
 use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
 use App\Models\Procurement;
+use App\Models\Product;
+use App\Services\ProductService;
 use Tendoo\Core\Exceptions\AccessDeniedException;
 
 
@@ -32,6 +34,11 @@ class ProcurementController extends DashboardController
      **/
     protected $procurementService;
 
+    /** 
+     * @var ProductService 
+     **/
+    protected $productService;
+
     /**
      * @var Options
      */
@@ -39,6 +46,7 @@ class ProcurementController extends DashboardController
 
     public function __construct(
         ProcurementService $procurementService,
+        ProductService $productService,
         Options $options
     )
     {
@@ -46,6 +54,7 @@ class ProcurementController extends DashboardController
 
         $this->validation           =   new Validation;
         $this->procurementService   =   $procurementService;
+        $this->productService       =   $productService;
         $this->options              =   $options;
     }
 
@@ -223,6 +232,23 @@ class ProcurementController extends DashboardController
             'procurement'   =>  $procurement,
             'options'       =>  $this->options
         ]);
+    }
+
+    public function searchProduct( Request $request )
+    {
+        $products    =   $this->productService->searchProduct( $request->input( 'search' ) );
+
+        if ( ! $products->isEmpty() ) {
+            return [
+                'from'      =>  'products',
+                'products'  =>  $products
+            ];
+        } 
+
+        return [
+            'from'      =>  'procurements',
+            'product'   =>  $this->procurementService->searchProduct( $request->input( 'search' ) )
+        ];
     }
 }
 

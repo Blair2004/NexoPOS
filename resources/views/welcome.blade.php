@@ -4,7 +4,7 @@
     <div id="page-container" class="h-full w-full bg-gray-300 flex">
         <div class="container flex-auto flex-col items-center justify-center flex m-4 sm:mx-auto">
             <div class="flex justify-center items-center py-6">
-                <h2 class="text-6xl font-bold text-transparent bg-clip-text from-blue-500 to-purple-400 bg-gradient-to-br">NexoPOS</h2>
+                <img class="w-32" src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" alt="NexoPOS">
             </div>
             <div class="rounded shadow bg-white w-full md:w-1/2 lg:w-1/3 overflow-hidden">
                 <div id="section-header" class="p-4">

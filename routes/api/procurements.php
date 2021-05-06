@@ -10,6 +10,7 @@ Route::get( 'procurements/{id}/refresh', [ ProcurementController::class, 'refres
 
 Route::post( 'procurements/{id}/products', [ ProcurementController::class, 'procure' ]);
 Route::post( 'procurements', [ ProcurementController::class, 'create' ]);
+Route::post( 'procurements/products/search', [ ProcurementController::class, 'searchProduct' ]);
 
 Route::put( 'procurements/{procurement}', [ ProcurementController::class, 'edit' ]);
 Route::put( 'procurements/{id}/products/{product_id}', [ ProcurementController::class, 'editProduct' ]);

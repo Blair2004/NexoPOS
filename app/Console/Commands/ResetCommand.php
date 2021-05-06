@@ -66,9 +66,8 @@ class ResetCommand extends Command
      */
     private function hardReset()
     {
-        $this->resetService->hardReset();
-
-        $this->info( 'The database has been cleared' );
+        $result     =   $this->resetService->hardReset();
+        $this->info( $result[ 'message' ] );
     }
 
     /**

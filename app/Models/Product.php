@@ -118,6 +118,11 @@ class Product extends NsModel
         return $this->hasMany( ProductGallery::class, 'product_id', 'id' );
     }
 
+    public function procurementHistory()
+    {
+        return $this->hasMany( ProcurementProduct::class, 'product_id', 'id' );
+    }
+
     /**
      * Filter query by getting products that are variations
      * @param QueryBuilder $query

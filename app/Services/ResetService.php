@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Classes\Schema;
+use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
@@ -98,6 +99,8 @@ class ResetService
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
         DotenvEditor::save();
+
+        Migration::truncate();
 
         Artisan::call( 'key:generate' );
 

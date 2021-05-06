@@ -398,6 +398,7 @@ class ProcurementService
             $procurementProduct->product_id                 =   $procuredProduct[ 'product_id' ];
             $procurementProduct->purchase_price             =   $procuredProduct[ 'purchase_price' ];
             $procurementProduct->quantity                   =   $procuredProduct[ 'quantity' ];
+            $procurementProduct->available_quantity         =   $procuredProduct[ 'quantity' ];
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
@@ -406,7 +407,7 @@ class ProcurementService
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
-            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->unit_id . '-' . $procurementProduct->id;
+            $procurementProduct->barcode                    =   str_pad( $product->barcode, 5, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->unit_id, 3, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->id, 3, '0', STR_PAD_LEFT );
             $procurementProduct->save();
 
             
@@ -917,5 +918,19 @@ class ProcurementService
             default :
                 return $label;
         }
+    }
+
+    public function searchProduct( $argument )
+    {
+        $procurementProduct     =   ProcurementProduct::where( 'barcode', $argument )
+            ->with([ 'unit', 'procurement' ])
+            ->first();
+
+        $procurementProduct->unit_quantity  =   $this->productService->getUnitQuantity( 
+            $procurementProduct->product_id, 
+            $procurementProduct->unit_id 
+        );
+
+        return $procurementProduct;
     }
 }

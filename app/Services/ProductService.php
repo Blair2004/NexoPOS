@@ -1344,4 +1344,27 @@ class ProductService
             );
         });
     }
+
+    public function searchProduct( $argument, $limit = 5 )
+    {
+        return Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+            ->searchable()
+            ->with( 'unit_quantities.unit' )
+            ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
+            ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
+            ->limit( $limit )
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    });
+                }
+
+                return $product;
+            });
+    }
 }

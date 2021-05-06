@@ -6,7 +6,7 @@ import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import NsManageProducts from './manage-products';
 import { Tax } from "@/libraries/tax";
 import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
-
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-procurement',
     mounted() {
@@ -122,6 +122,8 @@ export default {
     },
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
+        __,
+
         computeTotal() {
 
             this.totalTaxValues = 0;
@@ -332,7 +334,7 @@ export default {
             this.form.products.forEach( product => {
                 if ( ! parseFloat( product.procurement.quantity ) >= 1 ) {
                     product.procurement.$invalid    =   true;
-                } else if ( product.unit_id === 0 ) {
+                } else if ( product.procurement.unit_id === 0 ) {
                     product.procurement.$invalid    =   true;
                 } else {
                     product.procurement.$invalid    =   false;
@@ -422,7 +424,7 @@ export default {
         <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
+                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">{{ __( 'No title is provided' ) }}</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
                     </div>
@@ -471,8 +473,8 @@ export default {
                                     <div class="shadow bg-white relative z-10">
                                         <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b border-gray-300 p-2 text-gray-700">
                                             <span class="block font-bold text-gray-700">{{ product.name }}</span>
-                                            <span class="block text-sm text-gray-600">SKU : {{ product.sku }}</span>
-                                            <span class="block text-sm text-gray-600">Barcode : {{ product.barcode }}</span>                                                
+                                            <span class="block text-sm text-gray-600">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
+                                            <span class="block text-sm text-gray-600">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
                                         </div>
                                     </div>
                                 </div>
