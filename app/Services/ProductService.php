@@ -935,14 +935,16 @@ class ProductService
          * @param id unit_id
          * @param float $unit_price
          * @param float total_price
+         * @param int procurement_product_id
          * @param string $description
          * @param float quantity
          * @param string sku
          * @param string $unit_identifier
          */       
-        $product        =   isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
-        $product_id     =   $product->id;
-        $unit_id        =   isset( $unit_id ) ? $unit_id : Unit::identifier( $unit_identifier )->firstOrFail()->id;
+        $product                =   isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
+        $product_id             =   $product->id;
+        $unit_id                =   isset( $unit_id ) ? $unit_id : Unit::identifier( $unit_identifier )->firstOrFail()->id;
+        $procurementProduct     =   isset( $procurement_product_id ) ? ProcurementProduct::find( $procurement_product_id ) : false;
 
         /**
          * let's check the different 
@@ -1011,6 +1013,15 @@ class ProductService
                  * @var array [ 'oldQuantity', 'newQuantity' ]
                  */
                 $result             =   $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+
+                /**
+                 * We should reduce the quantity if
+                 * we're dealing with a product that has 
+                 * accurate stock tracking
+                 */
+                if ( $procurementProduct instanceof ProcurementProduct ) {
+                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
+                }
             } else {
     
                 /**
@@ -1019,6 +1030,15 @@ class ProductService
                  * @var array [ 'oldQuantity', 'newQuantity' ]
                  */
                 $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+
+                /**
+                 * We should reduce the quantity if
+                 * we're dealing with a product that has 
+                 * accurate stock tracking
+                 */
+                if ( $procurementProduct instanceof ProcurementProduct ) {
+                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
+                }
             }
         }
 
@@ -1041,6 +1061,23 @@ class ProductService
         event( new ProductAfterStockAdjustmentEvent( $history ) );
 
         return $history;
+    }
+
+    /**
+     * Update procurement product quantity
+     * @param ProcurementProduct $procurementProduct
+     * @param int $quantity
+     * @param string $action
+     */
+    public function updateProcurementProductQuantity( $procurementProduct, $quantity, $action )
+    {
+        if ( $action === ProcurementProduct::STOCK_INCREASE ) {
+            $procurementProduct->available_quantity     +=  $quantity;
+        } else if ( $action === ProcurementProduct::STOCK_REDUCE ) {
+            $procurementProduct->available_quantity     -=  $quantity;
+        }
+
+        $procurementProduct->save();
     }
 
     /**

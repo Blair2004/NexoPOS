@@ -926,10 +926,12 @@ class ProcurementService
             ->with([ 'unit', 'procurement' ])
             ->first();
 
-        $procurementProduct->unit_quantity  =   $this->productService->getUnitQuantity( 
-            $procurementProduct->product_id, 
-            $procurementProduct->unit_id 
-        );
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            $procurementProduct->unit_quantity  =   $this->productService->getUnitQuantity( 
+                $procurementProduct->product_id, 
+                $procurementProduct->unit_id 
+            );
+        }
 
         return $procurementProduct;
     }

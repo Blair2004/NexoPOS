@@ -961,14 +961,7 @@ class OrdersService
         $gross          =   0;
 
         $products->each(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
-            /**
-             * this should run only if the product looped doesn't include an identifier.
-             * Usually if it's the case, the product is supposed to have been already handled before.
-             */
-            // if ( empty( $product[ 'id' ] ) ) {
-            // }
-            
+           
             /**
              * storing the product
              * history as a sale

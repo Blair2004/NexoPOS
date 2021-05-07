@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\ProcurementCrud;
+use App\Crud\ProcurementProductCrud;
 use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -20,7 +21,9 @@ use App\Services\ProcurementService;
 use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
 use App\Models\Procurement;
+use App\Models\ProcurementProduct;
 use App\Models\Product;
+use App\Models\Unit;
 use App\Services\ProductService;
 use Tendoo\Core\Exceptions\AccessDeniedException;
 
@@ -236,7 +239,28 @@ class ProcurementController extends DashboardController
 
     public function searchProduct( Request $request )
     {
-        $products    =   $this->productService->searchProduct( $request->input( 'search' ) );
+        $products    =   Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
+            ->searchable()
+            ->trackingDisabled()
+            ->with( 'unit_quantities.unit' )
+            ->where( function( $query ) use ( $request ) {
+                $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
+                ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
+            })
+            ->limit( 5 )
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    });
+                }
+
+                return $product;
+            });
 
         if ( ! $products->isEmpty() ) {
             return [
@@ -249,6 +273,16 @@ class ProcurementController extends DashboardController
             'from'      =>  'procurements',
             'product'   =>  $this->procurementService->searchProduct( $request->input( 'search' ) )
         ];
+    }
+
+    public function getProcurementProducts()
+    {
+        return ProcurementProductCrud::table();
+    }
+
+    public function editProcurementProduct( ProcurementProduct $product )
+    {
+        return ProcurementProductCrud::form( $product );
     }
 }
 

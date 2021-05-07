@@ -319,9 +319,14 @@ class MenuService
                         'href'          =>  ns()->url( '/dashboard/procurements' )
                     ], 
                     'procurements-create'  =>  [
-                        'label' =>  __( 'New Procurement' ),
+                        'label'         =>  __( 'New Procurement' ),
                         'permissions'   =>  [ 'nexopos.create.procurements' ],
-                        'href'  =>  ns()->url( '/dashboard/procurements/create' )
+                        'href'          =>  ns()->url( '/dashboard/procurements/create' )
+                    ], 
+                    'procurements-products'  =>  [
+                        'label'         =>  __( 'Products' ),
+                        'permissions'   =>  [ 'nexopos.update.procurements' ],
+                        'href'          =>  ns()->url( '/dashboard/procurements/products' )
                     ], 
                 ]
             ],

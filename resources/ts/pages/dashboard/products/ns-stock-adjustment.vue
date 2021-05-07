@@ -35,10 +35,12 @@ export default {
                                     this.suggestions    =   result.products;
                                 }
                             } else {
+                                this.closeSearch();
                                 return nsSnackBar.error( __( 'Looks like no products matched the searched term.' ) ).subscribe();
                             }
                         } else if ( result.from === 'procurements' ) {
                             if ( result.product === null ) {
+                                this.closeSearch();
                                 return nsSnackBar.error( __( 'Looks like no products matched the searched term.' ) ).subscribe();
                             } else {
                                 this.addProductToList( result.product );
@@ -49,19 +51,29 @@ export default {
         },
 
         addProductToList( product ) {
+            const exists    =   this.products
+                .filter( __product => __product.procurement_product_id === product.id );
+
+            if ( exists.length > 0 ) {
+                this.closeSearch();
+                return nsSnackBar.error( __( 'The product already exists on the table.' ) ).subscribe();
+            }
+
             const finalProduct                  =   new Object;
             product.unit_quantity.unit          =   product.unit;
             finalProduct.quantities             =   [ product.unit_quantity ];
             finalProduct.name                   =   product.name;
             finalProduct.adjust_unit            =   product.unit_quantity;
 
-            finalProduct.adjust_quantity          =   1;
-            finalProduct.adjust_action            =   '',
-            finalProduct.adjust_reason            =   '',
-            finalProduct.adjust_value             =   0;
-            finalProduct.accurate_tracking        =     1;
-            finalProduct.procurement_id           =   product.procurement.id;
-            finalProduct.procurement_history    =   [{
+            finalProduct.adjust_quantity            =   1;
+            finalProduct.adjust_action              =   '',
+            finalProduct.adjust_reason              =   '',
+            finalProduct.adjust_value               =   0;
+            finalProduct.id                         =   product.product_id;
+            finalProduct.accurate_tracking          =   1;
+            finalProduct.available_quantity         =   product.available_quantity;
+            finalProduct.procurement_product_id     =   product.id;
+            finalProduct.procurement_history        =   [{
                 label: `${product.procurement.name} (${product.available_quantity})`,
                 value: product.id
             }]
@@ -71,19 +83,18 @@ export default {
         },
 
         addSuggestion( suggestion ) {
-            console.log( suggestion );
             forkJoin([
                 nsHttpClient.get( `/api/nexopos/v4/products/${suggestion.id}/units/quantities` ),
-                nsHttpClient.get( `/api/nexopos/v4/products/${suggestion.id}/procurements` )
+                // nsHttpClient.get( `/api/nexopos/v4/products/${suggestion.id}/procurements` )
             ]).subscribe( result => {
                     if ( result[0].length > 0 ) {
-                        suggestion.quantities           =   result[0];
-                        suggestion.adjust_quantity      =   1;
-                        suggestion.adjust_action        =   '',
-                        suggestion.adjust_reason        =   '',
-                        suggestion.adjust_unit          =   '',
-                        suggestion.adjust_value         =   0;
-                        suggestion.procurement_id       =   0;
+                        suggestion.quantities                       =   result[0];
+                        suggestion.adjust_quantity                  =   1;
+                        suggestion.adjust_action                    =   '',
+                        suggestion.adjust_reason                    =   '',
+                        suggestion.adjust_unit                      =   '',
+                        suggestion.adjust_value                     =   0;
+                        suggestion.procurement_product_id           =   0;
 
                         this.products.push( suggestion );
                         this.closeSearch();
@@ -92,12 +103,12 @@ export default {
                     }
 
                     if ( suggestion.accurate_tracking === 1 ) {
-                        suggestion.procurement_history      =   result[1].map( product => {
-                            return {
-                                label: `${product.procurement.name} (${product.available_quantity})`,
-                                value: product.procurement_id
-                            }
-                        })
+                        // suggestion.procurement_history      =   result[1].map( product => {
+                        //     return {
+                        //         label: `${product.procurement.name} (${product.available_quantity})`,
+                        //         value: product.id
+                        //     }
+                        // })
                     }
                 });
         },
@@ -106,7 +117,6 @@ export default {
             this.suggestions    =   [];
         },
         recalculateProduct( product ) {
-            console.log( product );
             if ( product.adjust_unit !== '' ) {
                 if ([ 'deleted', 'defective', 'lost' ].includes( product.adjust_action ) ) {
                     product.adjust_value        =   - ( product.adjust_quantity * product.adjust_unit.sale_price );
@@ -117,12 +127,20 @@ export default {
             this.$forceUpdate();
         },
         openQuantityPopup( product ) {
+            const oldQuantity   =   product.quantity;
             const promise   =   new Promise( ( resolve, reject ) => {
                 Popup.show( nsProcurementQuantityVue, { resolve, reject, quantity : product.adjust_quantity });
             });
 
             promise.then( result => {
+                if ( product.accurate_tracking !== undefined && result.quantity > product.available_quantity ) {
+                    return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                } else if ( result.quantity > product.adjust_unit.quantity ) {
+                    return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                }
+
                 product.adjust_quantity     =   result.quantity;
+
                 this.recalculateProduct( product );
             });
         },
@@ -219,7 +237,7 @@ export default {
                         <td class="p-2 text-center text-gray-700" colspan="6">{{ __( 'Search and add some products' ) }}</td>
                     </tr>
                     <tr :key="product.id" v-for="product of products">
-                        <td class="p-2 text-gray-600">{{ product.name }} ({{ product.adjust_unit.quantity || 0 }})</td>
+                        <td class="p-2 text-gray-600">{{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</td>
                         <td class="p-2 text-gray-600">
                             <select @change="recalculateProduct( product )" v-model="product.adjust_unit" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
                                 <option :key="quantity.id" v-for="quantity of product.quantities" :value="quantity">{{ quantity.unit.name }}</option>
@@ -231,7 +249,7 @@ export default {
                             </select>
                         </td>
                         <td class="p-2 text-gray-600">
-                            <select v-if="product.accurate_tracking === 1" @change="recalculateProduct( product )" v-model="product.procurement_id" name="" id="" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
+                            <select v-if="product.accurate_tracking === 1" @change="recalculateProduct( product )" v-model="product.procurement_product_id" name="" id="" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
                                 <option v-for="action of product.procurement_history" :key="action.value" :value="action.value">{{ action.label }}</option>
                             </select>
                         </td>

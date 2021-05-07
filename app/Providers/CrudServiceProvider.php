@@ -25,13 +25,13 @@ use App\Crud\TaxCrud;
 use App\Crud\TaxesGroupCrud;
 use App\Crud\UserCrud;
 use App\Crud\ProcurementCrud;
+use App\Crud\ProcurementProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Crud\RolesCrud;
 use App\Crud\UnpaidOrderCrud;
-use App\Models\ExpenseHistory;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -88,6 +88,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.registers': return RegisterCrud::class;
                 case 'ns.registers-hitory': return RegisterHistoryCrud::class;
                 case 'ns.procurements': return ProcurementCrud::class;
+                case 'ns.procurements-products': return ProcurementProductCrud::class;
                 case 'ns.roles': return RolesCrud::class;
             }
             return $namespace;

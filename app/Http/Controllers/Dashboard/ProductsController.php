@@ -500,11 +500,12 @@ class ProductsController extends DashboardController
          */
         foreach( $request->input( 'products' ) as $product ) {
             $results[]          =   $this->productService->stockAdjustment( $product[ 'adjust_action' ], [
-                'unit_price'    =>  $product[ 'adjust_unit' ][ 'sale_price' ],
-                'unit_id'       =>  $product[ 'adjust_unit' ][ 'unit_id' ],
-                'product_id'    =>  $product[ 'id' ],
-                'quantity'      =>  $product[ 'adjust_quantity' ],
-                'description'   =>  $product[ 'adjust_reason' ] ?? '',
+                'unit_price'                =>  $product[ 'adjust_unit' ][ 'sale_price' ],
+                'unit_id'                   =>  $product[ 'adjust_unit' ][ 'unit_id' ],
+                'procurement_product_id'    =>  $product[ 'procurement_product_id' ] ?? null,
+                'product_id'                =>  $product[ 'id' ],
+                'quantity'                  =>  $product[ 'adjust_quantity' ],
+                'description'               =>  $product[ 'adjust_reason' ] ?? '',
             ]);
         }
 
