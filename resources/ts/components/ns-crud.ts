@@ -76,6 +76,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 return `&page=${this.page}`
             }
             return '';
+        },
+        resultInfo() {
+            return __( 'displaying {perPage} on {items} items' )
+                .replace( '{perPage}', this.result.total )
+                .replace( '{items}', this.result.total )
         }
     },
     methods: {
@@ -339,24 +344,27 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         <div class="p-2 flex flex-col md:flex-row justify-between">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full bg-gray-200 p-1">
                 <select class="text-gray-800 outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
-                    <option selected value=""><slot name="bulk-label">bulk-label</slot></option>
+                    <option selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
                     <option v-for="action of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
-                <button @click="bulkDo()" class="h-8 w-8 outline-none hover:bg-blue-400 hover:text-white rounded-full bg-white flex items-center justify-center"><slot name="bulk-go">Go</slot></button>
+                <button @click="bulkDo()" class="h-8 w-8 outline-none hover:bg-blue-400 hover:text-white rounded-full bg-white flex items-center justify-center"><slot name="bulk-go">{{ __( 'Go' ) }}</slot></button>
             </div>
-            <div id="pagination" class="flex -mx-1">
-                <template v-if="result.current_page">
-                    <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
-                        <i class="las la-angle-double-left"></i>
-                    </a>
-                    <template v-for="_paginationPage of pagination">
-                        <a v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
-                        <a v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+            <div class="flex">
+                <div class="items-center flex text-gray-600 mx-4">{{ resultInfo }}</div>
+                <div id="pagination" class="flex -mx-1">
+                    <template v-if="result.current_page">
+                        <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                            <i class="las la-angle-double-left"></i>
+                        </a>
+                        <template v-for="_paginationPage of pagination">
+                            <a v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
+                            <a v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+                        </template>
+                        <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                            <i class="las la-angle-double-right"></i>
+                        </a>
                     </template>
-                    <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
-                        <i class="las la-angle-double-right"></i>
-                    </a>
-                </template>
+                </div>
             </div>
         </div>
     </div>
