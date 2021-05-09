@@ -136,7 +136,10 @@ class ModulesService
                 $config[ 'api-file' ]                   =   is_file( $apiRoutesPath ) ? $apiRoutesPath : false;
                 $config[ 'controllers-path' ]           =   $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ]   =   ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
+                $config[ 'relativePath' ]               =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR;
                 $config[ 'views-path' ]                 =   $currentModulePath . 'Resources' . DIRECTORY_SEPARATOR . 'Views';
+                $config[ 'views-relativePath' ]         =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Views';
+                $config[ 'lang-relativePath' ]          =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Lang';
                 $config[ 'dashboard-path' ]             =   $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ]                    =   false; // by default the module is set as disabled
                 
@@ -363,7 +366,7 @@ class ModulesService
      * Return the list of module as an array
      * @return array of modules
      */
-    public function get( $namespace = null )
+    public function get($namespace = null)
     {
         if ( $namespace !== null ) {
             return $this->modules[ $namespace ] ?? null;
@@ -436,7 +439,7 @@ class ModulesService
      */
     public function extract( $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( $module  = $this->get( $namespace ) ) {
             $zipFile        =   storage_path() . DIRECTORY_SEPARATOR . 'module.zip';
@@ -546,7 +549,7 @@ class ModulesService
      */
     public function upload( $file )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' ) ) {
             mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' );
@@ -701,7 +704,7 @@ class ModulesService
      */
     public function createSymLink( $moduleNamespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         Storage::disk( 'public' )->makeDirectory( 'modules' );
 
@@ -734,7 +737,7 @@ class ModulesService
      */
     public function removeSymLink( $moduleNamespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         $path       =   base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace;
 
@@ -843,7 +846,7 @@ class ModulesService
      */
     public function delete( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         /**
          * Check if module exists first
@@ -971,7 +974,7 @@ class ModulesService
      */
     public function enable( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( $module = $this->get( $namespace ) ) {
             /**
@@ -1051,7 +1054,7 @@ class ModulesService
      */
     public function disable( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
@@ -1254,7 +1257,7 @@ class ModulesService
      * it's explicitely disabled from the settings
      * @return void
      */
-    public function preventManagement()
+    public function checkManagementStatus()
     {
         if ( env( 'NS_MODULES_MANAGEMENT_DISABLED', false ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );

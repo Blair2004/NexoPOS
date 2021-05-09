@@ -20,7 +20,6 @@ import Echo from "laravel-echo";
 const Pusher    =   require('pusher-js');
 
 
-
 declare global {
     interface Window {
         _: Lodash,
@@ -116,26 +115,57 @@ const nsScreen          =   new class {
     }
 }
 
+class NsLanguage {
+    private languages   =   {};
+
+    constructor() {
+        this.boot();
+    }
+
+    async boot() {
+        return await this.loadJson( '/lang' );
+    }
+
+    loadJson( path ) {
+        return new Promise( ( resolve, reject ) => {
+            console.log( 'will load' );
+            nsHttpClient.get( `${path}/${ns.language}.json` )
+                .subscribe( ( result: any ) => {
+                    for( let key in result ) {
+                        this.languages[ key ]   =   result[ key ];
+                    }
+                    console.log( 'has loaded' );
+                    resolve( true );
+                });
+        });
+    }
+
+    getEntries() {
+        return this.languages;
+    }
+}
+
 const nsState           =   new State({
     sidebar: [ 'xs', 'sm', 'md' ].includes( nsScreen.breakpoint ) ? 'hidden' : 'visible'
 });
 
 nsHttpClient.defineClient( Axios );
 
-(window as any ).nsEvent          =   nsEvent;
-(window as any ).nsHttpClient     =   nsHttpClient;
-(window as any ).nsSnackBar       =   nsSnackBar;
-(window as any ).nsCurrency       =   nsCurrency;
-(window as any ).nsRawCurrency    =   nsRawCurrency;
-(window as any ).nsAbbreviate     =   nsAbbreviate;
-(window as any ).nsState          =   nsState;
-(window as any ).nsUrl            =   nsUrl;
-(window as any ).nsScreen         =   nsScreen;
-(window as any ).ChartJS          =   ChartJS;
-(window as any ).EventEmitter     =   EventEmitter;
-(window as any ).Popup            =   Popup;
-(window as any ).RxJS             =   RxJS;
-(window as any ).FormValidation   =   FormValidation;
-(window as any ).nsCrudHandler    =   nsCrudHandler;
+(window as any ).nsEvent            =   nsEvent;
+(window as any ).nsHttpClient       =   nsHttpClient;
+(window as any ).nsSnackBar         =   nsSnackBar;
+(window as any ).nsCurrency         =   nsCurrency;
+(window as any ).nsRawCurrency      =   nsRawCurrency;
+(window as any ).nsAbbreviate       =   nsAbbreviate;
+(window as any ).nsState            =   nsState;
+(window as any ).nsUrl              =   nsUrl;
+(window as any ).nsScreen           =   nsScreen;
+(window as any ).ChartJS            =   ChartJS;
+(window as any ).EventEmitter       =   EventEmitter;
+(window as any ).Popup              =   Popup;
+(window as any ).RxJS               =   RxJS;
+(window as any ).FormValidation     =   FormValidation;
+(window as any ).nsCrudHandler      =   nsCrudHandler;
+(window as any ).nsLanguage         =   new NsLanguage;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

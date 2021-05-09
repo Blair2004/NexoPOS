@@ -9,14 +9,14 @@
             <ns-spinner></ns-spinner>
         </div>
         <div class="flex w-full items-center justify-center py-4">
-            <a href="/sign-in" class="hover:underline text-blue-600 text-sm">Already registered ?</a>
+            <a href="/sign-in" class="hover:underline text-blue-600 text-sm">{{ __( 'Already registered ?' ) }}</a>
         </div>
         <div class="flex justify-between items-center bg-gray-200 p-3">
             <div>
-                <ns-button @click="register()" type="info">Register</ns-button>
+                <ns-button @click="register()" type="info">{{ __( 'Register' ) }}</ns-button>
             </div>
             <div>
-                <ns-link :href="'/sign-in'" type="success">Sign In</ns-link>
+                <ns-link :href="'/sign-in'" type="success">{{ __( 'Sign In' ) }}</ns-link>
             </div>
         </div>
     </div>
@@ -25,6 +25,7 @@
 import FormValidation from '@/libraries/form-validation';
 import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { forkJoin } from 'rxjs';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-register',
@@ -52,6 +53,7 @@ export default {
         });
     },
     methods: {
+        __,
         register() {
             const isValid   =   this.validation.validateFields( this.fields );            
 

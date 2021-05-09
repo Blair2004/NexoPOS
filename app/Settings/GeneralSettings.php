@@ -81,12 +81,10 @@ class GeneralSettings extends SettingsPage
                         ], [
                             'name'          =>  'ns_store_language',
                             'value'         =>  $options->get( 'ns_store_language' ),
-                            'options'         =>  Helper::kvToJsOptions([
-                                'en'       =>  __( 'English' ),
-                            ]),
-                            'label' =>  __( 'Language' ), 
+                            'options'         =>  Helper::kvToJsOptions( config( 'nexopos.languages' ) ),
+                            'label'         =>  __( 'Language' ), 
                             'type'          =>  'select',
-                            'description'   =>  __( 'Force account validation after the registration.' ),
+                            'description'   =>  __( 'Define the default fallback language.' ),
                         ], 
                     ]
                 ],

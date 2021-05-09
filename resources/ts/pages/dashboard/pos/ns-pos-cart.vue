@@ -2,11 +2,11 @@
     <div id="pos-cart" class="flex-auto flex flex-col">
         <div id="tools" class="flex pl-2" v-if="visibleSection === 'cart'">
             <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-white font-semibold text-gray-700">
-                <span>Cart</span>
+                <span>{{ __( 'Cart' ) }}</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
             <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
-                Products
+                {{ __( 'Products' ) }}
             </div>
         </div>
         <div class="rounded shadow bg-white flex-auto flex overflow-hidden">
@@ -17,20 +17,20 @@
                             <div>
                                 <button @click="openNotePopup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none">
                                     <i class="las la-comment"></i>
-                                    <span class="ml-1 hidden md:inline-block">Comments</span>
+                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
                                 </button>
                             </div>
                             <div>
                                 <button @click="selectTaxGroup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
                                     <i class="las la-balance-scale-left"></i>
-                                    <span class="ml-1 hidden md:inline-block">Taxes</span>
+                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
                                     <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.taxes.length }}</span>
                                 </button>
                             </div>
                             <div>
                                 <button @click="selectCoupon()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
                                     <i class="las la-tags"></i>
-                                    <span class="ml-1 hidden md:inline-block">Coupons</span>
+                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Coupons' ) }}</span>
                                     <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
@@ -39,9 +39,9 @@
                     </div>
                 </div>
                 <div id="cart-table-header" class="w-full text-gray-700 font-semibold flex">
-                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">Product</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">Quantity</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">Total</div>
+                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">{{ __( 'Product' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">{{ __( 'Quantity' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">{{ __( 'Total' ) }}</div>
                 </div>
                 <div id="cart-products-table" class="flex flex-auto flex-col overflow-auto">
                     
@@ -78,13 +78,13 @@
                                         <a
                                             :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
-                                        >Price : {{ product.unit_price | currency }}</a>
+                                        >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1"> 
-                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Discount <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Quantity : {{ product.quantity }}</a>
+                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity' ) }} : {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Total : {{ product.total_price | currency }}</span>
@@ -107,7 +107,7 @@
                             <td width="200" class="border border-gray-300 p-2">
                                 <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">Sub Total</td>
+                            <td width="200" class="border border-gray-300 p-2">{{ __( 'Sub Total' ) }}</td>
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.subtotal | currency }}</td>
                         </tr>
                         <tr>
@@ -145,7 +145,7 @@
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between">
-                                    <span>Sub Total</span>
+                                    <span>{{ __( 'Sub Total' ) }}</span>
                                     <span>{{ order.subtotal | currency }}</span>
                                 </div>
                             </td>
@@ -157,9 +157,9 @@
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between items-center">
                                     <p>
-                                        <span>Discount</span>
+                                        <span>{{ __( 'Discount' ) }}</span>
                                         <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                        <span v-if="order.discount_type === 'flat'">(Flat)</span>
+                                        <span v-if="order.discount_type === 'flat'">({{ __( 'Flat' ) }})</span>
                                     </p>
                                     <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
                                 </div>
@@ -178,7 +178,7 @@
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between w-full">
-                                    <span>Total</span>
+                                    <span>{{ __( 'Total' ) }}</span>
                                     <span>{{ order.total | currency }}</span>    
                                 </div>
                             </td>
@@ -188,19 +188,19 @@
                 <div class="h-16 flex flex-shrink-0 border-t border-gray-200" id="cart-bottom-buttons">
                     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">Pay</span>
+                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
                     </div>
                     <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">Hold</span>
+                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
                     </div>
                     <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
                         <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">Discount</span>
+                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
                     </div>
                     <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-trash"></i> 
-                        <span class="text-lg hidden md:inline lg:text-2xl">Void</span>
+                        <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Void' ) }}</span>
                     </div>
                 </div>
             </div>
@@ -208,7 +208,6 @@
     </div>
 </template>
 <script>
-
 import { Popup } from '@/libraries/popup';
 import PosPaymentPopup from '@/popups/ns-pos-payment-popup';
 import PosConfirmPopup from '@/popups/ns-pos-confirm-popup';
@@ -230,6 +229,7 @@ import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
 import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
 import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-pos-cart',
@@ -281,6 +281,7 @@ export default {
         this.productSubscribe.unsubscribe();
     },
     methods: {
+        __,
         switchTo,
 
         async selectCoupon() {

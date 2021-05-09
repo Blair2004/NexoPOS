@@ -159,7 +159,7 @@ class ProductUnitQuantitiesCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'product_id',
-                            'label' =>  __( 'Product_id' ),
+                            'label' =>  __( 'Product id' ),
                             'value' =>  $entry->product_id ?? '',
                         ], [
                             'type'  =>  'text',
@@ -174,7 +174,7 @@ class ProductUnitQuantitiesCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'unit_id',
-                            'label' =>  __( 'Unit_id' ),
+                            'label' =>  __( 'Unit Id' ),
                             'value' =>  $entry->unit_id ?? '',
                         ], [
                             'type'  =>  'text',

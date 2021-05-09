@@ -36,7 +36,9 @@ Route::get('/', function () {
     return view('welcome', [
         'title'     =>  __( 'Welcome &mdash; NexoPOS 4.x' )
     ]);
-});
+})->middleware([
+    'web',
+]);
 
 include_once( dirname( __FILE__ ) . '/intermediate.php' );
 

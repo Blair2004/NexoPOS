@@ -95,10 +95,10 @@ class RolesCrud extends CrudService
         return [
             'list_title'            =>  __( 'Roles List' ),
             'list_description'      =>  __( 'Display all roles.' ),
-            'no_entry'              =>  __( 'No roles has been registered' ),
+            'no_entry'              =>  __( 'No role has been registered.' ),
             'create_new'            =>  __( 'Add a new role' ),
             'create_title'          =>  __( 'Create a new role' ),
-            'create_description'    =>  __( 'Register a new role and save it.' ),
+            'create_description'    =>  __( 'Create a new role and save it.' ),
             'edit_title'            =>  __( 'Edit role' ),
             'edit_description'      =>  __( 'Modify  Role.' ),
             'back_to_list'          =>  __( 'Return to Roles' ),

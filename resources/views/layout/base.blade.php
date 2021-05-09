@@ -31,6 +31,12 @@ use App\Services\DateService;
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
         }
+
+        /**
+         * define the current language selected by the user or
+         * the language that applies to the system by default.
+         */
+        window.ns.language     =   '{{ app()->getLocale() }}';
     </script>
 @include( 'common.header-socket' )
 </head>

@@ -8,9 +8,7 @@
             </div>
             <div class="rounded shadow bg-white w-full md:w-1/2 lg:w-1/3 overflow-hidden">
                 <div id="section-header" class="p-4">
-                    <p class="text-gray-700 text-center b-8 text-sm">{{ __( 'If you see this page, this means NexoPOS 4.x is correctly installed on your system. 
-                        As this page is mean to be the frontend, NexoPOS 4.x doesn\'t have a frontend for the meantime. 
-                        This page shows useful link that will takes you to the important resources.' ) }}</p>
+                    <p class="text-gray-700 text-center b-8 text-sm">{{ __( 'If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn\'t have a frontend for the meantime. This page shows useful links that will take you to the important resources.' ) }}</p>
                 </div>
                 <div class="flex shadow bg-gray-100 border-t">
                     <div class="flex w-1/3"><a class="text-blue-600 text-sm w-full py-2 text-center hover:bg-gray-200" href="{{ ns()->route( 'ns.dashboard.home' ) }}">{{ __( 'Dashboard' ) }}</a></div>

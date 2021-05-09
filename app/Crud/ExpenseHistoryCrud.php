@@ -162,22 +162,22 @@ class ExpenseHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
+                            'label' =>  __( 'Created At' ),
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'expense_category_name',
-                            'label' =>  __( 'Expense_category_name' ),
+                            'label' =>  __( 'Expense Category Name' ),
                             'value' =>  $entry->expense_category_name ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'expense_id',
-                            'label' =>  __( 'Expense_id' ),
+                            'label' =>  __( 'Expense ID' ),
                             'value' =>  $entry->expense_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'expense_name',
-                            'label' =>  __( 'Expense_name' ),
+                            'label' =>  __( 'Expense Name' ),
                             'value' =>  $entry->expense_name ?? '',
                         ], [
                             'type'  =>  'text',
@@ -187,7 +187,7 @@ class ExpenseHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
+                            'label' =>  __( 'Updated At' ),
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',

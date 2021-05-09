@@ -143,7 +143,7 @@ class ProcurementCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
+                            'label' =>  __( 'Created At' ),
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
@@ -163,7 +163,7 @@ class ProcurementCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'provider_id',
-                            'label' =>  __( 'Provider_id' ),
+                            'label' =>  __( 'Provider Id' ),
                             'value' =>  $entry->provider_id ?? '',
                         ], [
                             'type'  =>  'text',
@@ -173,12 +173,12 @@ class ProcurementCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'total_items',
-                            'label' =>  __( 'Total_items' ),
+                            'label' =>  __( 'Total Items' ),
                             'value' =>  $entry->total_items ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
+                            'label' =>  __( 'Updated At' ),
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',
