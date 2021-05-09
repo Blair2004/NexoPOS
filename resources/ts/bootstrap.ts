@@ -128,13 +128,11 @@ class NsLanguage {
 
     loadJson( path ) {
         return new Promise( ( resolve, reject ) => {
-            console.log( 'will load' );
             nsHttpClient.get( `${path}/${ns.language}.json` )
                 .subscribe( ( result: any ) => {
                     for( let key in result ) {
                         this.languages[ key ]   =   result[ key ];
                     }
-                    console.log( 'has loaded' );
                     resolve( true );
                 });
         });
