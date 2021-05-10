@@ -155,6 +155,13 @@ class Setup
          * The main user is the master
          */
         User::set( $user )->as( 'admin' );
+        
+        /**
+         * define default user language
+         */
+        $attribute      =   $user->attribute()->create([
+            'language'  =>  'en'
+        ]);
 
         DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
