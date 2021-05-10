@@ -10,12 +10,14 @@ export default {
         this.popupCloser();
     },
     methods: {
+        __,
+        
         popupCloser,
 
         reset() {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'The current order will be cleared. But not deleted if it\'s persistent. Would you like to proceed ?',
+                title: __( 'Confirm Your Action' ),
+                message: __( 'The current order will be cleared. But not deleted if it\'s persistent. Would you like to proceed ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
                         POS.reset();
@@ -29,6 +31,6 @@ export default {
 <template>
     <button @click="reset()" class="flex-shrink-0 h-12 flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
         <i class="mr-1 text-xl  las la-eraser"></i>
-        <span>Reset</span>
+        <span>{{ __( 'Reset' ) }}</span>
     </button>
 </template>

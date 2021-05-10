@@ -8,6 +8,7 @@ import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
 import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
 import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
 import nsOrderInstalments from "@/pages/dashboard/orders/ns-order-instalments.vue";
+import { __ } from "@/libraries/lang";
 
 /**
  * @var {ExtendedVue}
@@ -40,6 +41,7 @@ const nsOrderPreviewPopup   =   {
         },
     },
     methods: {
+        __,
         closePopup() {
             this.$popup.close();
         },
@@ -81,8 +83,8 @@ const nsOrderPreviewPopup   =   {
         },
         deleteOrder() {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'Would you like to delete this order',
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to delete this order' ),
                 onAction: ( action ) => {
                     if ( action ) {
                         nsHttpClient.delete( `/api/nexopos/v4/orders/${this.$popupParams.order.id}` )
@@ -99,8 +101,8 @@ const nsOrderPreviewPopup   =   {
         },
         voidOrder() {
             Popup.show( nsPromptPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'The current order will be void. This action will be recorded. Consider providing a reason for this operation',
+                title: __( 'Confirm Your Action' ),
+                message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
                 onAction:  ( reason ) => {
                     if ( reason !== false ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.$popupParams.order.id}/void`, { reason })
@@ -149,7 +151,7 @@ export default nsOrderPreviewPopup;
     <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl bg-white flex flex-col">
         <div class="border-b border-gray-300 p-3 flex items-center justify-between">
             <div>
-                <h3>Order Options</h3>
+                <h3>{{ __( 'Order Options' ) }}</h3>
             </div>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
@@ -158,26 +160,26 @@ export default nsOrderPreviewPopup;
         <div class="p-2 overflow-scroll bg-gray-100 flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
-                <ns-tabs-item label="Details" identifier="details" class="overflow-y-auto">
+                <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
                     <ns-order-details :order="order"></ns-order-details>
                 </ns-tabs-item>
 
                 <!-- End Summary -->
 
                 <!-- Payment Component -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" label="Payments" identifier="payments" class="overflow-y-auto">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded', 'partially_refunded' ].includes( order.payment_status )" :label="__( 'Payments' )" identifier="payments" class="overflow-y-auto">
                     <ns-order-payment @changed="refresh()" :order="order"></ns-order-payment>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Refund -->
-                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" label="Refund & Return" identifier="refund" class="flex overflow-y-auto">
+                <ns-tabs-item v-if="! [ 'order_void', 'hold', 'refunded' ].includes( order.payment_status )" :label="__( 'Refund & Return' )" identifier="refund" class="flex overflow-y-auto">
                     <ns-order-refund @changed="refresh()" :order="order"></ns-order-refund>
                 </ns-tabs-item>
                 <!-- End Refund -->
 
                 <!-- Instalment -->
-                <ns-tabs-item v-if="[ 'partially_paid' ].includes( order.payment_status )" label="Instalments" identifier="instalments" class="flex overflow-y-auto">
+                <ns-tabs-item v-if="[ 'partially_paid' ].includes( order.payment_status )" :label="__( 'Installments' )" identifier="instalments" class="flex overflow-y-auto">
                     <ns-order-instalments @changed="refresh()" :order="order"></ns-order-instalments>
                 </ns-tabs-item>
                 <!-- End Instalment -->
@@ -190,17 +192,17 @@ export default nsOrderPreviewPopup;
             <div>
                 <ns-button v-if="isVoidable" @click="voidOrder()" type="danger">
                     <i class="las la-ban"></i>
-                    Void
+                    {{ __( 'Void' ) }}
                 </ns-button>
                 <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="danger">
                     <i class="las la-trash"></i>
-                    Delete
+                    {{ __( 'Delete' ) }}
                 </ns-button>
             </div>
             <div>
                 <ns-button @click="printOrder()" type="info">
                     <i class="las la-print"></i>
-                    Print
+                    {{ __( 'Print' ) }}
                 </ns-button>
             </div>
         </div>

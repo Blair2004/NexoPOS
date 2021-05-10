@@ -55,7 +55,7 @@ export default {
              */
             setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
         }, ( error ) => {
-            nsSnackBar.error( error.message || 'An unexpected error occured.', 'OK', { duration: 0 }).subscribe();
+            nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
         });
     },
     methods: {
@@ -64,7 +64,7 @@ export default {
             const isValid   =   this.validation.validateFields( this.fields );            
 
             if ( ! isValid ) {
-                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             this.validation.disableFields( this.fields );

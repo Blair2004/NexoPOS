@@ -39,6 +39,7 @@ mix.disableNotifications();
 mix.sourceMaps();
 mix
     .js( 'resources/ts/bootstrap.ts', 'public/js')
+    .js( 'resources/ts/lang-loader.ts', 'public/js')
     .js( 'resources/ts/app.ts', 'public/js')
     .js( 'resources/ts/dashboard.ts', 'public/js')
     .js( 'resources/ts/update.ts', 'public/js')

@@ -1284,7 +1284,6 @@ class ProductService
         $mode       =   'create';
 
         foreach( $fields as $field => $value ) {
-            $fields         =   $fields;
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
 

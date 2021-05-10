@@ -3,26 +3,26 @@
         <div class="flex -mx-4 flex-wrap">
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center bg-blue-400 text-white text-xl font-bold">
-                    <span>Total</span>
+                    <span>{{ __( 'Total' ) }}</span>
                     <span>{{ order.total | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-green-400 text-white text-xl font-bold">
-                    <span>Paid</span>
+                    <span>{{ __( 'Paid' ) }}</span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-red-400 text-white text-xl font-bold">
-                    <span>Unpaid</span>
+                    <span>{{ __( 'Unpaid' ) }}</span>
                     <span v-if="order.total - order.tendered > 0">{{ order.total - order.tendered | currency }}</span>
                     <span v-if="order.total - order.tendered <= 0">{{ 0 | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-teal-400 text-white text-xl font-bold">
-                    <span>Customer Account</span>
+                    <span>{{ __( 'Customer Account' ) }}</span>
                     <span>{{ order.customer.account_amount | currency }}</span>
                 </div>
             </div>
@@ -31,7 +31,7 @@
             <div class="px-2 w-full mb-4 md:w-1/2">
                 <div v-if="order.payment_status !== 'paid'">
                     <h3 class="font-semibold border-b-2 border-blue-400 py-2">
-                        Payment
+                        {{ __( 'Payment' ) }}
                     </h3>
                     <div class="py-2">
                         <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
@@ -42,12 +42,12 @@
                     </div>
                 </div>
                 <div v-if="order.payment_status === 'paid'" class="flex items-center justify-center h-full">
-                    <h3 class="text-gray-700 font-semibold">No payment possible for paid order.</h3>
+                    <h3 class="text-gray-700 font-semibold">{{ __( 'No payment possible for paid order.' ) }}</h3>
                 </div>
             </div>
             <div class="px-2 w-full mb-4 md:w-1/2">
                 <h3 class="font-semibold border-b-2 border-blue-400 py-2 mb-2">
-                    Payment History
+                    {{ __( 'Payment History' ) }}
                 </h3>
                 <ul>
                     <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite bg-gray-300 mb-2">
@@ -65,6 +65,7 @@ import Labels from '@/libraries/labels';
 import FormValidation from '@/libraries/form-validation';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     props: [ 'order' ],
     data() {
@@ -76,6 +77,8 @@ export default {
         }
     },
     methods: {
+        __,
+
         updateValue( value ) {
             this.inputValue     =   value;
         },
@@ -89,11 +92,11 @@ export default {
             this.validation.validateFields( this.fields );
 
             if ( ! this.validation.fieldsValid( this.fields ) ) {
-                return nsSnackBar.error( 'Unable to proceed the form is not valid' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid' ) ).subscribe();
             }
 
             if ( parseFloat( value ) == 0 ) {
-                return nsSnackBar.error( 'Please provide a valid value' ).subscribe();
+                return nsSnackBar.error( __( 'Please provide a valid value' ) ).subscribe();
             }
         
             value   =   parseFloat( value );
@@ -104,8 +107,8 @@ export default {
             }
 
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'You make a payment for {amount}. A payment can\'t be canceled. Would you like to proceed ?'.replace( '{amount}', this.$options.filters.currency( value ) ),
+                title: __( 'Confirm Your Action' ),
+                message: __( 'You make a payment for {amount}. A payment can\'t be canceled. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( value ) ),
                 onAction:  ( action ) => {
                     if ( action ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/payments`, form )

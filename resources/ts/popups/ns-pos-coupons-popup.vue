@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-lg bg-white w-95vw md:w-3/5-screen lg:w-2/5-screen">
         <div class="border-b border-gray-200 p-2 flex justify-between items-center">
-            <h3 class="font-bold">Coupons</h3>
+            <h3 class="font-bold">{{ __( 'Coupons' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
@@ -14,10 +14,10 @@
                 <li v-for="coupon of coupons" :key="coupon.id" class="p-2 cursor-pointer flex justify-between bg-gray-100 hover:bg-blue-200">
                     <span>{{ coupon.name }}</span>
                     <span>
-                        <button class="rounded-full px-3 py-1">Use</button>
+                        <button class="rounded-full px-3 py-1">{{ __( 'Use' )}}</button>
                     </span>
                 </li>
-                <li class="py-3 text-center" v-if="coupons.length === 0 && hasLoaded">No coupon available for this customer</li>
+                <li class="py-3 text-center" v-if="coupons.length === 0 && hasLoaded">{{ __( 'No coupon available for this customer' ) }}</li>
             </ul>
         </div>
     </div>
@@ -26,6 +26,7 @@
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: "ns-pos-coupons-popup",
@@ -50,6 +51,8 @@ export default {
         this.orderSubscriber.unsubscribe();
     },
     methods: {
+        __,
+        
         popupCloser,
 
         popupResolver,

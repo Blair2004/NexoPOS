@@ -169,7 +169,12 @@ class ProcurementController extends DashboardController
      */
     public function deleteProcurementProduct( $product_id )
     {
-        return $this->procurementService->deleteProduct( $product_id );
+        $procurementProduct     =   ProcurementProduct::find( $product_id );
+
+        return $this->procurementService->deleteProduct( 
+            $procurementProduct,
+            $procurementProduct->procurement
+        );
     }
 
     /**
@@ -239,8 +244,12 @@ class ProcurementController extends DashboardController
 
     public function searchProduct( Request $request )
     {
+        return $this->procurementService->searchProduct( $request->input( 'search' ) );
+    }
+
+    public function searchProcurementProduct( Request $request )
+    {
         $products    =   Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
-            ->searchable()
             ->trackingDisabled()
             ->with( 'unit_quantities.unit' )
             ->where( function( $query ) use ( $request ) {
@@ -271,7 +280,7 @@ class ProcurementController extends DashboardController
 
         return [
             'from'      =>  'procurements',
-            'product'   =>  $this->procurementService->searchProduct( $request->input( 'search' ) )
+            'product'   =>  $this->procurementService->searchProcurementProduct( $request->input( 'search' ) )
         ];
     }
 

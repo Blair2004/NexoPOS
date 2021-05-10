@@ -8,6 +8,8 @@
 import { default as nsPosCashRegistersPopupVue } from '@/popups/ns-pos-cash-registers-popup.vue';
 import nsPosCashRegistersOptionsPopupVue from '@/popups/ns-pos-cash-registers-options-popup.vue';
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
+
 export default {
     data() {
         return {
@@ -21,6 +23,8 @@ export default {
     watch: {
     },
     methods: {
+        __,
+
         async openRegisterOptions() {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
@@ -61,10 +65,10 @@ export default {
         },
         setButtonName() {
             if ( this.settings.register === undefined ) {
-                return this.name   =   'Cash Register';
+                return this.name   =   __( 'Cash Register' );
             }
 
-            this.name   =   `Cash Register : ${this.settings.register.name}`;
+            this.name   =   __( `Cash Register : {register}` ).replace( '{register}', this.settings.register.name );
         }
     },
     destroyed() {

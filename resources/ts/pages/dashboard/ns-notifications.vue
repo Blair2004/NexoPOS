@@ -27,7 +27,7 @@
                         <div v-if="notifications.length === 0" class="h-full w-full flex items-center justify-center">
                             <div class="flex flex-col items-center">
                                 <i class="las la-laugh-wink text-5xl text-gray-800"></i>
-                                <p class="text-gray-600 text-sm">Nothing to care about !</p>
+                                <p class="text-gray-600 text-sm">{{ __( 'Nothing to care about !' ) }}</p>
                             </div>
                         </div>
                     </div>

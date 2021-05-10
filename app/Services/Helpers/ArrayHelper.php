@@ -134,13 +134,15 @@ trait ArrayHelper {
     static function flatArrayWithKeys( $data )
     {
         return collect( $data )->mapWithKeys( function( $data, $index ) {
-            if ( ! is_array( $data ) && ! is_numeric( $index ) ) {
+            if ( ! is_array( $data ) || is_numeric( $index ) ) {
                 return [ $index => $data ];
             } else if ( is_array( $data ) ) {
                 return self::flatArrayWithKeys( $data );
             }
 
             return [];
-        })->filter();
+        })->filter( function( $field ) {
+            return $field !== false;
+        });
     }
 }

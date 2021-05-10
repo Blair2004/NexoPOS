@@ -49,7 +49,7 @@
 
                     <div class="text-gray-700 flex" v-if="products.length === 0">
                         <div class="w-full text-center py-4 border-b border-gray-200">
-                            <h3 class="text-gray-600">No products added...</h3>
+                            <h3 class="text-gray-600">{{ __( 'No products added...' ) }}</h3>
                         </div>
                     </div>
 
@@ -84,10 +84,10 @@
                                         <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity' ) }} : {{ product.quantity }}</a>
+                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Total : {{ product.total_price | currency }}</span>
+                                        <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -112,12 +112,12 @@
                         </tr>
                         <tr>
                             <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
+                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
-                                <span>Discount</span>
+                                <span>{{ __( 'Discount' ) }}</span>
                                 <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
-                                <span v-if="order.discount_type === 'flat'">(Flat)</span>
+                                <span v-if="order.discount_type === 'flat'">({{ __( 'Flat' ) }})</span>
                             </td>
                             <td width="200" class="border border-gray-300 p-2 text-right">
                                 <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
@@ -126,7 +126,7 @@
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
                             <td width="200" class="border border-gray-300 p-2"></td>
                             <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
+                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Shipping' ) }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
@@ -134,14 +134,14 @@
                             <td width="200" class="border border-gray-300 p-2">
                                 <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Tax : {{ order.tax_value | currency }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">Total</td>
+                            <td width="200" class="border border-gray-300 p-2">{{ __( 'Total' ) }}</td>
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
                     </table>
                     <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'cart'">
                         <tr>
                             <td width="200" class="border border-gray-300 p-2">
-                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
+                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between">
@@ -152,7 +152,7 @@
                         </tr>
                         <tr>
                             <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Type : {{ selectedType }}</a>
+                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between items-center">
@@ -168,13 +168,13 @@
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
                             <td width="200" class="border border-gray-300 p-2"></td>
                             <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Shipping</a>
+                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Shipping' ) }}</a>
                                 <span></span>                          
                             </td>
                         </tr>
                         <tr class="bg-green-200">
                             <td width="200" class="border border-gray-300 p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Tax : {{ order.tax_value | currency }}</a>
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">
                                 <div class="flex justify-between w-full">

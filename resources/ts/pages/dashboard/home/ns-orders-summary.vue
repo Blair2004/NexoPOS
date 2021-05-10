@@ -44,24 +44,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="p-2 bg-white -mx-4 flex flex-wrap">
-            <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">
-                <span class="text-xs text-gray-600">Week Due</span>
-                <h2 class="text-3xl text-gray-700 font-bold">$ 35</h2>
-            </div>
-            <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">
-                <span class="text-xs text-gray-600">Partially</span>
-                <h2 class="text-3xl text-gray-700 font-bold">$ 354</h2>
-            </div>
-            <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">
-                <span class="text-xs text-gray-600">Net Income</span>
-                <h2 class="text-3xl text-gray-700 font-bold">$ 600</h2>
-            </div>
-            <div class="px-4 w-1/2 lg:w-1/4 flex flex-col items-center justify-center">
-                <span class="text-xs text-gray-600">Week Expenses</span>
-                <h2 class="text-3xl text-gray-700 font-bold">$ 200</h2>
-            </div>
-        </div> -->
     </div>
 </template>
 <script>

@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-xl bg-white w-95vw md:w-3/5-screen lg:w-3/7-screen h-95vh md:h-3/5-screen lg:h-3/7-screen overflow-hidden flex flex-col">
         <div class="p-2 flex justify-between border-b border-gray-200 items-center">
-            <h3 class="text-semibold">Products</h3>
+            <h3 class="text-semibold">{{ __( 'Products' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
@@ -17,7 +17,7 @@
         <div class="p-2 flex justify-between items-center border-t border-gray-200">
             <div></div>
             <div>
-                <ns-button @click="addProduct()" type="info">Add Product</ns-button>
+                <ns-button @click="addProduct()" type="info">{{ __( 'Add Product' ) }}</ns-button>
             </div>
         </div>
     </div>
@@ -26,6 +26,7 @@
 import popuCloser from "@/libraries/popup-closer";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import FormValidation from '@/libraries/form-validation';
+import { __ } from '@/libraries/lang';
 export default {
     mounted() {
         this.popuCloser();
@@ -40,6 +41,7 @@ export default {
         }
     },
     methods: {
+        __,
         popuCloser,
         close() {
             this.$popupParams.reject( false ); 
@@ -57,7 +59,7 @@ export default {
                 return this.close();
             }
 
-            nsSnackBar.error( 'The form is not valid.' ).subscribe();
+            nsSnackBar.error( __( 'The form is not valid.' ) ).subscribe();
         },
 
         loadFields() {

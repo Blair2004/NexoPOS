@@ -2,7 +2,7 @@
     <div class="shadow-lg w-6/7-screen lg:w-3/5-screen h-6/7-screen lg:h-4/5-screen bg-white overflow-hidden flex flex-col">
         <div class="p-2 border-b border-gray-200 text-gray-700 text-center font-medium flex justify-between items-center">
             <div>
-                Previewing : {{ product.name }}
+                {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
@@ -11,14 +11,14 @@
         <div class="flex-auto overflow-y-auto bg-gray-100">
             <div class="p-2">
                 <ns-tabs :active="active" @active="changeActiveTab( $event )">
-                    <ns-tabs-item label="Units & Quantities" identifier="units-quantities">
+                    <ns-tabs-item :label="__( 'Units & Quantities' )" identifier="units-quantities">
                         <table class="table w-full" v-if="hasLoadedUnitQuantities">
                             <thead>
                                 <tr>
-                                    <th class="p-1 bg-blue-100 border-blue-400 text-blue-700 border">Unit</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">Sale Price</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">Wholesale Price</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">Quantity</th>
+                                    <th class="p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Unit' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Sale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Wholesale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Quantity' ) }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,6 +39,7 @@
 </template>
 <script>
 import { nsHttpClient } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-products-preview',
     computed: {
@@ -47,6 +48,7 @@ export default {
         }
     },
     methods: {
+        __,
         changeActiveTab( event ) {
             this.active     =   event;
 

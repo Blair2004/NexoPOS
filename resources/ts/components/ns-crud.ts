@@ -227,7 +227,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             if ( this.bulkAction ) {
                 if ( this.selectedEntries.length > 0 ) {
                     console.log( this.getSelectedAction );
-                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || 'No bulk confirmation message provided on the CRUD class.' ) ) {
+                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'No bulk confirmation message provided on the CRUD class.' ) ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
                             entries: this.selectedEntries.map( r => r.$id )
@@ -241,11 +241,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                         })
                     }
                 } else {
-                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : 'No error provided when there is no selection selected (error-no-selection).' )
+                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : __( 'No selection has been made.' ) )
                         .subscribe();
                 }
             } else {
-                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : 'No error provided when there is no action selected (error-no-action).' )
+                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : __( 'No action has been selected.' ) )
                     .subscribe();
             }
 
@@ -335,7 +335,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             <ns-table-row @updated="refreshRow( $event )" v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
-                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">There is nothing to display...</td>
+                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">{{ __( 'There is nothing to display...' ) }}</td>
                         </tr>
                     </tbody>
                 </table>

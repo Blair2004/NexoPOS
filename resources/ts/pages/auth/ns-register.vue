@@ -58,7 +58,7 @@ export default {
             const isValid   =   this.validation.validateFields( this.fields );            
 
             if ( ! isValid ) {
-                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             this.validation.disableFields( this.fields );

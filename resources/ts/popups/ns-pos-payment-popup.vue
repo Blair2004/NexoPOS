@@ -8,6 +8,7 @@ import { default as AccountPayment } from '@/pages/dashboard/pos/payments/accoun
 import { Popup } from '@/libraries/popup';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-pos-payment',
@@ -56,6 +57,8 @@ export default {
         this.paymentTypesSubscription.unsubscribe();
     },    
     methods: {
+        __, 
+        
         resolveIfQueued,
 
         loadPaymentComponent( payment ) {
@@ -125,18 +128,15 @@ export default {
     <div class="w-screen h-screen p-4 flex overflow-hidden" v-if="order">
         <div class="flex flex-col flex-auto lg:flex-row bg-white shadow-xl">
             <div class="w-full lg:w-56 bg-gray-300 lg:h-full flex justify-between px-2 lg:px-0 lg:block items-center lg:items-start">
-                <h3 class="text-xl text-center my-4 font-bold lg:my-8 text-gray-700">Payments Gateway</h3>
+                <h3 class="text-xl text-center my-4 font-bold lg:my-8 text-gray-700">{{ __( 'Payments Gateway' ) }}</h3>
                 <ul class="hidden lg:block">
                     <li @click="select( payment )" v-for="payment of paymentsType" :class="payment.selected && ! showPayment ? 'bg-white text-gray-800' : 'text-gray-700'" :key="payment.identifier" class="cursor-pointer hover:bg-gray-400 py-2 px-3">{{ payment.label }}</li>
                     <li @click="showPayment = true" :class="showPayment ? 'bg-white text-gray-800' : 'text-gray-700'" class="cursor-pointer text-gray-700 hover:bg-gray-400 py-2 px-3 border-t border-gray-400 mt-4 flex items-center justify-between">
-                        <span>Payment List</span>
+                        <span>{{ __( 'Payment List' ) }}</span>
                         <span class="px-2 rounded-full h-8 w-8 flex items-center justify-center bg-green-500 text-white">{{ order.payments.length }}</span>
                     </li> 
                 </ul>
                 <ns-close-button class="lg:hidden" @click="closePopup()"></ns-close-button>
-                <!-- <button @click="closePopup()" class="cursor-pointer lg:hidden rounded-full border-2 border-blue-400 text-blue-400 bg-blue-200 hover:border-red-600 hover:bg-red-400 hover:text-red-600 h-10 w-10 flex justify-center items-center">
-                    <i class="las la-times"></i>
-                </button> -->
             </div>
             <div class="overflow-hidden flex flex-col flex-auto">
                 <div class="flex flex-col flex-auto overflow-hidden">
@@ -150,10 +150,10 @@ export default {
                         <component @submit="submitOrder()" :label="activePayment.label" :identifier="activePayment.identifier" v-bind:is="currentPaymentComponent"></component>
                     </div>
                     <div class="flex flex-auto overflow-y-auto p-2 flex-col" v-if="showPayment">
-                        <h3 class="text-center font-bold py-2 text-gray-700">List Of Payments</h3>
+                        <h3 class="text-center font-bold py-2 text-gray-700">{{ __( 'List Of Payments' ) }}</h3>
                         <ul class="flex-auto">
                             <li v-if="order.payments.length === 0" class="p-2 bg-gray-200 flex justify-center mb-2 items-center">
-                                <h3 class="font-semibold">No Payment added.</h3>
+                                <h3 class="font-semibold">{{ __( 'No Payment added.' ) }}</h3>
                             </li>
                             <li :key="index" v-for="(payment,index) of order.payments" class="p-2 bg-gray-200 flex justify-between mb-2 items-center">
                                 <span>{{ payment.label}}</span>
@@ -170,19 +170,19 @@ export default {
                 <div class="flex flex-col lg:flex-row w-full bg-gray-300 justify-between p-2">
                     <div class="flex mb-1">
                         <div class="flex items-center lg:hidden">
-                            <h3 class="font-semibold mr-2">Select Payment</h3>
+                            <h3 class="font-semibold mr-2">{{ __( 'Select Payment' ) }}</h3>
                             <select @change="selectPaymentAsActive( $event )" class="p-2 rounded border-2 border-blue-400 bg-white shadow">
-                                <option value="">Choose Payment</option>
+                                <option value="">{{ __( 'Choose Payment' ) }}</option>
                                 <option :selected="activePayment.identifier === payment.identifier" :value="payment.identifier" :key="payment.identifier" @click="select( payment )" v-for="payment of paymentsType">{{ payment.label }}</option>
                             </select>
                         </div>
                     </div>
                     <div class="flex justify-end">
                         <ns-button v-if="order.tendered >= order.total" @click="submitOrder()" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span ><i class="las la-cash-register"></i> Submit Payment</span>
+                            <span ><i class="las la-cash-register"></i> {{ __( 'Submit Payment' ) }}</span>
                         </ns-button>
                         <ns-button v-if="order.tendered < order.total" @click="submitOrder({ payment_status: 'unpaid' })" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span><i class="las la-bookmark"></i> Layaway &mdash; {{ expectedPayment | currency }}</span>
+                            <span><i class="las la-bookmark"></i> {{ __( 'Layaway' ) }} &mdash; {{ expectedPayment | currency }}</span>
                         </ns-button>
                     </div>
                 </div>

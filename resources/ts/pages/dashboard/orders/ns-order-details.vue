@@ -3,12 +3,12 @@
         <div class="flex-auto">
             <div class="w-full mb-2 flex-wrap flex">
                 <div class="w-full mb-2 px-4">
-                    <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">Payment Summary</h3>
+                    <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Payment Summary' ) }}</h3>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="bg-gray-200 p-2 flex justify-between items-start">
                         <div>
-                            <h4 class="text-semibold text-gray-700">Sub Total</h4>
+                            <h4 class="text-semibold text-gray-700">{{ __( 'Sub Total' ) }}</h4>
                         </div>
                         <div class="font-semibold text-gray-800">{{ order.subtotal | currency }}</div>
                     </div>
@@ -17,7 +17,7 @@
                     <div class="p-2 flex justify-between items-start bg-red-400 text-white">
                         <div>
                             <h4 class="text-semibold">
-                                <span>Discount</span>
+                                <span>{{ __( 'Discount' ) }}</span>
                                 <span class="ml-1" v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
                                 <span class="ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
@@ -28,7 +28,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start bg-gray-100">
                         <div>
-                            <h4 class="text-semibold text-gray-700">Shipping</h4>
+                            <h4 class="text-semibold text-gray-700">{{ __( 'Shipping' ) }}</h4>
                         </div>
                         <div class="font-semibold text-gray-800">{{ order.shipping | currency }}</div>
                     </div>
@@ -37,7 +37,7 @@
                     <div class="p-2 flex justify-between items-start bg-red-400 text-white">
                         <div>
                             <h4 class="text-semibold">
-                                <span>Coupons</span>
+                                <span>{{ __( 'Coupons' ) }}</span>
                             </h4>
                         </div>
                         <div class="font-semibold">{{ order.total_coupons | currency }}</div>
@@ -46,7 +46,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start bg-blue-400 text-white">
                         <div>
-                            <h4 class="text-semibold">Total</h4>
+                            <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.total | currency }}</div>
                     </div>
@@ -54,7 +54,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start bg-yellow-400 text-gray-700">
                         <div>
-                            <h4 class="text-semibold ">Taxes</h4>
+                            <h4 class="text-semibold ">{{ __( 'Taxes' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.tax_value | currency }}</div>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start text-gray-700 bg-gray-100">
                         <div>
-                            <h4 class="text-semibold">Change</h4>
+                            <h4 class="text-semibold">{{ __( 'Change' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.change | currency }}</div>
                     </div>
@@ -70,7 +70,7 @@
                 <div class="mb-2 w-full md:w-1/2 px-4">
                     <div class="p-2 flex justify-between items-start bg-teal-500 text-white">
                         <div>
-                            <h4 class="text-semibold">Paid</h4>
+                            <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.tendered | currency }}</div>
                     </div>
@@ -80,12 +80,12 @@
         
         <div class="px-4 w-full md:w-1/2 lg:w-1/3 mb-2">
             <div class="mb-2">
-                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">Order Status</h3>
+                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Order Status' ) }}</h3>
             </div>
             <div class="mb-2 p-2 flex justify-between items-start bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>Customer</span>
+                        <span>{{ __( 'Customer' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800">{{ order.nexopos_customers_name }}</div>
@@ -93,7 +93,7 @@
             <div class="mb-2 p-2 flex justify-between items-start bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>Type</span>
+                        <span>{{ __( 'Type' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800">{{ labels.getTypeLabel( order.type ) }}</div>
@@ -101,7 +101,7 @@
             <div class="mb-2 p-2 flex justify-between items-start bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>Delivery Status</span>
+                        <span>{{ __( 'Delivery Status' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800">{{ labels.getDeliveryStatus( order.delivery_status ) }}</div>
@@ -109,7 +109,7 @@
             <div class="mb-2 p-2 flex flex-col md:flex-row justify-between items-center bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>Proceessing Status</span>
+                        <span>{{ __( 'Proceessing Status' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800 mt-2 md:mt-0 w-full md:w-auto">
@@ -133,7 +133,7 @@
             <div class="mb-2 p-2 flex justify-between items-start bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>Payment Status</span>
+                        <span>{{ __( 'Payment Status' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800">{{ labels.getPaymentStatus( order.payment_status ) }}</div>
@@ -142,7 +142,7 @@
 
         <div class="px-4 w-full md:w-1/2 lg:w-2/3 mb-2">
             <div class="mb-2">
-                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">Products</h3>
+                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Products' ) }}</h3>
             </div>
             <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-gray-200">
                 <div>

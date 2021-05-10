@@ -1,28 +1,28 @@
 <template>
     <div class="shadow-lg bg-white w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
         <div class="p-2 flex justify-between text-gray-700 items-center border-b">
-            <h3 class="font-semibold">Orders</h3>
+            <h3 class="font-semibold">{{ __( 'Orders' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
         <div class="p-2 flex overflow-hidden flex-auto">
             <ns-tabs :active="active" @changeTab="setActiveTab( $event )">
-                <ns-tabs-item identifier="ns.hold-orders" label="On Hold" padding="p-0" class="flex flex-col overflow-hidden">
+                <ns-tabs-item identifier="ns.hold-orders" :label="__( 'On Hold' )" padding="p-0" class="flex flex-col overflow-hidden">
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
                         @proceedOpenOrder="proceedOpenOrder( $event )">
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="ns.unpaid-orders" label="Unpaid" padding="p-0" class="flex flex-col overflow-hidden">
+                <ns-tabs-item identifier="ns.unpaid-orders" :label="__( 'Unpaid' )" padding="p-0" class="flex flex-col overflow-hidden">
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
                         @proceedOpenOrder="proceedOpenOrder( $event )">
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="ns.partially-paid-orders" label="Partially Paid" padding="p-0" class="flex flex-col overflow-hidden">
+                <ns-tabs-item identifier="ns.partially-paid-orders" :label="__( 'Partially Paid' )" padding="p-0" class="flex flex-col overflow-hidden">
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
@@ -34,7 +34,7 @@
         <div class="p-2 flex justify-between border-t bg-gray-200">
             <div></div>
             <div>
-                <ns-button>close</ns-button>
+                <ns-button>{{ __( 'Close' ) }}</ns-button>
             </div>
         </div>
     </div>
@@ -44,11 +44,14 @@ import { nsEvent, nsHttpClient } from '@/bootstrap';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
 import nsPosPendingOrders from './ns-pos-pending-orders';
+import { __ } from '@/libraries/lang';
 export default {
     components: {
         nsPosPendingOrders
     },
     methods: {
+        __,
+        
         searchOrder( search ) {
             nsHttpClient.get( `/api/nexopos/v4/crud/${this.active}?search=${search}` )
                 .subscribe( (result) => {

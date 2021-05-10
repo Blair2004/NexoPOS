@@ -31,6 +31,7 @@ use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
+use App\Models\Unit;
 use Exception;
 
 class ProcurementService
@@ -920,7 +921,29 @@ class ProcurementService
         }
     }
 
-    public function searchProduct( $argument )
+    public function searchProduct( $argument, $limit = 10 )
+    {
+        return Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+            ->with( 'unit_quantities.unit' )
+            ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
+            ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
+            ->limit( $limit )
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    });
+                }
+
+                return $product;
+            });
+    }
+
+    public function searchProcurementProduct( $argument )
     {
         $procurementProduct     =   ProcurementProduct::where( 'barcode', $argument )
             ->with([ 'unit', 'procurement' ])

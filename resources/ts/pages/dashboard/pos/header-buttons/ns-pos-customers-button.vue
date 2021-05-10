@@ -1,10 +1,12 @@
 <script>
 import { Popup } from '@/libraries/popup';
 import { default as nsPosCustomers } from '@/popups/ns-pos-customers';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-pos-customers-button',
     methods: {
+        __,
         openPendingOrdersPopup() {
             const popup     =   new Popup;
             popup.open( nsPosCustomers );
@@ -15,6 +17,6 @@ export default {
 <template>
     <button @click="openPendingOrdersPopup()" class="flex-shrink-0 h-12 flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
         <i class="mr-1 text-xl lar la-user-circle"></i>
-        <span>Customers</span>
+        <span>{{ __( 'Customers' ) }}</span>
     </button>
 </template>
