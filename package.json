@@ -38,7 +38,7 @@
     "apexcharts": "^3.22.1",
     "autoprefixer": "^10.0.4",
     "chart.js": "^2.9.3",
-    "css-loader": "^3.6.0",
+    "css-loader": "^5.2.4",
     "dayjs": "^1.8.36",
     "jspdf": "^2.1.1",
     "mini-css-extract-plugin": "^1.0.0",
