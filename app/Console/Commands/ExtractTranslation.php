@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Services\ModulesService;
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -162,7 +164,7 @@ class ExtractTranslation extends Command
          */
         $this->withProgressBar( $filtered, function( $file ) use ( &$exportable ) {
             $fileContent    =   Storage::disk( 'ns' )->get( $file );
-            preg_match_all('/\_\_\(\s*[\'\"\`]([\w\s\"\+\\/\d\'\"\-é&\[\]\@*$#\.\?\%,)\{\}]*)[\'\"\`]\s*\)/', $fileContent, $output_array);
+            preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\"\+\\/\d\'\"\-é&\[\]\@*$#\.\?\%,)\{\}]*)[\'\"\`]\s*\)/', $fileContent, $output_array);
             
             if ( isset( $output_array[1] ) ) {
                 foreach( $output_array[1] as $string ) {

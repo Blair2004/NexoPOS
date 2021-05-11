@@ -180,6 +180,7 @@ return [
         App\Providers\CrudServiceProvider::class,
         App\Providers\SettingsPageProvider::class,
         App\Providers\FormsProvider::class,
+        App\Providers\LocalizationServiceProvider::class,
     ],
 
     /*

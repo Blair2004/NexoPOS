@@ -134,6 +134,7 @@ class ModulesService
                 $config[ 'index-file' ]                 =   is_file( $indexPath ) ? $indexPath : false;
                 $config[ 'routes-file' ]                =   is_file( $webRoutesPath ) ? $webRoutesPath : false;
                 $config[ 'api-file' ]                   =   is_file( $apiRoutesPath ) ? $apiRoutesPath : false;
+                $config[ 'has-languages' ]              =   Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
                 $config[ 'controllers-path' ]           =   $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ]   =   ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'relativePath' ]               =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR;
@@ -192,6 +193,22 @@ class ModulesService
 
                     foreach( $moduleConfig as $key => $value ) {
                         config([ $key => $value ]);
+                    }
+
+                    /**
+                     * if the language files are included
+                     * we'll add it to the module definition.
+                     */
+                    $config[ 'langFiles' ]          =   [];
+
+                    if ( $config[ 'has-languages' ] ) {
+                        $rawFiles               =   Storage::disk( 'ns-modules' )
+                            ->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
+                            
+                        $config[ 'langFiles' ]  =   collect( $rawFiles )->mapWithKeys( function( $file ) {
+                            $pathInfo           =   pathinfo( $file );
+                            return [ $pathInfo[ 'filename' ] => $file ];
+                        })->toArray();
                     }
                 }
 
@@ -723,6 +740,26 @@ class ModulesService
             } else {
                 $mode       =   'J';
                 $link       =   public_path( 'modules' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
+                $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
+                $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+            }
+        }
+
+        /**
+         * checks if a public directory exists and create a 
+         * link for that directory
+         */
+        if ( 
+            Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) && 
+            ! is_link( base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) ) 
+        ) {
+            $target         =   base_path( 'modules/' . $moduleNamespace . '/Lang' );
+
+            if ( ! \windows_os() ) {
+                $link           =   @\symlink( $target, public_path( '/modules-lang/' . strtolower( $moduleNamespace ) ) );
+            } else {
+                $mode       =   'J';
+                $link       =   public_path( 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
                 $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
                 $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
             }

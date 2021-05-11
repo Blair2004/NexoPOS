@@ -1,4 +1,6 @@
 <?php
+
+use App\Classes\Hook;
 use App\Services\DateService;
 ?>
 <!DOCTYPE html>
@@ -37,7 +39,11 @@ use App\Services\DateService;
          * the language that applies to the system by default.
          */
         window.ns.language     =   '{{ app()->getLocale() }}';
+        window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
+            asset( "/lang/" . app()->getLocale() . ".json" ),
+        ]));?>
     </script>
+    <script src="{{ asset( 'js/lang-loader.js' ) }}"></script>
 @include( 'common.header-socket' )
 </head>
 <body>

@@ -184,7 +184,21 @@ function execThis( $className ) {
 	throw new Exception( sprintf( __( 'Unable to execute the following class callback string : %s' ), $className ) );
 }
 
-function ns(): CoreService
-{
+/**
+ * Returns an instance of CoreService
+ * @return CoreService
+ */
+function ns(): CoreService {
     return app()->make( CoreService::class );
+}
+
+/**
+ * Returns a translated version for a string defined
+ * under a module namespace.
+ * @param string $key
+ * @param string $namespace
+ * @return string $result
+ */
+function __m( $key, $namespace ) {
+    return app( 'translator' )->get( $namespace . '.' . $key );
 }

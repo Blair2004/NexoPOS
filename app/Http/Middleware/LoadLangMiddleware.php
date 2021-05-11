@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\UserAttribute;
 use Closure;
 use Illuminate\Http\Request;
+use App\Events\LocaleDefinedEvent;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,11 @@ class LoadLangMiddleware
             $userAttribute  =   Auth::user()->attribute;
 
             $language       =   ns()->option->get( 'ns_store_language', 'en' );
+
+            /**
+             * if the user attribute is not defined,
+             * we'll use the default system locale or english by default.
+             */
             if ( $userAttribute instanceof UserAttribute ) {
                 $language   =   Auth::user()->attribute->language;
             }
@@ -31,6 +37,13 @@ class LoadLangMiddleware
         } else {
             App::setLocale( ns()->option->get( 'ns_store_language', 'en' ) );
         }
+
+        /**
+         * when the default language is loaded,
+         * we might dispatch an event that will load module
+         * locale as well.
+         */
+        LocaleDefinedEvent::dispatch( App::getLocale() );
         
         return $next($request);
     }
