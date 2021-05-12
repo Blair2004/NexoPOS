@@ -40,7 +40,7 @@ use App\Services\DateService;
          */
         window.ns.language     =   '{{ app()->getLocale() }}';
         window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            asset( "/lang/" . app()->getLocale() . ".json" ),
+            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
     </script>
     <script src="{{ asset( 'js/lang-loader.js' ) }}"></script>

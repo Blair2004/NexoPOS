@@ -34,7 +34,7 @@ return [
             'value'         =>  Auth::user()->attribute->language ?? '',
             'type'          =>  'select',
             'options'       =>  Helper::kvToJsOptions( config( 'nexopos.languages' ) ),
-            'description'   =>  __( 'Choose the language for the currnet account.' ),
+            'description'   =>  __( 'Choose the language for the current account.' ),
         ],
     ]
 ];

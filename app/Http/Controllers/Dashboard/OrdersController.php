@@ -134,7 +134,7 @@ class OrdersController extends DashboardController
         }, 15 );
 
         return $this->view( 'pages.dashboard.orders.pos', [
-            'title'             =>  __( 'Proceeding Order &mdash; NexoPOS' ),
+            'title'             =>  __( 'POS &mdash; NexoPOS' ),
             'orderTypes'        =>  config( 'nexopos.orders.types' ),
             'options'           =>  [
                 'ns_pos_printing_document'              =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),

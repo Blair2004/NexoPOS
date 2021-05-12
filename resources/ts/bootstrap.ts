@@ -13,7 +13,7 @@ import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate, nsRawCurrency } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
-import { __ } from "./libraries/lang";
+import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import Echo from "laravel-echo";
@@ -31,6 +31,7 @@ declare global {
         nsHooks: any,
         SnackBar: SnackBar,
         __: any,
+        __m: any,
         popupResolver: any,
         popupCloser: any,
         Pusher:any,
@@ -47,6 +48,7 @@ window.Vue              =   Vue;
 window.moment           =   <any>moment;
 window.Axios            =   Axios;
 window.__               =   __;
+window.__m              =   __m;
 window.VueRouter        =   <any>VueRouter;
 window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
