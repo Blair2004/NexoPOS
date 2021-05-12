@@ -56,6 +56,9 @@ module.exports = {
     './resources/**/*.vue',
     './resources/**/*.ts',
     './resources/**/*.php',
+    './modules/**/*.php',
+    './modules/**/*.vue',
+    './modules/**/*.ts',
   ],
   corePlugins: {
     float: false

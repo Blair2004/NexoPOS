@@ -17,32 +17,29 @@
 
 @section( 'layout.base.footer' )
     @parent
+    <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
+    <script src="{{ asset( 'js/pos.js' ) }}"></script>
     <script>
-    nsLanguage.onReadyScript([
-        `{{ asset( 'js/pos-init.js' ) }}`,
-        `{{ asset( 'js/pos.js' ) }}`
-    ]);
-    nsLanguage.onReadyCallback( () => {
+    document.addEventListener( 'DOMContentLoaded', () => {
         const loader    =   document.getElementById( 'loader' );
         loader.classList.remove( 'fade-in-entrance' );
         loader.classList.add( 'fade-out-exit' );
-
         setTimeout( () => {
             loader.remove();
-        }, 500 );
-
-        POS.defineTypes( <?php echo json_encode( $orderTypes );?>);
-        POS.defineOptions( <?php echo json_encode( $options );?>);
-        POS.defineSettings({
-            barcode_search      :   true,
-            text_search         :   false,
-            breadcrumb          :   [],
-            products_queue      :   [],
-            urls                :   <?php echo json_encode( $urls );?>
-        });
-
-        POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
-        POS.reset();
+        }, 500 ); 
     });
+
+    POS.defineTypes( <?php echo json_encode( $orderTypes );?>);
+    POS.defineOptions( <?php echo json_encode( $options );?>);
+    POS.defineSettings({
+        barcode_search      :   true,
+        text_search         :   false,
+        breadcrumb          :   [],
+        products_queue      :   [],
+        urls                :   <?php echo json_encode( $urls );?>
+    });
+
+    POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+    POS.reset();
     </script>
 @endsection
