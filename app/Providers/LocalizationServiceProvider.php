@@ -40,6 +40,7 @@ class LocalizationServiceProvider extends ServiceProvider
         foreach( $active as $module ) {
             if ( 
                 isset( $module[ 'langFiles' ] ) && 
+                isset( $module[ 'langFiles' ][ app()->getLocale() ] ) &&
                 Storage::disk( 'ns-modules' )->exists( $module[ 'langFiles' ][ app()->getLocale() ] ) 
             ) {
                 $locales        =   json_decode( file_get_contents( base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'langFiles' ][ app()->getLocale() ] ) ), true );
