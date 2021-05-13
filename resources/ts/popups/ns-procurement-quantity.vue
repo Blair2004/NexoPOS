@@ -69,6 +69,7 @@ export default {
         document.removeEventListener( 'keypress', this.handleKeyPress );
     },
     methods: {
+        __,
         handleKeyPress( event ) {
             if ( event.keyCode === 13 ) {
                 this.inputValue({ identifier : 'next' });
