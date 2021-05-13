@@ -597,7 +597,7 @@ class ModulesService
             throw new Exception( __( 'Unable to detect the folder from where to perform the installation.' ) );
         }
 
-        $directoryName  =   pathinfo( $directory[0] )[ 'filename' ];
+        $directoryName  =   pathinfo( $directory[0] )[ 'basename' ];
         $rawFiles       =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $module         =   [];
 
