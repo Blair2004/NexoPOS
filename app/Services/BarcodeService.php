@@ -36,7 +36,7 @@ class BarcodeService
                 $generator->getBarcode( $barcode, $realType, 3, 30 )
             );
         } catch( Exception $exception ) {
-            throw new Exception( __( 'An error has occured while creating a barcode for the product. Make sure the barcode value is correct for the barcode type selected.' ) );
+            throw new Exception( __( 'An error has occured while creating a barcode for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ) );
         }
     }
 }
