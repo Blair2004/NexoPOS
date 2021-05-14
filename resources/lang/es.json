@@ -1311,7 +1311,6 @@
     "Unable to proceed, the reCaptcha validation has failed.": "No se puede continuar, la validaci\u00f3n de reCaptcha ha fallado.",
     "Unable to proceed, the code has expired.": "No se puede continuar, el c\u00f3digo ha caducado.",
     "Unable to proceed, the request is not valid.": "No se puede continuar, la solicitud no es v\u00e1lida.",
-    "An error has occured while creating a barcode for the product. Make sure the barcode value is correct for the barcode type selected.": "Ha ocurrido un error al crear un c\u00f3digo de barras para el producto. Aseg\u00farese de que el valor del c\u00f3digo de barras sea correcto para el tipo de c\u00f3digo de barras seleccionado.",
     "The register has been successfully opened": "El registro se ha abierto con \u00e9xito",
     "The register has been successfully closed": "El registro se ha cerrado con \u00e9xito",
     "The provided amount is not allowed. The amount should be greater than \"0\". ": "La cantidad proporcionada no est\u00e1 permitida. La cantidad debe ser mayor que \"0\".",
@@ -1730,11 +1729,12 @@
     "Receipt &mdash; %s": "Recibo &mdash; %s",
     "Invoice &mdash; %s": "Factura &mdash; %s",
     "Choose the language for the current account.": "Elija el idioma para la cuenta corriente.",
-    "Sign In &mdash; NexoPOS": "Iniciar sesión &mdash; NexoPOS",
-    "Sign Up &mdash; NexoPOS": "Regístrate &mdash; NexoPOS",
+    "Sign In &mdash; NexoPOS": "Iniciar sesi\u00f3n &mdash; NexoPOS",
+    "Sign Up &mdash; NexoPOS": "Reg\u00edstrate &mdash; NexoPOS",
     "POS &mdash; NexoPOS": "PDV &mdash; NexoPOS",
     "Order Invoice &mdash; %s": "Factura de pedido &mdash; %s",
     "Order Receipt &mdash; %s": "Recibo de pedido &mdash; %s",
-    "NexoPOS 4 &mdash; Setup Wizard": "NexoPOS 4 &mdash; Asistente de configuración",
-    "%s &mdash; NexoPOS 4": "%s &mdash; NexoPOS 4"
+    "NexoPOS 4 &mdash; Setup Wizard": "NexoPOS 4 &mdash; Asistente de configuraci\u00f3n",
+    "%s &mdash; NexoPOS 4": "%s &mdash; NexoPOS 4",
+    "If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources.": "Si ve esta página, esto significa que Nexopos 4.x está instalado correctamente en su sistema. Como esta página está destinada a ser la frontend, Nexopos 4.x no tiene una frontend para siempre. Esta página muestra enlaces útiles que lo llevarán a los recursos importantes."
 }

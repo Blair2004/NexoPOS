@@ -123,6 +123,7 @@ class Setup
         Artisan::call( 'migrate --path=/database/migrations/default' );
         Artisan::call( 'migrate --path=/database/migrations/create-tables' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
+        Artisan::call( 'ns:translate --symlink' );
 
         /**
          * we'll register all "schema-updates" migration

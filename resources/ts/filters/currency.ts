@@ -14,10 +14,9 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
             numeralFormat = `0.00a`;
         break;
         default: 
-            numeralFormat = `0${ns.currency.ns_currency_thousand_separator}0${ns.currency.ns_currency_decimal_separator}${precision}`;
+            numeralFormat = `0[${ns.currency.ns_currency_thousand_separator}]0[${ns.currency.ns_currency_decimal_separator}]${precision}`;
         break;
     }
-
 
     NumeralJS.locale( locale );
 
