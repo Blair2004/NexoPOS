@@ -9,17 +9,17 @@
             <ns-spinner border="4" size="16"></ns-spinner>
         </div>
         <div class="flex w-full items-center justify-center py-4" v-if="showRecoveryLink">
-            <a href="/password-lost" class="hover:underline text-blue-600 text-sm">Password Forgotten ?</a>
+            <a href="/password-lost" class="hover:underline text-blue-600 text-sm">{{ __( 'Password Forgotten ?' ) }}</a>
         </div>
         <div class="flex justify-between items-center bg-gray-200 p-3">
             <div>
                 <ns-button @click="signIn()" class="justify-between" type="info">
                     <ns-spinner class="mr-2" v-if="isSubitting" size="6" border="2"></ns-spinner>
-                    <span>Sign In</span>
+                    <span>{{ __( 'Sign In' ) }}</span>
                 </ns-button>
             </div>
             <div>
-                <ns-link :href="'/sign-up'" type="success">Register</ns-link>
+                <ns-link :href="'/sign-up'" type="success">{{ __( 'Register' ) }}</ns-link>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
 import { forkJoin } from 'rxjs';
 import FormValidation from '@/libraries/form-validation';
 import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
-
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-login',
     props: [ 'showRecoveryLink' ],
@@ -55,15 +55,16 @@ export default {
              */
             setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
         }, ( error ) => {
-            nsSnackBar.error( error.message || 'An unexpected error occured.', 'OK', { duration: 0 }).subscribe();
+            nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
         });
     },
     methods: {
+        __,
         signIn() {
             const isValid   =   this.validation.validateFields( this.fields );            
 
             if ( ! isValid ) {
-                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             this.validation.disableFields( this.fields );

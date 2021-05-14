@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-xl bg-white overflow-hidden w-95vw md:w-4/6-screen lg:w-3/7-screen">
         <div class="p-2 flex justify-between">
-            <h3 class="font-semibold">Quantity</h3>
+            <h3 class="font-semibold">{{ __( 'Quantity' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
@@ -19,6 +19,7 @@
 import popupResolver from "@/libraries/popup-resolver";
 import nsNumpad from "@/components/ns-numpad";
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     components: {
         nsNumpad
@@ -36,6 +37,8 @@ export default {
         this.seeValue           =   this.product.quantity;
     },
     methods: {
+        __,
+        
         popupResolver,
 
         close() {

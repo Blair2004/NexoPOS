@@ -22,7 +22,7 @@ class CreateProductTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateProducts()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -42,7 +42,7 @@ class CreateProductTest extends TestCase
         $taxService     =   app()->make( TaxService::class );
         $taxType        =   $faker->randomElement([ 'exclusive', 'inclusive' ]);
         $unitGroup      =   UnitGroup::first();
-        $sale_price     =   $faker->numberBetween(25,30);
+        $sale_price     =   $faker->numberBetween(5,10);
         $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
             ->get()
             ->map( fn( $cat ) => $cat->id );
@@ -62,6 +62,7 @@ class CreateProductTest extends TestCase
                         'identification'    =>  [
                             'barcode'           =>  $faker->ean13(),
                             'barcode_type'      =>  'ean13',
+                            'searchable'        =>  $faker->randomElement([ true, false ]),
                             'category_id'       =>  $faker->randomElement( $categories ),
                             'description'       =>  __( 'Created via tests' ),
                             'product_type'      =>  'product',
@@ -103,5 +104,55 @@ class CreateProductTest extends TestCase
 
             $response->assertStatus(200);
         }
+    }
+
+    public function testSearchableAreSearchable()
+    {
+        Sanctum::actingAs(
+            Role::namespace( 'admin' )->users->first(),
+            ['*']
+        );
+
+        $searchable     =   Product::searchable()->first();
+
+        if ( $searchable instanceof Product ) {
+            $response   = $this
+                ->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'GET', '/api/nexopos/v4/categories/pos/' . $searchable->category_id );
+            
+            $response   =   json_decode( $response->getContent(), true );
+            $exists     =   collect( $response[ 'products' ] )
+                ->filter( fn( $product ) => ( int ) $product[ 'id' ] === ( int ) $searchable->id )
+                ->count() > 0;
+
+            return $this->assertTrue( $exists, __( 'Searchable product cannot be found on category.' ) );
+        }
+
+        return $this->assertTrue( true );
+    }
+
+    public function testNotSearchableAreSearchable() 
+    {
+        Sanctum::actingAs(
+            Role::namespace( 'admin' )->users->first(),
+            ['*']
+        );
+
+        $searchable     =   Product::searchable( false )->first();
+
+        if ( $searchable instanceof Product ) {
+            $response   = $this
+                ->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'GET', '/api/nexopos/v4/categories/pos/' . $searchable->category_id );
+            
+            $response   =   json_decode( $response->getContent(), true );
+            $exists     =   collect( $response[ 'products' ] )
+                ->filter( fn( $product ) => ( int ) $product[ 'id' ] === ( int ) $searchable->id )
+                ->count() === 0;
+
+            return $this->assertTrue( $exists, __( 'Not searchable product cannot be found on category.' ) );
+        }
+
+        return $this->assertTrue( true );
     }
 }

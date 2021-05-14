@@ -159,7 +159,7 @@ class UserCrud extends CrudService
                             'name'          =>  'password',
                             'label'         =>  __( 'Password' ),
                             'validation'    =>  'sometimes|min:6',
-                            'description'   =>  __( 'Make a unit and secure password.' ),
+                            'description'   =>  __( 'Make a unique and secure password.' ),
                         ], [
                             'type'          =>  'password',
                             'name'          =>  'password_confirm',

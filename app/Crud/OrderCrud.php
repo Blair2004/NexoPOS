@@ -141,17 +141,17 @@ class OrderCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
+                            'label' =>  __( 'Created At' ),
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
+                            'label' =>  __( 'Customer Id' ),
                             'value' =>  $entry->customer_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'delivery_status',
-                            'label' =>  __( 'Delivery_status' ),
+                            'label' =>  __( 'Delivery Status' ),
                             'value' =>  $entry->delivery_status ?? '',
                         ], [
                             'type'  =>  'text',
@@ -166,17 +166,17 @@ class OrderCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'discount_rate',
-                            'label' =>  __( 'Discount_rate' ),
+                            'label' =>  __( 'Discount Rate' ),
                             'value' =>  $entry->discount_rate ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'discount_type',
-                            'label' =>  __( 'Discount_type' ),
+                            'label' =>  __( 'Discount Type' ),
                             'value' =>  $entry->discount_type ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'gross_total',
-                            'label' =>  __( 'Gross_total' ),
+                            'label' =>  __( 'Gross Total' ),
                             'value' =>  $entry->gross_total ?? '',
                         ], [
                             'type'  =>  'text',
@@ -186,17 +186,17 @@ class OrderCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'net_total',
-                            'label' =>  __( 'Net_total' ),
+                            'label' =>  __( 'Net Total' ),
                             'value' =>  $entry->net_total ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'payment_status',
-                            'label' =>  __( 'Payment_status' ),
+                            'label' =>  __( 'Payment Status' ),
                             'value' =>  $entry->payment_status ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'process_status',
-                            'label' =>  __( 'Process_status' ),
+                            'label' =>  __( 'Process Status' ),
                             'value' =>  $entry->process_status ?? '',
                         ], [
                             'type'  =>  'text',
@@ -206,12 +206,12 @@ class OrderCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'shipping_rate',
-                            'label' =>  __( 'Shipping_rate' ),
+                            'label' =>  __( 'Shipping Rate' ),
                             'value' =>  $entry->shipping_rate ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'shipping_type',
-                            'label' =>  __( 'Shipping_type' ),
+                            'label' =>  __( 'Shipping Type' ),
                             'value' =>  $entry->shipping_type ?? '',
                         ], [
                             'type'  =>  'text',
@@ -236,7 +236,7 @@ class OrderCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
+                            'label' =>  __( 'Updated At' ),
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',

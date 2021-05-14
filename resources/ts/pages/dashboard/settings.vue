@@ -19,12 +19,13 @@
                 </div>
             </div>
             <div class="border-t border-gray-400 p-2 flex justify-end">
-                <ns-button @click="submitForm()" type="info"><slot name="submit-button">Save Settings</slot></ns-button>
+                <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang';
 import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
 import FormValidation from '../../libraries/form-validation';
 
@@ -54,6 +55,7 @@ export default {
         this.loadSettingsForm();
     },
     methods: {
+        __,
         submitForm() {
             if ( this.validation.validateForm( this.form ).length === 0 ) {
                 this.validation.disableForm( this.form );
@@ -80,12 +82,12 @@ export default {
                         
                         nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
 
-                        nsSnackBar.error( error.message || 'No error message provided in case the form is not valid.' )
+                        nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
                             .subscribe();
                     })
             }
 
-            nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || 'No error message provided in case the form is not valid.' )
+            nsSnackBar.error( this.$slots[ 'error-form-invalid' ][0].text || __( 'Unable to proceed the form is not valid.' ) )
                 .subscribe();
         },
         setActive( tab ) {

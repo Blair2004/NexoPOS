@@ -21,13 +21,14 @@
         <div class="flex justify-between" v-if="type === 'multiselect'">
             <div></div>
             <div>
-                <ns-button @click="select()" type="info">Select</ns-button>
+                <ns-button @click="select()" type="info">{{ __( 'Select' ) }}</ns-button>
             </div>
         </div>
     </div>
 </template>
 <script>
 import popupCloser from "@/libraries/popup-closer";
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -49,6 +50,7 @@ export default {
     },
     methods: {
         popupCloser,
+        __,
 
         toggle( option ) {
             const index     =   this.value.indexOf( option );

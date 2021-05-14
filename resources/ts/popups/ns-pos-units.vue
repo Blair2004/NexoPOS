@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col" v-if="loadsUnits">
         <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
-            <h3 class="font-bold text-gray-700">Choose Selling Unit</h3>
+            <h3 class="font-bold text-gray-700">{{ __( 'Choose Selling Unit' ) }}</h3>
         </div>
         <div v-if="unitsQuantities.length > 0" class="grid grid-flow-row grid-cols-2 overflow-y-auto">
             <div @click="selectUnit( unitQuantity )" :key="unitQuantity.id" v-for="unitQuantity of unitsQuantities" class="hover:bg-gray-200 cursor-pointer border flex-shrink-0 border-gray-200 flex flex-col items-center justify-center">
@@ -26,6 +26,7 @@
 </template>
 <script>
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -65,13 +66,14 @@ export default {
         }
     },
     methods: {
+        __,
         loadUnits() {
             nsHttpClient.get( `/api/nexopos/v4/products/${this.$popupParams.product.$original().id}/units/quantities` )
                 .subscribe( result => {
                     
                     if ( result.length === 0 ) {
                         this.$popup.close();
-                        return nsSnackBar.error( 'This product doesn\'t has any unit defined for selling.' ).subscribe();
+                        return nsSnackBar.error( __( 'This product doesn\'t has any unit defined for selling.' ) ).subscribe();
                     }
 
                     this.unitsQuantities  =   result;
@@ -98,9 +100,6 @@ export default {
                 $quantities         :   () => unitQuantity
             });
             this.$popup.close();
-            // this.types.forEach( type => type.selected = false );
-            // type.selected   =   true;
-            // POS.order.types.next( this.types );
         }
     }
 }

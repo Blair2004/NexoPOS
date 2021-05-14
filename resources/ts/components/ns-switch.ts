@@ -1,3 +1,4 @@
+import { __ } from '@/libraries/lang';
 import Vue from 'vue';
 
 const nsSwitch      =   Vue.component( 'ns-switch', {
@@ -34,6 +35,7 @@ const nsSwitch      =   Vue.component( 'ns-switch', {
         }
     },
     methods: {
+        __,
         setSelected( option ) {
             this.field.value    =   option.value;
             this._options.forEach( option => option.selected = false );
@@ -56,7 +58,7 @@ const nsSwitch      =   Vue.component( 'ns-switch', {
         </div>
         <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">
-            <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
+            <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
         </p>
     </div>
     `,

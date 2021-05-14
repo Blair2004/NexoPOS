@@ -151,9 +151,10 @@ class CategoryController extends DashboardController
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
-        return $category->products->filter( function( $product ) {
-            return in_array( $product->product_type, [ 'product', 'variable' ]);
-        })->values();
+        return $category->products()
+            ->whereIn( 'product_type', [ 'product', 'variation' ])
+            ->searchable()
+            ->get();
     }
 
     /**
@@ -168,9 +169,10 @@ class CategoryController extends DashboardController
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
-        return $category->products->filter( function( $product ) {
-            return $product->product_type === 'variation';
-        })->values();
+        return $category->products->products()
+            ->whereIn( 'product_type', [ 'variation' ])
+            ->searchable()
+            ->get();
     }
 
     /**
@@ -236,6 +238,7 @@ class CategoryController extends DashboardController
             return [
                 'products'          =>  $category->products()
                     ->with( 'galleries' )
+                    ->searchable()
                     ->trackingDisabled()
                     ->get(),
                 'categories'        =>  $category

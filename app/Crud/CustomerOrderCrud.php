@@ -116,17 +116,17 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
+                            'label' =>  __( 'Created at' ),
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
+                            'label' =>  __( 'Customer Id' ),
                             'value' =>  $entry->customer_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'delivery_status',
-                            'label' =>  __( 'Delivery_status' ),
+                            'label' =>  __( 'Delivery Status' ),
                             'value' =>  $entry->delivery_status ?? '',
                         ], [
                             'type'  =>  'text',
@@ -141,22 +141,22 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'discount_percentage',
-                            'label' =>  __( 'Discount_percentage' ),
+                            'label' =>  __( 'Discount Percentage' ),
                             'value' =>  $entry->discount_percentage ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'discount_type',
-                            'label' =>  __( 'Discount_type' ),
+                            'label' =>  __( 'Discount Type' ),
                             'value' =>  $entry->discount_type ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'final_payment_date',
-                            'label' =>  __( 'final_payment_date' ),
+                            'label' =>  __( 'Final Payment Date' ),
                             'value' =>  $entry->final_payment_date ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'gross_total',
-                            'label' =>  __( 'Gross_total' ),
+                            'label' =>  __( 'Gross Total' ),
                             'value' =>  $entry->gross_total ?? '',
                         ], [
                             'type'  =>  'text',
@@ -166,17 +166,17 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'net_total',
-                            'label' =>  __( 'Net_total' ),
+                            'label' =>  __( 'Net Total' ),
                             'value' =>  $entry->net_total ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'payment_status',
-                            'label' =>  __( 'Payment_status' ),
+                            'label' =>  __( 'Payment Status' ),
                             'value' =>  $entry->payment_status ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'process_status',
-                            'label' =>  __( 'Process_status' ),
+                            'label' =>  __( 'Process Status' ),
                             'value' =>  $entry->process_status ?? '',
                         ], [
                             'type'  =>  'text',
@@ -186,22 +186,22 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'shipping_rate',
-                            'label' =>  __( 'Shipping_rate' ),
+                            'label' =>  __( 'Shipping Rate' ),
                             'value' =>  $entry->shipping_rate ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'shipping_type',
-                            'label' =>  __( 'Shipping_type' ),
+                            'label' =>  __( 'Shipping Type' ),
                             'value' =>  $entry->shipping_type ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'subtotal',
-                            'label' =>  __( 'Subtotal' ),
+                            'label' =>  __( 'Sub Total' ),
                             'value' =>  $entry->subtotal ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'tax_value',
-                            'label' =>  __( 'Tax_value' ),
+                            'label' =>  __( 'Tax Value' ),
                             'value' =>  $entry->tax_value ?? '',
                         ], [
                             'type'  =>  'text',
@@ -221,7 +221,7 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'total_instalments',
-                            'label' =>  __( 'Total_installments' ),
+                            'label' =>  __( 'Total installments' ),
                             'value' =>  $entry->total_instalments ?? '',
                         ], [
                             'type'  =>  'text',
@@ -231,7 +231,7 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
+                            'label' =>  __( 'Updated at' ),
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',
@@ -241,7 +241,7 @@ class CustomerOrderCrud extends OrderCrud
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'voidance_reason',
-                            'label' =>  __( 'Voidance_reason' ),
+                            'label' =>  __( 'Voidance Reason' ),
                             'value' =>  $entry->voidance_reason ?? '',
                         ],                     ]
                 ]

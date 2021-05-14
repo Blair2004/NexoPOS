@@ -94,6 +94,12 @@ class OrdersService
         $this->taxService       =   $taxService;
     }
 
+    /**
+     * Create an order on NexoPOS.
+     * @param array $fields
+     * @param Order|null $order (optional)
+     * @return array
+     */
     public function create( $fields, Order $order = null )
     {
         $customer               =   $this->__customerIsDefined($fields);
@@ -218,6 +224,13 @@ class OrdersService
         ];
     }
 
+    /**
+     * Will save order installments if 
+     * it's provider
+     * @param Order $order
+     * @param array $instalments
+     * @return void
+     */
     public function __saveOrderInstalments( Order $order, $instalments = [] )
     {
         if ( ! empty( $instalments ) ) {
@@ -887,6 +900,12 @@ class OrdersService
         ];
     }
 
+    /**
+     * Compute an order total based
+     * on provided data
+     * @param array $data
+     * @return array $order
+     */
     private function __computeOrderTotal($data)
     {
         /**
@@ -942,14 +961,7 @@ class OrdersService
         $gross          =   0;
 
         $products->each(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
-            /**
-             * this should run only if the product looped doesn't include an identifier.
-             * Usually if it's the case, the product is supposed to have been already handled before.
-             */
-            // if ( empty( $product[ 'id' ] ) ) {
-            // }
-            
+           
             /**
              * storing the product
              * history as a sale
@@ -1271,7 +1283,7 @@ class OrdersService
              * if the order has just been created
              * then we'll define the "created_at" column.
              */
-            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d' );
+            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d h:m:s' );
         }
 
         /**
@@ -1291,7 +1303,7 @@ class OrdersService
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
-        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d' );
+        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d h:m:s' );
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;

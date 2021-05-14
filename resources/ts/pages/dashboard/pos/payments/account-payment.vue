@@ -3,27 +3,27 @@
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
                 <div id="details" class="h-16 flex justify-between items-center bg-blue-400 text-white text-xl md:text-3xl p-2">
-                    <span>Total : </span>
+                    <span>{{ __( 'Total' ) }} : </span>
                     <span>{{ order.total | currency }}</span>
                 </div>
                 <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-xl md:text-3xl p-2">
-                    <span>Discount : </span>
+                    <span>{{ __( 'Discount' ) }} : </span>
                     <span>{{ order.discount | currency }}</span>
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-xl md:text-3xl p-2">
-                    <span>Paid : </span>
+                    <span>{{ __( 'Paid' ) }} : </span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
                 <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-xl md:text-3xl p-2">
-                    <span>Change : </span>
+                    <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-blue-400 text-white text-xl md:text-3xl p-2">
-                    <span>Current Balance : </span>
+                    <span>{{ __( 'Current Balance' ) }} : </span>
                     <span>{{ order.customer.account_amount | currency }}</span>
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-xl md:text-3xl p-2">
-                    <span>Screen : </span>
+                    <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ screenValue | currency }}</span>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                             <div
                             @click="makeFullPayment()"
                             class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
-                            Full Payment</div>
+                            {{ __( 'Full Payment' ) }}</div>
                         </template>
                     </ns-numpad>
                 </div>
@@ -67,6 +67,7 @@
 import { default as nsNumpad } from "@/components/ns-numpad";
 import { nsSnackBar } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: "ns-account-payment",
@@ -82,6 +83,8 @@ export default {
         }
     },
     methods: {
+        __,
+
         handleChange( event ) {
             this.screenValue    =   event;
         },
@@ -90,17 +93,17 @@ export default {
             const payments  =   this.order.payments;
 
             if ( value <= 0 ) {
-                return nsSnackBar.error( 'Please provide a valid payment amount.' )
+                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) )
                     .subscribe();
             }
 
             if ( payments.filter( p => p.identifier === 'account-payment' ).length > 0 ) {
-                return nsSnackBar.error( 'The customer account can only be used once per order. Consider deleting the previously used payment.' )
+                return nsSnackBar.error( __( 'The customer account can only be used once per order. Consider deleting the previously used payment.' ) )
                     .subscribe();
             }
 
             if ( value > this.order.customer.account_amount ) {
-                return nsSnackBar.error( 'Not enough funds to add {amount} as a payment. Available balance {balance}.'
+                return nsSnackBar.error( __( 'Not enough funds to add {amount} as a payment. Available balance {balance}.' )
                     .replace( '{amount}', this.$options.filters.currency( value ) ) 
                     .replace( '{balance}', this.$options.filters.currency( this.order.customer.account_amount ) ) 
                 ).subscribe();
@@ -124,8 +127,8 @@ export default {
         },
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Full Payment',
-                message: 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?'.replace( '{amount}', this.$options.filters.currency( this.order.total ) ),
+                title: __( 'Confirm Full Payment' ),
+                message: __( 'You\'re about to use {amount} from the customer account to make a payment. Would you like to proceed ?' ).replace( '{amount}', this.$options.filters.currency( this.order.total ) ),
                 onAction: ( action ) => {
                     if ( action ) {
                         this.proceedFullPayment();

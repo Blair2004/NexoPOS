@@ -3,9 +3,9 @@
         <div @click="visible = !visible" class="rounded cursor-pointer bg-white shadow px-1 py-1 flex items-center text-gray-700">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm">
-                <span>{{ label || 'Date' }} : </span>
+                <span>{{ label || __( 'Date' ) }} : </span>
                 <span v-if="currentDay">{{ currentDay.format( 'YYYY/MM/DD' ) }}</span>
-                <span v-if="currentDay === null">N/A</span>
+                <span v-if="currentDay === null">{{ __( 'N/A' ) }}</span>
             </span>
         </div>
         <div class="relative h-0 w-0 -mb-2" v-if="visible">
@@ -21,13 +21,13 @@
                         </div>
                     </div>
                     <div class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Sun</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Mon</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Tue</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Wed</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Thr</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Fri</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Sat</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Sun' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Mon' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Tue' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Wed' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Thr' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Fri' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Sat' ) }}</div>
                     </div>
                     <div v-for="(week, index) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
                         <div :key="_index" v-for="( dayOfWeek, _index) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
@@ -48,6 +48,7 @@
 </template>
 <script>
 import moment from "moment";
+import { __ } from '@/libraries/lang';
 export default {
     name: "ns-datepicker",
     props: [ 'label', 'date' ],
@@ -67,6 +68,7 @@ export default {
         this.build();
     },
     methods: {
+        __,
         checkClickedItem( event ) {
             let clickChildrens;
 

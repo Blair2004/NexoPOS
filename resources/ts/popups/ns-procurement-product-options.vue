@@ -14,6 +14,7 @@
 <script>
 import FormValidation from '@/libraries/form-validation';
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-procurement-product-options',
     data() {
@@ -22,27 +23,27 @@ export default {
             fields: [],
             rawFields: [
                 {
-                    label: 'Expiration Date',
+                    label: __( 'Expiration Date' ),
                     name: 'expiration_date',
-                    description: 'Define when that specific product should expire.',
+                    description: __( 'Define when that specific product should expire.' ),
                     type: 'datetimepicker',
                 }, {
-                    label: 'Barcode',
+                    label: __( 'Barcode' ),
                     name: 'barcode',
-                    description: 'Renders the automatically generated barcode.',
+                    description: __( 'Renders the automatically generated barcode.' ),
                     type: 'text',
                     disabled: true,
                 }, {
-                    label: 'Tax Type',
+                    label: __( 'Tax Type' ),
                     name: 'tax_type',
-                    description: 'Adjust how tax is calculated on the item.',
+                    description: __( 'Adjust how tax is calculated on the item.' ),
                     type: 'select',
                     options: [
                         {
-                            label: 'Inclusive',
+                            label: __( 'Inclusive' ),
                             value: 'inclusive',
                         }, {
-                            label: 'Exclusive',
+                            label: __( 'Exclusive' ),
                             value: 'exclusive',
                         }
                     ],
@@ -51,6 +52,7 @@ export default {
         }
     },  
     methods: {
+        __,
         applyChanges() {
             const validation    =   this.validation.validateFields( this.fields );
             
@@ -61,7 +63,7 @@ export default {
                 return this.$popup.close();
             }
 
-            return nsSnackBar.error( 'Unable to proceed. The form is not valid.' )
+            return nsSnackBar.error( __( 'Unable to proceed. The form is not valid.' ) )
                 .subscribe();
         }
     },

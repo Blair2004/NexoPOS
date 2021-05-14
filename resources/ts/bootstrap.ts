@@ -13,12 +13,11 @@ import Url from "./libraries/url";
 import { nsCurrency, nsAbbreviate, nsRawCurrency } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
-import { __ } from "./libraries/lang";
+import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
 import Echo from "laravel-echo";
 const Pusher    =   require('pusher-js');
-
 
 
 declare global {
@@ -32,6 +31,7 @@ declare global {
         nsHooks: any,
         SnackBar: SnackBar,
         __: any,
+        __m: any,
         popupResolver: any,
         popupCloser: any,
         Pusher:any,
@@ -48,6 +48,7 @@ window.Vue              =   Vue;
 window.moment           =   <any>moment;
 window.Axios            =   Axios;
 window.__               =   __;
+window.__m              =   __m;
 window.VueRouter        =   <any>VueRouter;
 window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
@@ -122,20 +123,20 @@ const nsState           =   new State({
 
 nsHttpClient.defineClient( Axios );
 
-(window as any ).nsEvent          =   nsEvent;
-(window as any ).nsHttpClient     =   nsHttpClient;
-(window as any ).nsSnackBar       =   nsSnackBar;
-(window as any ).nsCurrency       =   nsCurrency;
-(window as any ).nsRawCurrency    =   nsRawCurrency;
-(window as any ).nsAbbreviate     =   nsAbbreviate;
-(window as any ).nsState          =   nsState;
-(window as any ).nsUrl            =   nsUrl;
-(window as any ).nsScreen         =   nsScreen;
-(window as any ).ChartJS          =   ChartJS;
-(window as any ).EventEmitter     =   EventEmitter;
-(window as any ).Popup            =   Popup;
-(window as any ).RxJS             =   RxJS;
-(window as any ).FormValidation   =   FormValidation;
-(window as any ).nsCrudHandler    =   nsCrudHandler;
+( window as any ).nsEvent            =   nsEvent;
+( window as any ).nsHttpClient       =   nsHttpClient;
+( window as any ).nsSnackBar         =   nsSnackBar;
+( window as any ).nsCurrency         =   nsCurrency;
+( window as any ).nsRawCurrency      =   nsRawCurrency;
+( window as any ).nsAbbreviate       =   nsAbbreviate;
+( window as any ).nsState            =   nsState;
+( window as any ).nsUrl              =   nsUrl;
+( window as any ).nsScreen           =   nsScreen;
+( window as any ).ChartJS            =   ChartJS;
+( window as any ).EventEmitter       =   EventEmitter;
+( window as any ).Popup              =   Popup;
+( window as any ).RxJS               =   RxJS;
+( window as any ).FormValidation     =   FormValidation;
+( window as any ).nsCrudHandler      =   nsCrudHandler;
 
 export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

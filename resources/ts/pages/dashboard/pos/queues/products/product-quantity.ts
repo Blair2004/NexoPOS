@@ -1,4 +1,5 @@
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 import { Popup } from '@/libraries/popup';
 import { default as nsPosQuantityPopup } from '@/popups/ns-pos-quantity-popup.vue';
 
@@ -59,7 +60,7 @@ export class ProductQuantityPromise {
                             ( holdQuantity )
                         )
                     ) {
-                        return nsSnackBar.error( 'Unable to add the product, there is not enough stock. Remaining %s'.replace( '%s', ( data.$quantities().quantity - holdQuantity ).toString() ) )
+                        return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ).toString() ) )
                             .subscribe();
                     }
                 }

@@ -8,6 +8,7 @@
   <testsuites>
     <testsuite name="Feature">
       <directory suffix="ResetTest.php">./tests/Feature</directory>
+      <directory suffix="ResetUserStatsTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
@@ -31,15 +32,6 @@
       <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
-      <!--  -->
-      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreApproveStockRequestTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreApproveStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreRejectStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCancelStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCreateStockTransfer.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCreatePendingStockTransfer.php">./tests/Feature</directory> -->
     </testsuite>
   </testsuites>
   <php>

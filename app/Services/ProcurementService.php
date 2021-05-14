@@ -31,6 +31,7 @@ use App\Models\Product;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
+use App\Models\Unit;
 use Exception;
 
 class ProcurementService
@@ -398,6 +399,7 @@ class ProcurementService
             $procurementProduct->product_id                 =   $procuredProduct[ 'product_id' ];
             $procurementProduct->purchase_price             =   $procuredProduct[ 'purchase_price' ];
             $procurementProduct->quantity                   =   $procuredProduct[ 'quantity' ];
+            $procurementProduct->available_quantity         =   $procuredProduct[ 'quantity' ];
             $procurementProduct->tax_group_id               =   $procuredProduct[ 'tax_group_id' ];
             $procurementProduct->tax_type                   =   $procuredProduct[ 'tax_type' ];
             $procurementProduct->tax_value                  =   $procuredProduct[ 'tax_value' ];
@@ -406,7 +408,7 @@ class ProcurementService
             $procurementProduct->unit_id                    =   $procuredProduct[ 'unit_id' ];
             $procurementProduct->author                     =   Auth::id();
             $procurementProduct->save();
-            $procurementProduct->barcode                    =   $product->barcode . '-' . $procurementProduct->unit_id . '-' . $procurementProduct->id;
+            $procurementProduct->barcode                    =   str_pad( $product->barcode, 5, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->unit_id, 3, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->id, 3, '0', STR_PAD_LEFT );
             $procurementProduct->save();
 
             
@@ -917,5 +919,43 @@ class ProcurementService
             default :
                 return $label;
         }
+    }
+
+    public function searchProduct( $argument, $limit = 10 )
+    {
+        return Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+            ->with( 'unit_quantities.unit' )
+            ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
+            ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
+            ->limit( $limit )
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    });
+                }
+
+                return $product;
+            });
+    }
+
+    public function searchProcurementProduct( $argument )
+    {
+        $procurementProduct     =   ProcurementProduct::where( 'barcode', $argument )
+            ->with([ 'unit', 'procurement' ])
+            ->first();
+
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            $procurementProduct->unit_quantity  =   $this->productService->getUnitQuantity( 
+                $procurementProduct->product_id, 
+                $procurementProduct->unit_id 
+            );
+        }
+
+        return $procurementProduct;
     }
 }

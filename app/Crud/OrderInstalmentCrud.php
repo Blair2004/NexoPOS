@@ -172,7 +172,7 @@ class OrderInstalmentCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'order_id',
-                            'label' =>  __( 'Order_id' ),
+                            'label' =>  __( 'Order Id' ),
                             'value' =>  $entry->order_id ?? '',
                         ], [
                             'type'  =>  'text',

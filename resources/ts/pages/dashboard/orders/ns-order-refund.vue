@@ -4,7 +4,7 @@
             <ns-spinner></ns-spinner>
         </div>
         <div class="px-4 w-full lg:w-1/2">
-            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">Refund With Products</h3>
+            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">{{ __( 'Refund With Products' ) }}</h3>
             <div class="my-2">
                 <ul>
                     <li class="border-b border-blue-400 flex justify-between items-center mb-2">
@@ -14,25 +14,25 @@
                             </div>
                             <div class="flex justify-between p-2">
                                 <div class="flex items-center text-gray-700">
-                                    <span v-if="order.shipping > 0" class="mr-2">Refund Shipping</span>
+                                    <span v-if="order.shipping > 0" class="mr-2">{{ __( 'Refund Shipping' ) }}</span>
                                     <ns-checkbox v-if="order.shipping > 0" @change="toggleRefundShipping( $event )" :checked="refundShipping"></ns-checkbox>
                                 </div>
                                 <div>
-                                    <button @click="addProduct()" class="border-2 rounded-full border-gray-200 px-2 py-1 hover:bg-blue-400 hover:text-white text-gray-700">Add Product</button>
+                                    <button @click="addProduct()" class="border-2 rounded-full border-gray-200 px-2 py-1 hover:bg-blue-400 hover:text-white text-gray-700">{{ __( 'Add Product' ) }}</button>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <h4 class="py-1 border-b-2 text-gray-700 border-blue-400">Products</h4>
+                        <h4 class="py-1 border-b-2 text-gray-700 border-blue-400">{{ __( 'Products' ) }}</h4>
                     </li>
                     <li v-for="product of refundables" :key="product.id" class="bg-gray-100 border-b border-blue-400 flex justify-between items-center mb-2">
                         <div class="px-2 text-gray-700 flex justify-between flex-auto">
                             <div class="flex flex-col">
                                 <p class="py-2">
                                     <span>{{ product.name }}</span>
-                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-red-400 mx-2 text-white">Damaged</span>
-                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-green-400 mx-2 text-white">Unspoiled</span>
+                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-red-400 mx-2 text-white">{{ __( 'Damaged' ) }}</span>
+                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-green-400 mx-2 text-white">{{ __( 'Unspoiled' ) }}</span>
                                 </p>
                                 <small>{{ product.unit.name }}</small>
                             </div>
@@ -54,22 +54,22 @@
             </div>
         </div>
         <div class="px-4 w-full lg:w-1/2">
-            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">Summary</h3>
+            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">{{ __( 'Summary' ) }}</h3>
             <div class="py-2">
                 <div class="bg-blue-400 text-white font-semibold flex mb-2 p-2 justify-between">
-                    <span>Total</span>
+                    <span>{{ __( 'Total' ) }}</span>
                     <span>{{ total | currency }}</span>
                 </div>
                 <div class="bg-teal-400 text-white font-semibold flex mb-2 p-2 justify-between">
-                    <span>Paid</span>
+                    <span>{{ __( 'Paid' ) }}</span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
                 <div @click="selectPaymentGateway()" class="bg-indigo-400 text-white font-semibold flex mb-2 p-2 justify-between cursor-pointer">
-                    <span>Payment Gateway</span>
+                    <span>{{ __( 'Payment Gateway' ) }}</span>
                     <span>{{ selectedPaymentGateway ? selectedPaymentGateway.label : 'N/A' }}</span>
                 </div>
                 <div class="bg-gray-300 text-gray-900 font-semibold flex mb-2 p-2 justify-between">
-                    <span>Screen</span>
+                    <span>{{ __( 'Screen' ) }}</span>
                     <span>{{ screenValue | currency }}</span>
                 </div>
                 <div>
@@ -89,6 +89,7 @@ import { nsSelect } from '@/components/ns-select';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { Popup } from '@/libraries/popup';
+import { __ } from '@/libraries/lang';
 
 export default {
     components: {
@@ -139,13 +140,15 @@ export default {
                     }),
                     validation: 'required',
                     name: 'product_id',
-                    label: 'Product',
-                    description: 'Select the product to perform a refund.'
+                    label: __( 'Product' ),
+                    description: __( 'Select the product to perform a refund.' )
                 }
             ]
         }
     }, 
     methods: {
+        __,
+
         updateScreen( value ) {
             this.screen     =   value;
         },
@@ -160,20 +163,20 @@ export default {
 
         proceedPayment() {
             if ( this.selectedPaymentGateway === false ) {
-                return nsSnackBar.error( 'Please select a payment gateway before proceeding.' ).subscribe();
+                return nsSnackBar.error( __( 'Please select a payment gateway before proceeding.' ) ).subscribe();
             }
 
             if ( this.total === 0 ) {
-                return nsSnackBar.error( 'There is nothing to refund.' ).subscribe();
+                return nsSnackBar.error( __( 'There is nothing to refund.' ) ).subscribe();
             }
 
             if ( this.screenValue === 0 ) {
-                return nsSnackBar.error( 'Please provide a valid payment amount.' ).subscribe();
+                return nsSnackBar.error( __( 'Please provide a valid payment amount.' ) ).subscribe();
             }
 
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Your Action',
-                message: 'The refund will be made on the current order.',
+                title: __( 'Confirm Your Action' ),
+                message: __( 'The refund will be made on the current order.' ),
                 onAction: ( action ) => {
                     if ( action ) {
                         this.doProceed();
@@ -206,7 +209,7 @@ export default {
             this.formValidation.validateFields( this.selectFields );
 
             if ( ! this.formValidation.fieldsValid( this.selectFields ) ) {
-                return nsSnackBar.error( 'Please select a product before proceeding.' ).subscribe();
+                return nsSnackBar.error( __( 'Please select a product before proceeding.' ) ).subscribe();
             }
 
             const fields                =   this.formValidation.extractFields( this.selectFields );
@@ -219,12 +222,12 @@ export default {
                     .reduce( ( before, after ) => before + after );
 
                 if ( totalUsedQuantity === currentProduct[0].quantity ) {
-                    return nsSnackBar.error( 'Not enough quantity to proceed.' ).subscribe();
+                    return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) ).subscribe();
                 }
             }
 
             if ( currentProduct[0].quantity === 0 ) {
-                return nsSnackBar.error( 'Not enough quantity to proceed.' ).subscribe();
+                return nsSnackBar.error( __( 'Not enough quantity to proceed.' ) ).subscribe();
             }
 
             const product    =   { ...currentProduct[0], ...{
@@ -315,8 +318,8 @@ export default {
         deleteProduct( product ) {
             const promise   =   new Promise( ( resolve, reject ) => {
                 Popup.show( nsPosConfirmPopupVue, {
-                    title: 'Confirm Your Action',
-                    message: 'Would you like to delete this product ?',
+                    title: __( 'Confirm Your Action' ),
+                    message: __( 'Would you like to delete this product ?' ),
                     onAction: action => {
                         if ( action ) {
                             const index     =   this.refundables.indexOf( product );

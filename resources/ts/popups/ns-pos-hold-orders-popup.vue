@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white shadow-lg w-6/7-screen md:w-3/7-screen lg:w-2/6-screen">
         <div class="p-2 flex justify-between border-b items-center">
-            <h3 class="font-semibold">Hold Order</h3>
+            <h3 class="font-semibold">{{ __( 'Hold Order' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
@@ -15,23 +15,24 @@
             </div>
             <div class="p-2">
                 <p class="text-gray-600">
-                    The current order will be set on hold. You can retreive this order from the pending order button. 
-                    Providing a reference to it might help you to identify the order more quickly.
+                    {{ __( `The current order will be set on hold. You can retreive this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.` )}}
                 </p>
             </div>
         </div>
         <div class="flex">
             <div @click="submitHold()" class=" cursor-pointer w-1/2 py-3 flex justify-center items-center bg-green-500 text-white font-semibold">
-                Confirm
+                {{ __( 'Confirm' ) }}
             </div>
             <div @click="$popup.close()" class="cursor-pointer w-1/2 py-3 flex justify-center items-center bg-red-500 text-white font-semibold">
-                Cancel
+                {{ __( 'Cancel' ) }}
             </div>
         </div>
     </div>
 </template>
 <script>
 import popupCloser from "@/libraries/popup-closer";
+import { __ } from '@/libraries/lang';
+
 export default {
     name: 'ns-pos-hold-orders',
     data() {
@@ -60,6 +61,8 @@ export default {
         this.title  =   this.$popupParams.order.title || '';
     },
     methods: {
+        __,
+
         popupCloser,
 
         submitHold() {

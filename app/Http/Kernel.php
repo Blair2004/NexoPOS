@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Http\Middleware\ForceSetSessionDomainMiddleware;
+use App\Http\Middleware\LoadLangMiddleware;
 use App\Http\Middleware\ProtectRoutePermissionMiddleware;
 use App\Http\Middleware\ProtectRouteRoleMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -43,10 +44,12 @@ class Kernel extends HttpKernel
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
+            LoadLangMiddleware::class,
         ],
 
         'api' => [
             EnsureFrontendRequestsAreStateful::class,
+            LoadLangMiddleware::class,
             // 'throttle:80,1',
         ],
     ];

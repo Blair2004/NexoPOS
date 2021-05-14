@@ -5,11 +5,12 @@
             <p class="py-4 text-gray-600 text-center">{{ message }}</p>
         </div>
         <div class="flex border-t border-gray-200 text-gray-700 justify-end items-center p-2">
-            <ns-button @click="emitAction( true )" type="info">OK</ns-button>
+            <ns-button @click="emitAction( true )" type="info">{{ __( 'Ok' ) }}</ns-button>
         </div>
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang'
 export default {
     data() {
         return {
@@ -36,6 +37,7 @@ export default {
         })
     },
     methods: {
+        __,
         emitAction( action ) {
             if ( this.$popupParams.onAction !== undefined ) {
                 this.$popupParams.onAction( action );

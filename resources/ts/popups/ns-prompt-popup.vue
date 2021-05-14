@@ -8,13 +8,14 @@
             <textarea v-model="input" name="" id="" cols="30" rows="10" class="text-gray-700 w-full border-2 p-2 border-blue-400"></textarea>
         </div>
         <div class="flex border-t border-gray-200 text-gray-700">
-            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">Ok</button>
+            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Ok' ) }}</button>
             <hr class="border-r border-gray-200">
-            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="reject( false )">Cancel</button>
+            <button class="hover:bg-gray-100 flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="reject( false )">{{ __( 'Cancel' ) }}</button>
         </div>
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang'
 export default {
     data() {
         return {
@@ -40,6 +41,7 @@ export default {
         })
     },
     methods: {
+        __,
         emitAction( action ) {
             this.$popupParams.onAction( action ? this.input : action );
             this.$popup.close();

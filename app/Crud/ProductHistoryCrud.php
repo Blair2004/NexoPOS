@@ -153,7 +153,7 @@ class ProductHistoryCrud extends CrudService
                         [
                             'type'  =>  'text',
                             'name'  =>  'after_quantity',
-                            'label' =>  __( 'After_quantity' ),
+                            'label' =>  __( 'After Quantity' ),
                             'value' =>  $entry->after_quantity ?? '',
                         ], [
                             'type'  =>  'text',
@@ -163,12 +163,12 @@ class ProductHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'before_quantity',
-                            'label' =>  __( 'Before_quantity' ),
+                            'label' =>  __( 'Before Quantity' ),
                             'value' =>  $entry->before_quantity ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
+                            'label' =>  __( 'Created At' ),
                             'value' =>  $entry->created_at ?? '',
                         ], [
                             'type'  =>  'text',
@@ -178,27 +178,27 @@ class ProductHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'operation_type',
-                            'label' =>  __( 'Operation_type' ),
+                            'label' =>  __( 'Operation Type' ),
                             'value' =>  $entry->operation_type ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'order_id',
-                            'label' =>  __( 'Order_id' ),
+                            'label' =>  __( 'Order id' ),
                             'value' =>  $entry->order_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'procurement_id',
-                            'label' =>  __( 'Procurement_id' ),
+                            'label' =>  __( 'Procurement Id' ),
                             'value' =>  $entry->procurement_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'procurement_product_id',
-                            'label' =>  __( 'Procurement_product_id' ),
+                            'label' =>  __( 'Procurement Product Id' ),
                             'value' =>  $entry->procurement_product_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'product_id',
-                            'label' =>  __( 'Product_id' ),
+                            'label' =>  __( 'Product Id' ),
                             'value' =>  $entry->product_id ?? '',
                         ], [
                             'type'  =>  'text',
@@ -208,22 +208,22 @@ class ProductHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'total_price',
-                            'label' =>  __( 'Total_price' ),
+                            'label' =>  __( 'Total Price' ),
                             'value' =>  $entry->total_price ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'unit_id',
-                            'label' =>  __( 'Unit_id' ),
+                            'label' =>  __( 'Unit Id' ),
                             'value' =>  $entry->unit_id ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'unit_price',
-                            'label' =>  __( 'Unit_price' ),
+                            'label' =>  __( 'Unit Price' ),
                             'value' =>  $entry->unit_price ?? '',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
+                            'label' =>  __( 'Updated At' ),
                             'value' =>  $entry->updated_at ?? '',
                         ], [
                             'type'  =>  'text',

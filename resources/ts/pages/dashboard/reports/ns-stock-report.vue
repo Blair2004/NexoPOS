@@ -5,6 +5,7 @@
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-sale-report',
     data() {
@@ -54,14 +55,14 @@ export default {
 
         loadReport() {
             if ( this.startDate === null || this.endDate ===null ) {
-                return nsSnackBar.error( 'Unable to proceed. Select a correct time range.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. Select a correct time range.' ) ).subscribe();
             }
 
             const startMoment   =   moment( this.startDate );
             const endMoment     =   moment( this.endDate );
 
             if ( endMoment.isBefore( startMoment ) ) {
-                return nsSnackBar.error( 'Unable to proceed. The current time range is not valid.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed. The current time range is not valid.' ) ).subscribe();
             }
 
             nsHttpClient.post( '/api/nexopos/v4/reports/sale-report', { 

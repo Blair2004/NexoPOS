@@ -5,19 +5,19 @@
                 <span class="px-2">
                     <a @click="refreshModules()" class="items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow flex px-3 py-1 hover:bg-blue-400 hover:text-white">
                         <i class="las la-sync"></i>
-                        <span class="mx-2">Refresh</span>
+                        <span class="mx-2">{{ __( 'Refresh' ) }}</span>
                     </a>
                 </span>
                 <span class="px-2">
                     <a :href="upload" class="flex items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white">
-                        <span>Upload</span>                        
+                        <span>{{ __( 'Upload' ) }}</span>                        
                         <i class="las la-angle-right"></i>
                     </a>
                 </span>
             </div>
             <div class="header-tabs flex -mx-4 flex-wrap">
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'enabled' ] ? $slots[ 'enabled' ][0].text : 'Enabled' }}({{ total_enabled }})</a></div>
-                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'disabled' ] ? $slots[ 'disabled' ][0].text : 'Disabled' }} ({{ total_disabled }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'enabled' ] ? $slots[ 'enabled' ][0].text : __( 'Enabled' ) }}({{ total_enabled }})</a></div>
+                <div class="px-4 text-xs text-blue-500 font-semibold hover:underline"><a href="#">{{ $slots[ 'disabled' ] ? $slots[ 'disabled' ][0].text : __( 'Disabled' ) }} ({{ total_disabled }})</a></div>
             </div>
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
@@ -37,8 +37,8 @@
                         <p class="py-2 text-gray-700 text-sm">{{ moduleObject[ 'description' ] }}</p>
                     </div>
                     <div class="footer bg-gray-200 p-2 flex justify-between">
-                        <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">Enable</ns-button>
-                        <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">Disable</ns-button>
+                        <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
+                        <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">
                             <div class="px-1">
                                 <ns-button 
@@ -70,6 +70,7 @@
 <script>
 import { nsHttpClient, nsSnackBar } from "../../bootstrap";
 import { map } from "rxjs/operators";
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-modules',
@@ -93,6 +94,8 @@ export default {
         }
     },
     methods: {
+        __,
+        
         download( module ) {
             document.location   =   '/dashboard/modules/download/' + module.namespace;
         },

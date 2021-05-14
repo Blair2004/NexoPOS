@@ -1,6 +1,7 @@
 <script>
 import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
 import popupCloser from "@/libraries/popup-closer";
+import { __ } from '@/libraries/lang';
 
 const VueUpload     =   require( 'vue-upload-component' );
 
@@ -13,11 +14,11 @@ export default {
     data() {
         return {
             pages: [{
-                label: 'Upload',
+                label: __( 'Upload' ),
                 name: 'upload',
                 selected: false,
             }, {
-                label: 'Gallery',
+                label: __( 'Gallery' ),
                 name : 'gallery',
                 selected: true,
             }],
@@ -97,6 +98,8 @@ export default {
     },
     methods: {
         popupCloser,
+
+        __,
 
         cancelBulkSelect() {
             this.bulkSelect     =   false;
@@ -196,7 +199,7 @@ export default {
 <template>
     <div class="flex bg-white shadow-xl overflow-hidden" :class="isPopup ? 'w-6/7-screen h-6/7-screen' : 'w-full h-full'">
         <div class="sidebar w-48 bg-gray-200 h-full flex-shrink-0">
-            <h3 class="text-xl font-bold text-gray-800 my-4 text-center">Medias Manager</h3>
+            <h3 class="text-xl font-bold text-gray-800 my-4 text-center">{{ __( 'Medias Manager' ) }}</h3>
             <ul>
                 <li @click="select( page )" v-for="(page,index) of pages" class="hover:bg-white py-2 px-3 text-gray-700 border-l-8 cursor-pointer" :class="page.selected ? 'bg-white border-blue-400' : 'border-transparent'" :key="index">{{ page.label }}</li>
             </ul>
@@ -213,7 +216,7 @@ export default {
                 :post-action="postMedia"
                 >
                 <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
-                    <h3 class="text-3xl font-bold text-gray-600 mb-4">Click Here Or Drop Your File To Upload</h3>
+                    <h3 class="text-3xl font-bold text-gray-600 mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
                     <div class="rounded w-full md:w-2/3 text-gray-700 bg-gray-500 h-56 overflow-y-auto p-2">
                         <ul>
                             <li v-for="(file, index) of files" :key="index" class="p-2 mb-2 shadow bg-white flex items-center justify-between rounded">
@@ -247,7 +250,7 @@ export default {
                             </div>
                         </div>
                         <div v-if="response.data.length === 0" class="flex flex-auto items-center justify-center">
-                            <h3 class="text-2xl text-gray-600 font-bold">Nothing has already been uploaded</h3>
+                            <h3 class="text-2xl text-gray-600 font-bold">{{ __( 'Nothing has already been uploaded' ) }}</h3>
                         </div>
                     </div>
                 </div>
@@ -257,13 +260,13 @@ export default {
                     </div>
                     <div id="details" class="p-4 text-gray-700 text-sm">
                         <p class="flex flex-col mb-2">
-                            <strong class="font-bold block">File Name: </strong><span>{{ selectedResource.name }}</span>
+                            <strong class="font-bold block">{{ __( 'File Name' ) }}: </strong><span>{{ selectedResource.name }}</span>
                         </p>
                         <p class="flex flex-col mb-2">
-                            <strong class="font-bold block">Uploaded At:</strong><span>{{ selectedResource.created_at }}</span>
+                            <strong class="font-bold block">{{ __( 'Uploaded At' ) }}:</strong><span>{{ selectedResource.created_at }}</span>
                         </p>
                         <p class="flex flex-col mb-2">
-                            <strong class="font-bold block">By :</strong><span>{{ selectedResource.user.username }}</span>
+                            <strong class="font-bold block">{{ __( 'By' ) }} :</strong><span>{{ selectedResource.user.username }}</span>
                         </p>
                     </div>
                 </div>
@@ -296,13 +299,13 @@ export default {
                 <div class="flex-shrink-0 -mx-2 flex">
                     <div class="px-2">
                         <div class="rounded shadow overflow-hidden border-blue-400 flex text-sm text-gray-700">
-                            <button :disabled="response.current_page === 1" @click="loadGallery( response.current_page - 1 )" :class="response.current_page === 1 ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Previous</button>
+                            <button :disabled="response.current_page === 1" @click="loadGallery( response.current_page - 1 )" :class="response.current_page === 1 ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">{{ __( 'Previous' ) }}</button>
                             <hr class="border-r border-gray-700">
-                            <button :disabled="response.current_page === response.last_page" @click="loadGallery( response.current_page + 1 )" :class="response.current_page === response.last_page ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">Next</button>
+                            <button :disabled="response.current_page === response.last_page" @click="loadGallery( response.current_page + 1 )" :class="response.current_page === response.last_page ? 'bg-gray-100 text-gray-600 cursor-not-allowed' : 'bg-white hover:bg-blue-400 hover:text-white'" class="p-2">{{ __( 'Next' ) }}</button>
                         </div>
                     </div>
                     <div class="px-2" v-if="popup && hasOneSelected">
-                        <button class="rounded shadow p-2 bg-blue-400 text-white text-sm" @click="useSelectedEntries()">Use Selected</button>
+                        <button class="rounded shadow p-2 bg-blue-400 text-white text-sm" @click="useSelectedEntries()">{{ __( 'Use Selected' ) }}</button>
                     </div>
                 </div>
             </div>

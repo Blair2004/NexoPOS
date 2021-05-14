@@ -12,7 +12,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
                 <span v-if="currentDay === null">N/A</span>
             </span>
         </div>
-        <p class="text-sm text-gray-500">{{ field.descrition }}</p>
+        <p class="text-sm text-gray-500 py-1">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0 -mb-2" v-if="visible">
             <div class="w-72 mt-2 shadow rounded bg-white anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto">

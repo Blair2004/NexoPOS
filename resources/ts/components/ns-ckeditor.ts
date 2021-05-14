@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import ckeditor from '@ckeditor/ckeditor5-vue2';
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-
+import { __ } from '@/libraries/lang';
 const nsCkeditor    =   Vue.component( 'ns-ckeditor', {
     data: () => {
         return {
@@ -13,6 +13,7 @@ const nsCkeditor    =   Vue.component( 'ns-ckeditor', {
     },
     mounted() {
     },
+    methods: { __ },
     computed: {
         hasError() {
             if ( this.field.errors !== undefined && this.field.errors.length > 0 ) {
@@ -44,8 +45,8 @@ const nsCkeditor    =   Vue.component( 'ns-ckeditor', {
         </div>
         <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
         <p v-for="error of field.errors" class="text-xs text-red-400">
-            <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
-            <slot v-if="error.identifier === 'email'" :name="error.identifier">This field must contain a valid email address.</slot>
+            <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
+            <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
             <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>
         </p>
     </div>

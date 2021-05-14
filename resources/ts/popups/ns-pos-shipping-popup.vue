@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
-            <h3 class="font-bold text-gray-700">Shipping & Billing</h3>
+            <h3 class="font-bold text-gray-700">{{ __( 'Shipping & Billing' ) }}</h3>
             <div class="tools">
                 <button @click="closePopup()" class="hover:bg-red-400 hover:text-white hover:border-red-600 rounded-full h-8 w-8 border items-center justify-center">
                     <i class="las la-times"></i>
@@ -25,7 +25,7 @@
         <div class="p-2 flex justify-between border-t border-gray-300">
             <div></div>
             <div>
-                <ns-button @click="submitInformations()" type="info">Save</ns-button>
+                <ns-button @click="submitInformations()" type="info">{{ __( 'Save' ) }}</ns-button>
             </div>
         </div>
     </div>
@@ -97,6 +97,8 @@ export default {
         }
     },
     methods: {
+        __,
+        
         resolveIfQueued,
 
         submitInformations() {

@@ -123,6 +123,7 @@ class Setup
         Artisan::call( 'migrate --path=/database/migrations/default' );
         Artisan::call( 'migrate --path=/database/migrations/create-tables' );
         Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
+        Artisan::call( 'ns:translate --symlink' );
 
         /**
          * we'll register all "schema-updates" migration
@@ -155,11 +156,19 @@ class Setup
          * The main user is the master
          */
         User::set( $user )->as( 'admin' );
+        
+        /**
+         * define default user language
+         */
+        $attribute      =   $user->attribute()->create([
+            'language'  =>  'en'
+        ]);
 
         DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotenvEditor::setKey( 'NS_SOCKET_PORT', 6001 );
+        DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) );
         DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
         DotenvEditor::save();
 

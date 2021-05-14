@@ -6,11 +6,11 @@
         </div>
         <div class="p-2" v-if="loaded">
             <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
-                <span>Balance </span>
+                <span>{{ __( 'Balance' ) }} </span>
                 <span>{{ settings.register.balance | currency }}</span>
             </div>
             <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right flex justify-between">
-                <span>Input</span>
+                <span>{{ __( 'Input' ) }}</span>
                 <span>{{ amount | currency }}</span>
             </div>
             <div class="mb-2">
@@ -28,6 +28,8 @@ import nsNumpadVue from '@/components/ns-numpad.vue';
 import FormValidation from '@/libraries/form-validation';
 import popupCloser from '@/libraries/popup-closer';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
+import { __ } from '@/libraries/lang';
+
 export default {
     components: {
         nsNumpad: nsNumpadVue
@@ -61,6 +63,7 @@ export default {
     },
     methods: {
         popupCloser,
+        __,
 
         definedValue( value ) {
             this.amount     =   value;

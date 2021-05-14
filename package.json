@@ -12,7 +12,7 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "@types/node": "^14.11.2",
+    "@types/node": "^15.0.2",
     "axios": "^0.21.0",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
@@ -20,7 +20,7 @@
     "laravel-mix": "^5.0.5",
     "lodash": "^4.17.20",
     "pusher-js": "^7.0.3",
-    "resolve-url-loader": "^3.1.1",
+    "resolve-url-loader": "^4.0.0",
     "sass": "^1.27.0",
     "sass-loader": "^10.0.3",
     "style-loader": "^2.0.0",
@@ -31,7 +31,7 @@
     "webpack": "^4.44.2"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^23.0.0",
+    "@ckeditor/ckeditor5-build-classic": "^27.1.0",
     "@ckeditor/ckeditor5-vue": "^1.0.3",
     "@ckeditor/ckeditor5-vue2": "^1.0.5",
     "@wordpress/hooks": "^2.10.0",
@@ -47,7 +47,7 @@
     "numeral": "^2.0.6",
     "postcss": "^8.1.10",
     "rx": "^4.1.0",
-    "rxjs": "^6.6.3",
+    "rxjs": "^7.0.1",
     "tailwindcss": "^2.0.4",
     "twitter_cldr": "^2.2.0",
     "uglifyjs-webpack-plugin": "^2.2.0",

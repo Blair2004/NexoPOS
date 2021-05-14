@@ -48,7 +48,7 @@ class CreateOrderTest extends TestCase
             $currency       =   app()->make( CurrencyService::class );
             $faker          =   Factory::create();
             $products       =   Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
-            $shippingFees   =   $faker->randomElement([100,150,200,250,300,350,400]);
+            $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
             $discountRate   =   $faker->numberBetween(0,5);
 
             $products           =   $products->map( function( $product ) use ( $faker ) {
@@ -64,7 +64,7 @@ class CreateOrderTest extends TestCase
             /**
              * testing customer balance
              */
-            $customer                   =   Customer::first();
+            $customer                   =   Customer::get()->random();
             $customerFirstPurchases     =   $customer->purchases_amount;
             $customerFirstOwed          =   $customer->owed_amount;
 

@@ -61,7 +61,10 @@
                 <tbody>
                     @foreach( $procurement->products as $product )
                     <tr>
-                        <td>{{ $product->name }}</td>
+                        <td>
+                            <h3 class="font-semibold">{{ $product->name }}</h3>
+                            <p class="text-sm">{{ $product->barcode }}</p>
+                        </td>
                         <td>{{ $product->unit->name }}</td>
                         <td class="text-right">{{ ( string ) ns()->currency->define( $product->purchase_price ) }}</td>
                         <td class="text-right">{{ $product->quantity }}</td>
