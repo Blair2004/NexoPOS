@@ -960,7 +960,7 @@ class OrdersService
         $taxes          =   0;
         $gross          =   0;
 
-        $products->each(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
+        $orderProducts  =   $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
            
             /**
              * storing the product
@@ -1040,9 +1040,11 @@ class OrdersService
             }
 
             event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
+
+            return $orderProduct;
         });
 
-        return compact('subTotal', 'taxes', 'order');
+        return compact('subTotal', 'taxes', 'order', 'orderProducts' );
     }
 
     private function __buildOrderProducts( $products )
@@ -1691,8 +1693,12 @@ class OrdersService
          * let's save the products
          * to the order now as the stock
          * seems to be okay
+         * @param array $orderProducts
+         * @param Order $order
+         * @param float $taxes
+         * @param float $subTotal
          */
-        $this->__saveOrderProducts($order, $products);
+        extract( $this->__saveOrderProducts( $order, $products ) );
 
         /**
          * Now we should refresh the order
@@ -1702,6 +1708,7 @@ class OrdersService
 
         return [
             'status'    =>  'success',
+            'data'      =>  compact( 'orderProducts', 'order' ),
             'message'   =>  sprintf(
                 __('The product has been added to the order "%s"'),
                 $order->code

@@ -1,4 +1,4 @@
-import { nsHttpClient, nsSnackBar } from '../bootstrap';
+import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import Vue from 'vue';
 import FormValidation from '../libraries/form-validation';
 
@@ -72,7 +72,6 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                     }).subscribe();
                     
                     this.formValidation.triggerError( this.form, error );
-
                     this.formValidation.enableForm( this.form );
                 })
         },
@@ -84,6 +83,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
             const request   =   nsHttpClient.get( `${this.src}` );
             request.subscribe( (f:any) => {
                 this.form    =   this.parseForm( f.form );
+                nsHooks.doAction( 'ns-crud-form-loaded', this );
                 this.$emit( 'updated', this.form );
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OKAY', { duration: 0 }).subscribe();

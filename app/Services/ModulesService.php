@@ -760,7 +760,7 @@ class ModulesService
             } else {
                 $mode       =   'J';
                 $link       =   public_path( 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
-                $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Public' );
+                $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' );
                 $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
             }
         }

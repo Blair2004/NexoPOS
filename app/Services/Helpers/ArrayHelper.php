@@ -137,7 +137,11 @@ trait ArrayHelper {
             if ( ! is_array( $data ) || is_numeric( $index ) ) {
                 return [ $index => $data ];
             } else if ( is_array( $data ) ) {
-                return self::flatArrayWithKeys( $data );
+                if ( array_keys( $data ) !== range(0, count( $data ) - 1) ) {
+                    return self::flatArrayWithKeys( $data );
+                } else {
+                    return [ $index => json_encode( $data ) ];
+                }
             }
 
             return [];

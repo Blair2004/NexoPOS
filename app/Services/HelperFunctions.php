@@ -199,6 +199,10 @@ function ns(): CoreService {
  * @param string $namespace
  * @return string $result
  */
-function __m( $key, $namespace ) {
-    return app( 'translator' )->get( $namespace . '.' . $key );
+function __m( $key, $namespace = 'default' ) {
+    if ( app( 'translator' )->has( $namespace . '.' . $key  ) ) {
+        return app( 'translator' )->get( $namespace . '.' . $key );
+    }
+    
+    return $key;
 }

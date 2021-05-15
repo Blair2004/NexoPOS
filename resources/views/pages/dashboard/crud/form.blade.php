@@ -1,3 +1,7 @@
+<?php
+use App\Classes\Hook;
+use App\Classes\Output;
+?>
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
@@ -20,4 +24,9 @@
         </ns-crud-form>
     </div>
 </div>
+@endsection
+
+@section( 'layout.dashboard.footer' )
+    @parent
+    {!! ( string ) Hook::filter( 'ns-crud-form-footer', new Output ) !!}
 @endsection
