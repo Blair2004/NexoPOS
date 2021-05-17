@@ -1300,12 +1300,12 @@ class OrdersService
         $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
-        $order->final_payment_date      =   Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) ?? null; // when the order is not saved as laid away
+        $order->final_payment_date      =   isset( $fields['final_payment_date' ] ) ? Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) : null; // when the order is not saved as laid away
         $order->total_instalments       =   $fields['total_instalments' ] ?? 0;
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
-        $order->updated_at              =   Carbon::parse( $fields[ 'updated_at' ] )->format( 'Y-m-d h:m:s' ) ?? ns()->date->format( 'Y-m-d h:m:s' );
+        $order->updated_at              =   isset( $fields[ 'updated_at' ] ) ? Carbon::parse(  )->format( 'Y-m-d h:m:s' ) : ns()->date->format( 'Y-m-d h:m:s' );
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;
