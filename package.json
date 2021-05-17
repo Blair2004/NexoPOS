@@ -34,7 +34,7 @@
     "@ckeditor/ckeditor5-build-classic": "^27.1.0",
     "@ckeditor/ckeditor5-vue": "^2.0.1",
     "@ckeditor/ckeditor5-vue2": "^1.0.5",
-    "@wordpress/hooks": "^2.10.0",
+    "@wordpress/hooks": "^3.0.0",
     "apexcharts": "^3.22.1",
     "autoprefixer": "^10.0.4",
     "chart.js": "^2.9.3",
