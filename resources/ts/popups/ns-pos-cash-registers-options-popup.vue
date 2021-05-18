@@ -48,6 +48,8 @@ export default {
                  * if the register has been successfully
                  * closed, we need to delete the registe reference
                  */
+                POS.unset( 'register' );
+                
                 this.popupResolver({
                     button: 'close_register',
                     ...response

@@ -1,24 +1,26 @@
 <template>
-    <div class="shadow-lg w-95vw md:w-2/5-screen bg-white">
-        <div class="border-b border-gray-200 p-2 text-gray-700 flex justify-between items-center">
-            <h3 class="font-semibold">{{ title }}</h3>
-            <div><ns-close-button @click="close()"></ns-close-button></div>
+    <div>
+        <div class="shadow-lg w-95vw md:w-2/5-screen bg-white" v-if="loaded">
+            <div class="border-b border-gray-200 p-2 text-gray-700 flex justify-between items-center">
+                <h3 class="font-semibold">{{ title }}</h3>
+                <div><ns-close-button @click="close()"></ns-close-button></div>
+            </div>
+            <div class="p-2">
+                <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
+                    <span>{{ __( 'Balance' ) }} </span>
+                    <span>{{ settings.register.balance | currency }}</span>
+                </div>
+                <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right flex justify-between">
+                    <span>{{ __( 'Input' ) }}</span>
+                    <span>{{ amount | currency }}</span>
+                </div>
+                <div class="mb-2">
+                    <ns-numpad @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
+                </div>
+                <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
+            </div>
         </div>
-        <div class="p-2" v-if="loaded">
-            <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
-                <span>{{ __( 'Balance' ) }} </span>
-                <span>{{ settings.register.balance | currency }}</span>
-            </div>
-            <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right flex justify-between">
-                <span>{{ __( 'Input' ) }}</span>
-                <span>{{ amount | currency }}</span>
-            </div>
-            <div class="mb-2">
-                <ns-numpad @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
-            </div>
-            <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
-        </div>
-        <div class="flex items-center justify-center" v-if="! loaded">
+        <div class="h-full w-full flex items-center justify-center" v-if="! loaded">
             <ns-spinner></ns-spinner>
         </div>
     </div>

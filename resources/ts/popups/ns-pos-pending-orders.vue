@@ -31,6 +31,7 @@
                         <div class="flex rounded-lg overflow-hidden buttons-container">
                             <button @click="proceedOpenOrder( order )" class="text-white bg-green-400 outline-none px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
                             <button @click="previewOrder( order )" class="text-white bg-blue-400 outline-none px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
+                            <button @click="printOrder( order )" class="text-white bg-teal-400 outline-none px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
                         </div>
                     </div>
                 </div>
@@ -71,6 +72,9 @@ export default {
         },
         searchOrder() {
             this.$emit( 'searchOrder', this.searchField );
+        },
+        printOrder( order ) {
+            this.$emit( 'printOrder', order );
         }
     }
 }

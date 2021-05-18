@@ -28,5 +28,5 @@ use App\Classes\Output;
 
 @section( 'layout.dashboard.footer' )
     @parent
-    {!! ( string ) Hook::filter( 'ns-crud-form-footer', new Output ) !!}
+    {!! ( string ) Hook::filter( 'ns-crud-form-footer', new Output, $namespace ) !!}
 @endsection

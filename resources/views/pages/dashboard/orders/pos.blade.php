@@ -18,17 +18,7 @@
 @section( 'layout.base.footer' )
     @parent
     <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
-    <script src="{{ asset( 'js/pos.js' ) }}"></script>
     <script>
-    document.addEventListener( 'DOMContentLoaded', () => {
-        const loader    =   document.getElementById( 'loader' );
-        loader.classList.remove( 'fade-in-entrance' );
-        loader.classList.add( 'fade-out-exit' );
-        setTimeout( () => {
-            loader.remove();
-        }, 500 ); 
-    });
-
     POS.defineTypes( <?php echo json_encode( $orderTypes );?>);
     POS.defineOptions( <?php echo json_encode( $options );?>);
     POS.defineSettings({
@@ -40,6 +30,17 @@
     });
 
     POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
-    POS.reset();
+
+    document.addEventListener( 'DOMContentLoaded', () => {
+        const loader    =   document.getElementById( 'loader' );
+        loader.classList.remove( 'fade-in-entrance' );
+        loader.classList.add( 'fade-out-exit' );
+        
+        setTimeout( () => {
+            loader.remove();
+        }, 500 ); 
+        POS.reset();
+    });    
     </script>
+    <script src="{{ asset( 'js/pos.js' ) }}"></script>
 @endsection

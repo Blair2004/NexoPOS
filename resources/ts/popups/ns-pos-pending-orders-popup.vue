@@ -12,6 +12,7 @@
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
+                        @printOrder="printOrder( $event )"
                         @proceedOpenOrder="proceedOpenOrder( $event )">
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
@@ -19,6 +20,7 @@
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
+                        @printOrder="printOrder( $event )"
                         @proceedOpenOrder="proceedOpenOrder( $event )">
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
@@ -26,6 +28,7 @@
                     <ns-pos-pending-orders :orders="orders" 
                         @searchOrder="searchOrder( $event )"
                         @previewOrder="previewOrder( $event )"
+                        @printOrder="printOrder( $event )"
                         @proceedOpenOrder="proceedOpenOrder( $event )">
                     </ns-pos-pending-orders>
                 </ns-tabs-item>
@@ -83,6 +86,9 @@ export default {
             promise.then( products => {
                 this.proceedOpenOrder( order );
             }, ( error ) => error );
+        },
+        printOrder( order ) {
+            POS.printOrder( order.id );
         },
         proceedOpenOrder( order ) {
             const products  =   POS.products.getValue();

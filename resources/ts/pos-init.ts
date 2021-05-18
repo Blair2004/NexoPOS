@@ -673,6 +673,29 @@ export class POS {
             return false;
         }
 
+        console.log( options.ns_pos_printing_gateway );
+
+        switch( options.ns_pos_printing_gateway ) {
+            case 'default' : this.processRegularPrinting( order_id ); break;
+            default: this.processCustomPrinting( order_id, options.ns_pos_printing_gateway ); break;
+        }
+    }
+
+    processCustomPrinting( order_id, gateway ) {
+        const result =  nsHooks.applyFilters( 'ns-order-custom-print', { printed: false, order_id, gateway });
+        
+        if ( ! result.printed ) {
+            nsSnackBar.error( __( `Unsupported print gateway.` ) ).subscribe();
+        }
+    }
+
+    processRegularPrinting( order_id ) {
+        const item  =   document.querySelector( 'printing-section' );
+
+        if ( item ) {
+            item.remove();
+        }
+
         const printSection      =   document.createElement( 'iframe' );
         printSection.id         =   'printing-section';
         printSection.className  =   'hidden';
@@ -1174,6 +1197,12 @@ export class POS {
         this.settings.next( settings );
     }
 
+    unset( key ) {
+        const settings  =   this.settings.getValue();
+        delete settings[ key ];
+        this.settings.next( settings );
+    }
+
     get( key ) {
         const settings  =   this.settings.getValue();
         return settings[ key ];
@@ -1192,5 +1221,4 @@ export class POS {
 }
 
 ( window as any ).POS       =   new POS;
-
-export const POSInit    =   <POS>( window as any ).POS;
+export const POSInit        =   <POS>( window as any ).POS

@@ -119,7 +119,10 @@ export default {
                 }
 
                 this.form  =    this.validation.createForm( form );
+                
                 nsHooks.doAction( 'ns-settings-loaded', this );
+
+                nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this });
             })
         }
     }
