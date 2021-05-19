@@ -1736,5 +1736,8 @@
     "Order Receipt &mdash; %s": "Recibo de pedido &mdash; %s",
     "NexoPOS 4 &mdash; Setup Wizard": "NexoPOS 4 &mdash; Asistente de configuraci\u00f3n",
     "%s &mdash; NexoPOS 4": "%s &mdash; NexoPOS 4",
-    "If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources.": "Si ve esta página, esto significa que Nexopos 4.x está instalado correctamente en su sistema. Como esta página está destinada a ser la frontend, Nexopos 4.x no tiene una frontend para siempre. Esta página muestra enlaces útiles que lo llevarán a los recursos importantes."
+    "If you see this page, this means NexoPOS 4.x is correctly installed on your system. As this page is meant to be the frontend, NexoPOS 4.x doesn't have a frontend for the meantime. This page shows useful links that will take you to the important resources.": "Si ve esta p\u00e1gina, esto significa que Nexopos 4.x est\u00e1 instalado correctamente en su sistema. Como esta p\u00e1gina est\u00e1 destinada a ser la frontend, Nexopos 4.x no tiene una frontend para siempre. Esta p\u00e1gina muestra enlaces \u00fatiles que lo llevar\u00e1n a los recursos importantes.",
+    "Unsupported print gateway.": "Puerta de enlace impresa no compatible.",
+    "Printing Gateway": "Puerta de entrada de impresión",
+    "Determine what is the gateway used for printing.": "Determine qué se usa la puerta de enlace para imprimir."
 }
