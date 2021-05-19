@@ -27,6 +27,11 @@ class SettingsPage
         return $this->labels;
     }
 
+    public function getNamespace()
+    {
+        return $this->identifier;
+    }
+
     public function getIdentifier()
     {
         return $this->identifier;

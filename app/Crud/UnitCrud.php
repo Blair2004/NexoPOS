@@ -403,9 +403,11 @@ class UnitCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.units',
-            'create'    =>  'ns.units/create',
-            'edit'      =>  'ns.units/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'units' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'units/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'units/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units/{id}' . '' ),
         ];
     }
 

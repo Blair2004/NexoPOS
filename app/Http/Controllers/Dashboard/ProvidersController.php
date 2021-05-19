@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\View;
 use App\Services\Validation;
 use Illuminate\Support\Facades\Validator;
 use App\Fields\ProviderFields;
+use App\Crud\ProviderCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Provider;
 use App\Services\Options;
@@ -43,35 +44,17 @@ class ProvidersController extends DashboardController
 
     public function listProviders()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.providers' ),
-            'title'         =>  __( 'Providers' ),
-            'description'   =>  __( 'List of registered providers' ),
-            'createUrl'     =>  ns()->url( '/dashboard/providers/create' ),
-        ]);
+        return ProviderCrud::table();
     }
 
     public function createProvider()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/form-config' ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.providers' ),
-            'title'         =>  __( 'Create A Provider' ),
-            'description'   =>  __( 'Add a new provider to the system' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/providers' ),
-        ]);
+        return ProviderCrud::form();
     }
 
     public function editProvider( Provider $provider )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/form-config/' . $provider->id ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $provider->id ),
-            'title'         =>  __( 'Edit Provider' ),
-            'submitMethod'  =>  'PUT',
-            'description'   =>  __( 'Modify an existing provider' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/providers' ),
-        ]);
+        return ProviderCrud::form( $provider );
     }
 
     /**

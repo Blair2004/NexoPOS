@@ -414,9 +414,11 @@ class ProductCategoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.products-categories',
-            'create'    =>  'ns.products-categories/create',
-            'edit'      =>  'ns.products-categories/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'products/categories' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'products/categories/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'products/categories/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.products-categories/{id}' . '' ),
         ];
     }
 

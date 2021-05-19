@@ -350,9 +350,11 @@ class UnitGroupCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.units-groups',
-            'create'    =>  'ns.units-groups/create',
-            'edit'      =>  'ns.units-groups/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'units/groups' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'units/groups/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'units/groups/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups/{id}' . '' ),
         ];
     }
 

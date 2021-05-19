@@ -744,7 +744,7 @@ class CrudService
             /**
              * provide the current crud namespace
              */
-            'namespace'     =>  $instance->namespace
+            'namespace'     =>  $instance->getNamespace()
         ]);
     }
 

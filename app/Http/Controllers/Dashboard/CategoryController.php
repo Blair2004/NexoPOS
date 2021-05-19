@@ -11,6 +11,7 @@ use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
+use App\Crud\ProductCategoryCrud;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
@@ -193,23 +194,12 @@ class CategoryController extends DashboardController
 
     public function listCategories()
     {
-        return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>      __( 'Product Categories' ),
-            'createUrl'     =>  ns()->url( '/dashboard/products/categories/create' ),
-            'description'   =>  __( 'List all categories available.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories' ),
-        ]);
+        return ProductCategoryCrud::table();
     }
 
     public function createCategory()
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Create New Product Category' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/products/categories' ),
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories' ),
-            'description'   =>  __( 'Allow you to create a new product category.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/form-config' )
-        ]);
+        return ProductCategoryCrud::form();
     }
 
     /**
@@ -217,14 +207,7 @@ class CategoryController extends DashboardController
      */
     public function editCategory( ProductCategory $category )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'         =>  __( 'Edit Product Category' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/products/categories' ),
-            'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $category->id ),
-            'description'   =>  __( 'Allow you to edit an existing product category.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.products-categories/form-config/' . $category->id )
-        ]);
+        return ProductCategoryCrud::form( $category );
     }
 
     public function getCategories( $id = '0' )
