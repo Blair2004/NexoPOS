@@ -611,50 +611,53 @@ export class POS {
     }
 
     loadOrder( order_id ) {
-        nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
-            .subscribe( ( order: any ) => {
+        return new Promise( ( resolve, reject ) => {
+            nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
+                .subscribe( ( order: any ) => {
 
-                order       =   { ...this.defaultOrder(), ...order };
+                    order       =   { ...this.defaultOrder(), ...order };
 
-                /**
-                 * We'll rebuilt the product
-                 */
-                const products  =   order.products.map( (orderProduct: OrderProduct ) => {
-                    orderProduct.$original       =   () => orderProduct.product;
-                    orderProduct.$quantities     =   () => orderProduct
-                        .product
-                        .unit_quantities
-                        .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
-                    return orderProduct;
-                });
+                    /**
+                     * We'll rebuilt the product
+                     */
+                    const products  =   order.products.map( (orderProduct: OrderProduct ) => {
+                        orderProduct.$original       =   () => orderProduct.product;
+                        orderProduct.$quantities     =   () => orderProduct
+                            .product
+                            .unit_quantities
+                            .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
+                        return orderProduct;
+                    });
 
-                /**
-                 * we'll redefine the order type
-                 */
-                order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
+                    /**
+                     * we'll redefine the order type
+                     */
+                    order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
 
-                /**
-                 * the address is provided differently
-                 * then we need to rebuild it the way it's saved and used
-                 */
-                order.addresses     =   {
-                    shipping    :   order.shipping_address,
-                    billing     :   order.billing_address
-                }
+                    /**
+                     * the address is provided differently
+                     * then we need to rebuild it the way it's saved and used
+                     */
+                    order.addresses     =   {
+                        shipping    :   order.shipping_address,
+                        billing     :   order.billing_address
+                    }
 
-                delete order.shipping_address;
-                delete order.billing_address;
+                    delete order.shipping_address;
+                    delete order.billing_address;
 
-                
-                /**
-                 * let's all set, let's load the order
-                 * from now. No further change is required
-                 */
-                
-                this.buildOrder( order );
-                this.buildProducts( products );
-                this.selectCustomer( order.customer );
-            });
+                    
+                    /**
+                     * let's all set, let's load the order
+                     * from now. No further change is required
+                     */
+                    
+                    this.buildOrder( order );
+                    this.buildProducts( products );
+                    this.selectCustomer( order.customer );
+                    resolve( order );
+                }, error => reject( error ) );
+        })
     }
 
     buildOrder( order ) {
@@ -1218,5 +1221,6 @@ export class POS {
     }
 }
 
-( window as any ).POS       =   new POS;
-export const POSInit        =   <POS>( window as any ).POS
+( window as any ).POS           =   new POS;
+( window as any ).POSClass      =   POS;
+export const POSInit            =   <POS>( window as any ).POS

@@ -41,7 +41,8 @@ export default {
             }
         });
 
-        this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
+        // this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
+        this.order      =   this.$popupParams.order;
 
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   paymentsType;
