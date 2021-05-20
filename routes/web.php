@@ -87,7 +87,8 @@ Route::middleware([
             Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
             Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
             Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
-            Route::get( '/users/roles/{id}', [ UsersController::class, 'editRole' ]);
+            Route::get( '/users/roles/create', [ UsersController::class, 'createRole' ]);
+            Route::get( '/users/roles/edit/{role}', [ UsersController::class, 'editRole' ]);
         });
     });
 });

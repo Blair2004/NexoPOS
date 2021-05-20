@@ -433,9 +433,11 @@ class UserCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.users',
-            'create'    =>  'ns.users/create',
-            'edit'      =>  'ns.users/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'users' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'users/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'users/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.users' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.users/{id}' . '' ),
         ];
     }
 

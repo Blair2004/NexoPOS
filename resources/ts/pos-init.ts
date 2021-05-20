@@ -673,8 +673,6 @@ export class POS {
             return false;
         }
 
-        console.log( options.ns_pos_printing_gateway );
-
         switch( options.ns_pos_printing_gateway ) {
             case 'default' : this.processRegularPrinting( order_id ); break;
             default: this.processCustomPrinting( order_id, options.ns_pos_printing_gateway ); break;
