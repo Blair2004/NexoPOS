@@ -757,6 +757,8 @@ export class POS {
                         reject( error );
                     });
             }
+
+            return resolve( order );
         });
     }
 
