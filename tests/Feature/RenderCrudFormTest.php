@@ -40,7 +40,7 @@ class RenderCrudFormTest extends TestCase
             'taxes/groups',
             'units',
             'units/groups',
-            'roles',
+            'users/roles',
             'users'
         ];
 
