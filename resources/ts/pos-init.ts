@@ -613,7 +613,7 @@ export class POS {
     loadOrder( order_id ) {
         return new Promise( ( resolve, reject ) => {
             nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
-                .subscribe( ( order: any ) => {
+                .subscribe( async ( order: any ) => {
 
                     order       =   { ...this.defaultOrder(), ...order };
 
@@ -654,7 +654,7 @@ export class POS {
                     
                     this.buildOrder( order );
                     this.buildProducts( products );
-                    this.selectCustomer( order.customer );
+                    await this.selectCustomer( order.customer );
                     resolve( order );
                 }, error => reject( error ) );
         })
@@ -756,9 +756,9 @@ export class POS {
                     }, ( error ) => {
                         reject( error );
                     });
+            } else {
+                return resolve( order );
             }
-
-            return resolve( order );
         });
     }
 
