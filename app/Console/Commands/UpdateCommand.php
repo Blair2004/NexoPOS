@@ -87,7 +87,7 @@ class UpdateCommand extends Command
 
         $this->line( exec( "{$npmpath} i" ) );
         $this->line( exec( "{$composerpath} i" ) );
-        $this->line( exec( "{$npmpath} prod" ) );}
+        $this->line( exec( "{$npmpath} run prod" ) );}
 
     /**
      * perform dev update and optionally 
