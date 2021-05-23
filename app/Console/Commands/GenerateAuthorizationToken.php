@@ -39,6 +39,7 @@ class GenerateAuthorizationToken extends Command
      */
     public function handle()
     {
+        DotenvEditor::load();
         DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotEnvEditor::save();
         $this->info( 'The authorization token has been refreshed.' );
