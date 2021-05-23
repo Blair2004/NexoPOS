@@ -86,8 +86,8 @@ class UpdateCommand extends Command
         $npmpath        =   env( 'NS_NPM', 'npm' );
 
         $this->line( exec( "{$npmpath} i" ) );
-        $this->line( exec( "{$composerpath} i" ) );
-        $this->line( exec( "{$npmpath} prod" ) );}
+        $this->line( exec( "yes | {$composerpath} i" ) );
+        $this->line( exec( "{$npmpath} run prod" ) );}
 
     /**
      * perform dev update and optionally 
