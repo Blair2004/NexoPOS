@@ -11,14 +11,14 @@ class UpdateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:update {argument} {--module}';
+    protected $signature = 'ns:update {argument} {--module} {--force}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'An utility for updating NexoPOS 4.x and it\'s modules.';
+    protected $description = 'An utility for updating NexoPOS 4.x and it\'s modules. Only works if the project was installed using Git.';
 
     /**
      * Create a new command instance.
@@ -37,6 +37,74 @@ class UpdateCommand extends Command
      */
     public function handle()
     {
-        return 0;
+        if ( $this->option( 'module' ) ) {
+            $this->proceedUpdateModule();
+        } else {
+            $this->proceedCoreUpdate();
+        }
+    }
+
+    private function proceedUpdateModule()
+    {
+        // we need to update my.nexopos.com to support this.
+    }
+
+    /**
+     * check the type of update
+     * performed by the user.
+     */
+    private function proceedCoreUpdate()
+    {
+        switch( $this->argument( 'argument' ) ) {
+            case 'dev':
+                $this->proceedDevPull();
+            break;
+            default: 
+                $this->proceedTagUpdate( $this->argument( 'argument' ) );
+            break;
+        }
+    }
+
+    private function proceedTagUpdate( $tag )
+    {
+        $gitpath        =   env( 'NS_GIT', 'git' );
+
+        $this->info( __( 'Downloading latest dev build...' ) );
+
+        if ( $this->option( 'force' ) ) {
+            $this->info( __( 'Reset project to HEAD...' ) );
+            $this->line( exec( "{$gitpath} reset HEAD --hard" ) );
+        }
+
+        $this->line( exec( "{$gitpath} pull" ) );
+        $this->build();
+    }
+
+    private function build()
+    {
+        $composerpath   =   env( 'NS_COMPOSER', 'composer' );
+        $npmpath        =   env( 'NS_NPM', 'npm' );
+
+        $this->line( exec( "{$npmpath} i" ) );
+        $this->line( exec( "{$composerpath} i" ) );
+        $this->line( exec( "{$npmpath} prod" ) );}
+
+    /**
+     * perform dev update and optionally 
+     * clear local changes.
+     */
+    private function proceedDevPull()
+    {
+        $gitpath        =   env( 'NS_GIT', 'git' );
+
+        $this->info( __( 'Downloading latest dev build...' ) );
+
+        if ( $this->option( 'force' ) ) {
+            $this->info( __( 'Reset project to HEAD...' ) );
+            $this->line( exec( "{$gitpath} reset HEAD --hard" ) );
+        }
+
+        $this->line( exec( "{$gitpath} pull" ) );
+        $this->build();
     }
 }
