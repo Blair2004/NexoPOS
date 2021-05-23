@@ -1937,7 +1937,7 @@ class OrdersService
             "cashier_name"              =>  $order->user->username,
             "cashier_id"                =>  $order->author,
             "order_code"                =>  $order->code,
-            "order_date"                =>  $order->created_at,
+            "order_date"                =>  ns()->date->getFormatted( $order->created_at ),
             "customer_name"             =>  $order->customer->name,
             "customer_email"            =>  $order->customer->email,
             "shipping_" . "name"        =>  $order->shipping_address->name,
@@ -1965,7 +1965,7 @@ class OrdersService
         foreach( $availableTags as $tag => $value ) {
             $template   =   ( str_replace( '{'.$tag.'}', $value, $template ) );
         }
-
+        
         return $template;
     }
 
