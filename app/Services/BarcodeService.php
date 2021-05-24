@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
@@ -29,9 +30,13 @@ class BarcodeService
             default : $realType         =   $generator::TYPE_EAN_8; break;
         }
 
-        Storage::disk( 'public' )->put(
-            Hook::filter( 'ns-media-path', 'products/barcodes/' . $barcode . '.png' ),
-            $generator->getBarcode( $barcode, $realType, 3, 30 )
-        );
+        try {
+            Storage::disk( 'public' )->put(
+                Hook::filter( 'ns-media-path', 'products/barcodes/' . $barcode . '.png' ),
+                $generator->getBarcode( $barcode, $realType, 3, 30 )
+            );
+        } catch( Exception $exception ) {
+            throw new Exception( __( 'An error has occured while creating a barcode for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ) );
+        }
     }
 }

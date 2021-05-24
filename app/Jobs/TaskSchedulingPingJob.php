@@ -43,6 +43,8 @@ class TaskSchedulingPingJob implements ShouldQueue
          * @var DateService
          */
         $date               =   app()->make( DateService::class );
+        DotenvEditor::load();
+        DotenvEditor::autoBackup(false);
         DotenvEditor::setKey( 'NS_CRON_PING', $date->toDateTimeString() );
         DotenvEditor::save();
     }

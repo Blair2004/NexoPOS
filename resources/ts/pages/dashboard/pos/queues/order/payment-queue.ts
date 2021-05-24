@@ -8,7 +8,9 @@ export class PaymentQueue implements Queue {
 
     run() { 
         return new Promise( ( resolve, reject ) => {
-            Popup.show( nsPaymentPopup, { resolve, reject })
+            Popup.show( nsPaymentPopup, { resolve, reject, order : this.order })
         })
     }
 }
+
+(<any>window).PaymentQueue    =   PaymentQueue;

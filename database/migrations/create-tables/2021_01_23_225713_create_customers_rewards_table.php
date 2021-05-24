@@ -13,7 +13,7 @@ class CreateCustomersRewardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('nexopos_customers_rewards', function (Blueprint $table) {
+        Schema::createIfMissing('nexopos_customers_rewards', function (Blueprint $table) {
             $table->id();
             $table->integer( 'customer_id' );
             $table->integer( 'reward_id' );

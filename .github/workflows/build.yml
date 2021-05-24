@@ -1,0 +1,18 @@
+name: Build Frontend Assets
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+          check-latest: true
+      - run: npm install
+      - run: npm run prod

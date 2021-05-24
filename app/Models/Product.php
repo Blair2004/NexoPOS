@@ -17,6 +17,9 @@ class Product extends NsModel
     const EXPIRES_ALLOW_SALES           =   'allow_sales';
     
     protected $table                    =   'nexopos_' . 'products';
+    protected $cats                     =   [
+        'accurate_tracking'     =>  'boolean'
+    ];
 
     public function category()
     {
@@ -118,6 +121,11 @@ class Product extends NsModel
         return $this->hasMany( ProductGallery::class, 'product_id', 'id' );
     }
 
+    public function procurementHistory()
+    {
+        return $this->hasMany( ProcurementProduct::class, 'product_id', 'id' );
+    }
+
     /**
      * Filter query by getting products that are variations
      * @param QueryBuilder $query
@@ -158,6 +166,17 @@ class Product extends NsModel
     public function scopeWithStockDisabled( $query )
     {
         return $query->where( 'stock_management', Product::STOCK_MANAGEMENT_DISABLED );
+    }
+
+    /**
+     * Filter query by getitng product with
+     * accurate stock enabled or not.
+     * @param QueryBuilder $query
+     * @return QueryBuilder
+     */
+    public function scopeAccurateTracking( $query, $argument = true )
+    {
+        return $query->where( 'accurate_tracking', $argument );
     }
 
     /**

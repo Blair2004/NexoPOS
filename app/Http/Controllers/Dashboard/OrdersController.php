@@ -134,9 +134,9 @@ class OrdersController extends DashboardController
         }, 15 );
 
         return $this->view( 'pages.dashboard.orders.pos', [
-            'title'             =>  __( 'Proceeding Order &mdash; NexoPOS' ),
+            'title'             =>  __( 'POS &mdash; NexoPOS' ),
             'orderTypes'        =>  config( 'nexopos.orders.types' ),
-            'options'           =>  [
+            'options'           =>  Hook::filter( 'ns-pos-options', [
                 'ns_pos_printing_document'              =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
                 'ns_orders_allow_partial'               =>  ns()->option->get( 'ns_orders_allow_partial', 'no' ),
                 'ns_orders_allow_unpaid'                =>  ns()->option->get( 'ns_orders_allow_unpaid', 'no' ),
@@ -156,8 +156,9 @@ class OrdersController extends DashboardController
                 'ns_pos_vat'                            =>  ns()->option->get( 'ns_pos_vat', 'disabled' ),
                 'ns_pos_tax_group'                      =>  ns()->option->get( 'ns_pos_tax_group', false ),
                 'ns_pos_tax_type'                       =>  ns()->option->get( 'ns_pos_tax_type', false ),
+                'ns_pos_printing_gateway'               =>  ns()->option->get( 'ns_pos_printing_gateway', 'default' ),
                 'ns_pos_show_quantity'                  =>  ns()->option->get( 'ns_pos_show_quantity', 'no' ) === 'no' ? false : true,
-            ],
+            ]),
             'urls'              =>  [
                 'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
                 'orders_url'    =>      ns()->route( 'ns.dashboard.orders' ),

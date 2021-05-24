@@ -95,10 +95,10 @@ class RolesCrud extends CrudService
         return [
             'list_title'            =>  __( 'Roles List' ),
             'list_description'      =>  __( 'Display all roles.' ),
-            'no_entry'              =>  __( 'No roles has been registered' ),
+            'no_entry'              =>  __( 'No role has been registered.' ),
             'create_new'            =>  __( 'Add a new role' ),
             'create_title'          =>  __( 'Create a new role' ),
-            'create_description'    =>  __( 'Register a new role and save it.' ),
+            'create_description'    =>  __( 'Create a new role and save it.' ),
             'edit_title'            =>  __( 'Edit role' ),
             'edit_description'      =>  __( 'Modify  Role.' ),
             'back_to_list'          =>  __( 'Return to Roles' ),
@@ -286,7 +286,7 @@ class RolesCrud extends CrudService
                 '$sort'         =>  false
             ],            
             'created_at'  =>  [
-                'label'  =>  __( 'Created_at' ),
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -310,7 +310,7 @@ class RolesCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
+                'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
@@ -387,9 +387,11 @@ class RolesCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.roles',
-            'create'    =>  'ns.roles/create',
-            'edit'      =>  'ns.roles/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'users/roles' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'users/roles/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'users/roles/edit/{id}' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.roles/{id}' . '' ),
         ];
     }
 

@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\ProcurementCrud;
+use App\Crud\ProcurementProductCrud;
 use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -20,6 +21,10 @@ use App\Services\ProcurementService;
 use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
 use App\Models\Procurement;
+use App\Models\ProcurementProduct;
+use App\Models\Product;
+use App\Models\Unit;
+use App\Services\ProductService;
 use Tendoo\Core\Exceptions\AccessDeniedException;
 
 
@@ -32,6 +37,11 @@ class ProcurementController extends DashboardController
      **/
     protected $procurementService;
 
+    /** 
+     * @var ProductService 
+     **/
+    protected $productService;
+
     /**
      * @var Options
      */
@@ -39,6 +49,7 @@ class ProcurementController extends DashboardController
 
     public function __construct(
         ProcurementService $procurementService,
+        ProductService $productService,
         Options $options
     )
     {
@@ -46,6 +57,7 @@ class ProcurementController extends DashboardController
 
         $this->validation           =   new Validation;
         $this->procurementService   =   $procurementService;
+        $this->productService       =   $productService;
         $this->options              =   $options;
     }
 
@@ -157,7 +169,12 @@ class ProcurementController extends DashboardController
      */
     public function deleteProcurementProduct( $product_id )
     {
-        return $this->procurementService->deleteProduct( $product_id );
+        $procurementProduct     =   ProcurementProduct::find( $product_id );
+
+        return $this->procurementService->deleteProduct( 
+            $procurementProduct,
+            $procurementProduct->procurement
+        );
     }
 
     /**
@@ -223,6 +240,58 @@ class ProcurementController extends DashboardController
             'procurement'   =>  $procurement,
             'options'       =>  $this->options
         ]);
+    }
+
+    public function searchProduct( Request $request )
+    {
+        return $this->procurementService->searchProduct( $request->input( 'search' ) );
+    }
+
+    public function searchProcurementProduct( Request $request )
+    {
+        $products    =   Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
+            ->trackingDisabled()
+            ->with( 'unit_quantities.unit' )
+            ->where( function( $query ) use ( $request ) {
+                $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
+                ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
+            })
+            ->limit( 5 )
+            ->get()
+            ->map( function( $product ) {
+                $units  =   json_decode( $product->purchase_unit_ids );
+                
+                if ( $units ) {
+                    $product->purchase_units     =   collect();
+                    collect( $units )->each( function( $unitID ) use ( &$product ) {
+                        $product->purchase_units->push( Unit::find( $unitID ) );
+                    });
+                }
+
+                return $product;
+            });
+
+        if ( ! $products->isEmpty() ) {
+            return [
+                'from'      =>  'products',
+                'products'  =>  $products
+            ];
+        } 
+
+        return [
+            'from'      =>  'procurements',
+            'product'   =>  $this->procurementService->searchProcurementProduct( $request->input( 'search' ) )
+        ];
+    }
+
+    public function getProcurementProducts()
+    {
+        return ProcurementProductCrud::table();
+    }
+
+    public function editProcurementProduct( ProcurementProduct $product )
+    {
+        return ProcurementProductCrud::form( $product );
     }
 }
 

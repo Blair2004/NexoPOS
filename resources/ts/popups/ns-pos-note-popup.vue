@@ -1,7 +1,7 @@
 <template>
     <div class="shadow-lg bg-white w-95vw md:w-3/5-screen lg:w-2/5-screen">
         <div class="p-2 flex justify-between items-center border-b border-gray-200">
-            <h3 class="font-bold">Order Note</h3>
+            <h3 class="font-bold">{{ __( 'Order Note' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
@@ -19,6 +19,7 @@ import FormValidation from '@/libraries/form-validation';
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
 import { nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     name: "ns-pos-note-popup",
     data() {
@@ -26,23 +27,23 @@ export default {
             validation: new FormValidation,
             fields: [
                 {
-                    label: 'Note',
+                    label: __( 'Note' ),
                     name: 'note',
                     value: '',
-                    description: 'More details about this order',
+                    description: __( 'More details about this order' ),
                     type: 'textarea',
                 }, {
-                    label: 'Display On Receipt',
+                    label: __( 'Display On Receipt' ),
                     name: 'note_visibility',
                     value: '',
                     options: [{
-                        label: 'Yes',
+                        label: __( 'Yes' ),
                         value: 'visible',
                     }, {
-                        label: 'No',
+                        label: __( 'No' ),
                         value: 'hidden'
                     }],
-                    description: 'Will display the note on the receipt',
+                    description: __( 'Will display the note on the receipt' ),
                     type: 'switch',
                 }
             ]
@@ -59,6 +60,7 @@ export default {
         });
     },
     methods: {
+        __,
         popupResolver,
         popupCloser,
 
@@ -72,7 +74,7 @@ export default {
                 this.validation.triggerFieldsErrors( this.fields, errors );
                 this.$forceUpdate();
                 console.log( this.fields );
-                return nsSnackBar.error( 'Unable to proceed the form is not valid.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             return this.popupResolver( this.validation.extractFields( this.fields ) );

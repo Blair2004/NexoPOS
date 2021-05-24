@@ -528,10 +528,9 @@ class CrudService
      * @param Crud $resource
      * @return Array
      */
-    public function extractCrudValidation( $crud, $entry = null )
+    public function extractCrudValidation( $crud, $model = null )
     {
-        $form   =   $crud->getForm( $entry );
-
+        $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
@@ -557,9 +556,9 @@ class CrudService
      * @param Request $request
      * @return array
      */
-    public function getPlainData( $resource, Request $request, $entry = null )
+    public function getPlainData( $crud, Request $request, $model = null )
     {
-        $form   =   $resource->getForm( $entry );
+        $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
         $data   =   [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {
@@ -573,8 +572,8 @@ class CrudService
              * this.
              */
             $keys       =   [];
-            if ( method_exists( $resource, 'getTabsRelations' ) ) {
-                $keys   =   array_keys( $resource->getTabsRelations() );
+            if ( method_exists( $crud, 'getTabsRelations' ) ) {
+                $keys   =   array_keys( $crud->getTabsRelations() );
             }
 
             /**
@@ -740,7 +739,12 @@ class CrudService
             /**
              * This will pass an instance of the MenuService.
              */
-            'menus'         =>  app()->make( MenuService::class )
+            'menus'         =>  app()->make( MenuService::class ),
+
+            /**
+             * provide the current crud namespace
+             */
+            'namespace'     =>  $instance->getNamespace()
         ]);
     }
 

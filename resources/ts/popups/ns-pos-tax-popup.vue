@@ -1,14 +1,14 @@
 <template>
     <div class="bg-white shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
         <div class="p-2 flex justify-between items-center border-b border-gray-200">
-            <h3 class="text-blog">Tax & Summary</h3>
+            <h3 class="text-blog">{{ __( 'Tax & Summary' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
         <div class="p-2 bg-gray-50">
             <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
-                <ns-tabs-item padding="0" label="Settings" identifier="settings" :active="true">
+                <ns-tabs-item padding="0" :label="__( 'Settings' )" identifier="settings" :active="true">
                     <div class="p-2 border-b border-gray-200">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
                     </div>
@@ -16,7 +16,7 @@
                         <ns-button @click="saveTax()" type="info">Save</ns-button>
                     </div>
                 </ns-tabs-item>
-                <ns-tabs-item padding="0" label="Summary" identifier="summary" :active="false">
+                <ns-tabs-item padding="0" :label="__( 'Summary' )" identifier="summary" :active="false">
                     <div class="p-2" v-if="order">
                         <div v-for="tax of order.taxes" :key="tax.id" class="border-blue-200 mb-2 border bg-blue-100 shadow p-2 w-full flex justify-between items-center text-gray-700">
                             <span>{{ tax.tax_name }}</span>
@@ -34,6 +34,7 @@ import { nsHttpClient } from '@/bootstrap';
 import FormValidation from '@/libraries/form-validation';
 import popupCloser from '@/libraries/popup-closer';
 import popupResolver from '@/libraries/popup-resolver';
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-pos-tax-popup',
     data() {
@@ -48,25 +49,25 @@ export default {
             activeTab: '',
             group_fields: [
                 {
-                    label: 'Select Tax',
+                    label: __( 'Select Tax' ),
                     name: 'tax_group_id',
-                    description: 'Define the tax that apply to the sale.',
+                    description: __( 'Define the tax that apply to the sale.' ),
                     type: 'select',
                     disabled: true,
                     value: '',
                     options: []
                 }, {
-                    label: 'Type',
+                    label: __( 'Type' ),
                     name: 'tax_type',
                     disabled: true,
                     value: '',
-                    description: 'Define how the tax is computed',
+                    description: __( 'Define how the tax is computed' ),
                     type: 'select',
                     options: [{
-                        label: 'Exclusive',
+                        label: __( 'Exclusive' ),
                         value: 'exclusive',
                     }, {
-                        label: 'Inclusive',
+                        label: __( 'Inclusive' ),
                         value: 'inclusive'
                     }]
                 }
@@ -104,6 +105,7 @@ export default {
         this.optionsSubscriber.unsubscribe();
     },
     methods: {
+        __,
         popupCloser,
         popupResolver,
 

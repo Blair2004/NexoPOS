@@ -1,7 +1,7 @@
 <template>
     <div class="h-full w-4/5-screen md:w-2/5-screen lg:w-2/5-screen xl:w-2/6-screen bg-white shadow-lg">
         <div id="header" class="h-16 flex justify-center items-center">
-            <h3 class="font-bold text-gray-700">Define The Order Type</h3>
+            <h3 class="font-bold text-gray-700">{{ __( 'Define The Order Type' ) }}</h3>
         </div>
         <div class="grid grid-flow-row grid-cols-2 grid-rows-2">
             <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'bg-blue-100' : ''" class="hover:bg-blue-100 h-56 flex items-center justify-center flex-col cursor-pointer border border-gray-200">
@@ -14,7 +14,7 @@
 <script>
 import resolveIfQueued from '@/libraries/popup-resolver';
 import nsPosShippingPopupVue from './ns-pos-shipping-popup.vue';
-
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -37,6 +37,8 @@ export default {
         this.typeSubscription.unsubscribe();
     },
     methods: {
+        __,
+        
         resolveIfQueued,
 
         async select( type ) {

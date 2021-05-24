@@ -31,6 +31,9 @@
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
+      <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
+      <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
+      <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
       <!--  -->
       <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
       <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
@@ -56,6 +59,7 @@
     <server name="QUEUE_CONNECTION" value="sync"/>
     <server name="SESSION_DRIVER" value="array"/>
     <server name="TELESCOPE_ENABLED" value="FALSE"/>
+    <server name="BROADCAST_DRIVER" value="log"/>
     <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
     <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
     <server name="NS_VERSION" value="FALSE"/>

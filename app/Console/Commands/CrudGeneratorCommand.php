@@ -223,15 +223,24 @@ class CrudGeneratorCommand extends Command
             $module             =   $modulesService->get( $moduleNamespace );
 
             if ( $module ) {
+                $fileName       =   $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php';
                 Storage::disk( 'ns-modules' )->put( 
-                    $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php', 
+                    $fileName, 
                     view( 'generate.crud', array_merge(
                         $this->crudDetails, [
                             'module'    =>  $module
                         ]
                     ) )
                 );
+
+                return $this->info( sprintf(
+                    __( 'The CRUD resource "%s" for the module "%s" has been generated at "%s"' ),
+                    $this->crudDetails[ 'resource_name' ],
+                    $module[ 'name' ],
+                    $fileName 
+                ) );
             }
+
         } else {
             $fileName   =   'app' . DIRECTORY_SEPARATOR . 'Crud' . DIRECTORY_SEPARATOR . ucwords( Str::camel( $this->crudDetails[ 'resource_name' ] ) ) . 'Crud.php';
 
@@ -239,12 +248,14 @@ class CrudGeneratorCommand extends Command
                 $fileName, 
                 view( 'generate.crud', $this->crudDetails )
             );
+
+            return $this->info( sprintf(
+                __( 'The CRUD resource "%s" has been generated at %s' ),
+                $this->crudDetails[ 'model_name' ],
+                $fileName 
+            ) );
         }
 
-        return $this->info( sprintf(
-            __( 'The CRUD resource "%" has been generated at %' ),
-            $this->crudDetails[ 'model_name' ],
-            $fileName 
-        ) );
+        return $this->error( __( 'An unexpected error has occured.' ) );
     }
 }

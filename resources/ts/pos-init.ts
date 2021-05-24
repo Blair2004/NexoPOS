@@ -43,6 +43,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _holdPopupEnabled       =   true;
     private _initialQueue: (() => Promise<StatusResponse>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
     private _responsive         =   new Responsive;
@@ -160,6 +161,7 @@ export class POS {
         this._customers.next([]);
         this._breadcrumbs.next([]);
         this.defineCurrentScreen();
+        this.setHoldPopupEnabled(true);
 
         this.processInitialQueue();
         this.refreshCart();
@@ -271,6 +273,16 @@ export class POS {
         });
 
         this.defineCurrentScreen();
+    }
+
+    public setHoldPopupEnabled( status = true )
+    {
+        this._holdPopupEnabled  =   status;
+    }
+
+    public getHoldPopupEnabled()
+    {
+        return this._holdPopupEnabled;
     }
 
     /**
@@ -599,50 +611,53 @@ export class POS {
     }
 
     loadOrder( order_id ) {
-        nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
-            .subscribe( ( order: any ) => {
+        return new Promise( ( resolve, reject ) => {
+            nsHttpClient.get( `/api/nexopos/v4/orders/${order_id}/pos` )
+                .subscribe( async ( order: any ) => {
 
-                order       =   { ...this.defaultOrder(), ...order };
+                    order       =   { ...this.defaultOrder(), ...order };
 
-                /**
-                 * We'll rebuilt the product
-                 */
-                const products  =   order.products.map( (orderProduct: OrderProduct ) => {
-                    orderProduct.$original       =   () => orderProduct.product;
-                    orderProduct.$quantities     =   () => orderProduct
-                        .product
-                        .unit_quantities
-                        .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
-                    return orderProduct;
-                });
+                    /**
+                     * We'll rebuilt the product
+                     */
+                    const products  =   order.products.map( (orderProduct: OrderProduct ) => {
+                        orderProduct.$original       =   () => orderProduct.product;
+                        orderProduct.$quantities     =   () => orderProduct
+                            .product
+                            .unit_quantities
+                            .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
+                        return orderProduct;
+                    });
 
-                /**
-                 * we'll redefine the order type
-                 */
-                order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
+                    /**
+                     * we'll redefine the order type
+                     */
+                    order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
 
-                /**
-                 * the address is provided differently
-                 * then we need to rebuild it the way it's saved and used
-                 */
-                order.addresses     =   {
-                    shipping    :   order.shipping_address,
-                    billing     :   order.billing_address
-                }
+                    /**
+                     * the address is provided differently
+                     * then we need to rebuild it the way it's saved and used
+                     */
+                    order.addresses     =   {
+                        shipping    :   order.shipping_address,
+                        billing     :   order.billing_address
+                    }
 
-                delete order.shipping_address;
-                delete order.billing_address;
+                    delete order.shipping_address;
+                    delete order.billing_address;
 
-                
-                /**
-                 * let's all set, let's load the order
-                 * from now. No further change is required
-                 */
-                
-                this.buildOrder( order );
-                this.buildProducts( products );
-                this.selectCustomer( order.customer );
-            });
+                    
+                    /**
+                     * let's all set, let's load the order
+                     * from now. No further change is required
+                     */
+                    
+                    this.buildOrder( order );
+                    this.buildProducts( products );
+                    await this.selectCustomer( order.customer );
+                    resolve( order );
+                }, error => reject( error ) );
+        })
     }
 
     buildOrder( order ) {
@@ -659,6 +674,27 @@ export class POS {
 
         if ( options.ns_pos_printing_enabled_for === 'disabled' ) {
             return false;
+        }
+
+        switch( options.ns_pos_printing_gateway ) {
+            case 'default' : this.processRegularPrinting( order_id ); break;
+            default: this.processCustomPrinting( order_id, options.ns_pos_printing_gateway ); break;
+        }
+    }
+
+    processCustomPrinting( order_id, gateway ) {
+        const result =  nsHooks.applyFilters( 'ns-order-custom-print', { printed: false, order_id, gateway });
+        
+        if ( ! result.printed ) {
+            nsSnackBar.error( __( `Unsupported print gateway.` ) ).subscribe();
+        }
+    }
+
+    processRegularPrinting( order_id ) {
+        const item  =   document.querySelector( 'printing-section' );
+
+        if ( item ) {
+            item.remove();
         }
 
         const printSection      =   document.createElement( 'iframe' );
@@ -720,6 +756,8 @@ export class POS {
                     }, ( error ) => {
                         reject( error );
                     });
+            } else {
+                return resolve( order );
             }
         });
     }
@@ -900,7 +938,7 @@ export class POS {
                 .reduce( ( before, after ) => before + after );
         }
 
-        order.total             =   ( order.subtotal + order.shipping + order.tax_value ) - order.discount - order.total_coupons;
+        order.total             =   ( order.subtotal + ( order.shipping || 0 ) + order.tax_value ) - order.discount - order.total_coupons;
         order.products          =   products;
         order.total_products    =   products.length
 
@@ -1162,6 +1200,12 @@ export class POS {
         this.settings.next( settings );
     }
 
+    unset( key ) {
+        const settings  =   this.settings.getValue();
+        delete settings[ key ];
+        this.settings.next( settings );
+    }
+
     get( key ) {
         const settings  =   this.settings.getValue();
         return settings[ key ];
@@ -1179,6 +1223,6 @@ export class POS {
     }
 }
 
-( window as any ).POS       =   new POS;
-
-export const POSInit    =   <POS>( window as any ).POS;
+( window as any ).POS           =   new POS;
+( window as any ).POSClass      =   POS;
+export const POSInit            =   <POS>( window as any ).POS

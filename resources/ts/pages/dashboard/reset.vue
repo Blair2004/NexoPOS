@@ -13,13 +13,14 @@
             </div>
             <div class="card-body border-t border-gray-400 p-2 flex">
                 <div> 
-                    <ns-button type="info" @click="submit()">Proceed</ns-button>
+                    <ns-button type="info" @click="submit()">{{ __( 'Proceed' ) }}</ns-button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang';
 import { nsHttpClient, nsSnackBar } from '../../bootstrap';
 import FormValidation from '../../libraries/form-validation';
 
@@ -27,6 +28,7 @@ export default {
     name: 'ns-reset',
     props: [ 'url' ],
     methods: {
+        __,
         submit() {
             if ( ! this.validation.validateFields( this.fields ) ) {
                 this.$forceUpdate();
@@ -35,7 +37,7 @@ export default {
 
             const fields   =   this.validation.getValue( this.fields );
 
-            if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : 'Would you like to proceed ?' ) ) {
+            if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : __( 'Would you like to proceed ?' ) ) ) {
                 nsHttpClient.post( '/api/nexopos/v4/reset', fields )
                     .subscribe( result => {
                         nsSnackBar.success( result.message ).subscribe();
@@ -52,13 +54,13 @@ export default {
                 {
                     label: 'Choose Option',
                     name: 'mode',
-                    description: 'Will apply various reset method on the system.',
+                    description: __( 'Will apply various reset method on the system.' ),
                     type: 'select',
                     options: [{
-                        label: 'Wipe Everything',
+                        label: __( 'Wipe Everything' ),
                         value: 'wipe_all',
                     }, {
-                        label: 'Wipe + Grocery Demo',
+                        label: __( 'Wipe + Grocery Demo' ),
                         value: 'wipe_plus_grocery',
                     }],
                     validation: 'required'

@@ -134,9 +134,13 @@ class ModulesService
                 $config[ 'index-file' ]                 =   is_file( $indexPath ) ? $indexPath : false;
                 $config[ 'routes-file' ]                =   is_file( $webRoutesPath ) ? $webRoutesPath : false;
                 $config[ 'api-file' ]                   =   is_file( $apiRoutesPath ) ? $apiRoutesPath : false;
+                $config[ 'has-languages' ]              =   Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
                 $config[ 'controllers-path' ]           =   $currentModulePath . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
                 $config[ 'controllers-relativePath' ]   =   ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers';
+                $config[ 'relativePath' ]               =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR;
                 $config[ 'views-path' ]                 =   $currentModulePath . 'Resources' . DIRECTORY_SEPARATOR . 'Views';
+                $config[ 'views-relativePath' ]         =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Views';
+                $config[ 'lang-relativePath' ]          =   'modules' . DIRECTORY_SEPARATOR . ucwords( $config[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Lang';
                 $config[ 'dashboard-path' ]             =   $currentModulePath . 'Dashboard' . DIRECTORY_SEPARATOR;
                 $config[ 'enabled' ]                    =   false; // by default the module is set as disabled
                 
@@ -189,6 +193,22 @@ class ModulesService
 
                     foreach( $moduleConfig as $key => $value ) {
                         config([ $key => $value ]);
+                    }
+
+                    /**
+                     * if the language files are included
+                     * we'll add it to the module definition.
+                     */
+                    $config[ 'langFiles' ]          =   [];
+
+                    if ( $config[ 'has-languages' ] ) {
+                        $rawFiles               =   Storage::disk( 'ns-modules' )
+                            ->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
+                            
+                        $config[ 'langFiles' ]  =   collect( $rawFiles )->mapWithKeys( function( $file ) {
+                            $pathInfo           =   pathinfo( $file );
+                            return [ $pathInfo[ 'filename' ] => $file ];
+                        })->toArray();
                     }
                 }
 
@@ -363,7 +383,7 @@ class ModulesService
      * Return the list of module as an array
      * @return array of modules
      */
-    public function get( $namespace = null )
+    public function get($namespace = null)
     {
         if ( $namespace !== null ) {
             return $this->modules[ $namespace ] ?? null;
@@ -436,7 +456,7 @@ class ModulesService
      */
     public function extract( $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( $module  = $this->get( $namespace ) ) {
             $zipFile        =   storage_path() . DIRECTORY_SEPARATOR . 'module.zip';
@@ -546,7 +566,7 @@ class ModulesService
      */
     public function upload( $file )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' ) ) {
             mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' );
@@ -577,7 +597,7 @@ class ModulesService
             throw new Exception( __( 'Unable to detect the folder from where to perform the installation.' ) );
         }
 
-        $directoryName  =   pathinfo( $directory[0] )[ 'filename' ];
+        $directoryName  =   pathinfo( $directory[0] )[ 'basename' ];
         $rawFiles       =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $module         =   [];
 
@@ -701,7 +721,7 @@ class ModulesService
      */
     public function createSymLink( $moduleNamespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         Storage::disk( 'public' )->makeDirectory( 'modules' );
 
@@ -724,6 +744,26 @@ class ModulesService
                 $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
             }
         }
+
+        /**
+         * checks if a public directory exists and create a 
+         * link for that directory
+         */
+        if ( 
+            Storage::disk( 'ns-modules' )->exists( $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' ) && 
+            ! is_link( base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) ) 
+        ) {
+            $target         =   base_path( 'modules/' . $moduleNamespace . '/Lang' );
+
+            if ( ! \windows_os() ) {
+                $link           =   @\symlink( $target, public_path( '/modules-lang/' . strtolower( $moduleNamespace ) ) );
+            } else {
+                $mode       =   'J';
+                $link       =   public_path( 'modules-lang' . DIRECTORY_SEPARATOR . strtolower( $moduleNamespace ) );
+                $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace . DIRECTORY_SEPARATOR . 'Lang' );
+                $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+            }
+        }
     }
 
     /**
@@ -734,7 +774,7 @@ class ModulesService
      */
     public function removeSymLink( $moduleNamespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         $path       =   base_path( 'public' ) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $moduleNamespace;
 
@@ -843,7 +883,7 @@ class ModulesService
      */
     public function delete( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         /**
          * Check if module exists first
@@ -971,7 +1011,7 @@ class ModulesService
      */
     public function enable( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         if ( $module = $this->get( $namespace ) ) {
             /**
@@ -1051,7 +1091,7 @@ class ModulesService
      */
     public function disable( string $namespace )
     {
-        $this->preventManagement();
+        $this->checkManagementStatus();
 
         // check if module exists
         if ( $module = $this->get( $namespace ) ) {
@@ -1254,7 +1294,7 @@ class ModulesService
      * it's explicitely disabled from the settings
      * @return void
      */
-    public function preventManagement()
+    public function checkManagementStatus()
     {
         if ( env( 'NS_MODULES_MANAGEMENT_DISABLED', false ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );

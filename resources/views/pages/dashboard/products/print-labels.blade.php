@@ -53,13 +53,24 @@ const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings',
                 name: 'selectedUnitQuantity',
                 description: 'Choose the unit to apply for the item',
                 options: product.unit_quantities.map( unit_quantity => {
-                    console.log( unit_quantity );
                     return {
                         label: unit_quantity.unit.name,
                         value: unit_quantity
                     }
                 }),
                 value: product.selectedUnitQuantity || product.unit_quantities[0]
+            }, {
+                label: 'Unit',
+                type: 'select',
+                name: 'procurement_id',
+                description: 'Choose quantity from procurement',
+                options: product.unit_quantities.map( unit_quantity => {
+                    return {
+                        label: unit_quantity.unit.name,
+                        value: unit_quantity
+                    }
+                }),
+                value: product.procurement_id
             }, {
                 label: 'Quantity',
                 type: 'number',

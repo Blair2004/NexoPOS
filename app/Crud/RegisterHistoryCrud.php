@@ -177,7 +177,7 @@ class RegisterHistoryCrud extends CrudService
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'register_id',
-                            'label' =>  __( 'Register_id' ),
+                            'label' =>  __( 'Register Id' ),
                             'value' =>  $entry->register_id ?? '',
                         ], [
                             'type'  =>  'text',

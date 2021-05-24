@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white shadow-xl w-4/5-screen md:w-2/5-screen xl:w-108">
         <div id="header" class="border-b border-gray-200 text-center font-semibold text-2xl text-gray-700 py-2">
-            <h2>Select Customer</h2>
+            <h2>{{ __( 'Select Customer' ) }}</h2>
         </div>
         <div class="relative">
             <div class="p-2 border-b border-gray-200 flex justify-between text-gray-600">
@@ -25,7 +25,7 @@
             <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto">
                 <ul>
                     <li class="p-2 text-center text-gray-600" v-if="customers && customers.length === 0">
-                        No customer match your query...
+                        {{ __( 'No customer match your query...' ) }}
                     </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200 text-gray-600 flex justify-between items-center">
                         <span>{{ customer.name }}</span>
@@ -51,6 +51,7 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import resolveIfQueued from "@/libraries/popup-resolver";
 import { Popup } from '@/libraries/popup';
 import nsPosCustomersVue from './ns-pos-customers.vue';
+import { __ } from '@/libraries/lang';
 
 export default {
     data() {
@@ -95,6 +96,8 @@ export default {
         this.orderSubscription.unsubscribe();
     },
     methods: {
+        __,
+        
         /**
          * if the popup is likely to be used
          * on a queue, using the resolveIfQueued

@@ -159,7 +159,7 @@ class UserCrud extends CrudService
                             'name'          =>  'password',
                             'label'         =>  __( 'Password' ),
                             'validation'    =>  'sometimes|min:6',
-                            'description'   =>  __( 'Make a unit and secure password.' ),
+                            'description'   =>  __( 'Make a unique and secure password.' ),
                         ], [
                             'type'          =>  'password',
                             'name'          =>  'password_confirm',
@@ -433,9 +433,11 @@ class UserCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.users',
-            'create'    =>  'ns.users/create',
-            'edit'      =>  'ns.users/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'users' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'users/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'users/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.users' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.users/{id}' . '' ),
         ];
     }
 

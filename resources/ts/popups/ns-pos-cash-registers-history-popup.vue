@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white shadow-lg w-95vw md:w-4/6-screen lg:w-half overflow-hidden">
         <div id="header" class="p-2 flex justify-between items-center">
-            <h3 class="font-bold">Register History</h3>
+            <h3 class="font-bold">{{ __( 'Register History' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup"></ns-close-button>
             </div>
@@ -37,6 +37,7 @@
 <script>
 import popupResolver from '@/libraries/popup-resolver'
 import { nsHttpClient } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -58,6 +59,7 @@ export default {
         this.settingsSubscription.unsubscribe();
     },
     methods: {
+        __,
         popupResolver,
 
         closePopup() {

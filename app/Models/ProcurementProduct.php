@@ -17,6 +17,9 @@ class ProcurementProduct extends NsModel
     
     protected $table    =   'nexopos_' . 'procurements_products';
 
+    const STOCK_INCREASE    =   'increase';
+    const STOCK_REDUCE      =   'reduce';
+
     protected $dispatchesEvents     =   [
         'creating'      =>  ProcurementProductBeforeCreateEvent::class,
         'created'       =>  ProcurementProductAfterCreateEvent::class,

@@ -21,7 +21,9 @@ use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
+use App\Events\OrderProductBeforeSavedEvent;
 use App\Events\OrderProductAfterSavedEvent;
+use App\Events\OrderProductAfterComputedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Events\OrderVoidedEvent;
 use App\Models\Order;
@@ -94,6 +96,12 @@ class OrdersService
         $this->taxService       =   $taxService;
     }
 
+    /**
+     * Create an order on NexoPOS.
+     * @param array $fields
+     * @param Order|null $order (optional)
+     * @return array
+     */
     public function create( $fields, Order $order = null )
     {
         $customer               =   $this->__customerIsDefined($fields);
@@ -218,6 +226,13 @@ class OrdersService
         ];
     }
 
+    /**
+     * Will save order installments if 
+     * it's provider
+     * @param Order $order
+     * @param array $instalments
+     * @return void
+     */
     public function __saveOrderInstalments( Order $order, $instalments = [] )
     {
         if ( ! empty( $instalments ) ) {
@@ -887,6 +902,12 @@ class OrdersService
         ];
     }
 
+    /**
+     * Compute an order total based
+     * on provided data
+     * @param array $data
+     * @return array $order
+     */
     private function __computeOrderTotal($data)
     {
         /**
@@ -941,29 +962,7 @@ class OrdersService
         $taxes          =   0;
         $gross          =   0;
 
-        $products->each(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
-
-            /**
-             * this should run only if the product looped doesn't include an identifier.
-             * Usually if it's the case, the product is supposed to have been already handled before.
-             */
-            // if ( empty( $product[ 'id' ] ) ) {
-            // }
-            
-            /**
-             * storing the product
-             * history as a sale
-             */
-            $history                    =   [
-                'order_id'      =>  $order->id,
-                'unit_id'       =>  $product[ 'unit_id' ],
-                'product_id'    =>  $product[ 'product' ]->id,
-                'quantity'      =>  $product[ 'quantity' ],
-                'unit_price'    =>  $this->currencyService->getRaw( $product[ 'unit_price' ] ),
-                'total_price'   =>  $this->currencyService->define($product[ 'unit_price' ])
-                    ->multiplyBy($product['quantity'])
-                    ->get()
-            ];
+        $orderProducts  =   $products->map(function ($product) use (&$subTotal, &$taxes, &$order, &$gross) {
 
             /**
              * if the product id is provided
@@ -974,6 +973,12 @@ class OrdersService
             } else {
                 $orderProduct           =   new OrderProduct;
             }
+            
+            /**
+             * this can be useful to allow injecting
+             * data that can later on be compted.
+             */
+            OrderProductBeforeSavedEvent::dispatch( $orderProduct, $product );
 
             $orderProduct->order_id                     =   $order->id;
             $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
@@ -982,7 +987,7 @@ class OrdersService
             $orderProduct->product_id                   =   $product[ 'product' ]->id;
             $orderProduct->product_category_id          =   $product[ 'product' ]->category_id;
             $orderProduct->name                         =   $product[ 'product' ]->name;
-            $orderProduct->quantity                     =   $history[ 'quantity'];
+            $orderProduct->quantity                     =   $product[ 'quantity'];
 
             /**
              * We might need to have another consideration
@@ -1004,13 +1009,13 @@ class OrdersService
                 ->subtractBy( $orderProduct->discount )
                 // ->subtractBy( $orderProduct->tax_value ?? 0 ) maybe we need to create a gross_purchase_price and net_purchase_price fields
                 ->getRaw();
-
+            
             $this->computeOrderProduct( $orderProduct );
 
             $orderProduct->save();
 
             $subTotal  =   $this->currencyService->define($subTotal)
-                ->additionateBy($orderProduct->total_price)
+                ->additionateBy( $orderProduct->total_price )
                 ->get();
 
             /**
@@ -1024,13 +1029,30 @@ class OrdersService
             }
 
             if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+                /**
+                 * storing the product
+                 * history as a sale
+                 */
+                $history                    =   [
+                    'order_id'      =>  $order->id,
+                    'unit_id'       =>  $product[ 'unit_id' ],
+                    'product_id'    =>  $product[ 'product' ]->id,
+                    'quantity'      =>  $product[ 'quantity' ],
+                    'unit_price'    =>  $orderProduct->unit_price,
+                    'total_price'   =>  $orderProduct->total_price
+                ];
+
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
             }
 
             event( new OrderProductAfterSavedEvent( $orderProduct, $order, $product ) );
+
+            return $orderProduct;
         });
 
-        return compact('subTotal', 'taxes', 'order');
+        $order->subtotal    =   $subTotal;
+
+        return compact( 'subTotal', 'taxes', 'order', 'orderProducts' );
     }
 
     private function __buildOrderProducts( $products )
@@ -1271,7 +1293,7 @@ class OrdersService
              * if the order has just been created
              * then we'll define the "created_at" column.
              */
-            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->format( 'Y-m-d' );
+            $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->getNow()->toDateTimeString();
         }
 
         /**
@@ -1286,12 +1308,12 @@ class OrdersService
         $order->discount                =   $this->currencyService->getRaw( $fields['discount'] ?? 0 ) ?: $this->computeOrderDiscount( $order, $fields );
         $order->total                   =   $this->currencyService->getRaw( $fields[ 'total' ] ?? 0 ) ?: $this->computeTotal( $fields, $order );
         $order->type                    =   $fields['type']['identifier'];
-        $order->final_payment_date      =   $fields['final_payment_date' ] ?? null; // when the order is not saved as laid away
+        $order->final_payment_date      =   isset( $fields['final_payment_date' ] ) ? Carbon::parse( $fields['final_payment_date' ] )->format( 'Y-m-d h:m:s' ) : null; // when the order is not saved as laid away
         $order->total_instalments       =   $fields['total_instalments' ] ?? 0;
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
-        $order->updated_at              =   $fields[ 'updated_at' ] ?? ns()->date->format( 'Y-m-d' );
+        $order->updated_at              =   isset( $fields[ 'updated_at' ] ) ? Carbon::parse(  )->format( 'Y-m-d h:m:s' ) : ns()->date->getNow()->toDateTimeString();
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;
@@ -1543,7 +1565,7 @@ class OrdersService
         }
 
         $orderProduct->total_gross_price    =   $this->currencyService
-            ->define( $orderProduct->excl_tax_sale_price )
+            ->define( $orderProduct->gross_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $total_gross_discount )
             ->get();
@@ -1555,10 +1577,17 @@ class OrdersService
             ->get();
 
         $orderProduct->total_net_price      =   $this->currencyService
-            ->define( $orderProduct->incl_tax_sale_price )
+            ->define( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $total_net_discount )
             ->get();
+
+        OrderProductAfterComputedEvent::dispatch( 
+            $orderProduct, 
+            $total_gross_discount,
+            $total_discount,
+            $total_net_discount 
+        );
     }
 
     /**
@@ -1679,8 +1708,12 @@ class OrdersService
          * let's save the products
          * to the order now as the stock
          * seems to be okay
+         * @param array $orderProducts
+         * @param Order $order
+         * @param float $taxes
+         * @param float $subTotal
          */
-        $this->__saveOrderProducts($order, $products);
+        extract( $this->__saveOrderProducts( $order, $products ) );
 
         /**
          * Now we should refresh the order
@@ -1690,6 +1723,7 @@ class OrdersService
 
         return [
             'status'    =>  'success',
+            'data'      =>  compact( 'orderProducts', 'order' ),
             'message'   =>  sprintf(
                 __('The product has been added to the order "%s"'),
                 $order->code
@@ -1744,7 +1778,7 @@ class OrdersService
             $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
         } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
             $order->payment_status      =       Order::PAYMENT_PAID;
-        } else if ( $order->tendered < $order->total ) {
+        } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
             $order->payment_status      =       Order::PAYMENT_PARTIALLY;
         } else if ( $order->total == 0 && $totalRefunds == 0 ) {
             $order->payment_status      =       Order::PAYMENT_UNPAID;
@@ -1903,7 +1937,7 @@ class OrdersService
             "cashier_name"              =>  $order->user->username,
             "cashier_id"                =>  $order->author,
             "order_code"                =>  $order->code,
-            "order_date"                =>  $order->created_at,
+            "order_date"                =>  ns()->date->getFormatted( $order->created_at ),
             "customer_name"             =>  $order->customer->name,
             "customer_email"            =>  $order->customer->email,
             "shipping_" . "name"        =>  $order->shipping_address->name,
@@ -1931,7 +1965,7 @@ class OrdersService
         foreach( $availableTags as $tag => $value ) {
             $template   =   ( str_replace( '{'.$tag.'}', $value, $template ) );
         }
-
+        
         return $template;
     }
 
@@ -2087,7 +2121,6 @@ class OrdersService
     public function resolveInstalments( Order $order )
     {
         if ( in_array( $order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {
-            
             $orderInstalments       =   $order->instalments()
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
                 ->where( 'date', '<=', ns()->date->copy()->endOfDay()->toDateTimeString() )

@@ -76,6 +76,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 return `&page=${this.page}`
             }
             return '';
+        },
+        resultInfo() {
+            return __( 'displaying {perPage} on {items} items' )
+                .replace( '{perPage}', this.result.total )
+                .replace( '{items}', this.result.total )
         }
     },
     methods: {
@@ -222,7 +227,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
             if ( this.bulkAction ) {
                 if ( this.selectedEntries.length > 0 ) {
                     console.log( this.getSelectedAction );
-                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || 'No bulk confirmation message provided on the CRUD class.' ) ) {
+                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'No bulk confirmation message provided on the CRUD class.' ) ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
                             entries: this.selectedEntries.map( r => r.$id )
@@ -236,11 +241,11 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                         })
                     }
                 } else {
-                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : 'No error provided when there is no selection selected (error-no-selection).' )
+                    return nsSnackBar.error( this.$slots[ 'error-no-selection' ] ? this.$slots[ 'error-no-selection' ][0].text : __( 'No selection has been made.' ) )
                         .subscribe();
                 }
             } else {
-                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : 'No error provided when there is no action selected (error-no-action).' )
+                return nsSnackBar.error( this.$slots[ 'error-no-action' ] ? this.$slots[ 'error-no-action' ][0].text : __( 'No action has been selected.' ) )
                     .subscribe();
             }
 
@@ -330,7 +335,7 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                             <ns-table-row @updated="refreshRow( $event )" v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
-                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">There is nothing to display...</td>
+                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">{{ __( 'There is nothing to display...' ) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -339,24 +344,27 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         <div class="p-2 flex flex-col md:flex-row justify-between">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full bg-gray-200 p-1">
                 <select class="text-gray-800 outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
-                    <option selected value=""><slot name="bulk-label">bulk-label</slot></option>
+                    <option selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
                     <option v-for="action of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
-                <button @click="bulkDo()" class="h-8 w-8 outline-none hover:bg-blue-400 hover:text-white rounded-full bg-white flex items-center justify-center"><slot name="bulk-go">Go</slot></button>
+                <button @click="bulkDo()" class="h-8 w-8 outline-none hover:bg-blue-400 hover:text-white rounded-full bg-white flex items-center justify-center"><slot name="bulk-go">{{ __( 'Go' ) }}</slot></button>
             </div>
-            <div id="pagination" class="flex -mx-1">
-                <template v-if="result.current_page">
-                    <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
-                        <i class="las la-angle-double-left"></i>
-                    </a>
-                    <template v-for="_paginationPage of pagination">
-                        <a v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
-                        <a v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+            <div class="flex">
+                <div class="items-center flex text-gray-600 mx-4">{{ resultInfo }}</div>
+                <div id="pagination" class="flex -mx-1">
+                    <template v-if="result.current_page">
+                        <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                            <i class="las la-angle-double-left"></i>
+                        </a>
+                        <template v-for="_paginationPage of pagination">
+                            <a v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
+                            <a v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+                        </template>
+                        <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+                            <i class="las la-angle-double-right"></i>
+                        </a>
                     </template>
-                    <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
-                        <i class="las la-angle-double-right"></i>
-                    </a>
-                </template>
+                </div>
             </div>
         </div>
     </div>

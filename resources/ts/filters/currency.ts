@@ -18,7 +18,6 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
         break;
     }
 
-
     NumeralJS.locale( locale );
 
     switch( ns.currency.ns_currency_prefered ) {

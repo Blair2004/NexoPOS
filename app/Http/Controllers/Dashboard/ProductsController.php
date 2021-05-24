@@ -158,27 +158,12 @@ class ProductsController extends DashboardController
         return $this->productService->update( $product, $primary );
     }
 
+    /**
+     * @todo must be extracted to a service
+     */
     public function searchProduct( Request $request )
     {
-        return Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'search' )}%" )
-            ->searchable()
-            ->with( 'unit_quantities.unit' )
-            ->orWhere( 'sku', 'LIKE', "%{$request->input( 'search' )}%" )
-            ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'search' )}%" )
-            ->limit(5)
-            ->get()
-            ->map( function( $product ) use ( $request ) {
-                $units  =   json_decode( $product->purchase_unit_ids );
-                
-                if ( $units ) {
-                    $product->purchase_units     =   collect();
-                    collect( $units )->each( function( $unitID ) use ( &$product ) {
-                        $product->purchase_units->push( Unit::find( $unitID ) );
-                    });
-                }
-
-                return $product;
-            });
+        return $this->productService->searchProduct( $request->input( 'search' ) );
     }
 
     public function refreshPrices( $id )
@@ -515,11 +500,12 @@ class ProductsController extends DashboardController
          */
         foreach( $request->input( 'products' ) as $product ) {
             $results[]          =   $this->productService->stockAdjustment( $product[ 'adjust_action' ], [
-                'unit_price'    =>  $product[ 'adjust_unit' ][ 'sale_price' ],
-                'unit_id'       =>  $product[ 'adjust_unit' ][ 'unit_id' ],
-                'product_id'    =>  $product[ 'id' ],
-                'quantity'      =>  $product[ 'adjust_quantity' ],
-                'description'   =>  $product[ 'adjust_reason' ] ?? '',
+                'unit_price'                =>  $product[ 'adjust_unit' ][ 'sale_price' ],
+                'unit_id'                   =>  $product[ 'adjust_unit' ][ 'unit_id' ],
+                'procurement_product_id'    =>  $product[ 'procurement_product_id' ] ?? null,
+                'product_id'                =>  $product[ 'id' ],
+                'quantity'                  =>  $product[ 'adjust_quantity' ],
+                'description'               =>  $product[ 'adjust_reason' ] ?? '',
             ]);
         }
 
@@ -597,6 +583,14 @@ class ProductsController extends DashboardController
             'title'         =>  __( 'Print Labels' ),
             'description'   =>  __( 'Customize and print products labels.' ),
         ]);
+    }
+
+    public function getProcuredProducts( Product $product )
+    {
+        return $product->procurementHistory->map( function( $procurementProduct ) {
+            $procurementProduct->procurement    =   $procurementProduct->procurement()->select( 'name' )->first();
+            return $procurementProduct;
+        });
     }
 }
 

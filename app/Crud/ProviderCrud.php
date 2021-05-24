@@ -415,9 +415,11 @@ class ProviderCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  'ns.providers',
-            'create'    =>  'ns.providers/create',
-            'edit'      =>  'ns.providers/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'providers' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'providers/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'providers/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers/{id}' . '' ),
         ];
     }
 

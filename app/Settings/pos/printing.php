@@ -1,10 +1,11 @@
 <?php
 
 use App\Services\Helper;
+use App\Classes\Hook;
 
 return [
     'label' =>  __( 'Printing' ),
-    'fields'    =>  [
+    'fields'    =>  Hook::filter( 'ns-printing-settings-fields', [
         [
             'name'              =>  'ns_pos_printing_document',
             'value'             =>  $options->get( 'ns_pos_printing_document' ),
@@ -27,6 +28,15 @@ return [
                 'only_paid_ordes'       =>  __( 'Only Paid Orders' ),
             ]),
             'description'       =>  __( 'Determine when the printing should be enabled.' ),
+        ], [
+            'name'              =>  'ns_pos_printing_gateway',
+            'value'             =>  $options->get( 'ns_pos_printing_gateway' ),
+            'label'             =>  __( 'Printing Gateway' ), 
+            'type'              =>  'select',
+            'options'           =>  Helper::kvToJsOptions([
+                'default'           =>  __( 'Default Printing (web)' ),
+            ]),
+            'description'       =>  __( 'Determine what is the gateway used for printing.' ),
         ], 
-    ]
+    ])
 ];

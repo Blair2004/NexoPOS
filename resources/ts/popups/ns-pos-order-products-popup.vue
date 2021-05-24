@@ -1,5 +1,6 @@
 <script>
 import { nsHttpClient } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -16,6 +17,7 @@ export default {
         this.loadProducts();
     },
     methods: {
+        __,
         close() {
             this.$popupParams.reject( false );
             this.$popup.close();
@@ -40,7 +42,7 @@ export default {
 <template>
     <div class="shadow-lg bg-white w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
         <div class="p-2 flex justify-between text-gray-700 items-center border-b">
-            <h3 class="font-semibold">Products &mdash; {{ order.code }} <span v-if="order.title">({{ order.title }})</span></h3>
+            <h3 class="font-semibold">{{ __( 'Products' ) }} &mdash; {{ order.code }} <span v-if="order.title">({{ order.title }})</span></h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
@@ -60,7 +62,7 @@ export default {
                         </div>
                         <div class="text-sm text-gray-600">
                             <ul>
-                                <li>Unit : {{ product.unit.name }}</li>
+                                <li>{{ __( 'Unit' ) }} : {{ product.unit.name }}</li>
                             </ul>
                         </div>
                     </div>
@@ -71,10 +73,10 @@ export default {
             <div class="px-1">
                 <div class="-mx-2 flex">
                     <div class="px-1">
-                        <ns-button @click="openOrder()" type="info">Open</ns-button>
+                        <ns-button @click="openOrder()" type="info">{{ __( 'Open' ) }}</ns-button>
                     </div>
                     <div class="px-1">
-                        <ns-button @click="close()" type="danger">Close</ns-button>
+                        <ns-button @click="close()" type="danger">{{ __( 'Close' ) }}</ns-button>
                     </div>
                 </div>
             </div>

@@ -51,6 +51,18 @@ const widthDims = {
 }
 
 module.exports = {
+  purge: [
+    './resources/**/*.html',
+    './resources/**/*.vue',
+    './resources/**/*.ts',
+    './resources/**/*.php',
+    './modules/**/*.php',
+    './modules/**/*.vue',
+    './modules/**/*.ts',
+  ],
+  corePlugins: {
+    float: false
+  },
   important: true,
   theme: {
     fontFamily: {

@@ -20,7 +20,7 @@
                         type="text" 
                         :class="form.main.disabled ? 'bg-gray-400' : ''"
                         class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
@@ -66,7 +66,7 @@
                             <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'images'">
                                 <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                     <div class="rounded border flex bg-white justify-between p-2 items-center">
-                                        <span>Add Images</span>
+                                        <span>{{ __( 'Add Images' ) }}</span>
                                         <button @click="addImage( variation )" class="rounded-full border flex items-center justify-center w-8 h-8 bg-white hover:bg-blue-400 hover:text-white">
                                             <i class="las la-plus-circle"></i>
                                         </button>
@@ -97,21 +97,21 @@
                                                 <span class="rounded-full border-2 border-gray-300 bg-white h-8 w-8 flex items-center justify-center">
                                                     <i class="las la-plus-circle"></i>
                                                 </span>
-                                                <span>New Group</span>
+                                                <span>{{ __( 'New Group' ) }}</span>
                                             </div>
                                         </div>
                                         <div class="-mx-4 flex flex-wrap">
                                             <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
                                                 <div class="shadow rounded overflow-hidden">
                                                     <div class="border-b text-sm bg-blue-400 text-white  border-blue-300 p-2 flex justify-between">
-                                                        <span>Available Quantity</span>
+                                                        <span>{{ __( 'Available Quantity' ) }}</span>
                                                         <span>{{ getUnitQuantity( group_fields ) }}</span>
                                                     </div>
                                                     <div class="p-2 mb-2">
                                                         <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
                                                     </div>
                                                     <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 text-red-800 hover:bg-red-200 border-t border-red-200 flex items-center justify-center cursor-pointer font-medium">
-                                                        Delete
+                                                        {{ __( 'Delete' ) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -130,7 +130,7 @@
 import FormValidation from '@/libraries/form-validation'
 import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-
+import { __ } from '@/libraries/lang';
 export default {
     data: () => {
         return {
@@ -168,6 +168,8 @@ export default {
     },  
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
+        __,
+        
         getUnitQuantity( fields ) {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
             return quantity.length > 0 ? quantity[0] : 0;
@@ -180,8 +182,8 @@ export default {
         removeUnitPriceGroup( group_fields, group ) {
             const hasIdField    =   group_fields.filter( field => field.name === 'id' && field.value !== undefined );
                 Popup.show( nsPosConfirmPopupVue, {
-                    title: 'Confirm Your Action',
-                    message: 'Would you like to delete this group ?',
+                    title: __( 'Confirm Your Action' ),
+                    message: __( 'Would you like to delete this group ?' ),
                     onAction: ( action ) => {
                         if ( action ) {
                             if ( hasIdField.length > 0 ) {
@@ -197,9 +199,9 @@ export default {
 
         confirmUnitQuantityDeletion({ group_fields, group }) {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Your Attention Is Required',
+                title: __( 'Your Attention Is Required' ),
                 size: 'w-3/4-screen h-2/5-screen',
-                message: 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?',
+                message: __( 'The current unit you\'re about to delete has a reference on the database and it might have already procured stock. Deleting that reference will remove procured stock. Would you proceed ?' ),
                 onAction: ( action ) => {
                     if ( action ) {
                         const id    =   group_fields.filter( f => f.name === 'id' )
@@ -224,13 +226,13 @@ export default {
          */
         addUnitGroup( field ) {
             if ( field.options.length === 0 ) {
-                return nsSnackBar.error( 'Please select at least one unit group before you proceed.' ).subscribe();
+                return nsSnackBar.error( __( 'Please select at least one unit group before you proceed.' ) ).subscribe();
             }
 
             if( field.options.length > field.groups.length ) {
                 field.groups.push(JSON.parse( JSON.stringify( field.fields ) ) );
             } else {
-                nsSnackBar.error( 'There shoulnd\'t be more option than there are units.' ).subscribe();
+                nsSnackBar.error( __( 'There shoulnd\'t be more option than there are units.' ) ).subscribe();
             }
         },
 
@@ -298,7 +300,7 @@ export default {
             }).filter( v => v.length > 0 );
 
             if ( validity.length > 0 || Object.values( this.form.main.errors ).length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'No error has been provided for the slot "error-form-invalid"' ).subscribe();
+                return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 
             /**
@@ -312,7 +314,7 @@ export default {
             })
 
             if ( images[0] && images[0].length > 1 ) {
-                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : 'No error has been provided for the slot "error-multiple-primary"' ).subscribe();
+                return nsSnackBar.error( this.$slots[ 'error-multiple-primary' ] ? this.$slots[ 'error-multiple-primary' ][0].text : __( 'Unable to proceed, more than one product is set as primary' ) ).subscribe();
             }
 
             const validation        =   [];
@@ -329,12 +331,12 @@ export default {
             });
 
             if ( validation.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ).subscribe(); 
+                return nsSnackBar.error( this.$slots[ 'error-no-units-groups' ] ? this.$slots[ 'error-no-units-groups' ][0].text : __( 'Either Selling or Purchase unit isn\'t defined. Unable to proceed.' ) ).subscribe(); 
             }
 
             if ( validation.filter( v => v === false ).length > 0 ) {
                 this.$forceUpdate();
-                return nsSnackBar.error( this.$slots[ 'error-invalid-unit-group' ] ? this.$slots[ 'error-invalid-unit-group' ][0].text : 'Unable to proceed as one of the unit group field is invalid' ).subscribe();
+                return nsSnackBar.error( this.$slots[ 'error-invalid-unit-group' ] ? this.$slots[ 'error-invalid-unit-group' ][0].text : __( 'Unable to proceed as one of the unit group field is invalid' ) ).subscribe();
             }
 
             /**
@@ -389,7 +391,7 @@ export default {
                 })
         },
         deleteVariation( index ) {
-            if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : 'No error message provided with code "delete-variation"' ) ) {
+            if ( confirm( this.$slots[ 'delete-variation' ] ? this.$slots[ 'delete-variation' ][0].text : __( 'Would you like to delete this variation ?' ) ) ) {
                 this.form.variations.splice( index, 1 );
             }
         },

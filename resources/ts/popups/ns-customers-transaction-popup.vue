@@ -1,7 +1,7 @@
 <template>
     <div class="w-6/7-screen md:w-5/7-screen lg:w-3/7-screen h-6/7-screen md:h-5/7-screen lg:h-4/7-screen shadow-lg bg-white flex flex-col relative">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
-            <h2 class="font-semibold">New Transaction</h2>
+            <h2 class="font-semibold">{{ __( 'New Transaction' ) }}</h2>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
@@ -19,10 +19,10 @@
             <div class="px-1">
                 <div class="-mx-2 flex flex-wrap">
                     <div class="px-1">
-                        <ns-button type="danger" @click="close()">Close</ns-button>
+                        <ns-button type="danger" @click="close()">{{ __( 'Close' ) }}</ns-button>
                     </div>
                     <div class="px-1">
-                        <ns-button type="info" @click="proceed()">Proceed</ns-button>
+                        <ns-button type="info" @click="proceed()">{{ __( 'Proceed' ) }}</ns-button>
                     </div>
                 </div>
             </div>
@@ -36,6 +36,8 @@
 import closeWithOverlayClicked from "@/libraries/popup-closer";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import FormValidation from '@/libraries/form-validation';
+import { __ } from '@/libraries/lang';
+
 export default {
     mounted() {
         this.closeWithOverlayClicked();
@@ -49,6 +51,8 @@ export default {
         }
     },
     methods: {
+        __,
+
         closeWithOverlayClicked,
 
         proceed() {

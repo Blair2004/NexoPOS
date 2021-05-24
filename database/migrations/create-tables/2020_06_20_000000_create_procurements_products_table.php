@@ -28,6 +28,7 @@ class CreateProcurementsProductsTable extends Migration
                 $table->integer( 'product_id' );
                 $table->float( 'purchase_price', 11, 5 )->default(0);
                 $table->float( 'quantity', 11, 5 );
+                $table->float( 'available_quantity', 11, 5 );
                 $table->integer( 'tax_group_id' );
                 $table->string( 'barcode' )->nullable();
                 $table->datetime( 'expiration_date' )->nullable();

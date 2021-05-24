@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
+use Illuminate\Support\Facades\Schema;
 
 class AddNewFieldsToNexoposUsersTableNov3 extends Migration
 {

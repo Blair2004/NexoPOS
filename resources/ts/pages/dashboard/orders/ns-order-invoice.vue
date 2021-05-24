@@ -5,7 +5,7 @@
                 <div class="px-2">
                     <ns-button @click="printTable()" type="info">
                         <i class="las la-print"></i> 
-                        <span>Print</span>
+                        <span>{{ __( 'Print' ) }}</span>
                     </ns-button>
                 </div>
             </div>

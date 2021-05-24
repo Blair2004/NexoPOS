@@ -6,7 +6,7 @@ import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import NsManageProducts from './manage-products';
 import { Tax } from "@/libraries/tax";
 import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
-
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-procurement',
     mounted() {
@@ -90,11 +90,11 @@ export default {
              */
             validTabs: [
                 {
-                    label: 'Details',
+                    label: __( 'Details' ),
                     identifier: 'details',
                     active: true,
                 }, {
-                    label: 'Products',
+                    label: __( 'Products' ),
                     identifier: 'products',
                     active: false,
                 }, 
@@ -122,6 +122,8 @@ export default {
     },
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
+        __,
+
         computeTotal() {
 
             this.totalTaxValues = 0;
@@ -207,7 +209,7 @@ export default {
          * @return void
          */
         doSearch( search ) {
-            nsHttpClient.post( '/api/nexopos/v4/products/search', { search })
+            nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-product', { search })
                 .subscribe( result => {
                     if ( result.length === 1 ) {
                         this.addProductList( result[0] );
@@ -296,7 +298,7 @@ export default {
         addProductList( product ) {
 
             if ( product.unit_quantities === undefined ) {
-                return nsSnackBar.error( 'Unable to add product which doesn\'t unit quantities defined.' )
+                return nsSnackBar.error( __( 'Unable to add product which doesn\'t unit quantities defined.' ) )
                     .subscribe();
             }
 
@@ -325,14 +327,14 @@ export default {
         submit() {
 
             if ( this.form.products.length === 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : 'No error message provided on the slot "error-no-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( this.$slots[ 'error-no-products' ] ? this.$slots[ 'error-no-products' ][0].text : __( 'Unable to proceed, no product were provided.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
                     .subscribe();
             }
 
             this.form.products.forEach( product => {
                 if ( ! parseFloat( product.procurement.quantity ) >= 1 ) {
                     product.procurement.$invalid    =   true;
-                } else if ( product.unit_id === 0 ) {
+                } else if ( product.procurement.unit_id === 0 ) {
                     product.procurement.$invalid    =   true;
                 } else {
                     product.procurement.$invalid    =   false;
@@ -342,7 +344,7 @@ export default {
             const invalidProducts   =   this.form.products.filter( product => product.procurement.$invalid );
 
             if ( invalidProducts.length > 0 ) {
-                return nsSnackBar.error( this.$slots[ 'error-invalid-products' ] ? this.$slots[ 'error-invalid-products' ][0].text : 'No error message provided on the slot "error-invalid-products".', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( this.$slots[ 'error-invalid-products' ] ? this.$slots[ 'error-invalid-products' ][0].text : __( 'Unable to proceed, one or more product has incorrect values.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
                     .subscribe();
             }
 
@@ -353,12 +355,12 @@ export default {
                  */
                 this.setTabActive( this.activeTab );
 
-                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : 'No error message provided for having an invalid form.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( this.$slots[ 'error-invalid-form' ] ? this.$slots[ 'error-invalid-form' ][0].text : __( 'Unable to proceed, the procurement form is not valid.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
                     .subscribe();
             }
 
             if ( this.submitUrl === undefined ) {
-                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : 'No error message provided for not having a valid submit url.', this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : 'OK' )
+                return nsSnackBar.error( this.$slots[ 'error-no-submit-url' ] ? this.$slots[ 'error-no-submit-url' ][0].text : __( 'Unable to submit, no valid submit URL were provided.' ), this.$slots[ 'okay' ] ? this.$slots[ 'okay' ][0].text : __( 'OK' ) )
                     .subscribe();
             }
 
@@ -422,9 +424,9 @@ export default {
         <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
+                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">{{ __( 'No title is provided' ) }}</slot></label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
                 <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
@@ -435,7 +437,7 @@ export default {
                         type="text" 
                         :class="form.main.disabled ? 'bg-gray-400' : ''"
                         class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                     <button @click="reloadEntities()" class="bg-white text-gray-700 outline-none px-4 h-10 border-gray-400"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
                 <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
@@ -471,8 +473,8 @@ export default {
                                     <div class="shadow bg-white relative z-10">
                                         <div @click="addProductList( product )" v-for="(product, index) of searchResult" :key="index" class="cursor-pointer border border-b border-gray-300 p-2 text-gray-700">
                                             <span class="block font-bold text-gray-700">{{ product.name }}</span>
-                                            <span class="block text-sm text-gray-600">SKU : {{ product.sku }}</span>
-                                            <span class="block text-sm text-gray-600">Barcode : {{ product.barcode }}</span>                                                
+                                            <span class="block text-sm text-gray-600">{{ __( 'SKU' ) }} : {{ product.sku }}</span>
+                                            <span class="block text-sm text-gray-600">{{ __( 'Barcode' ) }} : {{ product.barcode }}</span>                                                
                                         </div>
                                     </div>
                                 </div>
@@ -492,12 +494,12 @@ export default {
                                                     <div class="flex justify-between">
                                                         <div class="flex -mx-1 flex-col">
                                                             <div class="px-1">
-                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">Delete</span>
+                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="deleteProduct( index )">{{ __( 'Delete' ) }}</span>
                                                             </div>
                                                         </div>
                                                         <div class="flex -mx-1 flex-col">
                                                             <div class="px-1">
-                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="setProductOptions( index )">Options</span>
+                                                                <span class="text-xs text-red-500 cursor-pointer underline px-1" @click="setProductOptions( index )">{{ __( 'Options' ) }}</span>
                                                             </div>
                                                         </div>
                                                     </div>

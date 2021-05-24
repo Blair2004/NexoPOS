@@ -3,23 +3,23 @@
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
                 <div id="details" class="h-16 flex justify-between items-center bg-blue-400 text-white text-xl md:text-3xl p-2">
-                    <span>Total : </span>
+                    <span>{{ __( 'Total' ) }} : </span>
                     <span>{{ order.total | currency }}</span>
                 </div>
                 <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-xl md:text-3xl p-2">
-                    <span>Discount : </span>
+                    <span>{{ __( 'Discount' ) }} : </span>
                     <span>{{ order.discount | currency }}</span>
                 </div>
                 <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-xl md:text-3xl p-2">
-                    <span>Paid : </span>
+                    <span>{{ __( 'Paid' ) }} : </span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
                 <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-xl md:text-3xl p-2">
-                    <span>Change : </span>
+                    <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
                 <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-xl md:text-3xl p-2">
-                    <span>Screen : </span>
+                    <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ backValue / number | currency }}</span>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                         <div
                             @click="makeFullPayment()"
                             class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
-                            Full Payment</div>
+                            {{ __( 'Full Payment' ) }}</div>
                     </div>
                 </div>
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
@@ -70,6 +70,7 @@
 import { Popup } from '@/libraries/popup';
 import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { __ } from '@/libraries/lang';
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],
@@ -103,6 +104,7 @@ export default {
         this.orderSubscription.unsubscribe();
     },
     methods: {
+        __,
         toggleDiscount() {
             Popup.show( nsPosDiscountPopupVue, { 
                 reference : this.order,
@@ -114,8 +116,8 @@ export default {
         },
         makeFullPayment() {
             Popup.show( nsPosConfirmPopupVue, {
-                title: 'Confirm Full Payment',
-                message: 'A full payment will be made using {paymentType} for {total}'
+                title: __( 'Confirm Full Payment' ),
+                message: __( 'A full payment will be made using {paymentType} for {total}' )
                     .replace( '{paymentType}', this.label )
                     .replace( '{total}', this.$options.filters.currency( this.order.total ) ),
                 onAction: ( action ) => {

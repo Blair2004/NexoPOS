@@ -4,7 +4,7 @@
             <ns-spinner></ns-spinner>
         </div>
         <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center">Define Quantity</h1>
+            <h1 class="text-xl font-bold text-gray-700 text-center">{{ __( 'Define Quantity' ) }}</h1>
         </div>
         <div id="screen" class="h-16 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
@@ -23,6 +23,7 @@
 </template>
 <script>
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '@/libraries/lang';
 export default {
     data() {
         return {
@@ -71,6 +72,8 @@ export default {
         document.removeEventListener( 'keypress', this.handleKeyPress );
     },
     methods: {
+        __,
+
         handleKeyPress( event ) {
             if ( event.keyCode === 13 ) {
                 this.inputValue({ identifier : 'next' });
@@ -86,7 +89,7 @@ export default {
                 const quantity                  =   parseFloat( this.finalValue );
 
                 if ( quantity === 0 ) {
-                    return nsSnackBar.error( 'Please provide a quantity' )
+                    return nsSnackBar.error( __( 'Please provide a quantity' ) )
                         .subscribe();
                 }
 
@@ -122,7 +125,7 @@ export default {
                             ( holdQuantity )
                         )
                     ) {
-                        return nsSnackBar.error( 'Unable to add the product, there is not enough stock. Remaining %s'.replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) )
+                        return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) )
                             .subscribe();
                     }
                 }

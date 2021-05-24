@@ -50,5 +50,11 @@ class UpdateProductsTableMarch10 extends Migration
                 $table->dropColumn( 'available_quantity' );
             }
         });
+
+        Schema::table( 'nexopos_procurements_prodcuts', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_procurements_prodcuts', 'expiration_date' ) ) {
+                $table->dropColumn( 'expiration_date' );
+            }
+        });
     }
 }

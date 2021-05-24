@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\Helper;
 use Illuminate\Support\Facades\Auth;
 
 return [
@@ -27,6 +28,13 @@ return [
                 'type'      =>  'url'
             ],
             'description'   =>  __( 'Define the image that should be used as an avatar.' ),
+        ], [
+            'label'         =>  __( 'Language' ),
+            'name'          =>  'language',
+            'value'         =>  Auth::user()->attribute->language ?? '',
+            'type'          =>  'select',
+            'options'       =>  Helper::kvToJsOptions( config( 'nexopos.languages' ) ),
+            'description'   =>  __( 'Choose the language for the current account.' ),
         ],
     ]
 ];

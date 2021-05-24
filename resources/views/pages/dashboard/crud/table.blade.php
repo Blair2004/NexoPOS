@@ -12,6 +12,7 @@ use App\Classes\Output;
             <h3 class="text-3xl text-gray-700 font-bold">{{ $title ?? __( 'Unamed Table' ) }}</h3>
             <p class="text-gray-600">{{ $description ?? __( 'No description' ) }}</p>
         </div>
+        @include( 'components.session-message' )
         <ns-crud 
             src="{{ $src }}" 
             :query-params='@json( $queryParams ?? [] )'

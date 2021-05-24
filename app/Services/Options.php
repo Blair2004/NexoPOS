@@ -161,8 +161,8 @@ class Options
 
     /**
      * Get options
-     * @param string/array key
-     * @return any
+     * @param string|array $key
+     * @return string|array|boolean|float
     **/
     public function get( $key = null, $default = null )
     {
