@@ -9,6 +9,7 @@ composer.lock
 .phpunit.result.cache
 worker.log
 *.log
+*.ignore.*
 modules/*
 !modules/.temp
 modules/.temp/*
