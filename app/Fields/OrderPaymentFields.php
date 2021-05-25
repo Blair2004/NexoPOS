@@ -1,6 +1,7 @@
 <?php
 namespace App\Fields;
 
+use App\Models\PaymentType;
 use App\Services\FieldsService;
 use App\Services\Helper;
 
@@ -15,7 +16,7 @@ class OrderPaymentFields extends FieldsService
                 'validation'    =>  'required',
                 'name'          =>  'identifier',
                 'type'          =>  'select',
-                'options'       =>  collect( config( 'nexopos.pos.payments' ) )->map( function( $payment ) {
+                'options'       =>  collect( PaymentType::active()->get() )->map( function( $payment ) {
                     $payment[ 'value' ]     =   $payment[ 'identifier' ];
                     return $payment;
                 })

@@ -41,6 +41,7 @@ use App\Models\OrderProductRefund;
 use App\Models\OrderRefund;
 use App\Models\OrderStorage;
 use App\Models\OrderTax;
+use App\Models\PaymentType;
 use App\Models\ProcurementProduct;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
@@ -834,7 +835,9 @@ class OrdersService
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
 
-        $allowedPaymentsGateways    =   config('nexopos.pos.payments');
+        $allowedPaymentsGateways    =   Cache::remember( 'nexopos.pos.payments', 3600, function() {
+            return PaymentType::active()->get()->toArray();
+        });
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {

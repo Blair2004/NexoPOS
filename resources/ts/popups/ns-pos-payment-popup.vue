@@ -9,6 +9,7 @@ import { Popup } from '@/libraries/popup';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
 import { nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import samplePaymentVue from '@/pages/dashboard/pos/payments/sample-payment.vue';
 
 export default {
     name: 'ns-pos-payment',
@@ -75,6 +76,9 @@ export default {
                 break;
                 case 'account-payment':
                     this.currentPaymentComponent    =   AccountPayment;
+                break;
+                default: 
+                    this.currentPaymentComponent    =   samplePaymentVue;
                 break;
             }
         },
@@ -148,7 +152,11 @@ export default {
                         </div>
                     </div>
                     <div class="flex flex-auto overflow-y-auto" v-if="! showPayment">
-                        <component @submit="submitOrder()" :label="activePayment.label" :identifier="activePayment.identifier" v-bind:is="currentPaymentComponent"></component>
+                        <component 
+                            @submit="submitOrder()" 
+                            :label="activePayment.label" 
+                            :identifier="activePayment.identifier" 
+                            v-bind:is="currentPaymentComponent"></component>
                     </div>
                     <div class="flex flex-auto overflow-y-auto p-2 flex-col" v-if="showPayment">
                         <h3 class="text-center font-bold py-2 text-gray-700">{{ __( 'List Of Payments' ) }}</h3>

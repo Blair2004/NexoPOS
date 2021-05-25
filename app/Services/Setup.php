@@ -14,6 +14,7 @@ use App\Mails\SetupComplete;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Migration;
+use App\Models\PaymentType;
 use App\Models\Permission;
 use App\Services\Options;
 use App\Services\UserOptions;
@@ -57,30 +58,30 @@ class Setup
                 break;
                 case 1045   :   
                     $message =  [
-                        'name'              =>   'username',
-                        'message'           =>  __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status'            =>  'failed'
+                        'name'      =>   'username',
+                        'message'   =>  __( 'Unable to connect to the database using the credentials provided.' ),
+                        'status'    =>  'failed'
                     ];
                 break;
                 case 1049   :   
                     $message =  [
-                         'name'             => 'database_name',
-                         'message'          =>  __( 'Unable to select the database.' ),
-                         'status'           =>  'failed'
+                        'name'      => 'database_name',
+                        'message'   =>  __( 'Unable to select the database.' ),
+                        'status'    =>  'failed'
                     ];
                 break;
                 case 1044   :   
                     $message =  [
-                        'name'        => 'username',
-                        'message'      =>  __( 'Access denied for this user.' ),
-                        'status'       =>  'failed'
+                        'name'      => 'username',
+                        'message'   =>  __( 'Access denied for this user.' ),
+                        'status'    =>  'failed'
                     ];
                 break;
                 default     :   
                     $message =  [
-                         'name'        => 'hostname',
-                         'message'      =>  sprintf( __( 'Unexpected error occured. :%s' ), $e->getCode() ),
-                         'status'       =>  'failed'
+                        'name'      => 'hostname',
+                        'message'   =>  sprintf( __( 'Unexpected error occured. :%s' ), $e->getCode() ),
+                        'status'    =>  'failed'
                     ]; 
                 break;
             }
@@ -151,6 +152,31 @@ class Setup
         $user->author       =   $userID;
         $user->active       =   true; // first user active by default;
         $user->save();
+
+        /**
+         * let's create default payment
+         * for the system
+         */
+        $paymentType                =   new PaymentType();
+        $paymentType->label         =   __( 'Cash' );
+        $paymentType->identifier    =   'cash-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
+
+        $paymentType                =   new PaymentType;
+        $paymentType->label         =   __( 'Bank Payment' );
+        $paymentType->identifier    =   'bank-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
+
+        $paymentType                =   new PaymentType;
+        $paymentType->label         =   __( 'Customer Account' );
+        $paymentType->identifier    =   'account-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
         
         /**
          * The main user is the master

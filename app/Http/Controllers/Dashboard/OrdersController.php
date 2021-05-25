@@ -19,8 +19,10 @@ use App\Models\Order;
 use App\Http\Requests\OrderPaymentRequest;
 use App\Classes\Hook;
 use App\Crud\OrderInstalmentCrud;
+use App\Crud\PaymentTypeCrud;
 use App\Exceptions\NotAllowedException;
 use App\Models\OrderInstalment;
+use App\Models\PaymentType;
 
 class OrdersController extends DashboardController
 {
@@ -42,10 +44,9 @@ class OrdersController extends DashboardController
         $this->optionsService       =   $options;
         $this->ordersService        =   $ordersService;
 
-        $this->paymentTypes         =   collect( config( 'nexopos.pos.payments' ) )->map( function( $payment, $index ) {
-            return array_merge([
-                'selected'  =>  $index === 0,
-            ], $payment );
+        $this->paymentTypes         =   PaymentType::active()->get()->map( function( $payment, $index ) {
+            $payment->selected  =   $index === 0;
+            return $payment;
         });
     }
 
@@ -299,6 +300,21 @@ class OrdersController extends DashboardController
     public function changeOrderProcessingStatus( Request $request, Order $order )
     {
         return $this->ordersService->changeProcessingStatus( $order, $request->input( 'process_status' ) );
+    }
+
+    public function listPaymentsTypes()
+    {
+        return PaymentTypeCrud::table();
+    }
+
+    public function createPaymentType()
+    {
+        return PaymentTypeCrud::form();
+    }
+
+    public function updatePaymentType( PaymentType $paymentType )
+    {
+        return PaymentTypeCrud::form( $paymentType );
     }
 }
 

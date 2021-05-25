@@ -1,0 +1,488 @@
+<?php
+namespace App\Crud;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Services\CrudService;
+use App\Services\Users;
+use App\Exceptions\NotAllowedException;
+use App\Models\User;
+use TorMorten\Eventy\Facades\Events as Hook;
+use Exception;
+use App\Models\PaymentType;
+use App\Services\Helper;
+use Illuminate\Support\Facades\Cache;
+
+class PaymentTypeCrud extends CrudService
+{
+    /**
+     * define the base table
+     * @param  string
+     */
+    protected $table      =   'nexopos_payments_types';
+
+    /**
+     * default slug
+     * @param  string
+     */
+    protected $slug   =   'orders/payments-types';
+
+    /**
+     * Define namespace
+     * @param  string
+     */
+    protected $namespace  =   'ns.payments-type';
+
+    /**
+     * Model Used
+     * @param  string
+     */
+    protected $model      =   PaymentType::class;
+
+    /**
+     * Define permissions
+     * @param  array
+     */
+    protected $permissions  =   [
+        'create'    =>  'nexopos.manage-payments-types',
+        'read'      =>  'nexopos.manage-payments-types',
+        'update'    =>  'nexopos.manage-payments-types',
+        'delete'    =>  'nexopos.manage-payments-types',
+    ];
+
+    /**
+     * Adding relation
+     * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     * @param  array
+     */
+    public $relations   =  [
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_payments_types.author' ]
+    ];
+
+    /**
+     * all tabs mentionned on the tabs relations
+     * are ignored on the parent model.
+     */
+    protected $tabsRelations    =   [
+        // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
+    ];
+
+    /**
+     * Pick
+     * Restrict columns you retreive from relation.
+     * Should be an array of associative keys, where 
+     * keys are either the related table or alias name.
+     * Example : [
+     *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
+     * ]
+     */
+    public $pick        =   [
+        'user'  =>  [ 'username' ]
+    ];
+
+    /**
+     * Define where statement
+     * @var  array
+    **/
+    protected $listWhere    =   [];
+
+    /**
+     * Define where in statement
+     * @var  array
+     */
+    protected $whereIn      =   [];
+
+    /**
+     * Fields which will be filled during post/put
+     */
+        public $fillable    =   [];
+
+    /**
+     * Define Constructor
+     * @param  
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+    }
+
+    /**
+     * Return the label used for the crud 
+     * instance
+     * @return  array
+    **/
+    public function getLabels()
+    {
+        return [
+            'list_title'            =>  __( 'Payment Types List' ),
+            'list_description'      =>  __( 'Display all payment types.' ),
+            'no_entry'              =>  __( 'No payment types has been registered' ),
+            'create_new'            =>  __( 'Add a new payment type' ),
+            'create_title'          =>  __( 'Create a new payment type' ),
+            'create_description'    =>  __( 'Register a new payment type and save it.' ),
+            'edit_title'            =>  __( 'Edit payment type' ),
+            'edit_description'      =>  __( 'Modify  Payment Type.' ),
+            'back_to_list'          =>  __( 'Return to Payment Types' ),
+        ];
+    }
+
+    /**
+     * Check whether a feature is enabled
+     * @return  boolean
+    **/
+    public function isEnabled( $feature )
+    {
+        return false; // by default
+    }
+
+    /**
+     * Fields
+     * @param  object/null
+     * @return  array of field
+     */
+    public function getForm( $entry = null ) 
+    {
+        return [
+            'main' =>  [
+                'label'         =>  __( 'Label' ),
+                'name'          =>  'label',
+                'value'         =>  $entry->label ?? '',
+                'validation'    =>  'required',
+                'description'   =>  __( 'Provide a label to the resource.' )
+            ],
+            'tabs'  =>  [
+                'general'   =>  [
+                    'label'     =>  __( 'General' ),
+                    'fields'    =>  [
+                        [
+                            'type'  =>  'switch',
+                            'options'   =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name'  =>  'active',
+                            'label' =>  __( 'Active' ),
+                            'validation'    =>  'required',
+                            'value' =>  $entry->active ?? '',
+                        ], [
+                            'type'  =>  'text',
+                            'name'  =>  'identifier',
+                            'label' =>  __( 'Identifier' ),
+                            'validation'    =>  'required',
+                            'value' =>  $entry->identifier ?? '',
+                        ], [
+                            'type'  =>  'textarea',
+                            'name'  =>  'description',
+                            'label' =>  __( 'Description' ),                            
+                            'value' =>  $entry->description ?? '',
+                        ], 
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Filter POST input fields
+     * @param  array of fields
+     * @return  array of fields
+     */
+    public function filterPostInputs( $inputs )
+    {
+        $payment    =   PaymentType::where( 'identifier', $inputs[ 'identifier' ] )->first();
+
+        if ( $payment instanceof PaymentType ) {
+            throw new NotAllowedException( __( 'A payment type having the same identifier already exists.' ) );
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * Filter PUT input fields
+     * @param  array of fields
+     * @return  array of fields
+     */
+    public function filterPutInputs( $inputs, PaymentType $entry )
+    {
+        /**
+         * the identifier should not
+         * be edited for readonly payment type
+         */
+        if ( $entry->readonly ) {
+            $inputs[ 'identifier' ]     =   $entry->identifier;
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * Before saving a record
+     * @param  Request $request
+     * @return  void
+     */
+    public function beforePost( $request )
+    {
+        if ( $this->permissions[ 'create' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'create' ] );
+        } else {
+            throw new NotAllowedException;
+        }
+
+        Cache::forget( 'nexopos.pos.payments' );
+        Cache::forget( 'nexopos.pos.payments-key' );
+
+        return $request;
+    }
+
+    /**
+     * After saving a record
+     * @param  Request $request
+     * @param  PaymentType $entry
+     * @return  void
+     */
+    public function afterPost( $request, PaymentType $entry )
+    {
+        return $request;
+    }
+
+    
+    /**
+     * get
+     * @param  string
+     * @return  mixed
+     */
+    public function get( $param )
+    {
+        switch( $param ) {
+            case 'model' : return $this->model ; break;
+        }
+    }
+
+    /**
+     * Before updating a record
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
+     */
+    public function beforePut( $request, $entry )
+    {
+        if ( $this->permissions[ 'update' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'update' ] );
+        } else {
+            throw new NotAllowedException;
+        }
+
+        Cache::forget( 'nexopos.pos.payments' );
+        Cache::forget( 'nexopos.pos.payments-key' );
+
+        return $request;
+    }
+
+    /**
+     * After updating a record
+     * @param  Request $request
+     * @param  object entry
+     * @return  void
+     */
+    public function afterPut( $request, $entry )
+    {
+        return $request;
+    }
+
+    /**
+     * Before Delete
+     * @return  void
+     */
+    public function beforeDelete( $namespace, $id, $model ) {
+        if ( $namespace == 'ns.payments-type' ) {
+            /**
+             *  Perform an action before deleting an entry
+             *  In case something wrong, this response can be returned
+             *
+             *  return response([
+             *      'status'    =>  'danger',
+             *      'message'   =>  __( 'You\re not allowed to do that.' )
+             *  ], 403 );
+            **/
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
+            if ( $model->readonly ) {
+                throw new NotAllowedException( __( 'Unable to delete a read-only payments type.' ) );
+            }
+
+            Cache::forget( 'nexopos.pos.payments' );
+            Cache::forget( 'nexopos.pos.payments-key' );
+        }
+    }
+
+    /**
+     * Define Columns
+     * @return  array of columns configuration
+     */
+    public function getColumns() {
+        return [
+            'identifier'  =>  [
+                'label'  =>  __( 'Identifier' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'label'  =>  [
+                'label'  =>  __( 'Label' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'active'  =>  [
+                'label'  =>  __( 'Active' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created On' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'readonly'  =>  [
+                'label'  =>  __( 'Readonly' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'  =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+        ];
+    }
+
+    /**
+     * Define actions
+     */
+    public function setActions( $entry, $namespace )
+    {
+        // Don't overwrite
+        $entry->{ '$checked' }  =   false;
+        $entry->{ '$toggled' }  =   false;
+        $entry->{ '$id' }       =   $entry->id;
+        $entry->readonly        =   $entry->readonly ? __( 'Yes' ) : __( 'No' );
+        $entry->active          =   $entry->active ? __( 'Yes' ) : __( 'No' );
+
+        // you can make changes here
+        $entry->{'$actions'}    =   [
+            [
+                'label'         =>      __( 'Edit' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+            ], [
+                'label'     =>  __( 'Delete' ),
+                'namespace' =>  'delete',
+                'type'      =>  'DELETE',
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.payments-type/' . $entry->id ),
+                'confirm'   =>  [
+                    'message'  =>  __( 'Would you like to delete this ?' ),
+                ]
+            ]
+        ];
+
+        return $entry;
+    }
+
+    
+    /**
+     * Bulk Delete Action
+     * @param    object Request with object
+     * @return    false/array
+     */
+    public function bulkAction( Request $request ) 
+    {
+        /**
+         * Deleting licence is only allowed for admin
+         * and supervisor.
+         */
+
+        if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
+            $status     =   [
+                'success'   =>  0,
+                'failed'    =>  0
+            ];
+
+            foreach ( $request->input( 'entries' ) as $id ) {
+                $entity     =   $this->model::find( $id );
+
+                if ( $entity->readonly ) {
+                    $status[ 'failed' ]++;
+                    break;
+                }
+
+                if ( $entity instanceof PaymentType ) {
+
+                    Cache::forget( 'nexopos.pos.payments' );
+                    Cache::forget( 'nexopos.pos.payments-key' );
+
+                    $entity->delete();
+                    $status[ 'success' ]++;
+                } else {
+                    $status[ 'failed' ]++;
+                }
+            }
+            return $status;
+        }
+
+        return Hook::filter( $this->namespace . '-catch-action', false, $request );
+    }
+
+    /**
+     * get Links
+     * @return  array of links
+     */
+    public function getLinks()
+    {
+        return  [
+            'list'      =>  ns()->url( 'dashboard/' . 'orders/payments-types' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-type' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-type/{id}' . '' ),
+        ];
+    }
+
+    /**
+     * Get Bulk actions
+     * @return  array of actions
+    **/
+    public function getBulkActions()
+    {
+        return Hook::filter( $this->namespace . '-bulk', [
+            [
+                'label'         =>  __( 'Delete Selected Groups' ),
+                'identifier'    =>  'delete_selected',
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ]
+        ]);
+    }
+
+    /**
+     * get exports
+     * @return  array of export formats
+    **/
+    public function getExports()
+    {
+        return [];
+    }
+}

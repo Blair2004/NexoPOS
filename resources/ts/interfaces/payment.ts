@@ -1,5 +1,5 @@
 export class Payment {
-    label: string;
+    name: string;
     identifier: string;
     selected: boolean;
     readonly: boolean;

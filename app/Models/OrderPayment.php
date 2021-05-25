@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Cache;
 
 class OrderPayment extends NsModel
 {
@@ -26,8 +27,10 @@ class OrderPayment extends NsModel
 
     public function getPaymentLabelAttribute()
     {
-        $paymentTypes   =   collect( config( 'nexopos.pos.payments' ) )->mapWithKeys( function( $payment ) {
-            return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
+        $paymentTypes   =   Cache::remember( 'nexopos.pos.payments-key', '3600', function() {
+            return PaymentType::active()->get()->mapWithKeys( function( $paymentType ) {
+                return [ $paymentType->identifier => $paymentType->label ];
+            });
         });
 
         return $paymentTypes[ $this->identifier ] ?? __( 'Unknown Payment' );

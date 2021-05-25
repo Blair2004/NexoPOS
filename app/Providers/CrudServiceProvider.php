@@ -15,6 +15,7 @@ use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PartiallyPaidOrderCrud;
+use App\Crud\PaymentTypeCrud;
 use App\Crud\ProviderCrud;
 use App\Crud\RewardSystemCrud;
 use App\Crud\UnitCrud;
@@ -62,6 +63,7 @@ class CrudServiceProvider extends ServiceProvider
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.orders-instalments': return OrderInstalmentCrud::class;
+                case 'ns.payments-type': return PaymentTypeCrud::class;
                 case 'ns.hold-orders': return HoldOrderCrud::class;
                 case 'ns.unpaid-orders': return UnpaidOrderCrud::class;
                 case 'ns.partially-paid-orders': return PartiallyPaidOrderCrud::class;

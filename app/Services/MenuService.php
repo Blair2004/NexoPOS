@@ -32,7 +32,17 @@ class MenuService
                 'label' =>  __( 'Orders' ),
                 'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
                 'icon'  =>  'la-list-ol',
-                'href'  =>  ns()->url( '/dashboard/orders' )
+                'childrens'     =>  [
+                    [
+                        'label' =>  __( 'Orders List' ),
+                        'href'  =>  ns()->url( '/dashboard/orders' ),
+                        'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
+                    ], [
+                        'label' =>  __( 'Payment Types' ),
+                        'href'  =>  ns()->url( '/dashboard/orders/payments-types' ),
+                        'permissions'   =>  [ 'nexopos.manage-payments-types' ],
+                    ],
+                ],
             ], 
             'medias'    =>  [
                 'label'         =>  __( 'Medias' ),

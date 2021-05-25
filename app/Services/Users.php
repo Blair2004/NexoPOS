@@ -8,7 +8,7 @@ use App\Models\Permission;
 use App\Services\UserOptions;
 use App\Services\DateService;
 
-use App\Facades\Hook;
+use App\Classes\Hook;
 
 use App\Mail\ActivateAccountMail;
 

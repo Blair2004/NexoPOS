@@ -6,6 +6,7 @@ use App\Services\ModulesService;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -72,6 +73,26 @@ class ExtractTranslation extends Command
         return $this->info( 'Language Symbolic Link has been created !' );
     }
 
+    /**
+     * That will extrac tthe language string
+     * for a specific language code
+     * @param string $lang
+     * @param array $module
+     * @param Collection $files
+     * @return void
+     */
+    private function extractForModuleLanguage( $lang, $module, $files )
+    {
+        $filePath       =   Str::finish( $module[ 'lang-relativePath' ], DIRECTORY_SEPARATOR ) . $lang . '.json';
+        $finalArray     =   $this->extractLocalization( $files->flatten() );
+        $finalArray     =   $this->flushTranslation( $finalArray, $filePath );
+
+        Storage::disk( 'ns' )->put( $filePath, json_encode( $finalArray ) );
+
+        $this->newLine();
+        $this->info( sprintf( __( 'Localization for %s extracted to %s' ), config( 'nexopos.languages' )[ $lang ], $filePath ) );
+    }
+
     private function extracting()
     {
         $this->info( 'Extracting...' );
@@ -89,34 +110,67 @@ class ExtractTranslation extends Command
                     }
                 }
 
-                $filePath       =   Str::finish( $module[ 'lang-relativePath' ], DIRECTORY_SEPARATOR ) . $this->option( 'lang' ) . '.json';
-                $finalArray     =   $this->extractLocalization( $files->flatten() );
-                $finalArray     =   $this->flushTranslation( $finalArray, $filePath );
+                Storage::disk( 'ns' )->put( $module[ 'relativePath' ] . DIRECTORY_SEPARATOR . 'Lang' . DIRECTORY_SEPARATOR . 'index.html', '' );
 
-                Storage::disk( 'ns' )->put( $filePath, json_encode( $finalArray ) );
+                /**
+                 * We'll loop all the languages that are available
+                 */
+                if ( $this->option( 'lang' ) === 'all' ) {
+                    foreach( config( 'nexopos.languages' ) as $lang => $humanName ) {
+                        $this->extractForModuleLanguage( $lang, $module, $files );
+                    }
+                } else {
+                    $this->extractForModuleLanguage( $this->option( 'lang' ), $module, $files );
+                }
 
-                $this->newLine();
-                $this->info( sprintf( __( 'Localization extracted to %s' ), $filePath ) );
+                return $this->info( sprintf( __( 'Translation process is complete for the module %s !' ), $module[ 'name' ] ) );
+                
             } else {
                 return $this->error( __( 'Unable to find the requested module.' ) );
             }
-
         } else {
-            $files                  =   array_merge( 
+            $files      =   array_merge( 
                 Storage::disk( 'ns' )->allFiles( 'resources' ), 
                 Storage::disk( 'ns' )->allFiles( 'app' )
             );
             
-            $filePath               =   'resources/lang/' . $this->option( 'lang' ) . '.json';
-            $finalArray             =   $this->extractLocalization( $files );
-            $finalArray             =   $this->flushTranslation( $finalArray, $filePath );
-
-            Storage::disk( 'ns' )->put( 'resources/lang/' . $this->option( 'lang' ) . '.json', json_encode( $finalArray ) );
-            $this->newLine();
-            $this->info( 'Extraction complete !' );
+            if ( $this->option( 'lang' ) === 'all' ) {
+                foreach( config( 'nexopos.languages' ) as $lang => $humanName ) {
+                    $this->extractLanguageForSystem( $lang, $files );
+                }
+                $this->info( 'Translation process is complete !' );
+            } else {
+                return $this->extractLanguageForSystem( $this->option( 'lang' ), $files );
+            }
         }
     }
 
+    /**
+     * Will perform string extraction for 
+     * the system files
+     * @param string $lang
+     * @param array $files
+     * @return void
+     */
+    private function extractLanguageForSystem( $lang, $files )
+    {
+        $filePath               =   'resources/lang/' . $lang . '.json';
+        $finalArray             =   $this->extractLocalization( $files );
+        $finalArray             =   $this->flushTranslation( $finalArray, $filePath );
+
+        Storage::disk( 'ns' )->put( 'resources/lang/' . $this->option( 'lang' ) . '.json', json_encode( $finalArray ) );
+
+        $this->newLine();
+        $this->info( 'Extraction complete for language : ' . config( 'nexopos.languages' )[ $lang ] );
+    }
+
+    /**
+     * Will merge translation files
+     * by deleting old string that aren't referenced
+     * @param array $newTranslation
+     * @param string $filePath
+     * @return array $updatedTranslation
+     */
     private function flushTranslation( $newTranslation, $filePath )
     {
         $existingTranslation    =   [];
