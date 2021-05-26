@@ -33,7 +33,7 @@ class UpdateDefaultPaymentTypes extends Migration
 
         $paymentType                =   new PaymentType;
         $paymentType->label         =   __( 'Customer Account' );
-        $paymentType->identifier    =   'account-payement';
+        $paymentType->identifier    =   'account-payment';
         $paymentType->readonly      =   true;
         $paymentType->author        =   $admin->id;
         $paymentType->save();
