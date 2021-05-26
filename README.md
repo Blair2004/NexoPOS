@@ -22,7 +22,8 @@ We're frequently discussing about the future of the app (while waiting discussio
 
 ## Demo
 - Regular : https://v4.nexopos.com
-- MultiStore : https://multistore-v4.nexopos.com
+- MultiStore : https://v4-multi.nexopos.com
+- Gastro 4.x : https://v4-gastro.nexopos.com
 - Username : demouser
 - Password : 123456
 
