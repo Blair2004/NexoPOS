@@ -89,6 +89,7 @@ class Setup
             return response()->json( $message, 403 );
         }
 
+        DotEnvEditor::load();
         DotEnvEditor::setKey( 'MAIL_MAILER', 'log' );
         DotEnvEditor::setKey( 'DB_HOST', $request->input( 'hostname' ) );
         DotEnvEditor::setKey( 'DB_DATABASE', $request->input( 'database_name' ) );
@@ -190,13 +191,18 @@ class Setup
             'language'  =>  'en'
         ]);
 
+        $domain     =   pathinfo( url()->to( '/' ) );
+
         DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
         DotenvEditor::setKey( 'NS_AUTHORIZATION', Str::random(20) );
         DotenvEditor::setKey( 'NS_SOCKET_PORT', 6001 );
-        DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) );
+        DotEnvEditor::setKey( 'SESSION_DOMAIN', $domain[ 'basename' ] );
+        DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
+        DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
         DotenvEditor::save();
+        
 
         /**
          * We assume so far the application is installed

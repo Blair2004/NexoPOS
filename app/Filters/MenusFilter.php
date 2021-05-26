@@ -36,12 +36,7 @@ class MenusFilter
                     'label'     =>  __( 'Orders' ),
                     'icon'      =>  'la-list-ol',
                     'childrens' =>  [
-                        'regular-orders'       =>  [
-                            'label' =>  __( 'Orders' ),
-                            'permissions'   =>  [ 'nexopos.update.orders', 'nexopos.read.orders' ],
-                            'icon'  =>  'la-list-ol',
-                            'href'  =>  ns()->url( '/dashboard/orders' )
-                        ],
+                        ...$menus[ 'orders' ][ 'childrens' ],
                         'instalments'       =>  [
                             'label'         =>  __( 'Instalments' ),
                             'permissions'   =>  [ 'nexopos.read.orders-instalments' ],

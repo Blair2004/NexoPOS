@@ -41,7 +41,8 @@ class RenderCrudFormTest extends TestCase
             'units',
             'units/groups',
             'users/roles',
-            'users'
+            'users',
+            'orders/payments-types'
         ];
 
         foreach( $cruds as $crud ) {

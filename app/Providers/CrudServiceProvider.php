@@ -63,7 +63,7 @@ class CrudServiceProvider extends ServiceProvider
             switch( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.orders-instalments': return OrderInstalmentCrud::class;
-                case 'ns.payments-type': return PaymentTypeCrud::class;
+                case 'ns.payments-types': return PaymentTypeCrud::class;
                 case 'ns.hold-orders': return HoldOrderCrud::class;
                 case 'ns.unpaid-orders': return UnpaidOrderCrud::class;
                 case 'ns.partially-paid-orders': return PartiallyPaidOrderCrud::class;

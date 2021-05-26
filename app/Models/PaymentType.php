@@ -14,4 +14,9 @@ class PaymentType extends NsModel
     {
         return $query->where( 'active', true );
     }
+
+    public function scopeIdentifier( $query, $identifier )
+    {
+        return $query->where( 'identifier', $identifier );
+    }
 }

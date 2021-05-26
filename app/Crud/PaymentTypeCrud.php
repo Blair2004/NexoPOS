@@ -31,7 +31,7 @@ class PaymentTypeCrud extends CrudService
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.payments-type';
+    protected $namespace  =   'ns.payments-types';
 
     /**
      * Model Used
@@ -294,7 +294,7 @@ class PaymentTypeCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == 'ns.payments-type' ) {
+        if ( $namespace == 'ns.payments-types' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -381,7 +381,7 @@ class PaymentTypeCrud extends CrudService
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.payments-type/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.payments-types/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -455,8 +455,8 @@ class PaymentTypeCrud extends CrudService
             'list'      =>  ns()->url( 'dashboard/' . 'orders/payments-types' ),
             'create'    =>  ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
             'edit'      =>  ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-type' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-type/{id}' . '' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types/{id}' . '' ),
         ];
     }
 
