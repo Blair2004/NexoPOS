@@ -987,6 +987,7 @@ class OrdersService
             $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
             $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
             $orderProduct->unit_id                      =   $product[ 'unit_id' ];
+            $orderProduct->mode                         =   $product[ 'mode' ];
             $orderProduct->product_id                   =   $product[ 'product' ]->id;
             $orderProduct->product_category_id          =   $product[ 'product' ]->category_id;
             $orderProduct->name                         =   $product[ 'product' ]->name;
@@ -1129,6 +1130,7 @@ class OrdersService
         $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id;
         $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
         $orderProduct[ 'product' ]              =   $product;
+        $orderProduct[ 'mode' ]                 =   $orderProduct[ 'mode' ] ?? 'normal';
         $orderProduct[ 'unitQuantity' ]         =   $productUnitQuantity;
 
         return $orderProduct;

@@ -40,7 +40,7 @@ class CreateOrdersProductsTable extends Migration
                 $table->string( 'sale_tax_value' )->default(0);
                 $table->float( 'tax_value', 11, 5 )->default(0);
                 $table->float( 'net_price', 11, 5 )->default(0);
-                $table->string( 'mode' )->default( 'retail' );
+                $table->string( 'mode' )->default( 'normal' ); // 
                 $table->string( 'unit_name' )->nullable();
                 // $table->float( 'base_quantity', 11, 5 );
                 $table->float( 'total_gross_price', 11, 5 )->default(0);
