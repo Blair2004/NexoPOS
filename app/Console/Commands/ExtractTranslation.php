@@ -158,7 +158,7 @@ class ExtractTranslation extends Command
         $finalArray             =   $this->extractLocalization( $files );
         $finalArray             =   $this->flushTranslation( $finalArray, $filePath );
 
-        Storage::disk( 'ns' )->put( 'resources/lang/' . $this->option( 'lang' ) . '.json', json_encode( $finalArray ) );
+        Storage::disk( 'ns' )->put( 'resources/lang/' . $lang . '.json', json_encode( $finalArray ) );
 
         $this->newLine();
         $this->info( 'Extraction complete for language : ' . config( 'nexopos.languages' )[ $lang ] );
