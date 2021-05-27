@@ -227,6 +227,7 @@ export default {
          */
         reloadEntities() {
             this.reloading          =   true;
+            
             forkJoin([
                 nsHttpClient.get( '/api/nexopos/v4/categories' ),
                 nsHttpClient.get( '/api/nexopos/v4/products' ),
@@ -244,12 +245,22 @@ export default {
                     });
                 } 
 
-                this.form           =   Object.assign( this.form, result[2] );
+                this.form           =   Object.assign( JSON.parse( JSON.stringify( result[2] ) ), this.form );
                 this.form           =   this.formValidation.createForm( this.form );
-                
-                if ( this.form.products === undefined ) {
-                    this.form.products  =   [];
-                } else {
+
+                /**
+                 * if the fields are existing, we'll just
+                 * make sure to update with the new provided options
+                 */
+                if ( this.form.tabs ) {
+                    this.form.tabs.general.fields.forEach( (field, index) => {
+                        if ( field.options ) {
+                            field.options   =   result[2].tabs.general.fields[ index ].options;
+                        }
+                    });
+                }
+
+                if ( this.form.products.length === 0 ) {
                     /**
                      * if the product has been provided by the
                      * server we need to format it.
@@ -267,7 +278,7 @@ export default {
                             'tax_group_id',
                         ].forEach( field => {
                             if ( product[ field ] === undefined ) {
-                                product[ field ]    =   0;
+                                product[ field ]    =   product[ field ] === undefined ? 0 : product[ field ];
                             }
                         });
 
@@ -281,8 +292,6 @@ export default {
                             unit_quantities: product.unit_quantities || []
                         }
                     });
-
-                    console.log( this.form.products );
                 }
                 
                 this.$forceUpdate();

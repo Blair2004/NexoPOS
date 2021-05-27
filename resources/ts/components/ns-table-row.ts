@@ -63,7 +63,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                         .subscribe( response => {
                             nsSnackBar.success( response.message )
                                 .subscribe();
-                            this.$emit( 'updated', this.row );
+                            this.$emit( 'reload', this.row );
                         }, ( response ) => {
                             this.toggleMenu();
                             nsSnackBar.error( response.message ).subscribe();

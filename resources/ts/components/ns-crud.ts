@@ -332,7 +332,13 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                     </thead>
                     <tbody>
                         <template v-if="result.data !== undefined && result.data.length > 0">
-                            <ns-table-row @updated="refreshRow( $event )" v-for="row of result.data" :columns="columns" :row="row" @toggled="handleShowOptions( $event )"></ns-table-row>
+                            <ns-table-row 
+                                @updated="refreshRow( $event )" 
+                                v-for="row of result.data" 
+                                :columns="columns" 
+                                :row="row" 
+                                @reload="refresh()"
+                                @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
                             <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">{{ __( 'There is nothing to display...' ) }}</td>

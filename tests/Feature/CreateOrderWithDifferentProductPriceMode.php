@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Order;
-use App\Models\PaymentType;
 use App\Models\Product;
 use App\Models\Role;
 use App\Services\CurrencyService;
@@ -12,51 +10,20 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CreateCustomPaymentTypeAndOrder extends TestCase
+class CreateOrderWithDifferentProductPriceMode extends TestCase
 {
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_create_payment_type_and_order()
+    public function test_example()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
             ['*']
         );
 
-        /**
-         * To avoid any error, we'll make sure to delete the 
-         * payment type if that already exists.
-         */
-        $paymentType    =   PaymentType::identifier( 'paypal-payment' )->first();
-
-        if ( $paymentType instanceof PaymentType ) {
-            $paymentType->delete();
-        }
-
-        /**
-         * First we'll create a custom payment type.
-         * that has paypal as identifier
-         */
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.payments-types', [
-                'label'         =>  __( 'PayPal' ),
-                'general'       =>  [
-                    'identifier'    =>  'paypal-payment',
-                    'active'        =>  true
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        /**
-         * Next we'll create the order assigning
-         * the order type we have just created
-         */
         $currency       =   app()->make( CurrencyService::class );
         $product        =   Product::withStockEnabled()->get()->random();
         $unit           =   $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
@@ -87,8 +54,15 @@ class CreateCustomPaymentTypeAndOrder extends TestCase
                     [
                         'product_id'            =>  $product->id,
                         'quantity'              =>  1,
-                        'unit_price'            =>  12,
+                        'unit_price'            =>  8.5,
                         'unit_quantity_id'      =>  $unit->id,
+                        'mode'                  =>  'retail'
+                    ], [
+                        'product_id'            =>  $product->id,
+                        'quantity'              =>  1,
+                        'unit_price'            =>  8.5,
+                        'unit_quantity_id'      =>  $unit->id,
+                        'mode'                  =>  'normal'
                     ]
                 ],
                 'payments'              =>  [
@@ -100,9 +74,11 @@ class CreateCustomPaymentTypeAndOrder extends TestCase
                     ]
                 ]
             ]);
-        
-        $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PAID );
+
         $response   =   json_decode( $response->getContent(), true );
-        $this->assertTrue( $response[ 'data' ][ 'order' ][ 'payments' ][0][ 'identifier' ] === 'paypal-payment', 'Invalid payment identifier detected.' );
+        $order      =   $response[ 'data' ][ 'order' ];
+
+        $this->assertTrue( $order[ 'products' ][0][ 'mode' ] === 'retail', 'Failed to assert the first product price mode is "retail"' );
+        $this->assertTrue( $order[ 'products' ][1][ 'mode' ] === 'normal', 'Failed to assert the second product price mode is "normal"' );
     }
 }
