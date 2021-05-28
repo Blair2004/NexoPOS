@@ -1147,26 +1147,49 @@ class ModulesService
     }
 
     /**
-     * get module migration without
+     * Will return the module migrations files 
+     * that has already been migrated.
+     * @param array $module
+     * @return array
+     */
+    public function getModuleAlreadyMigratedFiles( $module )
+    {
+        return ModuleMigration::namespace( $module[ 'namespace' ] )
+            ->get()
+            ->map( fn( $migration ) => $migration->file )
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Get module migration without
      * having the modules array built.
      * @param array module namespace
      * @return array of migration files
      */
-    private function __getModuleMigration( $module )
+    private function __getModuleMigration( $module, $cache = true )
     {
         /**
          * If the last migration is not defined
          * that means we're running it for the first time
          * we'll set the migration to 0.0 then.
          */
-        $migratedFiles      =   Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function() use ( $module ) {
-            return ModuleMigration::namespace( $module[ 'namespace' ] )
-                ->get()
-                ->map( fn( $migration ) => $migration->file )
-                ->values()
-                ->toArray();
-        });
+        $migratedFiles      =   $cache === true ? Cache::remember( self::CACHE_MIGRATION_LABEL . $module[ 'namespace' ], 3600 * 24, function() use ( $module ) {
+            return $this->getModuleAlreadyMigratedFiles( $module );
+        }) : $this->getModuleAlreadyMigratedFiles( $module );
             
+        return $this->getModuleUnmigratedFiles( $module, $migratedFiles );
+    }
+
+    /**
+     * Will return all migrations file that hasn't 
+     * yet been runned for a specific module
+     * @param array $module
+     * @param array $migratedFiles
+     * @return array
+     */
+    public function getModuleUnmigratedFiles( $module, $migratedFiles )
+    {
         $files              =   $this->getAllModuleMigrationFiles( $module );
         $unmigratedFiles    =   [];
 
