@@ -53,7 +53,11 @@ use App\Services\DateService;
             <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-10 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
                 <div class="overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
+                        @if ( ns()->option->get( 'ns_store_rectangle_logo' ) )
+                        <img src="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" class="w-11/12" alt="logo"/>
+                        @else
                         <h1 class="font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-200 to-indigo-400 text-3xl">NexoPOS</h1>
+                        @endif
                     </div>
                     <ul>
                         @foreach( $menus->getMenus() as $identifier => $menu )

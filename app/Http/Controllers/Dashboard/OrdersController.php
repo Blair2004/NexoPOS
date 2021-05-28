@@ -178,6 +178,8 @@ class OrdersController extends DashboardController
         $order->load( 'billing_address' );
         $order->load( 'user' );
 
+        $order->products    =   Hook::filter( 'ns-receipt-products', $order->products );
+
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order'     =>  $order,
             'billing'   =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],

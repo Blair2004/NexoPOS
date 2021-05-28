@@ -15,7 +15,7 @@ class ReportsController extends DashboardController
     /**
      * @var OrdersService
      */
-    protected $orderService;
+    protected $ordersService;
 
     /**
      * @var ReportService
@@ -23,13 +23,13 @@ class ReportsController extends DashboardController
     protected $reportService;
 
     public function __construct(
-        OrdersService $orderService,
+        OrdersService $ordersService,
         ReportService $reportService
     )
     {
         parent::__construct();
 
-        $this->ordersService    =   $orderService;
+        $this->ordersService    =   $ordersService;
         $this->reportService    =   $reportService;
     }
 
@@ -199,5 +199,21 @@ class ReportsController extends DashboardController
             'title'         =>  __( 'Annual Report' ),
             'description'   =>  __( 'Provides an overview over the sales during a specific period' )
         ]);        
+    }
+
+    public function salesByPaymentTypes( Request $request )
+    {
+        return $this->view( 'pages.dashboard.reports.payment-types', [
+            'title'         =>  __( 'Sales By Payment Types' ),
+            'description'   =>  __( 'Provide a report of the sales by payment types, for a specific period.' )
+        ]); 
+    }
+
+    public function getPaymentTypes( Request $request )
+    {
+        return $this->ordersService->getPaymentTypesReport( 
+            $request->input( 'startDate' ),
+            $request->input( 'endDate' ),
+        );
     }
 }

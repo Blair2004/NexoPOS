@@ -40,15 +40,6 @@
                         <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
                         <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">
-                            <div class="px-1">
-                                <ns-button 
-                                    @click="performMigration( moduleObject )" 
-                                    v-if="Object.values( moduleObject.migrations ).length > 0 && ! moduleObject.migrating && ! moduleObject.migrated">
-                                    <i class="las la-sync text-xl"></i>
-                                </ns-button>
-                                <ns-button v-if="moduleObject.migrating" disabled><i class="las la-sync text-xl animate-spin"></i></ns-button>
-                                <ns-button v-if="moduleObject.migrated" disabled type="success"><i class="las la-check text-xl"></i></ns-button>
-                            </div>
                             <div class="px-1 flex -mx-1">
                                 <div class="px-1 flex">
                                     <ns-button @click="download( moduleObject )" type="info">
@@ -99,6 +90,9 @@ export default {
         download( module ) {
             document.location   =   '/dashboard/modules/download/' + module.namespace;
         },
+        /**
+         * @deprecated
+         */
         performMigration: async ( module, migrations ) => {
             const syncRunMigration  =   async ( file, version ) => {
                 return new Promise( ( resolve, reject ) => {
@@ -141,8 +135,6 @@ export default {
                 .subscribe( async result => {
                     nsSnackBar.success( result.message ).subscribe();
 
-                    this.performMigration( object, result.data.migrations );
-
                     this.loadModules().subscribe( result => {
                         document.location.reload();
                     }, ( error ) => {
@@ -169,15 +161,7 @@ export default {
         loadModules() {
             return nsHttpClient.get( this.url )
                 .pipe(
-                    map( result => {
-                        /**
-                         * provide default attributes
-                         */
-                        for( let namespace in result.modules ) {
-                            result.modules[ namespace ].migrating       =   false;
-                            result.modules[ namespace ].migrated        =   false;
-                        };
-                        
+                    map( result => {                        
                         this.modules            =   result.modules;
                         this.total_enabled      =   result.total_enabled;
                         this.total_disabled     =   result.total_disabled;

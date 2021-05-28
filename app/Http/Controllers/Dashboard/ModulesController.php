@@ -90,6 +90,7 @@ class ModulesController extends DashboardController
      * @param string module namespace
      * @return Request $request
      * @return Array response
+     * @deprecated
      */
     public function migrate( $namespace, Request $request )
     {

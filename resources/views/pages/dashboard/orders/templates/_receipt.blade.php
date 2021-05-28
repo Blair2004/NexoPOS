@@ -1,5 +1,6 @@
 <?php
 use App\Models\Order;
+use App\Classes\Hook;
 ?>
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
@@ -25,7 +26,7 @@ use App\Models\Order;
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @foreach( $order->products as $product )
+                    @foreach( Hook::filter( 'ns-receipt-products', $order->products ) as $product )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->name }} (x{{ $product->quantity }})</span>

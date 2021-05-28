@@ -375,6 +375,11 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.reports.yearly' ],
                         'href'  =>  ns()->url( '/dashboard/reports/annual-report' )
                     ], 
+                    'payment-types'  =>  [
+                        'label' =>  __( 'Sales By Payments' ),
+                        'permissions'   =>  [ 'nexopos.reports.payment-types' ],
+                        'href'  =>  ns()->url( '/dashboard/reports/payment-types' )
+                    ], 
                 ]
             ],
             'settings'      =>  [

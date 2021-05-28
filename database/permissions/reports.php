@@ -37,4 +37,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->namespace      =   'nexopos.reports.inventory';
     $permission->description    =   __( 'Let you see the Yearly report' );
     $permission->save();
+
+    $permission                 =   new Permission;
+    $permission->name           =   __( 'Read Sales by Payment Types' );
+    $permission->namespace      =   'nexopos.reports.payment-types';
+    $permission->description    =   __( 'Let the user read the report that shows sales by payment types.' );
+    $permission->save();
 }

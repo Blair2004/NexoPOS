@@ -1967,6 +1967,8 @@ class OrdersService
             "billing_" . "email"        =>  $order->billing_address->email,
         ];
 
+        $availableTags  =   Hook::filter( 'ns-orders-template-mapping', $availableTags, $order );
+
         foreach( $availableTags as $tag => $value ) {
             $template   =   ( str_replace( '{'.$tag.'}', $value, $template ) );
         }
@@ -2288,6 +2290,35 @@ class OrdersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The order has been successfully updated.' )
+        ];
+    }
+
+    public function getPaymentTypesReport( $startRange, $endRange )
+    {
+        $paymentTypes           =   PaymentType::active()->get();
+        $paymentsIdentifier     =   $paymentTypes->map( fn( $paymentType ) => $paymentType->identifier )->toArray();
+
+        $payments               =   OrderPayment::where( 'created_at', '>=', $startRange )
+            ->where( 'created_at', '<=', $endRange )
+            ->whereIn( 'identifier', $paymentsIdentifier )
+            ->get();
+
+        $total                  =   $payments->map( fn( $payment ) => $payment->value )->sum();
+
+        return [
+            'summary'   =>  $paymentTypes->map( function( $paymentType ) use ( $payments ) {
+                $total          =   $payments
+                    ->filter( fn( $payment ) => $payment->identifier === $paymentType->identifier )
+                    ->map( fn( $payment ) => $payment->value )
+                    ->sum();
+
+                return [
+                    'label'     =>  $paymentType->label,
+                    'total'     =>  ns()->currency->getRaw( $total )
+                ];
+            }),
+            'total'     =>  ns()->currency->getRaw( $total ), 
+            'entries'   =>  $payments
         ];
     }
 }
