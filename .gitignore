@@ -10,6 +10,7 @@ composer.lock
 worker.log
 *.log
 *.ignore.*
+*.log.*
 modules/*
 !modules/.temp
 modules/.temp/*
