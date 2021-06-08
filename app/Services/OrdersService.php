@@ -1770,7 +1770,7 @@ class OrdersService
         $order->subtotal        =   $productGrossTotal;
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   $productTotal + $orderShipping;
+        $order->total           =   $productTotal + $orderShipping - $order->discount;
         $order->tax_value       =   $productsTotalTaxes;
         $order->change          =   $order->tendered - $order->total;
 

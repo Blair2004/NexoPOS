@@ -57,10 +57,10 @@ export default {
                 ],
             },
             series: [{
-                name: 'Current Week',
+                name: __( 'Current Week' ),
                 data: []
             },{
-                name: 'Previous Week',
+                name: __( 'Previous Week' ),
                 data: []
             }],
             reportSubscription: null,

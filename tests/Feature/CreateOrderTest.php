@@ -17,6 +17,11 @@ use Faker\Factory;
 
 class CreateOrderTest extends TestCase
 {
+    protected $customProductParams  =   [];
+    protected $customOrderParams    =   [];
+    protected $shouldRefund         =   true;
+    protected $customDate           =   true;
+    protected $shouldMakePayment    =   true;
     protected $count    =   30;
 
     /**
@@ -24,7 +29,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    public function testPostingOrder()
+    public function testPostingOrder( $callback = null )
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -53,12 +58,12 @@ class CreateOrderTest extends TestCase
 
             $products           =   $products->map( function( $product ) use ( $faker ) {
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
-                return [
+                return array_merge([
                     'product_id'            =>  $product->id,
                     'quantity'              =>  $faker->numberBetween(1,10),
                     'unit_price'            =>  $unitElement->sale_price,
                     'unit_quantity_id'      =>  $unitElement->id,
-                ];
+                ], $this->customProductParams );
             });
 
             /**
@@ -115,96 +120,108 @@ class CreateOrderTest extends TestCase
                 $faker->numberBetween( 0,23 ) 
             )->format( 'Y-m-d H:m:s' );
 
-            $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/orders', [
-                    'customer_id'           =>  $customer->id,
-                    'type'                  =>  [ 'identifier' => 'takeaway' ],
-                    'discount_type'         =>  'percentage',
-                    'created_at'            =>  $dateString,
-                    'discount_percentage'   =>  $discountRate,
-                    'addresses'             =>  [
-                        'shipping'          =>  [
-                            'name'          =>  'First Name Delivery',
-                            'surname'       =>  'Surname',
-                            'country'       =>  'Cameroon',
-                        ],
-                        'billing'          =>  [
-                            'name'          =>  'EBENE Voundi',
-                            'surname'       =>  'Antony Hervé',
-                            'country'       =>  'United State Seattle',
-                        ]
+            $orderData  =   array_merge([
+                'customer_id'           =>  $customer->id,
+                'type'                  =>  [ 'identifier' => 'takeaway' ],
+                'discount_type'         =>  'percentage',
+                'created_at'            =>  $this->customDate ? $dateString : null,
+                'discount_percentage'   =>  $discountRate,
+                'addresses'             =>  [
+                    'shipping'          =>  [
+                        'name'          =>  'First Name Delivery',
+                        'surname'       =>  'Surname',
+                        'country'       =>  'Cameroon',
                     ],
-                    'coupons'               =>  $allCoupons,
-                    'subtotal'              =>  $subtotal,
-                    'shipping'              =>  $shippingFees,
-                    'products'              =>  $products->toArray(),
-                    'payments'              =>  [
-                        [
-                            'identifier'    =>  'cash-payment',
-                            'value'         =>  $currency->define( $subtotal )
-                                ->additionateBy( $shippingFees )
-                                ->subtractBy( 
-                                    $discountCoupons
-                                ) 
-                                ->getRaw()
-                        ]
+                    'billing'          =>  [
+                        'name'          =>  'EBENE Voundi',
+                        'surname'       =>  'Antony Hervé',
+                        'country'       =>  'United State Seattle',
                     ]
-                ]);
+                ],
+                'coupons'               =>  $allCoupons,
+                'subtotal'              =>  $subtotal,
+                'shipping'              =>  $shippingFees,
+                'products'              =>  $products->toArray(),
+                'payments'              =>  $this->shouldMakePayment ? [
+                    [
+                        'identifier'    =>  'cash-payment',
+                        'value'         =>  $currency->define( $subtotal )
+                            ->additionateBy( $shippingFees )
+                            ->subtractBy( 
+                                $discountCoupons
+                            ) 
+                            ->getRaw()
+                    ]
+                ] : []
+            ], $this->customOrderParams );
+
+            $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
             
             
                 $response->assertJson([
                 'status'    =>  'success'
             ]);
 
-            $discount       =   $currency->define( $discountRate )
-                ->multipliedBy( $subtotal )
-                ->divideBy( 100 )
-                ->getRaw();
+            if ( $this->shouldMakePayment ) {
+                $discount       =   $currency->define( $discountRate )
+                    ->multipliedBy( $subtotal )
+                    ->divideBy( 100 )
+                    ->getRaw();
+    
+                $netsubtotal    =   $currency
+                    ->define( $subtotal )
+                    ->subtractBy( $totalCoupons )
+                    ->subtractBy( $discount )
+                    ->getRaw();
+    
+                $total          =   $currency->define( $netsubtotal )
+                    ->additionateBy( $shippingFees )
+                    ->getRaw() ;
+    
+                $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
+                
+                $response->assertJsonPath( 'data.order.total',      $currency->define( $netsubtotal )
+                    ->additionateBy( $shippingFees )
+                    ->getRaw() 
+                );
+    
+                $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
+                    ->subtractBy( $subtotal + $shippingFees - ( $discountRate + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
+                    ->getRaw() 
+                );
 
-            $netsubtotal    =   $currency
-                ->define( $subtotal )
-                ->subtractBy( $totalCoupons )
-                ->subtractBy( $discount )
-                ->getRaw();
+                /**
+                 * test if the order has updated
+                 * correctly the customer account
+                 */
+                $customer->refresh();
+                $customerSecondPurchases    =   $customer->purchases_amount;
+                $customerSecondOwed         =   $customer->owed_amount;
 
-            $total          =   $currency->define( $netsubtotal )
-                ->additionateBy( $shippingFees )
-                ->getRaw() ;
-
-            $response->assertJsonPath( 'data.order.subtotal',   $currency->getRaw( $subtotal ) );
-            
-            $response->assertJsonPath( 'data.order.total',      $currency->define( $netsubtotal )
-                ->additionateBy( $shippingFees )
-                ->getRaw() 
-            );
-
-            $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
-                ->subtractBy( $subtotal + $shippingFees - ( $discountRate + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
-                ->getRaw() 
-            );
+                if ( ( float ) trim( $customerFirstPurchases + $total ) != ( float ) trim( $customerSecondPurchases ) ) {
+                    throw new Exception( 
+                        sprintf(
+                            __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
+                            $customerFirstPurchases + $total,
+                            $customerSecondPurchases,
+                            $total
+                        )
+                    );
+                }
+            }
 
             $responseData   =   json_decode( $response->getContent(), true );
 
             /**
-             * test if the order has updated
-             * correctly the customer account
+             * if a custom callback is provided
+             * we'll call that callback as well
              */
-            $customer->refresh();
-            $customerSecondPurchases    =   $customer->purchases_amount;
-            $customerSecondOwed         =   $customer->owed_amount;
-
-            if ( ( float ) trim( $customerFirstPurchases + $total ) != ( float ) trim( $customerSecondPurchases ) ) {
-                throw new Exception( 
-                    sprintf(
-                        __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
-                        $customerFirstPurchases + $total,
-                        $customerSecondPurchases,
-                        $total
-                    )
-                );
+            if ( is_callable( $callback ) ) {
+                $callback( $response,  $responseData );
             }
 
-            if ( $faker->randomElement([ true, false, false ]) === true ) {
+            if ( $faker->randomElement([ true, false, false ]) === true && $this->shouldRefund ) {
                 /**
                  * We'll keep original products amounts and quantity
                  * this means we're doing a full refund of price and quantities

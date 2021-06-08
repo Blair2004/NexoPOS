@@ -71,6 +71,10 @@ use App\Classes\Hook;
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Shipping' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->shipping ) }}</td>
                     </tr>
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total ) }}</td>
+                    </tr>
                     @foreach( $order->payments as $payment )
                     <tr>
                         <td class="p-2 border-b border-gray-800 text-sm font-semibold" colspan="2">{{ $paymentTypes[ $payment[ 'identifier' ] ] ?? __( 'Unknown Payment' ) }}</td>
