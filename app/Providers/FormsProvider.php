@@ -12,6 +12,7 @@ use App\Fields\PasswordLostFields;
 use App\Fields\NewPasswordFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
+use App\Fields\PosOrderSettingsFields;
 use App\Fields\RefundProductFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
@@ -87,6 +88,9 @@ class FormsProvider extends ServiceProvider
                 break;            
                 case 'ns.cash-registers-cashout':
                     return new CashRegisterCashoutFields;
+                break;     
+                case 'ns.pos-order-settings':
+                    return new PosOrderSettingsFields;
                 break;     
                 default:
                     return $class;

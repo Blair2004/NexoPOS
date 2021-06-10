@@ -153,3 +153,12 @@ body {
         }
     }
 }
+
+/**
+ * Components
+**/
+
+// Popup
+.popup-heading {
+    @apply p-2 flex justify-between items-center;
+}
