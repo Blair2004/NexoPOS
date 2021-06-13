@@ -411,7 +411,6 @@ class ProcurementService
             $procurementProduct->barcode                    =   str_pad( $product->barcode, 5, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->unit_id, 3, '0', STR_PAD_LEFT ) . '-' . str_pad( $procurementProduct->id, 3, '0', STR_PAD_LEFT );
             $procurementProduct->save();
 
-            
             event( new ProcurementAfterSaveProductEvent( $procurement, $procurementProduct, $procuredProduct ) );
 
             return $procurementProduct;

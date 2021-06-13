@@ -1,0 +1,39 @@
+{
+    "image": "/images/products/decor.jpg",
+    "name": "Decors",
+    "products": [
+        {
+            "name": "The Gray Barn 2-piece Roma Pitcher Vases",
+            "price": 51.69,
+            "image": "/images/products/The-Gray-Barn-2-piece-Roma-Pitcher-Vases.jpg"
+        }, {
+            "name": "Arlo Blinds Tuscan Bamboo Roman Shades",
+            "price": 31.66,
+            "image": "/images/products/Arlo-Blinds-Tuscan-Cordless-Bamboo-Shade.jpg"
+        }, {
+            "name": "Blazing Needles 48-inch Solid Papasan Cushion",
+            "price": 60.87,
+            "image": "/images/products/Blazing-Needles-48-inch-Solid-Papasan-Cushion-4aacf5c6-94e1-47b7-85d6-7127b66c5d09_600.jpg"
+        }, {
+            "name": "Cheer Collection Set of 2 Decorative Accent Throw Pillows",
+            "price": 21.26,
+            "image": "/images/products/P35716747.jpg"
+        }, {
+            "name": "42-inch Ultra-thin Wall-mounted Electric Fireplace Insert",
+            "price": 447.86,
+            "image": "/images/products/42_-Ultra-Thin-Electric-Fireplace-Insert,-Wall-Mounted-In-Wall-Easy-Installation-with-remote-control,-750W-1500W.jpg"
+        }, {
+            "name": "Kotter Home Coral Reef Throw Pillow",
+            "price": 45.28,
+            "image": "/images/products/P32848880.jpg"
+        }, {
+            "name": "Copper Grove Pomorie Outdoor Curtain Rod",
+            "price": 33.22,
+            "image": "/images/products/Copper-Grove-Pomorie-Outdoor-Curtain-Rod-and-Finial-Set-1fa93aa4-574b-482e-9d8d-cea7dabacead_600.jpg"
+        }, {
+            "name": "Mirror Trend Framed Accent Mirror",
+            "price": 58.36,
+            "image": "/images/products/Mirror-Trend-Framed-Accent-Mirror.jpg"
+        }
+    ]
+}

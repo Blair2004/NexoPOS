@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Classes\Hook;
 use App\Http\Controllers\DashboardController;
+use App\Services\DemoService;
 use App\Services\ResetService;
 use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
@@ -20,11 +21,18 @@ class ResetController extends DashboardController
      */
     protected $resetService;
 
+    /**
+     * @param DemoService
+     */
+    protected $demoService;
+
     public function __construct(
-        ResetService $resetService
+        ResetService $resetService,
+        DemoService $demoService
     )
     {
         $this->resetService     =   $resetService;
+        $this->demoService      =   $demoService;
     }
 
     /**
@@ -52,7 +60,7 @@ class ResetController extends DashboardController
 
         switch( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
-                ( new FirstDemoSeeder )->run();
+                $this->demoService->run();
             break;
             case 'wipe_plus_simple':
                 ( new FirstDemoSeeder )->run();

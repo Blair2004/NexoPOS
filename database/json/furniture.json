@@ -1,0 +1,39 @@
+{
+    "name": "Furnitures",
+    "image": "/images/products/furnitures.jpg",
+    "products": [
+        {
+            "name": "Copper Grove Daintree Espresso Storage Cabinet",
+            "price": 200.43,
+            "image": "/images/products/Copper-Grove-Daintree-Espresso-Storage-Cabinet.jpg"
+        }, {
+            "name": "The Gray Barn Lowbridge Kitchen Pantry Cabinet",
+            "price": 186.65,
+            "image": "/images/products/The-Gray-Barn-Lowbridge-Kitchen-Pantry-Cabinet-with-Doors.jpg"
+        }, {
+            "name": "Modern Home Zuna Mid-back Office Chair",
+            "price": 75.45,
+            "image": "/images/products/Modern-Home-Zuna-Mid-Back-Office-Chair.jpg"
+        }, {
+            "name": "Simple Living Jamie Storage Cabinet",
+            "price": 148.5,
+            "image": "/images/products/Simple-Living-Jamie-Storage-Cabinet.jpg"
+        }, {
+            "name": "Porch & Den Lincoln Solid Wood/MDF Corner Computer Desk",
+            "price": 92.50,
+            "image": "/images/products/Porch-&-Den-Lincoln-Black-Corner-Computer-Desk.jpg"
+        }, {
+            "name": "The Gray Barn Lowbridge Antique White L-shaped Storage Desk",
+            "price": 213.88,
+            "image": "/images/products/The-Gray-Barn-Lowbridge-Antique-White-L-shaped-Storage-Desk.jpg"
+        }, {
+            "name": "Respawn 110 Racing Style Reclining Gaming Chair with Footrest",
+            "price": 141.66,
+            "image": "/images/products/Respawn-110-Racing-Style-Reclining-Gaming-Chair-with-Footrest.jpg"
+        }, {
+            "name": "Porch & Den Westphalian Seagrass Wicker Storage Filing Cabinet",
+            "price": 60.45,
+            "image": "/images/products/File-Cabinet---Rolling-Seagrass-Filing-&-Storage-Cabinet.jpg"
+        }
+    ]
+}

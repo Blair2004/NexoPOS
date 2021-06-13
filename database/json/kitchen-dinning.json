@@ -1,0 +1,39 @@
+{
+    "name": "Kitchen & Dining",
+    "image": "/images/products/kitchen-dinning.jpg",
+    "products": [
+        {
+            "name": "The Gray Barn Emily Gulch Farmhouse Buffalo Check Tablecloth",
+            "image": "/images/products/The-Gray-Barn-Emily-Gulch-Buffalo-Check-Tablecloth-4319e580-dc17-4a35-92ec-357333478865_600.jpg",
+            "price": 24.25
+        }, {
+            "name": "Noodle Board Stove Top Cover",
+            "image": "/images/products/Stove-Top-Cover.jpg",
+            "price": 65.35
+        }, {
+            "name": "MALACASA Flora Porcelain Dinnerware",
+            "image": "/images/products/MALACASA,-Series-Flora,-Marble-Ceramic-Dinnerware-Set-For-6.jpg",
+            "price": 88.15
+        }, {
+            "name": "Luminarc 16 Piece Sterling Glass Tumbler Set",
+            "image": "/images/products/Luminarc-16-Piece-Sterling-Glass-Tumbler-Set.jpg",
+            "price": 26.4
+        }, {
+            "name": "Cheer Collection Set of 7 Airtight Food Storage Containers",
+            "image": "/images/products/Cheer-Collection-Set-of-7-Airtight-Food-Storage-Containers-plus-Dry-Erase-Marker-and-Labels.jpg",
+            "price": 33.85
+        }, {
+            "name": "vancasso Navia 16 Piece Vintage Distressed Dinnerware Set",
+            "image": "/images/products/vancasso-Navia-16-Piece-Multi-Color-Dinnerware-Set.jpg",
+            "price": 61.7
+        }, {
+            "name": "Weston Electric Tomato Strainer",
+            "image": "/images/products/P27396906.jpg",
+            "price": 95.75
+        }, {
+            "name": "3-drawer Drop Leaf Kitchen Cart",
+            "image": "/images/products/3-drawer-Drop-Leaf-Kitchen-Cart.jpg",
+            "price": 302.65
+        }
+    ]
+}

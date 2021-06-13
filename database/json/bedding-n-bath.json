@@ -1,0 +1,39 @@
+{
+    "name": "Bedding & Bath",
+    "image": "/images/products/twin-comforter-sets.jpg",
+    "products": [
+        {
+            "image" : "/images/products/twin-comforter-sets.jpg",
+            "name": "Twin Comforter Sets",
+            "price": 86.45
+        }, {
+            "image": "/images/products/twin-xl-comforter-sets.jpg",
+            "name": "Twin Comforter Set XL",
+            "price": 77.88
+        }, {
+            "image": "/images/products/Riverbrook-Home-Turin-Velvet-7-Piece-Comforter-Set.jpg",
+            "name": "Riverbrook Home Turin Velvet 7 Piece Comforter Set",
+            "price": 87.55
+        }, {
+            "image": "/images/products/The-Curated-Nomad-Clementina-Cotton-Printed-Chenille-Comforter-Set.jpg",
+            "name": "The Curated Nomad Clementina Cotton Printed",
+            "price":91
+        }, {
+            "image": "/images/products/Cozy-Peaks---Coma-Inducer-Oversized-Comforter---Chevron-Frosted-Navy.jpg",
+            "name": "Cozy Peaks - Coma Inducer Oversized Comforter",
+            "price":90.33
+        }, {
+            "image": "/images/products/P24906605.jpg",
+            "name": "Tommy Bahama Palmiers 4-piece Comforter Set",
+            "price": 87.33
+        }, {
+            "image": "/images/products/Madison-Park-Marcella-Indigo-Cotton-Printed-7-piece-Comforter-Set.jpg",
+            "name": "Madison Park Marcella Indigo Cotton Printed",
+            "price": 86.41
+        }, {
+            "image": "/images/products/Nanshing-Avalon-8-Piece-Comforter-Set.jpg",
+            "name": "Nanshing Avalon 8-piece Comforter Set",
+            "price": 67.72
+        }
+    ]
+}
