@@ -82,6 +82,7 @@
                                 <div class="-mx-1 flex flex-wrap">
                                     <div class="px-1 w-1/2 md:w-auto mb-1">
                                         <a
+                                            @click="changeProductPrice( product )"
                                             :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
                                         >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
@@ -237,6 +238,7 @@ import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
 import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
 import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';
+import nsPosProductPricePopupVue from '@/popups/ns-pos-product-price-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -249,6 +251,8 @@ export default {
             typeSubscribe: null,
             orderSubscribe: null,
             productSubscribe: null,
+            settingsSubscribe: null,
+            settings: {},
             types: [],
             order: {},
         }
@@ -277,6 +281,10 @@ export default {
             this.$forceUpdate();
         });
 
+        this.settingsSubscribe  =   POS.settings.subscribe( settings => {
+            this.settings   =   settings;
+        });
+
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection     =   section;
         });
@@ -286,10 +294,43 @@ export default {
         this.typeSubscribe.unsubscribe();
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
+        this.settingsSubscribe.unsubscribe();
     },
     methods: {
         __,
         switchTo,
+
+        async changeProductPrice( product ) {
+            if ( this.settings.unit_price_editable ) {
+                try {
+                    product.unit_price  =   await new Promise( ( resolve, reject ) => {
+                        return Popup.show( nsPosProductPricePopupVue, { product: Object.assign({}, product ), resolve, reject })
+                    });
+
+                    /**
+                     * since we've updated the product price
+                     * we'll change all the default value which computation
+                     * was made on the original value.
+                     */
+                    product.tax_value   =   0;
+
+                    /**
+                     * We need to change the price mode
+                     * to avoid restoring the original prices.
+                     */
+                    product.mode        =   'custom';
+
+                    POS.refreshProducts( POS.products.getValue() );
+                    POS.refreshCart();
+
+                    return nsSnackBar.success( __( 'The product price has been updated.' ) ).subscribe();
+                } catch( exception ) {
+                    return;
+                }
+            }
+
+            return nsSnackBar.error( __( 'The editable price feature is disabled.' ) ).subscribe();
+        },
 
         async selectCoupon() {
             try {

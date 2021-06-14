@@ -30,6 +30,7 @@
         text_search         :   false,
         breadcrumb          :   [],
         products_queue      :   [],
+        unit_price_editable :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
         urls                :   <?php echo json_encode( $urls );?>
     });
 

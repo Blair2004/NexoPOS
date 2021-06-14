@@ -69,6 +69,8 @@ class AppServiceProvider extends ServiceProvider
             return new DemoService(
                 app()->make( ProductCategoryService::class ),
                 app()->make( ProductService::class ),
+                app()->make( ProcurementService::class ),
+                app()->make( OrdersService::class )
             );
         });
 
