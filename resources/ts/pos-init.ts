@@ -43,6 +43,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _activePlate: BehaviorSubject<string>;
     private _holdPopupEnabled       =   true;
     private _initialQueue: (() => Promise<StatusResponse>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
@@ -114,6 +115,10 @@ export class POS {
         return this._types;
     }
 
+    get activePlate() {
+        return this._activePlate;
+    }
+
     get products() {
         return this._products;
     }
@@ -177,6 +182,7 @@ export class POS {
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );     
         this._options           =   new BehaviorSubject({});
+        this._activePlate       =   new BehaviorSubject( null );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._orderTypeProcessQueue =   [
@@ -278,6 +284,10 @@ export class POS {
     public setHoldPopupEnabled( status = true )
     {
         this._holdPopupEnabled  =   status;
+    }
+
+    public setActivePlate( plate ) {
+        this._activePlate.next( plate );
     }
 
     public getHoldPopupEnabled()
@@ -628,6 +638,8 @@ export class POS {
                             .filter( unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id )[0];
                         return orderProduct;
                     });
+
+                    console.log( products );
 
                     /**
                      * we'll redefine the order type
@@ -1002,6 +1014,7 @@ export class POS {
             tax_value           : 0, // is computed automatically using $original()
             unit_price          : 0,
             total_price         : 0,
+            plate               : this.activePlate.getValue(),
             mode                : 'normal',
             $original           : () => product
         };

@@ -35,9 +35,18 @@
                                 </button>
                             </div>
                             <div>
-                                <button @click="defineOrderSettings()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
-                                    <i class="las la-tools"></i>
-                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
+                                <button @click="setActivePlate( 'plate_1' )" :class="activePlate === 'plate_1' ? 'bg-blue-400 text-white' : 'bg-gray-200 border-gray-300'" class="w-full h-10 px-3  border-r  outline-none flex items-center">
+                                    <span class="ml-1 hidden md:inline-block">1</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button @click="setActivePlate( 'plate_2' )" :class="activePlate === 'plate_2' ? 'bg-blue-400 text-white' : 'bg-gray-200 border-gray-300'" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                    <span class="ml-1 hidden md:inline-block">2</span>
+                                </button>
+                            </div>
+                            <div>
+                                <button @click="setActivePlate( 'plate_3' )" :class="activePlate === 'plate_3' ? 'bg-blue-400 text-white' : 'bg-gray-200 border-gray-300'" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                    <span class="ml-1 hidden md:inline-block">3</span>
                                 </button>
                             </div>
                             <!-- <div class="flex-auto"><button class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center" disabled></button></div> -->
@@ -59,7 +68,160 @@
                         </div>
                     </div>
 
-                    <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products">
+                    <div class="border-2 border-blue-400 flex flex-col" v-if="products.filter( product => product.plate === 'plate_1' ).length > 0">
+                        <div class="bg-blue-400 p-2 text-white">
+                            <h3 class="font-semibold">{{ __( 'First' ) }}</h3>
+                        </div>
+                        <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products.filter( product => product.plate === 'plate_1' )">
+                            <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                                <div class="flex justify-between product-details mb-1">
+                                    <h3 class="font-semibold">
+                                        {{ product.name }} &mdash; {{ product.unit_name }}
+                                    </h3>
+                                    <div class="-mx-1 flex product-options">
+                                        <div class="px-1"> 
+                                            <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                                <i class="las la-trash text-xl"></i>
+                                            </a>
+                                        </div>
+                                        <div class="px-1"> 
+                                            <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                                <i class="las la-award text-xl"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between product-controls">
+                                    <div class="-mx-1 flex flex-wrap">
+                                        <div class="px-1 w-1/2 md:w-auto mb-1">
+                                            <a
+                                                @click="changeProductPrice( product )"
+                                                :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                                class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                            >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1"> 
+                                            <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-gray-200 items-center justify-center cursor-pointer hover:bg-blue-100">
+                                <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
+                            </div>
+                            <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 items-center justify-center">{{ product.total_price | currency }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-2 border-teal-400 flex flex-col" v-if="products.filter( product => product.plate === 'plate_2' ).length > 0">
+                        <div class="bg-teal-400 p-2 text-white">
+                            <h3 class="font-semibold">{{ __( 'Second' ) }}</h3>
+                        </div>
+                        <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products.filter( product => product.plate === 'plate_2' )">
+                            <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                                <div class="flex justify-between product-details mb-1">
+                                    <h3 class="font-semibold">
+                                        {{ product.name }} &mdash; {{ product.unit_name }}
+                                    </h3>
+                                    <div class="-mx-1 flex product-options">
+                                        <div class="px-1"> 
+                                            <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                                <i class="las la-trash text-xl"></i>
+                                            </a>
+                                        </div>
+                                        <div class="px-1"> 
+                                            <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                                <i class="las la-award text-xl"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between product-controls">
+                                    <div class="-mx-1 flex flex-wrap">
+                                        <div class="px-1 w-1/2 md:w-auto mb-1">
+                                            <a
+                                                @click="changeProductPrice( product )"
+                                                :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                                class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                            >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1"> 
+                                            <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-gray-200 items-center justify-center cursor-pointer hover:bg-blue-100">
+                                <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
+                            </div>
+                            <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 items-center justify-center">{{ product.total_price | currency }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-2 border-purple-400 flex flex-col" v-if="products.filter( product => product.plate === 'plate_3' ).length > 0">
+                        <div class="bg-purple-400 p-2 text-white">
+                            <h3 class="font-semibold">{{ __( 'Third' ) }}</h3>
+                        </div>
+                        <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products.filter( product => product.plate === 'plate_3' )">
+                            <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                                <div class="flex justify-between product-details mb-1">
+                                    <h3 class="font-semibold">
+                                        {{ product.name }} &mdash; {{ product.unit_name }}
+                                    </h3>
+                                    <div class="-mx-1 flex product-options">
+                                        <div class="px-1"> 
+                                            <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                                <i class="las la-trash text-xl"></i>
+                                            </a>
+                                        </div>
+                                        <div class="px-1"> 
+                                            <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                                <i class="las la-award text-xl"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between product-controls">
+                                    <div class="-mx-1 flex flex-wrap">
+                                        <div class="px-1 w-1/2 md:w-auto mb-1">
+                                            <a
+                                                @click="changeProductPrice( product )"
+                                                :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                                class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
+                                            >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1"> 
+                                            <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        </div>
+                                        <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                            <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-gray-200 items-center justify-center cursor-pointer hover:bg-blue-100">
+                                <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
+                            </div>
+                            <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 items-center justify-center">{{ product.total_price | currency }}</div>
+                        </div>
+                    </div>
+                    
+                    <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products.filter( product => [ null, '' ].includes( product.plate ) )">
                         <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
                             <div class="flex justify-between product-details mb-1">
                                 <h3 class="font-semibold">
@@ -252,6 +414,8 @@ export default {
             orderSubscribe: null,
             productSubscribe: null,
             settingsSubscribe: null,
+            activePlateSubscribe: null,
+            activePlate: '',
             settings: {},
             types: [],
             order: {},
@@ -281,6 +445,10 @@ export default {
             this.$forceUpdate();
         });
 
+        this.activePlateSubscribe   =   POS.activePlate.subscribe( activePlate => {
+            this.activePlate    =   activePlate;
+        })
+
         this.settingsSubscribe  =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
         });
@@ -295,10 +463,19 @@ export default {
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
+        this.activePlateSubscribe.unsubscribe();
     },
     methods: {
         __,
         switchTo,
+
+        setActivePlate( plate ) {
+            if ( plate === POS.activePlate.getValue() ) {
+                POS.activePlate.next( '' );
+            } else {
+                POS.activePlate.next( plate );
+            }
+        },
 
         async changeProductPrice( product ) {
             if ( this.settings.unit_price_editable ) {
