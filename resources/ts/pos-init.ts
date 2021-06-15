@@ -260,7 +260,7 @@ export class POS {
          * the order accordingly
          */
         this.types.subscribe( types => {
-            const selected  =   Object.values( types ).filter( (type: any) => type.selected );
+            const selected  =   Object.values( types ).filter( type => type.selected );
 
             if ( selected.length > 0 ) {
                 const order     =   this.order.getValue();
@@ -644,7 +644,7 @@ export class POS {
                     /**
                      * we'll redefine the order type
                      */
-                    order.type          =   Object.values( this.types.getValue() ).filter( (type: any) => type.identifier === order.type )[0];
+                    order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
 
                     /**
                      * the address is provided differently
