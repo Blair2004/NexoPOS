@@ -413,10 +413,18 @@ export default {
             typeSubscribe: null,
             orderSubscribe: null,
             productSubscribe: null,
+<<<<<<< HEAD
             settingsSubscribe: null,
             activePlateSubscribe: null,
             activePlate: '',
             settings: {},
+=======
+<<<<<<< HEAD
+=======
+            settingsSubscribe: null,
+            settings: {},
+>>>>>>> parent of 0711aa9 (Update)
+>>>>>>> a075423 (Update)
             types: [],
             order: {},
         }
@@ -445,14 +453,23 @@ export default {
             this.$forceUpdate();
         });
 
+<<<<<<< HEAD
         this.activePlateSubscribe   =   POS.activePlate.subscribe( activePlate => {
             this.activePlate    =   activePlate;
         })
 
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> a075423 (Update)
         this.settingsSubscribe  =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
         });
 
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 0711aa9 (Update)
+>>>>>>> a075423 (Update)
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection     =   section;
         });
@@ -462,13 +479,21 @@ export default {
         this.typeSubscribe.unsubscribe();
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
+<<<<<<< HEAD
         this.settingsSubscribe.unsubscribe();
         this.activePlateSubscribe.unsubscribe();
+=======
+<<<<<<< HEAD
+=======
+        this.settingsSubscribe.unsubscribe();
+>>>>>>> parent of 0711aa9 (Update)
+>>>>>>> a075423 (Update)
     },
     methods: {
         __,
         switchTo,
 
+<<<<<<< HEAD
         setActivePlate( plate ) {
             if ( plate === POS.activePlate.getValue() ) {
                 POS.activePlate.next( '' );
@@ -477,6 +502,10 @@ export default {
             }
         },
 
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> a075423 (Update)
         async changeProductPrice( product ) {
             if ( this.settings.unit_price_editable ) {
                 try {
@@ -509,6 +538,10 @@ export default {
             return nsSnackBar.error( __( 'The editable price feature is disabled.' ) ).subscribe();
         },
 
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 0711aa9 (Update)
+>>>>>>> a075423 (Update)
         async selectCoupon() {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
