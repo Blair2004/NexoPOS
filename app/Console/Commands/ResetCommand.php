@@ -2,12 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DemoService;
-use App\Models\Role;
 use App\Services\ResetService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetCommand extends Command
@@ -17,7 +14,7 @@ class ResetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:reset {--mode=soft} {--user=default}';
+    protected $signature = 'ns:reset {--mode=soft}';
 
     /**
      * The console command description.
@@ -33,24 +30,17 @@ class ResetCommand extends Command
     private $resetService;
 
     /**
-     * @var DemoService $demoService
-     */
-    private $demoService;
-
-    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        ResetService $resetService,
-        DemoService $demoService
+        ResetService $resetService
     )
     {
         parent::__construct();
 
         $this->resetService     =   $resetService;
-        $this->demoService      =   $demoService;
     }
 
     /**
@@ -60,24 +50,12 @@ class ResetCommand extends Command
      */
     public function handle()
     {    
-        if ( $this->option( 'user' ) === 'default' ) {
-            $user   =   Role::namespace( 'admin' )->users->first();
-            Auth::loginUsingId( $user->id );
-        } else {
-            Auth::loginUsingId( $this->option( 'user' ) );
-        }
-
         switch( $this->option( 'mode' ) ) {
             case 'soft':
                 return $this->softReset();
             break;
             case 'hard':
                 return $this->hardReset();
-            break;
-            case 'grocery':
-                $this->softReset();
-                $this->demoService->run();
-                $this->info( __( 'The demo has been enabled.' ) );
             break;
         }
     }

@@ -5,7 +5,6 @@ use App\Models\Role;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -13,20 +12,14 @@ class DemoService extends DemoCoreService
 {
     protected $categoryService;
     protected $productService;
-    protected $procurementService;
-    protected $orderService;
     protected $user;
     
     public function __construct(
         ProductCategoryService $categoryService,
-        ProductService $productService,
-        ProcurementService $procurementService,
-        OrdersService $ordersService
+        ProductService $productService
     ) {
-        $this->categoryService      =   $categoryService;
-        $this->productService       =   $productService;
-        $this->procurementService   =   $procurementService;
-        $this->orderService         =   $ordersService;
+        $this->categoryService  =   $categoryService;
+        $this->productService   =   $productService;
     }
 
     /**
@@ -38,14 +31,7 @@ class DemoService extends DemoCoreService
         $this->prepareDefaultUnitSystem();
         $this->createCustomers();
         $this->createProviders();
-        $this->createTaxes();
-        $this->createProducts();
-        $this->performProcurement();
-        $this->createSales();
-    }
 
-    public function createProducts()
-    {
         $categories     =   [
             json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'bedding-n-bath.json' ) ) ),
             json_decode( file_get_contents( base_path( 'database' . DIRECTORY_SEPARATOR . 'json' . DIRECTORY_SEPARATOR . 'furniture.json' ) ) ),
@@ -77,7 +63,7 @@ class DemoService extends DemoCoreService
                         'product_type'      =>  'product',
                         'type'              =>  'dematerialized',
                         'status'            =>  'available',
-                        'stock_management'  =>  'enabled', // Arr::random([ 'disabled', 'enabled' ]), 
+                        'stock_management'  =>  'disabled', 
                         'tax_group_id'      =>  1,
                         'tax_type'          =>  'inclusive',
                         'images'            =>  [

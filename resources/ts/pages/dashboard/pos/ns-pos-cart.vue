@@ -244,7 +244,6 @@
                                 <div class="-mx-1 flex flex-wrap">
                                     <div class="px-1 w-1/2 md:w-auto mb-1">
                                         <a
-                                            @click="changeProductPrice( product )"
                                             :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
                                         >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
@@ -400,7 +399,6 @@ import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
 import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
 import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';
-import nsPosProductPricePopupVue from '@/popups/ns-pos-product-price-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -414,6 +412,7 @@ export default {
             orderSubscribe: null,
             productSubscribe: null,
 <<<<<<< HEAD
+<<<<<<< HEAD
             settingsSubscribe: null,
             activePlateSubscribe: null,
             activePlate: '',
@@ -425,6 +424,8 @@ export default {
             settings: {},
 >>>>>>> parent of 0711aa9 (Update)
 >>>>>>> a075423 (Update)
+=======
+>>>>>>> parent of 9f43430 (Update)
             types: [],
             order: {},
         }
@@ -454,6 +455,7 @@ export default {
         });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.activePlateSubscribe   =   POS.activePlate.subscribe( activePlate => {
             this.activePlate    =   activePlate;
         })
@@ -470,6 +472,8 @@ export default {
 =======
 >>>>>>> parent of 0711aa9 (Update)
 >>>>>>> a075423 (Update)
+=======
+>>>>>>> parent of 9f43430 (Update)
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection     =   section;
         });
@@ -480,6 +484,7 @@ export default {
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.settingsSubscribe.unsubscribe();
         this.activePlateSubscribe.unsubscribe();
 =======
@@ -488,11 +493,14 @@ export default {
         this.settingsSubscribe.unsubscribe();
 >>>>>>> parent of 0711aa9 (Update)
 >>>>>>> a075423 (Update)
+=======
+>>>>>>> parent of 9f43430 (Update)
     },
     methods: {
         __,
         switchTo,
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         setActivePlate( plate ) {
             if ( plate === POS.activePlate.getValue() ) {
@@ -542,6 +550,8 @@ export default {
 =======
 >>>>>>> parent of 0711aa9 (Update)
 >>>>>>> a075423 (Update)
+=======
+>>>>>>> parent of 9f43430 (Update)
         async selectCoupon() {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {

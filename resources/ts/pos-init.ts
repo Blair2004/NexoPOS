@@ -1129,7 +1129,7 @@ export class POS {
         if ( product.mode === 'normal' ) {
             product.unit_price          =       product.$quantities().sale_price;
             product.tax_value           =       product.$quantities().sale_price_tax * product.quantity;
-        } else if ( product.mode === 'wholesale' ) {
+        } else {
             product.unit_price          =       product.$quantities().wholesale_price;
             product.tax_value           =       product.$quantities().wholesale_price_tax * product.quantity;
         }
