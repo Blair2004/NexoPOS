@@ -15,7 +15,6 @@ use App\Services\CrudService;
 use App\Services\CurrencyService;
 use App\Services\CustomerService;
 use App\Services\DateService;
-use App\Services\DemoService;
 use App\Services\ExpenseService;
 use App\Services\MediaService;
 use App\Services\UpdateService;
@@ -65,15 +64,16 @@ class AppServiceProvider extends ServiceProvider
             return new UpdateService();
         });
 
+<<<<<<< HEAD
         $this->app->singleton( DemoService::class, function(){
             return new DemoService(
                 app()->make( ProductCategoryService::class ),
                 app()->make( ProductService::class ),
-                app()->make( ProcurementService::class ),
-                app()->make( OrdersService::class )
             );
         });
 
+=======
+>>>>>>> parent of c12d6c0 (Update)
         // save Singleton for options
         $this->app->singleton( DateService::class, function(){
             $options    =   app()->make( Options::class );

@@ -992,6 +992,7 @@ class OrdersService
             $orderProduct->product_category_id          =   $product[ 'product' ]->category_id;
             $orderProduct->name                         =   $product[ 'product' ]->name;
             $orderProduct->quantity                     =   $product[ 'quantity'];
+            $orderProduct->plate                        =   $product[ 'plate'] ?? '';
 
             /**
              * We might need to have another consideration

@@ -2,12 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DemoService;
-use App\Models\Role;
 use App\Services\ResetService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetCommand extends Command
@@ -17,7 +14,7 @@ class ResetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:reset {--mode=soft} {--user=default}';
+    protected $signature = 'ns:reset {--mode=soft}';
 
     /**
      * The console command description.
@@ -33,24 +30,17 @@ class ResetCommand extends Command
     private $resetService;
 
     /**
-     * @var DemoService $demoService
-     */
-    private $demoService;
-
-    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        ResetService $resetService,
-        DemoService $demoService
+        ResetService $resetService
     )
     {
         parent::__construct();
 
         $this->resetService     =   $resetService;
-        $this->demoService      =   $demoService;
     }
 
     /**

@@ -16,12 +16,12 @@ class CustomerFactory extends Factory
     public function definition()
     {
         return [
-            'name'      =>  $this->faker->name(),
-            'surname'   =>  $this->faker->name(),
-            'email'     =>  $this->faker->email(),
+            'name'      =>  $this->faker->name,
+            'surname'   =>  $this->faker->name,
+            'email'     =>  $this->faker->email,
             'gender'    =>  $this->faker->randomElement([ 'male', 'female', '' ]),
-            'phone'     =>  $this->faker->phoneNumber(),
-            'pobox'     =>  $this->faker->postcode(),
+            'phone'     =>  $this->faker->phoneNumber,
+            'pobox'     =>  $this->faker->postcode,
             'author'    =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
             'group_id'  =>  $this->faker->randomElement( CustomerGroup::get()->map( fn( $group ) => $group->id ) ),
         ];

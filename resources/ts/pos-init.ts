@@ -43,6 +43,7 @@ export class POS {
     private _paymentsType: BehaviorSubject<PaymentType[]>;
     private _order: BehaviorSubject<Order>;
     private _screen: BehaviorSubject<string>;
+    private _activePlate: BehaviorSubject<string>;
     private _holdPopupEnabled       =   true;
     private _initialQueue: (() => Promise<StatusResponse>)[]     =   [];
     private _options: BehaviorSubject<{ [key:string] : any}>;
@@ -114,6 +115,10 @@ export class POS {
         return this._types;
     }
 
+    get activePlate() {
+        return this._activePlate;
+    }
+
     get products() {
         return this._products;
     }
@@ -177,6 +182,7 @@ export class POS {
         this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
         this._visibleSection    =   new BehaviorSubject( 'both' );     
         this._options           =   new BehaviorSubject({});
+        this._activePlate       =   new BehaviorSubject( null );
         this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
         this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
         this._orderTypeProcessQueue =   [
@@ -254,7 +260,7 @@ export class POS {
          * the order accordingly
          */
         this.types.subscribe( types => {
-            const selected  =   Object.values( types ).filter( (type: any) => type.selected );
+            const selected  =   Object.values( types ).filter( type => type.selected );
 
             if ( selected.length > 0 ) {
                 const order     =   this.order.getValue();
@@ -278,6 +284,10 @@ export class POS {
     public setHoldPopupEnabled( status = true )
     {
         this._holdPopupEnabled  =   status;
+    }
+
+    public setActivePlate( plate ) {
+        this._activePlate.next( plate );
     }
 
     public getHoldPopupEnabled()
@@ -629,10 +639,12 @@ export class POS {
                         return orderProduct;
                     });
 
+                    console.log( products );
+
                     /**
                      * we'll redefine the order type
                      */
-                    order.type          =   Object.values( this.types.getValue() ).filter( (type: any) => type.identifier === order.type )[0];
+                    order.type          =   Object.values( this.types.getValue() ).filter( type => type.identifier === order.type )[0];
 
                     /**
                      * the address is provided differently
@@ -1004,6 +1016,7 @@ export class POS {
             tax_value           : 0, // is computed automatically using $original()
             unit_price          : 0,
             total_price         : 0,
+            plate               : this.activePlate.getValue(),
             mode                : 'normal',
             $original           : () => product
         };
@@ -1118,7 +1131,7 @@ export class POS {
         if ( product.mode === 'normal' ) {
             product.unit_price          =       product.$quantities().sale_price;
             product.tax_value           =       product.$quantities().sale_price_tax * product.quantity;
-        } else if ( product.mode === 'wholesale' ) {
+        } else {
             product.unit_price          =       product.$quantities().wholesale_price;
             product.tax_value           =       product.$quantities().wholesale_price_tax * product.quantity;
         }
