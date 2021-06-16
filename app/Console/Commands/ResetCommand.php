@@ -60,13 +60,6 @@ class ResetCommand extends Command
      */
     public function handle()
     {    
-        if ( $this->option( 'user' ) === 'default' ) {
-            $user   =   Role::namespace( 'admin' )->users->first();
-            Auth::loginUsingId( $user->id );
-        } else {
-            Auth::loginUsingId( $this->option( 'user' ) );
-        }
-
         switch( $this->option( 'mode' ) ) {
             case 'soft':
                 return $this->softReset();
@@ -76,9 +69,20 @@ class ResetCommand extends Command
             break;
             case 'grocery':
                 $this->softReset();
+                $this->initializeRole();
                 $this->demoService->run();
                 $this->info( __( 'The demo has been enabled.' ) );
             break;
+        }
+    }
+
+    private function initializeRole()
+    {
+        if ( $this->option( 'user' ) === 'default' ) {
+            $user   =   Role::namespace( 'admin' )->users->first();
+            Auth::loginUsingId( $user->id );
+        } else {
+            Auth::loginUsingId( $this->option( 'user' ) );
         }
     }
 

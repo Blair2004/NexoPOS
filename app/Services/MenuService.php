@@ -350,6 +350,7 @@ class MenuService
                     'nexopos.reports.yearly',
                     'nexopos.reports.customers',
                     'nexopos.reports.inventory',
+                    'nexopos.reports.payment-types',
                 ],
                 'childrens'     =>  [
                     'sales'  =>  [

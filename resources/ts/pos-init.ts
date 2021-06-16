@@ -981,6 +981,8 @@ export class POS {
      */
     async addToCart( product ) {
 
+        console.log( product );
+
         /**
          * This is where all the mutation made by the  
          * queue promises are stored.

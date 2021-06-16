@@ -223,7 +223,14 @@ class CategoryController extends DashboardController
                     ->with( 'galleries' )
                     ->searchable()
                     ->trackingDisabled()
-                    ->get(),
+                    ->get()
+                    ->map( function( $product ) {
+                        if ( $product->unit_quantities()->count() === 1 ) {
+                            $product->load( 'unit_quantities.unit' );
+                        }
+        
+                        return $product;
+                    }),
                 'categories'        =>  $category
                     ->subCategories()
                     ->displayOnPOS()
