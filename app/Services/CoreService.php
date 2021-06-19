@@ -3,9 +3,11 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Exceptions\NotEnoughPermissionException;
+use App\Models\Migration;
 use App\Services\Helpers\App;
 use App\Services\UpdateService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CoreService
 {
@@ -170,5 +172,36 @@ class CoreService
     public function hasRole( $role )
     {
         return Auth::user()->role->namespace === $role;
+    }
+
+    /**
+     * clear missing migration files
+     * from migrated files.
+     * 
+     * @return void
+     */
+    public function purgeMissingMigrations()
+    {
+        $migrations	=	collect( Migration::get() )
+            ->map( function( $migration ) {
+                return $migration->migration;
+            });
+
+        $rawFiles		=	collect( Storage::disk( 'ns' )
+        ->allFiles( 'database/migrations' ) );
+
+        $files 			=	$rawFiles->map( function( $file ) {
+            $details 	=	pathinfo( $file );
+            return $details[ 'filename' ];
+        });
+
+        $difference 	=	array_diff( 
+            $migrations->toArray(), 
+            $files->toArray() 
+        );
+
+        foreach( $difference as $diff ) {
+            Migration::where( 'migration', $diff )->delete();
+        }
     }
 }

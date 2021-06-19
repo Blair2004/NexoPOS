@@ -13,7 +13,7 @@ class CreateNexoposPaymentsTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create( 'nexopos_payments_types', function (Blueprint $table) {
+        Schema::createIfMissing( 'nexopos_payments_types', function (Blueprint $table) {
             $table->id();
             $table->string( 'label' );
             $table->string( 'identifier' );
