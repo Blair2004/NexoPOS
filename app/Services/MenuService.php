@@ -358,6 +358,11 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.reports.sales' ],
                         'href'  =>  ns()->url( '/dashboard/reports/sales' )
                     ], 
+                    'products-report'  =>  [
+                        'label' =>  __( 'Products Report' ),
+                        'permissions'   =>  [ 'nexopos.reports.products-report' ],
+                        'href'  =>  ns()->url( '/dashboard/reports/products-report' )
+                    ], 
                     'sold-stock'  =>  [
                         'label' =>  __( 'Sold Stock' ),
                         'href'  =>  ns()->url( '/dashboard/reports/sold-stock' )

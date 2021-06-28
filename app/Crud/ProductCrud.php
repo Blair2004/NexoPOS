@@ -226,7 +226,12 @@ class ProductCrud extends CrudService
                                     'options'   =>  Helper::kvToJsOptions([
                                         'ean8'      =>  __( 'EAN 8' ),
                                         'ean13'     =>  __( 'EAN 13' ),
-                                        'codabar'   =>  __( 'Codeabar' ),
+                                        'codabar'   =>  __( 'Codabar' ),
+                                        'code128'   =>  __( 'Code 128' ),
+                                        'code39'    =>  __( 'Code 39' ),
+                                        'code11'    =>  __( 'Code 11' ),
+                                        'upca'      =>  __( 'UPC A' ),
+                                        'upce'      =>  __( 'UPC E' ),
                                     ]),
                                     'name'  =>  'barcode_type',
                                     'label' =>  __( 'Barcode Type' ),

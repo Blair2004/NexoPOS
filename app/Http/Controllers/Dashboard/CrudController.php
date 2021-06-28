@@ -371,7 +371,11 @@ class CrudController extends DashboardController
 
         return [
             'status'    =>  'success',
-            'message'   =>  sprintf( __( '%s has been deleted, %s has not been deleted.' ), $response[ 'success' ], $response[ 'failed' ]),
+            'message'   =>  sprintf( 
+                $response[ 'message' ] ?? __( '%s has been processed, %s has not been processed.' ), 
+                $response[ 'success' ], 
+                $response[ 'failed' ]
+            ),
             'data'      =>  $response
         ];
     }

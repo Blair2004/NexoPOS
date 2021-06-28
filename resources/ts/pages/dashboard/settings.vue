@@ -12,13 +12,18 @@
         </div>
         <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow">
             <div class="-mx-4 flex flex-wrap p-2">
-                <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
-                    <div class="flex flex-col my-2">
-                        <ns-field :field="field"></ns-field>
+                <template v-if="activeTab.fields">
+                    <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
+                        <div class="flex flex-col my-2">
+                            <ns-field :field="field"></ns-field>
+                        </div>
                     </div>
-                </div>
+                </template>
+                <template v-if="activeTab.component">
+                    <component v-bind:is="loadComponent( activeTab.component )"></component>
+                </template>
             </div>
-            <div class="border-t border-gray-400 p-2 flex justify-end">
+            <div v-if="activeTab.fields" class="border-t border-gray-400 p-2 flex justify-end">
                 <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>
             </div>
         </div>
@@ -56,6 +61,9 @@ export default {
     },
     methods: {
         __,
+        loadComponent( componentName ) {
+            return nsExtraComponents[ componentName ];
+        },
         submitForm() {
             if ( this.validation.validateForm( this.form ).length === 0 ) {
                 this.validation.disableForm( this.form );

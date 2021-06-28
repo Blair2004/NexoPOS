@@ -1,10 +1,11 @@
 import Vue from "vue";
 import moment from "moment";
+import { __ } from "@/libraries/lang";
 
 const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
     template: `
     <div class="picker mb-2">
-        <label class="my-1 block leading-5 font-medium text-gray-700">{{ field.label }}</label>
+        <label v-if="field" class="my-1 block leading-5 font-medium text-gray-700">{{ field.label }}</label>
         <div @click="visible = !visible" class="rounded cursor-pointer bg-white shadow px-1 py-1 flex items-center text-gray-700">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm">
@@ -12,7 +13,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
                 <span v-if="currentDay === null">N/A</span>
             </span>
         </div>
-        <p class="text-sm text-gray-500 py-1">{{ field.description }}</p>
+        <p class="text-sm text-gray-500 py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0 -mb-2" v-if="visible">
             <div class="w-72 mt-2 shadow rounded bg-white anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto">
@@ -26,16 +27,16 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
                         </div>
                     </div>
                     <div class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Sun</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Mon</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Tue</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Wed</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Thr</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Fri</div>
-                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">Sat</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Sun' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Mon' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Tue' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Wed' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Thr' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Fri' ) }}</div>
+                        <div class="border border-gray-200 h-8 flex justify-center items-center text-sm">{{ __( 'Sat' ) }}</div>
                     </div>
-                    <div v-for="(week, index) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
-                        <div :key="_index" v-for="( dayOfWeek, _index) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
+                    <div v-for="( week, index ) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-gray-700">
+                        <div :key="_index" v-for="( dayOfWeek, _index ) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
                             <template v-for="(day,_dayIndex) of week" class="h-full w-full">
                                 <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'bg-blue-400 text-white border border-blue-500' : 'hover:bg-gray-100 border border-gray-200'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
                                     {{ day.date.format( 'DD' ) }}
@@ -63,7 +64,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
         </div>
     </div>
     `,
-    props: [ 'field' ],
+    props: [ 'field', 'date' ],
     data() {
         return {
             visible: false,
@@ -92,12 +93,18 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
     },
     mounted() {
         document.addEventListener( 'mousedown', ( e ) => this.checkClickedItem( e ) );
-        this.currentDay     =   [ undefined, null, '' ].includes( this.field.value ) ? moment() : moment( this.field.value );
-        this.hours          =   this.currentDay.format( 'HH' );
-        this.minutes        =   this.currentDay.format( 'mm' );
+        if ( this.field ) {
+            this.currentDay     =   [ undefined, null, '' ].includes( this.field.value ) ? moment() : moment( this.field.value );
+        } else {
+            this.currentDay     =   [ undefined, null, '' ].includes( this.date ) ? moment() : moment( this.date );
+        }
+
+        this.hours      =   this.currentDay.format( 'HH' );
+        this.minutes    =   this.currentDay.format( 'mm' );
         this.build();        
     },
     methods: {
+        __,
         detectHoursChange() {
             if ( parseFloat( this.hours ) < 0 ) {
                 this.hours  =   0;
@@ -134,8 +141,14 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
             this.currentDay     =   date;
             this.currentDay.hours( this.hours );
             this.currentDay.minutes( this.minutes );
-            this.field.value    =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
-            this.$emit( 'change', this.field );
+            const value     =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
+
+            if ( this.field ) {
+                this.field.value    =   value;
+                this.$emit( 'change', this.field );
+            } else {
+                this.$emit( 'change', this.currentDay );
+            }
         },
         subMonth() {
             this.currentDay.subtract( 1, 'month' );

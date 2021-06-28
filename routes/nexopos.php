@@ -102,6 +102,7 @@ Route::get( '/units/groups/create', [ UnitsController::class, 'createUnitGroup' 
 Route::get( '/units/groups/edit/{group}', [ UnitsController::class, 'editUnitGroup' ]);
 
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
+Route::get( '/reports/products-report', [ ReportsController::class, 'productsReport' ]);
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);

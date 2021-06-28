@@ -34,7 +34,7 @@ class CreateCouponTest extends TestCase
                     'type'              =>  'percentage_discount',
                     'code'              =>  'cp-' . $this->faker->numberBetween(0,9) . $this->faker->numberBetween(0,9),
                     'discount_value'    =>  $this->faker->randomElement([ 10, 15, 20, 25 ]),
-                    'limit_usage'       =>  $this->faker->randomElement([ 30, 40, 50 ]),        
+                    'limit_usage'       =>  $this->faker->randomElement([ 100, 200, 400 ]),        
                 ],
                 'selected_products'     =>  [
                     'products'      =>  Product::select( 'id' )

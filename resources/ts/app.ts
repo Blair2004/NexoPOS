@@ -28,6 +28,7 @@ import NsSoldStockReport    from './pages/dashboard/reports/ns-sold-stock-report
 import NsProfitReport       from './pages/dashboard/reports/ns-profit-report.vue';
 import NsCashFlowReport     from './pages/dashboard/reports/ns-cash-flow-report.vue';
 import NsYearlyReport       from './pages/dashboard/reports/ns-yearly-report.vue';
+import NsBestProductsReport from './pages/dashboard/reports/ns-best-products-report.vue';
 import NsPaymentTypesReport from './pages/dashboard/reports/ns-payment-types-report.vue';
 import NsDashboardCards     from './pages/dashboard/home/ns-dashboard-cards.vue';
 import NsBestCustomers      from './pages/dashboard/home/ns-best-customers.vue';
@@ -86,6 +87,7 @@ const components    =   Object.assign({
     NsCashFlowReport,
     NsYearlyReport,
     NsPaymentTypesReport,
+    NsBestProductsReport,
 
     NsStockAdjustment,
     NsPromptPopup,

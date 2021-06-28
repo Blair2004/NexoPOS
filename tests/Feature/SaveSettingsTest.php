@@ -32,8 +32,6 @@ class SaveSettingsTest extends TestCase
                 ]
             ]);
 
-        $response->dump();
-
         $this->assertTrue( ns()->option->get( 'ns_pos_printing_gateway' ) === 'default' );
 
         return $response->assertJsonPath( 'status', 'success' );

@@ -280,6 +280,8 @@ class TaxService
         $product->wholesale_price               =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
         $product->incl_tax_wholesale_price      =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
         $product->excl_tax_wholesale_price      =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
+        $product->sale_price_tax                =   0;
+        $product->wholesale_price_tax           =   0;
 
         /**
          * calculate the taxes wether they are all

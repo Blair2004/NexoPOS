@@ -40,6 +40,14 @@ class ReportsController extends DashboardController
             'description'   =>  __( 'Provides an overview over the sales during a specific period' )
         ]);
     }
+
+    public function productsReport()
+    {
+        return $this->view( 'pages.dashboard.reports.best-products-report', [
+            'title'         =>  __( 'Product Sales' ),
+            'description'   =>  __( 'Provides an overview over the best products sold during a specific period.' )
+        ]);
+    }
     
     public function soldStock()
     {
@@ -214,6 +222,15 @@ class ReportsController extends DashboardController
         return $this->ordersService->getPaymentTypesReport( 
             $request->input( 'startDate' ),
             $request->input( 'endDate' ),
+        );
+    }
+
+    public function getProductsReport( Request $request )
+    {
+        return $this->reportService->getProductsReport(
+            $request->input( 'startDate' ),
+            $request->input( 'endDate' ),
+            $request->input( 'sort' )
         );
     }
 }

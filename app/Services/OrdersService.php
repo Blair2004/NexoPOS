@@ -1318,7 +1318,7 @@ class OrdersService
         $order->register_id             =   $fields['register_id' ] ?? null;
         $order->note                    =   $fields['note'] ?? null;
         $order->note_visibility         =   $fields['note_visibility' ] ?? null;
-        $order->updated_at              =   isset( $fields[ 'updated_at' ] ) ? Carbon::parse(  )->format( 'Y-m-d h:m:s' ) : ns()->date->getNow()->toDateTimeString();
+        $order->updated_at              =   isset( $fields[ 'updated_at' ] ) ? Carbon::parse( $fields[ 'updated_at' ] )->format( 'Y-m-d h:m:s' ) : ns()->date->getNow()->toDateTimeString();
         $order->tax_group_id            =   $fields['tax_group_id' ] ?? null;
         $order->tax_type                =   $fields['tax_type' ] ?? null;
         $order->total_coupons           =   $fields['total_coupons'] ?? 0;
@@ -1823,6 +1823,10 @@ class OrdersService
             ]);
 
             $product->delete();
+        });
+
+        $order->payments->each( function( $payment ) {
+            $payment->delete();
         });
 
         $order->delete();

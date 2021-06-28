@@ -305,9 +305,6 @@ const nsCrud    =   Vue.component( 'ns-crud', {
                 <div class="px-1 flex">
                     <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 bg-teal-400 outline-none text-white font-semibold"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
                 </div>
-                <div class="px-1 flex">
-                    <button class="flex justify-center items-center rounded-full text-sm h-10 px-3 hover:border-blue-400 hover:text-white hover:bg-blue-400 outline-none border-gray-400 border text-gray-700"><i class="las la-filter"></i> {{ __( 'Filter' ) }}</button>
-                </div>
             </div>
         </div>
         <div class="flex">

@@ -573,13 +573,11 @@ class ProductService
              * Let's compute the tax only
              * when the tax group is provided.
              */
-            if ( isset( $fields[ 'tax_group_id' ] ) ) {
-                $this->taxService->computeTax( 
-                    $unitQuantity, 
-                    $fields[ 'tax_group_id' ], 
-                    $fields[ 'tax_type' ] 
-                );
-            }
+            $this->taxService->computeTax( 
+                $unitQuantity, 
+                $fields[ 'tax_group_id' ] ?? null, 
+                $fields[ 'tax_type' ] ?? null 
+            );
 
             /**
              * save custom barcode for the created unit quantity
@@ -591,11 +589,11 @@ class ProductService
 
     /**
      * refresh the price for a specific product
-     * @param Product instance of the product
+     * @param ProductUnitQuantity instance of the product
      * @return array response of the operation
      * @deprecated
      */
-    public function refreshPrices( Product $product )
+    public function refreshPrices( ProductUnitQuantity $product )
     {
         return $this->taxService->computeTax( $product, $product->tax_group_id ?? null );
     }

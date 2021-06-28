@@ -22,7 +22,8 @@ class CreateOrderTest extends TestCase
     protected $shouldRefund         =   true;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
-    protected $count    =   30;
+    protected $count                =   10;
+    protected $totalDaysInterval    =   40;
 
     /**
      * A basic feature test example.
@@ -36,16 +37,28 @@ class CreateOrderTest extends TestCase
             ['*']
         );
 
-        $dates          =   [];
+        $faker          =   Factory::create();
         $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDay();
 
-        for( $i = 0; $i < 7; $i++ ) {
-            $dates[]    =   $startOfWeek->addDay()->clone();
-        }
+        for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
+            $date           =   $startOfWeek->addDay()->clone();
+            $this->count    =   $faker->numberBetween(5,10);
+            $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
+            $this->processOrders( $date, $callback );
+        }        
+    }
 
+    private function output( $message )
+    {
+        $fp = fopen('php://output', 'w');
+        fwrite($fp, $message );
+        fwrite($fp, "\n" );
+        fclose($fp);
+    }
+
+    public function processOrders( $currentDate, $callback )
+    {
         for( $i = 0; $i < $this->count; $i++ ) {
-
-            $currentDate    =   Arr::random( $dates );
 
             /**
              * @var CurrencyService
@@ -60,7 +73,7 @@ class CreateOrderTest extends TestCase
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
                 return array_merge([
                     'product_id'            =>  $product->id,
-                    'quantity'              =>  $faker->numberBetween(1,10),
+                    'quantity'              =>  $faker->numberBetween(1,20),
                     'unit_price'            =>  $unitElement->sale_price,
                     'unit_quantity_id'      =>  $unitElement->id,
                 ], $this->customProductParams );
@@ -159,7 +172,7 @@ class CreateOrderTest extends TestCase
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
             
             
-                $response->assertJson([
+            $response->assertJson([
                 'status'    =>  'success'
             ]);
 

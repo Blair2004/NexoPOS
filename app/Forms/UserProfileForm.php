@@ -1,6 +1,7 @@
 <?php
 namespace App\Forms;
 
+use App\Classes\Hook;
 use App\Http\Requests\UserProfileRequest;
 use App\Models\Role;
 use App\Models\User;
@@ -21,10 +22,10 @@ class UserProfileForm extends SettingsPage
         $options    =   app()->make( UserOptions::class );
         
         $this->form    =   [
-            'tabs'  =>  [
+            'tabs'  =>  Hook::filter( 'ns-user-profile-form', [
                 'attribute'     =>  include( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
                 'security'      =>  include( dirname( __FILE__ ) . '/user-profile/security.php' ),
-            ]
+            ])
         ];
     }
 

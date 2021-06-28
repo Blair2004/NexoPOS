@@ -14,10 +14,10 @@
             <div id="report-section" class="px-4">
                 <div class="flex -mx-2">
                     <div class="px-2">
-                        <ns-datepicker :date="startDate" @change="setStartDate( $event )"></ns-datepicker>
+                        <ns-date-time-picker :date="startDate" @change="setStartDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <ns-datepicker :date="endDate" @change="setEndDate( $event )"></ns-datepicker>
+                        <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <!-- <div class="px-2">
                         <ns-datetimepicker :field="field" @change="setEndDate( $event )"></ns-datetimepicker>

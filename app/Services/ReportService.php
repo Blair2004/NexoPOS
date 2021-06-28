@@ -1,14 +1,18 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\ExpenseHistory;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\ProductHistory;
 use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class ReportService
 {
@@ -180,13 +184,13 @@ class ReportService
              * @todo make sure outgoing link takes to relevant article
              * @var NotificationService
              */
-            $message            =   __( 'A stock operation (%s) has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+            $message            =   __( 'A stock operation has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
             $notification       =   app()->make( NotificationService::class );
             $notification->create([
                 'title'         =>      __( 'Untracked Stock Operation' ),
                 'description'   =>      $message,
                 'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation'
-            ])->dispatchFor( Role::namespace( 'admin' ) );
+            ])->dispatchForGroup( Role::namespace( 'admin' ) );
 
             return [
                 'status'    =>  'failed',
@@ -366,13 +370,14 @@ class ReportService
          * @todo make sure outgoing link takes to relevant article
          * @var NotificationService
          */
-        $message            =   __( 'A stock operation (%s) has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+        $message            =   __( 'A stock operation has recently been detected, however the NexoPOS was\'nt able to update the report accordingly. This occurs if the daily dashboard reference has\'nt been created.' );
+
         $notification       =   app()->make( NotificationService::class );
         $notification->create([
             'title'         =>      __( 'Untracked Stock Operation' ),
             'description'   =>      $message,
             'url'           =>      'https://my.nexopos.com/en/troubleshooting/untracked-stock-operation'
-        ])->dispatchFor( Role::namespace( 'admin' ) );
+        ])->dispatchForGroup( Role::namespace( 'admin' ) );
 
         return [
             'status'    =>  'failed',
@@ -386,7 +391,12 @@ class ReportService
         $this->initializeWastedGood( $dashboardDay );
     }
 
-    public function initializeWastedGood( $dashboardDay )
+    /**
+     * Will initialize a report for wasted good
+     * @param DashboarDay $dashboardDay
+     * @return void
+     */
+    public function initializeWastedGood( DashboardDay $dashboardDay )
     {
         $previousReport                                     =   DashboardDay::forLastRecentDay( $dashboardDay );
         $dashboardDay->total_unpaid_orders                  =   $previousReport->total_unpaid_orders ?? 0;
@@ -427,6 +437,11 @@ class ReportService
             ->get();
     }
 
+    /**
+     * This return the year report
+     * @param string $year
+     * @return array $reports
+     */
     public function getYearReportFor( $year )
     {
         $date           =   $this->dateService->now();
@@ -454,5 +469,215 @@ class ReportService
         while( ! $startOfYear->isSameMonth( $endOfYear->copy()->addMonth() ) );
 
         return $reports;
+    }
+
+    /**
+     * Will return the products report
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $sort
+     * @return array
+     */
+    public function getProductsReport( $startDate, $endDate, $sort )
+    {
+        $startDate          =   Carbon::parse( $startDate );
+        $endDate            =   Carbon::parse( $endDate ); 
+        $diffInDays         =   Carbon::parse( $startDate )->diffInDays( $endDate );
+
+        $orderProductTable  =   Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
+        $productsTable      =   Hook::filter( 'ns-model-table', 'nexopos_products' );
+        $unitstable         =   Hook::filter( 'ns-model-table', 'nexopos_units' );
+
+        if ( $diffInDays > 0 ) {
+            // check if it's the start and end of the month
+            $isStartOfMonth =   Carbon::parse( $startDate )->startOfMonth()->isSameDay( $startDate );
+            $isEndOfMonth   =   Carbon::parse( $endDate )->endOfMonth()->isSameDay( $endDate );
+
+            if ( 
+                $isStartOfMonth && $isEndOfMonth
+            ) {
+                $startCycle     =   Carbon::parse( $startDate )->subMonth()->startOfMonth();
+                $endCycle       =   Carbon::parse( $endDate )->subDay()->subMonth()->endOfMonth();
+            } else {
+                $startCycle     =   Carbon::parse( $startDate )->subDays( $diffInDays + 1 );
+                $endCycle       =   Carbon::parse( $endDate )->subDays( $diffInDays + 1 );
+            }
+
+            $previousDates  =   [
+                'previous'  =>  [
+                    'startDate' =>  $startCycle->toDateTimeString(),
+                    'endDate'   =>  $endCycle->toDateTimeString()
+                ],
+                'current'   =>  [
+                    'startDate' =>  $startDate->toDateTimeString(),
+                    'endDate'   =>  $endDate->toDateTimeString()
+                ]
+            ];
+
+            return $this->getBestRecords( $previousDates, $sort );
+        } else {
+            $startCycle     =   Carbon::parse( $startDate )->subDay();
+            $endCycle       =   Carbon::parse( $endDate )->subDay();
+
+            $previousDates  =   [
+                'previous'      =>  [
+                    'startDate' =>  $startCycle->toDateTimeString(),
+                    'endDate'   =>  $endCycle->toDateTimeString()
+                ],
+                'current'       =>  [
+                    'startDate' =>  $startDate->toDateTimeString(),
+                    'endDate'   =>  $endDate->toDateTimeString()
+                ]
+            ];
+
+            return $this->getBestRecords( $previousDates, $sort );
+        }
+    }
+
+    /**
+     * Will detect wether an increase
+     * or decrease exists between an old and new value
+     * @param int $old
+     * @param int $new
+     * @return int
+     */
+    private function getDiff( $old, $new ) {
+        if ( $old > $new ) {
+            return $this->computeDiff( $old, $new, 'decrease' );
+        } else {
+            return $this->computeDiff( $old, $new, 'increase' );
+        }
+    }
+
+    /**
+     * Will compute the difference between two numbers
+     * @param int $old
+     * @param int $new
+     * @param string $operation
+     * @return int
+     */
+    private function computeDiff( $old, $new, $operation )
+    {
+        if ( $operation === 'decrease' ) {
+            return ( ( $old - $new ) / $old ) * 100;
+        } else {
+            return ( ( $new - $old ) / $old ) * 100;
+        }
+    }
+
+    /**
+     * Will proceed the request to the 
+     * database that returns the products report
+     * @param array $previousDates
+     * @param string $sort
+     * @return void
+     */
+    private function getBestRecords( $previousDates, $sort )
+    {
+        $orderProductTable  =   Hook::filter( 'ns-model-table', 'nexopos_orders_products' );
+        $orderTable         =   Hook::filter( 'ns-model-table', 'nexopos_orders' );
+        $productsTable      =   Hook::filter( 'ns-model-table', 'nexopos_products' );
+        $unitstable         =   Hook::filter( 'ns-model-table', 'nexopos_units' );
+        
+        switch( $sort ) {
+            case 'using_quantity_asc': 
+                $sorting    =   [
+                    'column'    =>  'quantity',
+                    'direction' =>  'asc'
+                ];
+            break;
+            case 'using_quantity_desc': 
+                $sorting    =   [
+                    'column'    =>  'quantity',
+                    'direction' =>  'desc'
+                ];
+            break;
+            case 'using_sales_asc': 
+                $sorting    =   [
+                    'column'    =>  'total_price',
+                    'direction' =>  'asc'
+                ];
+            break;
+            case 'using_sales_desc': 
+                $sorting    =   [
+                    'column'    =>  'total_price',
+                    'direction' =>  'desc'
+                ];
+            break;
+            case 'using_name_asc': 
+                $sorting    =   [
+                    'column'    =>  'name',
+                    'direction' =>  'asc'
+                ];
+            break;
+            case 'using_name_desc': 
+                $sorting    =   [
+                    'column'    =>  'name',
+                    'direction' =>  'desc'
+                ];
+            break;
+            default: 
+            $sorting    =   [
+                'column'    =>  'total_price',
+                'direction' =>  'desc'
+            ];
+            break;
+        }
+
+        foreach( $previousDates as $key => $report ) {
+            $previousDates[ $key ][ 'products' ]    =   DB::table( $orderProductTable )
+                ->select([
+                    $orderProductTable . '.unit_name as unit_name',
+                    $orderProductTable . '.product_id as product_id',
+                    $orderProductTable . '.name as name',
+                    $orderTable . '.created_at as created_at', 
+                    DB::raw( 'SUM( quantity ) as quantity' ),
+                    DB::raw( 'SUM( total_price ) as total_price' ),
+                    DB::raw( 'SUM( ' . env( 'DB_PREFIX' ) . $orderProductTable . '.tax_value ) as tax_value' ),
+                ])
+                ->groupBy(          
+                    $orderProductTable . '.unit_name', 
+                    $orderProductTable . '.product_id', 
+                    $orderProductTable . '.name',
+                    $orderTable . '.created_at',
+                )
+                ->orderBy( $sorting[ 'column' ], $sorting[ 'direction' ] )
+                ->join( $orderTable, $orderTable . '.id', '=', $orderProductTable . '.order_id' )
+                ->where( $orderTable . '.created_at', '>=', $report[ 'startDate' ] )
+                ->where( $orderTable . '.created_at', '<=', $report[ 'endDate' ] )
+                ->get()
+                ->map( function( $product ) {
+                    $product->difference    =   0;
+                    return $product;
+                });
+        }
+
+        foreach( $previousDates[ 'current' ][ 'products' ] as $id => &$product ) {
+            $default                =   new stdClass;
+            $default->total_price   =   0;
+        
+            $oldProduct                 =   collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function( $product ) use ( $id ) {
+                return $product->product_id === $id;
+            })->first() ?: $default;
+
+            $product->old_total_price   =   $oldProduct->total_price;
+            $product->old_quantity      =   $oldProduct->quantity ?? 0;
+            $product->difference        =   $oldProduct->total_price > 0 ? $this->getDiff(
+                $oldProduct->total_price,
+                $product->total_price
+            ) : 100;
+
+            $product->evolution      =   $product->total_price > $oldProduct->total_price ? 'progress' : 'regress';
+        }
+
+        $previousDates[ 'current' ][ 'total_price' ]    =   collect( $previousDates[ 'current' ][ 'products' ] )
+            ->map( fn( $product ) => $product->total_price )
+            ->sum();
+
+        $previousDates[ 'previous' ][ 'total_price' ]    =   collect( $previousDates[ 'previous' ][ 'products' ] )
+            ->map( fn( $product ) => $product->total_price )
+            ->sum();
+
+        return $previousDates;
     }
 }

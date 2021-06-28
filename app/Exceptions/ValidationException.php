@@ -12,7 +12,7 @@ class ValidationException extends MainValidationException
         
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
-                'title'         =>  __( 'Unable to proceed the for is not valid' ),
+                'title'         =>  __( 'Unable to proceed the form is not valid' ),
                 'message'       =>  $this->getMessage() ?: $message
             ]);
         }

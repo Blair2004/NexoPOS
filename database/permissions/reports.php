@@ -9,6 +9,12 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->save();
 
     $permission                 =   new Permission;
+    $permission->name           =   __( 'See Products Report' );
+    $permission->namespace      =   'nexopos.reports.products-report';
+    $permission->description    =   __( 'Let you see the Products report' );
+    $permission->save();
+
+    $permission                 =   new Permission;
     $permission->name           =   __( 'See Best Report' );
     $permission->namespace      =   'nexopos.reports.best_sales';
     $permission->description    =   __( 'Let you see the best_sales report' );

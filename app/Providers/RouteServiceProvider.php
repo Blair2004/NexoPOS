@@ -128,7 +128,7 @@ class RouteServiceProvider extends ServiceProvider
              * will load api.php file has api file
              */
             if ( $module[ 'api-file' ] !== false ) {
-                Route::prefix('api')
+                Route::prefix( 'api/nexopos/v4' )
                     ->middleware([ 'ns.installed', 'api' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'api-file' ] );

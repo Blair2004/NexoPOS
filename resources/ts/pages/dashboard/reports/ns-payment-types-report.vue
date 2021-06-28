@@ -6,6 +6,7 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import { nsDateTimePicker } from '@/components/ns-date-time-picker';
 
 export default {
     name: 'ns-payment-types-report',
@@ -23,7 +24,7 @@ export default {
     },
     components: {
         nsDatepicker,
-        // nsDatetimepicker,
+        nsDateTimePicker,
     },
     computed: {
         
@@ -36,6 +37,7 @@ export default {
             this.$htmlToPaper( 'sale-report' );
         },
         setStartDate( moment ) {
+            console.log( moment );
             this.startDate  =   moment.format();
         },
 
@@ -62,6 +64,7 @@ export default {
         },
 
         setEndDate( moment ) {
+            console.log( moment );
             this.endDate    =   moment.format();
         },
     }
