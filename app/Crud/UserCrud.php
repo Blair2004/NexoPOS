@@ -357,7 +357,7 @@ class UserCrud extends CrudService
         $entry->active          =   ( bool ) $entry->active ? __( 'Yes' ) : __( 'No' );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
+        $entry->{'$actions'}    =   Hook::filter( 'ns-users-actions', [
             [
                 'label'         =>      __( 'Edit' ),
                 'namespace'     =>      'edit',
@@ -373,7 +373,7 @@ class UserCrud extends CrudService
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
             ]
-        ];
+        ], $entry );
 
         return $entry;
     }

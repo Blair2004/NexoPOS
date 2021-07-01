@@ -19,9 +19,9 @@
                         </div>
                     </div>
                 </template>
-                <template v-if="activeTab.component">
+                <div class="w-full px-4" v-if="activeTab.component">
                     <component v-bind:is="loadComponent( activeTab.component )"></component>
-                </template>
+                </div>
             </div>
             <div v-if="activeTab.fields" class="border-t border-gray-400 p-2 flex justify-end">
                 <ns-button @click="submitForm()" type="info"><slot name="submit-button">{{ __( 'Save Settings' ) }}</slot></ns-button>

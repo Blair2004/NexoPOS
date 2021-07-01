@@ -47,7 +47,7 @@ class Permission extends Model
      */
     public function scopeIncludes( $query, $search )
     {   
-        return $query->where( 'namespace', 'like', '%' . $search );
+        return $query->where( 'namespace', 'like', '%' . $search . '%' );
     }
 
     /**

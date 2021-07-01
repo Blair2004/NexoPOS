@@ -8,6 +8,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\Hook;
+use App\Events\AfterSuccessfulLoginEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\SignInRequest;
@@ -153,6 +154,8 @@ class AuthController extends Controller
         }
         
         $intended       =   redirect()->intended()->getTargetUrl();
+
+        AfterSuccessfulLoginEvent::dispatch( Auth::user() );
         
         return [
             'status'    =>  'success',

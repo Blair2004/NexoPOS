@@ -20,5 +20,6 @@ const nsExtraComponents     =   window[ 'nsExtraComponents' ];
         nsRegister,
         nsPasswordLost,
         nsNewPassword,
+        ...nsExtraComponents
     }
 });

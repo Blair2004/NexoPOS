@@ -445,6 +445,7 @@ class ProductHistoryCrud extends CrudService
         switch( $entry->operation_type ) {
             case ProductHistory::ACTION_DEFECTIVE : 
             case ProductHistory::ACTION_DELETED : 
+            case ProductHistory::ACTION_LOST : 
             case ProductHistory::ACTION_REMOVED : 
             case ProductHistory::ACTION_VOID_RETURN : 
                 $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
@@ -474,6 +475,7 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_REMOVED :           $entry->operation_type      = __( 'Removed' ); break;
             case ProductHistory::ACTION_RETURNED :          $entry->operation_type      = __( 'Returned' ); break;
             case ProductHistory::ACTION_SOLD :              $entry->operation_type      = __( 'Sold' ); break;
+            case ProductHistory::ACTION_LOST :              $entry->operation_type      = __( 'Lost' ); break;
             case ProductHistory::ACTION_ADDED :             $entry->operation_type      = __( 'Added' ); break;
             case ProductHistory::ACTION_TRANSFER_IN :       $entry->operation_type      = __( 'Incoming Transfer' ); break;
             case ProductHistory::ACTION_TRANSFER_OUT :      $entry->operation_type      = __( 'Outgoing Transfer' ); break;

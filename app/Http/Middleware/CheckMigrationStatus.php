@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\AfterMigrationStatusCheckedEvent;
 use App\Models\Migration;
 use App\Services\Helpers\App;
 use App\Services\ModulesService;
@@ -34,6 +35,8 @@ class CheckMigrationStatus
                 return redirect( ns()->route( 'ns.database-update' ) );
             }
         }
+
+        AfterMigrationStatusCheckedEvent::dispatch( $next, $request );
 
         return $next($request);
     }
