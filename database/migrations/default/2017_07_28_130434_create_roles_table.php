@@ -17,7 +17,7 @@ class CreateRolesTable extends Migration
             $table->increments('id');
             $table->string( 'name' )->unique();
             $table->string( 'namespace' )->unique();
-            $table->string( 'dashboard_identifier' )->nullable();
+            $table->string( 'dashid' )->nullable();
             $table->text( 'description' )->nullable();
             $table->integer( 'author' )->nullable(); // when provided match the user id
             $table->boolean( 'locked' )->default( true ); // means the role can be edited from the fronte
