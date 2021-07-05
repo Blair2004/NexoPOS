@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Role;
+use App\Services\Helper;
 use Illuminate\Validation\Rule;
 
 class RolesCrud extends CrudService
@@ -142,6 +143,17 @@ class RolesCrud extends CrudService
                             ],
                             'description'   =>  __( 'Should be a unique value with no spaces or special character' ),
                             'value' =>  $entry->namespace ?? '',
+                        ], [
+                            'type'  =>  'select',
+                            'name'  =>  'dashid',
+                            'label' =>  __( 'Dashboard Identifier' ),
+                            'validation'    =>  'required',
+                            'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-dashboard-identifiers', [
+                                'store'     =>  __( 'Store Dashboard' ),
+                                'cashier'   =>  __( 'Cashier Dashboard' )
+                            ])),
+                            'description'   =>  __( 'Define what should be the home page of the dashboard.' ),
+                            'value' =>  $entry->dashid ?? '',
                         ], [
                             'type'          =>  'textarea',
                             'name'          =>  'description',

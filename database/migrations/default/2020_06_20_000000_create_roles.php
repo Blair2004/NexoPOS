@@ -24,11 +24,12 @@ class CreateRoles extends Migration
         $this->options      =   app()->make( Options::class );
 
         // User Role
-        $user                 =   new Role;
-        $user->name           =   __( 'User' );
-        $user->namespace      =   'user';
-        $user->locked         =   true;
-        $user->description    =   __( 'Basic user role.' );
+        $user               =   new Role;
+        $user->name         =   __( 'User' );
+        $user->namespace    =   'user';
+        $user->locked       =   true;
+        $user->dashid       =   'default';
+        $user->description  =   __( 'Basic user role.' );
         $user->save();
         $user->addPermissions([ 
             'manage.profile' 
@@ -38,6 +39,7 @@ class CreateRoles extends Migration
         $supervisor                 =   new Role;
         $supervisor->name           =   __( 'Supervisor' );
         $supervisor->namespace      =   'supervisor';
+        $supervisor->dashid         =   'store';
         $supervisor->locked         =   true;
         $supervisor->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
         $supervisor->save(); 
@@ -48,11 +50,12 @@ class CreateRoles extends Migration
         ]);
 
         // Master User
-        $admin                 =   new Role;
-        $admin->name           =   __( 'Administrator' );
-        $admin->namespace      =   'admin';
-        $admin->locked         =   true;
-        $admin->description    =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
+        $admin                      =   new Role;
+        $admin->name                =   __( 'Administrator' );
+        $admin->namespace           =   'admin';
+        $admin->dashid              =   'store';
+        $admin->locked              =   true;
+        $admin->description         =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
         $admin->save(); 
         $admin->addPermissions([ 
             'create.users', 
@@ -143,17 +146,7 @@ class CreateRoles extends Migration
         $storeCashier->save();
         $storeCashier->addPermissions([ 'read.dashboard' ]);
         $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
-
-        /**
-         * store administrator role
-         */
-        $driver                     =   new Role;
-        $driver->name               =   __( 'Vehicule Driver' );
-        $driver->namespace          =   'nexopos.store.driver';
-        $driver->locked             =   true;
-        $driver->description        =   __( 'Does the orders delivery.' );
-        $driver->save();
-        $driver->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );    }
+    }
 
     /**
      * Reverse the migrations.

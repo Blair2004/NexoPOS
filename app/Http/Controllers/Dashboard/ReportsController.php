@@ -9,6 +9,7 @@ use App\Services\OrdersService;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends DashboardController
 {
@@ -232,5 +233,10 @@ class ReportsController extends DashboardController
             $request->input( 'endDate' ),
             $request->input( 'sort' )
         );
+    }
+
+    public function getMyReport( Request $request )
+    {
+        return $this->reportService->getCashierDashboard( Auth::id() );
     }
 }

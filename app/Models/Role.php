@@ -153,7 +153,7 @@ class Role extends NsRootModel
     public function removePermissions( $permissionNamespace )
     {
         if ( $permissionNamespace instanceof Collection ) {
-            $permissionNamespace->each( fn( $permission ) => $this->removePermissions( $permission ) );
+            $permissionNamespace->each( fn( $permission ) => $this->removePermissions( $permission->namespace ) );
         } else {
             $permission     =   Permission::where([ 'namespace' => $permissionNamespace ])
                 ->first();

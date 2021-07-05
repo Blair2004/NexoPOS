@@ -35,6 +35,7 @@ import NsBestCustomers      from './pages/dashboard/home/ns-best-customers.vue';
 import NsBestCashiers       from './pages/dashboard/home/ns-best-cashiers.vue';
 import NsOrdersSummary      from './pages/dashboard/home/ns-orders-summary.vue';
 import NsOrdersChart        from './pages/dashboard/home/ns-orders-chart.vue';
+import NsCashierDashboard   from './pages/dashboard/home/ns-cashier-dashboard.vue';
 import NsStockAdjustment    from './pages/dashboard/products/ns-stock-adjustment.vue';
 import NsOrderInvoice       from './pages/dashboard/orders/ns-order-invoice.vue';
 import NsPromptPopup        from './popups/ns-prompt-popup.vue';
@@ -75,6 +76,7 @@ const components    =   Object.assign({
     NsProcurementInvoice,
     NsMedia,
     NsDashboardCards,
+    NsCashierDashboard,
     NsBestCustomers,
     NsBestCashiers,
     NsOrdersSummary,

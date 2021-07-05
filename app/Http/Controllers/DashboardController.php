@@ -10,17 +10,10 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use App\Services\MenuService;
-use App\Models\ProductCategory;
 use App\Models\Role;
-use App\Models\User;
 use App\Services\DateService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {

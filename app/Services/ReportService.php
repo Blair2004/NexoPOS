@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\ExpenseHistory;
@@ -11,6 +12,7 @@ use App\Models\ProductHistory;
 use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use stdClass;
 
@@ -679,5 +681,76 @@ class ReportService
             ->sum();
 
         return $previousDates;
+    }
+
+    /**
+     * Will returns the details for a specific cashier
+     */
+    public function getCashierDashboard( $cashier, $startDate = null, $endDate = null )
+    {
+        $cacheKey   =   'cashier-report-' . $cashier;
+
+        if ( ! empty( request()->query( 'refresh' ) ) ) {
+            Cache::forget( $cacheKey );
+        }
+
+        return Cache::remember( $cacheKey, now()->addDay(1), function() use ( $startDate, $cashier, $endDate ) {
+            $startDate  =   $startDate === null ? ns()->date->getNow()->startOfDay()->toDateTimeString() : $startDate;
+            $endDate    =   $endDate === null ? ns()->date->getNow()->endOfDay()->toDateTimeString() : $endDate;
+
+            $totalSales     =   Order::paid()
+                ->where( 'author', $cashier )
+                ->count();
+
+            $todaySales   =   Order::paid()
+                ->where( 'created_at', '>=', $startDate )
+                ->where( 'created_at', '<=', $endDate )
+                ->where( 'author', $cashier )
+                ->count();
+
+            $totalSalesAmount   =   Order::paid()
+                ->where( 'author', $cashier )
+                ->sum( 'total' );
+
+            $todaySalesAmount   =   Order::paid()
+                ->where( 'created_at', '>=', $startDate )
+                ->where( 'created_at', '<=', $endDate )
+                ->where( 'author', $cashier )
+                ->sum( 'total' );    
+
+            $totalRefundsAmount   =   Order::refunded()
+                ->where( 'author', $cashier )
+                ->sum( 'total' );
+
+            $todayRefunds   =   Order::refunded()
+                ->where( 'created_at', '>=', $startDate )
+                ->where( 'created_at', '<=', $endDate )
+                ->where( 'author', $cashier )
+                ->sum( 'total' );        
+
+            $totalCustomers   =   Customer::where( 'author', $cashier )
+                ->count();
+
+            $todayCustomers   =   Customer::where( 'created_at', '>=', $startDate )
+                ->where( 'created_at', '<=', $endDate )
+                ->where( 'author', $cashier )
+                ->count();        
+                
+            return [
+                'total_sales_count'     =>  $totalSales,
+                'today_sales_count'     =>  $todaySales,
+                'total_sales_amount'    =>  $totalSalesAmount,
+                'today_sales_amount'    =>  $todaySalesAmount,
+                'total_refunds_amount'  =>  $totalRefundsAmount,
+                'today_refunds_amount'  =>  $todayRefunds,
+                'total_customers'       =>  $totalCustomers,
+                'today_customers'       =>  $todayCustomers,
+                'today_orders'          =>  Order::where( 'created_at', '>=', $startDate )
+                    ->where( 'created_at', '<=', $endDate )
+                    ->where( 'author', $cashier )
+                    ->orderBy( 'id', 'desc' )
+                    ->get()
+            ];
+        });
     }
 }

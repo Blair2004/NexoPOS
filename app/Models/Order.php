@@ -109,6 +109,11 @@ class Order extends NsModel
         return $query->where( 'payment_status', self::PAYMENT_PAID );
     }
 
+    public function scopeRefunded( $query )
+    {
+        return $query->where( 'payment_status', self::PAYMENT_REFUNDED );
+    }
+
     public function scopePaymentStatus( $query, $status )
     {
         return $query->where( 'payment_status', $status );
