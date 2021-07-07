@@ -29,7 +29,6 @@ class UpdateAddPaymentTypePermissions extends Migration
         }
 
         Role::namespace( 'admin' )->addPermissions( $permission );
-        Role::namespace( 'supervisor' )->addPermissions( $permission );
         Role::namespace( 'nexopos.store.administrator' )->addPermissions( $permission );
     }
 

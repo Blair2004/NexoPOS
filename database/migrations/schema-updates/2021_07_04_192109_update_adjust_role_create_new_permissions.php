@@ -40,7 +40,6 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
          */
         Role::whereIn( 'namespace', [
                 'admin',
-                'supervisor',
                 'nexopos.store.administrator'
             ])
             ->get()

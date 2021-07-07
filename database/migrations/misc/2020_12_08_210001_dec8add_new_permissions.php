@@ -34,11 +34,6 @@ class Dec8addNewPermissions extends Migration
             $deleteHistory
         ]);
 
-        Role::namespace( 'supervisor' )->addPermissions([
-            $readHistory,
-            $deleteHistory
-        ]);
-
         Role::namespace( 'nexopos.store.administrator' )->addPermissions([
             $readHistory,
             $deleteHistory

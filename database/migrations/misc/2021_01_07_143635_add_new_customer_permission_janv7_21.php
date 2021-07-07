@@ -25,7 +25,6 @@ class AddNewCustomerPermissionJanv721 extends Migration
         }
 
         Role::namespace( 'admin' )->addPermissions( 'nexopos.customers.manage-account' );
-        Role::namespace( 'supervisor' )->addPermissions( 'nexopos.customers.manage-account' );
         Role::namespace( 'nexopos.store.administrator' )->addPermissions( 'nexopos.customers.manage-account' );
     }
 

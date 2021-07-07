@@ -35,20 +35,6 @@ class CreateRoles extends Migration
             'manage.profile' 
         ]); 
 
-        // Admin Role
-        $supervisor                 =   new Role;
-        $supervisor->name           =   __( 'Supervisor' );
-        $supervisor->namespace      =   'supervisor';
-        $supervisor->dashid         =   'store';
-        $supervisor->locked         =   true;
-        $supervisor->description    =   __( 'Advanced role which can access to the dashboard manage settings.' );
-        $supervisor->save(); 
-        $supervisor->addPermissions([ 
-            'manage.profile', 
-            'manage.options', 
-            'read.dashboard',
-        ]);
-
         // Master User
         $admin                      =   new Role;
         $admin->name                =   __( 'Administrator' );
