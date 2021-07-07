@@ -32,6 +32,7 @@ use App\Services\DateService;
         window.ns.date                     =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
+            timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}'
         }
 
         /**

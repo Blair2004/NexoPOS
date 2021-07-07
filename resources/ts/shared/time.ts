@@ -21,3 +21,23 @@ ns.date.interval        =   setInterval( () => {
         .add( 1, 'seconds' )
         .format( 'YYYY-MM-DD HH:mm:ss' );
 }, 1000 );
+
+/**
+ * Using the interval for updating the date has
+ * been failing when the tab loose focused and when
+ * the browser would like to save memory.
+ * @returns {string} current date
+ */
+ns.date.getNowString      =   () => {
+    const date  =   Date.parse( new Date().toLocaleString("en-US", {timeZone: ns.date.timeZone }) );
+    return moment( date ).format( 'YYYY-MM-DD HH:mm:ss' );
+}
+
+/**
+ * Will returns an instance of the date.
+ * @returns {moment} Moment
+ */
+ns.date.getMoment       =   () => {
+    const date  =   Date.parse( new Date().toLocaleString("en-US", {timeZone: ns.date.timeZone }) );
+    return moment( date );
+}

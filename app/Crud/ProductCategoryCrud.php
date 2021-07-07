@@ -250,7 +250,7 @@ class ProductCategoryCrud extends CrudService
          * If the category is not visible on the POS
          * the products aren't searchable.
          */
-        if ( ! $entry->display_on_pos ) {
+        if ( ! ( bool ) $entry->displays_on_pos ) {
             Product::where( 'category_id', $entry->id )->update([
                 'searchable'    =>  false
             ]);

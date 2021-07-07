@@ -896,26 +896,11 @@ class ModulesService
             
             /**
              * Delete Migration version
+             * @deprecated
              */
             $this->options->delete( strtolower( $module[ 'namespace' ] ) . '_last_migration' );
 
-            /**
-             * Run down method for all migrations 
-             */
-
-            $migrationFiles   =   Storage::disk( 'ns-modules' )->allFiles( 
-                $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR
-            );
-
-            /**
-             * Checks if migration files exists
-             * so that we can "down" all migrations
-             */
-            if ( $migrationFiles ) {
-                foreach( $migrationFiles as $file ) {
-                    $this->__runSingleFile( 'down', $module, $file );
-                }
-            }
+            $this->revertMigrations( $module );
 
             /**
              * Delete module from DISK
@@ -941,6 +926,33 @@ class ModulesService
             'status'    =>  'danger',
             'code'      =>  'unknow_module'
         ];
+    }
+
+    /**
+     * Will revert the migrations
+     * for a specific module
+     * @param array $module
+     * @return void
+     */
+    public function revertMigrations( $module )
+    {
+        /**
+         * Run down method for all migrations 
+         */
+
+        $migrationFiles   =   Storage::disk( 'ns-modules' )->allFiles( 
+            $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR
+        );
+
+        /**
+         * Checks if migration files exists
+         * so that we can "down" all migrations
+         */
+        if ( $migrationFiles ) {
+            foreach( $migrationFiles as $file ) {
+                $this->__runSingleFile( 'down', $module, $file );
+            }
+        }
     }
 
     /**

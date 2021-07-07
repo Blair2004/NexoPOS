@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\ModuleMigration;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -9,6 +10,7 @@ use App\Services\Modules;
 use App\Services\Setup;
 use App\Services\Helper;
 use App\Services\ModulesService;
+use Illuminate\Support\Facades\Artisan;
 
 class ModuleMigrations extends Command
 {
@@ -17,7 +19,7 @@ class ModuleMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:migration {namespace} {--delete=}';
+    protected $signature = 'modules:migration {namespace} {--delete=} {--forget}';
 
     /**
      * The console command description.
@@ -81,6 +83,28 @@ class ModuleMigrations extends Command
         } else if( $this->option( 'delete' ) != '' ) {
             Storage::disk( 'ns-modules' )->deleteDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $this->option( 'delete' ) );
             $this->info( sprintf( 'The migration directory %s has been deleted.', $this->option( 'delete' ) ) );
+            return false;
+        } else if ( $this->option( 'forget' ) ) {
+            /**
+             * This will revert the migration
+             * for a specific module.
+             */
+            $moduleService  =   app()->make( ModulesService::class );
+            $moduleService->revertMigrations( $this->module );
+
+            /**
+             * We'll make sure to clear the migration as
+             * being executed on the system.
+             */
+            ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )->delete();
+            $this->info( sprintf( 'The migration for the module %s has been forgotten.', $this->module[ 'name' ] ) );
+
+            /**
+             * because we use the cache to prevent the system for overusing the
+             * database with too many requests.
+             */
+            Artisan::call( 'cache:clear' );
+
             return false;
         }
 
