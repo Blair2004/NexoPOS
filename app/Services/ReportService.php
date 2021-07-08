@@ -560,10 +560,11 @@ class ReportService
      */
     private function computeDiff( $old, $new, $operation )
     {
-        if ( $operation === 'decrease' ) {
-            return ( ( $old - $new ) / $old ) * 100;
+        if ( $new == 0 ) {
+            return 100;
         } else {
-            return ( ( $new - $old ) / $old ) * 100;
+            $change     =   ( ( $old - $new ) / $new ) * 100;
+            return $operation === 'increase' ? abs( $change ) : $change;
         }
     }
 
@@ -632,7 +633,6 @@ class ReportService
                     $orderProductTable . '.unit_name as unit_name',
                     $orderProductTable . '.product_id as product_id',
                     $orderProductTable . '.name as name',
-                    $orderTable . '.created_at as created_at', 
                     DB::raw( 'SUM( quantity ) as quantity' ),
                     DB::raw( 'SUM( total_price ) as total_price' ),
                     DB::raw( 'SUM( ' . env( 'DB_PREFIX' ) . $orderProductTable . '.tax_value ) as tax_value' ),
@@ -640,8 +640,7 @@ class ReportService
                 ->groupBy(          
                     $orderProductTable . '.unit_name', 
                     $orderProductTable . '.product_id', 
-                    $orderProductTable . '.name',
-                    $orderTable . '.created_at',
+                    $orderProductTable . '.name'
                 )
                 ->orderBy( $sorting[ 'column' ], $sorting[ 'direction' ] )
                 ->join( $orderTable, $orderTable . '.id', '=', $orderProductTable . '.order_id' )
@@ -657,9 +656,10 @@ class ReportService
         foreach( $previousDates[ 'current' ][ 'products' ] as $id => &$product ) {
             $default                =   new stdClass;
             $default->total_price   =   0;
+            $default->quantity      =   0;
         
-            $oldProduct                 =   collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function( $product ) use ( $id ) {
-                return $product->product_id === $id;
+            $oldProduct                 =   collect( $previousDates[ 'previous' ][ 'products' ] )->filter( function( $previousProduct ) use ( $product ) {
+                return $previousProduct->product_id === $product->product_id;
             })->first() ?: $default;
 
             $product->old_total_price   =   $oldProduct->total_price;
@@ -669,7 +669,7 @@ class ReportService
                 $product->total_price
             ) : 100;
 
-            $product->evolution      =   $product->total_price > $oldProduct->total_price ? 'progress' : 'regress';
+            $product->evolution      =   $product->quantity > $oldProduct->quantity ? 'progress' : 'regress';
         }
 
         $previousDates[ 'current' ][ 'total_price' ]    =   collect( $previousDates[ 'current' ][ 'products' ] )

@@ -133,10 +133,16 @@ export default {
             });
 
             promise.then( result => {
-                if ( product.accurate_tracking !== undefined && result.quantity > product.available_quantity ) {
-                    return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
-                } else if ( result.quantity > product.adjust_unit.quantity ) {
-                    return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                /**
+                 * will check the stock if the adjustment
+                 * reduce the stock.
+                 */
+                if ( ! [ 'added' ].includes( product.adjust_action ) ) {
+                    if ( product.accurate_tracking !== undefined && result.quantity > product.available_quantity ) {
+                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                    } else if ( result.quantity > product.adjust_unit.quantity ) {
+                        return nsSnackBar.error( __( 'The specified quantity exceed the available quantity.' ) ).subscribe();
+                    }
                 }
 
                 product.adjust_quantity     =   result.quantity;

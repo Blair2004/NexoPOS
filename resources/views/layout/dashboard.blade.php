@@ -51,7 +51,7 @@ use App\Services\DateService;
 <body>
     <div class="h-full w-full flex flex-col">
         <div id="dashboard-body" class="overflow-hidden flex flex-auto">
-            <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-10 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
+            <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-50 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
                 <div class="overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
                         @if ( ns()->option->get( 'ns_store_rectangle_logo' ) )
@@ -77,7 +77,7 @@ use App\Services\DateService;
                     </ul>
                 </div>
             </div>
-            <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
+            <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             <div class="flex flex-auto overflow-hidden bg-gray-200">
                 <div class="overflow-y-auto flex-auto">
                     @yield( 'layout.dashboard.body', View::make( 'common.dashboard.with-header' ) )

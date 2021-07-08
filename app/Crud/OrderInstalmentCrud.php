@@ -55,7 +55,7 @@ class OrderInstalmentCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.id' ],
+        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
 
     /**
@@ -416,7 +416,7 @@ class OrderInstalmentCrud extends CrudService
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . 'orders/instalments' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'orders/instalments/create' ),
+            'create'    =>  'javascript:void(0)',
             'edit'      =>  ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
             'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
             'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),

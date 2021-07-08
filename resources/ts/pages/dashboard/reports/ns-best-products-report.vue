@@ -41,7 +41,7 @@ export default {
             const startDate     =   moment( this.startDate );
             const endDate       =   moment( this.endDate );
 
-            nsHttpClient.post( '/api/nexopos/v4/reports/best-products', { 
+            nsHttpClient.post( '/api/nexopos/v4/reports/products-report', { 
                     startDate : startDate.format( 'YYYY/MM/DD HH:mm' ), 
                     endDate : endDate.format( 'YYYY/MM/DD HH:mm' ),
                     sort: this.sort
