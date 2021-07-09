@@ -56,6 +56,9 @@ class NotificationService
             $role->each( function( $role ) {
                 $this->dispatchForGroup( $role );
             });
+        } else if ( is_string( $role ) ) {
+            $roleInstance   =   Role::namespace( $role );
+            $this->dispatchForGroup( $roleInstance );
         } else {
             $role->users->map( function( $user ) {
                 $this->__makeNotificationFor( $user );

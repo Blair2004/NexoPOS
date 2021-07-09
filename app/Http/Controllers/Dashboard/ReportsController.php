@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
+use App\Jobs\ComputeYearlyReportJob;
 use App\Models\DashboardDay;
 use App\Models\ExpenseCategory;
 use App\Services\OrdersService;
 use App\Services\ReportService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -224,6 +226,21 @@ class ReportsController extends DashboardController
             $request->input( 'startDate' ),
             $request->input( 'endDate' ),
         );
+    }
+
+    public function computeReport( Request $request, $type )
+    {
+        if ( $type === 'yearly' ) {
+
+            ComputeYearlyReportJob::dispatch( $request->input( 'year' ) );
+            
+            return [
+                'stauts'    =>  'success',
+                'message'   =>  __( 'The report will be computed for the current year.' )
+            ];
+        }
+
+        throw new Exception( __( 'Unknown report to refresh.' ) );
     }
 
     public function getProductsReport( Request $request )

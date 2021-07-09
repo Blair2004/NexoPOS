@@ -106,7 +106,7 @@ Route::get( '/reports/products-report', [ ReportsController::class, 'productsRep
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);
-Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ]);
+Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ])->name( ns()->routeName( 'ns.dashboard.reports-annual' ) );
 Route::get( '/reports/payment-types', [ ReportsController::class, 'salesByPaymentTypes' ]);
 
 Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);

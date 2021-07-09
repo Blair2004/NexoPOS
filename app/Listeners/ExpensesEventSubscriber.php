@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseAfterRefreshEvent;
+use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\ExpenseHistoryAfterCreatedEvent;
 use App\Events\ExpenseHistoryBeforeDeleteEvent;
@@ -36,8 +37,21 @@ class ExpensesEventSubscriber
          */
         $event->listen(
             ExpenseAfterCreateEvent::class,
-            function( $event ) {
+            function( ExpenseAfterCreateEvent $event ) {
                 if ( ! $event->expense->recurring && $event->expense->active ) {
+                    $this->expenseService->triggerExpense( $event->expense );
+                }
+            }
+        );
+
+        /**
+         * will record the history of the expense
+         * only if it's not recurring
+         */
+        $event->listen(
+            ExpenseAfterUpdateEvent::class,
+            function( ExpenseAfterUpdateEvent $event ) {
+                if ( ! $event->expense->recurring && ( bool ) $event->expense->active ) {
                     $this->expenseService->triggerExpense( $event->expense );
                 }
             }

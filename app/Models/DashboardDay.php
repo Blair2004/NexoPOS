@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Events\DashboardDayAfterCreatedEvent;
 use App\Services\DateService;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -52,10 +53,12 @@ class DashboardDay extends NsModel
      */
     public static function forLastRecentDay( DashboardDay $day )
     {
-        $dashboardDay       =   DashboardDay::get()->filter( function( $dashboard ) use ( $day ) {
-            return $dashboard->id < $day->id;
-        });
+        $date       =   Carbon::parse( $day->range_starts )->subDay();
 
-        return $dashboardDay->last();
+        $dashboardDay   =   DashboardDay::from( $date->startOfDay()->toDateTimeString() )
+            ->to( $date->endOfDay()->toDateTimeString() )
+            ->first();
+
+        return $dashboardDay;
     }
 }

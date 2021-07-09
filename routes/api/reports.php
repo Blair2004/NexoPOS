@@ -11,4 +11,5 @@ Route::post( 'reports/cash-flow', [ ReportsController::class, 'getCashFlow' ]);
 Route::post( 'reports/annual-report', [ ReportsController::class, 'getAnnualReport' ]);
 Route::post( 'reports/payment-types', [ ReportsController::class, 'getPaymentTypes' ]);
 Route::post( 'reports/products-report', [ ReportsController::class, 'getProductsReport' ]);
+Route::post( 'reports/compute/{type}', [ ReportsController::class, 'computeReport' ]);
 Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ]);

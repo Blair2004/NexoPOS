@@ -22,13 +22,13 @@
                     <div class="px-2">
                         <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-sync-alt text-xl"></i>
-                            <span class="pl-2">Load</span>
+                            <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
                         <button @click="printSaleReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-print text-xl"></i>
-                            <span class="pl-2">Print</span>
+                            <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
                     </div>
                 </div>

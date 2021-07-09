@@ -31,7 +31,7 @@ class ReportService
     public function refreshFromDashboardDay( DashboardDay $todayReport )
     {
         $previousReport     =   DashboardDay::forLastRecentDay( $todayReport );
-
+        
         /**
          * when the method is used without defining
          * the dayStarts and dayEnds, this method
@@ -70,7 +70,7 @@ class ReportService
 
         if ( ! $todayReport instanceof DashboardDay ) {
             $todayReport                =   new DashboardDay;
-            $todayReport->day_of_year   =   $this->dateService->dayOfYear;
+            $todayReport->day_of_year   =   Carbon::parse( $this->dayStarts )->dayOfYear;
         }
 
         $this->refreshFromDashboardDay( $todayReport );
@@ -464,7 +464,7 @@ class ReportService
                 $monthReport    =   $this->computeDashboardMonth( $currentMonth );
             }
 
-            $reports[ $currentMonth->format( 'm' ) ]       =   $monthReport;
+            $reports[ ( int ) $currentMonth->format( 'm' ) ]       =   $monthReport;
 
             $startOfYear->addMonth();
         }
@@ -752,5 +752,27 @@ class ReportService
                     ->get()
             ];
         });
+    }
+
+    /**
+     * @param int $year
+     * @return array $response
+     */
+    public function computeYearReport( $year )
+    {
+        $date           =   ns()->date->copy();
+        $date->year     =   $year;
+        $startOfYear    =   $date->startOfYear();
+        $endOfYear      =   $date->endOfYear();
+
+        while( ! $startOfYear->isSameMonth( $endOfYear ) ) {
+            $this->computeDashboardMonth( $startOfYear->copy() );
+            $startOfYear->addMonth();
+        }
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The report has been computed successfully.' )
+        ];
     }
 }

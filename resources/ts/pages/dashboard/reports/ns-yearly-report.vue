@@ -2,6 +2,7 @@
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 
 
 export default {
@@ -16,8 +17,8 @@ export default {
         return {
             startDate: moment(),
             endDate: moment(),
-            report: [],
-            year: '2020',
+            report: {},
+            year: ns.date.getMoment().format( 'Y' ),
             labels: [ 'month_paid_orders', 'month_taxes', 'month_expenses', 'month_income' ]
         }
     },
@@ -47,6 +48,30 @@ export default {
 
             return 0;
         },
+
+        recomputeForSpecificYear() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Would you like to proceed ?' ),
+                message: __( `The report will be computed for the current year, a job will be dispatched and you'll be informed once it's completed.` ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        nsHttpClient.post( `/api/nexopos/v4/reports/compute/yearly`, {
+                            year: this.year
+                        }).subscribe( result => {
+                            nsSnackBar.success( result.message ).subscribe();
+                        }, ( error ) => {
+                            nsSnackBar.success( error.message || __( 'An unexpected error has occured.' ) ).subscribe();
+                        })
+                    }
+                }
+            });
+        },
+
+        getReportForMonth( month ) {
+            console.log( this.report, month );
+            return this.report[ month ];
+        },
+
         loadReport() {
             const year       =   this.year;
 

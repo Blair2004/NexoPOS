@@ -19,13 +19,19 @@
                     <div class="px-2 flex">
                         <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-sync-alt text-xl"></i>
-                            <span class="pl-2">Load</span>
+                            <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2 flex">
                         <button @click="printSaleReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-print text-xl"></i>
-                            <span class="pl-2">Print</span>
+                            <span class="pl-2">{{ __( 'Print' ) }}</span>
+                        </button>
+                    </div>
+                    <div class="px-2 flex">
+                        <button @click="recomputeForSpecificYear()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
+                            <i class="las la-sync-alt text-xl"></i>
+                            <span class="pl-2">{{ __( 'Recompute' ) }}</span>
                         </button>
                     </div>
                 </div>
@@ -60,55 +66,55 @@
                                     <tr>
                                         <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-left">{{ __( 'January' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[01] ? report[01][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[1] ? report[1][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-left">{{ __( 'Febuary' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[02] ? report[02][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[2] ? report[2][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'March' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[03] ? report[03][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[3] ? report[3][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'April' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[04] ? report[04][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[4] ? report[4][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'May' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[05] ? report[05][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[5] ? report[5][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'June' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[06] ? report[06][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[6] ? report[6][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'July' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[07] ? report[07][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[7] ? report[7][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'August' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[08] ? report[08][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[8] ? report[8][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
                                         <td class="bg-gray-100 text-left text-gray-700 border border-gray-300 p-2">{{ __( 'September' ) }}</td>
                                         <template v-for="label of labels">
-                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[09] ? report[09][ label ] : 0 ) | currency }}</td>
+                                            <td class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-right">@{{ ( report[9] ? report[9][ label ] : 0 ) | currency }}</td>
                                         </template>
                                     </tr>
                                     <tr>
