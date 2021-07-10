@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="flex -mx-4 flex-wrap">
-            <div class="px-4 w-full md:w-1/3">
-                <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-green-400 to-green-600 text-white px-3 py-5">
+            <div class="px-4 w-full mb-6" :class="showCommission ? 'md:w-1/2 lg:w-1/4' : 'md:w-1/3'">
+                <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-purple-400 to-purple-600 text-white px-3 py-5">
                     <div class="flex flex-row md:flex-col flex-auto">
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
                             <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Total Sales' ) }}</h6>
@@ -17,7 +17,7 @@
                     </div>
                 </div>
             </div>
-            <div class="px-4 w-full md:w-1/3">
+            <div class="px-4 w-full mb-6" :class="showCommission ? 'md:w-1/2 lg:w-1/4' : 'md:w-1/3'">
                 <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-red-400 to-red-600 text-white px-3 py-5">
                     <div class="flex flex-row md:flex-col flex-auto">
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            <div class="px-4 w-full md:w-1/3">
+            <div class="px-4 w-full mb-6" :class="showCommission ? 'md:w-1/2 lg:w-1/4' : 'md:w-1/3'">
                 <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-blue-400 to-blue-600 text-white px-3 py-5">
                     <div class="flex flex-row md:flex-col flex-auto">
                         <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
@@ -45,6 +45,22 @@
                         <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
                             <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Clients Registered' ) }}</h6>
                             <h4 class="text-xs text-right">+{{ ( report.today_customers ) }} {{ __( 'Today' ) }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="showCommission" class="px-4 w-full mb-6" :class="showCommission ? 'md:w-1/2 lg:w-1/4' : 'md:w-1/3'">
+                <div class="flex flex-auto flex-col rounded-lg shadow-lg bg-gradient-to-br from-green-400 to-green-600 text-white px-3 py-5">
+                    <div class="flex flex-row md:flex-col flex-auto">
+                        <div class="w-1/2 md:w-full flex md:flex-col md:items-start items-center justify-center">
+                            <h6 class="font-bold hidden text-right md:inline-block">{{ __( 'Commissions' ) }}</h6>
+                            <h3 class="text-2xl font-black">
+                                {{ ( report.total_commissions ) | currency }}
+                            </h3>
+                        </div>
+                        <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
+                            <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Commissions' ) }}</h6>
+                            <h4 class="text-xs text-right">+{{ ( report.today_commissions ) | currency }} {{ __( 'Today' ) }}</h4>
                         </div>
                     </div>
                 </div>
@@ -72,6 +88,7 @@
 <script>
 export default {
     name: 'ns-cashier-dashboard',
+    props: [ 'showCommission' ],
     data() {
         return {
             report: {}

@@ -12,8 +12,10 @@ use App\Models\ProductHistory;
 use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Modules\NsCommissions\Models\EarnedCommission;
 use stdClass;
 
 class ReportService
@@ -735,8 +737,26 @@ class ReportService
                 ->where( 'created_at', '<=', $endDate )
                 ->where( 'author', $cashier )
                 ->count();        
+
+            /**
+             * This will compute the cashier
+             * commissions and displays on his dashboard.
+             */
+            $module         =   app()->make( ModulesService::class );
+            $config         =   [];
+
+            if ( $module->getIfEnabled( 'NsCommissions' ) ) {
+                $config     =   [
+                    'today_commissions' =>  EarnedCommission::for( Auth::id() )
+                        ->where( 'created_at', '>=', ns()->date->getNow()->copy()->startOfDay()->toDateTimeString() )
+                        ->where( 'created_at', '<=', ns()->date->getNow()->copy()->endOfDay()->toDateTimeString() )
+                        ->sum( 'value' ),
+                    'total_commissions' =>  EarnedCommission::for( Auth::id() )
+                        ->sum( 'value' )
+                ];
+            }
                 
-            return [
+            return array_merge([
                 'total_sales_count'     =>  $totalSales,
                 'today_sales_count'     =>  $todaySales,
                 'total_sales_amount'    =>  $totalSalesAmount,
@@ -750,7 +770,7 @@ class ReportService
                     ->where( 'author', $cashier )
                     ->orderBy( 'id', 'desc' )
                     ->get()
-            ];
+            ], $config );
         });
     }
 
