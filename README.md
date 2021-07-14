@@ -3,6 +3,20 @@
 # About NexoPOS 4.x
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
 
+## Demo
+- Regular : https://v4.nexopos.com
+- MultiStore : https://v4-multi.nexopos.com
+- Gastro 4.x : https://v4-gastro.nexopos.com
+- Username : demouser
+- Password : 123456
+
+## Documentation
+All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
+
+- [Configuring the environment](https://my.nexopos.com/en/documentation/getting-started/configuring-the-environment)
+- [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
+- [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
+
 # How To Unlock Premium Features
 The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619). While purchasing on CodeCanyon, you also get : 
 
@@ -20,31 +34,12 @@ Therefore, __No refunds are allowed__ if the customer discovered later on the li
 ## Changelog & Feature Announcement
 We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS 4.x.
 
-## Demo
-- Regular : https://v4.nexopos.com
-- MultiStore : https://v4-multi.nexopos.com
-- Gastro 4.x : https://v4-gastro.nexopos.com
-- Username : demouser
-- Password : 123456
-
-## Documentation
-All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.nexopos.com/en/documentation). That includes : 
-
-- [Configuring the environment](https://my.nexopos.com/en/documentation/getting-started/configuring-the-environment)
-- [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
-- [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
-
 
 ## Support Terms
 
 1 - The support on NexoPOS 4.x only applies to the information provided by the users while creating an issue. This means we won't either do the installation on your server or check an issue on your server. You're therefore invited not to post your server information while creating an issue. We'll use your explanations to reproduce your issue and therefore to solve it.
 
 2 - If you would like to have a dedicated support. Consider registering as a member to [My NexoPOS platform](https://my.nexopos.com/en/account/checkout/premium).
-
-## Regarding Release Date
-
-NexoPOS 4.x RC-1 (Release Candidate) is scheduled for 15th December 2020. During that time, we're proceeding further test and creating documentation to cover most 
-of the features on NexoPOS 4.x.
 
 ## Troubleshooting
 Here we list the knowns issues and the way around. Not everyone is likely to face these issues as it depends on the used enviroment.
