@@ -24,7 +24,7 @@ The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecany
 - Access to NexoPOS 4.x marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
-- 
+
 Therefore, __No refunds are allowed__ if the customer discovered later on the limited free version.
 
 [
