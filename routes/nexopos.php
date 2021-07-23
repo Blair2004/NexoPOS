@@ -109,5 +109,5 @@ Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);
 Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ])->name( ns()->routeName( 'ns.dashboard.reports-annual' ) );
 Route::get( '/reports/payment-types', [ ReportsController::class, 'salesByPaymentTypes' ]);
 
-Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ]);
+Route::get( '/settings/{settings}', [ SettingsController::class, 'getSettings' ])->name( ns()->routeName( 'ns.dashboard.settings' ) );
 Route::get( '/settings/form/{settings}', [ SettingsController::class, 'loadSettingsForm' ]);

@@ -55,10 +55,10 @@
                             <table class="table w-full">
                                 <thead class="text-gray-700">
                                     <tr>
-                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">Orders</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Discounts</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Taxes</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">Total</th>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Orders' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Discounts' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Taxes' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Total' ) }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-700">

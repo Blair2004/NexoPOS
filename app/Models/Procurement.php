@@ -51,7 +51,14 @@ class Procurement extends NsModel
      */
     const STOCKED      =   'stocked';
 
+    /**
+     * The procurement hasn't been paid.
+     */
     const PAYMENT_UNPAID    =   'unpaid';
+
+    /**
+     * The procurement has been paid.
+     */
     const PAYMENT_PAID      =   'paid';
 
     protected $dispatchesEvents     =   [

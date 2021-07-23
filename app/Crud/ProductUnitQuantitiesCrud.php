@@ -344,21 +344,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
         // you can make changes here
         $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products-units/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
-            ]
+            // ...
         ];
 
         return $entry;
@@ -415,11 +401,11 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'products/units' ),
-            'create'    => ns()->url( 'dashboard/' . 'products/units/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'products/units/edit/' ),
-            'post'      => ns()->url( 'dashboard/' . 'products/units' ),
-            'put'       => ns()->url( 'dashboard/' . 'products/units/' . '' ),
+            'list'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
+            'create'    => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/create' ),
+            'edit'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/edit/' ),
+            'post'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
+            'put'       => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/' . '' ),
         ];
     }
 

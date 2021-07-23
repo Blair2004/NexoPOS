@@ -1,12 +1,12 @@
 <template>
-    <div class="w-6/7-screen md:w-5/7-screen lg:w-3/7-screen h-6/7-screen md:h-5/7-screen lg:h-4/7-screen shadow-lg bg-white flex flex-col relative">
+    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-6/7-screen md:h-5/7-screen lg:h-5/7-screen overflow-hidden shadow-lg bg-white flex flex-col relative">
         <div class="p-2 border-b border-gray-200 flex justify-between items-center">
             <h2 class="font-semibold">{{ __( 'New Transaction' ) }}</h2>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto">
+        <div class="flex-auto overflow-y-auto">
             <div class="h-full w-full flex items-center justify-center" v-if="fields.length === 0">
                 <ns-spinner></ns-spinner>
             </div>

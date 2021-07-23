@@ -8,6 +8,7 @@ use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
 use App\Models\Role;
+use App\Models\User;
 use App\Services\CurrencyService;
 use Exception;
 use Laravel\Sanctum\Sanctum;
@@ -22,8 +23,9 @@ class CreateOrderTest extends TestCase
     protected $shouldRefund         =   true;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
-    protected $count                =   10;
+    protected $count                =   false;
     protected $totalDaysInterval    =   40;
+    protected $users                =   [];
 
     /**
      * A basic feature test example.
@@ -42,7 +44,7 @@ class CreateOrderTest extends TestCase
 
         for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
             $date           =   $startOfWeek->addDay()->clone();
-            $this->count    =   $faker->numberBetween(5,10);
+            $this->count    =   $this->count === false ? $faker->numberBetween(5,10) : $this->count;
             $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
             $this->processOrders( $date, $callback );
         }        
@@ -151,6 +153,9 @@ class CreateOrderTest extends TestCase
                         'country'       =>  'United State Seattle',
                     ]
                 ],
+                'author'                =>  ! empty( $this->users ) // we want to randomise the users
+                    ? collect( $this->users )->suffle()->first()
+                    : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
                 'coupons'               =>  $allCoupons,
                 'subtotal'              =>  $subtotal,
                 'shipping'              =>  $shippingFees,

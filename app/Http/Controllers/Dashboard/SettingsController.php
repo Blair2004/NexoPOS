@@ -46,12 +46,24 @@ class SettingsController extends DashboardController
             case 'reports'; return $this->reportsSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
+            case 'expenses-settings'; return $this->expenseSettings(); break;
 
             case 'reset'; return $this->resetSettings(); break;
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
-            default : return abort( 404, __( 'Settings Page Not Found' ) );break;
+            default : return $this->handleDefaultSettings( $identifier );break;
         }
+    }
+
+    public function handleDefaultSettings( $identifier )
+    {
+        $settings       =   Hook::filter( 'ns.settings', false, $identifier );
+
+        if ( $settings instanceof SettingsPage ) {
+            return $settings->renderForm();
+        }
+
+        return abort( 404, __( 'Settings Page Not Found' ) );
     }
 
     /**
@@ -83,6 +95,14 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.general', [
             'title'     =>      __( 'General Settings' ),
             'description'   =>  __( 'Configure the general settings of the application.' )
+        ]);
+    }
+
+    public function expenseSettings()
+    {
+        return $this->view( 'pages.dashboard.settings.expenses', [
+            'title'     =>      __( 'Expenses Settings' ),
+            'description'   =>  __( 'Configure the expenses settings of the application.' )
         ]);
     }
 

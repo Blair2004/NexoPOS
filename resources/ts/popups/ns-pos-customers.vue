@@ -27,66 +27,70 @@
                         </div>
                     </div>
                     <div v-if="customer" class="flex flex-col flex-auto">
-                        <div class="flex-auto p-2">
+                        <div class="flex-auto p-2 flex flex-col">
                             <div class="-mx-4 flex flex-wrap">
                                 <div class="px-4 mb-4 w-full">
                                     <h2 class="font-semibold text-gray-700">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/3">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
-                                        <h3 class="font-medium text-xl">{{ __( 'Total Purchases' ) }}</h3>
+                                        <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-3xl font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ customer.purchases_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/3">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
-                                        <h3 class="font-medium text-xl">{{ __( 'Total Owed' ) }}</h3>
+                                        <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-3xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ customer.owed_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/3">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
-                                        <h3 class="font-medium text-xl">{{ __( 'Account Amount' ) }}</h3>
+                                        <h3 class="font-medium text-lg">{{ __( 'Account Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-3xl font-bold">{{ customer.account_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="flex flex-auto flex-col overflow-hidden">
                                 <div class="py-2 w-full">
                                     <h2 class="font-semibold text-gray-700">{{ __( 'Last Purchases' ) }}</h2>
                                 </div>
-                                <table class="table w-full">
-                                    <thead>
-                                        <tr class="text-gray-700">
-                                            <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
-                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
-                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
-                                            <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-gray-700">
-                                        <tr v-if="orders.length === 0">
-                                            <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
-                                        </tr>
-                                        <tr v-for="order of orders" :key="order.id">
-                                            <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
-                                            <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
-                                            <td class="border border-gray-200 p-2 text-center">{{ order.payment_status }}</td>
-                                            <td class="border border-gray-200 p-2 text-center">
-                                                <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
-                                                    <i class="las la-wallet"></i>
-                                                    <span class="ml-1">{{ __( 'Payment' ) }}</span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="flex-auto flex-col flex overflow-hidden">
+                                    <div class="flex-auto overflow-y-auto">
+                                        <table class="table w-full">
+                                            <thead>
+                                                <tr class="text-gray-700">
+                                                    <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
+                                                    <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
+                                                    <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
+                                                    <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="text-gray-700">
+                                                <tr v-if="orders.length === 0">
+                                                    <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
+                                                </tr>
+                                                <tr v-for="order of orders" :key="order.id">
+                                                    <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
+                                                    <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
+                                                    <td class="border border-gray-200 p-2 text-right">{{ order.human_status }}</td>
+                                                    <td class="border border-gray-200 p-2 text-center">
+                                                        <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
+                                                            <i class="las la-wallet"></i>
+                                                            <span class="ml-1">{{ __( 'Payment' ) }}</span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="p-2 border-t border-gray-400 flex justify-between">

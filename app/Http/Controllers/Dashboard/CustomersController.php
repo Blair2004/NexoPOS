@@ -21,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerReward;
+use App\Models\Order;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 
@@ -119,22 +120,25 @@ class CustomersController extends DashboardController
      */
     public function getOrders( $id )
     {
-        return $this->customerService->get( $id )->orders;
+        return $this->customerService->get( $id )->orders->map( function( $order ) {
+            switch( $order->payment_status ) {
+                case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' ); break;
+                case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' ); break;
+                case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' ); break;
+                case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' ); break;
+                case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' ); break;
+                case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' ); break;
+                case Order::PAYMENT_VOID : $order->human_status = __( 'Void' ); break;
+                default: $order->human_status = $order->payment_status; break;
+            }
+
+            return $order;
+        });
     }
 
     public function editCustomer( Customer $customer )
     {
-        return $this->view( 'pages.dashboard.crud.form', [
-            'title'             =>  sprintf( __( 'Edit Customer : %s' ), $customer->name ),
-            'description'       =>  __( 'Edit an existing customer.' ),
-            'submitUrl'         =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $customer->id ),
-            'returnUrl'         =>  ns()->url( '/dashboard/customers' ),
-            'submitMethod'      =>  'PUT',
-            'mainFieldLabel'    =>  __( 'Customer Name' ),
-            'saveButton'        =>  __( 'Update Customer' ),
-            'src'               =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/form-config/' . $customer->id ),
-            'customer'          =>  $customer
-        ]);
+        return CustomerCrud::form( $customer );
     }
 
     /**

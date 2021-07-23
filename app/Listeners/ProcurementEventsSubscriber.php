@@ -11,6 +11,7 @@ use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use App\Events\ProcurementBeforeUpdateProductEvent;
 use App\Models\Provider;
+use App\Services\ExpenseService;
 use App\Services\ProviderService;
 
 class ProcurementEventsSubscriber
@@ -19,14 +20,21 @@ class ProcurementEventsSubscriber
     protected $providerService;
     protected $productService;
 
+    /**
+     * @var ExpenseService
+     */
+    protected $expenseService;
+
     public function __construct( 
         ProcurementService $procurementService,
         ProductService $productService,
-        ProviderService $providerService
+        ProviderService $providerService,
+        ExpenseService $expenseService
     ) {
         $this->procurementService   =   $procurementService;
         $this->providerService      =   $providerService;
         $this->productService       =   $productService;
+        $this->expenseService       =   $expenseService;
     }
 
     public function subscribe( $events )
@@ -90,6 +98,24 @@ class ProcurementEventsSubscriber
         $events->listen(
             ProcurementAfterUpdateEvent::class,
             fn( $event ) => $this->procurementService->handleProcurement( $event->procurement )
+        );
+
+        /**
+         * if a procurement is saved as paid
+         * then we'll create an expense
+         */
+        $events->listen(
+            ProcurementAfterUpdateEvent::class,
+            fn( ProcurementAfterUpdateEvent $event ) => $this->expenseService->handleProcurementExpense( $event->procurement )
+        );
+
+        /**
+         * We'll check if the procurement
+         * after being created is marked as paid.
+         */
+        $events->listen(
+            ProcurementAfterCreateEvent::class,
+            fn( ProcurementAfterCreateEvent $event ) => $this->expenseService->handleProcurementExpense( $event->procurement )
         );
 
         /**

@@ -371,7 +371,7 @@ class OrdersService
                 $existingCoupon->type                   =   $coupon[ 'type' ] ?: 0;
                 $existingCoupon->limit_usage            =   $coupon[ 'limit_usage' ] ?: 0;
                 $existingCoupon->code                   =   $coupon[ 'code' ];
-                $existingCoupon->author                 =   Auth::id();
+                $existingCoupon->author                 =   $order->author ?? Auth::id();
                 $existingCoupon->discount_value         =   $coupon[ 'discount_value' ] ?: 0;
             }
 
@@ -668,7 +668,7 @@ class OrdersService
                 }
             }
             
-            $orderShipping->author      =   Auth::id();
+            $orderShipping->author      =   $order->author ?? Auth::id();
             $orderShipping->order_id    =   $order->id;
             $orderShipping->save();
         }
@@ -758,7 +758,7 @@ class OrdersService
         $orderPayment->order_id     =   $order->id;
         $orderPayment->identifier   =   $payment['identifier'];
         $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
-        $orderPayment->author       =   Auth::id();
+        $orderPayment->author       =   $order->author ?? Auth::id();
         $orderPayment->save();
 
         /**
@@ -1325,7 +1325,7 @@ class OrdersService
         $order->payment_status          =   $paymentStatus;
         $order->delivery_status         =   'pending';
         $order->process_status          =   'pending';
-        $order->author                  =   Auth::id();
+        $order->author                  =   $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 ) ?: $this->computeOrderTaxValue( $fields, $order );
         $order->code                    =   $order->code ?: ''; // to avoid generating a new code

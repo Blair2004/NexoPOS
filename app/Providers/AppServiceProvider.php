@@ -266,13 +266,13 @@ class AppServiceProvider extends ServiceProvider
         config([ 'nexopos.orders.types'         =>  Hook::filter( 'ns-orders-types', [
             'takeaway'          =>  [
                 'identifier'    =>  'takeaway',
-                'label'         =>  'Take Away',
+                'label'         =>  __( 'Take Away' ),
                 'icon'          =>  '/images/groceries.png',
                 'selected'      =>  false
             ], 
             'delivery'          =>  [
                 'identifier'    =>  'delivery',
-                'label'         =>  'Delivery',
+                'label'         =>  __( 'Delivery' ),
                 'icon'          =>  '/images/delivery.png',
                 'selected'      =>  false
             ]

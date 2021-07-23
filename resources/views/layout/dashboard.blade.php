@@ -78,9 +78,12 @@ use App\Services\DateService;
                 </div>
             </div>
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
-            <div class="flex flex-auto overflow-hidden bg-gray-200">
+            <div class="flex flex-auto flex-col overflow-hidden bg-gray-200">
                 <div class="overflow-y-auto flex-auto">
                     @yield( 'layout.dashboard.body', View::make( 'common.dashboard.with-header' ) )
+                </div>
+                <div class="p-2 text-xs flex justify-end text-gray-500">
+                    {!! sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) !!}
                 </div>
             </div>
         </div>

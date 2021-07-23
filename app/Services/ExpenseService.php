@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ExpenseCategory;
 use App\Exceptions\NotFoundException;
 use App\Models\ExpenseHistory;
+use App\Models\Procurement;
 use App\Models\Role;
 use Carbon\Carbon;
 
@@ -351,5 +352,43 @@ class ExpenseService
             ->get();
 
         return $history instanceof ExpenseHistory;
+    }
+
+    /**
+     * Will record an expense resulting from a paid procurement
+     * @param Procurement $procurement
+     * @return void
+     */
+    public function handleProcurementExpense( Procurement $procurement )
+    {
+        if ( 
+            ( bool ) ns()->option->get( 'ns_supplies_create_expenses' ) && 
+            $procurement->payment_status === Procurement::PAYMENT_PAID &&
+            $procurement->delivery_status === Procurement::DELIVERED
+        ) {
+            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_supplies_expense_category' ) );
+
+            if ( ! $expenseCategory instanceof ExpenseCategory ) {
+                $result     =   $this->createCategory([
+                    'name'  =>  __( 'Procurement Expenses' ),
+                ]);
+
+                $expenseCategory    =   $result[ 'data' ][ 'category' ];
+            }
+                                    
+            /**
+             * this behave as a flash expense
+             * made only for recording an history.
+             */
+            $expense                =   new Expense;
+            $expense->value         =   $procurement->value;
+            $expense->active        =   true;
+            $expense->author        =   Auth::id();
+            $expense->name          =   sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $expense->id            =   0; // this is not assigned to an existing expense
+            $expense->category      =   $expenseCategory;
+
+            $this->recordExpenseHistory( $expense );
+        }
     }
 }
