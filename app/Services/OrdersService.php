@@ -585,7 +585,7 @@ class OrdersService
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
                     return $this->currencyService->define( $product['quantity'] )
-                        ->multiplyBy( floatval($product['sale_price']) )
+                        ->multiplyBy( floatval($product['unit_price']) )
                         ->getRaw();
                 })->sum();
 
