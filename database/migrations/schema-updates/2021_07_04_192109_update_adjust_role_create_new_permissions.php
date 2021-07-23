@@ -14,16 +14,13 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
      */
     public function up()
     {        
-        $role           =   Role::namespace( 'nexopos.store.driver' )->first();
+        $role           =   Role::namespace( 'nexopos.store.driver' );
         
         if ( $role instanceof Role ) {
             $permissions    =   Role::namespace( 'nexopos.store.driver' )
-                ->first()
                 ->permissions;
 
-            Role::namespace( 'nexopos.store.driver' )
-                ->first()
-                ->removePermissions( $permissions ); 
+            $role->removePermissions( $permissions ); 
                 
             $role->delete();
         }

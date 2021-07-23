@@ -19,7 +19,8 @@ return [
     'languages'     =>  [
         'en'        =>  'English',
         'fr'        =>  'Français',
-        'es'        =>  'Espanol'
+        'es'        =>  'Espanol',
+        'it'        =>  'Italian',
     ],
     'timezones'      =>  [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
