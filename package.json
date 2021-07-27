@@ -39,6 +39,7 @@
     "autoprefixer": "^10.0.4",
     "chart.js": "^3.3.0",
     "css-loader": "^3.6.0",
+    "currency.js": "^2.0.4",
     "dayjs": "^1.8.36",
     "jspdf": "^2.1.1",
     "mini-css-extract-plugin": "^1.0.0",
