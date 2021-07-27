@@ -1938,11 +1938,11 @@ class OrdersService
      */
     public function orderTemplateMapping( $option, Order $order )
     {
-        $template                       =   $this->optionsService->get( $option );
+        $template                       =   ns()->option->get( $option );
         $availableTags                  =   [
-            "store_name"                =>  $this->optionsService->get( 'ns_store_name' ),
-            "store_email"               =>  $this->optionsService->get( 'ns_store_email' ),
-            "store_phone"               =>  $this->optionsService->get( 'ns_store_phone' ),
+            "store_name"                =>  ns()->option->get( 'ns_store_name' ),
+            "store_email"               =>  ns()->option->get( 'ns_store_email' ),
+            "store_phone"               =>  ns()->option->get( 'ns_store_phone' ),
             "cashier_name"              =>  $order->user->username,
             "cashier_id"                =>  $order->author,
             "order_code"                =>  $order->code,

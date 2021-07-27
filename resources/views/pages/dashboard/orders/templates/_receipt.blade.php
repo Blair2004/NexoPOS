@@ -5,7 +5,7 @@ use App\Classes\Hook;
 <div class="w-full h-full">
     <div class="w-full md:w-1/2 lg:w-1/3 shadow-lg bg-white p-2 mx-auto">
         <div class="flex items-center justify-center">
-            <h3 class="text-3xl font-bold">{{ $optionsService->get( 'ns_store_name' ) }}</h3>
+            <h3 class="text-3xl font-bold">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
         </div>
         <div class="p-2 border-b border-gray-700">
             <div class="flex flex-wrap -mx-2 text-sm">
@@ -107,7 +107,7 @@ use App\Classes\Hook;
             </div>
             @endif
             <div class="pt-6 pb-4 text-center text-gray-800 text-sm">
-                {{ $optionsService->get( 'ns_invoice_receipt_footer' ) }}
+                {{ ns()->option->get( 'ns_invoice_receipt_footer' ) }}
             </div>
         </div>
     </div>

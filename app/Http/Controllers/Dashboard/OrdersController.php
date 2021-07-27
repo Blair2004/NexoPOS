@@ -23,6 +23,7 @@ use App\Crud\PaymentTypeCrud;
 use App\Exceptions\NotAllowedException;
 use App\Models\OrderInstalment;
 use App\Models\PaymentType;
+use Modules\NsMultiStore\Models\Store;
 
 class OrdersController extends DashboardController
 {
@@ -44,9 +45,13 @@ class OrdersController extends DashboardController
         $this->optionsService       =   $options;
         $this->ordersService        =   $ordersService;
 
-        $this->paymentTypes         =   PaymentType::active()->get()->map( function( $payment, $index ) {
-            $payment->selected  =   $index === 0;
-            return $payment;
+        $this->middleware( function( $request, $next ) {
+            $this->paymentTypes         =   PaymentType::active()->get()->map( function( $payment, $index ) {
+                $payment->selected  =   $index === 0;
+                return $payment;
+            });
+
+            return $next( $request );
         });
     }
 
