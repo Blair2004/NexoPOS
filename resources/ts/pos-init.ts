@@ -50,6 +50,7 @@ export class POS {
     private _visibleSection: BehaviorSubject<'cart' | 'grid' | 'both'>;
     private _isSubmitting           =   false;
     private _processingAddQueue     =   false;
+    private _selectedPaymentType: BehaviorSubject<PaymentType>;
     private defaultOrder            =   (): Order => {
         const order: Order     =   {
             discount_type: null,
@@ -104,6 +105,10 @@ export class POS {
 
     get paymentsType() {
         return this._paymentsType;
+    }
+
+    get selectedPaymentType() {
+        return this._selectedPaymentType;
     }
 
     get order() {
@@ -169,16 +174,17 @@ export class POS {
 
     public initialize()
     {
-        this._products          =   new BehaviorSubject<OrderProduct[]>([]);
-        this._customers         =   new BehaviorSubject<Customer[]>([]);
-        this._types             =   new BehaviorSubject<OrderType[]>([]);
-        this._breadcrumbs       =   new BehaviorSubject<any[]>([]);
-        this._screen            =   new BehaviorSubject<string>('');
-        this._paymentsType      =   new BehaviorSubject<PaymentType[]>([]);   
-        this._visibleSection    =   new BehaviorSubject( 'both' );     
-        this._options           =   new BehaviorSubject({});
-        this._settings          =   new BehaviorSubject<{ [ key: string ] : any }>({});
-        this._order             =   new BehaviorSubject<Order>( this.defaultOrder() );
+        this._products              =   new BehaviorSubject<OrderProduct[]>([]);
+        this._customers             =   new BehaviorSubject<Customer[]>([]);
+        this._types                 =   new BehaviorSubject<OrderType[]>([]);
+        this._breadcrumbs           =   new BehaviorSubject<any[]>([]);
+        this._screen                =   new BehaviorSubject<string>('');
+        this._paymentsType          =   new BehaviorSubject<PaymentType[]>([]);   
+        this._visibleSection        =   new BehaviorSubject( 'both' );     
+        this._options               =   new BehaviorSubject({});
+        this._settings              =   new BehaviorSubject<{ [ key: string ] : any }>({});
+        this._order                 =   new BehaviorSubject<Order>( this.defaultOrder() );
+        this._selectedPaymentType   =   new BehaviorSubject<PaymentType>( null );
         this._orderTypeProcessQueue =   [
             {
                 identifier : 'handle.delivery-order',
@@ -512,7 +518,8 @@ export class POS {
     canProceedAsLaidAway( _order: Order ): { status: string, message: string, data: { order: Order } } | any {
         return new Promise( async ( resolve, reject ) => {
             const minimalPaymentPercent     =   _order.customer.group.minimal_credit_payment;
-            const expected                  =   ( _order.total * minimalPaymentPercent ) / 100;
+            let expected:any                =   ( ( _order.total * minimalPaymentPercent ) / 100 ).toFixed( ns.currency.ns_currency_precision );
+            expected                        =   parseFloat( expected );
 
             /**
              * checking order details
@@ -523,13 +530,48 @@ export class POS {
                     Popup.show( NsLayawayPopup, { order: _order, reject, resolve });
                 });
 
-                if ( order.tendered < expected ) {
-                    const message   =    `Before saving the order as laid away, a minimum payment of ${ Vue.filter( 'currency' )( expected ) } is required`;
-                    Popup.show( NsAlertPopup, { title: 'Unable to proceed', message });
-                    return reject({ status: 'failed', message });
-                }
+                if ( order.instalments.length === 0 && order.tendered < expected ) {
+                    const message   =    __( `Before saving the order as laid away, a minimum payment of {amount} is required` ).replace( '{amount}', Vue.filter( 'currency' )( expected ));
+                    Popup.show( NsAlertPopup, { title: __( 'Unable to proceed' ), message });
+                    return reject({ status: 'failed', message });                    
+                } else {
+                    const paymentType       =   this.selectedPaymentType.getValue();
+                    const expectedSlice     =   order.instalments.filter( payment => payment.amount == expected );
 
-                return resolve({ status: 'success', message: __( 'Layaway defined' ), data: { order } });
+                    if ( expectedSlice.length === 0 ) {
+                        return resolve({ status: 'success', message: __( 'Layaway defined' ), data: { order } });
+                    }
+
+                    const firstSlice        =   expectedSlice[0].amount;
+
+                    /**
+                     * If the instalment has been configured, we'll ease things for
+                     * the waiter and invite him to add the first slice as 
+                     * the payment.
+                     */
+                    Popup.show( NsConfirmPopup, { 
+                        title : __( `Confirm Payment` ),
+                        message : __( `An instalment has been detected. Would you like to add as first payment {amount} for the selected payment type "{paymentType}"?` )
+                            .replace( '{amount}', Vue.filter( 'currency' )( firstSlice ) )
+                            .replace( '{paymentType}', paymentType.label ),
+                        onAction: ( action ) => {
+
+                            console.log( paymentType.identifier );
+
+                            const payment: Payment  =   {
+                                identifier : paymentType.identifier,
+                                label: paymentType.label,
+                                value: firstSlice,
+                                readonly: false,
+                                selected: true,
+                            }
+
+                            this.addPayment( payment );
+
+                            resolve({ status: 'success', message: __( 'Layaway defined' ), data: { order } });
+                        }
+                    });
+                }
 
             } catch( exception ) {
                 return reject( exception );
@@ -558,7 +600,7 @@ export class POS {
             if ( order.payment_status !== 'hold' ) {
                 if ( order.payments.length  === 0 || order.total > order.tendered ) {
                     if ( this.options.getValue().ns_orders_allow_partial === 'no' ) {
-                        const message   =   'Partially paid orders are disabled.';
+                        const message   =   __( 'Partially paid orders are disabled.' );
                         return reject({ status: 'failed', message });
                     } else if ( minimalPayment >= 0 ) {
                         try {
@@ -606,7 +648,7 @@ export class POS {
                     })
             }
 
-            return reject({ status: 'failed', message: 'An order is currently being processed.' });
+            return reject({ status: 'failed', message: __( 'An order is currently being processed.' ) });
         });
     }
 

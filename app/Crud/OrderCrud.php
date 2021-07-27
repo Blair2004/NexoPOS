@@ -438,6 +438,11 @@ class OrderCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
+        /**
+         * @var OrdersService
+         */
+        $orderService           =   app()->make( OrdersService::class );
+
         // Don't overwrite
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
@@ -445,24 +450,9 @@ class OrderCrud extends CrudService
         $entry->total           =   ( string ) ns()->currency->define( $entry->total );
         $entry->discount        =   ( string ) ns()->currency->define( $entry->discount );
 
-        switch( $entry->type ) {
-            case 'delivery' : $entry->type = __( 'Delivery' ); break;
-            case 'takeaway' : $entry->type = __( 'Take Away' ); break;
-        }
-
-        switch( $entry->delivery_status ) {
-            case 'pending' : $entry->delivery_status       = __( 'Pending' ); break;
-            case 'ongoing' : $entry->delivery_status       = __( 'Ongoing' ); break;
-            case 'delivered' : $entry->delivery_status     = __( 'Delivered' ); break;
-            case 'failed' : $entry->delivery_status        = __( 'Failed' ); break;
-        }
-
-        switch( $entry->process_status ) {
-            case 'pending' : $entry->process_status       = __( 'Pending' ); break;
-            case 'ongoing' : $entry->process_status       = __( 'Ongoing' ); break;
-            case 'delivered' : $entry->process_status     = __( 'Delivered' ); break;
-            case 'failed' : $entry->process_status        = __( 'Failed' ); break;
-        }
+        $entry->delivery_status         =   $orderService->getShippingLabel( $entry->delivery_status );
+        $entry->process_status          =   $orderService->getProcessStatus( $entry->process_status );
+        $entry->type                    =   $orderService->getTypeLabel( $entry->type );
 
         switch( $entry->payment_status ) {
             case Order::PAYMENT_PAID : 

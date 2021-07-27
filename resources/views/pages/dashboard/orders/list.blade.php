@@ -1,7 +1,9 @@
 <?php
 use App\Services\Helper;
-?>
+use App\Services\OrdersService;
 
+?>
+@inject( 'ordersService', OrdersService::class )
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
@@ -24,12 +26,10 @@ use App\Services\Helper;
 @section( 'layout.dashboard.footer' )
     @parent
 <script>
-const processingStatus  =   <?php echo json_encode( Helper::kvToJsOptions([
-    'pending'   =>  __( 'Pending' ),
-    'failed'    =>  __( 'Failed' ),
-    'ongoing'   =>  __( 'Ongoing' ),
-    'ready'     =>  __( 'Ready' )
-]));?>;
+const processingStatuses  =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getProcessStatuses() ));?>;
+const deliveryStatuses    =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getDeliveryStatuses() ));?>;
+const typeLabels          =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getTypeLabels() ));?>;
+const paymentLabels       =   <?php echo json_encode( Helper::kvToJsOptions( $ordersService->getPaymentLabels() ));?>;
 
 document.addEventListener( 'DOMContentLoaded', () => {
     nsEvent.subject().subscribe( event => {

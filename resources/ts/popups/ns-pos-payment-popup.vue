@@ -42,10 +42,14 @@ export default {
             }
         });
 
-        this.order      =   this.$popupParams.order;
-
+        this.order                      =   this.$popupParams.order;
         this.paymentTypesSubscription   =   POS.paymentsType.subscribe( paymentsType => {
             this.paymentsType   =   paymentsType;
+            paymentsType.filter( payment => {
+                if ( payment.selected ) {
+                    POS.selectedPaymentType.next( payment );
+                }
+            });
         });
     },
     watch: {
@@ -86,6 +90,7 @@ export default {
         },
         closePopup() {
             this.$popup.close();
+            POS.selectedPaymentType.next( null );
         },
         deletePayment( payment ) {
             POS.removePayment( payment );

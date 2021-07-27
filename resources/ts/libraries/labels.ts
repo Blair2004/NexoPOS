@@ -1,42 +1,25 @@
 import { __ } from "./lang";
+declare const typeLabels;
+declare const deliveryStatuses;
+declare const processingStatuses;
+declare const paymentLabels;
 
 export default class Labels {
     getTypeLabel( label ) {
-        switch( label ) {
-            // @todo localization needed here
-            case 'delivery' : return __( 'Delivery' ); break;
-            case 'takeaway' : return __( 'Take Away' ); break;
-            default : return __( 'Unknown Type' ); break;
-        }
+        console.log( label );
+        const type   =   typeLabels.filter( p => p.value === label );
+        return type.length > 0 ? type[0].label : __( 'Unknown Status' );
     }
     getDeliveryStatus( label ) {
-        switch( label ) {
-            // @todo localization needed here
-            case 'pending' : return __( 'Pending' ); break;
-            case 'ongoing' : return __( 'Ongoing' ); break;
-            case 'delivered' : return __( 'Delivered' ); break;
-            case 'failed' : return __( 'Delivery Failure' ); break;
-            default : return __( 'Unknown Status' ); break;
-        }
+        const delivery   =   deliveryStatuses.filter( p => p.value === label );
+        return delivery.length > 0 ? delivery[0].label : __( 'Unknown Status' );
     }
     getProcessingStatus( label ) {
-        switch( label ) {
-            // @todo localization needed here
-            case 'pending' : return __( 'Pending' ); break;
-            case 'ongoing' : return __( 'Ongoing' ); break;
-            case 'ready' : return __( 'Ready' ); break;
-            case 'failed' : return __( 'Failure' ); break;
-            default : return __( 'Unknown Status' ); break;
-        }
+        const process   =   processingStatuses.filter( p => p.value === label );
+        return process.length > 0 ? process[0].label : __( 'Unknown Status' );
     }
     getPaymentStatus( label ) {
-        switch( label ) {
-            // @todo localization needed here
-            case 'paid' : return __( 'Paid' ); break;
-            case 'hold' : return __( 'Hold' ); break;
-            case 'unpaid' : return __( 'Unpaid' ); break;
-            case 'partially_paid' : return __( 'Partially Paid' ); break;
-            default : return __( 'Unknown Status' ); break;
-        }
+        const paymentType   =   paymentLabels.filter( p => p.value === label );
+        return paymentType.length > 0 ? paymentType[0].label : __( 'Unknown Status' );
     }
 }
