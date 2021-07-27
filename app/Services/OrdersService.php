@@ -18,7 +18,9 @@ use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
+use App\Events\OrderAfterUpdatedDeliveryStatus;
 use App\Events\OrderAfterUpdatedEvent;
+use App\Events\OrderAfterUpdatedProcessStatus;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Events\OrderProductBeforeSavedEvent;
@@ -1333,11 +1335,55 @@ class OrdersService
 
         if ( $order->code === '' ) {
             $order->code                    =   $this->generateOrderCode( $order ); // to avoid generating a new code
-            $order->save();
         }
 
+        /**
+         * Some order needs to have their
+         * delivery and process status updated
+         * according to the order type
+         */
+        $this->updateDeliveryStatus( $order );
+        $this->updateProcessStatus( $order );
+        
+        $order->save();        
 
         return $order;
+    }
+
+    /**
+     * Will update the prodcess status of an order
+     * @param Order $order
+     * @return void
+     */
+    public function updateProcessStatus( Order $order )
+    {
+        if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
+            if ( $order->type === 'delivery' ) {
+                $order->process_status  =   'pending';
+            } else {
+                $order->process_status  =   'not-available';
+            }
+        }
+
+        OrderAfterUpdatedProcessStatus  ::dispatch( $order );
+    }
+
+    /**
+     * Will order the delivery status of an order
+     * @param Order $order
+     * @return void
+     */
+    public function updateDeliveryStatus( Order $order )
+    {
+        if ( in_array( $order->type, [ 'delivery', 'takeaway' ] ) ) {
+            if ( $order->type === 'delivery' ) {
+                $order->delivery_status  =   'pending';
+            } else {
+                $order->delivery_status  =   'not-available';
+            }
+        }
+
+        OrderAfterUpdatedDeliveryStatus::dispatch( $order );
     }
 
     /**
@@ -1894,10 +1940,8 @@ class OrdersService
      */
     public function getTypeLabel( $type ) 
     {
-        switch( $type ) {
-            case 'delivery': return __( 'Delivery' ); break;
-            case 'takeaway': return __( 'Take Away' ); break;
-        }
+        $types      =   $this->getTypeLabels();
+        return $types[ $type ] ?? sprintf( __( 'Unknown Type (%s)' ), $type );
     }
 
     /**
@@ -1913,6 +1957,15 @@ class OrdersService
     }
 
     /**
+     * Returns the order payment labels
+     * @return array $labels
+     */
+    public function getPaymentLabels()
+    {
+        return config( 'nexopos.orders.statuses' );
+    }
+
+    /**
      * It only returns what is the type of
      * the orders
      * @param string
@@ -1920,13 +1973,63 @@ class OrdersService
      */
     public function getShippingLabel( $type ) 
     {
-        switch( $type ) {
-            case 'pending': return __( 'Pending' ); break;
-            case 'ongoing': return __( 'Ongoing' ); break;
-            case 'delivered': return __( 'Delivered' ); break;
-            case 'failed': return __( 'Shipping Failed' ); break;
-            default : return sprintf( _( 'Unknown Status (%s)' ), $type ); break;
-        }
+        $shipping       =   $this->getDeliveryStatuses();
+        return $shipping[ $type ] ?? sprintf( _( 'Unknown Status (%s)' ), $type );
+    }
+
+    /**
+     * It only returns the order process status
+     * @param string
+     * @return string
+     */
+    public function getProcessStatus( $type ) 
+    {
+        $process    =   $this->getProcessStatuses();
+        return $process[ $type ] ?? sprintf( _( 'Unknown Status (%s)' ), $type );
+    }
+
+    /**
+     * It only returns the order process status
+     * @param string
+     * @return string
+     */
+    public function getTypeLabels() 
+    {
+        return Hook::filter( 'ns-order-types', [
+            'delivery'          =>  __( 'Pending' ),
+            'takeaway'          =>  __( 'Ongoing' ),
+            'not-available'     =>  __( 'Ready' ),
+            'not-available'     =>  __( 'Not Available' ),
+        ]);
+    }
+
+    /**
+     * Returns the order statuses
+     * @return array $statuses
+     */
+    public function getProcessStatuses()
+    {
+        return [
+            'pending'       =>  __( 'Pending' ),
+            'ongoing'       =>  __( 'Ongoing' ),
+            'ready'         =>  __( 'Ready' ),
+            'not-available' =>  __( 'Not Available' ),
+        ];
+    }
+
+    /**
+     * Returns the order statuses
+     * @return array $statuses
+     */
+    public function getDeliveryStatuses()
+    {
+        return [
+            'pending'       =>  __( 'Pending' ),
+            'ongoing'       =>  __( 'Ongoing' ),
+            'delivered'     =>  __( 'Delivered' ),
+            'failed'        =>  __( 'Failed' ),
+            'not-available' =>  __( 'Not Available' ),
+        ];
     }
 
     /**
@@ -2287,6 +2390,35 @@ class OrdersService
         }
 
         $order->process_status      =   $status;
+        $order->save();
+
+        event( new OrderAfterUpdatedEvent( $order ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The order has been successfully updated.' )
+        ];
+    }
+
+    /**
+     * Changes the order processing status
+     * @param Order $order
+     * @param string $status
+     * @return array
+     */
+    public function changeDeliveryStatus( Order $order, $status )
+    {
+        if ( ! in_array( $status, [
+            Order::DELIVERY_COMPLETED,
+            Order::DELIVERY_DELIVERED,
+            Order::DELIVERY_FAILED,
+            Order::DELIVERY_ONGOING,
+            Order::DELIVERY_PENDING,
+        ] ) ) {
+            throw new NotAllowedException( __( 'The provided status is not supported.' ) );
+        }
+
+        $order->delivery_status      =   $status;
         $order->save();
 
         event( new OrderAfterUpdatedEvent( $order ) );

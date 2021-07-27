@@ -239,7 +239,7 @@ export default {
                 return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) ).subscribe();
             }
 
-            console.log( instalments, totalInstalments, this.order );
+            // console.log( totalInstalments, this.order.total );
 
             if ( totalInstalments != this.order.total ) {
                 return nsSnackBar.error( __( 'Total instalments must be equal to the order total.' ) ).subscribe();

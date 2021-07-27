@@ -78,7 +78,7 @@
             </div>
         </div>
         
-        <div class="px-4 w-full md:w-1/2 lg:w-1/3 mb-2">
+        <div class="px-4 w-full md:w-1/2 lg:w-2/4 mb-2">
             <div class="mb-2">
                 <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Order Status' ) }}</h3>
             </div>
@@ -104,12 +104,28 @@
                         <span>{{ __( 'Delivery Status' ) }}</span>
                     </h4>
                 </div>
-                <div class="font-semibold text-gray-800">{{ labels.getDeliveryStatus( order.delivery_status ) }}</div>
+                <div class="font-semibold text-gray-800 mt-2 md:mt-0 w-full md:w-auto">
+                    <div class="w-full text-center">
+                        <span @click="showDeliverySelect = true" v-if="! showDeliverySelect" class="font-semibold text-gray-800 border-b border-blue-400 cursor-pointer border-dashed">{{ labels.getDeliveryStatus( order.delivery_status ) }}</span>
+                    </div>
+                    <div v-if="showDeliverySelect" class="flex-auto flex">
+                        <select ref="process_status" class="flex-auto border-blue-400 rounded-lg" v-model="order.delivery_status">
+                            <option 
+                                v-for="( option, index ) of deliveryStatuses" 
+                                :key="index" 
+                                :value="option.value">{{ option.label }}</option>
+                        </select>
+                        <div class="pl-2 flex">
+                            <ns-close-button @click="showDeliverySelect = false"></ns-close-button>
+                            <button @click="submitDeliveryStatus( order )" class="bg-green-400 text-white rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="mb-2 p-2 flex flex-col md:flex-row justify-between items-center bg-gray-200">
                 <div>
                     <h4 class="text-semibold text-gray-700">
-                        <span>{{ __( 'Proceessing Status' ) }}</span>
+                        <span>{{ __( 'Processing Status' ) }}</span>
                     </h4>
                 </div>
                 <div class="font-semibold text-gray-800 mt-2 md:mt-0 w-full md:w-auto">
@@ -119,7 +135,7 @@
                     <div class="flex-auto flex" v-if="showProcessingSelect">
                         <select ref="process_status" class="flex-auto border-blue-400 rounded-lg" v-model="order.process_status">
                             <option 
-                                v-for="( option, index ) of processingStatus" 
+                                v-for="( option, index ) of processingStatuses" 
                                 :key="index" 
                                 :value="option.value">{{ option.label }}</option>
                         </select>
@@ -140,7 +156,7 @@
             </div>
         </div>
 
-        <div class="px-4 w-full md:w-1/2 lg:w-2/3 mb-2">
+        <div class="px-4 w-full md:w-1/2 lg:w-2/4 mb-2">
             <div class="mb-2">
                 <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Products' ) }}</h3>
             </div>
@@ -164,9 +180,11 @@ export default {
     props: [ 'order' ],
     data() {
         return {
-            processingStatus,
+            processingStatuses,
+            deliveryStatuses,
             labels: new Labels,
             showProcessingSelect: false,
+            showDeliverySelect: false,
         }
     },
     mounted() {
@@ -182,6 +200,26 @@ export default {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/processing`, {
                             process_status: this.order.process_status
                         }).subscribe( result => {
+                            this.showProcessingSelect   =   false;
+                            nsSnackBar.success( result.message ).subscribe();
+                        }, ( error ) => {
+                            nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                        })                            
+                    }
+                }
+            })
+        },
+
+        submitDeliveryStatus() {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Would you proceed ?' ),
+                message: __( 'The delivery status of the order will be changed. Please confirm your action.' ),
+                onAction: ( action ) => {
+                    if ( action ) {
+                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/delivery`, {
+                            delivery_status: this.order.delivery_status
+                        }).subscribe( result => {
+                            this.showDeliverySelect     =   false;
                             nsSnackBar.success( result.message ).subscribe();
                         }, ( error ) => {
                             nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();

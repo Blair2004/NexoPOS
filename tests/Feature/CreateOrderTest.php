@@ -122,12 +122,25 @@ class CreateOrderTest extends TestCase
                 $totalCoupons           =   0;
             }
 
-            $discountValue  =   $currency->define( $discountRate )
-                ->multiplyBy( $subtotal )
-                ->divideBy( 100 )
-                ->getRaw();
+            $discount           =   [
+                'type'      =>      $faker->randomElement([ 'percentage', 'flat' ]),
+            ];
 
-            $discountCoupons    =   $currency->define( $discountValue )
+            /**
+             * If the discount is percentage or flat.
+             */
+            if ( $discount[ 'type' ] === 'percentage' ) {
+                $discount[ 'rate' ]     =   $discountRate;
+                $discount[ 'value' ]    =   $currency->define( $discount[ 'rate' ] )
+                    ->multiplyBy( $subtotal )
+                    ->divideBy( 100 )
+                    ->getRaw();
+            } else {
+                $discount[ 'value' ]    =   10;
+                $discount[ 'rate' ]     =   0;
+            }
+            
+            $discountCoupons    =   $currency->define( $discount[ 'value' ] )
                 ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
                 ->getRaw();
 
@@ -138,9 +151,10 @@ class CreateOrderTest extends TestCase
             $orderData  =   array_merge([
                 'customer_id'           =>  $customer->id,
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
+                'discount_type'         =>  $discount[ 'type' ],
                 'created_at'            =>  $this->customDate ? $dateString : null,
-                'discount_percentage'   =>  $discountRate,
+                'discount_percentage'   =>  $discount[ 'rate' ] ?? 0,
+                'discount'              =>  $discount[ 'value' ] ?? 0,
                 'addresses'             =>  [
                     'shipping'          =>  [
                         'name'          =>  'First Name Delivery',
@@ -181,16 +195,11 @@ class CreateOrderTest extends TestCase
                 'status'    =>  'success'
             ]);
 
-            if ( $this->shouldMakePayment ) {
-                $discount       =   $currency->define( $discountRate )
-                    ->multipliedBy( $subtotal )
-                    ->divideBy( 100 )
-                    ->getRaw();
-    
+            if ( $this->shouldMakePayment ) {    
                 $netsubtotal    =   $currency
                     ->define( $subtotal )
                     ->subtractBy( $totalCoupons )
-                    ->subtractBy( $discount )
+                    ->subtractBy( $discount[ 'value' ] )
                     ->getRaw();
     
                 $total          =   $currency->define( $netsubtotal )
@@ -204,8 +213,8 @@ class CreateOrderTest extends TestCase
                     ->getRaw() 
                 );
     
-                $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discountRate + $totalCoupons ) )
-                    ->subtractBy( $subtotal + $shippingFees - ( $discountRate + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
+                $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discount[ 'rate' ] + $totalCoupons ) )
+                    ->subtractBy( $subtotal + $shippingFees - ( $discount[ 'rate' ] + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
                     ->getRaw() 
                 );
 

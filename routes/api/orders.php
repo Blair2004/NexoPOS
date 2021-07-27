@@ -22,6 +22,7 @@ Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->m
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);
 Route::post( 'orders/{order}/processing', [ OrdersController::class, 'changeOrderProcessingStatus' ])->middleware( 'ns.restrict:nexopos.update.orders' );
+Route::post( 'orders/{order}/delivery', [ OrdersController::class, 'changeOrderDeliveryStatus' ])->middleware( 'ns.restrict:nexopos.update.orders' );
 Route::post( 'orders/{order}/payments', [ OrdersController::class, 'addPayment' ])->middleware( 'ns.restrict:nexopos.make-payment.orders' );
 Route::post( 'orders/{order}/refund', [ OrdersController::class, 'makeOrderRefund' ])
 ->middleware( 'ns.restrict:nexopos.refund.orders' );

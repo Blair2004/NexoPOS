@@ -34,7 +34,10 @@ class Order extends NsModel
     const DELIVERY_PENDING                  =   'pending';
     const DELIVERY_ONGOING                  =   'ongoing';
     const DELIVERY_FAILED                   =   'failed';
+
+    // @todo check if it's still useful
     const DELIVERY_COMPLETED                =   'completed';
+    const DELIVERY_DELIVERED                =   'delivered';
 
     public $casts    =   [
         'created_at'                =>  DateCast::class,

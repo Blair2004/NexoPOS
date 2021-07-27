@@ -55,7 +55,7 @@ export interface Order {
     customer_id: number;
     products: OrderProduct[], 
     payments: Payment[],
-    instalments?: { date: string, payment: number }[],
+    instalments?: { date: string, amount: number }[],
     note: string;
     note_visibility: 'hidden' | 'visible';
     tax_group_id: number,
