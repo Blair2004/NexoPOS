@@ -8,6 +8,7 @@ declare const window;
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
 
 const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', locale = 'en' ) => {
+    console.log( format );
     let numeralFormat, currencySymbol;
 
     switch( ns.currency.ns_currency_prefered ) {
@@ -19,16 +20,23 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
         break;
     }
 
-    const config            =   {
-        decimal: ns.currency.ns_currency_decimal_separator,
-        separator: ns.currency.ns_currency_thousand_separator,
-        precision : parseInt( ns.currency.ns_currency_precision ),
-        symbol: ''
-    };
+    let newValue;
 
-    const currencyValue     =   currency( value, config );
+    if ( format === 'full' ) {
+        const config            =   {
+            decimal: ns.currency.ns_currency_decimal_separator,
+            separator: ns.currency.ns_currency_thousand_separator,
+            precision : parseInt( ns.currency.ns_currency_precision ),
+            symbol: ''
+        };
+    
+        newValue    =   currency( value, config ).format();
+    } else {
+        newValue    =   NumeralJS( value ).format( '0.0a' );
+    }
 
-    return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ currencyValue.format() }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
+    return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ newValue }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
+
 });
 
 const nsRawCurrency     =   ( value ) => {
