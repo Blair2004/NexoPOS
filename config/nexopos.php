@@ -1,6 +1,6 @@
 <?php
 return [
-    'version'       =>  '4.3.2',
+    'version'       =>  '4.4.0',
     'pos'           =>  [
         // deprecated
         'payments'  =>  [
