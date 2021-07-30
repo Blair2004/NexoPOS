@@ -30,6 +30,7 @@ Route::get( '/orders/payments-types/create', [ OrdersController::class, 'createP
 Route::get( '/orders/payments-types/edit/{paymentType}', [ OrdersController::class, 'updatePaymentType' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders-update-types' ) );
 Route::get( '/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
 Route::get( '/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt' ]);
+Route::get( '/orders/refund-receipt/{refund}', [ OrdersController::class, 'orderRefundReceipt' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders-refund-receipt' ) );
 Route::get( '/pos', [ OrdersController::class, 'showPOS' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.pos' ) );
 
 Route::get( '/cash-registers', [ CashRegistersController::class, 'listRegisters' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.registers-list' ) );

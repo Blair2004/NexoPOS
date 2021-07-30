@@ -7,6 +7,8 @@ Route::get( 'orders/{id?}', [ OrdersController::class, 'getOrders' ])->where( 'i
 Route::get( 'orders/payments', [ OrdersController::class, 'getSupportedPayments' ]);
 Route::get( 'orders/{id}/pos', [ OrdersController::class, 'getPosOrder' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/products', [ OrdersController::class, 'getOrderProducts' ])->where( 'id', '[0-9]+');
+Route::get( 'orders/{order}/products/refunded', [ OrdersController::class, 'getOrderProductsRefunded' ])->where( 'id', '[0-9]+');
+Route::get( 'orders/{order}/refunds', [ OrdersController::class, 'getOrderRefunds' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/payments', [ OrdersController::class, 'getOrderPayments' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{order}/instalments', [ OrdersController::class, 'getOrderInstalments' ])->where( 'id', '[0-9]+')->middleware( 'ns.restrict:nexopos.read.orders-instalments' );
 Route::get( 'orders/{order}/instalments/{instalment}/paid', [ OrdersController::class, 'markInstalmentAs' ])->where( 'id', '[0-9]+')->middleware( 'ns.restrict:nexopos.update.orders-instalments' );

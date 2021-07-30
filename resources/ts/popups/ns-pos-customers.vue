@@ -17,7 +17,7 @@
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
                 </ns-tabs-item>
-                <ns-tabs-item identifier="customer-account" label="Customer Account" class="flex" style="padding:0!important">
+                <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
                         <i class="lar la-frown text-6xl text-gray-700"></i>
                         <h3 class="font-medium text-2xl text-gray-700">{{ __( 'No Customer Selected' ) }}</h3>
@@ -128,12 +128,12 @@ export default {
 
         this.subscription   =   POS.order.subscribe( order => {
             if ( order.customer !== undefined ) {
-                this.activeTab  =   'customer-account';
+                this.activeTab  =   'account-payment';
                 this.customer   =   order.customer;
                 this.loadCustomerOrders( this.customer.id );
             } else {
                 if ( this.$popupParams.customer !== undefined ) {
-                    this.activeTab  =   'customer-account';
+                    this.activeTab  =   'account-payment';
                     this.customer   =   this.$popupParams.customer;
                     this.loadCustomerOrders( this.customer.id );
                 }

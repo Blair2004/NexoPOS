@@ -101,6 +101,7 @@ export default {
          * @param Unit
          */
         selectUnit( unitQuantity ) {
+            console.log( unitQuantity );
             this.$popupParams.resolve({
                 unit_quantity_id    :   unitQuantity.id,
                 unit_name           :   unitQuantity.unit.name,

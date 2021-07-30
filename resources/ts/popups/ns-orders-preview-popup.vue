@@ -76,9 +76,9 @@ const nsOrderPreviewPopup   =   {
                 nsHttpClient.get( `/api/nexopos/v4/orders/${orderId}/payments` ),
             ])
                 .subscribe( result => {
-                    this.order      =   result[0];
-                    this.products   =   result[1];
-                    this.payments   =   result[2];
+                    this.order              =   result[0];
+                    this.products           =   result[1];
+                    this.payments           =   result[2];
                 });
         },
         deleteOrder() {
@@ -200,10 +200,10 @@ export default nsOrderPreviewPopup;
                 </ns-button>
             </div>
             <div>
-                <ns-button @click="printOrder()" type="info">
+                <!-- <ns-button @click="printOrder()" type="info">
                     <i class="las la-print"></i>
                     {{ __( 'Print' ) }}
-                </ns-button>
+                </ns-button> -->
             </div>
         </div>
     </div>

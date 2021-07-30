@@ -197,7 +197,7 @@ export default {
             nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
                 .subscribe( result => {
                     this.isSubmitting   =   false;
-                    this.$emit( 'updated', true );
+                    this.$emit( 'changed', true );
                     nsSnackBar.success( result.message ).subscribe();
                 }, error => {
                     this.isSubmitting   =   false;
@@ -335,7 +335,7 @@ export default {
         nsHttpClient.get( '/api/nexopos/v4/orders/payments' )
             .subscribe( paymentField => {
                 this.paymentField       =   paymentField;
-            })
+            });
     }
 }
 </script>

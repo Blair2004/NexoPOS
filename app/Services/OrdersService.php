@@ -1465,7 +1465,7 @@ class OrdersService
         $results                =   [];
 
         foreach( $fields[ 'products' ] as $product ) {
-            $results[]   =   $this->refundSingleProduct( $order, OrderProduct::find( $product[ 'id' ] ), $product );
+            $results[]   =   $this->refundSingleProduct( $order, $orderRefund, OrderProduct::find( $product[ 'id' ] ), $product );
         }
 
         /**
@@ -1504,7 +1504,7 @@ class OrdersService
      * @param int product id
      * @param string status : sold, returned, defective
      */
-    public function refundSingleProduct( Order $order, OrderProduct $orderProduct, $details )
+    public function refundSingleProduct( Order $order, OrderRefund $orderRefund, OrderProduct $orderProduct, $details )
     {
         if ( ! in_array( $details[ 'condition' ], [
             OrderProductRefund::CONDITION_DAMAGED,
@@ -1534,17 +1534,24 @@ class OrdersService
         $this->computeOrderProduct( $orderProduct );
         $orderProduct->save();
 
+        /**
+         * Let's store a reference of 
+         * the refunded product
+         */
         $productRefund                      =   new OrderProductRefund;
         $productRefund->condition           =   $details[ 'condition' ];
         $productRefund->description         =   $details[ 'description' ];
         $productRefund->unit_price          =   $details[ 'unit_price' ];
         $productRefund->unit_id             =   $orderProduct->unit_id;
-        $productRefund->total_price         =   $this->currencyService->getRaw( $productRefund->unit_price * floatval( $details[ 'quantity' ] ) );
+        $productRefund->total_price         =   $this->currencyService
+            ->getRaw( $productRefund->unit_price * floatval( $details[ 'quantity' ] ) );
         $productRefund->quantity            =   $details[ 'quantity' ];
         $productRefund->author              =   Auth::id();
         $productRefund->order_id            =   $order->id;
+        $productRefund->order_refund_id     =   $orderRefund->id;
         $productRefund->order_product_id    =   $orderProduct->id;
         $productRefund->product_id          =   $orderProduct->product_id;
+        $productRefund->save();
 
         event( new OrderAfterProductRefundedEvent( $order, $orderProduct ) );
 
@@ -2456,5 +2463,28 @@ class OrdersService
             'total'     =>  ns()->currency->getRaw( $total ), 
             'entries'   =>  $payments
         ];
+    }
+
+    /**
+     * Will return the product that
+     * that has been refunded
+     * @param Order $order
+     * @return array
+     */
+    public function getOrderRefundedProducts( Order $order )
+    {
+        return $order->refundedProducts;
+    }
+
+    /**
+     * Will return the order refund along
+     * with the product refunded
+     * @param Order $order
+     * @return OrderRefund
+     */
+    public function getOrderRefunds( Order $order )
+    {
+        $order->load( 'refunds.refunded_products.product', 'refunds.refunded_products.unit', 'refunds.author' );
+        return $order;
     }
 }

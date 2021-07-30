@@ -160,12 +160,23 @@
             <div class="mb-2">
                 <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Products' ) }}</h3>
             </div>
-            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-gray-200">
+            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-gray-200 mb-2">
                 <div>
                     <h4 class="text-semibold text-gray-700">{{ product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }}</p>
                 </div>
-                <div class="font-semibold text-gray-800">{{ product.unit_price | currency }}</div>
+                <div class="font-semibold text-gray-800">{{ product.total_price | currency }}</div>
+            </div>
+
+            <div class="mb-2">
+                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Refunded Products' ) }}</h3>
+            </div>
+            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start bg-gray-200  mb-2">
+                <div>
+                    <h4 class="text-semibold text-gray-700">{{ product.product.name }} (x{{ product.quantity }})</h4>
+                    <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-red-400 text-white' : 'bg-blue-400 text-white'">{{ product.condition }}</span></p>
+                </div>
+                <div class="font-semibold text-gray-800">{{ product.total_price | currency }}</div>
             </div>
         </div>
     </div>

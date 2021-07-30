@@ -12,11 +12,16 @@ class OrderRefund extends NsModel
     
     public function refunded_products()
     {
-        return $this->hasMany( OrderProductRefund::class, 'refund_order_id', 'id' );
+        return $this->hasMany( OrderProductRefund::class, 'order_refund_id', 'id' );
     }
 
     public function order()
     {
         return $this->belongsTo( Order::class, 'order_id', 'id' );
+    }
+
+    public function author()
+    {
+        return $this->belongsTo( User::class, 'author', 'id' );
     }
 }

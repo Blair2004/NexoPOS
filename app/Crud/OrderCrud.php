@@ -9,6 +9,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
 use App\Services\OrdersService;
+use Illuminate\Support\Facades\DB;
 
 class OrderCrud extends CrudService
 {
@@ -507,6 +508,27 @@ class OrderCrud extends CrudService
                 ]
             ]
         ];
+
+        /**
+         * We'll check if the order has refunds 
+         * to add a refund receipt for printing
+         */
+        $refundCount    =   DB::table( Hook::filter( 'ns-model-table', 'nexopos_orders_refunds' ) )
+            ->where( 'order_id', $entry->id )
+            ->count();
+            
+        $hasRefunds     =   $refundCount > 0;
+
+        if ( $hasRefunds ) {
+            array_splice( $entry->{ '$actions' }, 3, 0, [
+                [
+                    'label'         =>  '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
+                    'type'          =>  'POPUP',
+                    'namespace'     =>  'ns.order-refunds',
+                    'url'           =>  ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
+                ]
+            ]);
+        }
 
         return $entry;
     }

@@ -519,13 +519,12 @@ class ProductsController extends DashboardController
     public function searchUsingArgument( $reference )
     {
         $procurementProduct     =   ProcurementProduct::barcode( $reference )->first();
-        $productUnitQuantity    =   ProductUnitQuantity::barcode( $reference )->first();
+        $productUnitQuantity    =   ProductUnitQuantity::barcode( $reference )->with( 'unit' )->first();
         $product                =   Product::barcode( $reference )
             ->searchable()
             ->first();
 
         if ( $procurementProduct instanceof ProcurementProduct ) {
-
             $product    =   $procurementProduct->product;
             
             /**
@@ -547,7 +546,7 @@ class ProductsController extends DashboardController
             $product->procurement_product_id       =   $procurementProduct->id;
 
         } else if ( $productUnitQuantity instanceof ProductUnitQuantity ) {
-            
+
             /**
              * if a product unit quantity is loaded. Then we make sure to return the parent
              * product with the selected unit quantity.
@@ -555,12 +554,12 @@ class ProductsController extends DashboardController
             $productUnitQuantity->load( 'unit' );
             
             $product      =   Product::find( $productUnitQuantity->product_id );
-            $product->load( 'unit_quantities' );
+            $product->load( 'unit_quantities.unit' );
             $product->selectedUnitQuantity  =   $productUnitQuantity;
 
         } else if ( $product instanceof Product ) {
 
-            $product->load( 'unit_quantities' );
+            $product->load( 'unit_quantities.unit' );
 
             if ( $product->accurate_tracking ) {
                 throw new NotAllowedException( __( 'Unable to add a product that has accurate tracking enabled, using an ordinary barcode.' ) );

@@ -22,6 +22,7 @@ use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
 use App\Exceptions\NotAllowedException;
 use App\Models\OrderInstalment;
+use App\Models\OrderRefund;
 use App\Models\PaymentType;
 use Modules\NsMultiStore\Models\Store;
 
@@ -122,6 +123,7 @@ class OrdersController extends DashboardController
             $id->load( 'shipping_address' );
             $id->load( 'billing_address' );
             $id->load( 'products.unit' );
+            $id->load( 'refundedProducts.unit', 'refundedProducts.product' );
             return $id;
         }
 
@@ -190,6 +192,22 @@ class OrdersController extends DashboardController
             'billing'   =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping'  =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title'     =>  sprintf( __( 'Order Invoice &mdash; %s' ), $order->code )
+        ]);
+    }
+
+    public function orderRefundReceipt( OrderRefund $refund )
+    {
+        $refund->load( 'order.customer', 'order.refundedProducts', 'order.refund.author', 'order.shipping_address', 'order.billing_address', 'order.user' );
+        $refund->load( 'refunded_products.product', 'refunded_products.unit' );
+
+        $refund->refunded_products    =   Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );
+
+        return $this->view( 'pages.dashboard.orders.templates.refund-receipt', [
+            'refund'            =>  $refund,
+            'ordersService'     =>  app()->make( OrdersService::class ),
+            'billing'           =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping'          =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title'             =>  sprintf( __( 'Order Refund Receipt &mdash; %s' ), $refund->order->code )
         ]);
     }
 
@@ -333,6 +351,16 @@ class OrdersController extends DashboardController
     public function updatePaymentType( PaymentType $paymentType )
     {
         return PaymentTypeCrud::form( $paymentType );
+    }
+
+    public function getOrderProductsRefunded( Request $request, Order $order )
+    {
+        return $this->ordersService->getOrderRefundedProducts( $order );
+    }
+
+    public function getOrderRefunds( Request $request, Order $order )
+    {
+        return $this->ordersService->getOrderRefunds( $order );
     }
 }
 

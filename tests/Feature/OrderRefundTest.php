@@ -112,7 +112,7 @@ class OrderRefundTest extends TestCase
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
                 'payment'   =>  [
-                    'identifier'    =>  'customer-account',
+                    'identifier'    =>  'account-payment',
                 ],
                 'total'     =>  $responseData[ 'data' ][ 'order' ][ 'total' ],
                 'products'  =>  $responseData[ 'data' ][ 'order' ][ 'products' ],

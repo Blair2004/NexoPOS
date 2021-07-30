@@ -52,12 +52,28 @@ class Order extends NsModel
         );
     }
 
+    public function refundedProducts()
+    {
+        return $this->hasMany(
+            OrderProductRefund::class,
+            'order_id'
+        );
+    }
+
     public function user()
     {
         return $this->hasOne( User::class, 'id', 'author' );
     }
 
+    /**
+     * @deprecated
+     */
     public function refund()
+    {
+        return $this->hasMany( OrderRefund::class, 'order_id', 'id' );
+    }
+
+    public function refunds()
     {
         return $this->hasMany( OrderRefund::class, 'order_id', 'id' );
     }

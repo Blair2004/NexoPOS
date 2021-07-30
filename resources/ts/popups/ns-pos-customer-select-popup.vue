@@ -115,7 +115,7 @@ export default {
         openCustomerHistory( customer, event ) {
             event.stopImmediatePropagation();
             this.$popup.close();
-            Popup.show( nsPosCustomersVue, { customer, activeTab: 'customer-account' });
+            Popup.show( nsPosCustomersVue, { customer, activeTab: 'account-payment' });
         },
 
         selectCustomer( customer ) {

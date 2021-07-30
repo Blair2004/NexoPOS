@@ -59,7 +59,7 @@ use App\Classes\Hook;
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total_coupons ) }}</td>
                     </tr>
                     @endif
-                    @if ( $order->tax_value > 0 )
+                    @if ( $order->payment_status !== 'refunded' && $order->tax_value > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
                             <span>{{ __( 'Taxes' ) }}</span>
@@ -85,6 +85,14 @@ use App\Classes\Hook;
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Paid' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tendered ) }}</td>
                     </tr>
+                    @if ( in_array( $order->payment_status, [ 'refunded', 'partially_refunded' ]) )
+                        @foreach( $order->refund as $refund )
+                        <tr>
+                            <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Refunded' ) }}</td>
+                            <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( - $refund->total ) }}</td>
+                        </tr>
+                        @endforeach
+                    @endif
                     @switch( $order->payment_status )
                         @case( Order::PAYMENT_PAID )
                         <tr>
