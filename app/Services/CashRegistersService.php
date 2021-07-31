@@ -2,9 +2,12 @@
 namespace App\Services;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
+use App\Models\Order;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use Exception;
@@ -229,6 +232,11 @@ class CashRegistersService
         }
     }
 
+    /**
+     * Returns the register status for human
+     * @param string $label
+     * @return string
+     */
     public function getRegisterStatusLabel( $label )
     {
         switch( $label ) {
@@ -247,6 +255,47 @@ class CashRegistersService
             default:
                 return $label;
             break;
+        }
+    }
+
+    /**
+     * Update the register with various details
+     * @param Register $register
+     * @return void
+     */
+    public function getRegisterDetails( Register $register )
+    {
+        $register->status_label         =   $this->getRegisterStatusLabel( $register->status );
+        $register->opening_balance      =   0;
+        $register->total_sale_amount    =   0;
+
+        if ( $register->status === Register::STATUS_OPENED ) {
+            $history                        =   $register->history()
+                ->where( 'action', RegisterHistory::ACTION_OPENING )
+                ->orderBy( 'id', 'desc' )->first();
+            $register->opening_balance      =   $history->value;
+            $register->total_sale_amount    =   Order::paid()
+                ->where( 'register_id', $register->id )
+                ->sum( 'total' );
+        }
+
+        return $register;
+    }
+
+    /**
+     * Will save the order total amount to the 
+     * register every time the order is completely paid.
+     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
+     * @return void
+     */
+    public function recordPaidOrderAmount( $event )
+    {
+        if ( $event->order->payment_status === Order::PAYMENT_PAID ) {
+            $register   =   Register::find( $event->order->register_id );
+
+            if ( $register instanceof Register ) {
+                $this->cashIn( $register, $event->order->total, __( 'Automatically recorded sale payment.' ) );
+            }
         }
     }
 }

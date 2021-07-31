@@ -629,23 +629,26 @@ export class POS {
                 this._isSubmitting  =   true;
 
                 return nsHttpClient[ method ]( `/api/nexopos/v4/orders${ order.id !== undefined ? '/' + order.id : '' }`, order )
-                    .subscribe( result => {
-                        resolve( result );
-                        this.reset();
-                        
-                        /**
-                         * will trigger an acction when
-                         * the order has been successfully submitted
-                         */
-                        nsHooks.doAction( 'ns-order-submit-successful', result );
-
-                        this._isSubmitting  =   false;
-                    }, ( error: any ) => {
-                        this._isSubmitting  =   false;
-                        reject( error );
-
-                        nsHooks.doAction( 'ns-order-submit-failed', error );
-                    })
+                    .subscribe({
+                        next: result => {
+                            resolve( result );
+                            this.reset();
+                            
+                            /**
+                             * will trigger an acction when
+                             * the order has been successfully submitted
+                             */
+                            nsHooks.doAction( 'ns-order-submit-successful', result );
+    
+                            this._isSubmitting  =   false;
+                        },
+                        error: ( error: any ) => {
+                            this._isSubmitting  =   false;
+                            reject( error );
+    
+                            nsHooks.doAction( 'ns-order-submit-failed', error );
+                        }
+                    });
             }
 
             return reject({ status: 'failed', message: __( 'An order is currently being processed.' ) });

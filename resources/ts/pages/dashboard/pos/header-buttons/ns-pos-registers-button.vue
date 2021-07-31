@@ -56,6 +56,7 @@ export default {
                      * throughout the orders send to the server
                      */
                     POS.set( 'register', response.data.register ); 
+                    this.setRegister( response.data.register );
 
                     return response;
                 } catch( exception ) {
@@ -69,6 +70,17 @@ export default {
             }
 
             this.name   =   __( `Cash Register : {register}` ).replace( '{register}', this.settings.register.name );
+        },
+        setRegister( register ) {
+            if ( register !== undefined ) {
+                /**
+                 * This will update the register ID once we've
+                 * successfully loaded the opened cash register
+                 */
+                const order             =   POS.order.getValue();
+                order.register_id       =   register.id; 
+                POS.order.next( order );
+            }
         }
     },
     destroyed() {
@@ -83,7 +95,9 @@ export default {
         });
 
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
-            this.settings   =   settings;
+            this.settings           =   settings;
+
+            this.setRegister( this.settings.register );   
 
             this.setButtonName();
         });
