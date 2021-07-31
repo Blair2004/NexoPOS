@@ -32,8 +32,8 @@ class SignUpRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'          =>  'required|min:6|unique:nexopos_users',
-            'email'             =>  'email|unique:nexopos_users',
+            'username'          =>  'required|min:6',
+            'email'             =>  'email',
             'password'          =>  'required',
             'password_confirm'  => 'same:password'
         ];

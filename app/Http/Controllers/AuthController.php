@@ -204,6 +204,22 @@ class AuthController extends Controller
     {
         Hook::action( 'ns-register-form', $request );
 
+        /**
+         * check user existence
+         */
+        $user   =   User::where( 'email', $request->input( 'email' ) )->first();
+        if ( $user instanceof User ) {
+            throw new NotAllowedException( __( 'Unable to register using this email.' ) );
+        }
+
+        /**
+         * check user existence
+         */
+        $user   =   User::where( 'username', $request->input( 'username' ) )->first();
+        if ( $user instanceof User ) {
+            throw new NotAllowedException( __( 'Unable to register using this username.' ) );
+        }
+
         $options                    =   app()->make( Options::class );
         $role                       =   $options->get( 'ns_registration_role' );
         $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );
