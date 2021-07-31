@@ -9,14 +9,14 @@
             </div>
             <div class="flex flex-auto overflow-hidden">
                 <div class="overflow-y-auto">
-                    <div class="border-b border-gray-200 text-gray-700 flex">
-                        <div v-for="role of roles" :key="role.id" class="py-4 px-2 items-center justify-center flex role w-56 flex-shrink-0 border-r border-gray-200">
+                    <div class="text-gray-700 flex">
+                        <div v-for="role of roles" :key="role.id" class="py-4 px-2 items-center border-b justify-center flex role w-56 flex-shrink-0 border-r border-gray-200">
                             <p class="mx-1"><span>{{ role.name }}</span></p>
                             <span class="mx-1"><ns-checkbox @change="selectAllPermissions( role )" :field="role.field"></ns-checkbox></span>
                         </div>
                     </div>
-                    <div :key="permission.id" v-for="permission of permissions" class="permission flex border-b border-gray-200">
-                        <div v-for="role of roles" :key="role.id" class="w-56 flex-shrink-0 p-2 flex items-center justify-center border-r">
+                    <div :key="permission.id" v-for="permission of permissions" class="permission flex">
+                        <div v-for="role of roles" :key="role.id" class="border-b border-gray-200 w-56 flex-shrink-0 p-2 flex items-center justify-center border-r">
                             <ns-checkbox @change="submitPermissions( role, role.fields[ permission.namespace ] )" :field="role.fields[ permission.namespace ]"></ns-checkbox>
                         </div>
                     </div>
