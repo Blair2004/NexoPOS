@@ -7,6 +7,8 @@ use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
+use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Order;
 use App\Models\Register;
 use App\Models\RegisterHistory;
@@ -296,6 +298,40 @@ class CashRegistersService
             if ( $register instanceof Register ) {
                 $this->cashIn( $register, $event->order->total, __( 'Automatically recorded sale payment.' ) );
             }
+        }
+    }
+
+    /**
+     * Will issue an expense history for every
+     * cashing out operation if an expense category is assigned
+     * @param CashRegisterHistoryAfterCreatedEvent $event
+     * @return void
+     */
+    public function issueExpenses( CashRegisterHistoryAfterCreatedEvent $event )
+    {
+        /**
+         * @var ExpenseService
+         */
+        $expenseService     =   app()->make( ExpenseService::class );
+        $cat_id             =   ns()->option->get( 'ns_pos_cashout_expense_category' );
+        $expenseCategory    =   ExpenseCategory::find( $cat_id );
+
+        if ( $expenseCategory instanceof ExpenseCategory && $event->registerHistory->action === RegisterHistory::ACTION_CASHOUT ) {
+            /**
+             * We simulate a created expense
+             * that will be added to the expenses history
+             * but it won't be persistent.
+             */
+            $expense                =   new Expense();
+            $expense->name          =   $event->registerHistory->description ?: __( 'Cash out' );
+            $expense->category_id   =   $expenseCategory->id;
+            $expense->description   =   __( 'An automatically generated expense for cash-out operation.' );
+            $expense->value         =   $event->registerHistory->value;
+            $expense->author        =   Auth::id();
+            $expense->id            =   0; // untracked expenses shouldn't be assigned
+            $expense->active        =   true;
+
+            $expenseService->triggerExpense( $expense );
         }
     }
 }

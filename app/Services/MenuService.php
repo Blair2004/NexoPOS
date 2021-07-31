@@ -128,8 +128,8 @@ class MenuService
                 ]
             ], 
             'expenses' =>  [
-                'label' =>  __( 'Expenses' ),
-                'icon'  =>  'la-money-bill-wave',
+                'label'     =>  __( 'Banking' ),
+                'icon'      =>  'la-piggy-bank',
                 'permissions'   =>  [
                     "nexopos.read.expenses",
                     "nexopos.create.expenses",
@@ -161,6 +161,10 @@ class MenuService
                         'label' =>  __( 'Create Expense Category'),
                         'permissions'   =>  [ 'nexopos.create.expenses-categories' ],
                         'href'  =>  ns()->url( '/dashboard/expenses/categories/create' )
+                    ],
+                    'cash-in'   =>  [
+                        'label' =>  __( 'Cash Flow' ),
+                        'href'  =>  ns()->url( '/dashboard/banking/cash-flow' )
                     ]
                 ]
             ], 
@@ -412,6 +416,10 @@ class MenuService
                     'orders'        =>  [
                         'label'     =>  __( 'Orders'),
                         'href'      =>  ns()->url( '/dashboard/settings/orders' )
+                    ],
+                    'accounting'    =>  [
+                        'label'     =>  __( 'Accounting' ),
+                        'href'      =>  ns()->url( '/dashboard/settings/accounting' )
                     ],
                     'reports'       =>  [
                         'label'     =>  __( 'Reports'),

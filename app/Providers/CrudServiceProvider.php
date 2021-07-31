@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Crud\CashFlowHistoryCrud;
 use App\Crud\CouponCrud;
 use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
@@ -92,6 +93,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.procurements': return ProcurementCrud::class;
                 case 'ns.procurements-products': return ProcurementProductCrud::class;
                 case 'ns.roles': return RolesCrud::class;
+                case 'ns.cash-flow-history': return CashFlowHistoryCrud::class;
             }
             return $namespace;
         });

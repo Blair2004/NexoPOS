@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Services\Helper;
 
 $cashRegisters  =   [
@@ -13,6 +15,13 @@ $cashRegisters  =   [
         'label'         =>  __( 'Enable Cash Registers' ), 
         'type'          =>  'select',
         'description'   =>  __( 'Determine if the POS will support cash registers.' ),
+    ], [
+        'name'          =>  'ns_pos_cashout_expense_category',
+        'value'         =>  $options->get( 'ns_pos_cashout_expense_category' ),
+        'options'         =>  Helper::toJsOptions( ExpenseCategory::get(), [ 'id', 'name' ]),
+        'label'         =>  __( 'Cash Out Assigned Expense Category' ), 
+        'type'          =>  'select',
+        'description'   =>  __( 'Every cashout will issue an expense under the selected expense category.' ),
     ], 
 ];
 

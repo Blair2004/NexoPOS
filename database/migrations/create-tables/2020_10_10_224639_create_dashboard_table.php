@@ -38,6 +38,9 @@ class CreateDashboardTable extends Migration
                     'total_paid_orders',
                     'day_paid_orders',
 
+                    'total_other_cashin',
+                    'day_other_cashin',
+
                     'total_paid_orders_count',
                     'day_paid_orders_count',
 

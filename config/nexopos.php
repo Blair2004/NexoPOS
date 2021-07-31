@@ -1,21 +1,6 @@
 <?php
 return [
     'version'       =>  '4.4.1',
-    'pos'           =>  [
-        // deprecated
-        'payments'  =>  [
-            [
-                'label'         =>  'Cash',
-                'identifier'    =>  'cash-payment'
-            ], [
-                'label'         =>  'Bank Transfer',
-                'identifier'    =>  'bank-payment'
-            ], [
-                'label'         =>  'Customer Account',
-                'identifier'    =>  'account-payment'
-            ]
-        ]
-    ],
     'languages'     =>  [
         'en'        =>  'English',
         'fr'        =>  'Français',
