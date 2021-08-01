@@ -22,6 +22,8 @@ class CreateExpensesCategoriesTable extends Migration
             Schema::createIfMissing( 'nexopos_expenses_categories', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
+                $table->string( 'operation' )->default( 'debit' ); // "credit" or "debit".
+                $table->string( 'account' )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();

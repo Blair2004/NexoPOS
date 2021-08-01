@@ -2,12 +2,11 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
-use App\Models\ExpenseHistory;
 use App\Models\Order;
-use App\Models\OrderProduct;
 use App\Models\ProductHistory;
 use App\Models\Role;
 use Carbon\Carbon;
@@ -215,7 +214,7 @@ class ReportService
             ->paymentStatus( Order::PAYMENT_PAID )
             ->sum( 'net_total' );
 
-        $totalExpenses      =   ExpenseHistory::from( $this->dayStarts )
+        $totalExpenses      =   CashFlow::from( $this->dayStarts )
             ->to( $this->dayEnds )
             ->sum( 'value' );
 
@@ -330,15 +329,22 @@ class ReportService
         $todayReport->total_discounts   = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
-    public function increaseDailyExpenses( $expense, $today = null )
+    public function increaseDailyExpenses( CashFlow $cashFlow, $today = null )
     {
         $today  =   $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            $yesterday                  =   DashboardDay::forLastRecentDay( $today );
-            $today->day_expenses        +=  $expense->getRawOriginal( 'value' );
-            $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
-            $today->save();
+            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT ) {
+                $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+                $today->day_expenses        +=   $cashFlow->getRawOriginal( 'value' );
+                $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+                $today->save();
+            } else {
+                $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+                $today->day_income          +=  $cashFlow->getRawOriginal( 'value' );
+                $today->total_income        =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
+                $today->save();
+            }
 
             return [
                 'status'    =>  'success',
@@ -349,15 +355,22 @@ class ReportService
         return $this->notifyIncorrectDashboardReport();
     }
 
-    public function reduceDailyExpenses( $expense, $today = null )
+    public function reduceDailyExpenses( CashFlow $cashFlow, $today = null )
     {
         $today  =   $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
-            $yesterday                  =   DashboardDay::forLastRecentDay( $today );
-            $today->day_expenses        -=  $expense->getRawOriginal( 'value' );
-            $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
-            $today->save();
+            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT ) {
+                $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+                $today->day_income        -=  $cashFlow->getRawOriginal( 'value' );
+                $today->total_income      =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
+                $today->save();
+            } else {
+                $yesterday                  =   DashboardDay::forLastRecentDay( $today );
+                $today->day_expenses        -=  $cashFlow->getRawOriginal( 'value' );
+                $today->total_expenses      =   ( $yesterday->total_expenses ?? 0 ) + $today->day_expenses;
+                $today->save();
+            }
 
             return [
                 'status'    =>  'success',

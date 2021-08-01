@@ -32,4 +32,9 @@ class OrderProductRefund extends NsModel
     {
         return $this->belongsTo( Order::class, 'order_id', 'id' );
     }
+
+    public function orderRefund()
+    {
+        return $this->belongsTo( Order::class, 'order_refund_id', 'id' );
+    }
 }

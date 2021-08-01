@@ -11,7 +11,6 @@ use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
 use App\Crud\ExpenseCategoryCrud;
 use App\Crud\ExpenseCrud;
-use App\Crud\ExpenseHistoryCrud;
 use App\Crud\HoldOrderCrud;
 use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
@@ -77,7 +76,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.rewards-system': return RewardSystemCrud::class;
                 case 'ns.providers': return ProviderCrud::class;
                 case 'ns.expenses-categories': return ExpenseCategoryCrud::class;
-                case 'ns.expenses-history': return ExpenseHistoryCrud::class;
+                case 'ns.cash-flow-history': return CashFlowHistoryCrud::class;
                 case 'ns.expenses': return ExpenseCrud::class;
                 case 'ns.units-groups': return UnitGroupCrud::class;
                 case 'ns.units': return UnitCrud::class;
@@ -93,7 +92,6 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.procurements': return ProcurementCrud::class;
                 case 'ns.procurements-products': return ProcurementProductCrud::class;
                 case 'ns.roles': return RolesCrud::class;
-                case 'ns.cash-flow-history': return CashFlowHistoryCrud::class;
             }
             return $namespace;
         });

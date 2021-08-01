@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\ExpenseHistory;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use App\Classes\Schema;
+use App\Models\CashFlow;
 
 class Dec8AddColumnsToExpensesHistory extends Migration
 {
@@ -16,7 +16,7 @@ class Dec8AddColumnsToExpensesHistory extends Migration
     {
         Schema::table('nexopos_expenses_history', function (Blueprint $table) {
             if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'status' ) ) {
-                $table->string( 'status' )->default( ExpenseHistory::STATUS_ACTIVE );
+                $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
             }
         });
     }

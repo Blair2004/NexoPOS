@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashFlow;
 use App\Models\Procurement;
 use App\Models\Product;
 use App\Models\Provider;
@@ -9,8 +10,6 @@ use App\Models\Role;
 use App\Models\TaxGroup;
 use App\Services\CurrencyService;
 use App\Services\TaxService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Arr;
@@ -25,7 +24,7 @@ class MakeProcurementTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateProcurement()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -49,7 +48,7 @@ class MakeProcurementTest extends TestCase
         $taxGroup       =   TaxGroup::get()->random();
         $margin         =   25;
 
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/procurements', [
                 'name'                  =>  sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
                 'general'   =>  [
@@ -74,6 +73,8 @@ class MakeProcurementTest extends TestCase
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
 
+                    $quantity   =   $faker->numberBetween(1000,2000);
+
                     return [
                         'product_id'            =>  $data->product->id,
                         'gross_purchase_price'  =>  15,
@@ -86,7 +87,7 @@ class MakeProcurementTest extends TestCase
                                 $margin
                             )
                         ),
-                        'quantity'              =>  $faker->numberBetween(500,1000),
+                        'quantity'              =>  $quantity,
                         'tax_group_id'          =>  $taxGroup->id,
                         'tax_type'              =>  $taxType,
                         'tax_value'             =>  $taxService->getTaxGroupVatValue( 
@@ -104,11 +105,16 @@ class MakeProcurementTest extends TestCase
                                 $data->unitQuantity->sale_price,
                                 $margin
                             ) 
-                        ) * 250,
+                        ) * $quantity,
                         'unit_id'               =>  $data->unit->id,
                     ];
                 })
             ]);
+
+        $responseData       =   json_decode( $response->getContent(), true );
+        $existingExpense    =   CashFlow::where( 'procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ] )->first();
+
+        $this->assertTrue( $existingExpense instanceof CashFlow, __( 'No cash flow were created for the created procurement.' ) );
 
         $response->assertJson([ 'status' => 'success' ]);
     }

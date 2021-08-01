@@ -20,7 +20,7 @@ class CreateCouponTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateCoupon()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

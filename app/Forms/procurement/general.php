@@ -42,7 +42,7 @@ return [
         ], [
             'type'          =>  'select',
             'name'          =>  'payment_status',
-            'value' =>  $procurement->payment_status ?? '',
+            'value'         =>  $procurement->payment_status ?? '',
             'validation'    =>  'required',
             'options'           =>  Helper::kvToJsOptions([
                 'unpaid'    =>  __( 'Unpaid' ),

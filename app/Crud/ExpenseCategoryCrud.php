@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ExpenseCategory;
+use App\Services\Helper;
 
 class ExpenseCategoryCrud extends CrudService
 {
@@ -122,6 +123,22 @@ class ExpenseCategoryCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
+                            'type'  =>  'select',
+                            'name'  =>  'operation',
+                            'label' =>  __( 'Operation' ),
+                            'description'   =>  __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
+                            'options'   =>  Helper::kvToJsOptions([
+                                'credit'    =>  __( 'Credit' ),
+                                'debit'     =>  __( 'Debit' )
+                            ]),
+                            'value' =>  $entry->operation ?? '',
+                        ], [
+                            'type'          =>  'text',
+                            'name'          =>  'account',
+                            'label'         =>  __( 'Account' ),
+                            'description'   =>  __( 'Provide the accounting number for this category.' ),
+                            'value'         =>  $entry->account ?? '',
+                        ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
@@ -248,6 +265,16 @@ class ExpenseCategoryCrud extends CrudService
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'account'  =>  [
+                'label'  =>  __( 'Account' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'operation'  =>  [
+                'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],

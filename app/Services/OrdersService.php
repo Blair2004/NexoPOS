@@ -1457,7 +1457,7 @@ class OrdersService
         $orderRefund->order_id          =   $order->id;
         $orderRefund->payment_method    =   $fields[ 'payment' ][ 'identifier' ];
         $orderRefund->shipping          =   ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
-        $orderRefund->total             =   $this->currencyService->getRaw( $fields[ 'total' ] );
+        $orderRefund->total             =   0;
         $orderRefund->save();
 
         event( new OrderRefundPaymentAfterCreatedEvent( $orderRefund ) );
@@ -1472,10 +1472,19 @@ class OrdersService
          * if the shipping is refunded
          * We'll do that here
          */
+        $shipping       =   0;
         if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
+            $shipping               =       $order->shipping;
             $order->shipping        =       0;
             $order->save();
         }
+
+        /**
+         * let's update the order refund total
+         */
+        $orderRefund->load( 'refunded_products' );
+        $orderRefund->total     =   $orderRefund->refunded_products->sum( 'total_price' ) + $shipping;
+        $orderRefund->save();
 
         /**
          * check if the payment used is the customer account
@@ -1553,7 +1562,7 @@ class OrdersService
         $productRefund->product_id          =   $orderProduct->product_id;
         $productRefund->save();
 
-        event( new OrderAfterProductRefundedEvent( $order, $orderProduct ) );
+        event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
 
         /**
          * we do proceed by doing an initial return

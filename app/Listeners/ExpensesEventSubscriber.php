@@ -2,12 +2,17 @@
 
 namespace App\Listeners;
 
+use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\ExpenseAfterRefreshEvent;
 use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
-use App\Events\ExpenseHistoryAfterCreatedEvent;
-use App\Events\ExpenseHistoryBeforeDeleteEvent;
+use App\Events\CashFlowHistoryAfterCreatedEvent;
+use App\Events\CashFlowHistoryBeforeDeleteEvent;
+use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterProductRefundedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\AfterExpenseComputedJob;
 use App\Jobs\ComputeDashboardExpensesJob;
 use App\Jobs\RefreshExpenseJob;
@@ -15,6 +20,9 @@ use App\Services\ExpenseService;
 
 class ExpensesEventSubscriber
 {
+    /**
+     * @var ExpenseService
+     */
     public $expenseService;
 
     /**
@@ -62,8 +70,31 @@ class ExpensesEventSubscriber
          * the expense record on the dashboard
          */
         $event->listen(
-            ExpenseHistoryAfterCreatedEvent::class,
+            CashFlowHistoryAfterCreatedEvent::class,
             fn( $event ) => ComputeDashboardExpensesJob::dispatch( $event )
+        );
+
+        /**
+         * Will record a cash flow for every
+         * completed sales generated.
+         */
+        $event->listen(
+            OrderAfterCreatedEvent::class,
+            fn( OrderAfterCreatedEvent $event ) => $this->expenseService->handleSales( $event->order )
+        );
+
+        $event->listen(
+            OrderAfterUpdatedEvent::class,
+            fn( OrderAfterUpdatedEvent $event ) => $this->expenseService->handleSales( $event->order )
+        );
+
+        /**
+         * We'll create a record for every customer
+         * translaction generated on his account
+         */
+        $event->listen(
+            AfterCustomerAccountHistoryCreatedEvent::class,
+            fn( AfterCustomerAccountHistoryCreatedEvent $event ) => $this->expenseService->handleCustomerCredit( $event->customerAccount )
         );
 
         /**
@@ -71,8 +102,13 @@ class ExpensesEventSubscriber
          * deleted. This should recalculate the expenses for the specific day.
          */
         $event->listen(
-            ExpenseHistoryBeforeDeleteEvent::class,
+            CashFlowHistoryBeforeDeleteEvent::class,
             fn( $event ) => ComputeDashboardExpensesJob::dispatch( $event )
+        );
+
+        $event->listen( 
+            CashRegisterHistoryAfterCreatedEvent::class,
+            fn( CashRegisterHistoryAfterCreatedEvent $event ) => $this->expenseService->handleCashRegisterHistory( $event->registerHistory )
         );
 
         /**
@@ -93,6 +129,16 @@ class ExpensesEventSubscriber
             ExpenseAfterRefreshEvent::class,
             fn( $event ) => AfterExpenseComputedJob::dispatch( $event->event )
                 ->delay( $event->date )
+        );
+
+        /**
+         * All refunds should create an expense on the system
+         */
+        $event->listen( 
+            OrderAfterProductRefundedEvent::class,
+            function( OrderAfterProductRefundedEvent $event ) {
+                $this->expenseService->createExpenseFromRefund( $event->orderProductRefund, $event->orderProduct );
+            }
         );
     }
 }

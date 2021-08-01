@@ -195,13 +195,16 @@ export default {
 
             this.isSubmitting   =   true;
             nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/refund`, data )
-                .subscribe( result => {
-                    this.isSubmitting   =   false;
-                    this.$emit( 'changed', true );
-                    nsSnackBar.success( result.message ).subscribe();
-                }, error => {
-                    this.isSubmitting   =   false;
-                    nsSnackBar.error( error.message ).subscribe();
+                .subscribe({
+                    next:  (result) => {
+                        this.isSubmitting   =   false;
+                        this.$emit( 'changed', true );
+                        nsSnackBar.success( result.message ).subscribe();
+                    },
+                    error: (error) => {
+                        this.isSubmitting   =   false;
+                        nsSnackBar.error( error.message ).subscribe();
+                    }
                 })
         },
 

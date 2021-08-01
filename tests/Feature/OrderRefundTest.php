@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\ExpenseCategory;
 use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
@@ -135,6 +136,20 @@ class OrderRefundTest extends TestCase
                 )
             );
         }
+
+        /**
+         * let's check if an expense has been created accordingly
+         */
+        $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_cashflow_account' ) );
+
+        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+            throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
+        }
+
+        $expense    =   $expenseCategory->expensesHistory()->orderBy( 'id', 'desc' )->first();
+        if ( ( float ) $expense->getRawOriginal( 'value' ) != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
+            throw new Exception( __( 'The expense created after the refund doesn\'t match the product value.' ) );
+        }  
         
         $response->assertJson([
             'status'    =>  'success'

@@ -10,6 +10,7 @@
       <directory suffix="ResetTest.php">./tests/Feature</directory>
       <directory suffix="ResetUserStatsTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
+      <directory suffix="ConfigureAccoutingTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>
       <directory suffix="CreateRewardSystemTest.php">./tests/Feature</directory>
@@ -22,20 +23,20 @@
       <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
       <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
-      <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
-      <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
-      <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
-      <directory suffix="OrderWithInstalment.php">./tests/Feature</directory>
-      <directory suffix="OrderRefundTest.php">./tests/Feature</directory>
-      <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
-      <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
-      <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
-      <directory suffix="CrudTest.php">./tests/Feature</directory>
-      <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
-      <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
-      <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory>
-      <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
-      <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
+      <!-- <directory suffix="DeleteOrderTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="OrderHoldTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="OrderWithInstalment.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="OrderRefundTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="DeletingOrderTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CrudTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="CreateExpenseTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="RefreshReportForPassDaysTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory> -->
+      <!-- <directory suffix="SaveSettingsTest.php">./tests/Feature</directory> -->
     </testsuite>
   </testsuites>
   <php>

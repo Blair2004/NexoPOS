@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Dashboard\CustomersController;
 use App\Http\Controllers\Dashboard\CustomersGroupsController;
+use App\Http\Controllers\Dashboard\RewardsSystemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '/customers', [ CustomersController::class, 'listCustomers' ]);

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
 use App\Models\OrderPayment;
@@ -23,8 +24,8 @@ class CreateOrderTest extends TestCase
     protected $shouldRefund         =   true;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
-    protected $count                =   false;
-    protected $totalDaysInterval    =   40;
+    protected $count                =   2;
+    protected $totalDaysInterval    =   1;
     protected $users                =   [];
 
     /**
@@ -75,10 +76,12 @@ class CreateOrderTest extends TestCase
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
                 return array_merge([
                     'product_id'            =>  $product->id,
-                    'quantity'              =>  $faker->numberBetween(1,20),
+                    'quantity'              =>  $faker->numberBetween(1,$unitElement->quantity),
                     'unit_price'            =>  $unitElement->sale_price,
                     'unit_quantity_id'      =>  $unitElement->id,
                 ], $this->customProductParams );
+            })->filter( function( $product ) {
+                return $product[ 'quantity' ] > 0;
             });
 
             /**
@@ -241,12 +244,25 @@ class CreateOrderTest extends TestCase
             $responseData   =   json_decode( $response->getContent(), true );
 
             /**
+             * Let's test wether the cash
+             * flow has been created for this sale
+             */
+            $this->assertTrue( 
+                CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
+                instanceof CashFlow,
+                __( 'No cash flow were created for this order.' )
+            );
+
+            /**
              * if a custom callback is provided
              * we'll call that callback as well
              */
             if ( is_callable( $callback ) ) {
                 $callback( $response,  $responseData );
             }
+
+            // stop here
+            return;
 
             if ( $faker->randomElement([ true, false, false ]) === true && $this->shouldRefund ) {
                 /**
