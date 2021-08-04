@@ -556,6 +556,22 @@ class ExpenseService
         if ( $order->payment_status === Order::PAYMENT_PAID ) {
             $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_cashflow_account' ) );
 
+            if ( ! $expenseCategory instanceof ExpenseCategory ) {
+                $result     =   $this->createCategory([
+                    'name'  =>  __( 'Sales' ),
+                ]);
+
+                $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+                
+                /**
+                 * Will set the expense as the default category expense
+                 * category for subsequent expenses.
+                 */
+                ns()->option->set( 'ns_sales_cashflow_account', $expenseCategory->id );
+
+                $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_cashflow_account' ) );
+            }
+
             if ( $expenseCategory instanceof ExpenseCategory ) {
                 $expense                        =   new Expense;
                 $expense->value                 =   $order->total;
