@@ -73,7 +73,7 @@ class MakeProcurementTest extends TestCase
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
 
-                    $quantity   =   $faker->numberBetween(1000,2000);
+                    $quantity   =   $faker->numberBetween(800,1500);
 
                     return [
                         'product_id'            =>  $data->product->id,

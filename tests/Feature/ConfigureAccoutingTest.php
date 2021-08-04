@@ -76,7 +76,6 @@ class ConfigureAccoutingTest extends TestCase
                     ]
                 ]);
 
-            $response->dump();
             $response->assertStatus(200);
         }
 

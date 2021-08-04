@@ -140,13 +140,14 @@ class OrderRefundTest extends TestCase
         /**
          * let's check if an expense has been created accordingly
          */
-        $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_cashflow_account' ) );
+        // ns_sales_refunds_cashflow_account
+        $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_account' ) );
 
         if ( ! $expenseCategory instanceof ExpenseCategory ) {
             throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
         }
 
-        $expense    =   $expenseCategory->expensesHistory()->orderBy( 'id', 'desc' )->first();
+        $expense    =   $expenseCategory->cashFlowHistories()->orderBy( 'id', 'desc' )->first();
         if ( ( float ) $expense->getRawOriginal( 'value' ) != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
             throw new Exception( __( 'The expense created after the refund doesn\'t match the product value.' ) );
         }  

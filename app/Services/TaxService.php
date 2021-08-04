@@ -383,7 +383,7 @@ class TaxService
         if ( $type === 'inclusive' ) {
             return $value - $this->getComputedTaxValue( $type, $rate, $value );
         } else if ( $type === 'exclusive' ) {
-            return $this->getComputedTaxValue( $type, $rate, $value ) - $value;
+            return $value - $this->getComputedTaxValue( $type, $rate, $value );
         }
     }
 

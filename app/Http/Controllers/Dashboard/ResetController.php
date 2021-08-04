@@ -65,7 +65,7 @@ class ResetController extends DashboardController
             case 'wipe_plus_simple':
                 ( new FirstDemoSeeder )->run();
             break;
-            default:
+            case 'default':
                 ( new DefaultSeeder )->run();
             break;
         }

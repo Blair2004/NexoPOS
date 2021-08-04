@@ -21,11 +21,11 @@ class CreateOrderTest extends TestCase
 {
     protected $customProductParams  =   [];
     protected $customOrderParams    =   [];
-    protected $shouldRefund         =   true;
+    protected $shouldRefund         =   false;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
-    protected $count                =   2;
-    protected $totalDaysInterval    =   1;
+    protected $count                =   5;
+    protected $totalDaysInterval    =   30;
     protected $users                =   [];
 
     /**
@@ -76,7 +76,7 @@ class CreateOrderTest extends TestCase
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
                 return array_merge([
                     'product_id'            =>  $product->id,
-                    'quantity'              =>  $faker->numberBetween(1,$unitElement->quantity),
+                    'quantity'              =>  $faker->numberBetween(1,10),
                     'unit_price'            =>  $unitElement->sale_price,
                     'unit_quantity_id'      =>  $unitElement->id,
                 ], $this->customProductParams );
@@ -260,9 +260,6 @@ class CreateOrderTest extends TestCase
             if ( is_callable( $callback ) ) {
                 $callback( $response,  $responseData );
             }
-
-            // stop here
-            return;
 
             if ( $faker->randomElement([ true, false, false ]) === true && $this->shouldRefund ) {
                 /**

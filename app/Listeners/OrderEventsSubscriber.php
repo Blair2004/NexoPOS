@@ -2,6 +2,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterRefundedEvent;

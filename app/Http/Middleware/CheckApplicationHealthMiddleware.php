@@ -30,6 +30,12 @@ class CheckApplicationHealthMiddleware
              */
             $this->emitMisconfigurationNotification();
 
+            /**
+             * force dispatching the job
+             * to force check the tasks status.
+             */
+            TaskSchedulingPingJob::dispatch()->delay( now() );
+
         } else {
             /**
              * @var DateService

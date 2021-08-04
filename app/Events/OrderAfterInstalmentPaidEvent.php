@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Order;
+use App\Models\OrderInstalment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,20 +12,29 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class OrderAfterUpdatedProcessStatus
+class OrderAfterInstalmentPaidEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    /**
+     * @var Order
+     */
     public $order;
+
+    /**
+     * @var OrderInstalment
+     */
+    public $instalment;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order )
+    public function __construct( OrderInstalment $instalment, Order $order )
     {
-        $this->order    =   $order;
+        $this->instalment   =   $instalment;
+        $this->order        =   $order;
     }
 
     /**

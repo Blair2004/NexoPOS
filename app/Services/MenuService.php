@@ -128,8 +128,8 @@ class MenuService
                 ]
             ], 
             'expenses' =>  [
-                'label'     =>  __( 'Banking' ),
-                'icon'      =>  'la-piggy-bank',
+                'label'     =>  __( 'Accounting' ),
+                'icon'      =>  'la-stream',
                 'permissions'   =>  [
                     "nexopos.read.expenses",
                     "nexopos.create.expenses",
