@@ -290,7 +290,7 @@ class OrdersService
             }
             
             if ( $total < ( float ) $fields[ 'total' ] ) {
-                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which addionnated is less than the order total.' ) );
+                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which additionnated is less than the order total.' ) );
             }
 
             $instalments->each( function( $instalment ) {

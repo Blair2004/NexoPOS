@@ -63,14 +63,14 @@ return [
             'label'     =>  __( 'Cash Register Cash-In Account' ),
             'name'      =>  'ns_cashregister_cashin_cashflow_account',
             'value'     =>  ns()->option->get( 'ns_cashregister_cashin_cashflow_account' ),
-            'description'   =>  __( 'Cash Regiser cash-in will be added to the cash flow account' ),
+            'description'   =>  __( 'Cash Register cash-in will be added to the cash flow account' ),
             'options'       =>  Helper::toJsOptions( $expenses, [ 'id', 'name' ]),
             'type'          =>  'select',
         ], [
             'label'     =>  __( 'Cash Register Cash-Out Account' ),
             'name'      =>  'ns_cashregister_cashout_cashflow_account',
             'value'     =>  ns()->option->get( 'ns_cashregister_cashout_cashflow_account' ),
-            'description'   =>  __( 'Cash Regiser cash-out will be added to the cash flow account' ),
+            'description'   =>  __( 'Cash Register cash-out will be added to the cash flow account' ),
             'options'       =>  Helper::toJsOptions( $expenses, [ 'id', 'name' ]),
             'type'          =>  'select',
         ]
