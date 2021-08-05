@@ -39,7 +39,7 @@ class CashFlowHistoryCrud extends CrudService
      * @param  array
      */
     protected $permissions  =   [
-        'create'    =>  false,
+        'create'    =>  false, // 'nexopos.create.cash-flow-history',
         'read'      =>  'nexopos.read.cash-flow-history',
         'update'    =>  false,
         'delete'    =>  'nexopos.delete.cash-flow-history',
@@ -141,8 +141,8 @@ class CashFlowHistoryCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -150,21 +150,6 @@ class CashFlowHistoryCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'expense_category_name',
-                            'label' =>  __( 'Expense Category Name' ),
-                            'value' =>  $entry->expense_category_name ?? '',
-                        ], [
                             'type'  =>  'text',
                             'name'  =>  'expense_id',
                             'label' =>  __( 'Expense ID' ),
@@ -176,20 +161,11 @@ class CashFlowHistoryCrud extends CrudService
                             'value' =>  $entry->expense_name ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated At' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'value',
                             'label' =>  __( 'Value' ),
                             'value' =>  $entry->value ?? '',
-                        ],                     ]
+                        ],
+                    ]
                 ]
             ]
         ];

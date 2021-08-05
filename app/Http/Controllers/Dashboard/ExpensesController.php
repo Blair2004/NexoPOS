@@ -142,7 +142,7 @@ class ExpensesController extends DashboardController
      * Get expenses entries under a specific 
      * expense category
      * @param int Expense Category ID
-     * @return array
+     * @return array    
      */
     public function getCategoryExpenses( $id )
     {
@@ -152,6 +152,11 @@ class ExpensesController extends DashboardController
     public function cashFlowHistory()
     {
         return CashFlowHistoryCrud::table();
+    }
+
+    public function createCashFlowHistory()
+    {
+        return CashFlowHistoryCrud::form();
     }
 }
 
