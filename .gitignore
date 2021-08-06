@@ -21,6 +21,7 @@ public/export/*
 !public/export/index.html
 !public/modules/index.html
 public/js/*.js
+!public/js/*.min.js
 public/css/*.css
 public/js/*.map
 public/js/*.txt

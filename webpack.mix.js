@@ -1,6 +1,6 @@
-const mix = require('laravel-mix');
 const tailwindcss = require('tailwindcss');
 const path = require( 'path' );
+const mix = require( 'laravel-mix' );
 
 /*
  |--------------------------------------------------------------------------
@@ -14,24 +14,24 @@ const path = require( 'path' );
  */
 mix
     .webpackConfig({
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    loader: "ts-loader",
-                    exclude: /node_modules/
-                },{
-                    test: /\.m?js$/,
-                    exclude: /(node_modules|bower_components)/,
-                    use: {
-                      loader: 'babel-loader',
-                      options: {
-                        presets: ['@babel/preset-env'],
-                      },
-                    },
-                },
-            ]
-        },
+        // module: {
+        //     rules: [
+        //         {
+        //             test: /\.tsx?$/,
+        //             loader: "ts-loader",
+        //             exclude: /node_modules/
+        //         },{
+        //             test: /\.m?js$/,
+        //             exclude: /(node_modules|bower_components)/,
+        //             use: {
+        //               loader: 'babel-loader',
+        //               options: {
+        //                 presets: ['@babel/preset-env'],
+        //               },
+        //             },
+        //         },
+        //     ]
+        // },
         resolve: {
             extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
             alias: {
@@ -43,39 +43,20 @@ mix
 
 mix.disableNotifications();
 mix.sourceMaps();
+mix.extract();
+mix.vue({ version: 2 })
 mix
-    .js( 'resources/ts/bootstrap.ts', 'public/js')
-    .js( 'resources/ts/lang-loader.ts', 'public/js')
-    .js( 'resources/ts/app.ts', 'public/js')
-    .js( 'resources/ts/dashboard.ts', 'public/js')
-    .js( 'resources/ts/cashier.ts', 'public/js')
-    .js( 'resources/ts/update.ts', 'public/js')
-    .js( 'resources/ts/pos-init.ts', 'public/js')
-    .js( 'resources/ts/pos.ts', 'public/js')
-    .js( 'resources/ts/auth.ts', 'public/js')
-    .js( 'resources/ts/setup.ts', 'public/js')
-    .js( 'resources/ts/popups.ts', 'public/js/' )
-    .extract([ 
-        // 'vue', 
-        // 'lodash', 
-        // 'vue-apexcharts',
-        // 'chart.js', 
-        // 'axios', 
-        // 'moment', 
-        // 'rxjs', 
-        // 'rx', 
-        // 'vue-router', 
-        // 'dayjs',
-        // 'vue-html-to-paper',
-        // '@wordpress/hooks',
-        // 'numeral',
-        // 'css-loader',
-        // 'autoprefixer',
-        // 'apexcharts',
-        // '@ckeditor/ckeditor5-vue',
-        // 'twitter_cldr',
-        // 'vue-upload-component'
-    ])
+    .ts( 'resources/ts/bootstrap.ts', mix.inProduction() ? 'public/js/bootstrap.min' : 'public/js')
+    .ts( 'resources/ts/lang-loader.ts', mix.inProduction() ? 'public/js/lang-loader.min' : 'public/js')
+    .ts( 'resources/ts/app.ts', mix.inProduction() ? 'public/js/app.min' : 'public/js')
+    .ts( 'resources/ts/dashboard.ts', mix.inProduction() ? 'public/js/dashboard.min' : 'public/js')
+    .ts( 'resources/ts/cashier.ts', mix.inProduction() ? 'public/js/cashier.min' : 'public/js')
+    .ts( 'resources/ts/update.ts', mix.inProduction() ? 'public/js/update.min' : 'public/js')
+    .ts( 'resources/ts/pos-init.ts', mix.inProduction() ? 'public/js/pos-init.min' : 'public/js')
+    .ts( 'resources/ts/pos.ts', mix.inProduction() ? 'public/js/pos.min' : 'public/js')
+    .ts( 'resources/ts/auth.ts', mix.inProduction() ? 'public/js/auth.min' : 'public/js')
+    .ts( 'resources/ts/setup.ts', mix.inProduction() ? 'public/js/setup.min' : 'public/js')
+    .ts( 'resources/ts/popups.ts', mix.inProduction() ? 'public/js/popups.min' : 'public/js/' )
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,

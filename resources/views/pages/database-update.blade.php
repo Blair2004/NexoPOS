@@ -14,5 +14,5 @@
             modules: @json( $modules )
         }
     </script>
-    <script src="{{ asset( '/js/update.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? '/js/update.min.js' : '/js/update.js' ) }}"></script>
 @endsection
