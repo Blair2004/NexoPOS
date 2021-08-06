@@ -301,6 +301,10 @@ export default {
         switchTo,
 
         async changeProductPrice( product ) {
+            if ( ! this.settings.edit_purchase_price ) {
+                return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) ).subscribe();
+            }
+
             if ( this.settings.unit_price_editable ) {
                 try {
                     product.unit_price  =   await new Promise( ( resolve, reject ) => {
@@ -343,6 +347,10 @@ export default {
         },
 
         async defineOrderSettings() {
+            if ( ! this.settings.edit_settings ) {
+                return nsSnackBar.error( __( 'You\'re not allowed to edit the order settings.' ) ).subscribe();
+            }
+
             try {
                 const response  =   await new Promise( ( resolve, reject) => {
                     Popup.show( nsPosOrderSettingsVue, { resolve, reject, order : this.order });
@@ -458,6 +466,14 @@ export default {
         },
 
         openDiscountPopup( reference, type ) {
+            if ( ! this.settings.products_discount && type === 'product' ) {
+                return nsSnackBar.error( `You're not allowed to add a discount on the product.` ).subscribe();
+            }
+
+            if ( ! this.settings.cart_discount && type === 'cart' ) {
+                return nsSnackBar.error( `You're not allowed to add a discount on the cart.` ).subscribe();
+            }
+
             Popup.show( nsPosDiscountPopupVue, { 
                 reference,
                 type,
