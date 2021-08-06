@@ -1816,6 +1816,10 @@ class OrdersService
             return floatval($product->total_price);
         })->sum();
 
+        $productTotalQuatity    =   $products->map( function( $product) {
+            return floatval( $product->quantity );
+        })->sum();
+
         $productGrossTotal      =   $products->map(function ($product) {
             return floatval($product->total_gross_price);
         })->sum();
@@ -1848,16 +1852,24 @@ class OrdersService
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();
 
-        if ( ( float ) $order->total == 0 && $totalRefunds > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_REFUNDED;
-        } else if ( $order->total > 0 && $totalRefunds > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
-        } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_PAID;
-        } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
-            $order->payment_status      =       Order::PAYMENT_PARTIALLY;
-        } else if ( $order->total == 0 && $totalRefunds == 0 ) {
-            $order->payment_status      =       Order::PAYMENT_UNPAID;
+        /**
+         * We believe if the product total is greater
+         * than "0", then probably the order hasn't been paid yet.
+         */
+        if ( $productTotal ) {
+            if ( ( float ) $order->total == 0 && $totalRefunds > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_REFUNDED;
+            } else if ( $order->total > 0 && $totalRefunds > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
+            } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_PAID;
+            } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
+                $order->payment_status      =       Order::PAYMENT_PARTIALLY;
+            } else if ( $order->total == 0 && $totalRefunds == 0 ) {
+                $order->payment_status      =       Order::PAYMENT_UNPAID;
+            }
+        } else if ( $productTotal == 0 && $productTotalQuatity == 0 ) {
+            $order->payment_status      =   Order::PAYMENT_REFUNDED;
         }
 
         $order->save();

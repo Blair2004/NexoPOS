@@ -162,10 +162,6 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.create.expenses-categories' ],
                         'href'  =>  ns()->url( '/dashboard/expenses/categories/create' )
                     ],
-                    'cash-in'   =>  [
-                        'label' =>  __( 'Cash Flow' ),
-                        'href'  =>  ns()->url( '/dashboard/banking/cash-flow' )
-                    ]
                 ]
             ], 
             'inventory' =>  [
