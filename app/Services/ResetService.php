@@ -31,7 +31,7 @@ class ResetService
 
             'nexopos_expenses',
             'nexopos_expenses_categories',
-            'nexopos_expenses_history',
+            'nexopos_cash_flow',
 
             'nexopos_medias',
             'nexopos_notifications',

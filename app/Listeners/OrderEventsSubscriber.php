@@ -2,6 +2,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -66,6 +67,27 @@ class OrderEventsSubscriber
             [ OrderEventsSubscriber::class, 'handleOrderUpdate' ]
         );
 
+        /**
+         * all events likely to affect
+         * the customer account.
+         */
+        $events->listen(
+            OrderAfterCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleCustomerUpdates' ]
+        );
+        $events->listen(
+            OrderAfterUpdatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleCustomerUpdates' ]
+        );
+        $events->listen(
+            OrderBeforeDeleteEvent::class,
+            [ OrderEventsSubscriber::class, 'handleCustomerUpdates' ]
+        );
+        $events->listen(
+            OrderAfterRefundedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleCustomerUpdates' ]
+        );
+
         $events->listen(
             OrderAfterCreatedEvent::class,
             [ OrderEventsSubscriber::class, 'handleInstalmentPayment' ]
@@ -110,11 +132,25 @@ class OrderEventsSubscriber
         ComputeDayReportJob::dispatch()
             ->delay( now()->addSecond(5) );
 
-        ComputeCustomerAccountJob::dispatch( $event )
-            ->delay( now()->addSecond(5) );
-
         ComputeCashierSalesJob::dispatch( $event )
             ->delay( now()->addSecond(10) );
+    }
+
+    public function handleCustomerUpdates( $event )
+    {
+        if ( 
+            $event instanceof OrderAfterCreatedEvent ||
+            $event instanceof OrderAfterUpdatedEvent || 
+            $event instanceof OrderBeforeDeleteEvent ||
+            $event instanceof OrderAfterRefundedEvent
+            
+        ) {
+            ComputeCustomerAccountJob::dispatch( 
+                $event,
+                app()->make( CustomerService::class )
+            )
+            ->delay( now()->addSecond(5) );
+        }
     }
 
     /**

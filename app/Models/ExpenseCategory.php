@@ -15,4 +15,9 @@ class ExpenseCategory extends NsModel
     {
         return $this->hasMany( Expense::class, 'category_id' );
     }
+
+    public function cashFlowHistories()
+    {
+        return $this->hasMany( CashFlow::class, 'expense_category_id' );
+    }
 }

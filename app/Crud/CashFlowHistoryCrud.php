@@ -1,53 +1,48 @@
 <?php
 namespace App\Crud;
 
-use App\Events\ExpenseHistoryBeforeDeleteEvent;
-use Illuminate\Support\Facades\Auth;
+use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\Expense;
-use App\Models\User;
+use App\Models\CashFlow;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\ExpenseHistory;
 
-class ExpenseHistoryCrud extends CrudService
+class CashFlowHistoryCrud extends CrudService
 {
     /**
      * define the base table
      * @param  string
      */
-    protected $table      =   'nexopos_expenses_history';
+    protected $table      =   'nexopos_cash_flow';
 
     /**
      * default identifier
      * @param  string
      */
-    protected $identifier   =   'expenses/history';
+    protected $identifier   =   'cash-flow/history';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.expenses-history';
+    protected $namespace  =   'ns.cash-flow-history';
 
     /**
      * Model Used
      * @param  string
      */
-    protected $model      =   ExpenseHistory::class;
+    protected $model      =   CashFlow::class;
 
     /**
      * Define permissions
      * @param  array
      */
     protected $permissions  =   [
-        'create'    =>  false,
-        'read'      =>  'nexopos.read.expenses-history',
+        'create'    =>  false, // 'nexopos.create.cash-flow-history',
+        'read'      =>  'nexopos.read.cash-flow-history',
         'update'    =>  false,
-        'delete'    =>  'nexopos.delete.expenses-history',
+        'delete'    =>  'nexopos.delete.cash-flow-history',
     ];
 
     /**
@@ -55,7 +50,7 @@ class ExpenseHistoryCrud extends CrudService
      * @param  array
      */
     public $relations   =  [
-        [ 'nexopos_users as user', 'nexopos_expenses_history.author', '=', 'user.id' ]
+        [ 'nexopos_users as user', 'nexopos_cash_flow.author', '=', 'user.id' ]
     ];
 
     /**
@@ -115,14 +110,14 @@ class ExpenseHistoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Expenses History List' ),
-            'list_description'      =>  __( 'Display all Expenses History.' ),
-            'no_entry'              =>  __( 'No Expense History has been registered' ),
-            'create_new'            =>  __( 'Add a new Expense history' ),
-            'create_title'          =>  __( 'Create a new Expense History' ),
-            'create_description'    =>  __( 'Register a new Expense History and save it.' ),
-            'edit_title'            =>  __( 'Edit Expense History' ),
-            'edit_description'      =>  __( 'Modify  Expense History.' ),
+            'list_title'            =>  __( 'Cash Flow List' ),
+            'list_description'      =>  __( 'Display all Cash Flow.' ),
+            'no_entry'              =>  __( 'No Cash Flow has been registered' ),
+            'create_new'            =>  __( 'Add a new Cash Flow' ),
+            'create_title'          =>  __( 'Create a new Cash Flow' ),
+            'create_description'    =>  __( 'Register a new Cash Flow and save it.' ),
+            'edit_title'            =>  __( 'Edit Cash Flow' ),
+            'edit_description'      =>  __( 'Modify  Cash Flow.' ),
             'back_to_list'          =>  __( 'Return to Expenses Histories' ),
         ];
     }
@@ -146,8 +141,8 @@ class ExpenseHistoryCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -155,21 +150,6 @@ class ExpenseHistoryCrud extends CrudService
                     'label'     =>  __( 'General' ),
                     'fields'    =>  [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created At' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'expense_category_name',
-                            'label' =>  __( 'Expense Category Name' ),
-                            'value' =>  $entry->expense_category_name ?? '',
-                        ], [
                             'type'  =>  'text',
                             'name'  =>  'expense_id',
                             'label' =>  __( 'Expense ID' ),
@@ -181,20 +161,11 @@ class ExpenseHistoryCrud extends CrudService
                             'value' =>  $entry->expense_name ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated At' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'value',
                             'label' =>  __( 'Value' ),
                             'value' =>  $entry->value ?? '',
-                        ],                     ]
+                        ],
+                    ]
                 ]
             ]
         ];
@@ -215,7 +186,7 @@ class ExpenseHistoryCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, ExpenseHistory $entry )
+    public function filterPutInputs( $inputs, CashFlow $entry )
     {
         return $inputs;
     }
@@ -244,10 +215,10 @@ class ExpenseHistoryCrud extends CrudService
     /**
      * After saving a record
      * @param  Request $request
-     * @param  ExpenseHistory $entry
+     * @param  CashFlow $entry
      * @return  void
      */
-    public function afterPost( $request, ExpenseHistory $entry )
+    public function afterPost( $request, CashFlow $entry )
     {
         return $request;
     }
@@ -298,7 +269,7 @@ class ExpenseHistoryCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == 'ns.expenses-history' ) {
+        if ( $namespace == 'ns.cash-flow-history' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -314,11 +285,11 @@ class ExpenseHistoryCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            if ( $model->status !== ExpenseHistory::STATUS_ACTIVE ) {
+            if ( $model->status !== CashFlow::STATUS_ACTIVE ) {
                 throw new NotAllowedException( __( 'This expense history does\'nt have a status that allow deletion.' ) );
             }
 
-            event( new ExpenseHistoryBeforeDeleteEvent( ExpenseHistory::find( $model->id ) ) );
+            event( new CashFlowHistoryBeforeDeleteEvent( CashFlow::find( $model->id ) ) );
 
             return [
                 'status'    =>  'success',
@@ -333,18 +304,18 @@ class ExpenseHistoryCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'expense_name'  =>  [
-                'label'  =>  __( 'Expense Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'expense_category_name'  =>  [
-                'label'  =>  __( 'Category Name' ),
+            'name'  =>  [
+                'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
             'value'  =>  [
                 'label'  =>  __( 'Value' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'operation'  =>  [
+                'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -371,13 +342,34 @@ class ExpenseHistoryCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
+        $entry->value           =   ns()->currency->define( $entry->value )->format();
+        
+
+        switch( $entry->operation ) {
+            case CashFlow::OPERATION_CREDIT : 
+                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+            break;
+            case CashFlow::OPERATION_DEBIT : 
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+            break;
+        }
+
+        switch( $entry->operation ) {
+            case CashFlow::OPERATION_CREDIT : 
+                $entry->operation             =   "<span class='bg-green-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Credit' ) . '</span>';
+            break;
+            case CashFlow::OPERATION_DEBIT : 
+                $entry->operation             =   "<span class='bg-red-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Debit' ) . '</span>';
+            break;
+        }
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses-history/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -418,7 +410,7 @@ class ExpenseHistoryCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof ExpenseHistory ) {
+                if ( $entity instanceof CashFlow ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -438,11 +430,11 @@ class ExpenseHistoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'expenses/history' ),
-            'create'    => ns()->url( 'dashboard/' . 'expenses/history/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'expenses/history/edit/' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses-history' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.expenses-history/{id}' . '' ),
+            'list'      => ns()->url( 'dashboard/' . 'cash-flow/history' ),
+            'create'    => ns()->url( 'dashboard/' . 'cash-flow/history/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'cash-flow/history/edit/' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history/{id}' . '' ),
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ExpenseCategory;
 use App\Services\Helper;
 
 return [

@@ -15,7 +15,7 @@
                     <span>{{ amount | currency }}</span>
                 </div>
                 <div class="mb-2">
-                    <ns-numpad @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
+                    <ns-numpad :floating="true" @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
                 </div>
                 <ns-field v-for="(field,index) of fields" :field="field" :key="index"></ns-field>
             </div>
@@ -97,7 +97,7 @@ export default {
         },
         triggerSubmit() {
             const fields    =   this.validation.extractFields( this.fields );
-            fields.amount   =   this.amount;
+            fields.amount   =   this.amount === '' ? 0 : this.amount;
 
             nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
                 .subscribe( result => {

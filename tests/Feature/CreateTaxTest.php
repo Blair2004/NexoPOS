@@ -16,7 +16,7 @@ class CreateTaxTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateTaxes()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

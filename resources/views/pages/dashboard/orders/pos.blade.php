@@ -23,15 +23,23 @@
     @parent
     <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
     <script>
-    POS.defineTypes( <?php echo json_encode( $orderTypes );?>);
+    POS.defineTypes( <?php
+
+use App\Models\User;
+
+echo json_encode( $orderTypes );?>);
     POS.defineOptions( <?php echo json_encode( $options );?>);
     POS.defineSettings({
-        barcode_search      :   true,
-        text_search         :   false,
-        breadcrumb          :   [],
-        products_queue      :   [],
-        unit_price_editable :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
-        urls                :   <?php echo json_encode( $urls );?>
+        barcode_search          :   true,
+        text_search             :   false,
+        edit_purchase_price     :   <?php echo User::allowedTo( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
+        edit_settings           :   <?php echo User::allowedTo( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
+        products_discount       :   <?php echo User::allowedTo( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
+        cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
+        breadcrumb              :   [],
+        products_queue          :   [],
+        unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
+        urls                    :   <?php echo json_encode( $urls );?>
     });
 
     POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );

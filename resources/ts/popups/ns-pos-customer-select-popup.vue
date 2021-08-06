@@ -27,6 +27,9 @@
                     <li class="p-2 text-center text-gray-600" v-if="customers && customers.length === 0">
                         {{ __( 'No customer match your query...' ) }}
                     </li>
+                    <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-gray-600" v-if="customers && customers.length === 0">
+                        <span class="border-b border-dashed border-blue-400">{{ __( 'Create a customer' ) }}</span>
+                    </li>
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-gray-100 p-2 border-b border-gray-200 text-gray-600 flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
@@ -142,6 +145,12 @@ export default {
                 this.customers  =   customers;
             })
         },
+
+        createCustomerWithMatch( value ) {
+            this.resolveIfQueued(false)
+            Popup.show( nsPosCustomersVue, { name: value })
+        },
+
         getRecentCustomers() {
             this.isLoading  =   true;
 

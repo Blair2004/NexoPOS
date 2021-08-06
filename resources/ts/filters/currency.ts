@@ -8,7 +8,6 @@ declare const window;
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
 
 const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', locale = 'en' ) => {
-    console.log( format );
     let numeralFormat, currencySymbol;
 
     switch( ns.currency.ns_currency_prefered ) {

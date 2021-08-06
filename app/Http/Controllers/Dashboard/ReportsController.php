@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
+use App\Models\CashFlow;
 use App\Models\DashboardDay;
 use App\Models\ExpenseCategory;
 use App\Services\OrdersService;
@@ -131,16 +132,28 @@ class ReportsController extends DashboardController
             ->toDateTimeString();
 
         $entries        =   $this->reportService->getFromTimeRange( $startOfDay, $endOfDay );
-        $total          =   $entries->first()->toArray();
-        $expenses       =   ExpenseCategory::with([
-            'expenses' => function( $query ) use ( $startOfDay, $endOfDay ) {
+        $total          =   $entries->count() > 0 ? $entries->first()->toArray() : [];
+        $creditCashFlow =   ExpenseCategory::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
+            'cashFlowHistories' => function( $query ) use ( $startOfDay, $endOfDay ) {
                 $query->where( 'created_at', '>=', $startOfDay )
                     ->where( 'created_at', '<=', $endOfDay );
             }
         ])  
         ->get()
         ->map( function( $expenseCategory ) {
-            $expenseCategory->total     =   $expenseCategory->expenses->count() > 0 ? $expenseCategory->expenses->sum( 'value' ) : 0;
+            $expenseCategory->total     =   $expenseCategory->cashFlowHistories->count() > 0 ? $expenseCategory->cashFlowHistories->sum( 'value' ) : 0;
+            return $expenseCategory;
+        });
+
+        $debitCashFlow =   ExpenseCategory::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
+            'cashFlowHistories' => function( $query ) use ( $startOfDay, $endOfDay ) {
+                $query->where( 'created_at', '>=', $startOfDay )
+                    ->where( 'created_at', '<=', $endOfDay );
+            }
+        ])  
+        ->get()
+        ->map( function( $expenseCategory ) {
+            $expenseCategory->total     =   $expenseCategory->cashFlowHistories->count() > 0 ? $expenseCategory->cashFlowHistories->sum( 'value' ) : 0;
             return $expenseCategory;
         });
 
@@ -149,19 +162,18 @@ class ReportsController extends DashboardController
                 if ( ! in_array( $key, [ 'range_starts', 'range_ends', 'day_of_year' ] ) ) {
                     return [ $key => $entries->sum( $key ) ];
                 }
-    
                 return [ $key => $value ];
             }),
+            
             'total_debit'   =>  collect([
-                $expenses->sum( 'total' ),
-                $entries->sum( 'total_taxes' ),
-                $entries->sum( 'total_wasted_goods' ),
-                $entries->sum( 'total_discounts' )
+                $debitCashFlow->sum( 'total' ),
             ])->sum(),
             'total_credit'  =>  collect([
-                $entries->sum( 'total_paid_orders' ),
+                $creditCashFlow->sum( 'total' ),
             ])->sum(),
-            'expenses'  =>  $expenses
+
+            'creditCashFlow'    =>  $creditCashFlow,
+            'debitCashFlow'     =>  $debitCashFlow
         ];
     }
     

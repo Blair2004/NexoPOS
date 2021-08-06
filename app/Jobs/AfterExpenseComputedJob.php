@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Events\ExpenseHistoryBeforeDeleteEvent;
+use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,8 +33,8 @@ class AfterExpenseComputedJob implements ShouldQueue
      */
     public function handle()
     {
-        if ( $this->event instanceof ExpenseHistoryBeforeDeleteEvent ) {
-            $this->event->expenseHistory->delete();
+        if ( $this->event instanceof CashFlowHistoryBeforeDeleteEvent ) {
+            $this->event->cashFlow->delete();
         }
     }
 }

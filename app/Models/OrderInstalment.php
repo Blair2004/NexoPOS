@@ -11,4 +11,8 @@ class OrderInstalment extends NsModel
     public $timestamps       =   false;
     
     protected $table    =   'nexopos_' . 'orders_instalments';
+    
+    protected $casts    =   [
+        'paid' =>   'boolean'
+    ];
 }

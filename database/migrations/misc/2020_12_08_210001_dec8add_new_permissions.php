@@ -17,15 +17,15 @@ class Dec8addNewPermissions extends Migration
      */
     public function up()
     {
-        $readHistory                 =   Permission::withNamespaceOrNew( 'nexopos.read.expenses-history' );
-        $readHistory->name           =   __( 'Read Expense History' );
-        $readHistory->namespace      =   'nexopos.read.expenses-history';
-        $readHistory->description    =   __( 'Allow to the expense history.' );
+        $readHistory                 =   Permission::withNamespaceOrNew( 'nexopos.read.cash-flow-history' );
+        $readHistory->name           =   __( 'Read Cash Flow History' );
+        $readHistory->namespace      =   'nexopos.read.cash-flow-history';
+        $readHistory->description    =   __( 'Allow to the Cash Flow History.' );
         $readHistory->save();
 
-        $deleteHistory                 =   Permission::withNamespaceOrNew( 'nexopos.delete.expenses-history' );
+        $deleteHistory                 =   Permission::withNamespaceOrNew( 'nexopos.delete.cash-flow-history' );
         $deleteHistory->name           =   __( 'Delete Expense History' );
-        $deleteHistory->namespace      =   'nexopos.delete.expenses-history';
+        $deleteHistory->namespace      =   'nexopos.delete.cash-flow-history';
         $deleteHistory->description    =   __( 'Allow to delete an expense history.' );
         $deleteHistory->save();
 

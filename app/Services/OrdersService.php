@@ -15,6 +15,7 @@ use App\Events\OrderBeforeDeleteProductEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
+use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -289,7 +290,7 @@ class OrdersService
             }
             
             if ( $total < ( float ) $fields[ 'total' ] ) {
-                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which addionnated is not equal to the order total.' ) );
+                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which additionnated is less than the order total.' ) );
             }
 
             $instalments->each( function( $instalment ) {
@@ -711,16 +712,19 @@ class OrdersService
                 throw new NotFoundException( __( 'No payment is expected at the moment. If the customer want to pay early, consider adjusting instalment payments date.' ) );
             }
 
-            if ( 
-                ns()->currency->getRaw( $paymentToday->sum( 'amount' ) ) !== 
-                ns()->currency->getRaw( $payment[ 'value' ] ) ) {
-                throw new NotAllowedException( 
-                    sprintf(
-                        __( 'The provided payment doesn\'t match the expected payment : %s. If the customer want to pay a different amount, consider adjusting the instalment amount.' ),
-                        ( string ) Currency::define( $paymentToday->sum( 'amount' ) )
-                    )
-                );
-            }
+            /**
+             * @todo don't think this restriction is actually necessary.
+             */
+            // if ( 
+            //     ns()->currency->getRaw( $paymentToday->sum( 'amount' ) ) !== 
+            //     ns()->currency->getRaw( $payment[ 'value' ] ) ) {
+            //     throw new NotAllowedException( 
+            //         sprintf(
+            //             __( 'The provided payment doesn\'t match the expected payment : %s. If the customer want to pay a different amount, consider adjusting the instalment amount.' ),
+            //             ( string ) Currency::define( $paymentToday->sum( 'amount' ) )
+            //         )
+            //     );
+            // }
         }        
 
         $this->__saveOrderSinglePayment( $payment, $order );
@@ -940,9 +944,7 @@ class OrdersService
         /**
          * compute change
          */
-        $order->change          =   $this->currencyService->define( $order->tendered )
-            ->subtractBy( $order->total )
-            ->get();
+        $order->change          =   $this->currencyService->getRaw( $order->tendered - $order->total );
 
         /**
          * compute gross total
@@ -1015,7 +1017,7 @@ class OrdersService
                 ->subtractBy( $orderProduct->discount )
                 // ->subtractBy( $orderProduct->tax_value ?? 0 ) maybe we need to create a gross_purchase_price and net_purchase_price fields
                 ->getRaw();
-            
+
             $this->computeOrderProduct( $orderProduct );
 
             $orderProduct->save();
@@ -1222,7 +1224,7 @@ class OrdersService
                 )
             )
             ->multiplyBy( floatval( $fields[ 'quantity' ] ) )
-            ->getRaw();        
+            ->getRaw();
         }
 
         /**
@@ -1457,7 +1459,7 @@ class OrdersService
         $orderRefund->order_id          =   $order->id;
         $orderRefund->payment_method    =   $fields[ 'payment' ][ 'identifier' ];
         $orderRefund->shipping          =   ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] ? $order->shipping : 0 );
-        $orderRefund->total             =   $this->currencyService->getRaw( $fields[ 'total' ] );
+        $orderRefund->total             =   0;
         $orderRefund->save();
 
         event( new OrderRefundPaymentAfterCreatedEvent( $orderRefund ) );
@@ -1472,10 +1474,19 @@ class OrdersService
          * if the shipping is refunded
          * We'll do that here
          */
+        $shipping       =   0;
         if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
+            $shipping               =       $order->shipping;
             $order->shipping        =       0;
             $order->save();
         }
+
+        /**
+         * let's update the order refund total
+         */
+        $orderRefund->load( 'refunded_products' );
+        $orderRefund->total     =   $orderRefund->refunded_products->sum( 'total_price' ) + $shipping;
+        $orderRefund->save();
 
         /**
          * check if the payment used is the customer account
@@ -1553,7 +1564,7 @@ class OrdersService
         $productRefund->product_id          =   $orderProduct->product_id;
         $productRefund->save();
 
-        event( new OrderAfterProductRefundedEvent( $order, $orderProduct ) );
+        event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
 
         /**
          * we do proceed by doing an initial return
@@ -1805,12 +1816,23 @@ class OrdersService
             return floatval($product->total_price);
         })->sum();
 
+        $productTotalQuatity    =   $products->map( function( $product) {
+            return floatval( $product->quantity );
+        })->sum();
+
         $productGrossTotal      =   $products->map(function ($product) {
             return floatval($product->total_gross_price);
         })->sum();
 
         $productsTotalTaxes     =   $products->map(function ($product) {
-            return floatval($product->tax_value);
+            if( in_array( ns()->option->get( 'ns_pos_vat' ), [
+                'products_vat',
+                'products_flat_vat'
+            ] ) ) {
+                return floatval($product->tax_value);
+            }
+
+            return 0;
         })->sum();
 
         $orderShipping          =   $order->shipping;
@@ -1820,26 +1842,34 @@ class OrdersService
         /**
          * let's refresh all the order values
          */
-        $order->subtotal        =   $productGrossTotal;
+        $order->subtotal        =   $productTotal;
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   $productTotal + $orderShipping - $order->discount;
+        $order->total           =   ( $productTotal + $orderShipping ) - ( $order->discount + $order->total_coupons );
         $order->tax_value       =   $productsTotalTaxes;
         $order->change          =   $order->tendered - $order->total;
 
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();
 
-        if ( ( float ) $order->total == 0 && $totalRefunds > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_REFUNDED;
-        } else if ( $order->total > 0 && $totalRefunds > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
-        } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
-            $order->payment_status      =       Order::PAYMENT_PAID;
-        } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
-            $order->payment_status      =       Order::PAYMENT_PARTIALLY;
-        } else if ( $order->total == 0 && $totalRefunds == 0 ) {
-            $order->payment_status      =       Order::PAYMENT_UNPAID;
+        /**
+         * We believe if the product total is greater
+         * than "0", then probably the order hasn't been paid yet.
+         */
+        if ( $productTotal ) {
+            if ( ( float ) $order->total == 0 && $totalRefunds > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_REFUNDED;
+            } else if ( $order->total > 0 && $totalRefunds > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
+            } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
+                $order->payment_status      =       Order::PAYMENT_PAID;
+            } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
+                $order->payment_status      =       Order::PAYMENT_PARTIALLY;
+            } else if ( $order->total == 0 && $totalRefunds == 0 ) {
+                $order->payment_status      =       Order::PAYMENT_UNPAID;
+            }
+        } else if ( $productTotal == 0 && $productTotalQuatity == 0 ) {
+            $order->payment_status      =   Order::PAYMENT_REFUNDED;
         }
 
         $order->save();
@@ -2311,8 +2341,19 @@ class OrdersService
             throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
         }
 
+        $payment        =   [
+            'order_id'      =>   $order->id,
+            'identifier'    =>   OrderPayment::PAYMENT_CASH, // hard coded for now,
+            'author'        =>   Auth::id(),
+            'value'         =>   $instalment->amount,
+        ];
+
+        $this->makeOrderSinglePayment( $payment, $order );
+
         $instalment->paid   =   true;
         $instalment->save();
+
+        OrderAfterInstalmentPaidEvent::dispatch( $instalment, $order );
 
         return [
             'status'    =>  'success',
@@ -2328,9 +2369,9 @@ class OrdersService
      */
     public function deleteInstalment( Order $order, OrderInstalment $instalment )
     {
-        $this->refreshInstalmentCount( $order );
-
         $instalment->delete();
+
+        $this->refreshInstalmentCount( $order );
 
         return [
             'status'    =>  'success',
@@ -2356,7 +2397,7 @@ class OrdersService
 
         if ( Currency::raw( $fields[ 'amount' ] ) <= 0 ) {
             throw new NotAllowedException( __( 'The defined amount is not valid.' ) );
-        }
+        } 
 
         if ( Currency::raw( $totalInstalment ) >= $order->total ) {
             throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );

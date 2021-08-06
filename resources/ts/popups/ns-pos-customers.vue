@@ -10,6 +10,7 @@
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
+                        @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
                         submit-url="/api/nexopos/v4/crud/ns.customers"
                         src="/api/nexopos/v4/crud/ns.customers/form-config">
@@ -136,6 +137,10 @@ export default {
                     this.activeTab  =   'account-payment';
                     this.customer   =   this.$popupParams.customer;
                     this.loadCustomerOrders( this.customer.id );
+                } else if ( this.$popupParams.name !== undefined ) {
+                    setTimeout( () => {
+
+                    }, 100 );
                 }
             }
         });
@@ -147,6 +152,12 @@ export default {
         
         allowedForPayment( order ) {
             return [ 'unpaid', 'partially_paid', 'hold' ].includes( order.payment_status );
+        },
+
+        prefillForm( event ) {
+            if ( this.$popupParams.name !== undefined ) {
+                event.main.value     =   this.$popupParams.name;
+            }
         },
 
         openCustomerSelection() {

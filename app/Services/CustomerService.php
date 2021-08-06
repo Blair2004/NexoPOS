@@ -511,6 +511,28 @@ class CustomerService
     }
 
     /**
+     * Will refresh the owed amount
+     * for the provided customer
+     */
+    public function updateCustomerOwedAmount( Customer $customer )
+    {
+        $unpaid     =   Order::whereIn( 'payment_status', [
+            Order::PAYMENT_UNPAID
+        ])->sum( 'total' );
+
+        /**
+         * Change here will be negative, so we
+         * want to be an absolute value.
+         */
+        $change     =   abs( Order::whereIn( 'payment_status', [
+            Order::PAYMENT_PARTIALLY
+        ])->sum( 'change' ) );
+
+        $customer->owed_amount  =   ns()->currency->getRaw( $unpaid + $change );
+        $customer->save();
+    }
+
+    /**
      * Create customer group using
      * provided fields
      * @param array $fields

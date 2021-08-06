@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Services\CashRegistersService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -40,6 +42,11 @@ class CashRegisterEventsSubscriber
         $event->listen( 
             CashRegisterHistoryAfterCreatedEvent::class, 
             [ $this->registerService, 'updateRegisterAmount' ]
+        );
+
+        $event->listen( 
+            CashRegisterHistoryAfterCreatedEvent::class, 
+            [ $this->registerService, 'issueExpenses' ]
         );
 
         $event->listen( 

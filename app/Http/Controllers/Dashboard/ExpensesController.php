@@ -8,7 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\ExpenseCrud;
-use App\Crud\ExpenseHistoryCrud;
+use App\Crud\CashFlowHistoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Expense;
 use Illuminate\Http\Request;
@@ -122,7 +122,7 @@ class ExpensesController extends DashboardController
      */
     public function postExpenseCategory( Request $request )
     {
-        $fields             =   $request->only([ 'name', 'description' ]);
+        $fields             =   $request->only([ 'name', 'description', 'account', 'operation' ]);
         return $this->expenseService->createCategory( $fields );
     }
 
@@ -142,16 +142,21 @@ class ExpensesController extends DashboardController
      * Get expenses entries under a specific 
      * expense category
      * @param int Expense Category ID
-     * @return array
+     * @return array    
      */
     public function getCategoryExpenses( $id )
     {
         return $this->expenseService->getCategories( $id )->expenses;
     }
 
-    public function expensesHistory()
+    public function cashFlowHistory()
     {
-        return ExpenseHistoryCrud::table();
+        return CashFlowHistoryCrud::table();
+    }
+
+    public function createCashFlowHistory()
+    {
+        return CashFlowHistoryCrud::form();
     }
 }
 

@@ -2,14 +2,19 @@
 namespace App\Services;
 
 use App\Events\ExpenseAfterCreateEvent;
-use App\Events\ExpenseHistoryAfterCreatedEvent;
+use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\Expense;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ExpenseCategory;
 use App\Exceptions\NotFoundException;
-use App\Models\ExpenseHistory;
+use App\Models\CashFlow;
+use App\Models\CustomerAccountHistory;
+use App\Models\Order;
+use App\Models\OrderProduct;
+use App\Models\OrderProductRefund;
 use App\Models\Procurement;
+use App\Models\RegisterHistory;
 use App\Models\Role;
 use Carbon\Carbon;
 
@@ -224,7 +229,7 @@ class ExpenseService
      */
     public function triggerExpense( $expense )
     {
-        $this->recordExpenseHistory( $expense );
+        $this->recordCashFlowHistory( $expense );
 
         /**
          * a non recurring expenses
@@ -241,30 +246,35 @@ class ExpenseService
         return $expenseCategory->expenses;
     }
 
-    public function recordExpenseHistory( Expense $expense )
+    public function recordCashFlowHistory( Expense $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
             Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
-                $history                            =   new ExpenseHistory;
+                $history                            =   new CashFlow;
                 $history->value                     =   $expense->value;
                 $history->expense_id                =   $expense->id;
+                $history->operation                 =   'debit';
                 $history->author                    =   $expense->author;
-                $history->expense_name              =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
-                $history->expense_category_name     =   $expense->category->name;
+                $history->name              =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
+                $history->expense_category_id       =   $expense->category->id;
                 $history->save();
 
-                event( new ExpenseHistoryAfterCreatedEvent( $history ) );
+                event( new CashFlowHistoryAfterCreatedEvent( $history ) );
             });
         } else {
-            $history                            =   new ExpenseHistory;
+            $history                            =   new CashFlow;
             $history->value                     =   $expense->value;
             $history->expense_id                =   $expense->id;
+            $history->operation                 =   $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
             $history->author                    =   $expense->author;
-            $history->expense_name              =   $expense->name;
-            $history->expense_category_name     =   $expense->category->name;
+            $history->name                      =   $expense->name;
+            $history->procurement_id            =   $expense->procurement_id ?? 0; // if the cash flow is created from a procurement
+            $history->order_id                  =   $expense->order_id ?? 0; // if the cash flow is created from a refund
+            $history->register_history_id       =   $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
+            $history->expense_category_id       =   $expense->category->id;
             $history->save();
 
-            event( new ExpenseHistoryAfterCreatedEvent( $history ) );
+            event( new CashFlowHistoryAfterCreatedEvent( $history ) );
         }
     }
 
@@ -305,9 +315,9 @@ class ExpenseService
                  */
                 if ( $this->dateService->isSameDay( $expenseScheduledDate ) ) {
                     
-                    if ( ! $this->hadExpenseRecordedAlready( $expenseScheduledDate, $expense ) ) {
+                    if ( ! $this->hadCashFlowRecordedAlready( $expenseScheduledDate, $expense ) ) {
                         
-                        $this->recordExpenseHistory( $expense );
+                        $this->recordCashFlowHistory( $expense );
                         
                         return [
                             'status'    =>  'success',
@@ -344,14 +354,14 @@ class ExpenseService
      * To prevent many recurring expenses to trigger multiple times
      * during a day.
      */
-    public function hadExpenseRecordedAlready( $date, Expense $expense )
+    public function hadCashFlowRecordedAlready( $date, Expense $expense )
     {
-        $history    =   ExpenseHistory::where( 'expense_id', $expense->id )
+        $history    =   CashFlow::where( 'expense_id', $expense->id )
             ->where( 'created_at', '>=', $date->startOfDay()->toDateTimeString() )
             ->where( 'created_at', '<=', $date->endOfDay()->toDateTimeString() )
             ->get();
 
-        return $history instanceof ExpenseHistory;
+        return $history instanceof CashFlow;
     }
 
     /**
@@ -362,33 +372,270 @@ class ExpenseService
     public function handleProcurementExpense( Procurement $procurement )
     {
         if ( 
-            ( bool ) ns()->option->get( 'ns_supplies_create_expenses' ) && 
             $procurement->payment_status === Procurement::PAYMENT_PAID &&
-            $procurement->delivery_status === Procurement::DELIVERED
+            $procurement->delivery_status === Procurement::STOCKED
         ) {
-            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_supplies_expense_category' ) );
+            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_procurement_cashflow_account' ) );
 
             if ( ! $expenseCategory instanceof ExpenseCategory ) {
                 $result     =   $this->createCategory([
                     'name'  =>  __( 'Procurement Expenses' ),
                 ]);
 
-                $expenseCategory    =   $result[ 'data' ][ 'category' ];
+                $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+                
+                /**
+                 * Will set the expense as the default category expense
+                 * category for subsequent expenses.
+                 */
+                ns()->option->set( 'ns_procurement_cashflow_account', $expenseCategory->id );
             }
                                     
             /**
              * this behave as a flash expense
              * made only for recording an history.
              */
-            $expense                =   new Expense;
-            $expense->value         =   $procurement->value;
-            $expense->active        =   true;
-            $expense->author        =   Auth::id();
-            $expense->name          =   sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $expense->id            =   0; // this is not assigned to an existing expense
-            $expense->category      =   $expenseCategory;
+            $expense                    =   new Expense;
+            $expense->value             =   $procurement->value;
+            $expense->active            =   true;
+            $expense->author            =   Auth::id();
+            $expense->procurement_id    =   $procurement->id;
+            $expense->name              =   sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $expense->id                =   0; // this is not assigned to an existing expense
+            $expense->category          =   $expenseCategory;
 
-            $this->recordExpenseHistory( $expense );
+            $this->recordCashFlowHistory( $expense );
         }
+    }
+
+    /**
+     * Will record an expense for every refund performed
+     * @param OrderProduct $orderProduct
+     * @return void
+     */
+    public function createExpenseFromRefund( OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
+    {
+        $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_account' ) );
+
+        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+            $result     =   $this->createCategory([
+                'name'  =>  __( 'Sales Refunds' ),
+            ]);
+
+            $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+            
+            /**
+             * Will set the expense as the default category expense
+             * category for subsequent expenses.
+             */
+            ns()->option->set( 'ns_sales_refunds_account', $expenseCategory->id );
+        }
+                                
+        /**
+         * Every product refund produce a debit
+         * operation on the system.
+         */
+        $expense                    =   new Expense;
+        $expense->value             =   $orderProductRefund->total_price;
+        $expense->active            =   true;
+        $expense->operation         =   CashFlow::OPERATION_DEBIT;
+        $expense->author            =   Auth::id();
+        $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
+        $expense->name              =   sprintf( __( 'Refunding : %s' ), $orderProduct->name );
+        $expense->id                =   0; // this is not assigned to an existing expense
+        $expense->category          =   $expenseCategory;
+
+        $this->recordCashFlowHistory( $expense );
+
+        /**
+         * According to wether the product was returned in good condition
+         * we'll add a stock return or a waste.
+         */
+        $conditionLabel             =   $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? __( 'Soiled' ) : __( 'Unspoiled' );
+        $optionName                 =   $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? 'ns_stock_return_spoiled_account' : 'ns_stock_return_unspoiled_account';
+        $expenseCategory            =   ExpenseCategory::find( ns()->option->get( $optionName ) );
+
+        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+            $result     =   $this->createCategory([
+                'name'  =>  $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? __( 'Stock Return (Spoiled Products)' ) : __( 'Stock Return (Unspoiled Products)' ),
+            ]);
+
+            $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+            
+            /**
+             * Will set the expense as the default category expense
+             * category for subsequent expenses.
+             */
+            ns()->option->set( $optionName, $expenseCategory->id );
+        }
+
+        $expense                    =   new Expense;
+        $expense->value             =   $orderProductRefund->total_price;
+        $expense->active            =   true;
+        $expense->operation         =   $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? CashFlow::OPERATION_DEBIT : CashFlow::OPERATION_CREDIT;
+        $expense->author            =   Auth::id();
+        $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
+        $expense->name              =   sprintf( __( 'Stock Return (%s) : %s' ), $conditionLabel, $orderProduct->name );
+        $expense->id                =   0; // this is not assigned to an existing expense
+        $expense->category          =   $expenseCategory;
+
+        $this->recordCashFlowHistory( $expense );
+    }
+
+    public function handleCashRegisterHistory( RegisterHistory $history )
+    {                               
+        /**
+         * this behave as a flash expense
+         * made only for recording an history.
+         */
+        if ( in_array( $history->action, [
+            RegisterHistory::ACTION_CASHING,
+            // RegisterHistory::ACTION_SALE, // we want to consider sales separately
+            RegisterHistory::ACTION_OPENING
+        ])) {
+            $operation      =   'credit';
+            $expenseCategory        =   $this->__getCashFlowCategory( $operation );
+        } else {
+            $operation      =   'debit';
+            $expenseCategory        =   $this->__getCashFlowCategory( $operation );
+        }
+
+        /**
+         * @var CashRegistersService
+         */
+        $registerService                =   app()->make( CashRegistersService::class );
+
+        $expense                        =   new Expense;
+        $expense->value                 =   $history->value;
+        $expense->active                =   true;
+        $expense->operation             =   $operation;
+        $expense->author                =   Auth::id();
+        $expense->register_history_id   =   $history->id;
+        $expense->name                  =   sprintf( __( 'Cash Register : %s' ), $registerService->getActionLabel( $history->action ) );
+        $expense->id                    =   0; // this is not assigned to an existing expense
+        $expense->category              =   $expenseCategory;
+
+        $this->recordCashFlowHistory( $expense );
+    }
+
+    /**
+     * @param string $operation
+     * @return ExpenseCategory
+     */
+    private function __getCashFlowCategory( $operation )
+    {
+        $optionName         =   $operation === 'debit' ? 'ns_cashregister_cashin_cashflow_account' : 'ns_cashregister_cashout_cashflow_account';
+        $expenseCategory    =   ExpenseCategory::find( 
+            ns()->option->get( $optionName )
+        );
+
+        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+            $result     =   $this->createCategory([
+                'name'  =>  $operation === 'credit' ? __( 'Cash Register Cash In' ) : __( 'Cash Register Cash Out' ),
+            ]);
+
+            $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+            
+            /**
+             * Will set the expense as the default category expense
+             * category for subsequent expenses.
+             */
+            ns()->option->set( $optionName, $expenseCategory->id );
+        }
+
+        return $expenseCategory;
+    }
+
+    /**
+     * Will records salees on the cash flow history
+     * @param Order $order
+     * @return void
+     */
+    public function handleSales( Order $order )
+    {
+        if ( $order->payment_status === Order::PAYMENT_PAID ) {
+            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_cashflow_account' ) );
+
+            if ( ! $expenseCategory instanceof ExpenseCategory ) {
+                $result     =   $this->createCategory([
+                    'name'  =>  __( 'Sales' ),
+                ]);
+
+                $expenseCategory    =   ( object ) $result[ 'data' ][ 'category' ];
+                
+                /**
+                 * Will set the expense as the default category expense
+                 * category for subsequent expenses.
+                 */
+                ns()->option->set( 'ns_sales_cashflow_account', $expenseCategory->id );
+
+                $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_cashflow_account' ) );
+            }
+
+            if ( $expenseCategory instanceof ExpenseCategory ) {
+                $expense                        =   new Expense;
+                $expense->value                 =   $order->total;
+                $expense->active                =   true;
+                $expense->operation             =   CashFlow::OPERATION_CREDIT;
+                $expense->author                =   Auth::id();
+                $expense->order_id              =   $order->id;
+                $expense->name                  =   sprintf( __( 'Sale : %s' ), $order->code );
+                $expense->id                    =   0; // this is not assigned to an existing expense
+                $expense->category              =   $expenseCategory;
+    
+                $this->recordCashFlowHistory( $expense );
+            }
+        }
+    }
+
+    /**
+     * Will add customer credit operation 
+     * to the cash flow history
+     * @param CustomerAccountHistory $customerHistory
+     * @return void
+     */
+    public function handleCustomerCredit( CustomerAccountHistory $customerHistory )
+    {
+        if ( in_array( $customerHistory->operation, [
+            CustomerAccountHistory::OPERATION_ADD,
+            CustomerAccountHistory::OPERATION_REFUND,
+            CustomerAccountHistory::OPERATION_PAYMENT,
+        ]) ) {
+            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_customer_crediting_cashflow_account' ) );
+    
+            if ( $expenseCategory instanceof ExpenseCategory ) {
+                $expense                                =   new Expense;
+                $expense->value                         =   $customerHistory->amount;
+                $expense->active                        =   true;
+                $expense->operation                     =   CashFlow::OPERATION_CREDIT;
+                $expense->author                        =   Auth::id();
+                $expense->customer_account_history_id   =   $customerHistory->id;
+                $expense->name                          =   sprintf( __( 'Customer Crediting : %s' ), $customerHistory->customer->name );
+                $expense->id                            =   0; // this is not assigned to an existing expense
+                $expense->category                      =   $expenseCategory;
+    
+                $this->recordCashFlowHistory( $expense );
+            }
+        } else if ( in_array(
+            $customerHistory->operation, [
+                CustomerAccountHistory::OPERATION_DEDUCT,
+            ]
+        ) ) {
+            $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_customer_debitting_cashflow_account' ) );
+    
+            if ( $expenseCategory instanceof ExpenseCategory ) {
+                $expense                                =   new Expense;
+                $expense->value                         =   $customerHistory->amount;
+                $expense->active                        =   true;
+                $expense->operation                     =   CashFlow::OPERATION_DEBIT;
+                $expense->author                        =   Auth::id();
+                $expense->customer_account_history_id   =   $customerHistory->id;
+                $expense->name                          =   sprintf( __( 'Customer Crediting Deducting : %s' ), $customerHistory->customer->name );
+                $expense->id                            =   0; // this is not assigned to an existing expense
+                $expense->category                      =   $expenseCategory;
+    
+                $this->recordCashFlowHistory( $expense );
+            }
+        }        
     }
 }

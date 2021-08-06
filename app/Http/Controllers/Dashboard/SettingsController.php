@@ -51,6 +51,7 @@ class SettingsController extends DashboardController
             case 'reset'; return $this->resetSettings(); break;
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
+            case 'accounting'; return $this->accountingSettings(); break;
             default : return $this->handleDefaultSettings( $identifier );break;
         }
     }
@@ -111,6 +112,14 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.notifications', [
             'title'     =>      __( 'Notifications Settings' ),
             'description'   =>  __( 'Configure the notifications settings of the application.' )
+        ]);
+    }
+
+    public function accountingSettings()
+    {
+        return $this->view( 'pages.dashboard.settings.accounting', [
+            'title'     =>      __( 'Accounting Settings' ),
+            'description'   =>  __( 'Configure the accounting settings of the application.' )
         ]);
     }
 

@@ -12,6 +12,7 @@ use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
 use App\Models\Register;
@@ -58,11 +59,13 @@ class CashRegistersController extends DashboardController
     public function getRegisters( $register_id = null )
     {
         if ( $register_id !== null ) {
-            return Register::findOrFail( $register_id );
+            $register   =   Register::findOrFail( $register_id );
+            $this->registersService->getRegisterDetails( $register );
+            return $register;
         }
 
         return Register::get()->map( function( $register ) {
-            $register->status_label     =   $this->registersService->getRegisterStatusLabel( $register->status );
+            $this->registersService->getRegisterDetails( $register );
             return $register;
         });
     }

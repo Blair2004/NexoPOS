@@ -26,27 +26,27 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $expenses->description    =   __( 'Let the user read expenses' );
     $expenses->save();
     
-    $expenses                 =   new Permission;
-    $expenses->name           =   __( 'Read Expense History' );
-    $expenses->namespace      =   'nexopos.read.expenses-history';
-    $expenses->description    =   __( 'Allow to the expense history.' );
-    $expenses->save();
+    $readCashFlowHistory                 =   new Permission;
+    $readCashFlowHistory->name           =   __( 'Read Cash Flow History' );
+    $readCashFlowHistory->namespace      =   'nexopos.read.cash-flow-history';
+    $readCashFlowHistory->description    =   __( 'Allow to the Cash Flow History.' );
+    $readCashFlowHistory->save();
 
-    $expenses                 =   new Permission;
-    $expenses->name           =   __( 'Delete Expense History' );
-    $expenses->namespace      =   'nexopos.delete.expenses-history';
-    $expenses->description    =   __( 'Allow to delete an expense history.' );
-    $expenses->save();
+    $deleteCashFlowHistory                 =   new Permission;
+    $deleteCashFlowHistory->name           =   __( 'Delete Cash Flow History' );
+    $deleteCashFlowHistory->namespace      =   'nexopos.delete.cash-flow-history';
+    $deleteCashFlowHistory->description    =   __( 'Allow to delete an Cash Flow History.' );
+    $deleteCashFlowHistory->save();
 
-    $readHistory                 =   Permission::withNamespaceOrNew( 'nexopos.read.expenses-history' );
-    $readHistory->name           =   __( 'Read Expense History' );
-    $readHistory->namespace      =   'nexopos.read.expenses-history';
-    $readHistory->description    =   __( 'Allow to the expense history.' );
-    $readHistory->save();
+    $readCashFlowHistory                 =   Permission::withNamespaceOrNew( 'nexopos.update.cash-flow-history' );
+    $readCashFlowHistory->name           =   __( 'Update Cash Flow History' );
+    $readCashFlowHistory->namespace      =   'nexopos.update.cash-flow-history';
+    $readCashFlowHistory->description    =   __( 'Allow to the Cash Flow History.' );
+    $readCashFlowHistory->save();
 
-    $deleteHistory                 =   Permission::withNamespaceOrNew( 'nexopos.delete.expenses-history' );
-    $deleteHistory->name           =   __( 'Delete Expense History' );
-    $deleteHistory->namespace      =   'nexopos.delete.expenses-history';
-    $deleteHistory->description    =   __( 'Allow to delete an expense history.' );
-    $deleteHistory->save();
+    $createCashFlowHistory                 =   Permission::withNamespaceOrNew( 'nexopos.create.cash-flow-history' );
+    $createCashFlowHistory->name           =   __( 'Create Cash Flow History' );
+    $createCashFlowHistory->namespace      =   'nexopos.create.cash-flow-history';
+    $createCashFlowHistory->description    =   __( 'Allow to create a Cash Flow History.' );
+    $createCashFlowHistory->save();
 }

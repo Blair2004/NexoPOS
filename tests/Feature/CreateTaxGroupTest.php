@@ -15,7 +15,7 @@ class CreateTaxGroupTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateTaxGroup()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),

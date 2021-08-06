@@ -5,8 +5,8 @@ namespace App\Jobs;
 use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Events\ExpenseAfterRefreshEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
-use App\Events\ExpenseHistoryAfterCreatedEvent;
-use App\Events\ExpenseHistoryBeforeDeleteEvent;
+use App\Events\CashFlowHistoryAfterCreatedEvent;
+use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use App\Models\DashboardDay;
 use App\Services\DateService;
 use App\Services\ReportService;
@@ -55,8 +55,8 @@ class ComputeDashboardExpensesJob implements ShouldQueue
          */
         $now                =   now();
 
-        $todayStart         =   Carbon::parse( $this->event->expenseHistory->created_at )->startOfDay()->toDateTimeString();
-        $todayEnd           =   Carbon::parse( $this->event->expenseHistory->created_at )->endOfDay()->toDateTimeString();
+        $todayStart         =   Carbon::parse( $this->event->cashFlow->created_at )->startOfDay()->toDateTimeString();
+        $todayEnd           =   Carbon::parse( $this->event->cashFlow->created_at )->endOfDay()->toDateTimeString();
         $dashboardDay       =   DashboardDay::from( $todayStart )
             ->to( $todayEnd )
             ->first();
@@ -66,14 +66,14 @@ class ComputeDashboardExpensesJob implements ShouldQueue
          * we'll editer reduce the expense or increase
          */
         if ( $dashboardDay instanceof DashboardDay ) {
-            if ( $this->event instanceof ExpenseHistoryAfterCreatedEvent ) {
-                $reportService->increaseDailyExpenses( $this->event->expenseHistory, $dashboardDay );
-            } else if ( $this->event instanceof ExpenseHistoryBeforeDeleteEvent ) {
-                $reportService->reduceDailyExpenses( $this->event->expenseHistory, $dashboardDay );
+            if ( $this->event instanceof CashFlowHistoryAfterCreatedEvent ) {
+                $reportService->increaseDailyExpenses( $this->event->cashFlow, $dashboardDay );
+            } else if ( $this->event instanceof CashFlowHistoryBeforeDeleteEvent ) {
+                $reportService->reduceDailyExpenses( $this->event->cashFlow, $dashboardDay );
             }
 
             $reports         =   DashboardDay::from( 
-                Carbon::parse( $this->event->expenseHistory->created_at )->startOfDay()->toDateTimeString() 
+                Carbon::parse( $this->event->cashFlow->created_at )->startOfDay()->toDateTimeString() 
             )->to(
                 $dateService->copy()->endOfDay()->toDateTimeString()
             )->get();

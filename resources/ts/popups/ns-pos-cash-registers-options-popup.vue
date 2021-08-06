@@ -6,16 +6,20 @@ import popupResolver from '@/libraries/popup-resolver';
 import { __ } from '@/libraries/lang';
 export default {
     mounted() {
+        // destroy observable
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
         });
 
         this.popupCloser();
+
+        this.loadRegisterSummary();
     },
     data() {
         return {
             settings: null,
             settingsSubscriber: null,
+            register: {}
         }
     },
     methods: {
@@ -24,6 +28,13 @@ export default {
         popupResolver,
 
         popupCloser,
+
+        loadRegisterSummary() {
+            nsHttpClient.get( `/api/nexopos/v4/cash-registers/${this.settings.register.id}` )
+                .subscribe( result => {
+                    this.register   =   result;
+                })
+        },
 
         closePopup() {
             this.popupResolver({
@@ -122,11 +133,21 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-1/3-screen bg-white">
+    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-2/4-screen bg-white">
         <div class="p-2 border-b border-gray-200 flex items-center justify-between">
             <h3>{{ __( 'Register Options' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
+            </div>
+        </div>
+        <div>
+            <div class="h-16 text-3xl bg-blue-400 text-white flex items-center justify-between px-3">
+                <span class="">{{ __( 'Sales' ) }}</span>
+                <span class="font-bold">{{ ( register.total_sale_amount | 0 ) | currency }}</span>
+            </div>
+            <div class="h-16 text-3xl bg-green-400 text-white flex items-center justify-between px-3">
+                <span class="">{{ __( 'Balance' ) }}</span>
+                <span class="font-bold">{{ ( register.balance | 0 ) | currency }}</span>
             </div>
         </div>
         <div class="grid grid-cols-2 text-gray-700">
