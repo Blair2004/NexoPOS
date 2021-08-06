@@ -31,7 +31,7 @@
         <div class="px-2 pb-2">
             <div class="-mx-2 flex flex-wrap">
                 <div class="pl-2 pr-1 flex-auto">
-                    <ns-numpad @changed="handleChange( $event )" @next="proceedAddingPayment( $event )">
+                    <ns-numpad :floating="true" @changed="handleChange( $event )" @next="proceedAddingPayment( $event )">
                         <template v-slot:numpad-footer>
                             <div
                             @click="makeFullPayment()"
