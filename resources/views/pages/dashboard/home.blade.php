@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\View;
 
 @section( 'layout.dashboard.footer.inject' )
     @if ( $dashid === 'store' )
-    <script src="{{ asset( '/js/dashboard.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? '/js/dashboard.min.js' : '/js/dashboard.js' ) }}"></script>
     @elseif ( $dashid === 'cashier' )
-    <script src="{{ asset( '/js/cashier.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? '/js/cashier.min.js' : '/js/cashier.js' ) }}"></script>
     @endif
 @endsection
