@@ -22,7 +22,10 @@ public/export/*
 !public/modules/index.html
 public/js/*.js
 !public/js/*.min.js
+!public/js/vendor.js
+!public/js/manifest.js
 public/css/*.css
+!public/css/app.css
 public/js/*.map
 public/js/*.txt
 public/css/*.map
