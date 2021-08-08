@@ -524,9 +524,11 @@ class CustomerService
          * Change here will be negative, so we
          * want to be an absolute value.
          */
-        $change     =   abs( Order::whereIn( 'payment_status', [
+        $orders     =   Order::whereIn( 'payment_status', [
             Order::PAYMENT_PARTIALLY
-        ])->sum( 'change' ) );
+        ]);
+        
+        $change     =   abs( $orders->sum( 'change' ) );
 
         $customer->owed_amount  =   ns()->currency->getRaw( $unpaid + $change );
         $customer->save();
