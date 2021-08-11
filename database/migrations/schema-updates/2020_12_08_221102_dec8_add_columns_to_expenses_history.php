@@ -14,11 +14,13 @@ class Dec8AddColumnsToExpensesHistory extends Migration
      */
     public function up()
     {
-        Schema::table('nexopos_expenses_history', function (Blueprint $table) {
-            if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'status' ) ) {
-                $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
-            }
-        });
+        if ( Schema::hasTable( 'nexopos_expenses_history' ) ) {
+            Schema::table('nexopos_expenses_history', function (Blueprint $table) {
+                if ( ! Schema::hasColumn( 'nexopos_expenses_history', 'status' ) ) {
+                    $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
+                }
+            });
+        }
     }
 
     /**

@@ -81,7 +81,7 @@ export default {
             return Object.values( this.modules ).length === 0;
         },
         noModuleMessage() {
-            return this.$slots[ 'no-modules-message' ] ? this.$slots[ 'no-modules-message' ][0].text : 'No message provided for "no-module-message"';
+            return this.$slots[ 'no-modules-message' ] ? this.$slots[ 'no-modules-message' ][0].text : __( `No module has been updated yet.` );
         }
     },
     methods: {

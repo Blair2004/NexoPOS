@@ -37,7 +37,7 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => false, // env( 'NS_SOCKET_SECURED', false ) ? true : false,
+                'useTLS' => env( 'NS_SOCKET_SECURED', false ) ? true : false,
                 'host'  => env( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) ),
                 'port'  =>  env( 'NS_SOCKET_PORT', 6001 ),
                 'scheme' => env( 'NS_SOCKET_SCHEME', 'http' ),
