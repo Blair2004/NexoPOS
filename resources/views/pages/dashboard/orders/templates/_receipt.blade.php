@@ -42,6 +42,7 @@ use App\Classes\Hook;
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->subtotal ) }}</td>
                     </tr>
+                    @if ( $order->discount > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
                             <span>{{ __( 'Discount' ) }}</span>
@@ -51,6 +52,7 @@ use App\Classes\Hook;
                         </td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->discount ) }}</td>
                     </tr>
+                    @endif
                     @if ( $order->total_coupons > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
@@ -59,7 +61,7 @@ use App\Classes\Hook;
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total_coupons ) }}</td>
                     </tr>
                     @endif
-                    @if ( $order->payment_status !== 'refunded' && $order->tax_value > 0 )
+                    @if ( $order->tax_value > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">
                             <span>{{ __( 'Taxes' ) }}</span>
@@ -67,10 +69,12 @@ use App\Classes\Hook;
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->tax_value ) }}</td>
                     </tr>
                     @endif
+                    @if ( $order->shipping > 0 )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Shipping' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->shipping ) }}</td>
                     </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $order->total ) }}</td>

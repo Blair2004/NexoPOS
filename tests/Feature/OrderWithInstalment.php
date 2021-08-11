@@ -44,15 +44,15 @@ class OrderWithInstalment extends TestCase
         $faker          =   Factory::create();
         $products       =   Product::with( 'unit_quantities' )->get()->shuffle()->take(1);
         $shippingFees   =   $faker->randomElement([100,150,200,250,300,350,400]);
-        // $shippingFees   =   200.45;
+        // $shippingFees   =   200;
         $discountRate   =   $faker->numberBetween(1,5);
 
         $products       =   $products->map( function( $product ) use ( $faker ) {
             $unitElement    =   $faker->randomElement( $product->unit_quantities );
             return [
                 'product_id'            =>  $product->id,
-                'quantity'              =>  $faker->numberBetween(1,10), // 1,
-                'unit_price'            =>  $unitElement->sale_price, // 25,
+                'quantity'              =>  $faker->numberBetween(1,10), // 2,
+                'unit_price'            =>  $unitElement->sale_price, // 110.8402,
                 'unit_quantity_id'      =>  $unitElement->id,
             ];
         });
@@ -63,15 +63,12 @@ class OrderWithInstalment extends TestCase
         $customer                   =   Customer::first();
 
         $subtotal   =   ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
-            return $currency
-                ->define( $product[ 'unit_price' ] )
-                ->multiplyBy( $product[ 'quantity' ] )
-                ->getRaw();
+            return Currency::raw( $product[ 'unit_price' ] ) * Currency::raw( $product[ 'quantity' ] );
         })->sum() );
 
         $initialTotalInstallment    =   2;
         $discountValue              =   $orderService->computeDiscountValues( $discountRate, $subtotal );
-        // $discountValue              =   1.58;
+        // $discountValue              =   Currency::raw( 2.1504 );
         $total                      =   ns()->currency->getRaw( ( $subtotal + $shippingFees ) - $discountValue );
 
         $paymentAmount              =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
@@ -79,19 +76,21 @@ class OrderWithInstalment extends TestCase
         // ( ( $subtotal + $shippingFees ) - $discountValue ) / 2
         $instalmentPayment          =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
 
-        // dump( 'total => ' . $total );
-        // dump( 'discount => ' . $discountValue );
-        // dump( 'installment => ' . ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 ) );
-        // dump( 'payment =>' . $paymentAmount );
+        dump( 'subtotal => ' . $subtotal );
+        dump( 'discount => ' . $discountValue );
+        dump( 'shippingFees => ' . $shippingFees );
+        dump( 'total => ' . $total );
+        dump( 'installment => ' . ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 ) );
+        dump( 'payment =>' . $paymentAmount );
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
                 'customer_id'           =>  $customer->id,
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
+                // 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  $discountRate,
-                // 'discount_type'         =>  'flat',
-                // 'discount'              =>  $discountValue,
+                'discount_type'         =>  'flat',
+                'discount'              =>  $discountValue,
                 'addresses'             =>  [
                     'shipping'          =>  [
                         'name'          =>  'First Name Delivery',

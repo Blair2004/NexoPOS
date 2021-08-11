@@ -1,3 +1,6 @@
+<?php
+use App\Models\User;
+?>
 @extends( 'layout.base' )
 
 @section( 'layout.base.header' )
@@ -21,13 +24,9 @@
 
 @section( 'layout.base.footer' )
     @parent
-    <script src="{{ asset( 'js/pos-init.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? 'js/pos-init.min.js' : 'js/pos-init.js' ) }}"></script>
     <script>
-    POS.defineTypes( <?php
-
-use App\Models\User;
-
-echo json_encode( $orderTypes );?>);
+    POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
     POS.defineOptions( <?php echo json_encode( $options );?>);
     POS.defineSettings({
         barcode_search          :   true,
@@ -55,5 +54,5 @@ echo json_encode( $orderTypes );?>);
         POS.reset();
     });    
     </script>
-    <script src="{{ asset( 'js/pos.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? 'js/pos.min.js' : 'js/pos.js' ) }}"></script>
 @endsection

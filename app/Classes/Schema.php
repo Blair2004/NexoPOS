@@ -10,6 +10,11 @@ class Schema extends ParentSchema
         return parent::table( Hook::filter( 'ns-table-name', $table ), $callback );
     }
 
+    public static function rename( $previous, $new )
+    {
+        return parent::rename( Hook::filter( 'ns-table-name', $previous ), Hook::filter( 'ns-table-name', $new ) );
+    }
+
     public static function create( $table, $callback )
     {
         return parent::create( Hook::filter( 'ns-table-name', $table ), $callback );

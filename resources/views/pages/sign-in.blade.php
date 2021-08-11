@@ -28,5 +28,5 @@ use App\Classes\Output;
 @section( 'layout.base.footer' )
     @parent
     {!! Hook::filter( 'ns-login-footer', new Output ) !!}
-    <script src="{{ asset( 'js/auth.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? 'js/auth.min.js' : 'js/auth.js' ) }}"></script>
 @endsection

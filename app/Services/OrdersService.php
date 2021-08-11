@@ -289,7 +289,7 @@ class OrdersService
                 }
             }
             
-            if ( $total < ( float ) $fields[ 'total' ] ) {
+            if ( $total < ns()->currency->getRaw( ( float ) $fields[ 'total' ] ) ) {
                 throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which additionnated is less than the order total.' ) );
             }
 
@@ -944,7 +944,7 @@ class OrdersService
         /**
          * compute change
          */
-        $order->change          =   $this->currencyService->getRaw( $order->tendered - $order->total );
+        $order->change          =   Currency::raw( $order->tendered - $order->total );
 
         /**
          * compute gross total
@@ -1669,7 +1669,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return ( $value * $rate ) / 100;
+            return Currency::raw( ( $value * $rate ) / 100 );
         }
 
         return 0;
@@ -1847,7 +1847,7 @@ class OrdersService
         $order->discount        =   $this->computeOrderDiscount( $order );
         $order->total           =   ( $productTotal + $orderShipping ) - ( $order->discount + $order->total_coupons );
         $order->tax_value       =   $productsTotalTaxes;
-        $order->change          =   $order->tendered - $order->total;
+        $order->change          =   Currency::raw( $order->tendered - $order->total );
 
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();

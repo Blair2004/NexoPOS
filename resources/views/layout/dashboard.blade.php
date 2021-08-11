@@ -45,7 +45,7 @@ use App\Services\DateService;
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
     </script>
-    <script src="{{ asset( 'js/lang-loader.js' ) }}"></script>
+    <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
 @include( 'common.header-socket' )
 </head>
 <body>
@@ -90,7 +90,7 @@ use App\Services\DateService;
     </div>
     @section( 'layout.dashboard.footer' )
         @include( '../common/footer' )
-        <script defer src="{{ asset( 'js/app.js' ) }}"></script>
+        <script defer src="{{ asset( ns()->isProduction() ? 'js/app.min.js' : 'js/app.js' ) }}"></script>
     @show
 </body>
 </html>

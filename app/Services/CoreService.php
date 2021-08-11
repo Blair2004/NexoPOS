@@ -204,4 +204,14 @@ class CoreService
             Migration::where( 'migration', $diff )->delete();
         }
     }
+
+    /**
+     * Returns a boolean if the environment is 
+     * on production mode
+     * @return boolean
+     */
+    public function isProduction() 
+    {
+        return in_array( env( 'NS_ENV', 'prod' ), [ 'prod', 'production' ]);
+    }
 }
