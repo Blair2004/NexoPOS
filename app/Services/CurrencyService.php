@@ -74,7 +74,7 @@ class CurrencyService
     public static function multiply( $first, $second )
     {
         return self::__defineAmount( 
-            bcmul( floatval( trim( $first ) ), floatval( trim( $second ) ), intval( self::$_decimal_precision ) )
+            bcmul( floatval( trim( $first ) ), floatval( trim( $second ) ) )
         );
     }
 
@@ -88,7 +88,7 @@ class CurrencyService
     public static function divide( $first, $second )
     {
         return self::__defineAmount( 
-            bcdiv( floatval( trim( $first ) ), floatval( trim( $second ) ), intval( self::$_decimal_precision ) )
+            bcdiv( floatval( trim( $first ) ), floatval( trim( $second ) ), 10 )
         );
     }
 
@@ -101,7 +101,7 @@ class CurrencyService
     public static function additionate( $left_operand, $right_operand )
     {
         return self::__defineAmount(
-            bcadd( floatval( $left_operand ), floatval( $right_operand ), intval( self::$_decimal_precision ) )
+            bcadd( floatval( $left_operand ), floatval( $right_operand ), 10 )
         );
     }
 
@@ -187,7 +187,7 @@ class CurrencyService
      */
     public function multipliedBy( $number )
     {
-        $this->value    =   bcmul( floatval( $this->value ), floatval( $number ), $this->decimal_precision );
+        $this->value    =   bcmul( floatval( $this->value ), floatval( $number ), 10 );
         return $this;
     }
 
@@ -210,7 +210,7 @@ class CurrencyService
      */
     public function dividedBy( $number )
     {
-        $this->value    =   bcdiv( floatval( $this->value ), floatval( $number ), $this->decimal_precision );
+        $this->value    =   bcdiv( floatval( $this->value ), floatval( $number ), 10 );
         return $this;
     }
 
@@ -233,7 +233,7 @@ class CurrencyService
      */
     public function subtractBy( $number )
     {
-        $this->value    =   bcsub( floatval( $this->value ), floatval( $number ), $this->decimal_precision );
+        $this->value    =   bcsub( floatval( $this->value ), floatval( $number ), 10 );
         return $this;
     }
 
@@ -245,7 +245,7 @@ class CurrencyService
      */
     public function additionateBy( $number )
     {
-        $this->value    =   bcadd( floatval( $this->value ), floatval( $number ), $this->decimal_precision );
+        $this->value    =   bcadd( floatval( $this->value ), floatval( $number ), 10 );
         return $this;
     }
 

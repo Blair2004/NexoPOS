@@ -40,6 +40,12 @@ use App\Models\PaymentType;
                     @endforeach
                 </tbody>
                 <tbody>
+                    @if ( $refund->tax_value > 0 )
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Tax' ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $refund->tax_value ) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $refund->total ) }}</td>

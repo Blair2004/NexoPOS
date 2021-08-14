@@ -36,7 +36,7 @@ const systemOptions       =   <?php echo json_encode([
 ]);?>
 
 const systemSettings      =  <?php echo json_encode([
-    'printing_url'  =>  ns()->url( '/dashboard/orders/refund-receipt/{order_id}' )
+    'printing_url'  =>  ns()->url( '/dashboard/orders/refund-receipt/{order_id}?autoprint=true&dash-visibility=disabled' )
 ]);?>
 
 document.addEventListener( 'DOMContentLoaded', () => {

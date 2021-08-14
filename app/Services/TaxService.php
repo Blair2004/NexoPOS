@@ -366,15 +366,9 @@ class TaxService
     public function getComputedTaxValue( $type, float $rate, float $value )
     {
         if ( $type === 'inclusive' ) {
-            return $this->currency->define( $value )
-                ->dividedBy( $rate + 100 )
-                ->multipliedBy( 100 )
-                ->getRaw();
+            return $this->currency->getRaw( ( $value / ( $rate + 100 ) ) * 100 );
         } else if ( $type === 'exclusive' ) {
-            return $this->currency->define( $value )
-                ->dividedBy( 100 )
-                ->multipliedBy( $rate + 100 )
-                ->getRaw();
+            return $this->currency->getRaw( ( $value / 100 ) * ( $rate + 100 ) );
         }
     }
 
@@ -413,10 +407,7 @@ class TaxService
      */
     public function getPercentageOf( $value, $rate )
     {
-        return $this->currency->define( $value )
-            ->multiplyBy( $rate )
-            ->dividedBy( 100 )
-            ->getRaw();
+        return $this->currency->getRaw( ( $value * $rate ) / 100 );
     }
 
     /**

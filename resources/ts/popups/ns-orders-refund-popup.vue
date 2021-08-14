@@ -103,11 +103,16 @@ export default {
 
             const url               =   this.settings.printing_url.replace( '{order_id}', order_id );
             const printSection      =   document.createElement( 'iframe' );
+
             printSection.id         =   'printing-section';
             printSection.className  =   'hidden';
             printSection.src        =   url;
 
             document.body.appendChild( printSection );
+            
+            setTimeout( () => {
+                document.querySelector( '#printing-section' ).remove();
+            }, 100 );
         },
 
         printRefundReceipt( refund ) {

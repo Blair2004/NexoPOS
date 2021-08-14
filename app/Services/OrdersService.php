@@ -171,11 +171,6 @@ class OrdersService
         $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
 
         /**
-         * register taxes for the order
-         */
-        $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
-
-        /**
          * if we're editing an order. We need to loop the products in order
          * to recover all the products that has been deleted from the POS and therefore
          * aren't tracked no more.
@@ -207,6 +202,11 @@ class OrdersService
          * @var float $subTotal
          */
         extract( $this->__saveOrderProducts( $order, $fields[ 'products' ] ) );
+
+        /**
+         * register taxes for the order
+         */
+        $this->__registerTaxes( $order, $fields[ 'taxes' ] ?? [] );
 
         /**
          * compute order total
@@ -405,6 +405,51 @@ class OrdersService
     }
 
     /**
+     * Will compute the taxes assigned to an order
+     * @return float
+     */
+    public function __saveOrderTaxes( Order $order, $taxes )
+    {
+        /**
+         * if previous taxes had been registered,
+         * we need to clear them
+         */
+        OrderTax::where( 'order_id', $order->id )->delete();
+        
+        $taxCollection  =   collect([]);
+
+        if ( count( $taxes ) > 0 ) {
+            foreach( $taxes as $tax ) {
+                $orderTax               =   new OrderTax;
+                $orderTax->tax_name     =   $tax[ 'tax_name' ];
+
+                /**
+                 * in case the tax value is not provided,
+                 * we'll compute that using the defined value
+                 */
+                $orderTax->tax_value    =   $tax[ 'tax_value' ] ?? $this->taxService->getComputedTaxValue(
+                    ns()->option->get( 'ns_pos_tax_type', 'inclusive' ),
+                    $tax[ 'rate' ],
+                    $order->subtotal
+                );
+
+                $orderTax->rate         =   $tax[ 'rate' ];
+                $orderTax->tax_id       =   $tax[ 'tax_id' ];
+                $orderTax->order_id     =   $order->id;
+                $orderTax->save();  
+                
+                $taxCollection->push( $orderTax );
+            }
+        }
+
+        /**
+         * we'll increase the tax value and
+         * update the value on the order tax object
+         */
+        return $taxCollection->map( fn( $tax ) => $tax->tax_value )->sum();
+    }
+
+    /**
      * Assign taxes to the processed order
      * @param Order $order
      * @param array $taxes
@@ -412,22 +457,20 @@ class OrdersService
      */
     public function __registerTaxes( Order $order, $taxes )
     {
-        /**
-         * if previous taxes had been registered,
-         * we need to clear them
-         */
-        OrderTax::where( 'order_id', $order->id )->delete();
-
-        if ( count( $taxes ) > 0 ) {
-            foreach( $taxes as $tax ) {
-                $orderTax   =   new OrderTax;
-                $orderTax->tax_name     =   $tax[ 'tax_name' ];
-                $orderTax->tax_value    =   $tax[ 'tax_value' ];
-                $orderTax->rate         =   $tax[ 'rate' ];
-                $orderTax->tax_id       =   $tax[ 'tax_id' ];
-                $orderTax->order_id     =   $order->id;
-                $orderTax->save();
-            }
+        switch( ns()->option->get( 'ns_pos_vat' ) ) {
+            case 'products_vat';
+            case 'products_flat_vat';
+                $order->tax_value   =   $this->getOrderProductsTaxes( $order );
+            break;
+            case 'flat_vat';
+            case 'variable_vat';
+                $order->tax_value   =   Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+            break;
+            case 'products_variable_vat':
+                $order->tax_value   =   
+                    Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) ) + 
+                    $this->getOrderProductsTaxes( $order );
+            break;
         }
     }
 
@@ -934,11 +977,11 @@ class OrdersService
          */
         $order->total           =   $this->currencyService->define( $order->subtotal )
             ->additionateBy( $order->shipping )
+            ->additionateBy( $order->tax_value )
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->discount )
             ->get();
 
-        $order->tax_value       =   $taxes;
         $order->gross_total     =   $order->total;
 
         /**
@@ -1331,7 +1374,7 @@ class OrdersService
         $order->process_status          =   'pending';
         $order->author                  =   $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title                   =   $fields[ 'title' ] ?? null;
-        $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 ) ?: $this->computeOrderTaxValue( $fields, $order );
+        $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
         $order->code                    =   $order->code ?: ''; // to avoid generating a new code
         $order->save();
 
@@ -1411,9 +1454,88 @@ class OrdersService
         }
     }
 
-    public function computeOrderTaxValue( $fields, $order )
+    /**
+     * Will compute a tax value using
+     * the taxes assigned to an order
+     * @param Order $order
+     * @param float $value
+     * @param string $type
+     * @return float value
+     */
+    public function computeTaxFromOrderTaxes( Order $order, $value, $type = 'inclusive' )
     {
-        return $this->currencyService->getRaw( $fields[ 'products' ]->map( fn( $product ) => $product[ 'tax_value' ] )->sum() );
+        return $order->taxes->map( function( $tax ) use ( $value, $type ) {
+            $result =   $this->taxService->getVatValue(
+                $type, $tax->rate, $value
+            );
+
+            // dump( '=>>' . $tax->rate . '-' . $value . '-' . $type . '=' . $result );
+
+            return $result;
+        })->sum();
+    }
+
+    /**
+     * Will return the tax values from the order taxes
+     * @param Order $order
+     * @param float $value
+     * @param string $type
+     * @return float
+     */
+    public function getTaxComputedFromOrderTaxes( Order $order, $value, $type )
+    {
+        $rates  =   $order->taxes->map( function( $tax ) use ( $value, $type ) {
+            return $tax->rate;
+        })->sum();
+
+        return $this->taxService->getComputedTaxValue(
+            $type, $rates, $value
+        );
+    }
+
+    /**
+     * will compute the taxes based
+     * on the configuration and the products
+     * @param Order $order
+     */
+    public function computeOrderTaxes( Order $order )
+    {
+        $posVat     =   ns()->option->get( 'ns_pos_vat' );
+
+        if( in_array( $posVat, [
+            'products_vat',
+            'products_flat_vat',
+            'products_variable_vat'
+        ] ) ) {
+            $taxValue     =   $order->products->map(function ($product) {
+                return floatval($product->tax_value);
+            })->sum();
+        } else if ( in_array( $posVat, [
+            'flat_vat',
+            'variable_vat',
+        ])) {
+            $taxType                =   ns()->option->get( 'ns_pos_tax_type' );
+            $subTotal               =   $order->products()->sum( 'total_price' );
+            $taxValue               =   $order->taxes->map( function( $tax ) use ( $taxType, $subTotal ) {
+                $tax->tax_value     =   $this->taxService->getComputedTaxValue( $taxType, $tax->rate, $subTotal );
+                $tax->save();
+
+                return $tax->tax_value;
+            })->sum();
+        } 
+
+        $order->tax_value   =   $taxValue;
+    }
+
+    /**
+     * return the tax value for the products
+     * @param array $fields
+     * @param Order $order
+     * @return float
+     */
+    public function getOrderProductsTaxes( $order )
+    {
+        return $this->currencyService->getRaw( $order->products->map( fn( $product ) => $product->tax_value )->sum() );
     }
 
     public function computeTotal( $fields, $order )
@@ -1475,17 +1597,24 @@ class OrdersService
          * We'll do that here
          */
         $shipping       =   0;
+
         if ( isset( $fields[ 'refund_shipping' ] ) && $fields[ 'refund_shipping' ] === true ) {
-            $shipping               =       $order->shipping;
-            $order->shipping        =       0;
-            $order->save();
+            $shipping           =   $order->shipping;
+            $order->shipping    =   0;
         }
+
+        $taxValue           =   collect( $results )->map( function( $result ) {
+            $refundProduct  =   $result[ 'data' ][ 'productRefund' ];
+            return $refundProduct->tax_value;
+        })->sum() ?: 0;
+
+        $orderRefund->tax_value   =   Currency::raw( $taxValue );
 
         /**
          * let's update the order refund total
          */
         $orderRefund->load( 'refunded_products' );
-        $orderRefund->total     =   $orderRefund->refunded_products->sum( 'total_price' ) + $shipping;
+        $orderRefund->total     =   Currency::raw( ( $orderRefund->refunded_products->sum( 'total_price' ) + $shipping ) ); //  - $orderRefund->tax_value
         $orderRefund->save();
 
         /**
@@ -1552,7 +1681,12 @@ class OrdersService
         $productRefund                      =   new OrderProductRefund;
         $productRefund->condition           =   $details[ 'condition' ];
         $productRefund->description         =   $details[ 'description' ];
-        $productRefund->unit_price          =   $details[ 'unit_price' ];
+        $productRefund->unit_price          =   $this->getTaxComputedFromOrderTaxes(
+            $order, 
+            $details[ 'unit_price' ], 
+            ns()->option->get( 'ns_pos_tax_type' ) 
+        );
+
         $productRefund->unit_id             =   $orderProduct->unit_id;
         $productRefund->total_price         =   $this->currencyService
             ->getRaw( $productRefund->unit_price * floatval( $details[ 'quantity' ] ) );
@@ -1562,6 +1696,12 @@ class OrdersService
         $productRefund->order_refund_id     =   $orderRefund->id;
         $productRefund->order_product_id    =   $orderProduct->id;
         $productRefund->product_id          =   $orderProduct->product_id;
+        $productRefund->tax_value           =   $this->computeTaxFromOrderTaxes(
+            $order,
+            $productRefund->total_price,
+            ns()->option->get( 'ns_pos_tax_type' )
+        );
+
         $productRefund->save();
 
         event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
@@ -1824,16 +1964,7 @@ class OrdersService
             return floatval($product->total_gross_price);
         })->sum();
 
-        $productsTotalTaxes     =   $products->map(function ($product) {
-            if( in_array( ns()->option->get( 'ns_pos_vat' ), [
-                'products_vat',
-                'products_flat_vat'
-            ] ) ) {
-                return floatval($product->tax_value);
-            }
-
-            return 0;
-        })->sum();
+        $this->computeOrderTaxes( $order );
 
         $orderShipping          =   $order->shipping;
         $totalPayments          =   $order->payments->map( fn( $payment ) => $payment->value )->sum();
@@ -1846,7 +1977,6 @@ class OrdersService
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
         $order->total           =   ( $productTotal + $orderShipping ) - ( $order->discount + $order->total_coupons );
-        $order->tax_value       =   $productsTotalTaxes;
         $order->change          =   Currency::raw( $order->tendered - $order->total );
 
         $refunds                =   $order->refund;
