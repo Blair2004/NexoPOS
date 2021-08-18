@@ -1469,8 +1469,6 @@ class OrdersService
                 $type, $tax->rate, $value
             );
 
-            // dump( '=>>' . $tax->rate . '-' . $value . '-' . $type . '=' . $result );
-
             return $result;
         })->sum();
     }
@@ -1671,7 +1669,9 @@ class OrdersService
          */
         $orderProduct->status           =   'returned';
         $orderProduct->quantity         -=   floatval( $details[ 'quantity' ] );
+        
         $this->computeOrderProduct( $orderProduct );
+
         $orderProduct->save();
 
         /**
@@ -1696,9 +1696,10 @@ class OrdersService
         $productRefund->order_refund_id     =   $orderRefund->id;
         $productRefund->order_product_id    =   $orderProduct->id;
         $productRefund->product_id          =   $orderProduct->product_id;
+        
         $productRefund->tax_value           =   $this->computeTaxFromOrderTaxes(
             $order,
-            $productRefund->total_price,
+            Currency::raw( $details[ 'unit_price' ] * $details[ 'quantity' ] ),
             ns()->option->get( 'ns_pos_tax_type' )
         );
 

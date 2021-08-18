@@ -107,10 +107,6 @@ class OrderRefundTest extends TestCase
         $responseData           =   json_decode( $response->getContent(), true );
         
         $secondFetchCustomer    =   $firstFetchCustomer->fresh();
-
-        dump( $currency->define( $secondFetchCustomer->purchases_amount )
-        ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
-        ->getRaw() );
         
         if ( $currency->define( $secondFetchCustomer->purchases_amount )
             ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
@@ -171,7 +167,6 @@ class OrderRefundTest extends TestCase
 
         $expense    =   $expenseCategory->cashFlowHistories()->orderBy( 'id', 'desc' )->first();
 
-        dump( $expense->getRawOriginal( 'value' ), $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] );
 
         if ( ( float ) $expense->getRawOriginal( 'value' ) != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
             throw new Exception( __( 'The expense created after the refund doesn\'t match the order refund total.' ) );
