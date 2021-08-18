@@ -76,13 +76,6 @@ class OrderWithInstalment extends TestCase
         // ( ( $subtotal + $shippingFees ) - $discountValue ) / 2
         $instalmentPayment          =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
 
-        dump( 'subtotal => ' . $subtotal );
-        dump( 'discount => ' . $discountValue );
-        dump( 'shippingFees => ' . $shippingFees );
-        dump( 'total => ' . $total );
-        dump( 'installment => ' . ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 ) );
-        dump( 'payment =>' . $paymentAmount );
-
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
                 'customer_id'           =>  $customer->id,

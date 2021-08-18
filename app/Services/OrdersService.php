@@ -1499,6 +1499,7 @@ class OrdersService
     public function computeOrderTaxes( Order $order )
     {
         $posVat     =   ns()->option->get( 'ns_pos_vat' );
+        $taxValue   =   0;
 
         if( in_array( $posVat, [
             'products_vat',

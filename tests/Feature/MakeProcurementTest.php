@@ -112,7 +112,6 @@ class MakeProcurementTest extends TestCase
             ]);
 
         $responseData       =   json_decode( $response->getContent(), true );
-        $response->dump();
         $existingExpense    =   CashFlow::where( 'procurement_id', $responseData[ 'data' ][ 'procurement' ][ 'id' ] )->first();
 
         $this->assertTrue( $existingExpense instanceof CashFlow, __( 'No cash flow were created for the created procurement.' ) );

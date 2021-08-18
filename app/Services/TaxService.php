@@ -370,6 +370,8 @@ class TaxService
         } else if ( $type === 'exclusive' ) {
             return $this->currency->getRaw( ( $value / 100 ) * ( $rate + 100 ) );
         }
+
+        return $value;
     }
 
     public function getVatValue( $type, float $rate, float $value )
