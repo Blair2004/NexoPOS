@@ -9,18 +9,16 @@ use Illuminate\Support\Str;
 class Module
 {
     protected $module;
+    protected $file;
 
     public function __construct( $file )
     {
-        $this->modules  =   app()->make( ModulesService::class );
-
-        if ( is_array( $file ) ) {
-            $this->module   =   $file;
-        } else {
-            $this->module   =   $this->modules->asFile( $file );
-        }
+        $this->file     =   $file;
     }
 
+    /**
+     * @deprecated
+     */
     public static function namespace( $namespace )
     {
         /**
@@ -44,9 +42,11 @@ class Module
      * Include specific module file
      * @param string $file
      * @return void
+     * @deprecated
      */
     public function loadFile( $file )
     {
-        require( Str::finish( $this->module[ 'path' ] . $file, '.php' ) );
+        $filePath   =   Str::finish( $this->module[ 'path' ] . $file, '.php' );
+        require( $filePath );
     }
 }

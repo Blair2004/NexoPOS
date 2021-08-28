@@ -531,6 +531,11 @@ class CrudService
     public function extractCrudValidation( $crud, $model = null )
     {
         $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+
+        if ( is_subclass_of( $crud, CrudService::class ) ) {
+            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+        }
+
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
@@ -559,6 +564,11 @@ class CrudService
     public function getPlainData( $crud, Request $request, $model = null )
     {
         $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+
+        if ( is_subclass_of( $crud, CrudService::class ) ) {
+            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+        }
+        
         $data   =   [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {

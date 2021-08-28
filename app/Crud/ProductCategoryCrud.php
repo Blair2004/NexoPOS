@@ -1,6 +1,9 @@
 <?php
 namespace App\Crud;
 
+use App\Events\ProductCategoryAfterCreatedEvent;
+use App\Events\ProductCategoryAfterUpdatedEvent;
+use App\Events\ProductCategoryBeforeDeletedEvent;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -199,6 +202,7 @@ class ProductCategoryCrud extends CrudService
     public function beforePost( $request )
     {
         $this->allowedTo( 'create' );
+
         return $request;
     }
 
@@ -210,6 +214,8 @@ class ProductCategoryCrud extends CrudService
      */
     public function afterPost( $request, ProductCategory $entry )
     {
+        ProductCategoryAfterCreatedEvent::dispatch( $entry );
+
         return $request;
     }
 
@@ -244,7 +250,7 @@ class ProductCategoryCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $entry )
+    public function afterPut( $request, ProductCategory $entry )
     {
         /**
          * If the category is not visible on the POS
@@ -259,6 +265,8 @@ class ProductCategoryCrud extends CrudService
                 'searchable'    =>  true
             ]);
         }
+
+        ProductCategoryAfterUpdatedEvent::dispatch( $entry );
 
         return $request;
     }
@@ -289,6 +297,8 @@ class ProductCategoryCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.products-categories' ) {
             $this->allowedTo( 'delete' );
+
+            ProductCategoryBeforeDeletedEvent::dispatch( $model );
         }
     }
 

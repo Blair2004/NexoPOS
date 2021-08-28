@@ -25,6 +25,11 @@ class OrderPayment extends NsModel
         return $query->where( 'order_id', $order_id );
     }
 
+    public function type()
+    {
+        return $this->hasOne( PaymentType::class, 'identifier', 'identifier' );
+    }
+
     public function getPaymentLabelAttribute()
     {
         $paymentTypes   =   Cache::remember( 'nexopos.pos.payments-key', '3600', function() {

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Customer;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -14,14 +15,16 @@ class CustomerAfterUpdatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $customer;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Customer $customer )
     {
-        //
+        $this->customer     =   $customer;
     }
 
     /**

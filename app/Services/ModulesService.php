@@ -43,6 +43,21 @@ class ModulesService
         Storage::disk( 'ns' )->makeDirectory( 'modules' );
     }
 
+
+    /**
+     * Will lot a set of files within a specifc module
+     * @param string $module namespace
+     * @param string $path to fload
+     * @return mixed
+     */
+    public static function loadModuleFile( $namespace, $file )
+    {
+        $moduleService      =   app()->make( self::class );
+        $module             =   $moduleService->get( $namespace );
+        $filePath           =   Str::finish( $module[ 'path' ] . $file, '.php' );
+        return require( $filePath );
+    }
+
     /**
      * Load Modules
      * @param string path to load

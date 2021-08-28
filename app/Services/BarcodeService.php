@@ -5,9 +5,20 @@ use App\Classes\Hook;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Picqer\Barcode\BarcodeGeneratorPNG;
+use Faker\Factory;
+use Illuminate\Support\Str;
 
-class BarcodeService
+class BarcodeService 
 {
+    const TYPE_EAN8         =   'ean8';
+    const TYPE_EAN13        =   'ean13';
+    const TYPE_CODABAR      =   'codabar';
+    const TYPE_CODE128      =   'code128';
+    const TYPE_CODE39       =   'code39';
+    const TYPE_CODE11       =   'code11';
+    const TYPE_UPCA         =   'upca';
+    const TYPE_UPCE         =   'upce';
+
     /**
      * generate barcode using a code and a code type
      * @param string $barcode
@@ -36,7 +47,29 @@ class BarcodeService
                 $generator->getBarcode( $barcode, $realType, 3, 30 )
             );
         } catch( Exception $exception ) {
-            throw new Exception( __( 'An error has occured while creating a barcode for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ) );
+            throw new Exception( 
+                sprintf(
+                    __( 'An error has occured while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
+                    $barcode,
+                    $realType
+                )
+            );
+        }
+    }
+
+    public function generateBarcodeValue( $type )
+    {
+        $faker  =   (new Factory)->create();
+
+        switch( $type ) {
+            case self::TYPE_CODE39  : return strtoupper( Str::random(10) );
+            case self::TYPE_CODE128 : return strtoupper( Str::random(10) );
+            case self::TYPE_EAN8    : return $faker->randomNumber(8,true);
+            case self::TYPE_EAN13   : return $faker->randomNumber(6,true) . $faker->randomNumber(6,true);
+            case self::TYPE_UPCA    : return $faker->randomNumber(5,true) . $faker->randomNumber(6,true);
+            case self::TYPE_UPCE    : return $faker->randomNumber(6,true);
+            case self::TYPE_CODABAR : return $faker->randomNumber(8,true) . $faker->randomNumber(8,true);
+            case self::TYPE_CODE11 : return $faker->randomNumber(5,true) . '-' . $faker->randomNumber(4,true);
         }
     }
 }

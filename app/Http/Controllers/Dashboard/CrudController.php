@@ -473,7 +473,15 @@ class CrudController extends DashboardController
         if ( method_exists( $resource, 'getEntries' ) ) {
             $model          =   $resource->get( 'model' );
             $model          =   $model::find( $id );
+            /**
+             * @deprecated
+             */
             $form           =   Hook::filter( 'ns.crud.form', $resource->getForm( $model ), $namespace, compact( 'model', 'namespace', 'id' ) );
+
+            /**
+             * @since 4.4.3
+             */
+            $form           =   Hook::filter( get_class( $resource )::method( 'getForm' ), $resource->getForm( $model ), compact( 'model' ) );
             $config         =   [
                 'form'                  =>  $form,
                 'labels'                =>  $resource->getLabels(),

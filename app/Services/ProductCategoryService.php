@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 
+use App\Events\ProductCategoryAfterCreatedEvent;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Auth;
 
@@ -48,6 +49,8 @@ class ProductCategoryService
         $category->parent_id        =   $data[ 'parent_id' ] ?? null;
         $category->displays_on_pos  =   $data[ 'displays_on_pos' ] ?? true;
         $category->save();
+
+        ProductCategoryAfterCreatedEvent::dispatch( $category );
 
         return [
             'status'    =>  'success',

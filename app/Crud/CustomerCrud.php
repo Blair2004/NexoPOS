@@ -1,5 +1,9 @@
 <?php
 namespace App\Crud;
+
+use App\Events\CustomerAfterCreatedEvent;
+use App\Events\CustomerAfterUpdatedEvent;
+use App\Events\CustomerBeforeDeletedEvent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -368,8 +372,10 @@ class CustomerCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPost( $inputs )
+    public function afterPost( $inputs, Customer $customer )
     {
+        CustomerAfterCreatedEvent::dispatch( $customer );
+
         return $inputs;
     }
 
@@ -391,8 +397,10 @@ class CustomerCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $inputs )
+    public function afterPut( $inputs, Customer $customer )
     {
+        CustomerAfterUpdatedEvent::dispatch( $customer );
+        
         return $inputs;
     }
     
@@ -419,9 +427,11 @@ class CustomerCrud extends CrudService
      * Before Delete
      * @return  void
      */
-    public function beforeDelete( $namespace, $id ) {
+    public function beforeDelete( $namespace, $id, Customer $customer ) {
         if ( $namespace == 'ns.customers' ) {
             $this->allowedTo( 'delete' );
+
+            CustomerBeforeDeletedEvent::dispatch( $customer );
         }
     }
 

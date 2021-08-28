@@ -237,11 +237,19 @@ class ProductService
      */
     public function createSimpleProduct( $data )
     {
+        if ( empty( $data[ 'barcode' ] ) ) {
+            $data[ 'barcode' ]  =   $this->barcodeService->generateBarcodeValue( $data[ 'barcode_type' ] );
+        }
+
         if ( $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
             throw new Exception( sprintf( 
                 __( 'The provided barcode "%s" is already in use.' ), 
                 $data[ 'barcode' ] 
             ) );
+        }
+
+        if ( empty( $data[ 'sku' ] ) ) {
+            $data[ 'sku' ]  =   $data[ 'barcode' ];
         }
 
         /**
@@ -354,6 +362,10 @@ class ProductService
 
         $this->releaseProductTaxes( $product );
 
+        if ( empty( $fields[ 'barcode' ] ) ) {
+            $fields[ 'barcode' ]  =   $this->barcodeService->generateBarcodeValue( $fields[ 'barcode_type' ] );
+        }
+
         if ( $existingProduct = $this->getProductUsingBarcode( $fields[ 'barcode' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided barcode is already in use.' ) );
@@ -368,6 +380,10 @@ class ProductService
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided SKU is already in use.' ) );
             }
+        }
+
+        if ( empty( $fields[ 'sku' ] ) ) {
+            $fields[ 'sku' ]  =   $fields[ 'barcode' ];
         }
 
         foreach( $fields as $field => $value ) {
