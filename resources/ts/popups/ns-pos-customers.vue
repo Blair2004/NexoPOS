@@ -59,39 +59,93 @@
                                 </div>
                             </div>
                             <div class="flex flex-auto flex-col overflow-hidden">
-                                <div class="py-2 w-full">
-                                    <h2 class="font-semibold text-gray-700">{{ __( 'Last Purchases' ) }}</h2>
-                                </div>
-                                <div class="flex-auto flex-col flex overflow-hidden">
-                                    <div class="flex-auto overflow-y-auto">
-                                        <table class="table w-full">
-                                            <thead>
-                                                <tr class="text-gray-700">
-                                                    <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
-                                                    <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
-                                                    <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
-                                                    <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="text-gray-700">
-                                                <tr v-if="orders.length === 0">
-                                                    <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
-                                                </tr>
-                                                <tr v-for="order of orders" :key="order.id">
-                                                    <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
-                                                    <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
-                                                    <td class="border border-gray-200 p-2 text-right">{{ order.human_status }}</td>
-                                                    <td class="border border-gray-200 p-2 text-center">
-                                                        <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
-                                                            <i class="las la-wallet"></i>
-                                                            <span class="ml-1">{{ __( 'Payment' ) }}</span>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                <ns-tabs :active="selectedTab" @changeTab="doChangeTab( $event )">
+                                    <ns-tabs-item identifier="orders" :label="__( 'Orders' )">
+                                        <div class="py-2 w-full">
+                                            <h2 class="font-semibold text-gray-700">{{ __( 'Last Purchases' ) }}</h2>
+                                        </div>
+                                        <div class="flex-auto flex-col flex overflow-hidden">
+                                            <div class="flex-auto overflow-y-auto">
+                                                <table class="table w-full">
+                                                    <thead>
+                                                        <tr class="text-gray-700">
+                                                            <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
+                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
+                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
+                                                            <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="text-gray-700">
+                                                        <tr v-if="orders.length === 0">
+                                                            <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
+                                                        </tr>
+                                                        <tr v-for="order of orders" :key="order.id">
+                                                            <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
+                                                            <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
+                                                            <td class="border border-gray-200 p-2 text-right">{{ order.human_status }}</td>
+                                                            <td class="border border-gray-200 p-2 text-center">
+                                                                <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
+                                                                    <i class="las la-wallet"></i>
+                                                                    <span class="ml-1">{{ __( 'Payment' ) }}</span>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </ns-tabs-item>
+                                    <ns-tabs-item identifier="coupons" :label="__( 'Coupons' )">
+                                        <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingCoupons">
+                                            <ns-spinner size="36"></ns-spinner>
+                                        </div>
+                                        <template v-if="! isLoadingCoupons">
+                                            <div class="py-2 w-full">
+                                                <h2 class="font-semibold text-gray-700">{{ __( 'Coupons' ) }}</h2>
+                                            </div>
+                                            <div class="flex-auto flex-col flex overflow-hidden">
+                                                <div class="flex-auto overflow-y-auto">
+                                                    <table class="table w-full">
+                                                        <thead>
+                                                            <tr class="text-gray-700">
+                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Type' ) }}</th>
+                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="text-gray-700 text-sm">
+                                                            <tr v-if="coupons.length === 0">
+                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
+                                                            </tr>
+                                                            <tr v-for="coupon of coupons" :key="coupon.id">
+                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                    <h3>{{ coupon.name }}</h3>
+                                                                    <div class="">
+                                                                        <ul class="-mx-2 flex">
+                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
+                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="border border-gray-200 p-2 text-center">{{ getType( coupon.coupon.type ) }} 
+                                                                    <span v-if="coupon.coupon.type === 'percentage_discount'">
+                                                                        ({{ coupon.coupon.discount_value }}%)
+                                                                    </span>
+                                                                    <span v-if="coupon.coupon.type === 'flat_discount'">
+                                                                        ({{ coupon.coupon.discount_value | currency }})
+                                                                    </span>
+                                                                </td>
+                                                                <td class="border border-gray-200 p-2 text-right">
+                                                                    <ns-button @click="applyCoupon( coupon )" type="info">{{ __( 'Use Coupon' ) }}</ns-button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </ns-tabs-item>
+                                </ns-tabs>
                             </div>
                         </div>
                         <div class="p-2 border-t border-gray-400 flex justify-between">
@@ -114,6 +168,11 @@ import { Popup } from '@/libraries/popup';
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
 import nsCustomersTransactionPopupVue from './ns-customers-transaction-popup.vue';
 import { __ } from '@/libraries/lang';
+import nsPosCouponsLoadPopupVue from './ns-pos-coupons-load-popup.vue';
+import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
+import popupResolver from '@/libraries/popup-resolver';
+import popupCloser from '@/libraries/popup-closer';
+
 export default {
     name: 'ns-pos-customers',
     data() {
@@ -122,33 +181,70 @@ export default {
             customer: null,
             subscription: null,
             orders: [],
+            selectedTab: 'orders',
+            isLoadingCoupons: false,
+            coupons: [],
+            order: null,
         }
     },  
     mounted() {
         this.closeWithOverlayClicked();
 
         this.subscription   =   POS.order.subscribe( order => {
-            if ( order.customer !== undefined ) {
+            
+            this.order  =   order;
+
+            if ( this.$popupParams.customer !== undefined ) {
+                this.activeTab  =   'account-payment';
+                this.customer   =   this.$popupParams.customer;
+                this.loadCustomerOrders( this.customer.id );
+            } else if ( order.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
                 this.customer   =   order.customer;
                 this.loadCustomerOrders( this.customer.id );
-            } else {
-                if ( this.$popupParams.customer !== undefined ) {
-                    this.activeTab  =   'account-payment';
-                    this.customer   =   this.$popupParams.customer;
-                    this.loadCustomerOrders( this.customer.id );
-                } else if ( this.$popupParams.name !== undefined ) {
-                    setTimeout( () => {
-
-                    }, 100 );
-                }
             }
         });
+
+        this.popupCloser();
     },
     methods: {
         __,
+
+        popupResolver,
+        popupCloser,
+
+        getType( type ) {
+            switch( type ) {
+                case 'percentage_discount':
+                    return __( 'Percentage Discount' );
+                case 'flat_discount' :
+                    return __( 'Flat Discount' );
+            }
+        },
         
         closeWithOverlayClicked,
+
+        doChangeTab( tab ) {
+            this.selectedTab = tab;
+
+            if ( tab === 'coupons' ) {
+                this.loadCoupons();
+            }
+        },
+
+        loadCoupons() {
+            this.isLoadingCoupons   =   true;
+            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/coupons` )
+                .subscribe({
+                    next: ( coupons ) => {
+                        this.coupons            =   coupons;
+                        this.isLoadingCoupons   =   false;
+                    },
+                    error: ( error ) => {
+                        this.isLoadingCoupons   =   false;
+                    }
+                });
+        },
         
         allowedForPayment( order ) {
             return [ 'unpaid', 'partially_paid', 'hold' ].includes( order.payment_status );
@@ -186,6 +282,48 @@ export default {
                     .subscribe( _customer => {
                         POS.selectCustomer( _customer );
                     });
+            })
+        },
+
+        applyCoupon( customerCoupon ) {
+            if ( this.order.customer === undefined ) {
+                Popup.show( nsPosConfirmPopupVue, {
+                    title: __( 'Use Customer ?' ),
+                    message: __( 'No customer is selected. Would you like to proceed with this customer ?' ),
+                    onAction : ( action ) => {
+                        if ( action ) {
+                            POS.selectCustomer( this.customer )
+                                .then( result => {
+                                    this.proceedApplyingCoupon( customerCoupon );
+                                })                            
+                        }
+                    }
+                })
+            } else if ( this.order.customer.id === this.customer.id ) {
+                this.proceedApplyingCoupon( customerCoupon );
+            } else if ( this.order.customer.id !== this.customer.id ) {
+                Popup.show( nsPosConfirmPopupVue, {
+                    title: __( 'Change Customer ?' ),
+                    message: __( 'Would you like to assign this customer to the ongoing order ?' ),
+                    onAction : ( action ) => {
+                        if ( action ) {
+                            POS.selectCustomer( this.customer )
+                                .then( result => {
+                                    this.proceedApplyingCoupon( customerCoupon );
+                                })                            
+                        }
+                    }
+                })
+            }        
+        },
+
+        proceedApplyingCoupon( customerCoupon ) {
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPosCouponsLoadPopupVue, { apply_coupon : customerCoupon.code, resolve, reject })
+            }).then( result => {
+                this.popupResolver( false );
+            }).catch( exception => {
+                // ...
             })
         },
 

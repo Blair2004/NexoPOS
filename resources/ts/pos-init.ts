@@ -281,6 +281,30 @@ export class POS {
         this.defineCurrentScreen();
     }
 
+    public getSalePrice( item )
+    {
+        switch( this.options.getValue().ns_pos_vat ) {
+            case 'products_vat' :
+            case 'products_flat_vat' :
+            case 'products_variable_vat' :
+                return item.incl_tax_sale_price;
+            default:
+                return item.sale_price;
+        }
+    }
+
+    public getWholesalePrice( item )
+    {
+        switch( this.options.getValue().ns_pos_vat ) {
+            case 'products_vat' :
+            case 'products_flat_vat' :
+            case 'products_variable_vat' :
+                return item.incl_tax_wholesale_price;
+            default:
+                return item.wholesale_price;
+        }
+    }
+
     public setHoldPopupEnabled( status = true )
     {
         this._holdPopupEnabled  =   status;
@@ -1026,8 +1050,6 @@ export class POS {
      */
     async addToCart( product ) {
 
-        console.log( product );
-
         /**
          * This is where all the mutation made by the  
          * queue promises are stored.
@@ -1161,10 +1183,10 @@ export class POS {
          * real sale price
          */
         if ( product.mode === 'normal' ) {
-            product.unit_price          =       product.$quantities().sale_price;
+            product.unit_price          =       this.getSalePrice( product.$quantities() );
             product.tax_value           =       product.$quantities().sale_price_tax * product.quantity;
         } else if ( product.mode === 'wholesale' ) {
-            product.unit_price          =       product.$quantities().wholesale_price;
+            product.unit_price          =       this.getWholesalePrice( product.$quantities() );
             product.tax_value           =       product.$quantities().wholesale_price_tax * product.quantity;
         }
 

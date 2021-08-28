@@ -129,6 +129,24 @@ export default {
                 this.activeTab  =   'active-coupons';
             }
         });
+
+        if ( this.$popupParams ) {
+
+            /**
+             * We want to add a way to quickly
+             * apply a coupon while loading the popup
+             */
+            if ( this.$popupParams.apply_coupon ) {
+                this.couponCode     =   this.$popupParams.apply_coupon;
+                this.getCoupon( this.couponCode )
+                    .subscribe({
+                        next: ( coupon ) => {
+                            this.customerCoupon     =   coupon;
+                            this.apply();
+                        }
+                    })
+            }
+        }
     },
     destroyed() {
         this.orderSubscriber.unsubscribe();
@@ -257,18 +275,29 @@ export default {
             this.activeTab  =   tab;
         },
 
+        getCoupon( code ) {
+            if ( ! this.order.customer_id > 0 ) {
+                return nsSnackBar.error( __( 'You must select a customer before applying a coupon.' ) ).subscribe();
+            }
+
+            return nsHttpClient.post( `/api/nexopos/v4/customers/coupons/${code}`, {
+                    customer_id :  this.order.customer_id
+                });
+        },
+
         loadCoupon() {
             const code      =   this.couponCode;
 
-            nsHttpClient.post( `/api/nexopos/v4/customers/coupons/${code}`, {
-                    customer_id :  this.order.customer_id
-                })
-                .subscribe( customerCoupon => {
-                    this.customerCoupon     =   customerCoupon;
-                    nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
-                }, error => {
-                    nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe()
-                })
+            this.getCoupon( code )
+                .subscribe({
+                    next: customerCoupon => {
+                        this.customerCoupon     =   customerCoupon;
+                        nsSnackBar.success( __( 'The coupon has been loaded.' ) ).subscribe()
+                    },
+                    error : error => {
+                        nsSnackBar.error( error.message || __( 'An unexpected error occured.' ) ).subscribe()
+                    }
+                });
         }
     } 
 }

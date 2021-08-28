@@ -15,7 +15,7 @@
                     <div class="h-0 w-full">
                         <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2 flex-col" style="background:rgb(255 255 255 / 73%)">
                             <h3 class="font-bold text-gray-700 py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
-                            <p class="text-sm font-medium text-gray-600">{{ unitQuantity.sale_price | currency }}</p>
+                            <p class="text-sm font-medium text-gray-600">{{ displayRightPrice( unitQuantity ) | currency }}</p>
                         </div>
                     </div>
                 </div>
@@ -34,8 +34,15 @@ export default {
         return {
             unitsQuantities: [],
             loadsUnits: false,
+            options: null,
+            optionsSubscriber: null
         }
     },
+
+    beforeDestroy() {
+        this.optionsSubscriber.unsubscribe();
+    },
+
     mounted() {
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
@@ -54,6 +61,10 @@ export default {
                 this.$popup.close();
             }
         });
+
+        this.optionsSubscriber     =   POS.options.subscribe( options => {
+            this.options   =   options;
+        })
 
         /**
          * If there is a default selected unit quantity
@@ -74,6 +85,11 @@ export default {
     },
     methods: {
         __,
+
+        displayRightPrice( item ){
+            return POS.getSalePrice( item );
+        },
+
         loadUnits() {
             nsHttpClient.get( `/api/nexopos/v4/products/${this.$popupParams.product.$original().id}/units/quantities` )
                 .subscribe( result => {

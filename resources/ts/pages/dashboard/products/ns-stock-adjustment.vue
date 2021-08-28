@@ -172,16 +172,26 @@ export default {
             });
         },
         provideReason( product ) {
-            Popup.show( nsPromptPopupVue, {
-                title: __( 'More Details' ),
-                message: __( 'Useful to describe better what are the reasons that leaded to this adjustment.' ),
-                input: product.adjust_reason,
-                onAction: ( input ) => {
-                    if ( input !== false ) {
-                        product.adjust_reason     =   input;
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPromptPopupVue, {
+                    title: __( 'More Details' ),
+                    resolve,
+                    reject,
+                    message: __( 'Useful to describe better what are the reasons that leaded to this adjustment.' ),
+                    input: product.adjust_reason,
+                    onAction: ( input ) => {
+                        if ( input !== false ) {
+                            product.adjust_reason     =   input;
+                        }
                     }
-                }
+                });
             });
+
+            promise.then( result => {
+                nsSnackBar.success( __( 'The reason has been updated.' ) ).susbcribe();
+            }).catch( error => {
+                // ...
+            })
         },
         removeProduct( product ) {
             Popup.show( nsPosConfirmPopupVue, { 

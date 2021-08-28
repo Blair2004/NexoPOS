@@ -372,6 +372,8 @@ export default {
                     return data;
                 })
             }
+            
+            this.formValidation.disableForm( this.form );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
                 .subscribe( data => {

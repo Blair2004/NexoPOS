@@ -262,7 +262,7 @@ class CustomersController extends DashboardController
 
     public function getCustomerCoupons( Customer $customer )
     {
-        return $customer->coupons;
+        return $customer->coupons()->with( 'coupon' )->get();
     }
 
     public function loadCoupons( Request $request, $code )
