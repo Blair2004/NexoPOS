@@ -12,6 +12,7 @@ use App\Services\Validation;
 use Illuminate\Support\Facades\Validator;
 use App\Fields\ProviderFields;
 use App\Crud\ProviderCrud;
+use App\Crud\ProviderProcurementsCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Provider;
 use App\Services\Options;
@@ -124,6 +125,25 @@ class ProvidersController extends DashboardController
     public function deleteProvider( $id )
     {
         return $this->providerService->delete( $id );   
+    }
+
+    /**
+     * Will return the list of procurements
+     * made by the provider 
+     * @param Provider $provider
+     * @return string 
+     */
+    public function listProvidersProcurements( Provider $provider )
+    {
+        return ProviderProcurementsCrud::table([
+            'queryParams'   =>  [
+                'provider_id'   =>  $provider->id
+            ],
+            'title'     =>  sprintf(
+                __( 'Procurements by "%s"' ),
+                $provider->name
+            )
+        ]);
     }
 }
 

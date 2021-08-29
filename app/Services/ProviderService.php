@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Hook;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Provider;
 use App\Exceptions\NotFoundException;
@@ -125,6 +126,50 @@ class ProviderService
         } catch( Exception $exception ) {
             throw new Exception( sprintf( __( 'An error occured: %s.' ), $exception->getMessage() ) );
         }
+    }
+
+    /**
+     * Will return a human redale status
+     * @param string $label
+     * @return string
+     */
+    public function getDeliveryStatusLabel( $label )
+    {
+        switch( $label ) {
+            case Procurement::PENDING:
+                $label = __( 'Pending' );
+            break;
+            case Procurement::DELIVERED:
+                $label = __( 'Delivered' );
+            break;
+            case Procurement::STOCKED:
+                $label = __( 'Stocked' );
+            break;
+            default:
+                $label     =   Hook::filter( 'ns-delivery-status', $label );
+            break;
+        }
+
+        return $label;
+    }
+
+    /**
+     * Will return the payment status label
+     * @param string $label
+     * @return string
+     */
+    public function getPaymentStatusLabel( $label )
+    {
+        switch( $label ) {
+            case Procurement::PAYMENT_UNPAID:
+                $label = __( 'Unpaid' );
+            break;
+            case Procurement::PAYMENT_PAID:
+                $label = __( 'Paid' );
+            break;
+        }
+
+        return $label;
     }
 
     /**
