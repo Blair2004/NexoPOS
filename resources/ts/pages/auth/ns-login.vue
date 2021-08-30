@@ -45,17 +45,20 @@ export default {
             nsHttpClient.get( '/api/nexopos/v4/fields/ns.login' ),
             nsHttpClient.get( '/sanctum/csrf-cookie' ),
         ])
-        .subscribe( result => {
-            this.fields         =   this.validation.createFields( result[0] );
-            this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
+        .subscribe({
+            next: result => {
+                this.fields         =   this.validation.createFields( result[0] );
+                this.xXsrfToken     =   nsHttpClient.response.config.headers[ 'X-XSRF-TOKEN' ];
 
-            /**
-             * emit an event
-             * when the component is mounted
-             */
-            setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
-        }, ( error ) => {
-            nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
+                /**
+                 * emit an event
+                 * when the component is mounted
+                 */
+                setTimeout( () => nsHooks.doAction( 'ns-login-mounted', this ), 100 );
+            }, 
+            error: ( error ) => {
+                nsSnackBar.error( error.message || __( 'An unexpected error occured.' ), __( 'OK' ), { duration: 0 }).subscribe();
+            }
         });
     },
     methods: {
