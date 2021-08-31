@@ -1035,24 +1035,28 @@ class OrdersService
             $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
             $orderProduct->unit_id                      =   $product[ 'unit_id' ];
             $orderProduct->mode                         =   $product[ 'mode' ];
-            $orderProduct->product_id                   =   $product[ 'product' ]->id;
-            $orderProduct->product_category_id          =   $product[ 'product' ]->category_id;
-            $orderProduct->name                         =   $product[ 'product' ]->name;
+            $orderProduct->product_id                   =   $product[ 'product' ]->id ?? 0;
+            $orderProduct->product_category_id          =   $product[ 'product' ]->category_id ?? 0;
+            $orderProduct->name                         =   $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unamed Product' );
             $orderProduct->quantity                     =   $product[ 'quantity'];
 
             /**
              * We might need to have another consideration
              * on how we do compute the taxes
              */
-            if ( $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
+            if ( $product[ 'product' ] instanceof Product && $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
                 $orderProduct->tax_group_id         =   $product[ 'product' ]->tax_group_id;
                 $orderProduct->tax_type             =   $product[ 'product' ]->tax_type;
+                $orderProduct->tax_value            =   $product[ 'tax_value' ];
+            } else if ( isset( $product[ 'tax_type' ] ) && isset( $product[ 'tax_group_id' ] ) ) {
+                $orderProduct->tax_group_id         =   $product[ 'tax_group_id' ];
+                $orderProduct->tax_type             =   $product[ 'tax_type' ];
                 $orderProduct->tax_value            =   $product[ 'tax_value' ];
             }
 
             $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
-            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price )->getRaw();
-            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price )->getRaw();
+            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price ?? 0 )->getRaw();
+            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price ?? 0 )->getRaw();
             $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
@@ -1079,7 +1083,10 @@ class OrdersService
                     ->get();
             }
 
-            if ( in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) ) {
+            if ( 
+                in_array( $order[ 'payment_status' ], [ 'paid', 'partially_paid', 'unpaid' ] ) &&
+                $product[ 'product' ] instanceof Product
+            ) {
                 /**
                  * storing the product
                  * history as a sale
@@ -1109,15 +1116,26 @@ class OrdersService
     private function __buildOrderProducts( $products )
     {
         return collect( $products )->map( function( $orderProduct ) {
-            $product    =   Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function() use ($orderProduct) {
-                if (!empty(@$orderProduct['product_id'])) {
-                    return $this->productService->get($orderProduct['product_id']);
-                } else if (!empty(@$orderProduct['sku'])) {
-                    return $this->productService->getProductUsingSKUOrFail($orderProduct['sku']);
-                }
-            });
             
-            $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
+            /**
+             * by default, we'll assume a quick
+             * product is being created.
+             */
+            $product                =   null;
+            $productUnitQuantity    =   null;
+
+            if ( ! empty( $orderProduct[ 'sku' ] ) || ! empty( $orderProduct[ 'product_id' ] ) ) {
+                
+                $product    =   Cache::remember( 'store-' . ( $orderProduct['product_id'] ?? $orderProduct['sku'] ), 60, function() use ($orderProduct) {
+                    if (!empty(@$orderProduct['product_id'])) {
+                        return $this->productService->get($orderProduct['product_id']);
+                    } else if (!empty(@$orderProduct['sku'])) {
+                        return $this->productService->getProductUsingSKUOrFail($orderProduct['sku']);
+                    }
+                });
+                
+                $productUnitQuantity    =   ProductUnitQuantity::findOrFail( $orderProduct[ 'unit_quantity_id' ] );
+            }
 
             $orderProduct           =   $this->__buildOrderProduct(
                 $orderProduct,
@@ -1144,12 +1162,14 @@ class OrdersService
          * so that it can be reused 
          */
         $items  =  collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
-            $this->checkQuantityAvailability( 
-                $orderProduct[ 'product' ], 
-                $orderProduct[ 'unitQuantity' ],
-                $orderProduct,
-                $session_identifier
-            );
+            if ( $orderProduct[ 'product' ] instanceof Product ) {
+                $this->checkQuantityAvailability( 
+                    $orderProduct[ 'product' ], 
+                    $orderProduct[ 'unitQuantity' ],
+                    $orderProduct,
+                    $session_identifier
+                );
+            }
 
             return $orderProduct;
         });
@@ -1166,15 +1186,15 @@ class OrdersService
      * @param Product $product
      * @return array Order Product (updated)
      */
-    public function __buildOrderProduct( array $orderProduct, ProductUnitQuantity $productUnitQuantity, Product $product )
+    public function __buildOrderProduct( array $orderProduct, ProductUnitQuantity $productUnitQuantity = null, Product $product = null )
     {       
         /**
          * This will calculate the product default field
          * when they aren't provided. 
          */
         $orderProduct                           =   $this->computeProduct( $orderProduct, $product, $productUnitQuantity );
-        $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id;
-        $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id;
+        $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id ?? $orderProduct[ 'unit_id' ] ?? 0;
+        $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id ?? 0;
         $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
         $orderProduct[ 'product' ]              =   $product;
         $orderProduct[ 'mode' ]                 =   $orderProduct[ 'mode' ] ?? 'normal';
@@ -1234,7 +1254,7 @@ class OrdersService
         }
     }
 
-    public function computeProduct( $fields, Product $product, ProductUnitQuantity $productUnitQuantity )
+    public function computeProduct( $fields, Product $product = null, ProductUnitQuantity $productUnitQuantity = null )
     {
         $sale_price     =   ( $fields[ 'unit_price' ] ?? $productUnitQuantity->sale_price );
 
@@ -1261,8 +1281,8 @@ class OrdersService
         if ( empty( $fields[ 'tax_value' ] ) ) {
             $fields[ 'tax_value' ]      =   $this->currencyService->define(
                 $this->taxService->getComputedTaxGroupValue(
-                    $product->tax_type,
-                    $product->tax_group_id,
+                    $fields[ 'tax_type' ] ?? $product->tax_type,
+                    $fields[ 'tax_group_id' ] ?? $product->tax_group_id,
                     $sale_price
                 )
             )
@@ -1281,25 +1301,27 @@ class OrdersService
             ) * floatval( $fields[ 'quantity' ] );
         }
 
-        /**
-         * We'll retreive the last defined purchase price
-         * for the defined item. Won't work for unmaterial item
-         */
-        $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
-            ->where( 'unit_id', $productUnitQuantity->unit_id )
-            ->orderBy( 'id', 'desc' )
-            ->first();
+        if ( $product instanceof Product ) {
 
-        /**
-         * @todo we might check if the barcode provided
-         * here include a procurement id
-         */
-        if ( $procurementProduct instanceof ProcurementProduct ) {
-            $fields[ 'total_purchase_price' ]       =   $this->currencyService->define( $procurementProduct->purchase_price )
-                ->multiplyBy( $fields[ 'quantity' ] )
-                ->getRaw();
+            /**
+             * We'll retreive the last defined purchase price
+             * for the defined item. Won't work for unmaterial item
+             */
+            $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
+                ->where( 'unit_id', $productUnitQuantity->unit_id )
+                ->orderBy( 'id', 'desc' )
+                ->first();
+    
+            /**
+             * @todo we might check if the barcode provided
+             * here include a procurement id
+             */
+            if ( $procurementProduct instanceof ProcurementProduct ) {
+                $fields[ 'total_purchase_price' ]       =   $this->currencyService->define( $procurementProduct->purchase_price )
+                    ->multiplyBy( $fields[ 'quantity' ] )
+                    ->getRaw();
+            }
         }
-
 
         return $fields;
     }

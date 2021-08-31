@@ -40,12 +40,12 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
-                            <!-- <div>
+                            <div>
                                 <button @click="openAddQuickProduct()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
                                     <i class="las la-plus"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Product / Service' ) }}</span>
                                 </button>
-                            </div> -->
+                            </div>
                             <!-- <div class="flex-auto"><button class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center" disabled></button></div> -->
                         </div>
                     </div>

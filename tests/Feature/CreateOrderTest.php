@@ -74,11 +74,16 @@ class CreateOrderTest extends TestCase
 
             $products           =   $products->map( function( $product ) use ( $faker ) {
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
+
                 return array_merge([
-                    'product_id'            =>  $product->id,
+                    // 'product_id'            =>  $product->id,
+                    'name'                  =>  'Fees',
                     'quantity'              =>  $faker->numberBetween(1,10),
                     'unit_price'            =>  $unitElement->sale_price,
-                    'unit_quantity_id'      =>  $unitElement->id,
+                    'tax_type'              =>  'inclusive',
+                    'tax_group_id'          =>  1,
+                    'unit_id'               =>  $unitElement->unit_id,
+                    // 'unit_quantity_id'      =>  $unitElement->id,
                 ], $this->customProductParams );
             })->filter( function( $product ) {
                 return $product[ 'quantity' ] > 0;
