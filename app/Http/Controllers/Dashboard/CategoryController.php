@@ -220,7 +220,7 @@ class CategoryController extends DashboardController
 
             return [
                 'products'          =>  $category->products()
-                    ->with( 'galleries' )
+                    ->with( 'galleries', 'tax_group.taxes' )
                     ->searchable()
                     ->trackingDisabled()
                     ->get()

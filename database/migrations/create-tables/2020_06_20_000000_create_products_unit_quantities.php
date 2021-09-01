@@ -38,6 +38,10 @@ class CreateProductsUnitQuantities extends Migration
                 $table->float( 'incl_tax_wholesale_price', 11, 5 )->default(0); // include tax whole sale price
                 $table->float( 'excl_tax_wholesale_price', 11, 5 )->default(0); // exclude tax whole sale price
                 $table->float( 'wholesale_price_tax', 11, 5 )->default(0);
+                $table->float( 'custom_price' )->default(0);
+                $table->float( 'custom_price_edit' )->default(0);
+                $table->float( 'incl_tax_custom_price' )->default(0);
+                $table->float( 'excl_tax_custom_price' )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
             });
