@@ -993,13 +993,30 @@ export class POS {
          * retreive all products taxes
          * and sum the total.
          */
-        const totalTaxes = products.map((product: OrderProduct) => product.tax_value);
+        const totalTaxes = products.map((product: OrderProduct) => {
+            return product.tax_value;
+        });
+
+        let exclusiveTaxCount   =   0;
+
+        const exclusiveTaxes    =   products.map( (product: OrderProduct ) => {
+            if ( product.tax_type === 'exclusive' ) {
+                return product.tax_value;
+            }
+
+            return 0;
+        });
+
+        if ( exclusiveTaxes.length > 0 ) {
+            exclusiveTaxCount   =   exclusiveTaxes.reduce( ( b, a ) => b + a );
+        }
 
         /**
          * tax might be computed above the tax that currently
          * applie to the items.
          */
         order.tax_value = 0;
+
         const vatType = this.options.getValue().ns_pos_vat;
 
         if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(vatType) && totalTaxes.length > 0) {
@@ -1013,7 +1030,7 @@ export class POS {
         }
 
         order.total = +(
-            (order.subtotal + (order.shipping || 0) + order.tax_value) - order.discount - order.total_coupons
+            (order.subtotal + (order.shipping || 0) + exclusiveTaxCount) - order.discount - order.total_coupons
         ).toFixed( ns.currency.ns_currency_precision );
 
         order.products = products;
