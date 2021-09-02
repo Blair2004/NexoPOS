@@ -23,9 +23,9 @@ export default {
     methods: {
         __,
 
-        searchProduct( search ) {
-            if ( search.length > 0 ) {
-                nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-procurement-product', { search })
+        searchProduct( argument ) {
+            if ( argument.length > 0 ) {
+                nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-procurement-product', { argument })
                     .subscribe( result => {
                         if ( result.from === 'products' ) {
                             if ( result.products.length > 0 ) {

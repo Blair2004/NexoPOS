@@ -249,14 +249,15 @@ class ProcurementController extends DashboardController
 
     public function searchProcurementProduct( Request $request )
     {
-        $products    =   Product::query()->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
+        $products    =   Product::query()
             ->trackingDisabled()
             ->with( 'unit_quantities.unit' )
             ->where( function( $query ) use ( $request ) {
                 $query->where( 'sku', 'LIKE', "%{$request->input( 'argument' )}%" )
+                ->orWhere( 'name', 'LIKE', "%{$request->input( 'argument' )}%" )
                 ->orWhere( 'barcode', 'LIKE', "%{$request->input( 'argument' )}%" );
             })
-            ->limit( 5 )
+            ->limit( 8 )
             ->get()
             ->map( function( $product ) {
                 $units  =   json_decode( $product->purchase_unit_ids );
