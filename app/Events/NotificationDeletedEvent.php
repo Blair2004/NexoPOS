@@ -27,11 +27,6 @@ class NotificationDeletedEvent implements ShouldBroadcast
         $this->notification     =   $notification;
     }
 
-    public function handle()
-    {
-        $this->notification->delete();
-    }
-
     /**
      * Get the channels the event should broadcast on.
      *

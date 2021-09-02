@@ -140,9 +140,11 @@ class NotificationService
 
     public function deleteSingleNotification( $id )
     {
-        $notification       =   Notification::find( $id );
+        $notification       =   Notification::find( $id );        
                                                                   
         NotificationDeletedEvent::dispatch( $notification );
+
+        $notification->delete();
     }
 
     public function deleteNotificationsFor( User $user )
