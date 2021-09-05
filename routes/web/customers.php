@@ -12,6 +12,9 @@ Route::get( '/customers/{customer}/rewards', [ CustomersController::class, 'getC
 Route::get( '/customers/{customer}/rewards/edit/{reward}', [ CustomersController::class, 'editCustomerReward' ]);
 Route::get( '/customers/{customer}/orders', [ CustomersController::class, 'getCustomersOrders' ]);
 Route::get( '/customers/{customer}/coupons', [ CustomersController::class, 'getCustomersCoupons' ]);
+Route::get( '/customers/{customer}/account-history', [ CustomersController::class, 'getCustomerAccountHistory' ]);
+Route::get( '/customers/{customer}/account-history/create', [ CustomersController::class, 'createCustomerAccountHistory' ]);
+Route::get( '/customers/{customer}/account-history/edit/{customerAccountHistory}', [ CustomersController::class, 'editCustomerAccountHistory' ]);
 Route::get( '/customers/groups', [ CustomersGroupsController::class, 'listCustomersGroups' ]);
 Route::get( '/customers/groups/create', [ CustomersGroupsController::class, 'createCustomerGroup' ]);
 Route::get( '/customers/groups/edit/{group}', [ CustomersGroupsController::class, 'editCustomerGroup' ]);

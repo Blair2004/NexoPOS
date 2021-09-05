@@ -278,6 +278,16 @@ export class POS {
             this.defineCurrentScreen();
         });
 
+        /**
+         * This will ensure the order is not closed mistakenly.
+         * @returns void
+         */
+        window.onbeforeunload   =   () => {
+            if ( this.products.getValue().length > 0 ) {
+                return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
+            }
+        }
+
         this.defineCurrentScreen();
     }
 
@@ -670,6 +680,16 @@ export class POS {
                             nsHooks.doAction('ns-order-submit-successful', result);
 
                             this._isSubmitting = false;
+
+                            /**
+                             * when all this has been executed, we can play
+                             * a sound if it's enabled
+                             */
+                            const url     =   this.options.getValue().ns_pos_complete_sale_audio;
+                            
+                            if ( url.length > 0 ) {
+                                ( new Audio( url ) ).play();
+                            }
                         },
                         error: (error: any) => {
                             this._isSubmitting = false;
@@ -1176,6 +1196,16 @@ export class POS {
          * product has been added.
          */
         this._products.next(products);
+
+        /**
+         * when all this has been executed, we can play
+         * a sound if it's enabled
+         */
+        const url     =   this.options.getValue().ns_pos_new_item_audio;
+
+        if ( url.length > 0 ) {
+            ( new Audio( url ) ).play();
+        }
     }
 
     defineTypes(types) {

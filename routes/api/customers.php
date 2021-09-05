@@ -15,6 +15,8 @@ Route::get( 'customers/schema', [ CustomersController::class, 'schema' ]);
 Route::post( 'customers', [ CustomersController::class, 'post' ]);
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);
 Route::post( 'customers/coupons/{coupon}', [ CustomersController::class, 'loadCoupons' ]);
+Route::post( 'customers/{customer}/crud/account-history', [ CustomersController::class, 'recordAccountHistory' ]);
+Route::put( 'customers/{customer}/crud/{accountHistory}/account-history', [ CustomersController::class, 'updateAccountHistory' ]);
 Route::put( 'customers/{customer}', [ CustomersController::class, 'put' ]);
 
 Route::post( 'customers/{customer}/account-history', [ CustomersController::class, 'accountTransaction' ])

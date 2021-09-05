@@ -521,6 +521,11 @@ class CustomerCrud extends CrudService
                 'type'          =>      'GOTO',
                 'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' )
             ], [
+                'label'         =>      __( 'Account History' ),
+                'namespace'     =>      'customers_rewards',
+                'type'          =>      'GOTO',
+                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' )
+            ], [
                 'label'     =>      __( 'Delete' ),
                 'namespace' =>      'delete',
                 'type'      =>      'DELETE',

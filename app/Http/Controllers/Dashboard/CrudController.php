@@ -101,75 +101,82 @@ class CrudController extends DashboardController
             $resource->beforePost( $request );
         }
 
-        foreach ( $inputs as $name => $value ) {
+        /**
+         * If we would like to handle the PUT request
+         * by any other handler than the CrudService
+         */
+        if ( ! $resource->disablePut ) {
 
-            /**
-             * If submitted field are part of fillable fields
-             */
-            if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+            foreach ( $inputs as $name => $value ) {
 
                 /**
-                 * We might give the capacity to filter fields 
-                 * before storing. This can be used to apply specific formating to the field.
+                 * If submitted field are part of fillable fields
                  */
-                if ( method_exists( $resource, 'filterPost' ) ) {
-                    $entry->$name   =   $resource->filterPost( $value, $name );
-                } else {
-                    $entry->$name   =   $value;
+                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+
+                    /**
+                     * We might give the capacity to filter fields 
+                     * before storing. This can be used to apply specific formating to the field.
+                     */
+                    if ( method_exists( $resource, 'filterPost' ) ) {
+                        $entry->$name   =   $resource->filterPost( $value, $name );
+                    } else {
+                        $entry->$name   =   $value;
+                    }
+                }
+
+                /**
+                 * sanitizing input to remove
+                 * all script tags
+                 */
+                if ( ! empty( $entry->$name ) ) {
+                    $entry->$name       =   strip_tags( $entry->$name );
                 }
             }
-
-            /**
-             * sanitizing input to remove
-             * all script tags
-             */
-            if ( ! empty( $entry->$name ) ) {
-                $entry->$name       =   strip_tags( $entry->$name );
-            }
-        }
-        
-        /**
-         * If fillable is empty or if "author" it's explicitely
-         * mentionned on the fillable array.
-         */
-        if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
-            $entry->author      =   Auth::id();
-        }
-
-        $entry->save();
-
-        /**
-         * loop the tabs relations
-         * and store it
-         */
-        foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
-            $fields         =   $request->input( $tab );
-            $class          =   $relationParams[0];
-            $localKey       =   $relationParams[1];
-            $foreighKey     =   $relationParams[2];
             
-            if ( ! empty( $fields ) ) {
-                $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+            /**
+             * If fillable is empty or if "author" it's explicitely
+             * mentionned on the fillable array.
+             */
+            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+                $entry->author      =   Auth::id();
+            }
 
-                /**
-                 * no relation has been found
-                 * so we'll store that.
-                 */
-                if ( ! $model instanceof $class ) {
-                    $model  =   new $relationParams[0]; // should be the class;
+            $entry->save();
+
+            /**
+             * loop the tabs relations
+             * and store it
+             */
+            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
+                $fields         =   $request->input( $tab );
+                $class          =   $relationParams[0];
+                $localKey       =   $relationParams[1];
+                $foreighKey     =   $relationParams[2];
+                
+                if ( ! empty( $fields ) ) {
+                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+
+                    /**
+                     * no relation has been found
+                     * so we'll store that.
+                     */
+                    if ( ! $model instanceof $class ) {
+                        $model  =   new $relationParams[0]; // should be the class;
+                    }
+
+                    /**
+                     * We're saving here all the fields for 
+                     * the related model
+                     */
+                    foreach( $fields as $name => $value ) {
+                        $model->$name   =   $value;
+                    }
+
+                    $model->$localKey   =   $entry->$foreighKey;
+                    $model->author      =   Auth::id();
+                    $model->save();
                 }
-
-                /**
-                 * We're saving here all the fields for 
-                 * the related model
-                 */
-                foreach( $fields as $name => $value ) {
-                    $model->$name   =   $value;
-                }
-
-                $model->$localKey   =   $entry->$foreighKey;
-                $model->author      =   Auth::id();
-                $model->save();
             }
         }
 
@@ -224,78 +231,86 @@ class CrudController extends DashboardController
             $resource->beforePut( $request, $entry );
         }
 
-        foreach ( $inputs as $name => $value ) {
+        /**
+         * If we would like to handle the PUT request
+         * by any other handler than the CrudService
+         */
+        if ( ! $resource->disablePut ) {
 
-            /**
-             * If submitted field are part of fillable fields
-             */
-            if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
-
+            foreach ( $inputs as $name => $value ) {
+    
                 /**
-                 * We might give the capacity to filter fields 
-                 * before storing. This can be used to apply specific formating to the field.
+                 * If submitted field are part of fillable fields
                  */
-                if ( method_exists( $resource, 'filterPut' ) ) {
-                    $entry->$name   =   $resource->filterPut( $value, $name );
-                } else {
-                    $entry->$name   =   $value;
+                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+    
+                    /**
+                     * We might give the capacity to filter fields 
+                     * before storing. This can be used to apply specific formating to the field.
+                     */
+                    if ( method_exists( $resource, 'filterPut' ) ) {
+                        $entry->$name   =   $resource->filterPut( $value, $name );
+                    } else {
+                        $entry->$name   =   $value;
+                    }
+                }
+    
+                /**
+                 * sanitizing input to remove
+                 * all script tags
+                 */
+                if ( ! empty( $entry->$name ) ) {
+                    $entry->$name       =   strip_tags( $entry->$name );
                 }
             }
-
-            /**
-             * sanitizing input to remove
-             * all script tags
-             */
-            if ( ! empty( $entry->$name ) ) {
-                $entry->$name       =   strip_tags( $entry->$name );
-            }
-        }
-        
-        /**
-         * If fillable is empty or if "author" it's explicitely
-         * mentionned on the fillable array.
-         */
-        if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
-            $entry->author      =   Auth::id();
-        }
-        
-        $entry->save();
-
-        /**
-         * loop the tabs relations
-         * and store it
-         */
-        foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
-            $fields         =   $request->input( $tab );
-            $class          =   $relationParams[0];
-            $localKey       =   $relationParams[1];
-            $foreighKey     =   $relationParams[2];
             
-            if ( ! empty( $fields ) ) {
-                $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
-
-                /**
-                 * no relation has been found
-                 * so we'll store that.
-                 */
-                if ( ! $model instanceof $class ) {
-                    $model  =   new $relationParams[0]; // should be the class;
-                }
-
-                /**
-                 * We're saving here all the fields for 
-                 * the related model
-                 */
-                foreach( $fields as $name => $value ) {
-                    $model->$name   =   $value;
-                }
-
-                $model->$localKey   =   $entry->$foreighKey;
-                $model->author      =   Auth::id();
-                $model->save();
+            /**
+             * If fillable is empty or if "author" it's explicitely
+             * mentionned on the fillable array.
+             */
+            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+                $entry->author      =   Auth::id();
             }
+            
+            $entry->save();
+    
+            /**
+             * loop the tabs relations
+             * and store it
+             */
+            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
+                $fields         =   $request->input( $tab );
+                $class          =   $relationParams[0];
+                $localKey       =   $relationParams[1];
+                $foreighKey     =   $relationParams[2];
+                
+                if ( ! empty( $fields ) ) {
+                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+    
+                    /**
+                     * no relation has been found
+                     * so we'll store that.
+                     */
+                    if ( ! $model instanceof $class ) {
+                        $model  =   new $relationParams[0]; // should be the class;
+                    }
+    
+                    /**
+                     * We're saving here all the fields for 
+                     * the related model
+                     */
+                    foreach( $fields as $name => $value ) {
+                        $model->$name   =   $value;
+                    }
+    
+                    $model->$localKey   =   $entry->$foreighKey;
+                    $model->author      =   Auth::id();
+                    $model->save();
+                }
+            }
+    
         }
-
+        
         /**
          * Create an event after crud POST
          */

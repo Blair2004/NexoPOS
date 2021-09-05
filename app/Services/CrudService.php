@@ -68,6 +68,19 @@ class CrudService
     protected $tabsRelations    =   [];
 
     /**
+     * Will ensure every POST request
+     * aren't persistent while events
+     * for this request are triggered.
+     */
+    protected $disablePost      =   false;
+
+    /**
+     * Will ensure every PUT requests aren't persisten
+     * while the events for that request are triggered.
+     */
+    protected $disablePut       =   false;
+
+    /**
      * Construct Parent
      */
     public function __construct()
