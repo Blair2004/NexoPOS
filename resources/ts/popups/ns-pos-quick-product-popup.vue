@@ -179,14 +179,12 @@ export default {
                     type: 'text',
                     description: __( 'Provide a unique name for the product.' ),
                     validation: 'required',
-                    value: 'Sample', // temp
                 }, {
                     label: __( 'Unit Price' ),
                     name: 'unit_price',
                     type: 'text',
                     description: __( 'Define what is the sale price of the item.' ),
                     validation: 'required',
-                    value: 1.25, // temp
                 }, {
                     label: __( 'Quantity' ),
                     name: 'quantity',
@@ -208,8 +206,7 @@ export default {
                         }
                     ],
                     description: __( 'Define what is tax type of the item.' ),
-                    validation: 'required',
-                    value: 'inclusive', // temp
+                    validation: 'required',                    
                 }, {
                     label: __( 'Tax Group' ),
                     name: 'tax_group_id',
@@ -218,8 +215,7 @@ export default {
                         // ...
                     ],
                     description: __( 'Choose the tax group that should apply to the item.' ),
-                    validation: 'required',
-                    value: 1, // temp
+                    validation: 'required',                    
                 }, {
                     label: __( 'Unit' ),
                     name: 'unit_id',
@@ -228,8 +224,7 @@ export default {
                         // ...
                     ],
                     description: __( 'Assign a unit to the product.' ),
-                    validation: 'required',
-                    value: 1, // temp
+                    validation: 'required',                    
                 }
             ]
         }
