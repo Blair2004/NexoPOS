@@ -72,13 +72,13 @@ class CrudService
      * aren't persistent while events
      * for this request are triggered.
      */
-    protected $disablePost      =   false;
+    public $disablePost      =   false;
 
     /**
      * Will ensure every PUT requests aren't persisten
      * while the events for that request are triggered.
      */
-    protected $disablePut       =   false;
+    public $disablePut       =   false;
 
     /**
      * Construct Parent

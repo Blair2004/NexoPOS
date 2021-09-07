@@ -54,9 +54,9 @@ class CustomerAccountCrud extends CrudService
      * We would like to manually
      * save the data from the crud class
      */
-    protected $disablePost  =   true;
+    public $disablePost  =   true;
 
-    protected $disablePut   =   false;
+    public $disablePut   =   false;
 
     /**
      * Adding relation
