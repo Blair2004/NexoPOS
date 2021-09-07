@@ -16,6 +16,7 @@ import { OrderProduct } from "./interfaces/order-product";
 import { StatusResponse } from "./status-response";
 import { __ } from "./libraries/lang";
 import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
+import moment from "moment";
 
 /**
  * these are dynamic component
@@ -577,7 +578,7 @@ export class POS {
                     return reject({ status: 'failed', message });
                 } else {
                     const paymentType = this.selectedPaymentType.getValue();
-                    const expectedSlice = order.instalments.filter(payment => payment.amount == expected);
+                    const expectedSlice = order.instalments.filter(payment => payment.amount >= expected && moment( payment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
 
                     if (expectedSlice.length === 0) {
                         return resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
