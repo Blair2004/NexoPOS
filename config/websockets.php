@@ -30,7 +30,7 @@ return [
             'path' => env('PUSHER_APP_PATH'),
             'capacity' => null,
             'host'  =>  env( 'NS_SOCKET_DOMAIN', env( 'SESSION_DOMAIN' ) ),
-            'enable_client_messages' => true,
+            'enable_client_messages' => false,
             'enable_statistics' => true,
         ],
     ],
