@@ -1,12 +1,6 @@
 <?php
 
-use App\Classes\Hook;
-use App\Http\Controllers\Dashboard\CustomersController;
-use App\Http\Controllers\Dashboard\CustomersGroupsController;
-use App\Http\Controllers\Dashboard\ProductsController;
-use App\Http\Controllers\Dashboard\OrdersController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
 use App\Http\Controllers\Dashboard\ModulesController;

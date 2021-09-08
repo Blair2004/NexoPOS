@@ -31,7 +31,7 @@ class ForceSetSessionDomainMiddleware
             DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
         }
 
-        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {            
+        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {         
             DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
         }
 

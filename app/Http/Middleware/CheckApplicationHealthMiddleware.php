@@ -51,7 +51,7 @@ class CheckApplicationHealthMiddleware
                  * to force check the tasks status.
                  */
                 TaskSchedulingPingJob::dispatch()->delay( now() );
-            }
+            } 
         }
 
         /**

@@ -135,6 +135,8 @@ class UpdateAddColumnsToExpenseHistoryAug1 extends Migration
             });
         }
 
-        Schema::rename( 'nexopos_cash_flow', 'nexopos_expense_history' );
+        if ( Schema::hasTable( 'nexopos_cash_flow' ) ) {
+            Schema::rename( 'nexopos_cash_flow', 'nexopos_expense_history' );
+        }
     }
 }
