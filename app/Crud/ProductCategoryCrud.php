@@ -5,11 +5,9 @@ use App\Events\ProductCategoryAfterCreatedEvent;
 use App\Events\ProductCategoryAfterUpdatedEvent;
 use App\Events\ProductCategoryBeforeDeletedEvent;
 use App\Models\Product;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ProductCategory;
@@ -362,6 +360,12 @@ class ProductCategoryCrud extends CrudService
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id )
+            ], [
+                'label'         =>      __( 'Compute Products' ),
+                'namespace'     =>      'edit',
+                'type'          =>      'GOTO',
+                'index'         =>      'id',
+                'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

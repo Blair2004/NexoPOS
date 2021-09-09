@@ -12,11 +12,24 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
 use App\Crud\ProductCategoryCrud;
+use App\Services\ProductCategoryService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
 {
+    /**
+     * @param ProductCategoryService
+     */
+    public $categoryService;
+
+    public function __construct(
+        ProductCategoryService $categoryService
+    )
+    {
+        $this->categoryService      =   $categoryService;
+    }
+
     public function get( $id = null )
     {
         if ( ! empty( $id ) ) {
@@ -208,6 +221,14 @@ class CategoryController extends DashboardController
     public function editCategory( ProductCategory $category )
     {
         return ProductCategoryCrud::form( $category );
+    }
+
+    public function computeCategoryProducts( ProductCategory $category )
+    {
+        $this->categoryService->computeProducts( $category );
+
+        return redirect( url()->previous() )
+            ->with( 'message', __( 'The category products has been refreshed' ) );
     }
 
     public function getCategories( $id = '0' )

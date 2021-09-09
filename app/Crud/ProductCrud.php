@@ -2,20 +2,15 @@
 namespace App\Crud;
 
 use App\Events\ProductBeforeDeleteEvent;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\ProductTax;
 use App\Models\ProductUnitQuantity;
-use App\Models\Tax;
 use App\Models\TaxGroup;
-use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\Helper;
 use App\Services\TaxService;

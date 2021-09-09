@@ -64,6 +64,28 @@ class ProductEventsSubscriber
             ProductAfterUpdatedEvent::class,
             [ ProductEventsSubscriber::class, 'generateBarcode' ]
         );
+
+        $events->listen(
+            ProductAfterCreatedEvent::class,
+            [ ProductEventsSubscriber::class, 'updateCategoryProduct' ]
+        );
+
+        $events->listen( 
+            ProductBeforeDeleteEvent::class,
+            [ ProductEventsSubscriber::class, 'deductCategoryProducts' ]
+        );
+    }
+
+    public function deductCategoryProducts( ProductBeforeDeleteEvent $event )
+    {
+        $event->product->category->total_items--;
+        $event->product->category->save();
+    }
+
+    public function updateCategoryProduct( ProductAfterCreatedEvent $event )
+    {
+        $event->product->category->total_items++;
+        $event->product->category->save();
     }
 
     public function beforeDeleteProduct( ProductBeforeDeleteEvent $event )
@@ -111,5 +133,6 @@ class ProductEventsSubscriber
 
     public function afterDeleteProduct( ProductAfterDeleteEvent $event )
     {
+        // ...
     }
 }

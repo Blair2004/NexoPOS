@@ -22,6 +22,7 @@ import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
 import { nsDateTimePicker }     from  './ns-date-time-picker';
 import { default as nsNumpad }  from  './ns-numpad.vue';
+import { default as nsAvatar }  from  './ns-avatar.vue';
 
 const nsDatepicker              =   require( './ns-datepicker.vue' ).default;
 
@@ -50,3 +51,4 @@ export { nsDatepicker };
 export { nsDateTimePicker };
 export { nsNumpad };
 export { nsSelectAudio };
+export { nsAvatar };

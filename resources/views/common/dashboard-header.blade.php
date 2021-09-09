@@ -12,15 +12,9 @@
         </div>
         <div class="px-2">
             <div @click="toggleMenu()" :class="menuToggled ? 'bg-white border-transparent shadow-lg rounded-t-lg' : 'border-gray-400 rounded-lg'" class="w-32 md:w-56 flex flex-col border py-2 justify-center hover:border-opacity-0 cursor-pointer hover:shadow-lg hover:bg-white">
-                <div class="flex justify-between items-center flex-shrink-0">
-                    <span class="hidden md:inline-block text-gray-600 px-2">{{ sprintf( __( 'Howdy, %s' ), Auth::user()->username ) }}</span>
-                    <span class="md:hidden text-gray-600 px-2">{{ sprintf( "%s", Auth::user()->username ) }}</span>
-                    <div class="px-2">
-                        <div class="w-8 h-8 rounded-full bg-gray-100">
-                            <img src="{{ Auth::user()->attribute ? Auth::user()->attribute->avatar_link : asset( 'images/user.png' ) }}" class="w-8 h-8 overflow-hidden rounded-full" alt="{{ Auth::user()->username }}" srcset="">
-                        </div>
-                    </div>
-                </div>
+                <ns-avatar 
+                    display-name="{{ Auth::user()->username }}"
+                    url="{{ Auth::user()->attribute ? Auth::user()->attribute->avatar_link : asset( 'images/user.png' ) }}"></ns-avatar>
             </div>
             <div v-cloak class="w-32 md:w-56 shadow-lg flex z-10 absolute -mb-2 rounded-br-lg rounded-bl-lg overflow-hidden" v-if="menuToggled">
                 <ul class="text-gray-700 w-full bg-white">

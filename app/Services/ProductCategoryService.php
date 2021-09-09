@@ -58,4 +58,10 @@ class ProductCategoryService
             'data'      =>  compact( 'category' )
         ];
     }
+
+    public function computeProducts( ProductCategory $category )
+    {
+        $category->total_items  =   $category->products()->count();
+        $category->save();
+    }
 }
