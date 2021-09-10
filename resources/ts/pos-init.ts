@@ -77,6 +77,7 @@ export class POS {
             total_products: 0,
             shipping: 0,
             tax_value: 0,
+            product_taxes: 0,
             shipping_rate: 0,
             shipping_type: undefined,
             customer: undefined,
@@ -492,7 +493,8 @@ export class POS {
 
     computeTaxes() {
         return new Promise((resolve, reject) => {
-            const order = this.order.getValue();
+            let order   =   this.order.getValue();
+            order       =   this.computeProductsTaxes( order );
 
             if (order.tax_group_id === undefined || order.tax_group_id === null) {
                 return reject(false);
@@ -510,38 +512,45 @@ export class POS {
                     return tax;
                 });
 
+                order       =   this.computeOrderTaxes( order );
+
                 return resolve({
                     status: 'success',
                     data: { tax: groups[order.tax_group_id], order }
                 });
             }
 
-            if (order.tax_group_id !== null) {
+            if (order.tax_group_id !== null && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
-                    .subscribe((tax: any) => {
-                        order.tax_groups = order.tax_groups || [];
-                        order.taxes = tax.taxes.map(tax => {
-                            return {
-                                tax_id: tax.id,
-                                tax_name: tax.name,
-                                rate: parseFloat(tax.rate),
-                                tax_value: this.getVatValue(order.subtotal, tax.rate, order.tax_type)
-                            };
-                        });
-
-                        /**
-                         * this is set to cache the 
-                         * tax group to avoid subsequent request
-                         * to the server.
-                         */
-                        order.tax_groups[tax.id] = tax;
-
-                        return resolve({
-                            status: 'success',
-                            data: { tax, order }
-                        })
-                    }, (error) => {
-                        return reject(error);
+                    .subscribe({
+                        next: (tax: any) => {
+                            order.tax_groups = order.tax_groups || [];
+                            order.taxes = tax.taxes.map(tax => {
+                                return {
+                                    tax_id: tax.id,
+                                    tax_name: tax.name,
+                                    rate: parseFloat(tax.rate),
+                                    tax_value: this.getVatValue(order.subtotal, tax.rate, order.tax_type)
+                                };
+                            });
+    
+                            /**
+                             * this is set to cache the 
+                             * tax group to avoid subsequent request
+                             * to the server.
+                             */
+                            order.tax_groups[tax.id] = tax;
+    
+                            order       =   this.computeOrderTaxes( order );
+    
+                            return resolve({
+                                status: 'success',
+                                data: { tax, order }
+                            })
+                        }, 
+                        error: (error) => {
+                            return reject(error);
+                        }
                     })
             } else {
                 return reject({
@@ -550,6 +559,49 @@ export class POS {
                 })
             }
         })
+    }
+
+    computeOrderTaxes( order: Order ) {
+        const posVat    =   this.options.getValue().ns_pos_vat;
+
+        if (['flat_vat', 'variable_vat', 'products_variable_vat'].includes(posVat) && order.taxes && order.taxes.length > 0) {
+            order.tax_value += order.taxes
+                .map(tax => tax.tax_value)
+                .reduce((before, after) => before + after);
+        }
+
+        order.tax_value     +=  order.product_taxes;
+
+        return order;
+    }
+
+    computeProductsTaxes( order: Order ) {
+        const products      =   this.products.getValue();
+
+        /**
+         * retreive all products taxes
+         * and sum the total.
+         */
+        const totalTaxes = products.map((product: OrderProduct) => {
+            return product.tax_value;
+        });
+
+        /**
+         * tax might be computed above the tax that currently
+         * applie to the items.
+         */
+        order.product_taxes = 0;
+
+        const posVat = this.options.getValue().ns_pos_vat;
+
+        if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) && totalTaxes.length > 0) {
+            order.product_taxes += totalTaxes.reduce((b, a) => b + a);
+        }
+
+        order.products = products;
+        order.total_products = products.length
+
+        return order;
     }
 
     /**
@@ -995,6 +1047,8 @@ export class POS {
          * save actual change to ensure
          * all listener are up to date.
          */
+        order.tax_value     =   0;
+        
         this.order.next(order);
 
         /**
@@ -1010,52 +1064,40 @@ export class POS {
             }
         }
 
-        /**
-         * retreive all products taxes
-         * and sum the total.
-         */
-        const totalTaxes = products.map((product: OrderProduct) => {
-            return product.tax_value;
-        });
+        let inclusiveTaxCount   =   0;
 
-        let exclusiveTaxCount   =   0;
-
-        const exclusiveTaxes    =   products.map( (product: OrderProduct ) => {
-            if ( product.tax_type === 'exclusive' ) {
+        const inclusiveTaxes    =   products.map( (product: OrderProduct) => {
+            if ( product.tax_type === 'inclusive' ) {
                 return product.tax_value;
             }
 
             return 0;
         });
 
-        if ( exclusiveTaxes.length > 0 ) {
-            exclusiveTaxCount   =   exclusiveTaxes.reduce( ( b, a ) => b + a );
+        if ( inclusiveTaxes.length > 0 ) {
+            inclusiveTaxCount   =   inclusiveTaxes.reduce( ( b, a ) => b + a );
         }
 
-        /**
-         * tax might be computed above the tax that currently
-         * applie to the items.
-         */
-        order.tax_value = 0;
+        const taxType   =   this.options.getValue().ns_pos_tax_type;
+        const posVat    =   this.options.getValue().ns_pos_vat;
 
-        const vatType = this.options.getValue().ns_pos_vat;
+        let tax_value   =   0;
 
-        if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(vatType) && totalTaxes.length > 0) {
-            order.tax_value += totalTaxes.reduce((b, a) => b + a);
+        if (['flat_vat', 'variable_vat'].includes(posVat) ) {
+            tax_value   =   order.tax_value;
+        } else if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
+            tax_value   =   order.tax_value ;
         }
 
-        if (['flat_vat', 'variable_vat', 'products_variable_vat'].includes(vatType) && order.taxes && order.taxes.length > 0) {
-            order.tax_value += order.taxes
-                .map(tax => tax.tax_value)
-                .reduce((before, after) => before + after);
+        if ( taxType === 'exclusive' ) {
+            order.total     =   +(
+                ( order.subtotal + ( order.shipping ||0) + tax_value ) - order.discount - order.total_coupons
+            ).toFixed( ns.currency.ns_currency_precision );
+        } else {
+            order.total     =   +(
+                ( order.subtotal + ( order.shipping ||0) ) - order.discount - order.total_coupons
+            ).toFixed( ns.currency.ns_currency_precision );
         }
-
-        order.total = +(
-            (order.subtotal + (order.shipping || 0) + exclusiveTaxCount) - order.discount - order.total_coupons
-        ).toFixed( ns.currency.ns_currency_precision );
-
-        order.products = products;
-        order.total_products = products.length
 
         this.order.next(order);
 
@@ -1255,7 +1297,7 @@ export class POS {
 
     private proceedProductTaxComputation( product, price ) {
         const originalProduct   =   product.$original();
-        const taxGroup         =   originalProduct.tax_group;
+        const taxGroup          =   originalProduct.tax_group;
 
         let price_without_tax   =   0;
         let tax_value           =   0;

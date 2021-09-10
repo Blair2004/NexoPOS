@@ -78,24 +78,32 @@ export default {
              */
             try {
                 await new Promise ( ( resolve, reject ) => {
-                    nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
-                        .subscribe( taxGroup => {
-                            quantities.sale_price_tax  =   taxGroup.taxes.map( tax => {
-                                return POS.getVatValue( quantities.sale_price, tax.rate, product.tax_type );
-                            }).reduce( ( b, a ) => b + a );
-
-                            quantities.wholesale_price_tax  =   taxGroup.taxes.map( tax => {
-                                return POS.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
-                            }).reduce( ( b, a ) => b + a );
-
-                            quantities.excl_tax_sale_price  +=  quantities.sale_price_tax;
-                            
-                            tax_group            =   taxGroup;
-
-                            resolve( true );
-                        }, error => {
-                            reject( false );
-                        })
+                    if( product.tax_group_id ) {
+                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
+                            .subscribe( taxGroup => {
+                                quantities.sale_price_tax  =   taxGroup.taxes.map( tax => {
+                                    return POS.getVatValue( quantities.sale_price, tax.rate, product.tax_type );
+                                }).reduce( ( b, a ) => b + a );
+    
+                                quantities.wholesale_price_tax  =   taxGroup.taxes.map( tax => {
+                                    return POS.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
+                                }).reduce( ( b, a ) => b + a );
+    
+                                quantities.excl_tax_sale_price  +=  quantities.sale_price_tax;
+                                
+                                tax_group            =   taxGroup;
+    
+                                resolve( true );
+                            }, error => {
+                                reject( false );
+                            })
+                    } else {
+                        quantities.sale_price_tax       =   0;
+                        quantities.wholesale_price_tax  =   0;
+                        quantities.excl_tax_sale_price  =  product.unit_price;
+                        
+                        resolve( true );
+                    }
                 });
 
             } catch( exception ) {
@@ -189,33 +197,9 @@ export default {
                     label: __( 'Quantity' ),
                     name: 'quantity',
                     type: 'text',
-                    value: 2,
+                    value: 1,
                     description: __( 'Set the quantity of the product.' ),
                     validation: 'required'
-                }, {
-                    label: __( 'Tax Type' ),
-                    name: 'tax_type',
-                    type: 'select',
-                    options: [
-                        {
-                            label: __( 'Inclusive' ),
-                            value: 'inclusive',
-                        }, {
-                            label: __( 'Exclusive' ),
-                            value: 'exclusive'
-                        }
-                    ],
-                    description: __( 'Define what is tax type of the item.' ),
-                    validation: 'required',                    
-                }, {
-                    label: __( 'Tax Group' ),
-                    name: 'tax_group_id',
-                    type: 'select',
-                    options: [
-                        // ...
-                    ],
-                    description: __( 'Choose the tax group that should apply to the item.' ),
-                    validation: 'required',                    
                 }, {
                     label: __( 'Unit' ),
                     name: 'unit_id',
@@ -225,6 +209,31 @@ export default {
                     ],
                     description: __( 'Assign a unit to the product.' ),
                     validation: 'required',                    
+                }, {
+                    label: __( 'Tax Type' ),
+                    name: 'tax_type',
+                    type: 'select',
+                    options: [
+                        {
+                            label: __( 'Disabled' ),
+                            value: '',
+                        }, {
+                            label: __( 'Inclusive' ),
+                            value: 'inclusive',
+                        }, {
+                            label: __( 'Exclusive' ),
+                            value: 'exclusive'
+                        }
+                    ],
+                    description: __( 'Define what is tax type of the item.' ),               
+                }, {
+                    label: __( 'Tax Group' ),
+                    name: 'tax_group_id',
+                    type: 'select',
+                    options: [
+                        // ...
+                    ],
+                    description: __( 'Choose the tax group that should apply to the item.' ),                   
                 }
             ]
         }

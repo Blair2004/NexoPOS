@@ -68,6 +68,7 @@ export interface Order {
         billing: Address,
     };
     tax_value: number;
+    product_taxes: number;
     tax_groups: any[],
     shipping: number;
     shipping_rate: number;
