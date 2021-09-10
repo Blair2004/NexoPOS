@@ -135,7 +135,6 @@ class NotificationService
             ->get()
             ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
-                NotificationDispatchedEvent::dispatch( $notification );
             });        
     }
 

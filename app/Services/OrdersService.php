@@ -2050,14 +2050,17 @@ class OrdersService
         $order->products->each( function( OrderProduct $product) {
             /**
              * we do proceed by doing an initial return
+             * only if the product is not a quick product/service
              */
-            $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
-                'total_price'       =>  $product->total_price,
-                'product_id'        =>  $product->product_id,
-                'unit_id'           =>  $product->unit_id,
-                'quantity'          =>  $product->quantity,
-                'unit_price'        =>  $product->unit_price
-            ]);
+            if ( $product->product_id > 0 ) {
+                $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
+                    'total_price'       =>  $product->total_price,
+                    'product_id'        =>  $product->product_id,
+                    'unit_id'           =>  $product->unit_id,
+                    'quantity'          =>  $product->quantity,
+                    'unit_price'        =>  $product->unit_price
+                ]);
+            }
 
             $product->delete();
         });
