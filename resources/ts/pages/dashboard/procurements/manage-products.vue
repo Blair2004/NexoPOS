@@ -388,8 +388,12 @@ export default {
                     nsSnackBar.error( error.message, undefined, {
                         duration: 5000
                     }).subscribe();
-                    this.formValidation.triggerError( this.form, error.response.data );
+
                     this.formValidation.enableForm( this.form );
+
+                    if ( error.response ) {
+                        this.formValidation.triggerError( this.form, error.response.data );
+                    }
                 })
         },
         deleteVariation( index ) {
