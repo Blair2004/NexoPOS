@@ -40,6 +40,12 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
+                            <div>
+                                <button @click="openAddQuickProduct()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                                    <i class="las la-plus"></i>
+                                    <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
+                                </button>
+                            </div>
                             <!-- <div class="flex-auto"><button class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center" disabled></button></div> -->
                         </div>
                     </div>
@@ -239,6 +245,7 @@ import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
 import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';
 import nsPosProductPricePopupVue from '@/popups/ns-pos-product-price-popup.vue';
+import nsPosQuickProductPopupVue from '@/popups/ns-pos-quick-product-popup.vue';
 
 export default {
     name: 'ns-pos-cart',
@@ -300,6 +307,18 @@ export default {
         __,
         switchTo,
 
+        openAddQuickProduct() {
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPosQuickProductPopupVue, { resolve, reject })
+            });
+
+            promise.then( _ => {
+                // ...
+            }).catch( _ => {
+                // ...
+            })
+        },
+
         async changeProductPrice( product ) {
             if ( ! this.settings.edit_purchase_price ) {
                 return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) ).subscribe();
@@ -307,16 +326,18 @@ export default {
 
             if ( this.settings.unit_price_editable ) {
                 try {
-                    product.unit_price  =   await new Promise( ( resolve, reject ) => {
+                    const newPrice  =   await new Promise( ( resolve, reject ) => {
                         return Popup.show( nsPosProductPricePopupVue, { product: Object.assign({}, product ), resolve, reject })
                     });
 
-                    /**
-                     * since we've updated the product price
-                     * we'll change all the default value which computation
-                     * was made on the original value.
-                     */
-                    product.tax_value   =   0;
+                    const quantities  =   {
+                        ...product.$quantities(), 
+                        ...{
+                            custom_price_edit : newPrice
+                        }
+                    }
+
+                    product.$quantities     =   () => quantities;
 
                     /**
                      * We need to change the price mode
@@ -324,6 +345,8 @@ export default {
                      */
                     product.mode        =   'custom';
 
+                    product     =   POS.computeProductTax( product );
+                                        
                     POS.refreshProducts( POS.products.getValue() );
                     POS.refreshCart();
 

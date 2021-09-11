@@ -3,12 +3,10 @@
 namespace App\Jobs;
 
 use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
 use App\Models\Order;
-use App\Models\OrderPayment;
 use App\Services\CustomerService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

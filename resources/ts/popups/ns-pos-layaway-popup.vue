@@ -178,14 +178,12 @@ export default {
                             type: 'date',
                             name: 'date',
                             label: 'Date',
-                            disabled: this.expectedPayment > 0 && index === 0 ? true: false,
                             value: index === 0 ? ns.date.moment.format( 'YYYY-MM-DD' ) : '',
                         },
                         amount: {
                             type: 'number',
                             name: 'amount',
                             label: 'Amount',
-                            disabled: this.expectedPayment > 0 && index === 0 ? true: false,
                             value: index === 0 ? this.expectedPayment : 0,
                         },
                         readonly : {
@@ -237,6 +235,18 @@ export default {
 
             if ( instalments.filter( instalment => moment( instalment.date ).isBefore( ns.date.moment.startOf( 'day' ) ) ).length > 0 ) {
                 return nsSnackBar.error( __( 'One or more instalments has a date prior to the current date.' ) ).subscribe();
+            }
+
+            const instalmentsForToday   =   instalments.filter( instalment => moment( instalment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
+            let totalPaidToday          =   0;
+
+
+            instalmentsForToday.forEach( instalment => {
+                totalPaidToday      +=  parseFloat( instalment.amount );
+            });
+
+            if ( totalPaidToday < this.expectedPayment ) {
+                return nsSnackBar.error( __( 'The payment to be made today is less than what is expected.' ) ).subscribe();
             }
 
             if ( totalInstalments < nsRawCurrency( this.order.total ) ) {

@@ -45,9 +45,7 @@ class CreateExpensesTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_expenses' ) ) {
-            Schema::drop( 'nexopos_expenses' );
-        }
+        Schema::dropIfExists( 'nexopos_expenses' );
     }
 }
 

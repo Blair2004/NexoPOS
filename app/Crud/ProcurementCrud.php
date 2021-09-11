@@ -1,12 +1,14 @@
 <?php
 namespace App\Crud;
 
+use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Procurement;
+use App\Services\ProviderService;
 
 class ProcurementCrud extends CrudService
 {
@@ -67,12 +69,19 @@ class ProcurementCrud extends CrudService
     ];
 
     /**
+     * @var ProviderService
+     */
+    protected $providerService;
+
+    /**
      * Define Constructor
      * @param  
      */
     public function __construct()
     {
         parent::__construct();
+
+        $this->providerService  =   app()->make( ProviderService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
@@ -364,29 +373,8 @@ class ProcurementCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
 
-        switch( $entry->delivery_status ) {
-            case Procurement::PENDING:
-                $entry->delivery_status = __( 'Pending' );
-            break;
-            case Procurement::DELIVERED:
-                $entry->delivery_status = __( 'Delivered' );
-            break;
-            case Procurement::STOCKED:
-                $entry->delivery_status = __( 'Stocked' );
-            break;
-            default:
-                $entry->delivery_status     =   Hook::filter( 'ns-delivery-status', $entry->delivery_status );
-            break;
-        }
-
-        switch( $entry->payment_status ) {
-            case Procurement::PAYMENT_UNPAID:
-                $entry->payment_status = __( 'Unpaid' );
-            break;
-            case Procurement::PAYMENT_PAID:
-                $entry->payment_status = __( 'Paid' );
-            break;
-        }
+        $entry->delivery_status     =   $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
+        $entry->payment_status      =   $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         $entry->value       =   ns()
             ->currency
@@ -434,19 +422,17 @@ class ProcurementCrud extends CrudService
      */
     public function bulkAction( Request $request ) 
     {
-        /**
-         * Deleting licence is only allowed for admin
-         * and supervisor.
-         */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException;
+            }
+
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0

@@ -21,7 +21,7 @@ class UpdateOrderProductsTableMar30 extends Migration
         });
 
         OrderProduct::get()->each( function( $product ) {
-            $product->product_category_id   =   $product->product->category->id;  
+            $product->product_category_id   =   $product->product->category->id ?? 0;  
             $product->save();
         });
     }

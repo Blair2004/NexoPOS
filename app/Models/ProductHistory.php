@@ -54,6 +54,17 @@ class ProductHistory extends NsModel
         ProductHistory::ACTION_ADJUSTMENT_RETURN,
     ];
 
+    /**
+     * alias of scopeFindProduct
+     * @param QueryBuilder $query
+     * @param integer $product_id
+     * @return QueryBuilder
+     */
+    public function scopeWithProduct( $query, $product_id )
+    {
+        return $query->where( 'product_id', $product_id );
+    }
+
     public function scopeFindProduct( $query, $id )
     {
         return $query->where( 'product_id', $id );

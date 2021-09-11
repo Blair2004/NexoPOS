@@ -68,6 +68,19 @@ class CrudService
     protected $tabsRelations    =   [];
 
     /**
+     * Will ensure every POST request
+     * aren't persistent while events
+     * for this request are triggered.
+     */
+    public $disablePost      =   false;
+
+    /**
+     * Will ensure every PUT requests aren't persisten
+     * while the events for that request are triggered.
+     */
+    public $disablePut       =   false;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -531,6 +544,11 @@ class CrudService
     public function extractCrudValidation( $crud, $model = null )
     {
         $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+
+        if ( is_subclass_of( $crud, CrudService::class ) ) {
+            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+        }
+
         $rules  =   [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
@@ -559,6 +577,11 @@ class CrudService
     public function getPlainData( $crud, Request $request, $model = null )
     {
         $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+
+        if ( is_subclass_of( $crud, CrudService::class ) ) {
+            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+        }
+        
         $data   =   [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {

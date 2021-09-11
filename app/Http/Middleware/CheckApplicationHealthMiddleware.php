@@ -24,7 +24,7 @@ class CheckApplicationHealthMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if ( env( 'NS_CRON_PING', false ) === false ) {
+        if ( ns()->option->get( 'ns_cron_ping', false ) === false ) {
             /**
              * @var NotificationsEnum;
              */
@@ -41,7 +41,7 @@ class CheckApplicationHealthMiddleware
              * @var DateService
              */
             $date               =   app()->make( DateService::class );
-            $lastUpdate         =   Carbon::parse( env( 'NS_CRON_PING' ) );
+            $lastUpdate         =   Carbon::parse( ns()->option->get( 'ns_cron_ping' ) );
 
             if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
                 $this->emitMisconfigurationNotification();
@@ -51,7 +51,7 @@ class CheckApplicationHealthMiddleware
                  * to force check the tasks status.
                  */
                 TaskSchedulingPingJob::dispatch()->delay( now() );
-            }
+            } 
         }
 
         /**
@@ -79,7 +79,7 @@ class CheckApplicationHealthMiddleware
             'identifier'    =>      NotificationsEnum::NSCRONDISABLED,
             'source'        =>      'system',
             'url'           =>      'https://laravel.com/docs/8.x/scheduling#starting-the-scheduler',
-            'description'   =>      __( "NexoPOS is unable to run tasks correctly. This happens if Queues or Tasks Scheduling aren't configured correctly." )
+            'description'   =>      __( "NexoPOS is unable to run tasks correctly. This happens if Queues or Tasks Scheduling aren't configured correctly." ),
         ])->dispatchForGroup( Role::namespace( 'admin' ) );
     }
 }

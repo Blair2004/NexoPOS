@@ -8,6 +8,7 @@ use App\Models\OrderPayment;
 use App\Models\OrderProductRefund;
 use App\Models\Product;
 use App\Models\Role;
+use App\Models\TaxGroup;
 use App\Services\CurrencyService;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -51,6 +52,22 @@ class OrderRefundTest extends TestCase
 
         $subtotal   =   collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
         $netTotal   =   $subtotal   +   $shippingFees;
+        
+        /**
+         * We'll add taxes to the order in
+         * case we have some tax group defined.
+         */
+        $taxes      =   [];
+        $taxGroup   =   TaxGroup::first();
+        if ( $taxGroup instanceof TaxGroup ) {
+            $taxes  =   $taxGroup->taxes->map( function( $tax ) {
+                return [
+                    'tax_name'  =>  $tax->name,
+                    'tax_id'    =>  $tax->id,
+                    'rate'      =>  $tax->rate
+                ];
+            });
+        }
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -58,6 +75,7 @@ class OrderRefundTest extends TestCase
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
                 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  $discountRate,
+                'taxes'                 =>  $taxes,
                 'addresses'             =>  [
                     'shipping'          =>  [
                         'name'          =>  'First Name Delivery',
@@ -89,7 +107,7 @@ class OrderRefundTest extends TestCase
         $responseData           =   json_decode( $response->getContent(), true );
         
         $secondFetchCustomer    =   $firstFetchCustomer->fresh();
-
+        
         if ( $currency->define( $secondFetchCustomer->purchases_amount )
             ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
             ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
@@ -148,8 +166,10 @@ class OrderRefundTest extends TestCase
         }
 
         $expense    =   $expenseCategory->cashFlowHistories()->orderBy( 'id', 'desc' )->first();
+
+
         if ( ( float ) $expense->getRawOriginal( 'value' ) != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
-            throw new Exception( __( 'The expense created after the refund doesn\'t match the product value.' ) );
+            throw new Exception( __( 'The expense created after the refund doesn\'t match the order refund total.' ) );
         }  
         
         $response->assertJson([

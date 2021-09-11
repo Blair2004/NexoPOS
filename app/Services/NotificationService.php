@@ -133,29 +133,24 @@ class NotificationService
     {
         Notification::identifiedBy( $identifier )
             ->get()
-            ->map( function( $notification ) {
+            ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
-                $notification->delete();
             });        
     }
 
     public function deleteSingleNotification( $id )
     {
-        $notification       =   Notification::find( $id );
+        $notification       =   Notification::find( $id );        
                                                                   
         NotificationDeletedEvent::dispatch( $notification );
-
-        $notification->delete();
     }
 
     public function deleteNotificationsFor( User $user )
     {
-        
         Notification::for( $user->id )
             ->get()
             ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
-                $notification->delete();        
             });
     }
 }

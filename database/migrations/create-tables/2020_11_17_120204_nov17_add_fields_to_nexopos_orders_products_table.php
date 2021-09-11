@@ -19,6 +19,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
             $table->integer( 'order_id' );
             $table->integer( 'author' );
             $table->float( 'total', 11, 5 );
+            $table->float( 'tax_value' )->default(0);
             $table->float( 'shipping', 11, 5 );
             $table->string( 'payment_method' );
             $table->timestamps();
@@ -32,6 +33,7 @@ class Nov17AddFieldsToNexoposOrdersProductsTable extends Migration
             $table->integer( 'unit_id' );
             $table->integer( 'product_id' );
             $table->float( 'unit_price', 11, 5 );
+            $table->float( 'tax_value' )->default(0);
             $table->float( 'quantity', 11, 5 );
             $table->float( 'total_price', 11, 5 );
             $table->string( 'condition' ); // either unspoiled, damaged

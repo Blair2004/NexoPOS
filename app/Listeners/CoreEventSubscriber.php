@@ -9,8 +9,6 @@ use App\Jobs\ComputeDashboardMonthReportJob;
 use App\Jobs\InitializeDailyReportJob;
 use App\Models\DashboardDay;
 use App\Services\ReportService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CoreEventSubscriber
 {
@@ -30,23 +28,14 @@ class CoreEventSubscriber
 
     public function subscribe( $event )
     {
-        $event->listen(
-            AfterAppHealthCheckedEvent::class,
-            [ CoreEventSubscriber::class, 'initializeJobReport' ]
-        );
-
-        $event->listen(
-            DashboardDayAfterCreatedEvent::class,
-            [ CoreEventSubscriber::class, 'dispatchMonthReportUpdate' ]
-        );
-
-        $event->listen(
-            DashboardDayAfterUpdatedEvent::class,
-            [ CoreEventSubscriber::class, 'dispatchMonthReportUpdate' ]
-        );
+        return [
+            AfterAppHealthCheckedEvent::class       => 'initializeJobReport',
+            DashboardDayAfterCreatedEvent::class    => 'dispatchMonthReportUpdate',
+            DashboardDayAfterUpdatedEvent::class    => 'dispatchMonthReportUpdate',
+        ];
     }
 
-    public static function dispatchMonthReportUpdate( $event )
+    public function dispatchMonthReportUpdate( $event )
     {
         ComputeDashboardMonthReportJob::dispatch()
             ->delay( now()->addSeconds(10) );

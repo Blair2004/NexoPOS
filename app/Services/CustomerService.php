@@ -373,7 +373,7 @@ class CustomerService
          * we'll issue a new coupon and update the customer
          * point counter
          */
-        if ( $customerReward->points - $customerReward->target >= 0 ) {
+        if ( $customerReward->points >= $customerReward->target ) {
             $coupon                             =   $reward->coupon;
 
             if ( $coupon instanceof Coupon ) {
@@ -563,5 +563,21 @@ class CustomerService
             'message'   =>  __( 'The group has been created.' ),
             'data'      =>  compact( 'group' )
         ];
+    }
+
+    /**
+     * return the customer account operation label
+     * @param string $label
+     * @return string
+     */
+    public function getCustomerAccountOperationLabel( $label )
+    {
+        switch( $label ) {
+            case CustomerAccountHistory::OPERATION_ADD: return __( 'Crediting' ); break;
+            case CustomerAccountHistory::OPERATION_DEDUCT: return __( 'Deducting' ); break;
+            case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' ); break;
+            case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' ); break;
+            default: return __( 'Unknown Operation' ); break;
+        }
     }
 }

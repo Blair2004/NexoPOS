@@ -1,19 +1,16 @@
 <?php
 namespace App\Crud;
-use Illuminate\Support\Facades\Auth;
+
+use App\Events\ProductBeforeDeleteEvent;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\ProductTax;
 use App\Models\ProductUnitQuantity;
-use App\Models\Tax;
 use App\Models\TaxGroup;
-use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Services\Helper;
 use App\Services\TaxService;
@@ -571,8 +568,10 @@ class ProductCrud extends CrudService
      */
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.products' ) {
-            $this->allowedTo( 'create' );
+            $this->allowedTo( 'delete' );
         }
+
+        ProductBeforeDeleteEvent::dispatch( $model );
 
         $this->deleteProductAttachedRelation( $model );
     }

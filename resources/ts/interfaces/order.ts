@@ -55,7 +55,7 @@ export interface Order {
     customer_id: number;
     products: OrderProduct[], 
     payments: Payment[],
-    instalments?: { date: string, amount: number }[],
+    instalments?: { date: string, amount: number, paid?: boolean }[],
     note: string;
     note_visibility: 'hidden' | 'visible';
     tax_group_id: number,
@@ -68,6 +68,7 @@ export interface Order {
         billing: Address,
     };
     tax_value: number;
+    product_taxes: number;
     tax_groups: any[],
     shipping: number;
     shipping_rate: number;

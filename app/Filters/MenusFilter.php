@@ -35,14 +35,14 @@ class MenusFilter
                 'orders'     =>      [
                     'label'     =>  __( 'Orders' ),
                     'icon'      =>  'la-list-ol',
-                    'childrens' =>  [
-                        ...$menus[ 'orders' ][ 'childrens' ],
-                        'instalments'       =>  [
-                            'label'         =>  __( 'Instalments' ),
-                            'permissions'   =>  [ 'nexopos.read.orders-instalments' ],
-                            'href'          =>  ns()->route( 'ns.dashboard.orders-instalments' ),
-                        ],
-                    ]
+                    'childrens' =>  array_merge(
+                        $menus[ 'orders' ][ 'childrens' ], [
+                            'instalments'       =>  [
+                                'label'         =>  __( 'Instalments' ),
+                                'permissions'   =>  [ 'nexopos.read.orders-instalments' ],
+                                'href'          =>  ns()->route( 'ns.dashboard.orders-instalments' ),
+                            ],
+                    ])                        
                 ]
             ]);
         }

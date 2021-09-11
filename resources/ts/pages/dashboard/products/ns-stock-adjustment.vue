@@ -23,9 +23,9 @@ export default {
     methods: {
         __,
 
-        searchProduct( search ) {
-            if ( search.length > 0 ) {
-                nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-procurement-product', { search })
+        searchProduct( argument ) {
+            if ( argument.length > 0 ) {
+                nsHttpClient.post( '/api/nexopos/v4/procurements/products/search-procurement-product', { argument })
                     .subscribe( result => {
                         if ( result.from === 'products' ) {
                             if ( result.products.length > 0 ) {
@@ -172,16 +172,26 @@ export default {
             });
         },
         provideReason( product ) {
-            Popup.show( nsPromptPopupVue, {
-                title: __( 'More Details' ),
-                message: __( 'Useful to describe better what are the reasons that leaded to this adjustment.' ),
-                input: product.adjust_reason,
-                onAction: ( input ) => {
-                    if ( input !== false ) {
-                        product.adjust_reason     =   input;
+            const promise   =   new Promise( ( resolve, reject ) => {
+                Popup.show( nsPromptPopupVue, {
+                    title: __( 'More Details' ),
+                    resolve,
+                    reject,
+                    message: __( 'Useful to describe better what are the reasons that leaded to this adjustment.' ),
+                    input: product.adjust_reason,
+                    onAction: ( input ) => {
+                        if ( input !== false ) {
+                            product.adjust_reason     =   input;
+                        }
                     }
-                }
+                });
             });
+
+            promise.then( result => {
+                nsSnackBar.success( __( 'The reason has been updated.' ) ).susbcribe();
+            }).catch( error => {
+                // ...
+            })
         },
         removeProduct( product ) {
             Popup.show( nsPosConfirmPopupVue, { 

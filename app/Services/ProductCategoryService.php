@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 
+use App\Events\ProductCategoryAfterCreatedEvent;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,10 +50,18 @@ class ProductCategoryService
         $category->displays_on_pos  =   $data[ 'displays_on_pos' ] ?? true;
         $category->save();
 
+        ProductCategoryAfterCreatedEvent::dispatch( $category );
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The category has been created' ),
             'data'      =>  compact( 'category' )
         ];
+    }
+
+    public function computeProducts( ProductCategory $category )
+    {
+        $category->total_items  =   $category->products()->count();
+        $category->save();
     }
 }

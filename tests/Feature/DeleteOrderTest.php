@@ -33,7 +33,9 @@ class DeleteOrderTest extends TestCase
         $productService     =   app()->make( ProductService::class );
 
         $order      =   Order::paid()->first();
-        $products   =  $order->products->map( function( $product ) use ( $productService ) {
+        $products   =  $order->products
+            ->filter( fn( $product ) => $product->product_id > 0 )
+            ->map( function( $product ) use ( $productService ) {
             $product->previous_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
             return $product;
         });

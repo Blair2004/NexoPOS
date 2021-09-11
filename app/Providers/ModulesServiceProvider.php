@@ -17,24 +17,6 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function boot( ModulesService $modules )
     {
-        collect( $modules->getEnabled() )->each( fn( $module ) => $modules->boot( $module ) );
-        
-        /**
-         * trigger register method only for enabled modules
-         * service providers that extends ModulesServiceProvider.
-         */
-        collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
-            /**
-             * register module commands
-             */
-            $this->modulesCommands    =   array_merge(
-                $this->modulesCommands,
-                array_keys( $module[ 'commands' ] )
-            );
-
-            $modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
-        });
-
         /**
          * trigger boot method only for enabled modules
          * service providers that extends ModulesServiceProvider.
@@ -63,6 +45,24 @@ class ModulesServiceProvider extends ServiceProvider
         $this->app->singleton( ModulesService::class, function( $app ) {
             $modules    =   new ModulesService;
             $modules->load();
+            
+            collect( $modules->getEnabled() )->each( fn( $module ) => $modules->boot( $module ) );
+            
+            /**
+             * trigger register method only for enabled modules
+             * service providers that extends ModulesServiceProvider.
+             */
+            collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+                /**
+                 * register module commands
+                 */
+                $this->modulesCommands    =   array_merge(
+                    $this->modulesCommands,
+                    array_keys( $module[ 'commands' ] )
+                );
+
+                $modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
+            });
 
             event( new ModulesLoadedEvent( $modules->get() ) );
 

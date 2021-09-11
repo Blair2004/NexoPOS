@@ -1,6 +1,7 @@
 <?php
 use App\Models\Order;
 use App\Classes\Hook;
+use App\Classes\Currency;
 use App\Models\PaymentType;
 
 ?>
@@ -28,18 +29,33 @@ use App\Models\PaymentType;
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @foreach( Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products ) as $product )
+                    <?php
+                    $products   =   Hook::filter( 'ns-refund-receipt-products', $refund->refunded_products );
+                    ?>
+                    @foreach( $products as $product )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->product->name }} (x{{ $product->quantity }})</span>
                             <br>
                             <span class="text-xs text-gray-600">{{ $product->unit->name }}</span>
                         </td>
-                        <td class="p-2 border-b border-gray-800 text-right">{{ ns()->currency->define( $product->total_price ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-right">{{ Currency::raw( $product->total_price - $product->tax_value ) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tbody>
+                    @if ( $refund->tax_value > 0 )
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Sub Total' ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( 
+                            $products->map( fn( $product ) => Currency::raw( $product->total_price - $product->tax_value ) )->sum()
+                        ) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Tax' ) }}</td>
+                        <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $refund->tax_value ) }}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-800 text-sm font-semibold">{{ __( 'Total' ) }}</td>
                         <td class="p-2 border-b border-gray-800 text-sm text-right">{{ ns()->currency->define( $refund->total ) }}</td>

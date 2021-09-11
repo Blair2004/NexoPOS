@@ -4,6 +4,7 @@ import { nsButton }             from  './ns-button';
 import { nsLink }               from  './ns-link';
 import { nsInput }              from  './ns-input';
 import { nsSelect }             from  './ns-select';
+import { nsSelectAudio }        from  './ns-select-audio';
 import { nsCheckbox }           from  './ns-checkbox';
 import { nsCrud }               from  './ns-crud';
 import { nsTableRow }           from  './ns-table-row';
@@ -21,6 +22,7 @@ import { nsCkeditor }           from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }   from  './ns-tabs';
 import { nsDateTimePicker }     from  './ns-date-time-picker';
 import { default as nsNumpad }  from  './ns-numpad.vue';
+import { default as nsAvatar }  from  './ns-avatar.vue';
 
 const nsDatepicker              =   require( './ns-datepicker.vue' ).default;
 
@@ -48,3 +50,5 @@ export { nsTabs, nsTabsItem };
 export { nsDatepicker };
 export { nsDateTimePicker };
 export { nsNumpad };
+export { nsSelectAudio };
+export { nsAvatar };

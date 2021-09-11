@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\CouponCrud;
+use App\Crud\CustomerAccountCrud;
 use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
@@ -136,6 +137,11 @@ class CustomersController extends DashboardController
         });
     }
 
+    /**
+     * Renders a form for editing a customer 
+     * @param Customer $customer
+     * @return string
+     */
     public function editCustomer( Customer $customer )
     {
         return CustomerCrud::form( $customer );
@@ -152,6 +158,11 @@ class CustomersController extends DashboardController
         return $this->customerService->getCustomerAddresses( $id );
     }
 
+    /**
+     * Deletes a customer using his email
+     * @param string $email
+     * @return array
+     */
     public function deleteUsingEmail( $email )
     {
         return $this->customerService->deleteUsingEmail( $email );
@@ -232,6 +243,12 @@ class CustomersController extends DashboardController
         ]);
     }
 
+    /**
+     * Returns a crud component table that lists
+     * all customer rewards
+     * @param Customer $customer
+     * @return string
+     */
     public function getCustomersRewards( Customer $customer )
     {
         return CustomerRewardCrud::table([
@@ -241,6 +258,13 @@ class CustomersController extends DashboardController
         ]);
     }
 
+    /**
+     * Will render a formf or editing 
+     * a customer reward
+     * @param Customer $customer
+     * @param CustomerReward $reward
+     * @return string
+     */
     public function editCustomerReward( Customer $customer, CustomerReward $reward )
     {
         return CustomerRewardCrud::form( $reward, [
@@ -251,6 +275,11 @@ class CustomersController extends DashboardController
         ]);
     }
 
+    /**
+     * Will render the customer coupon table
+     * @param Customer $customer
+     * @return string
+     */
     public function getCustomersCoupons( Customer $customer )
     {
         return CustomerCouponCrud::table([
@@ -260,14 +289,78 @@ class CustomersController extends DashboardController
         ]);
     }
 
+    /**
+     * Returns allt he customer coupons
+     * @param Customer $customer
+     * @return array
+     */
     public function getCustomerCoupons( Customer $customer )
     {
-        return $customer->coupons;
+        return $customer->coupons()->with( 'coupon' )->get();
     }
 
+    /**
+     * Loads specific customer coupon and return 
+     * as an array
+     * @param Request $request
+     * @param string $code
+     * @return array|string
+     */
     public function loadCoupons( Request $request, $code )
     {
         return $this->customerService->loadCoupon( $code, $request->input( 'customer_id' ) );
+    }
+
+    /**
+     * Displays the customer account history
+     * @param Customer $customer
+     * @return string
+     */
+    public function getCustomerAccountHistory( Customer $customer )
+    {
+        return CustomerAccountCrud::table([
+            'queryParams'       =>  [
+                'customer_id'   =>  $customer->id
+            ],
+            'createUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
+            'description'       =>  sprintf(
+                __( 'Displays the customer account history for %s' ),
+                $customer->name
+            ),
+            'title'             =>  sprintf(
+                __( 'Account History : %s' ),
+                $customer->name
+            ),
+        ]);
+    }
+
+    public function createCustomerAccountHistory( Customer $customer )
+    {
+        return CustomerAccountCrud::form( null, [
+            'queryParams'       =>  [
+                'customer_id'   =>  $customer->id
+            ],
+            'returnUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
+            'submitUrl'         =>  ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
+            'description'       =>  sprintf(
+                __( 'Displays the customer account history for %s' ),
+                $customer->name
+            ),
+            'title'             =>  sprintf(
+                __( 'Account History : %s' ),
+                $customer->name
+            ),
+        ]);
+    }
+
+    public function recordAccountHistory( Customer $customer, Request $request )
+    {
+        return $this->customerService->saveTransaction( 
+            $customer, 
+            $request->input( 'general.operation' ), 
+            $request->input( 'general.amount' ), 
+            $request->input( 'general.description' ) 
+        );
     }
 }
 

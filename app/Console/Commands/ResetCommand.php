@@ -8,7 +8,6 @@ use App\Services\ResetService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class ResetCommand extends Command
 {

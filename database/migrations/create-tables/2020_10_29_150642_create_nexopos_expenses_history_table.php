@@ -42,6 +42,6 @@ class CreateNexoposExpensesHistoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists( Hook::filter( 'ns-table-prefix', 'nexopos_cash_flow') );
+        Schema::dropIfExists( 'nexopos_cash_flow' );
     }
 }

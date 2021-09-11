@@ -25,6 +25,9 @@ const nsField       =   Vue.component( 'ns-field', {
         isMultiselect() {
             return [ 'multiselect' ].includes( this.field.type );
         },
+        isSelectAudio() {
+            return [ 'select-audio' ].includes( this.field.type );
+        },
         isSwitch() {
             return [ 'switch' ].includes( this.field.type );
         },
@@ -93,6 +96,10 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
+        <ns-select-audio @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectAudio">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-select-audio>
         <ns-textarea @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isTextarea">
             <template>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

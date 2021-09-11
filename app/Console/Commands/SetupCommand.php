@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\Setup;
-use Exception;
 use Illuminate\Console\Command;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class SetupCommand extends Command
 {
