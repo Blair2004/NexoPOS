@@ -29,7 +29,7 @@ class GenerateModuleCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a new Tendoo module';
+    protected $description = 'Create a new NexoPOS 4.x module';
 
     /**
      * Create a new command instance.
@@ -52,7 +52,7 @@ class GenerateModuleCommand extends Command
         if ( ns()->installed() ) {
             $this->askInformations();
         } else {
-            $this->info( 'Tendoo is not yet installed.' );
+            $this->info( 'NexoPOS 4.x is not yet installed.' );
         }
     }
 

@@ -510,6 +510,7 @@ class AuthService
     /**
      * Check recaptcha using predefined 
      * values as POST data
+     * @deprecated
      * @return void
      */
     public function checkReCaptcha( $data = [])

@@ -268,7 +268,7 @@ class CustomersController extends DashboardController
     public function editCustomerReward( Customer $customer, CustomerReward $reward )
     {
         return CustomerRewardCrud::form( $reward, [
-            'returnUrl'     =>  ns()->route( 'ns.dashboard.customers-rewards', [ 'customer' => $customer->id ]),
+            'returnUrl'     =>  ns()->route( 'ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
             'queryParams'   =>  [
                 'customer_id'   =>  $customer->id
             ]
