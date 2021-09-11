@@ -293,33 +293,27 @@ export class POS {
         this.defineCurrentScreen();
     }
 
-    public getSalePrice(item) {
-        switch (this.options.getValue().ns_pos_vat) {
-            case 'products_vat':
-            case 'products_flat_vat':
-            case 'products_variable_vat':
+    public getSalePrice(item, original) {
+        switch ( original.tax_type ) {
+            case 'inclusive':
                 return item.incl_tax_sale_price;
             default:
                 return item.excl_tax_sale_price;
         }
     }
 
-    public getCustomPrice(item) {
-        switch (this.options.getValue().ns_pos_vat) {
-            case 'products_vat':
-            case 'products_flat_vat':
-            case 'products_variable_vat':
+    public getCustomPrice(item, original) {
+        switch ( original.tax_type ) {
+            case 'inclusive':
                 return item.incl_tax_custom_price;
             default:
                 return item.excl_tax_custom_price;
         }
     }
 
-    public getWholesalePrice(item) {
-        switch (this.options.getValue().ns_pos_vat) {
-            case 'products_vat':
-            case 'products_flat_vat':
-            case 'products_variable_vat':
+    public getWholesalePrice(item, original) {
+        switch ( original.tax_type ) {
+            case 'inclusive':
                 return item.incl_tax_wholesale_price;
             default:
                 return item.excl_tax_wholesale_price;
@@ -658,7 +652,13 @@ export class POS {
                                 selected: true,
                             }
 
-                            this.addPayment(payment);
+                            this.addPayment(payment);   
+                            
+                            /**
+                             * The expected slice
+                             * should be marked as paid once submitted
+                             */
+                            expectedSlice[0].paid   =   true;
 
                             resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
                         }
@@ -1078,7 +1078,7 @@ export class POS {
             inclusiveTaxCount   =   inclusiveTaxes.reduce( ( b, a ) => b + a );
         }
 
-        const taxType   =   this.options.getValue().ns_pos_tax_type;
+        const taxType   =   order.tax_type;
         const posVat    =   this.options.getValue().ns_pos_vat;
 
         let tax_value   =   0;
@@ -1395,13 +1395,13 @@ export class POS {
          * real sale price
          */
         if (product.mode === 'normal') {
-            product.unit_price = this.getSalePrice(product.$quantities());
+            product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().sale_price_tax * product.quantity;
         } else if (product.mode === 'wholesale') {
-            product.unit_price = this.getWholesalePrice(product.$quantities());
+            product.unit_price = this.getWholesalePrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().wholesale_price_tax * product.quantity;
         } if (product.mode === 'custom') {
-            product.unit_price = this.getCustomPrice(product.$quantities());
+            product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
 

@@ -249,6 +249,7 @@ class OrdersService
                 $newInstalment              =   new OrderInstalment;
                 $newInstalment->amount      =   $instalment[ 'amount' ];
                 $newInstalment->order_id    =   $order->id;
+                $newInstalment->paid        =   $instalment[ 'paid' ] ?? false;
                 $newInstalment->date        =   Carbon::parse( $instalment[ 'date' ] )->toDateTimeString();
                 $newInstalment->save();
             }
@@ -977,7 +978,7 @@ class OrdersService
          */
         $order->total           =   $this->currencyService->define( $order->subtotal )
             ->additionateBy( $order->shipping )
-            ->additionateBy( $order->tax_value )
+            ->additionateBy( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) // if the tax is exclusive it shouldn't for now be counted
             ->subtractBy( $order->total_coupons )
             ->subtractBy( $order->discount )
             ->get();
@@ -2000,7 +2001,7 @@ class OrdersService
         $order->subtotal        =   $productTotal;
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   ( $productTotal + $orderShipping ) - ( $order->discount + $order->total_coupons );
+        $order->total           =   ( $productTotal + $orderShipping + ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) ) - ( $order->discount + $order->total_coupons );
         $order->change          =   Currency::raw( $order->tendered - $order->total );
 
         $refunds                =   $order->refund;

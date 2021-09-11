@@ -51,9 +51,9 @@ export default {
             const quantities    =   {
                 unit: this.units.filter( unit => unit.id === product.unit_id )[0],
                 
-                incl_tax_sale_price: product.unit_price,
-                excl_tax_sale_price: 0,
-                sale_price: product.unit_price,
+                incl_tax_sale_price: parseFloat( product.unit_price ),
+                excl_tax_sale_price: parseFloat( product.unit_price ),
+                sale_price: parseFloat( product.unit_price ),
                 sale_price_tax: 0,
                 sale_price_edit: 0,
 
@@ -89,7 +89,8 @@ export default {
                                     return POS.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
                                 }).reduce( ( b, a ) => b + a );
     
-                                quantities.excl_tax_sale_price  +=  quantities.sale_price_tax;
+                                quantities.excl_tax_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
+                                quantities.incl_tax_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
                                 
                                 tax_group            =   taxGroup;
     
