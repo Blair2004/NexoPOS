@@ -373,7 +373,7 @@ class CustomerService
          * we'll issue a new coupon and update the customer
          * point counter
          */
-        if ( $customerReward->points - $customerReward->target >= 0 ) {
+        if ( $customerReward->points >= $customerReward->target ) {
             $coupon                             =   $reward->coupon;
 
             if ( $coupon instanceof Coupon ) {

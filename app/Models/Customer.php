@@ -25,6 +25,11 @@ class Customer extends NsModel
         return $this->hasMany( CustomerCoupon::class, 'customer_id' );
     }
 
+    public function rewards()
+    {
+        return $this->hasMany( CustomerReward::class, 'customer_id' );
+    }
+
     /**
      * define the relationship
      * @return Model\RelationShip
