@@ -20,6 +20,6 @@ spec:
     - key: DB_DATABASE
       value: ${nexopos_v4.DB_DATABASE}
       scope: RUN_TIME
-  databases:
-  - name: nexopos_v4
-    engine: MYSQL
+    databases:
+    - name: nexopos_v4
+      engine: MYSQL
