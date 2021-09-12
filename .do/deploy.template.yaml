@@ -1,27 +1,20 @@
 spec:
   name: nexopos
-  services:
-  - name: web
-    git:
-      branch: main
-      repo_clone_url: https://github.com/blair2004/NexoPOS-4x.git
-    github:
-      repo: blair2004/NexoPOS-4x
-      branch: master
-      deploy_on_push: true
-    build_command: composer install
-    envs:
-    - key: DB_PASSWORD
-      value: ""
-      type: SECRET
-    - key: DB_USERNAME
-      value: ${nexopos_v4.DB_USERNAME}
-      scope: RUN_TIME
-    - key: DB_DATABASE
-      value: ${nexopos_v4.DB_DATABASE}
-      scope: RUN_TIME
   databases:
-  - name: nexopos_v4
+  - name: nexopos
     engine: MYSQL
-    db_name: ${nexopos_v4.DB_DATABASE}
-    db_user: ${nexopos_v4.DB_USERNAME}
+    production: true
+    cluster_name: ns
+  services:
+  - environment_slug: php
+    name: nexopos
+    git:
+      repo_clone_url: https://github.com/blair2004/NexoPOS-4x
+      branch: master
+    build_command: 
+      npm install
+      composer install
+      cp .env.example .env
+      php artisan key:generate
+      php artisan storage:link
+    run_command: heroku-php-apache2 public/
