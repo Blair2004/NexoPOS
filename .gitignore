@@ -3,7 +3,6 @@ vendor
 error.log
 node_modules
 composer-lock.json
-package-lock.json
 composer.lock
 .env.testing
 .phpunit.result.cache
