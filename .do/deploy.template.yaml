@@ -21,7 +21,3 @@ spec:
       php artisan storage:link
     run_command:
       heroku-php-apache2 public/
-    envs:
-    - key: DB_DATABASE
-    - key: DB_USERNAME
-    - key: DB_PASSWORD
