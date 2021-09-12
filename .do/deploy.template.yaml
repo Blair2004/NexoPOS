@@ -14,7 +14,13 @@ spec:
       repo: blair2004/NexoPOS-4x
       branch: master
       deploy_on_push: true
-    build_command: composer install
+    build_command: 
+      composer install
+      cp .env.example .env
+      php artisan key:generate
+      php artisan storage:link
+    run_command:
+      heroku-php-apache2 public/
     envs:
     - key: DB_DATABASE
     - key: DB_USERNAME
