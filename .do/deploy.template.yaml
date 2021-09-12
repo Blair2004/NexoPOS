@@ -8,14 +8,12 @@ spec:
   services:
   - environment_slug: php
     name: nexopos
-    github:
-      repo: blair2004/NexoPOS-4x
+    git:
+      repo_clone_url: https://github.com/blair2004/NexoPOS-4x
       branch: master
-      deploy_on_push: true
     build_command: 
       composer install
       cp .env.example .env
       php artisan key:generate
       php artisan storage:link
-    run_command:
-      heroku-php-apache2 public/
+    run_command: heroku-php-apache2 public/
