@@ -1,5 +1,7 @@
 [![Latest Stable Version](https://poser.pugx.org/blair2004/nexopos/v)](//packagist.org/packages/blair2004/nexopos) [![Total Downloads](https://poser.pugx.org/blair2004/nexopos/downloads)](//packagist.org/packages/blair2004/nexopos) [![Latest Unstable Version](https://poser.pugx.org/blair2004/nexopos/v/unstable)](//packagist.org/packages/blair2004/nexopos) [![License](https://poser.pugx.org/blair2004/nexopos/license)](//packagist.org/packages/blair2004/nexopos)
 
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/master)
+
 # About NexoPOS 4.x
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
 

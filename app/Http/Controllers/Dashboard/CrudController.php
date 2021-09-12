@@ -499,8 +499,8 @@ class CrudController extends DashboardController
             $form           =   Hook::filter( get_class( $resource )::method( 'getForm' ), $resource->getForm( $model ), compact( 'model' ) );
             $config         =   [
                 'form'                  =>  $form,
-                'labels'                =>  $resource->getLabels(),
-                'links'                 =>  @$resource->getLinks(),
+                'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
+                'links'                 =>  Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ),
                 'namespace'             =>  $namespace,
             ];
 
