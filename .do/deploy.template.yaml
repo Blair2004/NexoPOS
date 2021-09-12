@@ -11,14 +11,17 @@ spec:
       deploy_on_push: true
     build_command: composer install
     envs:
-    - key: DB_NAME
-      value: ${nexopos_v4.DB_NAME}
+    - key: DB_PASSWORD
+      value: ""
       type: SECRET
-    - key: DB_USER
-      scope: RUN_TIME
-      value: ${example-db.DB_USER}
+    - key: DB_USERNAME
+      value: ""
+      type: ${nexopos_v4.DB_USERNAME}
+    - key: DB_DATABASE
+      value: ""
+      type: ${nexopos_v4.DB_DATABASE}
   databases:
   - name: nexopos_v4
     engine: MYSQL
-    db_name: nexopos_v4
-    db_user: root
+    db_name: ${nexopos_v4.DB_DATABASE}
+    db_user: ${nexopos_v4.DB_USERNAME}
