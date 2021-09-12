@@ -7,10 +7,7 @@ spec:
     cluster_name: ns
   services:
   - environment_slug: php
-  - name: web
-    git:
-      branch: main
-      repo_clone_url: https://github.com/blair2004/NexoPOS-4x.git
+    name: nexopos
     github:
       repo: blair2004/NexoPOS-4x
       branch: master
