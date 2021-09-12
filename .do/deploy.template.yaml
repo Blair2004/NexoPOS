@@ -3,6 +3,7 @@ spec:
   databases:
   - name: nexopos
     engine: MYSQL
+    production: true
   services:
   - name: web
     git:
