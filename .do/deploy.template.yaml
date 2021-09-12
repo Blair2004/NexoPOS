@@ -15,11 +15,11 @@ spec:
       value: ""
       type: SECRET
     - key: DB_USERNAME
-      value: ""
-      type: ${nexopos_v4.DB_USERNAME}
+      value: ${nexopos_v4.DB_USERNAME}
+      scope: RUN_TIME
     - key: DB_DATABASE
-      value: ""
-      type: ${nexopos_v4.DB_DATABASE}
+      value: ${nexopos_v4.DB_DATABASE}
+      scope: RUN_TIME
   databases:
   - name: nexopos_v4
     engine: MYSQL
