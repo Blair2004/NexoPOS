@@ -6,7 +6,7 @@ spec:
     production: true
     cluster_name: ns
   services:
-  - environment_slug: php
+  - environment_slug: laravel
     name: nexopos
     github:
       repo: blair2004/NexoPOS-4x
