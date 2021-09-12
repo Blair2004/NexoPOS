@@ -6,6 +6,7 @@ spec:
     production: true
     cluster_name: ns
   services:
+  - environment_slug: php
   - name: web
     git:
       branch: main
