@@ -4,6 +4,7 @@ spec:
   - name: nexopos
     engine: MYSQL
     production: true
+    cluster_name: ns
   services:
   - name: web
     git:
