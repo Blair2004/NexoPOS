@@ -23,5 +23,5 @@ spec:
   databases:
   - name: nexopos_v4
     engine: MYSQL
-    db_name: ${nexopos_v4.DB_DATABASE}
-    db_user: ${nexopos_v4.DB_USERNAME}
+    db_name: "nexopos_v4"
+    db_user: "root"
