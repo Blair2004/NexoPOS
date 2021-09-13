@@ -226,18 +226,20 @@ const nsCrud    =   Vue.component( 'ns-crud', {
         bulkDo() {
             if ( this.bulkAction ) {
                 if ( this.selectedEntries.length > 0 ) {
-                    console.log( this.getSelectedAction );
-                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'No bulk confirmation message provided on the CRUD class.' ) ) ) {
+                    if ( confirm( this.getSelectedAction.confirm || this.$slots[ 'error-bulk-confirmation' ] || __( 'Would you like to perform the selected bulk action on the selected entries ?' ) ) ) {
                         return nsHttpClient.post( `${this.src}/bulk-actions`, {
                             action: this.bulkAction,
                             entries: this.selectedEntries.map( r => r.$id )
-                        }).subscribe( (result: HttpStatusResponse ) => {
-                            nsSnackBar.info( result.message ).subscribe();
-                            this.selectedEntries    =   [];
-                            this.refresh();
-                        }, ( error ) => {
-                            nsSnackBar.error( error.message )
-                                .subscribe();
+                        }).subscribe({
+                            next: (result: HttpStatusResponse ) => {
+                                nsSnackBar.info( result.message ).subscribe();
+                                this.selectedEntries    =   [];
+                                this.refresh();
+                            },
+                            error: ( error ) => {
+                                nsSnackBar.error( error.message )
+                                    .subscribe();
+                            }
                         })
                     }
                 } else {

@@ -1,0 +1,20 @@
+spec:
+  name: nexopos
+  databases:
+  - name: nexopos
+    engine: MYSQL
+    production: true
+    cluster_name: ns
+  services:
+  - environment_slug: php
+    name: nexopos
+    git:
+      repo_clone_url: https://github.com/blair2004/NexoPOS-4x
+      branch: master
+    build_command: 
+      npm install
+      composer install
+      cp .env.example .env
+      php artisan key:generate
+      php artisan storage:link
+    run_command: heroku-php-apache2 public/

@@ -16,6 +16,7 @@ use App\Models\CustomerAddress;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
+use App\Services\Users;
 use Exception;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -565,7 +566,7 @@ class CustomerCrud extends CrudService
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( 'Tendoo\Core\Services\Users' );
+        $user   =   app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',

@@ -257,11 +257,13 @@ class CreateOrderTest extends TestCase
              * Let's test wether the cash
              * flow has been created for this sale
              */
-            $this->assertTrue( 
-                CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
-                instanceof CashFlow,
-                __( 'No cash flow were created for this order.' )
-            );
+            if ( $responseData[ 'data' ][ 'order' ][ 'payment_status' ] !== 'unpaid' ) {
+                $this->assertTrue( 
+                    CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )->first()
+                    instanceof CashFlow,
+                    __( 'No cash flow were created for this order.' )
+                );
+            }
 
             /**
              * if a custom callback is provided

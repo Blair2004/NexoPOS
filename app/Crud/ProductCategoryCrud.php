@@ -393,6 +393,7 @@ class ProductCategoryCrud extends CrudService
          * and supervisor.
          */
         $user   =   app()->make( Users::class );
+        
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',

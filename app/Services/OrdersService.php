@@ -637,10 +637,7 @@ class OrdersService
                 })->sum();
 
                 if ( $fields['discount'] > $productsTotal ) {
-                    throw new NotAllowedException([
-                        'status'    =>  'failed',
-                        'message'   =>  __('A discount cannot exceed the sub total value of an order.')
-                    ]);
+                    throw new NotAllowedException( __('A discount cannot exceed the sub total value of an order.') );
                 }
             }
         }
