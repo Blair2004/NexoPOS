@@ -304,7 +304,7 @@ Vue.component( 'label-printing', {
                                     <span>@{{ item.selectedUnitQuantity.sale_price | currency }}</span>
                                 </div>
                                 <div class="flex justify-center flex-col py-1">
-                                    <img :style="{ height: form.barcode_height + 'px' }" :src="'{{ asset( 'storage/products/barcodes' ) }}/' + item.selectedUnitQuantity.barcode + '.png'" :alt="item.selectedUnitQuantity.barcode">
+                                    <img :style="{ height: form.barcode_height + 'px' }" :src="'{{ ns()->asset( 'storage/products/barcodes' ) }}/' + item.selectedUnitQuantity.barcode + '.png'" :alt="item.selectedUnitQuantity.barcode">
                                     <div class="flex justify-center w-full">
                                         <span class="-mt-4 bg-white inline-block p-1">@{{ item.selectedUnitQuantity.barcode }}</span>
                                     </div>

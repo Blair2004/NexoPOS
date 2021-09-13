@@ -126,6 +126,18 @@ class CoreService
     }
 
     /**
+     * Returns a filtred URL to which
+     * apply the filter "ns-url" hook.
+     * 
+     * @param string $url
+     * @return string $url
+     */
+    public function asset( $url )
+    {
+        return url( Hook::filter( 'ns-asset', $url ) );
+    }
+
+    /**
      * check if a use is allowed to
      * access a page or trigger an error. This should not be used
      * on middleware or controller constructor.
