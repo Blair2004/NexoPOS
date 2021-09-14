@@ -9,6 +9,7 @@ use App\Events\ModulesBootedEvent;
 class ModulesServiceProvider extends ServiceProvider
 {
     protected $modulesCommands  =   [];
+    protected $modules;
 
     /**
      * Bootstrap the application services.
@@ -43,16 +44,16 @@ class ModulesServiceProvider extends ServiceProvider
     {
         // register module singleton
         $this->app->singleton( ModulesService::class, function( $app ) {
-            $modules    =   new ModulesService;
-            $modules->load();
-            
-            collect( $modules->getEnabled() )->each( fn( $module ) => $modules->boot( $module ) );
-            
+            $this->modules  =   new ModulesService;
+            $this->modules->load();
+
+            collect( $this->modules->getEnabled() )->each( fn( $module ) => $this->modules->boot( $module ) );
+                
             /**
              * trigger register method only for enabled modules
              * service providers that extends ModulesServiceProvider.
              */
-            collect( $modules->getEnabled() )->each( function( $module ) use ( $modules ) {
+            collect( $this->modules->getEnabled() )->each( function( $module ) {
                 /**
                  * register module commands
                  */
@@ -61,12 +62,12 @@ class ModulesServiceProvider extends ServiceProvider
                     array_keys( $module[ 'commands' ] )
                 );
 
-                $modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
+                $this->modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
             });
 
-            event( new ModulesLoadedEvent( $modules->get() ) );
+            event( new ModulesLoadedEvent( $this->modules->get() ) );
 
-            return $modules;
+            return $this->modules;
         });
     }
 }

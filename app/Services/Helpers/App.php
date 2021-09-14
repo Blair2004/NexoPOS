@@ -12,12 +12,7 @@ trait App {
      */
     static function installed()
     {
-        if ( DotenvEditor::keyExists( 'NS_VERSION' ) ) {
-            $version    =   DotenvEditor::getValue( 'NS_VERSION' );
-            return ! in_array( $version, [ null, false ]);
-        }
-
-        return false;
+        return env( 'NS_VERSION', false ) !== false;
     }
 
     /**
