@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Helpers;
 
+use App\Classes\Hook;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
@@ -27,6 +28,8 @@ trait App {
 
     static function pageTitle( $string )
     {
-        return sprintf( __( '%s &mdash; NexoPOS 4' ), $string );
+        return sprintf( 
+            Hook::filter( 'ns-page-title', __( '%s &mdash; NexoPOS 4' ) ), 
+        $string );
     }
 }
