@@ -17,7 +17,7 @@ trait App {
     {
         try {
             if( DB::connection()->getPdo() ){
-                return true;
+                return Schema::hasTable( 'nexopos_options' );
             }
         } catch (\Exception $e) {
             return false;
