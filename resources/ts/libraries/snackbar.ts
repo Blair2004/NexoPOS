@@ -101,13 +101,13 @@ export class SnackBar {
          */
         if ( label ) {
             buttonNode.textContent      =   label;
-            buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded-lg font-bold ${buttonThemeClass}` );
+            buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded uppercase ${buttonThemeClass}` );
             buttonsWrapper.appendChild( buttonNode );
         }
 
         sampleSnack.appendChild( textNode );
         sampleSnack.appendChild( buttonsWrapper );
-        sampleSnack.setAttribute( 'class', `md:rounded-lg py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center zoom-in-entrance anim-duration-300 ${snackThemeClass}` );
+        sampleSnack.setAttribute( 'class', `md:rounded py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center zoom-in-entrance anim-duration-300 ${snackThemeClass}` );
         
         snackWrapper.appendChild( sampleSnack );
 

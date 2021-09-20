@@ -2365,8 +2365,8 @@ class OrdersService
     public function getPaidSales( $startDate, $endDate )
     {
         return Order::paid()
-            ->where( 'created_at', '>=', Carbon::parse( $startDate )->startOfDay()->toDateTimeString() )
-            ->where( 'created_at', '<=', Carbon::parse( $endDate )->endOfDay()->toDateTimeString() )
+            ->where( 'created_at', '>=', Carbon::parse( $startDate )->toDateTimeString() )
+            ->where( 'created_at', '<=', Carbon::parse( $endDate )->toDateTimeString() )
             ->get();
     }
 
@@ -2378,8 +2378,8 @@ class OrdersService
      */
     public function getSoldStock( $startDate, $endDate )
     {
-        $rangeStarts    =   Carbon::parse( $startDate )->startOfDay()->toDateTimeString();
-        $rangeEnds      =   Carbon::parse( $endDate )->endOfDay()->toDateTimeString();
+        $rangeStarts    =   Carbon::parse( $startDate )->toDateTimeString();
+        $rangeEnds      =   Carbon::parse( $endDate )->toDateTimeString();
 
         $products       =   OrderProduct::whereHas( 'order', function( Builder $query ) {
             $query->where( 'payment_status', Order::PAYMENT_PAID );
