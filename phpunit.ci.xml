@@ -64,6 +64,6 @@
     <server name="BROADCAST_DRIVER" value="log"/>
     <server name="SANCTUM_STATEFUL_DOMAINS" value="nexopos-v4.std"/>
     <server name="SESSION_DOMAIN" value="nexopos-v4.std"/>
-    <server name="NS_VERSION" value="FALSE"/>
+    <server name="NS_VERSION" value="false"/>
   </php>
 </phpunit>

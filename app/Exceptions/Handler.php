@@ -2,7 +2,9 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\QueryException as ExceptionsQueryException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException as MainValidationException;
 use Throwable;
@@ -45,6 +47,8 @@ class Handler extends ExceptionHandler
     /**
      * We want to use our defined route
      * instead of what is provided by laravel.
+     * @return \Illuminate\Routing\Redirector
+     * 
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
@@ -68,6 +72,11 @@ class Handler extends ExceptionHandler
     {
         if ( $exception instanceof MainValidationException ) {
             return ( new ValidationException( $exception->validator, $exception->response, $exception->errorBag ) )
+                ->render( $request );
+        }
+
+        if ( $exception instanceof QueryException ) {
+            return ( new ExceptionsQueryException( $exception->getMessage() ) )
                 ->render( $request );
         }
 

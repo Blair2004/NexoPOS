@@ -37,3 +37,4 @@ public/mapping.json
 storage/module.zip
 tests/database.sqlite
 tests/database.sqlite-journal
+storage/snapshots/*.sql

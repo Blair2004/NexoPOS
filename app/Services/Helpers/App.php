@@ -1,9 +1,12 @@
 <?php
 namespace App\Services\Helpers;
 
+use App\Classes\Hook;
+use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 trait App {
     /**
@@ -12,12 +15,13 @@ trait App {
      */
     static function installed()
     {
-        if ( DotenvEditor::keyExists( 'NS_VERSION' ) ) {
-            $version    =   DotenvEditor::getValue( 'NS_VERSION' );
-            return ! in_array( $version, [ null, false ]);
+        try {
+            if( DB::connection()->getPdo() ){
+                return Schema::hasTable( 'nexopos_options' );
+            }
+        } catch (\Exception $e) {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -32,6 +36,8 @@ trait App {
 
     static function pageTitle( $string )
     {
-        return sprintf( __( '%s &mdash; NexoPOS 4' ), $string );
+        return sprintf( 
+            Hook::filter( 'ns-page-title', __( '%s &mdash; NexoPOS 4' ) ), 
+        $string );
     }
 }

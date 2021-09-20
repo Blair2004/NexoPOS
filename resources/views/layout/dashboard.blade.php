@@ -83,7 +83,9 @@ use App\Services\DateService;
                     @yield( 'layout.dashboard.body', View::make( 'common.dashboard.with-header' ) )
                 </div>
                 <div class="p-2 text-xs flex justify-end text-gray-500">
-                    {!! sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) !!}
+                    {!! 
+                        Hook::filter( 'ns-footer-signature', sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) )
+                    !!}
                 </div>
             </div>
         </div>

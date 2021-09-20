@@ -39,9 +39,9 @@ class ProductCategoryService
      * @param array details
      * @return array
      */
-    public function create( $data )
+    public function create( $data, ProductCategory $productCategory = null )
     {
-        $category                   =   new ProductCategory;
+        $category                   =   $productCategory === null ? new ProductCategory : $productCategory;
         $category->author           =   Auth::id();
         $category->description      =   $data[ 'description' ] ?? '';
         $category->preview_url      =   $data[ 'preview_url' ] ?? '';

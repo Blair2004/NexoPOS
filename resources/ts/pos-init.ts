@@ -231,14 +231,20 @@ export class POS {
 
             if (options.ns_customers_default !== false) {
                 nsHttpClient.get(`/api/nexopos/v4/customers/${options.ns_customers_default}`)
-                    .subscribe(customer => {
-                        this.selectCustomer(customer);
-                        resolve({
-                            status: 'success',
-                            message: __('The customer has been loaded')
-                        });
-                    }, (error) => {
-                        reject(error);
+                    .subscribe({
+                        next: customer => {
+                            this.selectCustomer(customer);
+                            resolve({
+                                status: 'success',
+                                message: __('The customer has been loaded')
+                            });
+                        },
+                        error: (error) => {
+                            nsSnackBar
+                                .error( __( 'Unable to select the default customer. Looks like the customer no longer exists. Consider changing the default customer on the settings.' ), __( 'OKAY' ), { duration: 0 })
+                                .subscribe();
+                            reject(error);
+                        }
                     });
             }
 
@@ -896,12 +902,15 @@ export class POS {
              */
             if (customer.group === undefined || customer.group === null) {
                 nsHttpClient.get(`/api/nexopos/v4/customers/${customer.id}/group`)
-                    .subscribe(group => {
-                        order.customer.group = group;
-                        this.order.next(order);
-                        resolve(order);
-                    }, (error) => {
-                        reject(error);
+                    .subscribe({
+                        next: group => {
+                            order.customer.group = group;
+                            this.order.next(order);
+                            resolve(order);
+                        },
+                        error: ( error ) => {
+                            reject(error);
+                        }
                     });
             } else {
                 return resolve(order);

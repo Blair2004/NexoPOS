@@ -33,6 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command( 'telescope:prune' )->daily();
         $schedule->job( new TaskSchedulingPingJob )->hourly();
         $schedule->job( new ExecuteExpensesJob )->daily( '00:01' );
         $schedule->job( new StockProcurementJob() )->daily( '00:05' );        
