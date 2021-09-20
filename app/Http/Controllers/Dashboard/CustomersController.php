@@ -13,6 +13,7 @@ use App\Crud\CustomerCouponCrud;
 use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
+use App\Exceptions\NotFoundException;
 use App\Models\Customer;
 
 use Illuminate\Http\Request;
@@ -65,8 +66,12 @@ class CustomersController extends DashboardController
     {
         $customer   =   Customer::with( 'group' )->find( $customer_id );
 
-        if ( $customer instanceof Customer ) {
-            return $customer;
+        if ( $customer_id !== null ) {
+            if ( $customer instanceof Customer ) {
+                return $customer;
+            }
+
+            throw new NotFoundException( __( 'The requested customer cannot be fonud.' ) );
         }
 
         return $this->customerService->get();
