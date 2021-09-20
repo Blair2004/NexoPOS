@@ -2,6 +2,7 @@
 namespace App\Services\Helpers;
 
 use App\Classes\Hook;
+use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +15,13 @@ trait App {
      */
     static function installed()
     {
-        return Schema::hasTable( 'nexopos_options' );
+        try {
+            if( DB::connection()->getPdo() ){
+                return true;
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
