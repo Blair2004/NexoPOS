@@ -5,6 +5,7 @@ use App\Classes\Hook;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 trait App {
     /**
@@ -13,7 +14,7 @@ trait App {
      */
     static function installed()
     {
-        return env( 'NS_VERSION', false ) !== false;
+        return Schema::hasTable( 'nexopos_options' );
     }
 
     /**
