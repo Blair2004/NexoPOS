@@ -752,20 +752,6 @@ class OrdersService
             if ( $paymentToday->count() === 0 ) {
                 throw new NotFoundException( __( 'No payment is expected at the moment. If the customer want to pay early, consider adjusting instalment payments date.' ) );
             }
-
-            /**
-             * @todo don't think this restriction is actually necessary.
-             */
-            // if ( 
-            //     ns()->currency->getRaw( $paymentToday->sum( 'amount' ) ) !== 
-            //     ns()->currency->getRaw( $payment[ 'value' ] ) ) {
-            //     throw new NotAllowedException( 
-            //         sprintf(
-            //             __( 'The provided payment doesn\'t match the expected payment : %s. If the customer want to pay a different amount, consider adjusting the instalment amount.' ),
-            //             ( string ) Currency::define( $paymentToday->sum( 'amount' ) )
-            //         )
-            //     );
-            // }
         }        
 
         $this->__saveOrderSinglePayment( $payment, $order );
@@ -1536,7 +1522,7 @@ class OrdersService
             $taxType                =   ns()->option->get( 'ns_pos_tax_type' );
             $subTotal               =   $order->products()->sum( 'total_price' );
             $taxValue               =   $order->taxes->map( function( $tax ) use ( $taxType, $subTotal ) {
-                $tax->tax_value     =   $this->taxService->getComputedTaxValue( $taxType, $tax->rate, $subTotal );
+                $tax->tax_value     =   $this->taxService->getVatValue( $taxType, $tax->rate, $subTotal );
                 $tax->save();
 
                 return $tax->tax_value;
