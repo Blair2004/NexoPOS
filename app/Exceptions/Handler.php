@@ -76,6 +76,12 @@ class Handler extends ExceptionHandler
         }
 
         if ( $exception instanceof QueryException ) {
+            if ( $request->expectsJson() ) {
+                return response()->json([
+                    'message' => $exception->getMessage()
+                ], 404);    
+            } 
+
             return ( new ExceptionsQueryException( $exception->getMessage() ) )
                 ->render( $request );
         }
