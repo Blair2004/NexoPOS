@@ -37,13 +37,13 @@ class ProductHistory extends NsModel
         ProductHistory::ACTION_DEFECTIVE,
         ProductHistory::ACTION_LOST,
         ProductHistory::ACTION_ADJUSTMENT_SALE,
+        ProductHistory::ACTION_DELETED,
     ];
 
     /**
      * actions that increase stock
      */
     const STOCK_INCREASE        =   [
-        ProductHistory::ACTION_DELETED,
         ProductHistory::ACTION_ADDED,
         ProductHistory::ACTION_RETURNED,
         ProductHistory::ACTION_TRANSFER_IN,

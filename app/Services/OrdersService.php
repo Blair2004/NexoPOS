@@ -2037,7 +2037,7 @@ class OrdersService
              * only if the product is not a quick product/service
              */
             if ( $product->product_id > 0 ) {
-                $this->productService->stockAdjustment( ProductHistory::ACTION_DELETED, [
+                $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
                     'total_price'       =>  $product->total_price,
                     'product_id'        =>  $product->product_id,
                     'unit_id'           =>  $product->unit_id,

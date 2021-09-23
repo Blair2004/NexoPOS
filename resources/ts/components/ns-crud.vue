@@ -110,6 +110,8 @@ import { HttpStatusResponse } from '@/interfaces/http-status-response';
 import { HttpCrudResponse } from '@/interfaces/http-crud-response';
 import nsOrdersFilterPopupVue from '@/popups/ns-orders-filter-popup.vue';
 
+declare const nsCrudHandler;
+
 export default {
     data: () => {
         return {

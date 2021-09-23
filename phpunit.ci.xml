@@ -21,6 +21,7 @@
       <directory suffix="CreateProductTest.php">./tests/Feature</directory>      
       <directory suffix="CreateProviderTest.php">./tests/Feature</directory>
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
+      <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
       <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
       <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
