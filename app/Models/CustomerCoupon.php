@@ -38,4 +38,9 @@ class CustomerCoupon extends NsModel
     public function coupon() {
         return $this->hasOne( Coupon::class, 'id', 'coupon_id' );
     }
+
+    public function customer()
+    {
+        return $this->belongsTo( Customer::class, 'customer_id', 'id' );
+    }
 }

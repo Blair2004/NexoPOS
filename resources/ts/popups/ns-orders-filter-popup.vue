@@ -1,0 +1,55 @@
+<template>
+    <div class="bg-white shadow-lg w-95vw h-95vh md:w-2/5-screen md:h-4/6-screen flex flex-col">
+        <div class="p-2 border-b flex justify-between items-center">
+            <h3>{{ __( 'Search Filters' ) }}</h3>
+            <div>
+                <ns-close-button @click="closePopup()"></ns-close-button>
+            </div>
+        </div>
+        <div class="p-2 border-b flex-auto">
+            <ns-field :field="field" :key="index" v-for="( field, index ) of fields"></ns-field>
+        </div>
+        <div class="p-2 flex justify-between">
+            <div>
+                <ns-button @click="clearFilters()" type="danger">{{ __( 'Clear Filters' ) }}</ns-button>
+            </div>
+            <div>
+                <ns-button @click="useFilters()" type="info">{{ __( 'Use Filters' ) }}</ns-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script lang="ts">
+import FormValidation from '@/libraries/form-validation'
+import { __ } from '@/libraries/lang';
+import popupCloser from '@/libraries/popup-closer';
+import popupResolver from '@/libraries/popup-resolver';
+import Vue from 'vue';
+
+export default Vue.extend({
+    data() {
+        return {
+            fields: [],
+            validation: new FormValidation
+        }
+    },
+    methods: {
+        __,
+        popupCloser,
+        popupResolver,
+        closePopup() {
+            this.popupResolver( false );
+        },
+        useFilters() {
+            this.popupResolver( this.validation.extractFields( this.fields ) );
+        },
+        clearFilters() {
+            this.popupResolver( null );
+        }
+    },
+    mounted() {
+        this.fields     =   this.validation.createFields( this.$popupParams.queryFilters );
+        this.popupCloser();
+    }
+})
+</script>

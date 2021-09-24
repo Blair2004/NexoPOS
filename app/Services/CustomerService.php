@@ -418,13 +418,8 @@ class CustomerService
      */
     public function loadCoupon( $code, $customer_id = null )
     {
-        $query  =   CustomerCoupon::code( $code );
-
-        if ( $customer_id !== null ) {
-            $query->customer( $customer_id );
-        }
-        
-        $coupon     =   $query->with( 'coupon.products.product' )
+        $coupon     =   CustomerCoupon::code( $code )
+            ->with( 'coupon.products.product' )
             ->with( 'coupon.categories.category' )
             ->first();
 

@@ -406,6 +406,7 @@ class CrudController extends DashboardController
 
         /**
          * Let's check it the resource has a method to retreive an item
+         * @var CrudService
          */
         $resource  =   new $crudClass;
 
@@ -462,6 +463,7 @@ class CrudController extends DashboardController
                     get_class( $resource ) . '@getColumns', 
                     $resource->getColumns()
                 ),
+                'queryFilters'          =>  Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
                 'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
                 'links'                 =>  Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ?? [] ),
                 'bulkActions'           =>  Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),

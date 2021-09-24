@@ -6,7 +6,7 @@ import { nsInput }              from  './ns-input';
 import { nsSelect }             from  './ns-select';
 import { nsSelectAudio }        from  './ns-select-audio';
 import { nsCheckbox }           from  './ns-checkbox';
-import { nsCrud }               from  './ns-crud';
+import { default as nsCrud }    from  './ns-crud.vue';
 import { nsTableRow }           from  './ns-table-row';
 import { nsSpinner }            from  './ns-spinner';
 import { nsCrudForm }           from  './ns-crud-form';

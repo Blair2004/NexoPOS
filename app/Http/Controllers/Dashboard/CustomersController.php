@@ -22,10 +22,12 @@ use App\Services\CustomerService;
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
 use App\Models\CustomerAccountHistory;
+use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
 
 class CustomersController extends DashboardController
 {
@@ -339,6 +341,11 @@ class CustomersController extends DashboardController
         ]);
     }
 
+    /**
+     * Will render a form to create a customer account history
+     * @param Customer $customer
+     * @return View
+     */
     public function createCustomerAccountHistory( Customer $customer )
     {
         return CustomerAccountCrud::form( null, [
@@ -366,6 +373,27 @@ class CustomersController extends DashboardController
             $request->input( 'general.amount' ), 
             $request->input( 'general.description' ) 
         );
+    }
+
+    /**
+     * Will render a form for editing
+     * a generated coupon
+     * @param CustomerCoupon $coupon
+     * @return View
+     */
+    public function editGeneratedCoupon( CustomerCoupon $coupon )
+    {
+        return CustomerCouponCrud::form( $coupon );
+    }
+
+    /**
+     * Will list all coupons generated
+     * for the available customer
+     * @return View
+     */
+    public function listGeneratedCoupons()
+    {
+        return CustomerCouponCrud::table();
     }
 }
 

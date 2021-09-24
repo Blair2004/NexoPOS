@@ -36,6 +36,12 @@ class CrudService
     protected   $columns    =   [];
 
     /**
+     * Query filters
+     * @param array
+     */
+    protected $queryFilters  =   [];
+
+    /**
      * Link
      * @return array
      */
@@ -127,6 +133,15 @@ class CrudService
     public function getBulkActions()
     {
         return $this->bulkActions;
+    }
+
+    /**
+     * Returns the available query filters
+     * @return array
+     */
+    public function getQueryFilters()
+    {
+        return $this->queryFilters;
     }
 
     public function __extractTable( $relation )
@@ -388,6 +403,25 @@ class CrudService
                 $request->query( 'active' ),
                 $request->query( 'direction' )
             );
+        }
+
+        /**
+         * @since 4.5.5
+         * Will filter request using provided
+         * query filters
+         */
+        if ( $request->query( 'queryFilters' ) ) {
+            $filters    =   json_decode( urldecode( $request->query( 'queryFilters' ) ), true );
+
+            /**
+             * @todo we might need to get the filter from the resource
+             * so that we can parse correctly the provider query filters.
+             */
+            if ( ! empty( $filters ) ) {
+                foreach( $filters as $key => $value ) {
+                    $query->where( $key, $value );
+                }
+            }
         }
 
         /**

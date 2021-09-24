@@ -61,13 +61,13 @@ class DeleteOrderTest extends TestCase
 
             $products->each( function( $product ) use ( $productService ){
                 $product->actual_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
-                
+
                 /**
                  * Let's check if the quantity has been restored 
                  * to the default value.
                  */
                 $this->assertTrue( 
-                    $product->actual_quantity == $product->previous_quantity + $product->quantity,
+                    ( float ) $product->actual_quantity == ( float ) $product->previous_quantity + ( float ) $product->quantity,
                     __( 'The new quantity was not restored to what it was before the deletion.')
                 );
             });

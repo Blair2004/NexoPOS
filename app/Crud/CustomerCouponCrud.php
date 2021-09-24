@@ -23,7 +23,7 @@ class CustomerCouponCrud extends CrudService
      * default slug
      * @param  string
      */
-    protected $slug   =   'customers/coupons';
+    protected $slug   =   'customers/coupons-generated';
 
     /**
      * Define namespace
@@ -43,9 +43,9 @@ class CustomerCouponCrud extends CrudService
      */
     protected $permissions  =   [
         'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+        'read'      =>  'nexopos.read.coupons',
+        'update'    =>  'nexopos.update.coupons',
+        'delete'    =>  'nexopos.delete.coupons',
     ];
 
     /**
@@ -151,8 +151,8 @@ class CustomerCouponCrud extends CrudService
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
+                'name'          =>  'name',
+                'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [
@@ -161,50 +161,18 @@ class CustomerCouponCrud extends CrudService
                     'fields'    =>  [
                         [
                             'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
-                        ], [
-                            'type'  =>  'text',
                             'name'  =>  'usage',
                             'label' =>  __( 'Usage' ),
+                            'description'   =>  __( 'Define how many time the coupon has been used.' ),
                             'value' =>  $entry->usage ?? '',
                         ], [
                             'type'  =>  'text',
-                            'name'  =>  'limit',
+                            'name'  =>  'limit_usage',
                             'label' =>  __( 'Limit' ),
-                            'value' =>  $entry->limit ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'coupon_id',
-                            'label' =>  __( 'Coupon_id' ),
-                            'value' =>  $entry->coupon_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'customer_id',
-                            'label' =>  __( 'Customer_id' ),
-                            'value' =>  $entry->customer_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'author',
-                            'label' =>  __( 'Author' ),
-                            'value' =>  $entry->author ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
-                        ],                     ]
+                            'description'   =>  __( 'Define the maximum usage possible for this coupon.' ),
+                            'value' =>  $entry->limit_usage ?? '',
+                        ], 
+                    ]
                 ]
             ]
         ];
@@ -323,7 +291,9 @@ class CustomerCouponCrud extends CrudService
 
     public function hook( $query )
     {
-        $query->where( 'customer_id', request()->query( 'customer_id' ) );
+        if ( ! empty( request()->query( 'customer_id' ) ) ) {
+            $query->where( 'customer_id', request()->query( 'customer_id' ) );
+        }
     }
 
     /**
@@ -362,7 +332,7 @@ class CustomerCouponCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'limit'  =>  [
+            'limit_usage'  =>  [
                 'label'  =>  __( 'Limit' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
@@ -475,11 +445,11 @@ class CustomerCouponCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      =>  '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons' ),
+            'list'      =>  ns()->route( 'ns.dashboard.customers-coupons-generated-list' ),
             'create'    =>  '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/create' ),
-            'edit'      =>  '#', // ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'customers/' . request()->query( 'customer_id' ) . '/coupons/edit/' ),
             'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/' . request()->query( 'customer_id' ) . '' . '' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' ),
         ];
     }
 

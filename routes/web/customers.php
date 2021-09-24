@@ -24,3 +24,5 @@ Route::get( '/customers/rewards-system/edit/{reward}', [ RewardsSystemController
 Route::get( '/customers/coupons', [ CustomersController::class, 'listCoupons' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-list' ) );
 Route::get( '/customers/coupons/create', [ CustomersController::class, 'createCoupon' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-create' ) );
 Route::get( '/customers/coupons/edit/{coupon}', [ CustomersController::class, 'editCoupon' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-edit' ) );
+Route::get( '/customers/coupons-generated', [ CustomersController::class, 'listGeneratedCoupons' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-generated-list' ) );
+Route::get( '/customers/coupons-generated/edit/{coupon}', [ CustomersController::class, 'editGeneratedCoupon' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-generated-edit' ) );

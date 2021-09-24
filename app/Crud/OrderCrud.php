@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
+use App\Services\Helper;
 use App\Services\OrdersService;
 use Illuminate\Support\Facades\DB;
 
@@ -42,6 +43,13 @@ class OrderCrud extends CrudService
         [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
     ];
 
+    public $pick                =   [
+        'nexopos_users'         =>  [ 'username' ],
+        'nexopos_customers'     =>  [ 'name' ]
+    ];
+
+    public $queryFilters    =   [];
+
     /**
      * Define where statement
      * @var  array
@@ -75,6 +83,38 @@ class OrderCrud extends CrudService
         parent::__construct();
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+
+        /**
+         * Let's define the query filters
+         * we would like to apply to the crud
+         */
+        $this->queryFilters     =   [
+            [
+                'type'  =>  'date',
+                'name'  =>  'created_at',
+                'description'   =>  __( 'Restrict the orders by the creation date.' ),
+                'label' =>  __( 'Created At' )
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Payment Status' ),
+                'name'      =>  'payment_status',
+                'description'   =>  __( 'Restrict the orders by the payment status.' ),
+                'options'   =>  Helper::kvToJsOptions([
+                    Order::PAYMENT_PAID                 =>  __( 'Paid' ),
+                    Order::PAYMENT_PARTIALLY            =>   __( 'Partially Paid' ),
+                    Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
+                    Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
+                    Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
+                    Order::PAYMENT_VOID                 =>  __( 'Voided' ),
+                ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Author' ),
+                'name'      =>  'nexopos_orders.author',
+                'description'   =>  __( 'Restrict the orders by the author.' ),
+                'options'   =>  Helper::toJsOptions( User::get(), [ 'id', 'username' ])
+            ]
+        ];
     }
 
     /**

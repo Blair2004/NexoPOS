@@ -87,7 +87,7 @@ export default {
         __,
 
         displayRightPrice( item ){
-            return POS.getSalePrice( item );
+            return POS.getSalePrice( item, this.$popupParams.product.$original() );
         },
 
         loadUnits() {
