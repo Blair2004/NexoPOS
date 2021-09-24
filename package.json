@@ -4,9 +4,6 @@
     "node": "14.x"
   },
   "scripts": {
-    "dev": "npm run development",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
     "watch-ts": "tsc --watch",
     "webpack": "webpack",
@@ -25,7 +22,7 @@
     "pusher-js": "^7.0.3",
     "resolve-url-loader": "^4.0.0",
     "sass": "^1.27.0",
-    "sass-loader": "^10.0.3",
+    "sass-loader": "^12.1.0",
     "style-loader": "^3.2.1",
     "ts-loader": "^9.2.5",
     "typescript": "^4.0.3",
