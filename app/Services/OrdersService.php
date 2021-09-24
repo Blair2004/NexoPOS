@@ -1018,11 +1018,11 @@ class OrdersService
             $orderProduct->unit_quantity_id             =   $product[ 'unit_quantity_id' ]; 
             $orderProduct->unit_name                    =   $product[ 'unit_name' ] ?? Unit::find( $product[ 'unit_id' ] )->name; 
             $orderProduct->unit_id                      =   $product[ 'unit_id' ];
-            $orderProduct->mode                         =   $product[ 'mode' ];
+            $orderProduct->mode                         =   $product[ 'mode' ] ?? 'normal';
             $orderProduct->product_id                   =   $product[ 'product' ]->id ?? 0;
             $orderProduct->product_category_id          =   $product[ 'product' ]->category_id ?? 0;
             $orderProduct->name                         =   $product[ 'product' ]->name ?? $product[ 'name' ] ?? __( 'Unamed Product' );
-            $orderProduct->quantity                     =   $product[ 'quantity'];
+            $orderProduct->quantity                     =   $product[ 'quantity' ];
 
             /**
              * We might need to have another consideration
