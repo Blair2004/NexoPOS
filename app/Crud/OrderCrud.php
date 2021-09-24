@@ -91,7 +91,7 @@ class OrderCrud extends CrudService
         $this->queryFilters     =   [
             [
                 'type'  =>  'date',
-                'name'  =>  'created_at',
+                'name'  =>  'nexopos_orders.created_at',
                 'description'   =>  __( 'Restrict the orders by the creation date.' ),
                 'label' =>  __( 'Created At' )
             ], [
