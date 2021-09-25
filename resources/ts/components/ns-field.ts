@@ -1,10 +1,15 @@
 import Vue from 'vue';
+import { default as nsDateRangePicker } from './ns-date-range-picker.vue';
+
 const nsField       =   Vue.component( 'ns-field', {
     data: () => {
         return {
         }
     },
     mounted() {
+    },
+    components: {
+        nsDateRangePicker
     },
     computed: {
         isInputField() {
@@ -39,6 +44,9 @@ const nsField       =   Vue.component( 'ns-field', {
         },
         isDateTimePicker() {
             return [ 'datetimepicker' ].includes( this.field.type );
+        },
+        isDateRangePicker() {
+            return [ 'daterangepicker' ].includes( this.field.type );
         },
         isCustom() {
             return [ 'custom' ].includes( this.field.type );
@@ -96,6 +104,10 @@ const nsField       =   Vue.component( 'ns-field', {
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>
         </ns-select>
+        <ns-date-range-picker @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isDateRangePicker">
+            <template v-slot>{{ field.label }}</template>
+            <template v-slot:description><span v-html="field.description || ''"></span></template>
+        </ns-date-range-picker>
         <ns-select-audio @blur="$emit( 'blur', field )" @change="$emit( 'change', field )"  :field="field" v-if="isSelectAudio">
             <template v-slot>{{ field.label }}</template>
             <template v-slot:description><span v-html="field.description || ''"></span></template>

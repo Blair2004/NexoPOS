@@ -419,7 +419,30 @@ class CrudService
              */
             if ( ! empty( $filters ) ) {
                 foreach( $filters as $key => $value ) {
-                    $query->where( $key, $value );
+                    /**
+                     * we won't handle empty value
+                     */
+                    if ( empty( $value ) ) {
+                        continue;
+                    }
+
+                    $definition     =   collect( $this->queryFilters )->filter( fn( $filter ) => $filter[ 'name' ] === $key )->first();
+
+                    if ( ! empty( $definition ) ) {
+                        switch( $definition[ 'type' ] ) {
+                            case 'daterangepicker':
+                                if ( $value[ 'startDate' ] !== null && $value[ 'endDate' ] !== null ) {
+                                    $query->where( $key, '>=', Carbon::parse( $value[ 'startDate' ] )->toDateTimeString() );
+                                    $query->where( $key, '<=', Carbon::parse( $value[ 'endDate' ] )->toDateTimeString() );
+                                }
+                            break;
+                            default:
+                                $query->where( $key, $value );
+                            break;
+                        }
+                    } else {
+                        $query->where( $key, $value );
+                    }
                 }
             }
         }

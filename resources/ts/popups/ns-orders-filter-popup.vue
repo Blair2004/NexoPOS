@@ -44,6 +44,7 @@ export default Vue.extend({
             this.popupResolver( this.validation.extractFields( this.fields ) );
         },
         clearFilters() {
+            this.fields.forEach( field => field.value = '' );
             this.popupResolver( null );
         }
     },

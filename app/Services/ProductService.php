@@ -1265,7 +1265,7 @@ class ProductService
      * @param string|int identifier
      * @return Product
      */
-    public function getProductUsingArgument( $argument = 'id', $identifier )
+    public function getProductUsingArgument( $argument = 'id', $identifier = null )
     {
         if ( $identifier instanceof Product ) {
             return $identifier;

@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -90,10 +92,10 @@ class OrderCrud extends CrudService
          */
         $this->queryFilters     =   [
             [
-                'type'  =>  'date',
+                'type'  =>  'daterangepicker',
                 'name'  =>  'nexopos_orders.created_at',
                 'description'   =>  __( 'Restrict the orders by the creation date.' ),
-                'label' =>  __( 'Created At' )
+                'label' =>  __( 'Created Between' )
             ], [
                 'type'      =>  'select',
                 'label'     =>  __( 'Payment Status' ),
@@ -113,6 +115,12 @@ class OrderCrud extends CrudService
                 'name'      =>  'nexopos_orders.author',
                 'description'   =>  __( 'Restrict the orders by the author.' ),
                 'options'   =>  Helper::toJsOptions( User::get(), [ 'id', 'username' ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Customer' ),
+                'name'      =>  'customer_id',
+                'description'   =>  __( 'Restrict the orders by the customer.' ),
+                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ])
             ]
         ];
     }
