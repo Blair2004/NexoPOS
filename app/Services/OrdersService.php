@@ -1451,9 +1451,7 @@ class OrdersService
         $fields[ 'discount' ]               =   $fields[ 'discount' ] ?? $order->discount ?? 0;
 
         if ( ! empty( $fields[ 'discount_type' ] ) && ! empty( $fields[ 'discount_percentage' ] ) && $fields[ 'discount_type' ] === 'percentage' ) {
-            return $this->currencyService->define( $fields[ 'subtotal' ] )
-                ->multiplyBy( $fields[ 'discount_percentage' ] )
-                ->divideBy( 100 )
+            return $this->currencyService->define( ( $fields[ 'subtotal' ] * $fields[ 'discount_percentage' ] ) / 100 )
                 ->getRaw();
         } else {
             return $this->currencyService->getRaw( $fields[ 'discount' ] );
@@ -1512,15 +1510,22 @@ class OrdersService
             'products_flat_vat',
             'products_variable_vat'
         ] ) ) {
-            $taxValue     =   $order->products->map(function ($product) {
-                return floatval($product->tax_value);
-            })->sum();
+            $taxValue     =   $order
+                ->products()
+                ->validProducts()
+                ->get()
+                ->map(function ($product) {
+                    return floatval($product->tax_value);
+                })->sum();
         } else if ( in_array( $posVat, [
             'flat_vat',
             'variable_vat',
         ])) {
             $taxType                =   ns()->option->get( 'ns_pos_tax_type' );
-            $subTotal               =   $order->products()->sum( 'total_price' );
+            $subTotal               =   $order->products()
+                ->validProducts()
+                ->sum( 'total_price' );
+
             $taxValue               =   $order->taxes->map( function( $tax ) use ( $taxType, $subTotal ) {
                 $tax->tax_value     =   $this->taxService->getVatValue( $taxType, $tax->rate, $subTotal );
                 $tax->save();
@@ -1850,7 +1855,11 @@ class OrdersService
      */
     public function getOrderProducts($identifier, $pivot = 'id')
     {
-        return $this->getOrder($identifier, $pivot)->products()->with( 'unit' )->get();
+        return $this->getOrder($identifier, $pivot)
+            ->products()
+            ->validProducts()
+            ->with( 'unit' )
+            ->get();
     }
 
     /**
@@ -1960,7 +1969,8 @@ class OrdersService
     {
         $products               =   $this->getOrderProducts($order->id);
 
-        $productTotal           =   $products->map(function ($product) {
+        $productTotal           =   $products
+            ->map(function ($product) {
             return floatval($product->total_price);
         })->sum();
 
@@ -1968,7 +1978,8 @@ class OrdersService
             return floatval( $product->quantity );
         })->sum();
 
-        $productGrossTotal      =   $products->map(function ($product) {
+        $productGrossTotal      =   $products
+            ->map(function ($product) {
             return floatval($product->total_gross_price);
         })->sum();
 
