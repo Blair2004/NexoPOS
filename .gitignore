@@ -1,5 +1,7 @@
 .env
 vendor
+mns-backup
+mns-download
 error.log
 node_modules
 composer-lock.json
