@@ -6,6 +6,7 @@ use App\Exceptions\QueryException as ExceptionsQueryException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException as MainValidationException;
 use Throwable;
 
@@ -77,8 +78,10 @@ class Handler extends ExceptionHandler
 
         if ( $exception instanceof QueryException ) {
             if ( $request->expectsJson() ) {
+                Log::error( $exception->getMessage() );
+
                 return response()->json([
-                    'message' => $exception->getMessage()
+                    'message' => env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'A database error has occured.' )
                 ], 404);    
             } 
 

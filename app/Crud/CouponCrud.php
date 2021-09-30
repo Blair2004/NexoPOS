@@ -164,6 +164,7 @@ class CouponCrud extends CrudService
                             'type'  =>  'text',
                             'name'  =>  'code',
                             'label' =>  __( 'Coupon Code' ),
+                            'validation'    =>  'required',
                             'description'   =>  __( 'Might be used while printing the coupon.' ),
                             'value' =>  $entry->code ?? '',
                         ], [
