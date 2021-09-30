@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Events\WebRoutesLoadedEvent;
+use App\Http\Controllers\Dashboard\CrudController;
 use App\Http\Controllers\Dashboard\ModulesController;
 use App\Http\Controllers\Dashboard\UsersController;
 use App\Http\Middleware\Authenticate;
@@ -83,6 +84,8 @@ Route::middleware([
             Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
             Route::get( '/users/roles/create', [ UsersController::class, 'createRole' ]);
             Route::get( '/users/roles/edit/{role}', [ UsersController::class, 'editRole' ]);
+
+            Route::get( '/crud/download/{hash}', [ CrudController::class, 'downloadSavedFile' ])->name( 'ns.dashboard.crud-download' );
         });
     });
 });
