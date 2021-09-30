@@ -76,6 +76,8 @@ class OrderRefundTest extends TestCase
                 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  $discountRate,
                 'taxes'                 =>  $taxes,
+                'tax_group_id'          =>  $taxGroup->id,
+                'tax_type'              =>  'inclusive',
                 'addresses'             =>  [
                     'shipping'          =>  [
                         'name'          =>  'First Name Delivery',
@@ -97,10 +99,9 @@ class OrderRefundTest extends TestCase
                         'value'         =>  $netTotal
                     ]
                 ]
-            ]);
+            ]);        
         
-        
-            $response->assertJson([
+        $response->assertJson([
             'status'    =>  'success'
         ]);
 

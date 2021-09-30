@@ -6,7 +6,6 @@ import popupResolver from '@/libraries/popup-resolver';
 import { __ } from '@/libraries/lang';
 export default {
     mounted() {
-        // destroy observable
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
             this.settings   =   settings;
         });
@@ -14,6 +13,9 @@ export default {
         this.popupCloser();
 
         this.loadRegisterSummary();
+    },
+    beforeDestroy() {
+        this.settingsSubscriber.unsubscribe();
     },
     data() {
         return {
@@ -140,14 +142,19 @@ export default {
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div>
+        <div v-if="register.total_sale_amount && register.balance">
             <div class="h-16 text-3xl bg-blue-400 text-white flex items-center justify-between px-3">
                 <span class="">{{ __( 'Sales' ) }}</span>
-                <span class="font-bold">{{ ( register.total_sale_amount | 0 ) | currency }}</span>
+                <span class="font-bold">{{ register.total_sale_amount | currency }}</span>
             </div>
             <div class="h-16 text-3xl bg-green-400 text-white flex items-center justify-between px-3">
                 <span class="">{{ __( 'Balance' ) }}</span>
-                <span class="font-bold">{{ ( register.balance | 0 ) | currency }}</span>
+                <span class="font-bold">{{ register.balance | currency }}</span>
+            </div>
+        </div>
+        <div class="h-32 border-gray-200 border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">
+            <div>
+                <ns-spinner border="4" size="16"></ns-spinner>
             </div>
         </div>
         <div class="grid grid-cols-2 text-gray-700">

@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
+use App\Models\Register;
 use App\Services\Helper;
 use App\Services\OrdersService;
 use Illuminate\Support\Facades\DB;
@@ -121,6 +122,12 @@ class OrderCrud extends CrudService
                 'name'      =>  'customer_id',
                 'description'   =>  __( 'Restrict the orders by the customer.' ),
                 'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Cash Register' ),
+                'name'      =>  'register_id',
+                'description'   =>  __( 'Restrict the orders to the cash registers.' ),
+                'options'   =>  Helper::toJsOptions( Register::get(), [ 'id', 'name' ])
             ]
         ];
     }

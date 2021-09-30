@@ -25,7 +25,7 @@ class CreateRegisterTest extends TestCase
 
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Computers' ),
+                'name'                  =>  __( 'Cash Register' ),
                 'general'               =>  [
                     'status'            =>  Register::STATUS_CLOSED
                 ]

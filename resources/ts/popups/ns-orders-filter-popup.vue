@@ -6,7 +6,7 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 border-b flex-auto">
+        <div class="p-2 border-b flex-auto overflow-y-auto">
             <ns-field :field="field" :key="index" v-for="( field, index ) of fields"></ns-field>
         </div>
         <div class="p-2 flex justify-between">

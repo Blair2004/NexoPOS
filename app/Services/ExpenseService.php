@@ -255,7 +255,7 @@ class ExpenseService
                 $history->expense_id                =   $expense->id;
                 $history->operation                 =   'debit';
                 $history->author                    =   $expense->author;
-                $history->name              =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
+                $history->name                      =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
                 $history->expense_category_id       =   $expense->category->id;
                 $history->save();
 
@@ -483,19 +483,34 @@ class ExpenseService
     }
 
     public function handleCashRegisterHistory( RegisterHistory $history )
-    {                               
+    {    
+        /**
+         * If the history of the register is not supported, 
+         * we don't need to track it as an expense
+         */
+        if ( ! in_array( $history->action, [
+            RegisterHistory::ACTION_CASHING,
+            RegisterHistory::ACTION_OPENING,
+            RegisterHistory::ACTION_CLOSING,
+            RegisterHistory::ACTION_CASHOUT,
+        ]) ) {
+            return false;
+        }
+
         /**
          * this behave as a flash expense
          * made only for recording an history.
          */
         if ( in_array( $history->action, [
             RegisterHistory::ACTION_CASHING,
-            // RegisterHistory::ACTION_SALE, // we want to consider sales separately
             RegisterHistory::ACTION_OPENING
         ])) {
             $operation      =   'credit';
             $expenseCategory        =   $this->__getCashFlowCategory( $operation );
-        } else {
+        } else if ( in_array( $history->action, [
+            RegisterHistory::ACTION_CLOSING,
+            RegisterHistory::ACTION_CASHOUT
+        ])) {
             $operation      =   'debit';
             $expenseCategory        =   $this->__getCashFlowCategory( $operation );
         }

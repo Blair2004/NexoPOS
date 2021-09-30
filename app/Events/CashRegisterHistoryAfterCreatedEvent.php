@@ -24,7 +24,7 @@ class CashRegisterHistoryAfterCreatedEvent
      */
     public function __construct( RegisterHistory $registerHistory )
     {
-        $this->registerHistory  =   $registerHistory;
+        $this->registerHistory      =   $registerHistory;
     }
 
     /**
@@ -34,6 +34,6 @@ class CashRegisterHistoryAfterCreatedEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel('channel-name');
     }
 }
