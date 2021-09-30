@@ -18,10 +18,13 @@ class RefreshReportForPassDaysTest extends TestCase
      */
     public function test_example()
     {
+        /**
+         * @var ReportService
+         */
         $service        =   app()->make( ReportService::class );
         $startInterval  =   ns()->date->clone()->subDays( $this->totalDaysInterval )->subDay();
 
-        for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
+        for( $i = 0; $i <= $this->totalDaysInterval; $i++ ) {
             $today      =   $startInterval->addDay()->clone();
 
             $service->computeDayReport(

@@ -15,7 +15,7 @@ class GenerateActivityCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'cw:simulate';
+    protected $signature = 'ns:simulate';
 
     /**
      * The console command description.

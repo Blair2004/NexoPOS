@@ -645,8 +645,6 @@ class ProcurementService
         $storedUnitReference        =   [];
         $itemsToSave                =   [];
 
-        // event( new ProcurementBeforeUpdateProduct( $procurementProduct, $fields ) );
-
         /**
          * the idea here it to update the procurement
          * quantity, unit_id and purchase price, since that information
@@ -672,8 +670,6 @@ class ProcurementService
 
         $procurementProduct->author    =   Auth::id();
         $procurementProduct->save();
-
-        // event( new ProcurementAfterUpdateProduct( $procurementProduct, $fields ) );
 
         return [
             'status'    =>  'success',

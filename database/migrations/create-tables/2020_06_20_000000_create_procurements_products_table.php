@@ -22,19 +22,19 @@ class CreateProcurementsProductsTable extends Migration
             Schema::createIfMissing( 'nexopos_procurements_products', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->string( 'name' );
-                $table->float( 'gross_purchase_price', 11, 5 )->default(0);
-                $table->float( 'net_purchase_price', 11, 5 )->default(0);
+                $table->float( 'gross_purchase_price', 18, 5 )->default(0);
+                $table->float( 'net_purchase_price', 18, 5 )->default(0);
                 $table->integer( 'procurement_id' );
                 $table->integer( 'product_id' );
-                $table->float( 'purchase_price', 11, 5 )->default(0);
-                $table->float( 'quantity', 11, 5 );
-                $table->float( 'available_quantity', 11, 5 );
+                $table->float( 'purchase_price', 18, 5 )->default(0);
+                $table->float( 'quantity', 18, 5 );
+                $table->float( 'available_quantity', 18, 5 );
                 $table->integer( 'tax_group_id' );
                 $table->string( 'barcode' )->nullable();
                 $table->datetime( 'expiration_date' )->nullable();
                 $table->string( 'tax_type' ); // inclusive or exclusive;
-                $table->float( 'tax_value', 11, 5 )->default(0);
-                $table->float( 'total_purchase_price', 11, 5 )->default(0);
+                $table->float( 'tax_value', 18, 5 )->default(0);
+                $table->float( 'total_purchase_price', 18, 5 )->default(0);
                 $table->integer( 'unit_id' );
                 $table->integer( 'author' );
                 $table->string( 'uuid' )->nullable();

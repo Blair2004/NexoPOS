@@ -51,12 +51,13 @@ class ComputeDailyReportCommand extends Command
     public function computeMonthReport()
     {
         $from           =   Carbon::parse( $this->option( 'from' ) );
+        $monthCursor    =   $from->copy();
         $currentDate    =   ns()->date->getNow();
         $dates          =   collect([]);
 
-        while( ! $from->isSameMonth( $currentDate->copy()->addMonth() ) ) {
-            $dates->push( $from->copy() );
-            $from->addMonth();
+        while( ! $monthCursor->isSameMonth( $currentDate->copy()->addMonth() ) ) {
+            $dates->push( $monthCursor->copy() );
+            $monthCursor->addMonth();
         }
 
         if ( $dates->count() === 0 ) {
@@ -90,12 +91,13 @@ class ComputeDailyReportCommand extends Command
     public function computeDayReport()
     {
         $from           =   Carbon::parse( $this->option( 'from' ) );
+        $dayCursor      =   $from->copy();
         $currentDate    =   ns()->date->getNow();
         $dates          =   collect([]);
 
-        while( ! $from->isSameDay( $currentDate->copy()->addDay() ) ) {
-            $dates->push( $from->copy() );
-            $from->addDay();
+        while( ! $dayCursor->isSameDay( $currentDate->copy()->addDay() ) ) {
+            $dates->push( $dayCursor->copy() );
+            $dayCursor->addDay();
         }
 
         if ( $dates->count() === 0 ) {

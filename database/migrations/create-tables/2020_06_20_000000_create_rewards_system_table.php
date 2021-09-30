@@ -23,7 +23,7 @@ class CreateRewardsSystemTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'author' );
                 $table->string( 'name' );
-                $table->float( 'target', 11, 5 )->default(0);
+                $table->float( 'target', 18, 5 )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->integer( 'coupon_id' )->nullable();
                 $table->string( 'uuid' )->nullable();

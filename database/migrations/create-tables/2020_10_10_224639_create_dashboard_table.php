@@ -66,7 +66,7 @@ class CreateDashboardTable extends Migration
                     'day_expenses',
                 ] as $column ) {
                     if ( ! Schema::hasColumn( 'nexopos_dashboard_days', $column ) ) {
-                        $table->float( $column, 11, 5 )->default(0);
+                        $table->float( $column, 18, 5 )->default(0);
                     }
                 }
     
@@ -101,7 +101,7 @@ class CreateDashboardTable extends Migration
                     'total_net_income',
                 ] as $column ) {
                     if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', $column ) ) {
-                        $table->float( $column, 11, 5 )->default(0);
+                        $table->float( $column, 18, 5 )->default(0);
                     }
                 }
     

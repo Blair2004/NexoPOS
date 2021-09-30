@@ -29,7 +29,7 @@ class CreateNexoposExpensesHistoryTable extends Migration
             $table->integer( 'customer_account_history_id' )->nullable(); // if a customer credit is generated
             $table->string( 'name' );
             $table->string( 'status' )->default( CashFlow::STATUS_ACTIVE );
-            $table->float( 'value' )->default(0);
+            $table->float( 'value', 18, 5 )->default(0);
             $table->integer( 'author' );
             $table->timestamps();
         });
