@@ -78,30 +78,58 @@ class Handler extends ExceptionHandler
                 ->render( $request );
         }
 
-        if ( $exception instanceof QueryException ) {
-            if ( $request->expectsJson() ) {
-                Log::error( $exception->getMessage() );
+        /**
+         * Let's make a better verfication
+         * to avoid repeating outself.
+         */
+        $exceptionResponse  =   collect([
+            ModuleVersionMismatchException::class   =>  [
+                'use'           =>  ModuleVersionMismatchException::class,
+                'safeMessage'   =>  null,
+                'code'          =>  503
+            ],
 
-                return response()->json([
-                    'message' => env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'A database error has occured.' )
-                ], 404);    
-            } 
+            QueryException::class   =>  [
+                'use'           =>  ExceptionsQueryException::class,
+                'safeMessage'   =>  __( 'A database error has occured' ),
+                'code'          =>  503
+            ],
 
-            return ( new ExceptionsQueryException( $exception->getMessage() ) )
-                ->render( $request );
-        }
+            MethodNotAllowedHttpException::class    =>  [
+                'use'           =>  ExceptionsMethodNotAllowedHttpException::class,
+                'safeMessage'   =>  __( 'Invalid method used for the current request.' ),
+                'code'          =>  405
+            ],
 
-        if ( $exception instanceof MethodNotAllowedHttpException ) {
-            if ( $request->expectsJson() ) {
-                Log::error( $exception->getMessage() );
+            CoreVersionMismatchException::class     =>  [
+                'use'           =>  CoreVersionMismatchException::class,
+                'safeMessage'   =>  null,
+                'code'          =>  503
+            ]
+        ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+            if ( $exception instanceof $class ) {
+                if ( $request->expectsJson() ) {
+                    Log::error( $exception->getMessage() );
+    
+                    /**
+                     * We'll return a safe message if the debug mode is enabled
+                     * otherwise, we'll return the full message which might have 
+                     * sensitive informations.
+                     */
+                    return response()->json([
+                        'message' => env( 'APP_DEBUG' ) && ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                    ], $exceptionConfig[ 'code' ] ?? 500 );    
+                } 
+    
+                return ( new $exceptionConfig[ 'use' ]( $exception->getMessage() ) )
+                    ->render( $request );
+            }
 
-                return response()->json([
-                    'message' => env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Invalid method used for the current request.' )
-                ], 404);    
-            } 
+            return false;
+        })->filter( fn( $exception ) => $exception !== false );
 
-            return ( new ExceptionsMethodNotAllowedHttpException( $exception->getMessage() ) )
-                ->render( $request );
+        if ( ! $exceptionResponse->isEmpty() ) {
+            return $exceptionResponse->first();
         }
 
         return parent::render($request, $exception);

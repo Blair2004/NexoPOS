@@ -13,9 +13,11 @@ use Laravie\Parser\Xml\Reader;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use App\Exceptions\MissingDependencyException;
+use App\Exceptions\ModuleVersionMismatchException;
 use App\Exceptions\NotAllowedException;
 use App\Models\ModuleMigration;
 use Exception;
+use SimpleXMLElement;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
@@ -118,16 +120,28 @@ class ModulesService
                 'description'           =>  [ 'uses'    =>  'description' ],
                 'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
                 'name'                  =>  [ 'uses'    =>  'name' ],
+                'core'                  =>  [ 'uses'    =>  'core' ],
             ]);
 
             $xmlElement                 =   new \SimpleXMLElement( $xmlContent );
+
+            if ( $xmlElement->core[0] instanceof SimpleXMLElement ) {
+                $attributes     =   $xmlElement->core[0]->attributes();
+                $minVersion     =   'min-version';
+                $maxVersion     =   'max-version';
+
+                $config[ 'core' ]   =   [
+                    'min-version'   =>  ( ( string ) $attributes->$minVersion ) ?? null,
+                    'max-version'   =>  ( ( string ) $attributes->$maxVersion ) ?? null,
+                ];
+            }
             
             $config[ 'requires' ]       =   collect( $xmlElement->children()->requires->xpath( '//dependency' ) )->mapWithKeys( function( $module ) {
                 $module     =   ( array ) $module;
                 return [
                     $module[ '@attributes' ][ 'namespace' ]     =>  [
-                        'min-version'   =>  $module[ '@attributes' ][ 'min-version' ],
-                        'max-version'   =>  $module[ '@attributes' ][ 'max-version' ],
+                        'min-version'   =>  $module[ '@attributes' ][ 'min-version' ] ?? null,
+                        'max-version'   =>  $module[ '@attributes' ][ 'max-version' ] ?? null,
                         'name'          =>  $module[0],
                     ]
                 ];
@@ -316,8 +330,13 @@ class ModulesService
                 $this->dependenciesCheck( $module );
             });
         } else {
+            /**
+             * We'll check if the requirements
+             * are meet for the provided modules
+             */
             if ( isset( $module[ 'requires' ] ) ) {
                 collect( $module[ 'requires' ] )->each( function( $dependency, $namespace ) use ( $module ) {
+
                     if ( $this->get( $namespace ) === null ) {
 
                         /**
@@ -352,10 +371,63 @@ class ModulesService
                         ) );
                     }
 
-                    /**
-                     * @todo must check module version
-                     */
+                    if ( ! empty( $dependency[ 'min-version' ] ) && ! version_compare( $this->get( $namespace )[ 'version' ], $dependency[ 'min-version' ], '>=' ) ) {
+                        /**
+                         * The module is disabled because
+                         * the version doesn't match the requirement.
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new ModuleVersionMismatchException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is not on the minimum required version "%s". ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ],
+                                $dependency[ 'min-version' ]
+                            )
+                        ) );
+                    }
+
+                    if ( ! empty( $dependency[ 'max-version' ] ) && ! version_compare( $this->get( $namespace )[ 'version' ], $dependency[ 'max-version' ], '<=' ) ) {
+                        /**
+                         * The module is disabled because
+                         * the version doesn't match the requirement.
+                         */
+                        $this->disable( $module[ 'namespace' ] );
+
+                        throw new ModuleVersionMismatchException( __(
+                            sprintf( 
+                                __( 'The module "%s" has been disabled as the dependency "%s" is on a version beyond the recommended "%s". ' ),
+                                $module[ 'name' ],
+                                $dependency[ 'name' ],
+                                $dependency[ 'max-version' ]
+                            )
+                        ) );
+                    }
                 });
+            }
+
+            /**
+             * We'll check if the system is
+             * at a compatible version for the module
+             */
+            if ( 
+                isset( $module[ 'core' ] ) && 
+                ! empty( $module[ 'core' ][ 'min-version' ] ) && 
+                version_compare( 
+                    config( 'nexopos.version' ), 
+                    $module[ 'core' ][ 'min-version' ], 
+                    '<' 
+                ) 
+            ) {
+                throw new ModuleVersionMismatchException( __(
+                    sprintf( 
+                        __( 'The module "%s" has been disabled it\'s not compatible with the current version of NexoPOS %s, but requires %s. ' ),
+                        $module[ 'name' ],
+                        config( 'nexopos.version' ),
+                        $module[ 'core' ][ 'min-version' ]
+                    )
+                ) );
             }
         }
     }
@@ -1054,13 +1126,15 @@ class ModulesService
             try {
                 $this->dependenciesCheck( $module );
             } catch( MissingDependencyException $exception ) {
-                throw new MissingDependencyException( 
-                    sprintf( 
-                        __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
-                        $module[ 'name' ],
-                        collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
-                    )
-                );
+                if ( $exception instanceof MissingDependencyException ) {
+                    throw new MissingDependencyException( 
+                        sprintf( 
+                            __( 'The module %s cannot be enabled as his dependencies (%s) are missing or are not enabled.' ),
+                            $module[ 'name' ],
+                            collect( $module[ 'requires' ])->map( fn( $dep ) => $dep[ 'name' ] )->join( ', ' )
+                        )
+                    );
+                }
             }
 
             /**
