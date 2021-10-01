@@ -2,12 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException as MainValidationException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -86,6 +88,19 @@ class Handler extends ExceptionHandler
             } 
 
             return ( new ExceptionsQueryException( $exception->getMessage() ) )
+                ->render( $request );
+        }
+
+        if ( $exception instanceof MethodNotAllowedHttpException ) {
+            if ( $request->expectsJson() ) {
+                Log::error( $exception->getMessage() );
+
+                return response()->json([
+                    'message' => env( 'APP_DEBUG' ) ? $exception->getMessage() : __( 'Invalid method used for the current request.' )
+                ], 404);    
+            } 
+
+            return ( new ExceptionsMethodNotAllowedHttpException( $exception->getMessage() ) )
                 ->render( $request );
         }
 
