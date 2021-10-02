@@ -20,39 +20,31 @@ use App\Mail\UserRegisteredMail;
 use App\Mail\WelcomeMail;
 use App\Mail\ResetPasswordMail;
 use App\Models\Role;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\PasswordAfterRecoveredEvent;
-
-
-use Tendoo\Core\Exceptions\CoreException;
-
 use App\Services\Options;
 use App\Models\User;
 use Exception;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\MessageBag;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function signIn()
     {
-        return view( 'pages.sign-in', [
+        return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.sign-in' ), [
             'title'     =>  __( 'Sign In &mdash; NexoPOS' )
         ]);
     }
 
     public function signUp()
     {
-        return view( 'pages.sign-up', [
+        return view( Hook::filter( 'ns-views:pages.sign-up', 'pages.sign-up' ), [
             'title'     =>      __( 'Sign Up &mdash; NexoPOS' )
         ]);
     }

@@ -190,6 +190,8 @@ class ModulesService
                  */
                 $config[ 'entry-class' ]    =  'Modules\\' . $config[ 'namespace' ] . '\\' . $config[ 'namespace' ] . 'Module'; 
                 $config[ 'providers' ]      =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
+                $config[ 'actions' ]        =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Actions' );
+                $config[ 'filters' ]        =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Filters' );
                 $config[ 'commands' ]       =   collect( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands' ) )
                     ->mapWithKeys( function( $file ) {
                         $className      =   str_replace(

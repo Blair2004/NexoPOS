@@ -110,12 +110,17 @@ class CrudController extends DashboardController
          */
         if ( ! $resource->disablePut ) {
 
+            $fillable   =   Hook::filter( 
+                get_class( $resource ) . '@getFillable', 
+                $resource->getFillable()
+            );
+
             foreach ( $inputs as $name => $value ) {
 
                 /**
                  * If submitted field are part of fillable fields
                  */
-                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
 
                     /**
                      * We might give the capacity to filter fields 
@@ -141,7 +146,7 @@ class CrudController extends DashboardController
              * If fillable is empty or if "author" it's explicitely
              * mentionned on the fillable array.
              */
-            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
                 $entry->author      =   Auth::id();
             }
 
@@ -240,12 +245,17 @@ class CrudController extends DashboardController
          */
         if ( ! $resource->disablePut ) {
 
+            $fillable   =   Hook::filter( 
+                get_class( $resource ) . '@getFillable', 
+                $resource->getFillable()
+            );
+
             foreach ( $inputs as $name => $value ) {
     
                 /**
                  * If submitted field are part of fillable fields
                  */
-                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
     
                     /**
                      * We might give the capacity to filter fields 
@@ -271,7 +281,7 @@ class CrudController extends DashboardController
              * If fillable is empty or if "author" it's explicitely
              * mentionned on the fillable array.
              */
-            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
                 $entry->author      =   Auth::id();
             }
             

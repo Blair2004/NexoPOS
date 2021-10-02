@@ -45,10 +45,10 @@ Route::middleware([
     Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
     Route::get( '/auth/activate/{user}/{token}', [ AuthController::class, 'activateAccount' ])->name( 'ns.activate-account' );
     Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
-    Route::get( '/password-lost', 'AuthController@passwordLost' );
+    Route::get( '/password-lost', 'AuthController@passwordLost' )->name( 'ns.password-lost' );
     Route::get( '/new-password/{user}/{token}', [ AuthController::class, 'newPassword' ])->name( 'ns.new-password' );
 
-    Route::post( '/auth/sign-in', 'AuthController@postSignIn' );
+    Route::post( '/auth/sign-in', 'AuthController@postSignIn' )->name( 'ns.login.post' );
     Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
     Route::post( '/auth/password-lost', [ AuthController::class, 'postPasswordLost' ])->name( 'ns.password-lost' );
     Route::post( '/auth/new-password/{user}/{token}', [ AuthController::class, 'postNewPassword' ])->name( 'ns.post.new-password' );
@@ -76,14 +76,14 @@ Route::middleware([
             Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules-download' );
             Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules-migrate' );
 
-            Route::get( '/users', [ UsersController::class, 'listUsers' ]);
-            Route::get( '/users/create', [ UsersController::class, 'createUser' ]);
+            Route::get( '/users', [ UsersController::class, 'listUsers' ])->name( 'ns.dashboard.users' );
+            Route::get( '/users/create', [ UsersController::class, 'createUser' ])->name( 'ns.dashboard.users-create' );
             Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ])->name( 'ns.dashboard.users.edit' );
             Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
             Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
-            Route::get( '/users/roles', [ UsersController::class, 'rolesList' ]);
-            Route::get( '/users/roles/create', [ UsersController::class, 'createRole' ]);
-            Route::get( '/users/roles/edit/{role}', [ UsersController::class, 'editRole' ]);
+            Route::get( '/users/roles', [ UsersController::class, 'rolesList' ])->name( 'ns.dashboard.users.roles' );
+            Route::get( '/users/roles/create', [ UsersController::class, 'createRole' ])->name( 'ns.dashboard.users.roles-create' );
+            Route::get( '/users/roles/edit/{role}', [ UsersController::class, 'editRole' ])->name( 'ns.dashboard.users.roles-edit' );
 
             Route::get( '/crud/download/{hash}', [ CrudController::class, 'downloadSavedFile' ])->name( 'ns.dashboard.crud-download' );
         });

@@ -85,6 +85,7 @@ export default Vue.extend({
                 :showWeekNumbers="true"
                 :showDropdowns="true"
                 :autoApply="false"
+                :appendToBody="true"
                 v-model="dateRange"
                 @blur="$emit( 'blur', this )" 
                 @update="$emit( 'change', this )"

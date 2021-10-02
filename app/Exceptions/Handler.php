@@ -9,6 +9,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException as MainValidationException;
+use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
@@ -103,6 +104,12 @@ class Handler extends ExceptionHandler
 
             CoreVersionMismatchException::class     =>  [
                 'use'           =>  CoreVersionMismatchException::class,
+                'safeMessage'   =>  null,
+                'code'          =>  503
+            ],
+
+            InvalidArgumentException::class         =>  [
+                'use'           =>  Exception::class,
                 'safeMessage'   =>  null,
                 'code'          =>  503
             ]
