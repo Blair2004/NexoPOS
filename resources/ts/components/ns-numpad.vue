@@ -15,7 +15,7 @@
 <script>
 export default {
     name: 'ns-numpad',
-    props: [ 'value', 'currency', 'floating', 'limit', 'syncValue' ],
+    props: [ 'value', 'currency', 'floating', 'limit' ],
     data() {
         return {
             number: parseInt( 
@@ -24,6 +24,7 @@ export default {
                 .map( _ => 0 )
                 .join('') 
             ),
+            screenValue: '',
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -37,7 +38,7 @@ export default {
         }
     },
     mounted() {
-        this.syncValue  =   this.value || 0;
+        this.screenValue  =   this.value || 0;
     },
     methods: {
         increaseBy( key ) {
@@ -48,7 +49,7 @@ export default {
                 .join('') 
             );
 
-            this.syncValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.syncValue ) || 0 ) ).toString();
+            this.screenValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.screenValue ) || 0 ) ).toString();
             this.allSelected    =   false;
         },
 
@@ -61,37 +62,37 @@ export default {
             );
 
             if ( key.identifier === 'next' ) {
-                this.$emit( 'next', this.floating && this.syncValue.length > 0 ? parseFloat( this.syncValue / this.number ) : this.syncValue );
+                this.$emit( 'next', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
-                    this.syncValue      =   '0';
+                    this.screenValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.syncValue      =   this.syncValue.substr( 0, this.syncValue.length - 1 );
+                    this.screenValue      =   this.screenValue.substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
-                if ( this.limit > 0 && this.syncValue.length >= this.limit ) {
+                if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
                     return;
                 }
                 
                 if ( this.allSelected ) {
-                    this.syncValue      =   key.value.toString();
+                    this.screenValue      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    this.syncValue      +=  key.value.toString();
+                    this.screenValue      +=  key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        this.syncValue = this.syncValue > 100 ? 100 : this.syncValue;
+                        this.screenValue = this.screenValue > 100 ? 100 : this.screenValue;
                     }
                 }
             } 
 
-            if ( ( this.syncValue ) === "0" ) {
-                this.syncValue      =   '';
+            if ( ( this.screenValue ) === "0" ) {
+                this.screenValue      =   '';
             }
 
-            this.$emit( 'changed', this.floating && this.syncValue.length > 0 ? parseFloat( this.syncValue / this.number ) : this.syncValue );
+            this.$emit( 'changed', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue );
         }
     }
 }
