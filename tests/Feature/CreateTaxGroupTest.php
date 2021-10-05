@@ -23,7 +23,7 @@ class CreateTaxGroupTest extends TestCase
         );
 
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes-groups', [
+            ->json( 'POST', '/api/nexopos/v4/crud/ns.taxes-groups', [
                 'name'          =>  __( 'GST' ),
             ]);
 

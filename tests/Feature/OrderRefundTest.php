@@ -42,11 +42,25 @@ class OrderRefundTest extends TestCase
         $shippingFees   =   150;
         $discountRate   =   3.5;
         $products       =   [
+            /**
+             * this is a sample product/service
+             */
+            [
+                'quantity'              =>  5,
+                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
+                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
+                'unit_id'               =>  $product->unit_quantities[0]->unit_id
+            ], 
+            
+            /**
+             * An existing product
+             */
             [
                 'product_id'            =>  $product->id,
                 'quantity'              =>  5,
                 'unit_price'            =>  $product->unit_quantities[0]->sale_price,
                 'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
+                'unit_id'               =>  $product->unit_quantities[0]->unit_id
             ]
         ];
 
@@ -138,6 +152,7 @@ class OrderRefundTest extends TestCase
                 'products'  =>  $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
 
+        $response->assertStatus(200);
         $responseData           =   json_decode( $response->getContent(), true );
 
         $thirdFetchCustomer      =   $secondFetchCustomer->fresh();

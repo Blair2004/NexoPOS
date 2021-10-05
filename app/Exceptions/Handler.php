@@ -121,7 +121,7 @@ class Handler extends ExceptionHandler
                 'code'          =>  503
             ]
         ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
-            if ( $exception instanceof $class ) {
+            if ( $exception instanceof $class && ! env( 'APP_DEBUG' ) ) {
                 if ( $request->expectsJson() ) {
                     Log::error( $exception->getMessage() );
     
@@ -131,7 +131,7 @@ class Handler extends ExceptionHandler
                      * sensitive informations.
                      */
                     return response()->json([
-                        'message' => ! env( 'APP_DEBUG' ) && ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                        'message' => ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
                     ], $exceptionConfig[ 'code' ] ?? 500 );    
                 } 
     

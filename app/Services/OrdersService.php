@@ -1250,8 +1250,8 @@ class OrdersService
         if ( empty( $fields[ 'tax_value' ] ) ) {
             $fields[ 'tax_value' ]      =   $this->currencyService->define(
                 $this->taxService->getComputedTaxGroupValue(
-                    $fields[ 'tax_type' ] ?? $product->tax_type,
-                    $fields[ 'tax_group_id' ] ?? $product->tax_group_id,
+                    $fields[ 'tax_type' ] ?? $product->tax_type ?? null,
+                    $fields[ 'tax_group_id' ] ?? $product->tax_group_id ?? null,
                     $sale_price
                 )
             )
@@ -1708,23 +1708,14 @@ class OrdersService
         event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
 
         /**
-         * we do proceed by doing an initial return
+         * We should adjust the stock only if a valid product
+         * is being refunded.
          */
-        $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
-            'total_price'       =>  $productRefund->total_price,
-            'quantity'          =>  $productRefund->quantity,
-            'unit_price'        =>  $productRefund->unit_price,
-            'product_id'        =>  $productRefund->product_id,
-            'unit_id'           =>  $productRefund->unit_id,
-            'order_id'          =>  $order->id
-        ]);
-
-        /**
-         * If the returned stock is damaged
-         * then we can pull this out from the stock
-         */
-        if ( $details[ 'condition' ] === OrderProductRefund::CONDITION_DAMAGED ) {
-            $this->productService->stockAdjustment( ProductHistory::ACTION_DEFECTIVE, [
+        if ( ! empty( $orderProduct->product_id ) ) {
+            /**
+             * we do proceed by doing an initial return
+             */
+            $this->productService->stockAdjustment( ProductHistory::ACTION_RETURNED, [
                 'total_price'       =>  $productRefund->total_price,
                 'quantity'          =>  $productRefund->quantity,
                 'unit_price'        =>  $productRefund->unit_price,
@@ -1732,6 +1723,21 @@ class OrdersService
                 'unit_id'           =>  $productRefund->unit_id,
                 'order_id'          =>  $order->id
             ]);
+    
+            /**
+             * If the returned stock is damaged
+             * then we can pull this out from the stock
+             */
+            if ( $details[ 'condition' ] === OrderProductRefund::CONDITION_DAMAGED ) {
+                $this->productService->stockAdjustment( ProductHistory::ACTION_DEFECTIVE, [
+                    'total_price'       =>  $productRefund->total_price,
+                    'quantity'          =>  $productRefund->quantity,
+                    'unit_price'        =>  $productRefund->unit_price,
+                    'product_id'        =>  $productRefund->product_id,
+                    'unit_id'           =>  $productRefund->unit_id,
+                    'order_id'          =>  $order->id
+                ]);
+            }
         }
 
         return [
