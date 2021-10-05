@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
+use ErrorException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -112,6 +113,12 @@ class Handler extends ExceptionHandler
                 'use'           =>  Exception::class,
                 'safeMessage'   =>  null,
                 'code'          =>  503
+            ],
+
+            ErrorException::class         =>  [
+                'use'           =>  Exception::class,
+                'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details.' ),
+                'code'          =>  503
             ]
         ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
             if ( $exception instanceof $class ) {
@@ -124,7 +131,7 @@ class Handler extends ExceptionHandler
                      * sensitive informations.
                      */
                     return response()->json([
-                        'message' => env( 'APP_DEBUG' ) && ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                        'message' => ! env( 'APP_DEBUG' ) && ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
                     ], $exceptionConfig[ 'code' ] ?? 500 );    
                 } 
     
