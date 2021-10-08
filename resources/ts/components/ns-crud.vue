@@ -206,11 +206,21 @@ export default {
         pageNumbers(count, current) {
             var shownPages = 3;
             var result = [];
-            if (current > count - shownPages) {
-                result.push(count - 2, count - 1, count);
-            } else {
-                result.push(current, current + 1, current + 2, '...', count);
+
+            if ( current - 3 > 1 ) {
+                result.push( 1, '...' );
             }
+
+            for( let i = 1; i <= count; i++ ) {
+                if ( current + 3 > i && current - 3 < i ) {
+                    result.push(i);
+                }
+            }
+
+            if ( current + 3 < count ) {
+                result.push( '...', count );
+            }
+            
             return result.filter( f => f > 0 || typeof f === 'string' );
         },
 

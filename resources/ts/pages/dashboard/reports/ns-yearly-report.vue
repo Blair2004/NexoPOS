@@ -1,6 +1,7 @@
 <script>
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
+import nsNotice from "@/components/ns-notice";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 
@@ -8,17 +9,22 @@ import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 export default {
     name : 'ns-yearly-report',
     mounted() {
-        this.loadReport();
+        if ( this.timezone !== '' ) {
+            this.year   =   ns.date.getMoment().format( 'Y' );
+            this.loadReport();
+        }
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsNotice
     },
     data() {
         return {
             startDate: moment(),
             endDate: moment(),
             report: {},
-            year: ns.date.getMoment().format( 'Y' ),
+            timezone: ns.date.timeZone,
+            year: '',
             labels: [ 'month_paid_orders', 'month_taxes', 'month_expenses', 'month_income' ]
         }
     },

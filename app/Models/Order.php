@@ -3,6 +3,7 @@ namespace App\Models;
 
 use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
+use App\Classes\Hook;
 use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -151,5 +152,61 @@ class Order extends NsModel
     public function scopePaymentStatusIn( $query, array $statuses )
     {
         return $query->whereIn( 'payment_status', $statuses );
+    }
+
+    /**
+     * Will return conditionnaly the merged products
+     * or all the product if it's enabled or disabled.
+     * @return array
+     */
+    public function getProductsAttribute()
+    {
+        if ( ns()->option->get( 'ns_invoice_merge_similar_products', 'no' ) === 'yes' ) {
+            return $this->combinedProducts;
+        }
+
+        return $this->products()->get();
+    }
+
+    public function getCombinedProductsAttribute()
+    {
+        $combinaison        =   [];
+
+        $this->products()->with( 'unit' )->get()->each( function( $product ) use ( &$combinaison ){
+            $values     =   $product->toArray();
+
+            extract( $values );
+
+            $keys                   =   array_keys( $combinaison );
+            $stringified            =   Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
+            $combinaisonAttributes  =   Hook::filter( 'ns-products-combinaison-attributes', [
+                'quantity',
+                'total_gross_price',
+                'total_price',
+                'total_purchase_price',
+                'total_net_price',
+                'discount'
+            ]);
+
+            if ( in_array( $stringified, $keys ) ) {
+                foreach( $combinaisonAttributes as $attribute ) {
+                    $combinaison[ $stringified ][ $attribute ]                  +=  (float) $product->$attribute;
+                }
+            } else {
+                $rawProduct                     =   $product->toArray();
+
+                unset( $rawProduct[ 'id' ] );
+                unset( $rawProduct[ 'created_at' ] );
+                unset( $rawProduct[ 'updated_at' ] );
+                unset( $rawProduct[ 'procurement_product_id' ] );
+
+                $combinaison[ $stringified ]    =   $rawProduct;
+            }
+        });
+
+        /**
+         * that's nasty.
+         */
+        return collect( json_decode( json_encode( $combinaison ) ) );
     }
 }

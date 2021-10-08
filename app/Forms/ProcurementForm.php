@@ -62,7 +62,14 @@ class ProcurementForm extends SettingsPage
             'products'          =>  isset( $procurement ) ? $procurement->products->map( function( $_product ) {
                 $product                    =   Product::findOrFail( $_product->product_id );
                 $product->load( 'unit_quantities.unit' )->get();
+                
+                $_product->procurement      =   array_merge( $_product->toArray(), [
+                    '$invalid'              =>  false,
+                    'purchase_price_edit'   =>  $_product->purchase_price
+                ]);
+
                 $_product->unit_quantities  =   $product->unit_quantities;
+
                 return $_product;
             }) : [],
             'tabs'              =>  [

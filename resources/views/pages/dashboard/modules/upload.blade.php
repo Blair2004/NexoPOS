@@ -13,7 +13,7 @@
         <div>
             <div class="flex justify-between items-center">
                 <div class="">
-                    <a href="{{ ns()->route( 'ns.dashboard.modules-list' ) }}" class="rounded-lg text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white"><i class="las la-angle-left"></i> {{ __( 'Return' ) }}</a>
+                    <a href="{{ ns()->route( 'ns.dashboard.modules-list' ) }}" class="rounded-lg text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
                 </div>
             </div>
             <form action="{{ ns()->route( 'ns.dashboard.modules-upload-post' ) }}" method="post" enctype="multipart/form-data">

@@ -15,14 +15,14 @@ use Illuminate\Support\Facades\Auth;
 
 class TestService
 {
-    public function prepareOrder( Carbon $date, array $orderDetails = [], array $productDetails = [] )
+    public function prepareOrder( Carbon $date, array $orderDetails = [], array $productDetails = [], array $config = [] )
     {
         /**
          * @var CurrencyService
          */
         $currency       =   app()->make( CurrencyService::class );
         $faker          =   Factory::create();
-        $products       =   Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->get()->shuffle()->take(3);
+        $products       =   isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->get()->shuffle()->take(3);
         $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
         $discountRate   =   $faker->numberBetween(0,5);
 

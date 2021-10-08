@@ -12,7 +12,11 @@
         </div>
         <ns-yearly-report inline-template v-cloak>
             <div class="px-4">
-                <div class="flex -mx-2">
+                <ns-notice color="red" v-if="timezone === ''">
+                    <template v-slot:title>{{ __( 'An Error Has Occured' ) }}</template>
+                    <template v-slot:description>{{ __( 'Unable to load the report as the timezone is not set on the settings.' ) }}</template>
+                </ns-notice>
+                <div class="flex -mx-2" v-if="timezone !== ''">
                     <div class="px-2">
                         <input type="text" v-model="year" placeholder="{{ __( 'Year' ) }}" class="outline-none rounded border-gray-400 border-2 focus:border-blue-400 p-2">
                     </div>
@@ -35,7 +39,7 @@
                         </button>
                     </div>
                 </div>
-                <div id="annual-report" class="anim-duration-500 fade-in-entrance">
+                <div id="annual-report" class="anim-duration-500 fade-in-entrance" v-if="timezone !== ''">
                     <div class="flex w-full">
                         <div class="my-4 flex justify-between w-full">
                             <div class="text-gray-600">
