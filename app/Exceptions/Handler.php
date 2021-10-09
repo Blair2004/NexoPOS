@@ -117,7 +117,7 @@ class Handler extends ExceptionHandler
 
             ErrorException::class         =>  [
                 'use'           =>  Exception::class,
-                'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details.' ),
+                'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details or enable the debugging.' ),
                 'code'          =>  503
             ]
         ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
@@ -135,7 +135,9 @@ class Handler extends ExceptionHandler
                     ], $exceptionConfig[ 'code' ] ?? 500 );    
                 } 
     
-                return ( new $exceptionConfig[ 'use' ]( $exception->getMessage() ) )
+                return ( new $exceptionConfig[ 'use' ]( 
+                    ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                ) )
                     ->render( $request );
             }
 
