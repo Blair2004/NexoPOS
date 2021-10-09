@@ -413,7 +413,7 @@ class ExpenseService
      * @param OrderProduct $orderProduct
      * @return void
      */
-    public function createExpenseFromRefund( OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
+    public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
     {
         $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_account' ) );
 
@@ -440,6 +440,7 @@ class ExpenseService
         $expense->active            =   true;
         $expense->operation         =   CashFlow::OPERATION_DEBIT;
         $expense->author            =   Auth::id();
+        $expense->order_id          =   $order->id;
         $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
         $expense->name              =   sprintf( __( 'Refunding : %s' ), $orderProduct->name );
         $expense->id                =   0; // this is not assigned to an existing expense
@@ -469,17 +470,19 @@ class ExpenseService
             ns()->option->set( $optionName, $expenseCategory->id );
         }
 
-        $expense                    =   new Expense;
-        $expense->value             =   $orderProductRefund->total_price;
-        $expense->active            =   true;
-        $expense->operation         =   $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? CashFlow::OPERATION_DEBIT : CashFlow::OPERATION_CREDIT;
-        $expense->author            =   Auth::id();
-        $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
-        $expense->name              =   sprintf( __( 'Stock Return (%s) : %s' ), $conditionLabel, $orderProduct->name );
-        $expense->id                =   0; // this is not assigned to an existing expense
-        $expense->category          =   $expenseCategory;
-
-        $this->recordCashFlowHistory( $expense );
+        if ( OrderProductRefund::CONDITION_DAMAGED ) {
+            $expense                    =   new Expense;
+            $expense->value             =   $orderProductRefund->total_price;
+            $expense->active            =   true;
+            $expense->operation         =   CashFlow::OPERATION_DEBIT;
+            $expense->author            =   Auth::id();
+            $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
+            $expense->name              =   sprintf( __( 'Stock Return (%s) : %s' ), $conditionLabel, $orderProduct->name );
+            $expense->id                =   0; // this is not assigned to an existing expense
+            $expense->category          =   $expenseCategory;
+    
+            $this->recordCashFlowHistory( $expense );
+        }
     }
 
     public function handleCashRegisterHistory( RegisterHistory $history )

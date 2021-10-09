@@ -26,7 +26,7 @@ class TestService
         $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
         $discountRate   =   $faker->numberBetween(0,5);
 
-        $products           =   $products->map( function( $product ) use ( $faker, $productDetails ) {
+        $products           =   $products->map( function( $product ) use ( $faker, $productDetails, $config ) {
             $unitElement    =   $faker->randomElement( $product->unit_quantities );
 
             $data           =   array_merge([
@@ -38,7 +38,7 @@ class TestService
                 'unit_id'               =>  $unitElement->unit_id,
             ], $productDetails );
 
-            if ( $faker->randomElement([ false, true ]) ) {
+            if ( $faker->randomElement([ false, true ]) || ! ( $config[ 'allow_quick_products' ] ?? true ) ) {
                 $data[ 'product_id' ]       =   $product->id;
                 $data[ 'unit_quantity_id' ] =   $unitElement->id;
             }

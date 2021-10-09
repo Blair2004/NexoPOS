@@ -2036,7 +2036,11 @@ class OrdersService
     {
         event( new OrderBeforeDeleteEvent( $order ) );
 
-        $order->products->each( function( OrderProduct $product) {
+        $order
+            ->products()
+            ->get()
+            ->each( function( OrderProduct $product) {
+
             /**
              * we do proceed by doing an initial return
              * only if the product is not a quick product/service

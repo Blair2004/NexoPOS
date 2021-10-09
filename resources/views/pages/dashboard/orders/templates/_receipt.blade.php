@@ -26,7 +26,7 @@ use App\Classes\Hook;
                     </tr>
                 </thead>
                 <tbody class="text-sm">
-                    @foreach( Hook::filter( 'ns-receipt-products', $order->products ) as $product )
+                    @foreach( Hook::filter( 'ns-receipt-products', $order->combinedProducts ) as $product )
                     <tr>
                         <td colspan="2" class="p-2 border-b border-gray-700">
                             <span class="">{{ $product->name }} (x{{ $product->quantity }})</span>

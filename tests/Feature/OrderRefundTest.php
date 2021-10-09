@@ -139,9 +139,12 @@ class OrderRefundTest extends TestCase
          * We'll keep original products amounts and quantity
          * this means we're doing a full refund of price and quantities
          */
-        $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'condition' ]      =   OrderProductRefund::CONDITION_DAMAGED;
-        $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ]       =   1;
-        $responseData[ 'data' ][ 'order' ][ 'products' ][0][ 'description' ]    =   __( 'The product wasn\'t properly manufactured, causing external damage to the device during the shipment.' );
+        $responseData[ 'data' ][ 'order' ][ 'products' ]    =   collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) {
+            $product[ 'condition' ]     =   OrderProductRefund::CONDITION_DAMAGED;
+            $product[ 'quantity' ]      =   1;
+            $product[ 'description' ]   =   __( 'Test : The product wasn\'t properly manufactured, causing external damage to the device during the shipment.' );
+            return $product;
+        })->toArray();
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
@@ -181,10 +184,11 @@ class OrderRefundTest extends TestCase
             throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
         }
 
-        $expense    =   $expenseCategory->cashFlowHistories()->orderBy( 'id', 'desc' )->first();
+        $expenseValue    =   $expenseCategory->cashFlowHistories()
+            ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+            ->sum( 'value' );
 
-
-        if ( ( float ) $expense->getRawOriginal( 'value' ) != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
+        if ( ( float ) $expenseValue != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
             throw new Exception( __( 'The expense created after the refund doesn\'t match the order refund total.' ) );
         }  
         
