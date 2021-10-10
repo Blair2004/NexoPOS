@@ -18,6 +18,7 @@ use App\Fields\OrderPaymentFields;
 use App\Models\Order;
 use App\Http\Requests\OrderPaymentRequest;
 use App\Classes\Hook;
+use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
 use App\Exceptions\NotAllowedException;
@@ -85,9 +86,13 @@ class OrdersController extends DashboardController
 
     public function listOrders()
     {
-        return $this->view( 'pages.dashboard.orders.list', [
-            'title' =>  __( 'Orders' )
-        ]);
+        Hook::addFilter( 
+            'ns-crud-footer', 
+            fn( Output $output ) => $output
+                ->addView( 'pages.dashboard.orders.footer' ) 
+        );
+
+        return OrderCrud::table();
     }
 
     public function getPOSOrder( $order_id )
@@ -123,7 +128,7 @@ class OrdersController extends DashboardController
             $id->load( 'shipping_address' );
             $id->load( 'billing_address' );
             $id->load( 'products.unit' );
-            $id->load( 'refundedProducts.unit', 'refundedProducts.product' );
+            $id->load( 'refundedProducts.unit', 'refundedProducts.product', 'refundedProducts.orderProduct' );
             return $id;
         }
 

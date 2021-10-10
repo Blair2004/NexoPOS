@@ -136,6 +136,33 @@ class CrudService
     }
 
     /**
+     * Will return picked array
+     * @return array
+     */
+    public function getPicked()
+    {
+        return $this->pick ?? [];
+    }
+
+    /**
+     * Will handle the definition operator
+     */
+    public function handleDefinitionOperator( $query, $definition, $searchKeyValue )
+    {
+        extract( $searchKeyValue );
+        /**
+         * @param string $key
+         * @param mixed $value
+         */
+
+        if ( isset( $definition[ 'operator' ] ) ) {
+            $query->where( $key, $definition[ 'operator' ], $value );
+        } else {
+            $query->where( $key, $value );
+        }
+    }
+
+    /**
      * Returns the available query filters
      * @return array
      */
@@ -244,7 +271,14 @@ class CrudService
                      * some columns from the related tables
                      */
                     $table          =   $relation[0];
-                    $pick           =   $this->pick ?? [];
+
+                    /**
+                     * If the CRUD instance has osme entries 
+                     * that are picked, we'll allow extensibility
+                     * using the filter "getPicked".
+                     */
+                    $pick           =   Hook::filter( self::method( 'getPicked' ), $this->getPicked() );
+
                     $hasAlias       =   explode( ' as ', $relation[0] ); // if there is an alias, let's just pick the table name
                     $hasAlias[0]    =   $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName      =   $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
@@ -437,7 +471,15 @@ class CrudService
                                 }
                             break;
                             default:
-                                $query->where( $key, $value );
+                                /**
+                                 * We would like to apply a specific operator
+                                 * if it's provided to each requests
+                                 */
+                                $this->handleDefinitionOperator( 
+                                    $query, 
+                                    $definition, 
+                                    compact( 'key', 'value' ) 
+                                );
                             break;
                         }
                     } else {
@@ -722,13 +764,13 @@ class CrudService
              * that displays the title on the page.
              * It fetches the value from the labels
              */
-            'title'         =>  $instance->getLabels()[ 'list_title' ],
+            'title'         =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_title' ],
 
             /**
              * That displays the page description. This allow pull the value
              * from the labels.
              */
-            'description'   =>  $instance->getLabels()[ 'list_description' ],
+            'description'   =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_description' ],
 
             /**
              * This create the src URL using the "namespace".
@@ -739,7 +781,7 @@ class CrudService
              * This pull the creation link. That link should takes the user
              * to the creation form.
              */
-            'createUrl'     =>  $instance->getLinks()[ 'create' ] ?? '#',
+            'createUrl'     =>  Hook::filter( $instance::method( 'getLinks' ), $instance->getLinks() )[ 'create' ] ?? '#',
 
             /**
              * Provided to render the side menu.

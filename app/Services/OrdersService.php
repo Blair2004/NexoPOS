@@ -2280,6 +2280,22 @@ class OrdersService
         $orders                 =   Order::paymentExpired()->get();
 
         if ( ! $orders->isEmpty() ) {
+
+            /**
+             * The status changes according to the fact
+             * if some orders has received a payment.
+             */
+            $orders->each( function( $order ) {
+                
+                if ( $order->paid > 0 ) {
+                    $order->payment_status  =   Order::PAYMENT_PARTIALLY_DUE;
+                } else {
+                    $order->payment_status  =   Order::PAYMENT_DUE;
+                }
+
+                $order->save();
+            });
+
             $notificationID     =   'ns.due-orders-notifications';
 
             /**

@@ -26,6 +26,8 @@ class Order extends NsModel
     const PAYMENT_VOID                      =   'order_void';
     const PAYMENT_REFUNDED                  =   'refunded';
     const PAYMENT_PARTIALLY_REFUNDED        =   'partially_refunded';
+    const PAYMENT_DUE                       =   'due';
+    const PAYMENT_PARTIALLY_DUE             =   'partially_due';
 
     const PROCESSING_PENDING                =   'pending';
     const PROCESSING_ONGOING                =   'ongoing';

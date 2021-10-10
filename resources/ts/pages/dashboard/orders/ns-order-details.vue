@@ -173,7 +173,7 @@
             </div>
             <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start bg-gray-200  mb-2">
                 <div>
-                    <h4 class="text-semibold text-gray-700">{{ product.product.name }} (x{{ product.quantity }})</h4>
+                    <h4 class="text-semibold text-gray-700">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-red-400 text-white' : 'bg-blue-400 text-white'">{{ product.condition }}</span></p>
                 </div>
                 <div class="font-semibold text-gray-800">{{ product.total_price | currency }}</div>

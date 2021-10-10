@@ -48,7 +48,7 @@ class OrderCrud extends CrudService
 
     public $pick                =   [
         'nexopos_users'         =>  [ 'username' ],
-        'nexopos_customers'     =>  [ 'name' ]
+        'nexopos_customers'     =>  [ 'name', 'phone' ]
     ];
 
     public $queryFilters    =   [];
@@ -104,11 +104,13 @@ class OrderCrud extends CrudService
                 'description'   =>  __( 'Restrict the orders by the payment status.' ),
                 'options'   =>  Helper::kvToJsOptions([
                     Order::PAYMENT_PAID                 =>  __( 'Paid' ),
-                    Order::PAYMENT_PARTIALLY            =>   __( 'Partially Paid' ),
+                    Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
                     Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
                     Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
                     Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
                     Order::PAYMENT_VOID                 =>  __( 'Voided' ),
+                    Order::PAYMENT_DUE                  =>  __( 'Due' ),
+                    Order::PAYMENT_PARTIALLY_DUE        =>  __( 'Due With Payment' ),
                 ])
             ], [
                 'type'      =>  'select',
@@ -122,6 +124,13 @@ class OrderCrud extends CrudService
                 'name'      =>  'customer_id',
                 'description'   =>  __( 'Restrict the orders by the customer.' ),
                 'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ])
+            ], [
+                'type'      =>  'text',
+                'label'     =>  __( 'Customer Phone' ),
+                'name'      =>  'phone',
+                'operator'  =>  'like',
+                'description'   =>  __( 'Restrict orders using the customer phone number.' ),
+                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'phone' ])
             ], [
                 'type'      =>  'select',
                 'label'     =>  __( 'Cash Register' ),
@@ -439,6 +448,11 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'nexopos_customers_phone'   =>  [
+                'label'         =>  __( 'Phone' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
+            ],
             'discount'  =>  [
                 'label'  =>  __( 'Discount' ),
                 '$direction'    =>  '',
@@ -503,8 +517,9 @@ class OrderCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
-        $entry->total           =   ( string ) ns()->currency->define( $entry->total );
-        $entry->discount        =   ( string ) ns()->currency->define( $entry->discount );
+        $entry->nexopos_customers_phone     =   $entry->nexopos_customers_phone ?: __( 'N/A' );
+        $entry->total                       =   ( string ) ns()->currency->define( $entry->total );
+        $entry->discount                    =   ( string ) ns()->currency->define( $entry->discount );
 
         $entry->delivery_status         =   $orderService->getShippingLabel( $entry->delivery_status );
         $entry->process_status          =   $orderService->getProcessStatus( $entry->process_status );
