@@ -567,12 +567,12 @@ export default {
         },
 
         async payOrder() {
-            const queues    =   [
+            const queues    =   nsHooks.applyFilters( 'ns-pay-queue', [
                 ProductsQueue,
                 CustomerQueue,
                 TypeQueue,
                 PaymentQueue
-            ];
+            ]);
 
             for( let index in queues ) {
                 try {

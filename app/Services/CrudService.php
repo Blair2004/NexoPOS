@@ -182,6 +182,16 @@ class CrudService
     }
 
     /**
+     * Will return mutated relation
+     * for the Crud instance
+     * @return arrray $relations
+     */
+    public function getRelations()
+    {
+        return Hook::filter( self::method( 'getRelations' ), $this->relations );
+    }
+
+    /**
      * get Entries
      * @param crud config
      * @return entries
@@ -195,7 +205,7 @@ class CrudService
         /**
          * Let's loop relation if they exists
          */
-        if ( $this->relations ) {
+        if ( $this->getRelations() ) {
             /**
              * First loop to retreive the columns and rename it
              */
@@ -226,7 +236,7 @@ class CrudService
             $relations      =   [];
             $relatedTables  =   [];
             
-            collect( $this->relations )->each( function( $relation ) use ( &$relations, &$relatedTables ){
+            collect( $this->getRelations() )->each( function( $relation ) use ( &$relations, &$relatedTables ){
                 if ( isset( $relation[0] ) ) {
                     if ( ! is_array( $relation[0] ) ) {
                         $relations[]    =   $relation;
@@ -321,7 +331,7 @@ class CrudService
 
             $query          =   call_user_func_array([ $query, 'select' ], $select );
 
-            foreach( $this->relations as $junction => $relation ) {
+            foreach( $this->getRelations() as $junction => $relation ) {
                 /**
                  * if no junction statement is provided
                  * then let's make it inner by default

@@ -31,6 +31,7 @@ use App\Crud\ProcurementProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
 use App\Crud\ProviderProcurementsCrud;
+use App\Crud\ProviderProductsCrud;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Crud\RolesCrud;
@@ -96,6 +97,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.roles': return RolesCrud::class;
                 case 'ns.providers-procurements' : return ProviderProcurementsCrud::class;
                 case 'ns.customers-account-history' : return CustomerAccountCrud::class;
+                case 'ns.providers-products': return ProviderProductsCrud::class;
             }
             return $namespace;
         });

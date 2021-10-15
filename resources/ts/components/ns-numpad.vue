@@ -24,7 +24,6 @@ export default {
                 .map( _ => 0 )
                 .join('') 
             ),
-            screenValue: '',
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -37,8 +36,10 @@ export default {
             ]
         }
     },
-    mounted() {
-        this.screenValue  =   this.value || 0;
+    computed: {
+        screenValue() {
+            return this.value === undefined ? 0 : this.value;
+        }
     },
     methods: {
         increaseBy( key ) {
@@ -54,6 +55,7 @@ export default {
         },
 
         inputValue( key ) {
+            let screenValue     =   this.screenValue;
             let number    =   parseInt( 
                 1 + ( new Array( this.cursor ) )
                 .fill('')
@@ -66,10 +68,10 @@ export default {
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
-                    this.screenValue      =   '0';
+                    screenValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue      =   this.screenValue.substr( 0, this.screenValue.length - 1 );
+                    screenValue      =   this.screenValue.substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
@@ -77,22 +79,22 @@ export default {
                 }
                 
                 if ( this.allSelected ) {
-                    this.screenValue      =   key.value.toString();
+                    screenValue      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    this.screenValue      +=  key.value.toString();
+                    screenValue      +=  key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        this.screenValue = this.screenValue > 100 ? 100 : this.screenValue;
+                        screenValue = this.screenValue > 100 ? 100 : this.screenValue;
                     }
                 }
             } 
 
-            if ( ( this.screenValue ) === "0" ) {
-                this.screenValue      =   '';
+            if ( ( screenValue ) === "0" ) {
+                screenValue      =   '';
             }
 
-            this.$emit( 'changed', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue );
+            this.$emit( 'changed', this.floating && screenValue.length > 0 ? parseFloat( screenValue / this.number ) : screenValue );
         }
     }
 }

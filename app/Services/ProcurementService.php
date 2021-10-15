@@ -855,7 +855,7 @@ class ProcurementService
     {
         $this->barcodeService->generateBarcode(
             $procurementProduct->barcode,
-            $procurementProduct->product->barcode_type
+            BarcodeService::TYPE_CODE128
         );
     }
 
