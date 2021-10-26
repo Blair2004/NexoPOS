@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\InstalledStateBeforeCheckedEvent;
 use Closure;
 
 class InstalledStateMiddleware
@@ -15,6 +16,8 @@ class InstalledStateMiddleware
      */
     public function handle($request, Closure $next)
     {
+        InstalledStateBeforeCheckedEvent::dispatch( $next, $request );
+        
         if ( ns()->installed() ) {
             return $next($request);
         }

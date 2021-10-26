@@ -7,6 +7,7 @@
             <h1 class="text-white text-center text-5xl font-bold">{!! $title ?? __( 'Access Denied' ) !!}</h1>
             <p class="py-3 font-semibold text-white text-center text-lg">{{ $message }}</p>
             <div class="flex -mx-4 my-4 flex-wrap">
+                <div class="px-4"><a class="btn bg-white text-gray-700" href="{{ route( 'ns.logout' ) }}"><i class="las la-sign-out-alt"></i> {{ __( 'Log out' ) }}</a></div>
                 <div class="px-4"><a class="btn bg-white text-gray-700" href="{{ ! empty( request()->query( 'back' ) ) ? urldecode( request()->query( 'back' ) ) : url()->previous() }}"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a></div>
                 <div class="px-4"><a class="btn bg-white text-gray-700" href="{{ url()->current() . '?back=' . urlencode( request()->query( 'back' ) ?? url()->previous() )  }}"><i class="las la-sync"></i> {{ __( 'Try Again' ) }}</a></div>
                 <div class="px-4"><a class="btn bg-white text-gray-700" href="{{ url( '/' ) }}"><i class="las la-home"></i> {{ __( 'Home' ) }}</a></div>

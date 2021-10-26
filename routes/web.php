@@ -27,6 +27,17 @@ use Illuminate\Routing\Route as RoutingRoute;
 |
 */
 
+/**
+ * Exclusively, we'll check if the multistore module is available
+ * and then load priorily his subdomain routes.
+ * @since 4.6.0
+ */
+$filePath   =   dirname( __FILE__ ) . '/../modules/NsMultiStore/Routes/web-subdomains.php';
+
+if( is_file( $filePath ) ) {
+    include_once( $filePath );
+}
+
 Route::get('/', function () {
     return view('welcome', [
         'title'     =>  __( 'Welcome &mdash; NexoPOS 4.x' )
@@ -35,25 +46,20 @@ Route::get('/', function () {
     'web',
 ]);
 
-include_once( dirname( __FILE__ ) . '/intermediate.php' );
+require( dirname( __FILE__ ) . '/intermediate.php' );
 
 Route::middleware([ 
     InstalledStateMiddleware::class, 
     CheckMigrationStatus::class, 
     SubstituteBindings::class 
 ])->group( function() {
-    Route::get( '/sign-in', 'AuthController@signIn' )->name( 'ns.login' );
-    Route::get( '/auth/activate/{user}/{token}', [ AuthController::class, 'activateAccount' ])->name( 'ns.activate-account' );
-    Route::get( '/sign-up', 'AuthController@signUp' )->name( 'ns.register' );
-    Route::get( '/password-lost', 'AuthController@passwordLost' )->name( 'ns.password-lost' );
-    Route::get( '/new-password/{user}/{token}', [ AuthController::class, 'newPassword' ])->name( 'ns.new-password' );
+    /**
+     * We would like to isolate certain routes as it's registered
+     * for authentication and are likely to be applicable to sub stores
+     */
+    require( dirname( __FILE__ ) . '/authenticate.php' );
 
-    Route::post( '/auth/sign-in', 'AuthController@postSignIn' )->name( 'ns.login.post' );
-    Route::post( '/auth/sign-up', 'AuthController@postSignUp' )->name( 'ns.register.post' );
-    Route::post( '/auth/password-lost', [ AuthController::class, 'postPasswordLost' ])->name( 'ns.password-lost' );
-    Route::post( '/auth/new-password/{user}/{token}', [ AuthController::class, 'postNewPassword' ])->name( 'ns.post.new-password' );
-    Route::get( '/sign-out', 'AuthController@signOut' )->name( 'ns.logout' );
-    Route::get( '/database-update/', 'UpdateController@updateDatabase' )
+    Route::get( '/database-update', 'UpdateController@updateDatabase' )
         ->withoutMiddleware([ CheckMigrationStatus::class ])
         ->name( 'ns.database-update' );
 
@@ -61,6 +67,7 @@ Route::middleware([
         Authenticate::class,
         CheckApplicationHealthMiddleware::class,
     ])->group( function() {
+
         Route::prefix( 'dashboard' )->group( function() {
 
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
@@ -71,22 +78,12 @@ Route::middleware([
                 require( dirname( __FILE__ ) . '/nexopos.php' );
             });
 
-            Route::get( '/modules', [ ModulesController::class, 'listModules' ])->name( 'ns.dashboard.modules-list' );
-            Route::get( '/modules/upload', [ ModulesController::class, 'showUploadModule' ])->name( 'ns.dashboard.modules-upload' );
-            Route::get( '/modules/download/{identifier}', [ ModulesController::class, 'downloadModule' ])->name( 'ns.dashboard.modules-download' );
-            Route::get( '/modules/migrate/{namespace}', [ ModulesController::class, 'migrateModule' ])->name( 'ns.dashboard.modules-migrate' );
-
-            Route::get( '/users', [ UsersController::class, 'listUsers' ])->name( 'ns.dashboard.users' );
-            Route::get( '/users/create', [ UsersController::class, 'createUser' ])->name( 'ns.dashboard.users-create' );
-            Route::get( '/users/edit/{user}', [ UsersController::class, 'editUser' ])->name( 'ns.dashboard.users.edit' );
-            Route::get( '/users/roles/permissions-manager', [ UsersController::class, 'permissionManager' ]);
-            Route::get( '/users/profile', [ UsersController::class, 'getProfile' ])->name( 'ns.dashboard.users.profile' );
-            Route::get( '/users/roles', [ UsersController::class, 'rolesList' ])->name( 'ns.dashboard.users.roles' );
-            Route::get( '/users/roles/create', [ UsersController::class, 'createRole' ])->name( 'ns.dashboard.users.roles-create' );
-            Route::get( '/users/roles/edit/{role}', [ UsersController::class, 'editRole' ])->name( 'ns.dashboard.users.roles-edit' );
+            include( dirname( __FILE__ ) . '/web/modules.php' );
+            include( dirname( __FILE__ ) . '/web/users.php' );
 
             Route::get( '/crud/download/{hash}', [ CrudController::class, 'downloadSavedFile' ])->name( 'ns.dashboard.crud-download' );
         });
+        
     });
 });
 

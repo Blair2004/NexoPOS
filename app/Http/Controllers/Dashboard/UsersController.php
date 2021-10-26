@@ -18,10 +18,16 @@ use App\Crud\RolesCrud;
 use App\Models\ProductCategory;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\Users;
 use Exception;
 
 class UsersController extends DashboardController
 {
+    /**
+     * @param Users
+     */
+    protected $usersService;
+    
     public function __construct()
     {
         parent::__construct();
@@ -169,6 +175,14 @@ class UsersController extends DashboardController
     public function createRole( Role $role )
     {
         return RolesCrud::form();
+    }
+
+    public function cloneRole( Role $role )
+    {
+        ns()->restrict([ 'create.roles' ]);
+
+        $this->usersService     =   app()->make( Users::class );
+        return $this->usersService->cloneRole( $role );
     }
 }
 

@@ -14,11 +14,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Role extends NsRootModel
 {
     use HasFactory;
-        protected $table    =   'nexopos_roles';
+    protected $table    =   'nexopos_roles';
 
     protected $cats     =   [
         'locked'        =>  'boolean'
     ];
+
+    protected $guarded     =   [ 'id' ];
 
     /**
      * Relation with users

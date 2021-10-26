@@ -9,6 +9,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Role;
 use App\Services\Helper;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class RolesCrud extends CrudService
@@ -175,6 +176,7 @@ class RolesCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'namespace' ] );
         $inputs[ 'locked' ]     =   false;
         return $inputs;
     }
@@ -186,6 +188,7 @@ class RolesCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Role $entry )
     {
+        $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'namespace' ] );
         return $inputs;
     }
 
@@ -324,6 +327,15 @@ class RolesCrud extends CrudService
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
+            ], [
+                'label'         =>      __( 'Clone' ),
+                'namespace'     =>      'clone',
+                'type'          =>      'GET',
+                'confirm'       =>      [
+                    'message'   =>  __( 'Would you like to clone this role ?' ),
+                ],
+                'index'         =>      'id',
+                'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

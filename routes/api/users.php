@@ -5,4 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( '/users/roles', [ UsersController::class, 'getRoles' ]);
 Route::put( '/users/roles', [ UsersController::class, 'updateRole' ]);
+Route::get( '/users/roles/{role}/clone', [ UsersController::class, 'cloneRole' ]);
 Route::get( '/users/permissions', [ UsersController::class, 'getPermissions' ]);
