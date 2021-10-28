@@ -6,7 +6,9 @@ return [
         'fr'        =>  'Français',
         'es'        =>  'Espanol',
         'it'        =>  'Italian',
+        'ar'        =>  'Arabic'
     ],
+    'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',
