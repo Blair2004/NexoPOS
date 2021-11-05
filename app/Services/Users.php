@@ -207,6 +207,7 @@ class Users
 
         $newRole[ 'name' ]      =   $name;
         $newRole[ 'namespace' ] =   $namespace;
+        $newRole[ 'locked' ]    =   0; // shouldn't be locked by default.
 
         /**
          * @var Role
