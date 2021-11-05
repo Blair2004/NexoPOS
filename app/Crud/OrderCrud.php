@@ -88,6 +88,12 @@ class OrderCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         /**
+         * This will allow module to change the bound
+         * class for the default User model.
+         */
+        $UserClass              =   app()->make( User::class );
+
+        /**
          * Let's define the query filters
          * we would like to apply to the crud
          */
@@ -117,7 +123,7 @@ class OrderCrud extends CrudService
                 'label'     =>  __( 'Author' ),
                 'name'      =>  'nexopos_orders.author',
                 'description'   =>  __( 'Restrict the orders by the author.' ),
-                'options'   =>  Helper::toJsOptions( User::get(), [ 'id', 'username' ])
+                'options'   =>  Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ])
             ], [
                 'type'      =>  'select',
                 'label'     =>  __( 'Customer' ),
