@@ -48,4 +48,9 @@ class ProductUnitQuantity extends NsModel
     {
         return $query->where( 'product_id', $id );
     }
+
+    public function scopeStockAlertEnabled( Builder $query )
+    {
+        return $query->where( 'stock_alert_enabled', true );
+    }
 }

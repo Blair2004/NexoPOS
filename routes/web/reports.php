@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
 Route::get( '/reports/products-report', [ ReportsController::class, 'productsReport' ]);
+Route::get( '/reports/low-stock', [ ReportsController::class, 'lowStockReport' ])->name( ns()->routeName( 'ns.dashboard.reports-low-stock' ) );
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);

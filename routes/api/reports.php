@@ -13,3 +13,4 @@ Route::post( 'reports/payment-types', [ ReportsController::class, 'getPaymentTyp
 Route::post( 'reports/products-report', [ ReportsController::class, 'getProductsReport' ]);
 Route::post( 'reports/compute/{type}', [ ReportsController::class, 'computeReport' ]);
 Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ]);
+Route::get( 'reports/low-stock', [ ReportsController::class, 'getLowStock' ]);

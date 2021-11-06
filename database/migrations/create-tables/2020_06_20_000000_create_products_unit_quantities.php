@@ -28,6 +28,8 @@ class CreateProductsUnitQuantities extends Migration
                 $table->integer( 'unit_id' );
                 $table->string( 'barcode' )->nullable();
                 $table->float( 'quantity', 18, 5 );
+                $table->float( 'low_quantity', 18, 5 )->default(0);
+                $table->boolean( 'stock_alert_enabled' )->default(false);
                 $table->float( 'sale_price', 18, 5 )->default(0); // could be 0 if the product support variations
                 $table->float( 'sale_price_edit', 18, 5 )->default(0); // to let the system consider the price sent by the client
                 $table->float( 'excl_tax_sale_price', 18, 5 )->default(0); // must be computed automatically

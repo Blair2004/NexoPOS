@@ -49,4 +49,10 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission->namespace      =   'nexopos.reports.payment-types';
     $permission->description    =   __( 'Let the user read the report that shows sales by payment types.' );
     $permission->save();
+
+    $permission                 =   new Permission;
+    $permission->name           =   __( 'Read Low Stock Report' );
+    $permission->namespace      =   'nexopos.reports.low-stock';
+    $permission->description    =   __( 'Let the user read the report that shows low stock.' );
+    $permission->save();
 }

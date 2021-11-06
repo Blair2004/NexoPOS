@@ -165,6 +165,19 @@ class ProductCrud extends CrudService
                 'description'   =>  __( 'Define the regular selling price.' ),
                 'validation'    =>  'required',
             ], [
+                'type'  =>  'number',
+                'errors'        =>  [],
+                'name'  =>  'low_quantity',
+                'label' =>  __( 'Low Quantity' ),
+                'description'   =>  __( 'Which quantity should be assumed low.' ),
+            ], [
+                'type'  =>  'switch',
+                'errors'        =>  [],
+                'name'  =>  'stock_alert_enabled',
+                'label' =>  __( 'Stock Alert' ),
+                'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                'description'   =>  __( 'Define whether the stock alert should be enabled for this unit.' ),
+            ], [
                 'type'          =>  'number',
                 'errors'        =>  [],
                 'name'          =>  'wholesale_price_edit',
