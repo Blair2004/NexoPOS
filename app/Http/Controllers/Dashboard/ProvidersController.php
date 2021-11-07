@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Fields\ProviderFields;
 use App\Crud\ProviderCrud;
 use App\Crud\ProviderProcurementsCrud;
+use App\Crud\ProviderProductsCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\Provider;
 use App\Services\Options;
@@ -143,6 +144,28 @@ class ProvidersController extends DashboardController
                 __( 'Procurements by "%s"' ),
                 $provider->name
             )
+        ]);
+    }
+
+    /**
+     * Will list all products
+     * provided by that provider
+     * @param Provider $provider
+     * @return array
+     */
+    public function listProvidersProducts( Provider $provider ) 
+    {
+        $procurements   =   $provider
+            ->procurements()
+            ->get( 'id' )
+            ->map( fn( $procurement ) => $procurement->id )
+            ->toArray();
+
+        return ProviderProductsCrud::table([
+            'title'         =>  sprintf( __( '%s\'s Products' ), $provider->name ),
+            'queryParams'   =>  [
+                'procurements'  =>  $procurements
+            ]
         ]);
     }
 }

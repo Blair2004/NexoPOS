@@ -136,6 +136,33 @@ class CrudService
     }
 
     /**
+     * Will return picked array
+     * @return array
+     */
+    public function getPicked()
+    {
+        return $this->pick ?? [];
+    }
+
+    /**
+     * Will handle the definition operator
+     */
+    public function handleDefinitionOperator( $query, $definition, $searchKeyValue )
+    {
+        extract( $searchKeyValue );
+        /**
+         * @param string $key
+         * @param mixed $value
+         */
+
+        if ( isset( $definition[ 'operator' ] ) ) {
+            $query->where( $key, $definition[ 'operator' ], $value );
+        } else {
+            $query->where( $key, $value );
+        }
+    }
+
+    /**
      * Returns the available query filters
      * @return array
      */
@@ -155,6 +182,16 @@ class CrudService
     }
 
     /**
+     * Will return mutated relation
+     * for the Crud instance
+     * @return arrray $relations
+     */
+    public function getRelations()
+    {
+        return Hook::filter( self::method( 'getRelations' ), $this->relations );
+    }
+
+    /**
      * get Entries
      * @param crud config
      * @return entries
@@ -168,7 +205,7 @@ class CrudService
         /**
          * Let's loop relation if they exists
          */
-        if ( $this->relations ) {
+        if ( $this->getRelations() ) {
             /**
              * First loop to retreive the columns and rename it
              */
@@ -199,7 +236,7 @@ class CrudService
             $relations      =   [];
             $relatedTables  =   [];
             
-            collect( $this->relations )->each( function( $relation ) use ( &$relations, &$relatedTables ){
+            collect( $this->getRelations() )->each( function( $relation ) use ( &$relations, &$relatedTables ){
                 if ( isset( $relation[0] ) ) {
                     if ( ! is_array( $relation[0] ) ) {
                         $relations[]    =   $relation;
@@ -244,7 +281,14 @@ class CrudService
                      * some columns from the related tables
                      */
                     $table          =   $relation[0];
-                    $pick           =   $this->pick ?? [];
+
+                    /**
+                     * If the CRUD instance has osme entries 
+                     * that are picked, we'll allow extensibility
+                     * using the filter "getPicked".
+                     */
+                    $pick           =   Hook::filter( self::method( 'getPicked' ), $this->getPicked() );
+
                     $hasAlias       =   explode( ' as ', $relation[0] ); // if there is an alias, let's just pick the table name
                     $hasAlias[0]    =   $this->hookTableName( $hasAlias[0] ); // make the table name hookable
                     $aliasName      =   $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
@@ -287,7 +331,7 @@ class CrudService
 
             $query          =   call_user_func_array([ $query, 'select' ], $select );
 
-            foreach( $this->relations as $junction => $relation ) {
+            foreach( $this->getRelations() as $junction => $relation ) {
                 /**
                  * if no junction statement is provided
                  * then let's make it inner by default
@@ -419,7 +463,38 @@ class CrudService
              */
             if ( ! empty( $filters ) ) {
                 foreach( $filters as $key => $value ) {
-                    $query->where( $key, $value );
+                    /**
+                     * we won't handle empty value
+                     */
+                    if ( empty( $value ) ) {
+                        continue;
+                    }
+
+                    $definition     =   collect( $this->queryFilters )->filter( fn( $filter ) => $filter[ 'name' ] === $key )->first();
+
+                    if ( ! empty( $definition ) ) {
+                        switch( $definition[ 'type' ] ) {
+                            case 'daterangepicker':
+                                if ( $value[ 'startDate' ] !== null && $value[ 'endDate' ] !== null ) {
+                                    $query->where( $key, '>=', Carbon::parse( $value[ 'startDate' ] )->toDateTimeString() );
+                                    $query->where( $key, '<=', Carbon::parse( $value[ 'endDate' ] )->toDateTimeString() );
+                                }
+                            break;
+                            default:
+                                /**
+                                 * We would like to apply a specific operator
+                                 * if it's provided to each requests
+                                 */
+                                $this->handleDefinitionOperator( 
+                                    $query, 
+                                    $definition, 
+                                    compact( 'key', 'value' ) 
+                                );
+                            break;
+                        }
+                    } else {
+                        $query->where( $key, $value );
+                    }
                 }
             }
         }
@@ -699,13 +774,13 @@ class CrudService
              * that displays the title on the page.
              * It fetches the value from the labels
              */
-            'title'         =>  $instance->getLabels()[ 'list_title' ],
+            'title'         =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_title' ],
 
             /**
              * That displays the page description. This allow pull the value
              * from the labels.
              */
-            'description'   =>  $instance->getLabels()[ 'list_description' ],
+            'description'   =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_description' ],
 
             /**
              * This create the src URL using the "namespace".
@@ -716,7 +791,7 @@ class CrudService
              * This pull the creation link. That link should takes the user
              * to the creation form.
              */
-            'createUrl'     =>  $instance->getLinks()[ 'create' ] ?? '#',
+            'createUrl'     =>  Hook::filter( $instance::method( 'getLinks' ), $instance->getLinks() )[ 'create' ] ?? '#',
 
             /**
              * Provided to render the side menu.

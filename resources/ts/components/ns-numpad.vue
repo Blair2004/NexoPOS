@@ -5,7 +5,7 @@
             :key="index" 
             v-for="(key,index) of keys" 
             style="margin:-1px;"
-            class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+            class="select-none hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
@@ -15,10 +15,9 @@
 <script>
 export default {
     name: 'ns-numpad',
-    props: [ 'value', 'currency', 'floating' ],
+    props: [ 'value', 'currency', 'floating', 'limit' ],
     data() {
         return {
-            backValue: '0',
             number: parseInt( 
                 1 + ( new Array( parseInt( ns.currency.ns_currency_precision ) ) )
                 .fill('')
@@ -37,8 +36,10 @@ export default {
             ]
         }
     },
-    mounted() {
-        this.backValue  =   this.value || this.backValue;
+    computed: {
+        screenValue() {
+            return this.value === undefined ? 0 : this.value;
+        }
     },
     methods: {
         increaseBy( key ) {
@@ -49,11 +50,12 @@ export default {
                 .join('') 
             );
 
-            this.backValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.backValue ) || 0 ) ).toString();
+            this.screenValue      =   (( parseFloat( key.value ) * number ) + ( parseFloat( this.screenValue ) || 0 ) ).toString();
             this.allSelected    =   false;
         },
 
         inputValue( key ) {
+            let screenValue     =   this.screenValue;
             let number    =   parseInt( 
                 1 + ( new Array( this.cursor ) )
                 .fill('')
@@ -62,33 +64,37 @@ export default {
             );
 
             if ( key.identifier === 'next' ) {
-                this.$emit( 'next', this.floating && this.backValue.length > 0 ? parseFloat( this.backValue / this.number ) : this.backValue );
+                this.$emit( 'next', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
-                    this.backValue      =   '0';
+                    screenValue      =   '0';
                     this.allSelected    =   false;
                 } else {
-                    this.backValue      =   this.backValue.substr( 0, this.backValue.length - 1 );
+                    screenValue      =   this.screenValue.substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
+                if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
+                    return;
+                }
+                
                 if ( this.allSelected ) {
-                    this.backValue      =   key.value.toString();
+                    screenValue      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    this.backValue      +=  key.value.toString();
+                    screenValue      +=  key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        this.backValue = this.backValue > 100 ? 100 : this.backValue;
+                        screenValue = this.screenValue > 100 ? 100 : this.screenValue;
                     }
                 }
             } 
 
-            if ( ( this.backValue ) === "0" ) {
-                this.backValue      =   '';
+            if ( ( screenValue ) === "0" ) {
+                screenValue      =   '';
             }
 
-            this.$emit( 'changed', this.floating && this.backValue.length > 0 ? parseFloat( this.backValue / this.number ) : this.backValue );
+            this.$emit( 'changed', this.floating && screenValue.length > 0 ? parseFloat( screenValue / this.number ) : screenValue );
         }
     }
 }

@@ -22,6 +22,16 @@ return [
             'value'     =>  $options->get( 'ns_invoice_receipt_logo' ),
             'description'   =>  __( 'Provide a URL to the logo.' )
         ], [
+            'label'     =>  __( 'Merge Products On Receipt/Invoice' ),
+            'type'      =>  'switch',
+            'options'   =>  Helper::kvToJsOptions([ 
+                'no'    =>  __( 'No' ), 
+                'yes'   =>  __( 'Yes' ) 
+            ]),
+            'name'      =>  'ns_invoice_merge_similar_products',
+            'value'     =>  $options->get( 'ns_invoice_merge_similar_products' ),
+            'description'   =>  __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' )
+        ], [
             'label'     =>  __( 'Receipt Footer' ),
             'type'      =>  'textarea',
             'name'      =>  'ns_invoice_receipt_footer',

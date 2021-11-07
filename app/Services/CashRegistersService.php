@@ -172,7 +172,7 @@ class CashRegistersService
         if ( $register instanceof Register && $register->status === Register::STATUS_OPENED ) {
             if( in_array( $event->registerHistory->action, RegisterHistory::IN_ACTIONS ) ) {
                 $register->balance      +=  $event->registerHistory->value;
-            } else {
+            } else if ( in_array( $event->registerHistory->action, RegisterHistory::OUT_ACTIONS ) ) {
                 $register->balance      -=  $event->registerHistory->value;
             }
 
@@ -188,7 +188,14 @@ class CashRegistersService
             $registerHistory->register_id   =   $event->order->register_id;
             $registerHistory->action        =   RegisterHistory::ACTION_SALE;
             $registerHistory->author        =   Auth::id();
-            $registerHistory->save();
+            $registerHistory->saveQuietly();
+
+            /**
+             * @todo : not really proud of this. :'(    
+             */
+            $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
+
+            $this->updateRegisterAmount( $event );
         }
     }
 

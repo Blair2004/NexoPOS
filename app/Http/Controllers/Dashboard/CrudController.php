@@ -4,6 +4,7 @@
  */
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exceptions\NotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
@@ -15,6 +16,8 @@ use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
@@ -107,12 +110,17 @@ class CrudController extends DashboardController
          */
         if ( ! $resource->disablePut ) {
 
+            $fillable   =   Hook::filter( 
+                get_class( $resource ) . '@getFillable', 
+                $resource->getFillable()
+            );
+
             foreach ( $inputs as $name => $value ) {
 
                 /**
                  * If submitted field are part of fillable fields
                  */
-                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
 
                     /**
                      * We might give the capacity to filter fields 
@@ -138,7 +146,7 @@ class CrudController extends DashboardController
              * If fillable is empty or if "author" it's explicitely
              * mentionned on the fillable array.
              */
-            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
                 $entry->author      =   Auth::id();
             }
 
@@ -237,12 +245,17 @@ class CrudController extends DashboardController
          */
         if ( ! $resource->disablePut ) {
 
+            $fillable   =   Hook::filter( 
+                get_class( $resource ) . '@getFillable', 
+                $resource->getFillable()
+            );
+
             foreach ( $inputs as $name => $value ) {
     
                 /**
                  * If submitted field are part of fillable fields
                  */
-                if ( in_array( $name, $resource->getFillable() ) || count( $resource->getFillable() ) === 0 ) {
+                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
     
                     /**
                      * We might give the capacity to filter fields 
@@ -268,7 +281,7 @@ class CrudController extends DashboardController
              * If fillable is empty or if "author" it's explicitely
              * mentionned on the fillable array.
              */
-            if ( empty( $resource->getFillable() ) || in_array( 'author', $resource->getFillable() ) ) {
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
                 $entry->author      =   Auth::id();
             }
             
@@ -490,15 +503,17 @@ class CrudController extends DashboardController
         if ( method_exists( $resource, 'getEntries' ) ) {
             $model          =   $resource->get( 'model' );
             $model          =   $model::find( $id );
+            $form           =   $resource->getForm( $model );
+            
             /**
              * @deprecated
              */
-            $form           =   Hook::filter( 'ns.crud.form', $resource->getForm( $model ), $namespace, compact( 'model', 'namespace', 'id' ) );
+            $form           =   Hook::filter( 'ns.crud.form', $form, $namespace, compact( 'model', 'namespace', 'id' ) );
 
             /**
              * @since 4.4.3
              */
-            $form           =   Hook::filter( get_class( $resource )::method( 'getForm' ), $resource->getForm( $model ), compact( 'model' ) );
+            $form           =   Hook::filter( get_class( $resource )::method( 'getForm' ), $form, compact( 'model' ) );
             $config         =   [
                 'form'                  =>  $form,
                 'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
@@ -561,7 +576,13 @@ class CrudController extends DashboardController
          * let's define what will be the output name
          * of the exported file.
          */
-        $fileName           =   'export/' . Str::slug( $resource->getLabels()[ 'list_title' ] ) . '.csv';
+        if ( ! is_dir( storage_path( 'app/public/exports' ) ) ) {
+            mkdir( storage_path( 'app/public/exports' ) );
+        }
+
+        $dateFormat         =   Str::slug( ns()->date->toDateTimeString() );
+        $relativePath       =   'exports/' . Str::slug( $resource->getLabels()[ 'list_title' ] ) . '-' . $dateFormat . '.csv';
+        $fileName           =   storage_path( 'app/public/' . $relativePath );
 
         /**
          * We'll prepare the writer
@@ -570,8 +591,15 @@ class CrudController extends DashboardController
         $writer             = new Csv($spreadsheet);
         $writer->save( $fileName );
 
+        /**
+         * We'll hide the asset URL behind random lettes
+         */
+        $hash   =   Str::random(20);
+
+        Cache::put( $hash, $relativePath, now()->addMinutes(5) );
+
         return [
-            'url'   =>  asset( $fileName )
+            'url'   =>  route( 'ns.dashboard.crud-download', compact( 'hash' ) )
         ];
     }
 
@@ -608,5 +636,16 @@ class CrudController extends DashboardController
             'status'    =>  'success',
             'message'   =>  __( 'This resource is not protected. The access is granted.' )
         ]);
+    }
+
+    public function downloadSavedFile( $hash )
+    {
+        $relativePath   =   Cache::pull( $hash );
+
+        if ( Storage::disk( 'public' )->exists( $relativePath ) ) {
+            return Storage::disk( 'public' )->download( $relativePath );
+        }
+
+        throw new NotFoundException( __( 'The requested file cannot be downloaded or has already been downloaded.' ) );
     }
 }

@@ -3,7 +3,7 @@
         <div class="border-b p-2 flex items-center justify-between">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">
-                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-blue-400 hover:text-white mr-1">{{ __( 'Return' ) }}</div>
+                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-blue-400 hover:text-white mr-1">{{ __( 'Go Back' ) }}</div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>            

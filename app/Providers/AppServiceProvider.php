@@ -281,6 +281,7 @@ class AppServiceProvider extends ServiceProvider
         config([ 
             'nexopos.orders.types-labels' =>   collect( config( 'nexopos.orders.types' ) )
                 ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
+                ->toArray()
         ]);
     }
 }

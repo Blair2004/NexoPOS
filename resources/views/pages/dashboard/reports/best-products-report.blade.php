@@ -51,7 +51,7 @@
                             <div class="text-gray-600">
                                 <ul>
                                     <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ __( 'Document : Sale Report' ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ __( 'Document : Best Sales Report' ) }}</li>
                                     <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
                                 </ul>
                             </div>

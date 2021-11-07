@@ -26,7 +26,7 @@ class CreateRegistersTable extends Migration
                 $table->text( 'description' )->nullable();
                 $table->integer( 'used_by' )->nullable();
                 $table->integer( 'author' );
-                $table->float( 'balance', 11, 5 )->default(0);
+                $table->float( 'balance', 18, 5 )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();            
             });

@@ -145,6 +145,48 @@
                                             </div>
                                         </template>
                                     </ns-tabs-item>
+                                    <ns-tabs-item identifier="rewards" :label="__( 'Rewards' )">
+                                        <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingRewards">
+                                            <ns-spinner size="36"></ns-spinner>
+                                        </div>
+                                        <template v-if="! isLoadingRewards">
+                                            <div class="py-2 w-full">
+                                                <h2 class="font-semibold text-gray-700">{{ __( 'Rewards' ) }}</h2>
+                                            </div>
+                                            <div class="flex-auto flex-col flex overflow-hidden">
+                                                <div class="flex-auto overflow-y-auto">
+                                                    <table class="table w-full">
+                                                        <thead>
+                                                            <tr class="text-gray-700">
+                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Points' ) }}</th>
+                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Target' ) }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="text-gray-700 text-sm" v-if="rewardsResponse.data">
+                                                            <tr v-if="rewardsResponse.data.length === 0">
+                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
+                                                            </tr>
+                                                            <tr v-for="reward of rewardsResponse.data" :key="reward.id">
+                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                    <h3 class="text-center">{{ reward.reward_name }}</h3>
+                                                                </td>
+                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                    <h3 class="text-center">{{ reward.points }}</h3>
+                                                                </td>
+                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                    <h3 class="text-center">{{ reward.target }}</h3>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="py-1 flex justify-end">
+                                                <ns-paginate :pagination="rewardsResponse" @load="loadRewards( $event )"></ns-paginate>
+                                            </div>
+                                        </template>
+                                    </ns-tabs-item>
                                 </ns-tabs>
                             </div>
                         </div>
@@ -172,6 +214,7 @@ import nsPosCouponsLoadPopupVue from './ns-pos-coupons-load-popup.vue';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
+import nsPaginate from '@/components/ns-paginate.vue';
 
 export default {
     name: 'ns-pos-customers',
@@ -183,10 +226,15 @@ export default {
             orders: [],
             selectedTab: 'orders',
             isLoadingCoupons: false,
+            isLoadingRewards: false,
             coupons: [],
+            rewardsResponse: [],
             order: null,
         }
-    },  
+    }, 
+    components: {
+        nsPaginate
+    },
     mounted() {
         this.closeWithOverlayClicked();
 
@@ -230,6 +278,10 @@ export default {
             if ( tab === 'coupons' ) {
                 this.loadCoupons();
             }
+
+            if ( tab === 'rewards' ) {
+                this.loadRewards();
+            }
         },
 
         loadCoupons() {
@@ -242,6 +294,20 @@ export default {
                     },
                     error: ( error ) => {
                         this.isLoadingCoupons   =   false;
+                    }
+                });
+        },
+        
+        loadRewards( url = `/api/nexopos/v4/customers/${this.customer.id}/rewards` ) {
+            this.isLoadingRewards   =   true;
+            nsHttpClient.get( url )
+                .subscribe({
+                    next: ( rewardsResponse ) => {
+                        this.rewardsResponse            =   rewardsResponse;
+                        this.isLoadingRewards   =   false;
+                    },
+                    error: ( error ) => {
+                        this.isLoadingRewards   =   false;
                     }
                 });
         },

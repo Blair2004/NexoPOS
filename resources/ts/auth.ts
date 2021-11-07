@@ -12,7 +12,13 @@ const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ];
 const nsExtraComponents     =   window[ 'nsExtraComponents' ];
 
-(<any>window)[ 'nsComponents' ]          =   Object.assign( components, nsExtraComponents );
+(<any>window)[ 'nsComponents' ]          =   Object.assign( components, nsExtraComponents, {
+    nsRegister,
+    nsLogin,
+    nsPasswordLost,
+    nsNewPassword
+});
+
 (<any>window)[ 'authVueComponent' ]      =   new Vue({
     el: '#page-container',
     components: {
@@ -20,6 +26,7 @@ const nsExtraComponents     =   window[ 'nsExtraComponents' ];
         nsRegister,
         nsPasswordLost,
         nsNewPassword,
-        ...nsExtraComponents
+        ...nsExtraComponents,
+        ...components
     }
 });

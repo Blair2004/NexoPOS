@@ -33,7 +33,8 @@ use App\Services\DateService;
         window.ns.date  =   {
             current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
             serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}'
+            timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}',
+            format: `{{ ns()->option->get( 'ns_datetime_format' ) }}`
         }
 
         /**
@@ -48,7 +49,7 @@ use App\Services\DateService;
     <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
 @include( 'common.header-socket' )
 </head>
-<body>
+<body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>
     <div class="h-full w-full flex flex-col">
         <div id="dashboard-body" class="overflow-hidden flex flex-auto">
             <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-50 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">

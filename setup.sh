@@ -20,9 +20,9 @@ nvm install 14
 
 # Apache config
 <VirtualHost *:80>
-    ServerName pos.mivifoods.eu
-    ServerAlias pos.mivifoods.eu
-    DocumentRoot /var/www/html/pos.mivifoods.eu
+    ServerName res.baramej.io
+    ServerAlias res.baramej.io
+    DocumentRoot /var/www/html/res.baramej.io
  
     <Directory /var/www/html>
         Options -Indexes +FollowSymLinks +MultiViews
@@ -39,4 +39,18 @@ nvm install 14
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 
-GRANT ALL ON *.* TO 'nexopos'@'localhost' IDENTIFIED BY 'Kg.Mw4K!UX5r)(e' WITH GRANT OPTION;
+GRANT ALL ON *.* TO '*****'@'localhost' IDENTIFIED BY '**********' WITH GRANT OPTION;
+
+# Supervisor
+[program:app-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/html/app/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=8
+redirect_stderr=true
+stdout_logfile=/var/www/html/app/worker.log
+stopwaitsecs=3600

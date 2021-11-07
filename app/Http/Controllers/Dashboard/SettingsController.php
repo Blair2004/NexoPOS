@@ -47,7 +47,6 @@ class SettingsController extends DashboardController
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'expenses-settings'; return $this->expenseSettings(); break;
-
             case 'reset'; return $this->resetSettings(); break;
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;

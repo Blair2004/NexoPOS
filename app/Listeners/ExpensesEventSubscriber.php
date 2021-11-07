@@ -137,7 +137,7 @@ class ExpensesEventSubscriber
         $event->listen( 
             OrderAfterProductRefundedEvent::class,
             function( OrderAfterProductRefundedEvent $event ) {
-                $this->expenseService->createExpenseFromRefund( $event->orderProductRefund, $event->orderProduct );
+                $this->expenseService->createExpenseFromRefund( $event->order, $event->orderProductRefund, $event->orderProduct );
             }
         );
     }

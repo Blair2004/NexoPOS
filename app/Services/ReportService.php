@@ -8,6 +8,7 @@ use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\Order;
 use App\Models\ProductHistory;
+use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -807,5 +808,14 @@ class ReportService
             'status'    =>  'success',
             'message'   =>  __( 'The report has been computed successfully.' )
         ];
+    }
+
+    /**
+     * Will retrun products having low stock
+     * @return array $products
+     */
+    public function getLowStockProducts()
+    {
+        return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
     }
 }

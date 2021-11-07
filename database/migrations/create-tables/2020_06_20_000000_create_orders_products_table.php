@@ -28,27 +28,26 @@ class CreateOrdersProductsTable extends Migration
                 $table->integer( 'unit_id' );
                 $table->integer( 'unit_quantity_id' );
                 $table->integer( 'order_id' );
-                $table->float( 'quantity', 11, 5 ); // could be the base unit
+                $table->float( 'quantity', 18, 5 ); // could be the base unit
                 $table->string( 'discount_type' )->default( 'none' );
-                $table->float( 'discount', 11, 5 )->default(0);
-                $table->float( 'discount_percentage', 11, 5 )->default(0);
-                $table->float( 'gross_price', 11, 5 )->default(0);
-                $table->float( 'unit_price', 11, 5 )->default(0);
+                $table->float( 'discount', 18, 5 )->default(0);
+                $table->float( 'discount_percentage', 18, 5 )->default(0);
+                $table->float( 'gross_price', 18, 5 )->default(0);
+                $table->float( 'unit_price', 18, 5 )->default(0);
                 $table->integer( 'tax_group_id' )->default(0);
                 $table->string( 'tax_type' )->default(0);
                 $table->string( 'wholesale_tax_value' )->default(0);
                 $table->string( 'sale_tax_value' )->default(0);
-                $table->float( 'tax_value', 11, 5 )->default(0);
-                $table->float( 'net_price', 11, 5 )->default(0);
+                $table->float( 'tax_value', 18, 5 )->default(0);
+                $table->float( 'net_price', 18, 5 )->default(0);
                 $table->string( 'mode' )->default( 'normal' ); // 
                 $table->string( 'unit_name' )->nullable();
-                // $table->float( 'base_quantity', 11, 5 );
-                $table->float( 'total_gross_price', 11, 5 )->default(0);
-                $table->float( 'total_price', 11, 5 )->default(0);
-                $table->float( 'total_purchase_price', 11, 5 )->default(0);
+                $table->float( 'total_gross_price', 18, 5 )->default(0);
+                $table->float( 'total_price', 18, 5 )->default(0);
+                $table->float( 'total_net_price', 18, 5 )->default(0);
+                $table->float( 'total_purchase_price', 18, 5 )->default(0);
                 $table->string( 'return_condition' )->nullable();
                 $table->text( 'return_observations' )->nullable();
-                $table->float( 'total_net_price', 11, 5 )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->string( 'status' )->default( 'sold' ); // sold, refunded
                 $table->timestamps();

@@ -14,11 +14,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Role extends NsRootModel
 {
     use HasFactory;
-        protected $table    =   'nexopos_roles';
+    protected $table    =   'nexopos_roles';
+
+    /**
+     * @var string ADMIN main role with all permissions
+     */
+    const ADMIN         =   'admin';
+
+    /**
+     * @var string STOREADMIN store manager
+     */
+    const STOREADMIN    =   'nexopos.store.administrator';
+
+    /**
+     * @var string STORECASHIER store role with sales capacity
+     */
+    const STORECASHIER  =   'nexopos.store.cashier';
+
+    /**
+     * @var string USER base role with no or less permissions
+     */
+    const USER          =   'user';
 
     protected $cats     =   [
         'locked'        =>  'boolean'
     ];
+
+    protected $guarded     =   [ 'id' ];
 
     /**
      * Relation with users

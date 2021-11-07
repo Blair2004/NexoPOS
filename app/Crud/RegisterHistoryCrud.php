@@ -140,6 +140,8 @@ class RegisterHistoryCrud extends CrudService
         if ( ! empty( request()->query( 'register_id' ) ) ) {
             $query->where( 'register_id', request()->query( 'register_id' ) );
         }
+
+        $query->orderBy( 'id', 'desc' );
     }
 
     /**

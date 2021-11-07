@@ -15,8 +15,8 @@ use App\Services\ExpenseService;
 
 class HomeController extends DashboardController
 {
-    public function index()
+    public function welcome()
     {
-        return View::make( 'NexoPOS::home' );
+        return View::make( 'welcome' );
     }
 }

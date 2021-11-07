@@ -23,6 +23,7 @@ import NsManageProducts     from './pages/dashboard/procurements/manage-products
 import NsProcurementInvoice from './pages/dashboard/procurements/ns-procurement-invoice.vue';
 import NsNotifications      from './pages/dashboard/ns-notifications.vue';
 import NsMedia              from './pages/dashboard/ns-media.vue';
+import NsLowStockReport     from './pages/dashboard/reports/ns-low-stock-report.vue';
 import NsSaleReport         from './pages/dashboard/reports/ns-sale-report.vue';
 import NsSoldStockReport    from './pages/dashboard/reports/ns-sold-stock-report.vue';
 import NsProfitReport       from './pages/dashboard/reports/ns-profit-report.vue';
@@ -90,6 +91,7 @@ const components    =   Object.assign({
     NsYearlyReport,
     NsPaymentTypesReport,
     NsBestProductsReport,
+    NsLowStockReport,
 
     NsStockAdjustment,
     NsPromptPopup,

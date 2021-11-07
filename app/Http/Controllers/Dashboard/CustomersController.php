@@ -395,5 +395,15 @@ class CustomersController extends DashboardController
     {
         return CustomerCouponCrud::table();
     }
+
+    /**
+     * Will return the customer rewards
+     * @param Customer $customer
+     * @return array<CustomerReward> $customerRewards
+     */
+    public function getCustomerRewards( Customer $customer )
+    {
+        return $customer->rewards()->paginate(20);
+    }
 }
 

@@ -1,7 +1,7 @@
 import { nsHooks, nsHttpClient, nsSnackBar } from '../bootstrap';
 import Vue from 'vue';
 import FormValidation from '../libraries/form-validation';
-
+import { __ } from '@/libraries/lang';
 const nsCrudForm    =   Vue.component( 'ns-crud-form', {
     data: () => {
         return {
@@ -26,6 +26,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
         }
     },
     methods: {
+        __,
         toggle( identifier ) {
             for( let key in this.form.tabs ) {
                 this.form.tabs[ key ].active    =   false;
@@ -123,7 +124,7 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                         <span v-if="form.main.name">{{ form.main.label }}</span>
                     </label>
                     <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:border-red-600 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:border-red-600 hover:bg-red-600 hover:text-white bg-white px-2 py-1">{{ __( 'Go Back' ) }}</a>
                     </div>
                 </div>
                 <template v-if="form.main.name">

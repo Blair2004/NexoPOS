@@ -30,6 +30,9 @@ class TrackLaidAwayOrdersJob implements ShouldQueue
      */
     public function handle()
     {
+        /**
+         * @var OrdersService
+         */
         $orderService       =   app()->make( OrdersService::class );
 
         /**

@@ -22,7 +22,7 @@ class CreateOrdersPaymentTable extends Migration
             Schema::createIfMissing( 'nexopos_orders_payments', function( Blueprint $table ) {
                 $table->bigIncrements( 'id' );
                 $table->integer( 'order_id' );
-                $table->float( 'value', 11, 5 )->default(0);
+                $table->float( 'value', 18, 5 )->default(0);
                 $table->integer( 'author' );
                 $table->string( 'identifier' );
                 $table->string( 'uuid' )->nullable();

@@ -21,6 +21,8 @@ class CreateOrderTest extends TestCase
 {
     protected $customProductParams  =   [];
     protected $customOrderParams    =   [];
+    protected $processCoupon        =   true;
+    protected $useDiscount          =   true;
     protected $shouldRefund         =   false;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
@@ -41,7 +43,7 @@ class CreateOrderTest extends TestCase
         );
 
         $faker          =   Factory::create();
-        $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDay();
+        $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDays($this->totalDaysInterval);
 
         for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
             $date           =   $startOfWeek->addDay()->clone();
@@ -110,7 +112,7 @@ class CreateOrderTest extends TestCase
 
             $customerCoupon     =   CustomerCoupon::get()->last();
 
-            if ( $customerCoupon instanceof CustomerCoupon ) {
+            if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon ) {
                 $allCoupons         =   [
                     [
                         'customer_coupon_id'    =>  $customerCoupon->id,
@@ -137,20 +139,24 @@ class CreateOrderTest extends TestCase
 
             $discount           =   [
                 'type'      =>      $faker->randomElement([ 'percentage', 'flat' ]),
+                'value'     =>  0,
+                'rate'      =>  0,
             ];
 
-            /**
-             * If the discount is percentage or flat.
-             */
-            if ( $discount[ 'type' ] === 'percentage' ) {
-                $discount[ 'rate' ]     =   $discountRate;
-                $discount[ 'value' ]    =   $currency->define( $discount[ 'rate' ] )
-                    ->multiplyBy( $subtotal )
-                    ->divideBy( 100 )
-                    ->getRaw();
-            } else {
-                $discount[ 'value' ]    =   10;
-                $discount[ 'rate' ]     =   0;
+            if ( $this->useDiscount ) {
+                /**
+                 * If the discount is percentage or flat.
+                 */
+                if ( $discount[ 'type' ] === 'percentage' ) {
+                    $discount[ 'rate' ]     =   $discountRate;
+                    $discount[ 'value' ]    =   $currency->define( $discount[ 'rate' ] )
+                        ->multiplyBy( $subtotal )
+                        ->divideBy( 100 )
+                        ->getRaw();
+                } else {
+                    $discount[ 'value' ]    =   10;
+                    $discount[ 'rate' ]     =   0;
+                }
             }
             
             $discountCoupons    =   $currency->define( $discount[ 'value' ] )

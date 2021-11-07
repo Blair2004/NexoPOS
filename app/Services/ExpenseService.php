@@ -255,7 +255,7 @@ class ExpenseService
                 $history->expense_id                =   $expense->id;
                 $history->operation                 =   'debit';
                 $history->author                    =   $expense->author;
-                $history->name              =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
+                $history->name                      =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
                 $history->expense_category_id       =   $expense->category->id;
                 $history->save();
 
@@ -413,7 +413,7 @@ class ExpenseService
      * @param OrderProduct $orderProduct
      * @return void
      */
-    public function createExpenseFromRefund( OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
+    public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
     {
         $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_account' ) );
 
@@ -440,6 +440,7 @@ class ExpenseService
         $expense->active            =   true;
         $expense->operation         =   CashFlow::OPERATION_DEBIT;
         $expense->author            =   Auth::id();
+        $expense->order_id          =   $order->id;
         $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
         $expense->name              =   sprintf( __( 'Refunding : %s' ), $orderProduct->name );
         $expense->id                =   0; // this is not assigned to an existing expense
@@ -469,33 +470,50 @@ class ExpenseService
             ns()->option->set( $optionName, $expenseCategory->id );
         }
 
-        $expense                    =   new Expense;
-        $expense->value             =   $orderProductRefund->total_price;
-        $expense->active            =   true;
-        $expense->operation         =   $orderProduct->condition === OrderProductRefund::CONDITION_DAMAGED ? CashFlow::OPERATION_DEBIT : CashFlow::OPERATION_CREDIT;
-        $expense->author            =   Auth::id();
-        $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
-        $expense->name              =   sprintf( __( 'Stock Return (%s) : %s' ), $conditionLabel, $orderProduct->name );
-        $expense->id                =   0; // this is not assigned to an existing expense
-        $expense->category          =   $expenseCategory;
-
-        $this->recordCashFlowHistory( $expense );
+        if ( OrderProductRefund::CONDITION_DAMAGED ) {
+            $expense                    =   new Expense;
+            $expense->value             =   $orderProductRefund->total_price;
+            $expense->active            =   true;
+            $expense->operation         =   CashFlow::OPERATION_DEBIT;
+            $expense->author            =   Auth::id();
+            $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
+            $expense->name              =   sprintf( __( 'Stock Return (%s) : %s' ), $conditionLabel, $orderProduct->name );
+            $expense->id                =   0; // this is not assigned to an existing expense
+            $expense->category          =   $expenseCategory;
+    
+            $this->recordCashFlowHistory( $expense );
+        }
     }
 
     public function handleCashRegisterHistory( RegisterHistory $history )
-    {                               
+    {    
+        /**
+         * If the history of the register is not supported, 
+         * we don't need to track it as an expense
+         */
+        if ( ! in_array( $history->action, [
+            RegisterHistory::ACTION_CASHING,
+            RegisterHistory::ACTION_OPENING,
+            RegisterHistory::ACTION_CLOSING,
+            RegisterHistory::ACTION_CASHOUT,
+        ]) ) {
+            return false;
+        }
+
         /**
          * this behave as a flash expense
          * made only for recording an history.
          */
         if ( in_array( $history->action, [
             RegisterHistory::ACTION_CASHING,
-            // RegisterHistory::ACTION_SALE, // we want to consider sales separately
             RegisterHistory::ACTION_OPENING
         ])) {
             $operation      =   'credit';
             $expenseCategory        =   $this->__getCashFlowCategory( $operation );
-        } else {
+        } else if ( in_array( $history->action, [
+            RegisterHistory::ACTION_CLOSING,
+            RegisterHistory::ACTION_CASHOUT
+        ])) {
             $operation      =   'debit';
             $expenseCategory        =   $this->__getCashFlowCategory( $operation );
         }

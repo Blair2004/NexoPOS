@@ -1,12 +1,14 @@
 <?php
 return [
-    'version'       =>  '4.5.6',
+    'version'       =>  '4.6.0',
     'languages'     =>  [
         'en'        =>  'English',
         'fr'        =>  'Français',
         'es'        =>  'Espanol',
         'it'        =>  'Italian',
+        'ar'        =>  'Arabic'
     ],
+    'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',

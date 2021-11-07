@@ -1,6 +1,7 @@
 <?php
 namespace App\Settings;
 
+use App\Classes\Hook;
 use App\Models\Role;
 use App\Services\Helper;
 use App\Services\Options;
@@ -203,7 +204,7 @@ class GeneralSettings extends SettingsPage
                         ], [
                             'name'          =>  'ns_registration_role',
                             'value'         =>  $options->get( 'ns_registration_role' ),
-                            'options'         =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
+                            'options'         =>  Helper::toJsOptions( Hook::filter( 'ns-registration-roles', Role::get() ), [ 'id', 'name' ]),
                             'label'         =>  __( 'Registration Role' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Select what is the registration role.' ),

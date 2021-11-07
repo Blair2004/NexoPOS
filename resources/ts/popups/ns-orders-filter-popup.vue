@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw h-95vh md:w-2/5-screen md:h-4/6-screen flex flex-col">
+    <div class="bg-white shadow-lg w-95vw h-95vh md:w-2/5-screen md:h-5/6-screen flex flex-col">
         <div class="p-2 border-b flex justify-between items-center">
             <h3>{{ __( 'Search Filters' ) }}</h3>
             <div>
@@ -44,6 +44,7 @@ export default Vue.extend({
             this.popupResolver( this.validation.extractFields( this.fields ) );
         },
         clearFilters() {
+            this.fields.forEach( field => field.value = '' );
             this.popupResolver( null );
         }
     },

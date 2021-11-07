@@ -1,4 +1,9 @@
 <?php
+/**
+ * @todo need to have explanation on why we need this.
+ */
+use Illuminate\Support\Facades\Route;
+
 Route::get( '/intermediate/{route}/{from}', function( $route, $from ) {
     $message    =   null;
 

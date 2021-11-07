@@ -14,9 +14,9 @@ class CreateTestDatabaseSQLite extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_create_sql_database()
     {
-        file_put_contents( dirname( __FILE__ ) . '/../database.sqlite', '' );
+        file_put_contents( base_path( 'tests/database.sqlite' ), '' );
         
         $this->assertTrue(true);
     }

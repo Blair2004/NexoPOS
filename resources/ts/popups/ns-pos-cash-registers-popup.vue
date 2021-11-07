@@ -61,13 +61,16 @@ export default {
         checkUsedRegister() {
             this.priorVerification  =   false;
             nsHttpClient.get( `/api/nexopos/v4/cash-registers/used` )
-                .subscribe( result => {
-                    this.$popupParams.resolve( result );
-                    this.$popup.close();
-                }, ( error ) => {
-                    this.priorVerification  =   true;
-                    nsSnackBar.error( error.message ).subscribe();
-                    this.loadRegisters();
+                .subscribe({
+                    next: result => {
+                        this.$popupParams.resolve( result );
+                        this.$popup.close();
+                    },
+                    error: ( error ) => {
+                        this.priorVerification  =   true;
+                        nsSnackBar.error( error.message ).subscribe();
+                        this.loadRegisters();
+                    }
                 });
         },
         loadRegisters() {

@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -8,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
+use App\Models\Register;
 use App\Services\Helper;
 use App\Services\OrdersService;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +48,7 @@ class OrderCrud extends CrudService
 
     public $pick                =   [
         'nexopos_users'         =>  [ 'username' ],
-        'nexopos_customers'     =>  [ 'name' ]
+        'nexopos_customers'     =>  [ 'name', 'phone' ]
     ];
 
     public $queryFilters    =   [];
@@ -85,15 +88,21 @@ class OrderCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         /**
+         * This will allow module to change the bound
+         * class for the default User model.
+         */
+        $UserClass              =   app()->make( User::class );
+
+        /**
          * Let's define the query filters
          * we would like to apply to the crud
          */
         $this->queryFilters     =   [
             [
-                'type'  =>  'date',
-                'name'  =>  'created_at',
+                'type'  =>  'daterangepicker',
+                'name'  =>  'nexopos_orders.created_at',
                 'description'   =>  __( 'Restrict the orders by the creation date.' ),
-                'label' =>  __( 'Created At' )
+                'label' =>  __( 'Created Between' )
             ], [
                 'type'      =>  'select',
                 'label'     =>  __( 'Payment Status' ),
@@ -101,18 +110,39 @@ class OrderCrud extends CrudService
                 'description'   =>  __( 'Restrict the orders by the payment status.' ),
                 'options'   =>  Helper::kvToJsOptions([
                     Order::PAYMENT_PAID                 =>  __( 'Paid' ),
-                    Order::PAYMENT_PARTIALLY            =>   __( 'Partially Paid' ),
+                    Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
                     Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
                     Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
                     Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
                     Order::PAYMENT_VOID                 =>  __( 'Voided' ),
+                    Order::PAYMENT_DUE                  =>  __( 'Due' ),
+                    Order::PAYMENT_PARTIALLY_DUE        =>  __( 'Due With Payment' ),
                 ])
             ], [
                 'type'      =>  'select',
                 'label'     =>  __( 'Author' ),
                 'name'      =>  'nexopos_orders.author',
                 'description'   =>  __( 'Restrict the orders by the author.' ),
-                'options'   =>  Helper::toJsOptions( User::get(), [ 'id', 'username' ])
+                'options'   =>  Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Customer' ),
+                'name'      =>  'customer_id',
+                'description'   =>  __( 'Restrict the orders by the customer.' ),
+                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ])
+            ], [
+                'type'      =>  'text',
+                'label'     =>  __( 'Customer Phone' ),
+                'name'      =>  'phone',
+                'operator'  =>  'like',
+                'description'   =>  __( 'Restrict orders using the customer phone number.' ),
+                'options'   =>  Helper::toJsOptions( Customer::get(), [ 'id', 'phone' ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Cash Register' ),
+                'name'      =>  'register_id',
+                'description'   =>  __( 'Restrict the orders to the cash registers.' ),
+                'options'   =>  Helper::toJsOptions( Register::get(), [ 'id', 'name' ])
             ]
         ];
     }
@@ -424,6 +454,11 @@ class OrderCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'nexopos_customers_phone'   =>  [
+                'label'         =>  __( 'Phone' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
+            ],
             'discount'  =>  [
                 'label'  =>  __( 'Discount' ),
                 '$direction'    =>  '',
@@ -488,8 +523,9 @@ class OrderCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
-        $entry->total           =   ( string ) ns()->currency->define( $entry->total );
-        $entry->discount        =   ( string ) ns()->currency->define( $entry->discount );
+        $entry->nexopos_customers_phone     =   $entry->nexopos_customers_phone ?: __( 'N/A' );
+        $entry->total                       =   ( string ) ns()->currency->define( $entry->total );
+        $entry->discount                    =   ( string ) ns()->currency->define( $entry->discount );
 
         $entry->delivery_status         =   $orderService->getShippingLabel( $entry->delivery_status );
         $entry->process_status          =   $orderService->getProcessStatus( $entry->process_status );

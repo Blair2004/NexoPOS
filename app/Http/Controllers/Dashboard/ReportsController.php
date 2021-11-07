@@ -61,6 +61,14 @@ class ReportsController extends DashboardController
         ]);
     }
 
+    public function lowStockReport()
+    {
+        return $this->view( 'pages.dashboard.reports.low-stock-report', [
+            'title'         =>  __( 'Low Stock Report' ),
+            'description'   =>  __( 'Provides an overview of the product which stock are low.' )
+        ]);
+    }
+
     public function profit()
     {
         return $this->view( 'pages.dashboard.reports.profit-report', [
@@ -267,5 +275,10 @@ class ReportsController extends DashboardController
     public function getMyReport( Request $request )
     {
         return $this->reportService->getCashierDashboard( Auth::id() );
+    }
+
+    public function getLowStock( Request $request )
+    {
+        return $this->reportService->getLowStockProducts();
     }
 }

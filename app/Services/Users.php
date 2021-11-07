@@ -180,4 +180,44 @@ class Users
             return Auth::user()->role->namespace === $group_name;
         }
     }
+
+    /**
+     * Clone a role assigning same permissions
+     * @param Role $role
+     * @return array
+     */
+    public function cloneRole( Role $role )
+    {
+        $newRole    =   $role->toArray();
+
+        unset( $newRole[ 'id' ] );
+        unset( $newRole[ 'created_at' ] );
+        unset( $newRole[ 'updated_at' ] );
+
+        /**
+         * We would however like
+         * to provide a unique name and namespace
+         */
+        $name       =   sprintf( 
+            __( 'Clone of "%s"' ),
+            $newRole[ 'name' ]
+        );
+
+        $namespace      =   Str::slug( $name );
+
+        $newRole[ 'name' ]      =   $name;
+        $newRole[ 'namespace' ] =   $namespace;
+        $newRole[ 'locked' ]    =   0; // shouldn't be locked by default.
+
+        /**
+         * @var Role
+         */
+        $newRole    =   Role::create( $newRole );
+        $newRole->addPermissions( $role->permissions );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The role has been cloned.' )
+        ];
+    }
 }
