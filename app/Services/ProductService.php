@@ -585,8 +585,8 @@ class ProductService
             $unitQuantity->sale_price_edit          =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
             $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
             $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
-            $unitQuantity->low_quantity             =   $group[ 'low_quantity' ];
-            $unitQuantity->stock_alert_enabled      =   $group[ 'stock_alert_enabled' ];
+            $unitQuantity->low_quantity             =   $group[ 'low_quantity' ] ?? 0;
+            $unitQuantity->stock_alert_enabled      =   $group[ 'stock_alert_enabled' ] ?? false;
 
             /**
              * Let's compute the tax only
