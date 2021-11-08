@@ -5,6 +5,8 @@ use App\Http\Controllers\Dashboard\CrudController;
 use App\Http\Controllers\Dashboard\HomeController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\UpdateController;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;

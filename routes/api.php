@@ -30,17 +30,17 @@ $domain     =   pathinfo( env( 'APP_URL' ) );
 BeforeStartApiRouteEvent::dispatch();
 
 /**
- * The defined route should only be applicable
- * to the main domain.
- */
-$domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
-
-/**
  * By default, wildcard is disabled
  * on the system. In order to enable it, the user
  * will have to follow these instructions https://my.nexopos.com/en/documentation/wildcards
  */
 if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+    /**
+     * The defined route should only be applicable
+     * to the main domain.
+     */
+    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+
     Route::domain( $domainString )->group( function() {
         include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'api-base.php' );
     });
