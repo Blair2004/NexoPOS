@@ -109,6 +109,12 @@ class Handler extends ExceptionHandler
                 'code'          =>  503
             ],
 
+            ModuleVersionMismatchException::class     =>  [
+                'use'           =>  ModuleVersionMismatchException::class,
+                'safeMessage'   =>  null,
+                'code'          =>  503
+            ],
+
             InvalidArgumentException::class         =>  [
                 'use'           =>  Exception::class,
                 'safeMessage'   =>  null,
@@ -121,7 +127,7 @@ class Handler extends ExceptionHandler
                 'code'          =>  503
             ]
         ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
-            if ( $exception instanceof $class && ! env( 'APP_DEBUG' ) ) {
+            if ( $exception instanceof $class ) {
                 if ( $request->expectsJson() ) {
                     Log::error( $exception->getMessage() );
     
@@ -131,12 +137,12 @@ class Handler extends ExceptionHandler
                      * sensitive informations.
                      */
                     return response()->json([
-                        'message' => ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                        'message' => ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
                     ], $exceptionConfig[ 'code' ] ?? 500 );    
                 } 
     
                 return ( new $exceptionConfig[ 'use' ]( 
-                    ! empty( $exceptionConfig[ 'safeMessage' ] ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                    ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
                 ) )
                     ->render( $request );
             }
