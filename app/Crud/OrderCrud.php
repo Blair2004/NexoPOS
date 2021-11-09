@@ -71,10 +71,10 @@ class OrderCrud extends CrudService
     public $fillable    =   [];
 
     protected $permissions = [
-        'create' => 'nexopos.create.orders',
-        'read' => 'nexopos.read.orders',
-        'update' => 'nexopos.update.orders',
-        'delete' => 'nexopos.delete.orders',
+        'create'    => 'nexopos.create.orders',
+        'read'      => 'nexopos.read.orders',
+        'update'    => 'nexopos.update.orders',
+        'delete'    => 'nexopos.delete.orders',
     ];
 
     /**
@@ -658,7 +658,7 @@ class OrderCrud extends CrudService
     {
         return  [
             'list'      =>  'ns.orders',
-            'create'    =>  'ns.orders/create',
+            'create'    =>  ns()->route( 'ns.dashboard.pos' ),
             'edit'      =>  'ns.orders/edit/#'
         ];
     }

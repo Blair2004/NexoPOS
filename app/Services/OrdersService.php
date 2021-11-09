@@ -1338,6 +1338,15 @@ class OrdersService
              */
             $order->created_at      =   $fields[ 'created_at' ] ?? ns()->date->getNow()->toDateTimeString();
         }
+        
+        /**
+         * If any other attributes needs to be 
+         * saved while creating the order, it should be 
+         * explicitely allowed on this filter
+         */
+        foreach( Hook::filter( 'ns-order-attributes', [] ) as $attribute ) {
+            $order->$attribute      =   $fields[ $attribute ];
+        }
 
         /**
          * let's save the order at 
@@ -1367,6 +1376,7 @@ class OrdersService
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
         $order->code                    =   $order->code ?: ''; // to avoid generating a new code
+
         $order->save();
 
         if ( $order->code === '' ) {
