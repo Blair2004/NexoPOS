@@ -20,7 +20,7 @@ class ProcurementForm extends SettingsPage
                 ->find( request()->route( 'identifier' ) );
         }
 
-        $this->form    =   [
+        $this->form    =   Hook::filter( 'ns-procurement-form', [
             'main'          =>  [
                 'name'      =>  'name',
                 'type'      =>  'text',
@@ -75,6 +75,6 @@ class ProcurementForm extends SettingsPage
             'tabs'              =>  [
                 'general'       =>  include( dirname( __FILE__ ) . '/procurement/general.php' ),
             ]
-        ];
+        ]);
     }
 }

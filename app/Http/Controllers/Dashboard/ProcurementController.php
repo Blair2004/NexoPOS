@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
 use App\Exceptions\NotAllowedException;
@@ -209,10 +210,10 @@ class ProcurementController extends DashboardController
     {
         ns()->restrict([ 'nexopos.create.procurements' ]);
 
-        return $this->view( 'pages.dashboard.procurements.create', [
+        return $this->view( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
             'title'         =>  __( 'New Procurement' ),
             'description'   =>  __( 'Make a new procurement' )
-        ]);
+        ] ) );
     }
 
     public function updateProcurement( Procurement $procurement )
@@ -223,11 +224,11 @@ class ProcurementController extends DashboardController
             throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
 
-        return $this->view( 'pages.dashboard.procurements.edit', [
+        return $this->view( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
             'title'         =>  __( 'Edit Procurement' ),
             'description'   =>  __( 'Perform adjustment on existing procurement.' ),
             'procurement'   =>  $procurement
-        ]);
+        ] ) );
     }
 
     public function procurementInvoice( Procurement $procurement )
