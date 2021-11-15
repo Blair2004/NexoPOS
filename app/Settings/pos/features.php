@@ -80,10 +80,7 @@ return [
             'value'             =>  $options->get( 'ns_pos_order_types' ),
             'label'             =>  __( 'Order Types' ), 
             'type'              =>  'multiselect',
-            'options'           =>  Helper::kvToJsOptions([
-                'delivery'      =>  __( 'Delivery' ),
-                'take_away'     =>  __( 'Take Away' )
-            ]),
+            'options'           =>  Helper::kvToJsOptions( config( 'nexopos.orders.types-labels' ) ),
             'description'       =>  __( 'Control the order type enabled.' ),
         ],
     ]
