@@ -149,7 +149,7 @@ class OrdersController extends DashboardController
         return $this->view( 'pages.dashboard.orders.pos', [
             'title'             =>  __( 'POS &mdash; NexoPOS' ),
             'orderTypes'        =>  collect( config( 'nexopos.orders.types' ) )->filter( function( $type, $label ) {
-                return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) );
+                return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
             }),
             'options'           =>  Hook::filter( 'ns-pos-options', [
                 'ns_pos_printing_document'              =>  ns()->option->get( 'ns_pos_printing_document', 'receipt' ),
