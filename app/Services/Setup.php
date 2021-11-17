@@ -212,6 +212,7 @@ class Setup
         $this->options      =   app()->make( Options::class );
         $this->options->set( 'ns_store_name', $fields[ 'ns_store_name' ] );
         $this->options->set( 'ns_registration_enabled', false );
+        $this->options->set( 'ns_pos_order_types', [ 'takeaway', 'delivery' ]);
 
         return [
             'status'    =>  'success',
