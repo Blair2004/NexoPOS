@@ -12,6 +12,8 @@ use App\Services\UserOptions;
 
 class ProcurementForm extends SettingsPage
 {
+    public $form;
+    
     public function __construct()
     {        
         if ( ! empty( request()->route( 'identifier' ) ) ) {

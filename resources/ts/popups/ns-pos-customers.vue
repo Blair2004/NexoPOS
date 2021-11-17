@@ -10,6 +10,7 @@
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
+                        v-if="options.ns_pos_customers_creation_enabled === 'yes'"
                         @updated="prefillForm( $event )"
                         @save="handleSavedCustomer( $event )"
                         submit-url="/api/nexopos/v4/crud/ns.customers"
@@ -17,6 +18,11 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
+                    <div class="h-full flex-col w-full flex items-center justify-center">
+                        <i class="lar la-hand-paper text-6xl text-gray-700"></i>
+                        <h3 class="font-medium text-2xl text-gray-700">{{ __( 'Not Authorized' ) }}</h3>
+                        <p class="text-gray-600">{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
+                    </div>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
@@ -224,6 +230,8 @@ export default {
             customer: null,
             subscription: null,
             orders: [],
+            options: {},
+            optionsSubscriber: null,
             selectedTab: 'orders',
             isLoadingCoupons: false,
             isLoadingRewards: false,
@@ -235,8 +243,16 @@ export default {
     components: {
         nsPaginate
     },
+    destroyed() {
+        this.subscription.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
+    },
     mounted() {
         this.closeWithOverlayClicked();
+
+        this.optionsSubscriber  =   POS.options.subscribe( options => {
+            this.options    =   options;
+        });
 
         this.subscription   =   POS.order.subscribe( order => {
             
