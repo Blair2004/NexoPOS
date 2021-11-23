@@ -2647,6 +2647,8 @@ class OrdersService
 
         event( new OrderAfterUpdatedEvent( $order ) );
 
+        OrderAfterUpdatedDeliveryStatus::dispatch( $order );
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The order has been successfully updated.' )

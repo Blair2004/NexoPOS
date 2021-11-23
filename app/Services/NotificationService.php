@@ -22,6 +22,9 @@ class NotificationService
     private $source;
     private $notification;
     
+    /**
+     * @param array $config [ 'title', 'url', 'identifier', 'source', 'dismissable', 'description' ]
+     */
     public function create( $config ) 
     {
         extract( $config );

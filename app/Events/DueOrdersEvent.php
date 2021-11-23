@@ -9,19 +9,25 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class DueOrdersEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
+     * @param Collection
+     */
+    public $orders;
+
+    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( Collection $orders )
     {
-        //
+        $this->orders   =   $orders;
     }
 
     /**

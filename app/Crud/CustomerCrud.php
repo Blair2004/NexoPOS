@@ -17,6 +17,7 @@ use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
 use App\Services\Users;
+use Carbon\Carbon;
 use Exception;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -136,7 +137,7 @@ class CustomerCrud extends CrudService
         return [
             'main'  =>  [
                 'label' =>  __( 'Customer Name' ),
-                'name'  =>  'name',
+                'name'          =>  'name',
                 'validation'    =>  'required',
                 'value'         =>  $entry->name ?? '',
                 'description'   =>  __( 'Provide a unique name for the customer.' )
@@ -158,6 +159,12 @@ class CustomerCrud extends CrudService
                             'value'         =>  $entry->group_id ?? '',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
+                        ], [
+                            'type'          =>  'datetimepicker',
+                            'label'         =>  __( 'Birth Date' ),
+                            'name'          =>  'birth_date',
+                            'value'         =>  $entry instanceof Customer ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : '', 
+                            'description'   =>  __( 'Displays the customer birth date' )
                         ], [
                             'type'          =>  'email',
                             'label'         =>  __( 'Email' ),
