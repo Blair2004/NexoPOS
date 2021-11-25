@@ -129,7 +129,7 @@ class ProcurementService
             }
 
             $procurement->author            =   Auth::id();
-            $procurement->value             =   0;
+            $procurement->cost              =   0;
             $procurement->save();
         });
         
@@ -207,7 +207,7 @@ class ProcurementService
             }
 
             $procurement->author            =   Auth::id();
-            $procurement->value             =   0;
+            $procurement->cost              =   0;
             $procurement->save();
         });
 
@@ -540,7 +540,12 @@ class ProcurementService
      */
     public function refresh( Procurement $procurement )
     {
-        Procurement::withoutEvents( function() use ( $procurement ) {
+        /**
+         * @var ProductService
+         */
+        $productService     =   app()->make( ProductService::class );
+
+        Procurement::withoutEvents( function() use ( $procurement, $productService ) {
             /**
              * Let's loop all procured produt
              * and get unit quantity if that exists
@@ -549,7 +554,14 @@ class ProcurementService
             $purchases  =   $procurement
                 ->products()
                 ->get()
-                ->map( function( $procurementProduct ) use ( $procurement ) {
+                ->map( function( $procurementProduct ) use ( $procurement, $productService ) {
+
+                $unitPrice      =   0;
+                $unit           =   $productService->getUnitQuantity( $procurementProduct->product_id, $procurementProduct->unit_id );
+
+                if ( $unit instanceof ProductUnitQuantity ) {
+                    $unitPrice  =   $unit->sale_price * $procurementProduct->quantity;
+                }
 
                 /**
                  * We'll return the total purchase
@@ -558,13 +570,14 @@ class ProcurementService
                 return [
                     'total_purchase_price'  =>  $procurementProduct->total_purchase_price,
                     'tax_value'             =>  $procurementProduct->tax_value,
+                    'total_price'           =>  $unitPrice
                 ];
             });
             
-            $procurement->value               =   $purchases->sum( 'total_purchase_price' );
-            $procurement->tax_value           =   $purchases->sum( 'tax_value' );
-            $procurement->total_items         =   count( $purchases );
-            $procurement->author              =   Auth::id();
+            $procurement->cost              =   $purchases->sum( 'total_purchase_price' );
+            $procurement->tax_value         =   $purchases->sum( 'tax_value' );
+            $procurement->value             =   $purchases->sum( 'total_price' );
+            $procurement->total_items       =   count( $purchases );
             $procurement->save();
         });
 

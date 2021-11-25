@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Migration;
 use App\Models\ModuleMigration;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
@@ -14,7 +15,7 @@ class MigrateForgetCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'migrate:forget {module} {--file=}';
+    protected $signature = 'migrate:forget {module?} {--file=}';
 
     /**
      * The console command description.
@@ -53,18 +54,22 @@ class MigrateForgetCommand extends Command
         $module     =   $this->moduleService->get( $this->argument( 'module' ) );
 
         if ( $module === null ) {
-            return $this->error( sprintf( __( 'Unable to find a module with the defined identifier "%s"'), $this->argument( 'module' ) ) );
-        }
+            if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
+                return $this->error( sprintf( __( 'Unable to find the requested file "%s" from the module migration.'), $this->option( 'file' ) ) );
+            }
+    
+            ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                ->where( 'file', $this->option( 'file' ) )
+                ->delete();
+            
+            Artisan::call( 'cache:clear' );
+    
+        } else {
 
-        if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
-            return $this->error( sprintf( __( 'Unable to find the requested file "%s" from the module migration.'), $this->option( 'file' ) ) );
-        }
+            Migration::where( 'migration', $this->option( 'file' ) )->delete();
+            Artisan::call( 'cache:clear' );
 
-        ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
-            ->where( 'file', $this->option( 'file' ) )
-            ->delete();
-        
-        Artisan::call( 'cache:clear' );
+        }
 
         return $this->info( __( 'The migration file has been successfully forgotten.' ) );
     }
