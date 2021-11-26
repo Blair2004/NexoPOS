@@ -64,4 +64,25 @@ class ProductCategoryService
         $category->total_items  =   $category->products()->count();
         $category->save();
     }
+
+    /**
+     * @todo work here
+     */
+    public function getCategoryFamilly( $category_id )
+    {
+        $categories     =   ProductCategory::where( 'parent_id', $category_id )
+            ->get();
+
+        if ( $categories->count() > 0 ) {
+            return $categories
+                ->map( function( $category ) {
+                    return $this->getCategoryFamilly( $category->id );
+                })
+                ->flatten()
+                ->push( $category_id )
+                ->toArray();            
+        }
+
+        return [ $category_id ];
+    }
 }
