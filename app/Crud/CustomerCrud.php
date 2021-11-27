@@ -471,6 +471,9 @@ class CustomerCrud extends CrudService
             'surname'  =>  [
                 'label'  =>  __( 'Surname' )
             ],
+            'phone'  =>  [
+                'label'  =>  __( 'Phone' )
+            ],
             'nexopos_customers_groups_name'  =>  [
                 'label'  =>  __( 'Group' )
             ],
@@ -506,6 +509,7 @@ class CustomerCrud extends CrudService
         $entry->owed_amount         =   ( string ) ns()->currency->define( $entry->owed_amount );
         $entry->account_amount      =   ( string ) ns()->currency->define( $entry->account_amount );
         $entry->purchases_amount    =   ( string ) ns()->currency->define( $entry->purchases_amount );
+        $entry->phone               =   empty( $entry->phone ) ? __( 'Not Defined' ) : $entry->phone;
         
         $entry->{'$actions'}    =   [
             [
