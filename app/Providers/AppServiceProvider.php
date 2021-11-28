@@ -261,6 +261,8 @@ class AppServiceProvider extends ServiceProvider
             Order::PAYMENT_VOID                 =>  __( 'Voided' ),
             Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
             Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
+            Order::PAYMENT_DUE                  =>  __( 'Due' ),
+            Order::PAYMENT_PARTIALLY_DUE        =>  __( 'Partially Due' ),
         ]]);
 
         config([ 'nexopos.orders.types'         =>  Hook::filter( 'ns-orders-types', [

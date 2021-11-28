@@ -24,6 +24,7 @@ class CreateProcurementsTable extends Migration
                 $table->string( 'name' );
                 $table->integer( 'provider_id' );
                 $table->float( 'value', 18, 5 )->default(0);
+                $table->float( 'cost', 18, 5 )->default(0);
                 $table->float( 'tax_value', 18, 5 )->default(0);
                 $table->string( 'invoice_reference' )->nullable();
                 $table->boolean( 'automatic_approval' )->default(false)->nullable();

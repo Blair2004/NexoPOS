@@ -1,6 +1,7 @@
 <?php
 namespace App\Crud;
 
+use App\Exceptions\NotAllowedException;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -307,6 +308,10 @@ class UserCrud extends CrudService
     public function beforeDelete( $namespace, $id, $model ) {
         if ( $namespace == 'ns.users' ) {
             $this->allowedTo( 'delete' );
+
+            if ( $id === Auth::id() ) {
+                throw new NotAllowedException( __( 'You cannot delete your own account.' ) );
+            }
         }
     }
 

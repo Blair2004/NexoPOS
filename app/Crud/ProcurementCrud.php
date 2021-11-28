@@ -341,8 +341,15 @@ class ProcurementCrud extends CrudService
                 '$sort'         =>  false
             ],
             'value'  =>  [
-                'label'         =>  __( 'Value' ),
+                'label'         =>  __( 'Sale Value' ),
                 '$direction'    =>  '',
+                'width'         =>  '150px',
+                '$sort'         =>  false
+            ],
+            'cost'  =>  [
+                'label'         =>  __( 'Purchase Value' ),
+                '$direction'    =>  '',
+                'width'         =>  '150px',
                 '$sort'         =>  false
             ],
             'tax_value'  =>  [
@@ -381,6 +388,11 @@ class ProcurementCrud extends CrudService
             ->define( $entry->value )
             ->format();
 
+        $entry->cost       =   ns()
+            ->currency
+            ->define( $entry->cost )
+            ->format();
+
         $entry->tax_value   =   ns()
             ->currency
             ->define( $entry->tax_value )
@@ -400,6 +412,15 @@ class ProcurementCrud extends CrudService
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
                 'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
+            ], [
+                'label'         =>      __( 'Refresh' ),
+                'namespace'     =>      'refresh',
+                'type'          =>      'GET',
+                'index'         =>      'id',
+                'url'           =>     ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
+                'confirm'   =>  [
+                    'message'  =>  __( 'Would you like to refresh this ?' ),
+                ]
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',

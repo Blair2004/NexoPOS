@@ -21,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
 use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
+use App\Jobs\ProcurementRefreshJob;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
@@ -156,11 +157,14 @@ class ProcurementController extends DashboardController
      * @param int procurement id
      * @return array response
      */
-    public function refreshProcurement( $procurement_id )
+    public function refreshProcurement( Procurement $id )
     {
-        return $this->procurementService->refresh( 
-            $this->procurementService->get( $procurement_id ) 
-        );
+        ProcurementRefreshJob::dispatch( $id );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The refresh process has started. You\'ll get informed once it\'s complete.' )
+        ];
     }
 
     /**

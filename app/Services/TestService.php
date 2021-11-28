@@ -117,7 +117,7 @@ class TestService
         ], $orderDetails );
     }
 
-    public function prepareProcurement( Carbon $date, array $details )
+    public function prepareProcurement( Carbon $date, array $details = [] )
     {
         $faker          =   Factory::create();
 
