@@ -137,7 +137,7 @@ class CrudController extends DashboardController
                  * sanitizing input to remove
                  * all script tags
                  */
-                if ( ! empty( $entry->$name ) ) {
+                if ( ! empty( $entry->$name ) && ! array( $entry->$name ) ) {
                     $entry->$name       =   strip_tags( $entry->$name );
                 }
             }
