@@ -24,6 +24,7 @@ export default {
                 .map( _ => 0 )
                 .join('') 
             ),
+            screenValue: 0,
             order: null,
             cursor: parseInt( ns.currency.ns_currency_precision ),
             orderSubscription: null,
@@ -36,10 +37,15 @@ export default {
             ]
         }
     },
-    computed: {
-        screenValue() {
-            return this.value === undefined ? 0 : this.value;
+    mounted() {
+        if( this.floating && this.value > 0 ) {
+            this.screenValue    =   parseFloat( this.value / this.number );
+        } else {
+            this.screenValue    =   0;
         }
+    },
+    computed: {
+        // ...
     },
     methods: {
         increaseBy( key ) {
@@ -55,7 +61,6 @@ export default {
         },
 
         inputValue( key ) {
-            let screenValue     =   this.screenValue;
             let number    =   parseInt( 
                 1 + ( new Array( this.cursor ) )
                 .fill('')
@@ -64,14 +69,14 @@ export default {
             );
 
             if ( key.identifier === 'next' ) {
-                this.$emit( 'next', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue );
+                this.$emit( 'next', this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / number ) : this.screenValue );
                 return;
             } else if ( key.identifier === 'backspace' ) {
                 if ( this.allSelected ) {
-                    screenValue      =   '0';
+                    this.screenValue    =   '0';
                     this.allSelected    =   false;
                 } else {
-                    screenValue      =   this.screenValue.substr( 0, this.screenValue.length - 1 );
+                    this.screenValue    =   this.screenValue.toString().substr( 0, this.screenValue.length - 1 );
                 }
             } else if ( key.value.toString().match( /^\d+$/ ) ) {
                 if ( this.limit > 0 && this.screenValue.length >= this.limit ) {
@@ -79,22 +84,24 @@ export default {
                 }
                 
                 if ( this.allSelected ) {
-                    screenValue      =   key.value.toString();
+                    this.screenValue      =   key.value.toString();
                     this.allSelected    =   false;
                 } else {
-                    screenValue      +=  key.value.toString();
+                    this.screenValue      +=  '' + key.value.toString();
 
                     if ( this.mode === 'percentage' ) {
-                        screenValue = this.screenValue > 100 ? 100 : this.screenValue;
+                        this.screenValue = this.screenValue > 100 ? 100 : this.screenValue;
                     }
                 }
             } 
 
-            if ( ( screenValue ) === "0" ) {
-                screenValue      =   '';
+            if ( ( this.screenValue ) === "0" ) {
+                this.screenValue      =   '';
             }
 
-            this.$emit( 'changed', this.floating && screenValue.length > 0 ? parseFloat( screenValue / this.number ) : screenValue );
+            const emitted   =   this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue;
+
+            this.$emit( 'changed', emitted );
         }
     }
 }

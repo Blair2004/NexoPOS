@@ -8,7 +8,7 @@
         </div>
         <div class="flex flex-col">
             <div class="h-16 flex items-center justify-center bg-gray-800 text-white font-bold">
-                <h2 class="text-2xl">{{ value | currency }}</h2>
+                <h2 class="text-2xl">{{ product.unit_price | currency }}</h2>
             </div>
             <div class="p-2">
                 <ns-numpad 
@@ -28,18 +28,17 @@ export default {
         nsNumpad
     },
     computed: {
-        product() {
-            return this.$popupParams.product;
-        }
+        // ...
     },
     data() {
         return {
-            value: 0
+            product: {}
         }
     },
     mounted() {
-        this.value      =   this.product.unit_price;
         this.popupCloser();
+
+        this.product    =   this.$popupParams.product;
     },
     methods: {
         popupResolver,
@@ -47,11 +46,11 @@ export default {
         __,
 
         updateProductPrice( price ) {
-            this.value  =   price;
+            this.product.unit_price     =   price;
         },
 
         resolveProductPrice( price ) {
-            this.popupResolver( price );
+            this.popupResolver( this.product.unit_price );
         }
     }
 }
