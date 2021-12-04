@@ -19,9 +19,6 @@
                     <div class="px-2">
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
-                    <!-- <div class="px-2">
-                        <ns-datetimepicker :field="field" @change="setEndDate( $event )"></ns-datetimepicker>
-                    </div> -->
                     <div class="px-2">
                         <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-sync-alt text-xl"></i>
@@ -33,6 +30,13 @@
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">Print</span>
                         </button>
+                    </div>
+                </div>
+                <div class="flex -mx-3">
+                    <div class="px-2">
+                        <div class="bg-white shadow rounded">
+                            <ns-select :field="field"></ns-select>
+                        </div>
                     </div>
                 </div>
                 <div id="sale-report" class="anim-duration-500 fade-in-entrance">

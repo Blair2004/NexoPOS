@@ -15,6 +15,25 @@ export default {
             endDate: moment(),
             orders: [],
             field: {
+                label: __( 'Report Type' ),
+                name: 'reportType',
+                type: 'select',
+                value: 'sale_report',
+                options: [
+                    {
+                        label: __( 'Sales' ),
+                        name: 'sale_report',
+                    },{
+                        label: __( 'Category' ),
+                        name: 'category_report',
+                    }, {
+                        label: __( 'Products' ),
+                        name: 'products_report',
+                    }
+                ],
+                description: __( 'Allow you to choose the report type.' ),
+            },
+            field: {
                 type: 'datetimepicker',
                 value: '2021-02-07',
                 name: 'date'
