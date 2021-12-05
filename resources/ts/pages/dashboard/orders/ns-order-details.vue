@@ -160,7 +160,7 @@
             <div class="mb-2">
                 <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Products' ) }}</h3>
             </div>
-            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-gray-200 mb-2">
+            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-gray-200 mb-6">
                 <div>
                     <h4 class="text-semibold text-gray-700">{{ product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }}</p>
@@ -169,9 +169,12 @@
             </div>
 
             <div class="mb-2">
-                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400">{{ __( 'Refunded Products' ) }}</h3>
+                <h3 class="font-semibold text-gray-800 pb-2 border-b border-blue-400 flex justify-between">
+                    <span>{{ __( 'Refunded Products' ) }}</span>
+                    <a href="javascript:void(0)" @click="openRefunds()" class="border-b border-blue-400 border-dashed">{{ __( 'All Refunds' ) }}</a>
+                </h3>
             </div>
-            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start bg-gray-200  mb-2">
+            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start bg-gray-200  mb-6">
                 <div>
                     <h4 class="text-semibold text-gray-700">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-gray-600 text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-red-400 text-white' : 'bg-blue-400 text-white'">{{ product.condition }}</span></p>
@@ -187,6 +190,7 @@ import { __ } from '@/libraries/lang';
 import { Popup } from '@/libraries/popup';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import nsOrdersRefundPopupVue from '@/popups/ns-orders-refund-popup.vue';
 export default {
     props: [ 'order' ],
     data() {
@@ -210,15 +214,29 @@ export default {
                     if ( action ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/processing`, {
                             process_status: this.order.process_status
-                        }).subscribe( result => {
-                            this.showProcessingSelect   =   false;
-                            nsSnackBar.success( result.message ).subscribe();
-                        }, ( error ) => {
-                            nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                        }).subscribe({
+                            next: result => {
+                                this.showProcessingSelect   =   false;
+                                nsSnackBar.success( result.message ).subscribe();
+                            }, 
+                            error: ( error ) => {
+                                nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                            }
                         })                            
                     }
                 }
             })
+        },
+
+        openRefunds() {
+            try {
+                const result    =   new Promise( ( resolve, reject ) => {
+                    const order     =   this.order;
+                    Popup.show( nsOrdersRefundPopupVue, { order, resolve, reject })
+                });
+            } catch( exception ) {
+                // ...
+            }
         },
 
         submitDeliveryStatus() {
@@ -229,11 +247,14 @@ export default {
                     if ( action ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/delivery`, {
                             delivery_status: this.order.delivery_status
-                        }).subscribe( result => {
-                            this.showDeliverySelect     =   false;
-                            nsSnackBar.success( result.message ).subscribe();
-                        }, ( error ) => {
-                            nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                        }).subscribe({
+                            next: result => {
+                                this.showDeliverySelect     =   false;
+                                nsSnackBar.success( result.message ).subscribe();
+                            }, 
+                            error: ( error ) => {
+                                nsSnackBar.error( error.message || __( 'Unexpected error occured.' ) ).subscribe();
+                            }
                         })                            
                     }
                 }

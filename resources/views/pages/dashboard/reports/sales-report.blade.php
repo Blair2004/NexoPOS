@@ -22,21 +22,20 @@
                     <div class="px-2">
                         <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-sync-alt text-xl"></i>
-                            <span class="pl-2">Load</span>
+                            <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
                         <button @click="printSaleReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
                             <i class="las la-print text-xl"></i>
-                            <span class="pl-2">Print</span>
+                            <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
                     </div>
-                </div>
-                <div class="flex -mx-3">
                     <div class="px-2">
-                        <div class="bg-white shadow rounded">
-                            <ns-select :field="field"></ns-select>
-                        </div>
+                        <button @click="openSettings()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
+                            <i class="las la-cogs text-xl"></i>
+                            <span class="pl-2">{{ __( 'Type' ) }} : @{{ getType( reportType.value ) }}</span>
+                        </button>
                     </div>
                 </div>
                 <div id="sale-report" class="anim-duration-500 fade-in-entrance">
@@ -54,31 +53,151 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white shadow rounded my-4">
+                    <div>
+                        <div class="-mx-4 flex md:flex-row flex-col">
+                            <div class="w-full md:w-1/2 px-4">
+                                <div class="bg-white shadow rounded my-4">
+                                    <div class="border-b border-gray-200">
+                                        <table class="table w-full">
+                                            <tbody class="text-gray-700">
+                                                <tr class="">
+                                                    <td width="150" class="font-semibold p-2 border text-left bg-blue-100 border-blue-200">{{ __( 'Sub Total' ) }}</td>
+                                                    <td class="p-2 border text-right border-blue-200">@{{ summary.subtotal | currency }}</td>
+                                                </tr>
+                                                <tr class="">
+                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Discounts' ) }}</td>
+                                                    <td class="p-2 border text-right border-red-200">@{{ summary.sales_discounts | currency }}</td>
+                                                </tr>
+                                                <tr class="">
+                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Taxes' ) }}</td>
+                                                    <td class="p-2 border text-right border-red-200">@{{ summary.sales_taxes | currency }}</td>
+                                                </tr>
+                                                <tr class="">
+                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Products Taxes' ) }}</td>
+                                                    <td class="p-2 border text-right border-red-200">@{{ summary.producs_taxes | currency }}</td>
+                                                </tr>
+                                                <tr class="">
+                                                    <td width="150" class="font-semibold p-2 border text-left bg-green-100 border-green-200">{{ __( 'Total' ) }}</td>
+                                                    <td class="p-2 border text-right border-blue-200">@{{ summary.total | currency }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2 px-4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow rounded my-4" v-if="reportType.value === 'products_report'">
                         <div class="border-b border-gray-200">
                             <table class="table w-full">
                                 <thead class="text-gray-700">
                                     <tr>
-                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Orders' ) }}</th>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Products' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Quantity' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Discounts' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Taxes' ) }}</th>
                                         <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Total' ) }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-700">
-                                    <tr v-for="order of orders" :key="order.id">
-                                        <td class="p-2 border border-blue-200 bg-white">@{{ order.code }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.discount | currency }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.tax_value | currency }}</td>
-                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ order.total | currency }}</td>
+                                    <tr v-for="product of result" :key="product.id">
+                                        <td class="p-2 border border-blue-200 bg-white">@{{ product.name }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.quantity }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.discount | currency }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.tax_value | currency }}</td>
+                                        <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.total_price | currency }}</td>
                                     </tr>
                                 </tbody>
                                 <tfoot class="text-gray-700 font-semibold">
                                     <tr>
                                         <td class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
-                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalDiscounts | currency }}</td>
-                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalTaxes | currency }}</td>
-                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ totalOrders | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'quantity' ) }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'discount' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'tax_value' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_price' ) | currency }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow rounded my-4" v-if="reportType.value === 'categories_report'">
+                        <div class="border-b border-gray-200">
+                            <table class="table w-full">
+                                <thead class="text-gray-700">
+                                    <tr>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Category' ) }}</th>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Product' ) }}</th>
+                                        <th width="100" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Quantity' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Discounts' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Taxes' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Total' ) }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-700">
+                                    <template v-for="(category, categoryIndex) of result">
+                                        <template v-if="category.products.length > 0">
+                                            <tr v-for="(product,productIndex) of category.products" :key="parseInt( category.id + '' + product.id )">
+                                                <td class="p-2 border border-blue-200 bg-white">@{{ category.name }}</td>
+                                                <td class="p-2 border border-blue-200 bg-white">@{{ product.name }}</td>
+                                                <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.quantity }}</td>
+                                                <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.discount | currency }}</td>
+                                                <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.tax_value | currency }}</td>
+                                                <td class="p-2 border text-right border-blue-200 bg-white">@{{ product.total_price | currency }}</td>
+                                            </tr>
+                                        </template>
+                                        <tr :key="categoryIndex"  class="bg-blue-400 text-white">
+                                            <td colspan="2" class="p-2 border border-blue-400">@{{ category.name }}</td>
+                                            <td class="p-2 border text-right border-blue-400">@{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                            <td class="p-2 border text-right border-blue-400">@{{ computeTotal( category.products, 'discount' ) | currency }}</td>
+                                            <td class="p-2 border text-right border-blue-400">@{{ computeTotal( category.products, 'tax_value' ) | currency }}</td>
+                                            <td class="p-2 border text-right border-blue-400">@{{ computeTotal( category.products, 'total_price' ) | currency }}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                                <tfoot class="text-gray-700 font-semibold">
+                                    <tr>
+                                        <td colspan="2" class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_sold_items' ) }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_discount' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_tax_value' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_price' ) | currency }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow rounded my-4" v-if="reportType.value === 'categories_summary'">
+                        <div class="border-b border-gray-200">
+                            <table class="table w-full">
+                                <thead class="text-gray-700">
+                                    <tr>
+                                        <th class="bg-gray-100 text-gray-800 border border-gray-300 p-2 text-left">{{ __( 'Category' ) }}</th>
+                                        <th width="100" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Quantity' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Discounts' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Taxes' ) }}</th>
+                                        <th width="150" class="bg-gray-100 text-right text-gray-800 border border-gray-300 p-2">{{ __( 'Total' ) }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-700">
+                                    <template v-for="(category, categoryIndex) of result">
+                                        <tr :key="categoryIndex"  class="">
+                                            <td class="p-2 border text-left border-blue-200">@{{ category.name }}</td>
+                                            <td class="p-2 border text-right border-blue-200">@{{ computeTotal( category.products, 'quantity' ) }}</td>
+                                            <td class="p-2 border text-right border-blue-200">@{{ computeTotal( category.products, 'discount' ) | currency }}</td>
+                                            <td class="p-2 border text-right border-blue-200">@{{ computeTotal( category.products, 'tax_value' ) | currency }}</td>
+                                            <td class="p-2 border text-right border-blue-200">@{{ computeTotal( category.products, 'total_price' ) | currency }}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                                <tfoot class="text-gray-700 font-semibold">
+                                    <tr>
+                                        <td class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_sold_items' ) }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_discount' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_tax_value' ) | currency }}</td>
+                                        <td class="p-2 border text-right border-gray-200 bg-gray-100 text-gray-700">@{{ computeTotal( result, 'total_price' ) | currency }}</td>
                                     </tr>
                                 </tfoot>
                             </table>

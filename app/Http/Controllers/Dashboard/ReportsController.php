@@ -45,10 +45,10 @@ class ReportsController extends DashboardController
         ]);
     }
 
-    public function productsReport()
+    public function salesProgress()
     {
         return $this->view( 'pages.dashboard.reports.best-products-report', [
-            'title'         =>  __( 'Product Sales' ),
+            'title'         =>  __( 'Sales Progress' ),
             'description'   =>  __( 'Provides an overview over the best products sold during a specific period.' )
         ]);
     }
@@ -92,10 +92,11 @@ class ReportsController extends DashboardController
      */
     public function getSaleReport( Request $request )
     {
-        return $this->ordersService
-            ->getPaidSales( 
+        return $this->reportService
+            ->getSaleReport( 
                 $request->input( 'startDate' ), 
-                $request->input( 'endDate' ) 
+                $request->input( 'endDate' ),
+                $request->input( 'type' )
             );
     }
 
@@ -265,7 +266,7 @@ class ReportsController extends DashboardController
 
     public function getProductsReport( Request $request )
     {
-        return $this->reportService->getProductsReport(
+        return $this->reportService->getProductSalesDiff(
             $request->input( 'startDate' ),
             $request->input( 'endDate' ),
             $request->input( 'sort' )

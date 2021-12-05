@@ -47,7 +47,10 @@ export default {
             this.$popup.close();
         },
         reject( action ) {
-            this.$popupParams.reject( action );
+            if( this.$popupParams.reject !== undefined ) {
+                this.$popupParams.reject( action );
+            }
+            
             this.$popup.close();
         }
     }
