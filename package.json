@@ -37,6 +37,7 @@
     "@dicebear/avatars": "^4.9.0",
     "@dicebear/avatars-avataaars-sprites": "^4.9.0",
     "@wordpress/hooks": "^3.0.0",
+    "acron": "^1.0.5",
     "apexcharts": "^3.22.1",
     "autoprefixer": "^10.0.4",
     "chart.js": "^3.3.0",
