@@ -1,10 +1,16 @@
-<?php
+    <?php
 
 use App\Http\Controllers\Dashboard\ReportsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '/reports/sales', [ ReportsController::class, 'salesReport' ]);
-Route::get( '/reports/products-report', [ ReportsController::class, 'productsReport' ]);
+Route::get( '/reports/sales-progress', [ ReportsController::class, 'salesProgress' ]);
+
+/**
+ * @deprecated
+ */
+Route::get( '/reports/products-report', [ ReportsController::class, 'salesProgress' ]);
+
 Route::get( '/reports/low-stock', [ ReportsController::class, 'lowStockReport' ])->name( ns()->routeName( 'ns.dashboard.reports-low-stock' ) );
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);

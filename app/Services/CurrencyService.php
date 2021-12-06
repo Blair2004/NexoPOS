@@ -294,9 +294,9 @@ class CurrencyService
     {
         if ( is_float( ( float ) $number ) ) {
             if ( ( ( string ) $number )[0] != '-') {
-                $value     =   ( float ) bcadd($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+                $value     =   ( float ) bcadd( $number, '0.' . str_repeat('0', $precision) . '5', $precision);
             } else {
-                $value     =   ( float ) bcsub($number, '0.' . str_repeat('0', $precision) . '5', $precision);
+                $value     =   ( float ) bcsub( $number, '0.' . str_repeat('0', $precision) . '5', $precision);
             }
 
             if ( strpos( ( string ) $value, '.' ) === false ) {

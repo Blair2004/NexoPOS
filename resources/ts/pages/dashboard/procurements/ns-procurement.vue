@@ -104,7 +104,7 @@ export default {
              * control the state of the reloading
              * spinner
              */
-            reloading: false
+            reloading: false,
         }
     },
     watch: {
@@ -187,10 +187,23 @@ export default {
 
                 product.procurement.tax_value                   =   product.procurement.tax_value * parseFloat( product.procurement.quantity );
                 product.procurement.total_purchase_price        =   product.procurement.purchase_price * parseFloat( product.procurement.quantity );
-            }
+            } 
 
             this.computeTotal();
             this.$forceUpdate();
+        },
+
+        fetchLastPurchasePrice( index ) {
+            const product   =   this.form.products[ index ];
+            const unit      =   product.unit_quantities.filter( unitQuantity => {
+                return product.procurement.unit_id === unitQuantity.unit_id;
+            });
+
+            if ( unit.length > 0 ) {
+                product.procurement.purchase_price_edit      =   ( unit[0].last_purchase_price || 0 );
+            }
+
+            this.updateLine( index );
         },
 
         /**
@@ -213,8 +226,10 @@ export default {
                 .subscribe( result => {
                     if ( result.length === 1 ) {
                         this.addProductList( result[0] );
-                    } else {
+                    } else if ( result.length > 1 ) {
                         this.searchResult   =   result;
+                    } else {
+                        nsSnackBar.error( __( 'No result match your query.' ) ).subscribe();
                     }
                 })
         },
@@ -433,7 +448,7 @@ export default {
         <template v-if="form.main">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">{{ __( 'No title is provided' ) }}</slot></label>
+                    <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label || __( 'No title is provided' ) }}</label>
                     <div for="title" class="text-sm my-2 text-gray-700">
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">{{ __( 'Go Back' ) }}</a>
                     </div>
@@ -539,7 +554,7 @@ export default {
                                                 </td>
                                                 <td :key="key" v-if="column.type === 'unit_quantities'" class="p-2 text-gray-600 border border-gray-300">
                                                     <div class="flex items-start">
-                                                        <select v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
+                                                        <select @change="fetchLastPurchasePrice( index )" v-model="product.procurement.unit_id" class="rounded border-blue-500 border-2 p-2 w-32">
                                                             <option v-for="option of product.unit_quantities" :key="option.id" :value="option.unit.id">{{ option.unit.name }}</option>
                                                         </select>
                                                     </div>

@@ -62,7 +62,7 @@ class MakeProcurementTest extends TestCase
          */
         $this->assertEquals( 
             Currency::raw( $newExpensevalue ), 
-            Currency::raw( ( float ) $currentExpenseValue + ( float ) $responseData[ 'data' ][ 'procurement' ][ 'value' ] ) 
+            Currency::raw( ( float ) $currentExpenseValue + ( float ) $responseData[ 'data' ][ 'procurement' ][ 'cost' ] ) 
         );
     }
 }

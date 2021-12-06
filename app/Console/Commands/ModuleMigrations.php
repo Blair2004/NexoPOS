@@ -88,6 +88,7 @@ class ModuleMigrations extends Command
             /**
              * This will revert the migration
              * for a specific module.
+             * @var ModulesService
              */
             $moduleService  =   app()->make( ModulesService::class );
             $moduleService->revertMigrations( $this->module );

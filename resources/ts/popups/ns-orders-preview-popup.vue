@@ -100,22 +100,34 @@ const nsOrderPreviewPopup   =   {
             })
         },
         voidOrder() {
-            Popup.show( nsPromptPopupVue, {
-                title: __( 'Confirm Your Action' ),
-                message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
-                onAction:  ( reason ) => {
-                    if ( reason !== false ) {
-                        nsHttpClient.post( `/api/nexopos/v4/orders/${this.$popupParams.order.id}/void`, { reason })
-                            .subscribe( result => {
-                                nsSnackBar.success( result.message ).subscribe();
-                                this.refreshCrudTable();
-                                this.closePopup();
-                            }, error => {
-                                nsSnackBar.error( error.message ).subscribe();
-                            })
-                    }
-                }
-            });
+            try {
+                const result  =   new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPromptPopupVue, {
+                        resolve,
+                        reject,
+                        title: __( 'Confirm Your Action' ),
+                        message: __( 'The current order will be void. This action will be recorded. Consider providing a reason for this operation' ),
+                        onAction:  ( reason ) => {
+                            if ( reason !== false ) {
+                                nsHttpClient.post( `/api/nexopos/v4/orders/${this.$popupParams.order.id}/void`, { reason })
+                                    .subscribe({
+                                        next: result => {
+                                            nsSnackBar.success( result.message ).subscribe();
+                                            this.refreshCrudTable();
+                                            this.closePopup();
+                                        },
+                                        error:  error => {
+                                            nsSnackBar.error( error.message ).subscribe();
+                                        }
+                                    })
+                            }
+                        }
+                    });
+                })
+            } catch( exception ) {
+                // ...
+                console.log( exception );
+            }
         },
         refreshCrudTable() {
             this.$popupParams.component.$emit( 'updated', true );

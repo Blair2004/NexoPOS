@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Classes\Hook;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
 use App\Exceptions\NotAllowedException;
@@ -20,6 +21,7 @@ use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
 use App\Services\Options;
 use App\Http\Requests\ProcurementRequest;
+use App\Jobs\ProcurementRefreshJob;
 use App\Models\Procurement;
 use App\Models\ProcurementProduct;
 use App\Models\Product;
@@ -155,11 +157,14 @@ class ProcurementController extends DashboardController
      * @param int procurement id
      * @return array response
      */
-    public function refreshProcurement( $procurement_id )
+    public function refreshProcurement( Procurement $id )
     {
-        return $this->procurementService->refresh( 
-            $this->procurementService->get( $procurement_id ) 
-        );
+        ProcurementRefreshJob::dispatch( $id );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The refresh process has started. You\'ll get informed once it\'s complete.' )
+        ];
     }
 
     /**
@@ -209,10 +214,10 @@ class ProcurementController extends DashboardController
     {
         ns()->restrict([ 'nexopos.create.procurements' ]);
 
-        return $this->view( 'pages.dashboard.procurements.create', [
+        return $this->view( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
             'title'         =>  __( 'New Procurement' ),
             'description'   =>  __( 'Make a new procurement' )
-        ]);
+        ] ) );
     }
 
     public function updateProcurement( Procurement $procurement )
@@ -223,11 +228,11 @@ class ProcurementController extends DashboardController
             throw new NotAllowedException( __( 'Unable to edit a procurement that is stocked. Consider performing an adjustment or either delete the procurement.' ) );
         }
 
-        return $this->view( 'pages.dashboard.procurements.edit', [
+        return $this->view( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
             'title'         =>  __( 'Edit Procurement' ),
             'description'   =>  __( 'Perform adjustment on existing procurement.' ),
             'procurement'   =>  $procurement
-        ]);
+        ] ) );
     }
 
     public function procurementInvoice( Procurement $procurement )

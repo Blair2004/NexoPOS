@@ -71,10 +71,10 @@ class OrderCrud extends CrudService
     public $fillable    =   [];
 
     protected $permissions = [
-        'create' => 'nexopos.create.orders',
-        'read' => 'nexopos.read.orders',
-        'update' => 'nexopos.update.orders',
-        'delete' => 'nexopos.delete.orders',
+        'create'    => 'nexopos.create.orders',
+        'read'      => 'nexopos.read.orders',
+        'update'    => 'nexopos.update.orders',
+        'delete'    => 'nexopos.delete.orders',
     ];
 
     /**
@@ -536,7 +536,7 @@ class OrderCrud extends CrudService
                 $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
             break;
             case Order::PAYMENT_UNPAID : 
-                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-gray-100 border-gray-200 border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY : 
                 $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
@@ -552,6 +552,12 @@ class OrderCrud extends CrudService
             break;
             case Order::PAYMENT_PARTIALLY_REFUNDED : 
                 $entry->{ '$cssClass' }             =   'bg-orange-100 border-orange-200 border text-sm';
+            break;
+            case Order::PAYMENT_DUE : 
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+            break;
+            case Order::PAYMENT_PARTIALLY_DUE : 
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
             break;
         }
 
@@ -658,7 +664,7 @@ class OrderCrud extends CrudService
     {
         return  [
             'list'      =>  'ns.orders',
-            'create'    =>  'ns.orders/create',
+            'create'    =>  ns()->route( 'ns.dashboard.pos' ),
             'edit'      =>  'ns.orders/edit/#'
         ];
     }

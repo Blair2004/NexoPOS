@@ -208,8 +208,7 @@ class CreateOrderTest extends TestCase
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
-            
-            
+                            
             $response->assertJson([
                 'status'    =>  'success'
             ]);

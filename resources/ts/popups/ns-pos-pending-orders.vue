@@ -16,8 +16,9 @@
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
                             <div class="w-full md:w-1/2 px-2">
+                                <p class="text-sm text-gray-600"><strong>{{ __( 'Code' ) }}</strong> : {{ order.code }}</p>
                                 <p class="text-sm text-gray-600"><strong>{{ __( 'Cashier' ) }}</strong> : {{ order.nexopos_users_username }}</p>
-                                <p class="text-sm text-gray-600"><strong>{{ __( 'Register' ) }}</strong> : {{ order.total | currency }}</p>
+                                <p class="text-sm text-gray-600"><strong>{{ __( 'Total' ) }}</strong> : {{ order.total | currency }}</p>
                                 <p class="text-sm text-gray-600"><strong>{{ __( 'Tendered' ) }}</strong> : {{ order.tendered | currency }}</p>
                             </div>
                             <div class="w-full md:w-1/2 px-2">

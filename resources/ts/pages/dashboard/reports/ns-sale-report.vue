@@ -6,6 +6,7 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 
 export default {
     name: 'ns-sale-report',
@@ -13,7 +14,27 @@ export default {
         return {
             startDate: moment(),
             endDate: moment(),
-            orders: [],
+            result: [],
+            summary: {},
+            reportType: {
+                label: __( 'Report Type' ),
+                name: 'reportType',
+                type: 'select',
+                value: 'categories_report',
+                options: [
+                    {
+                        label: __( 'Categories Detailed' ),
+                        name: 'categories_report',
+                    }, {
+                        label: __( 'Categories Summary' ),
+                        name: 'categories_summary',
+                    }, {
+                        label: __( 'Products' ),
+                        name: 'products_report',
+                    }
+                ],
+                description: __( 'Allow you to choose the report type.' ),
+            },
             field: {
                 type: 'datetimepicker',
                 value: '2021-02-07',
@@ -26,30 +47,7 @@ export default {
         // nsDatetimepicker,
     },
     computed: {
-        totalDiscounts() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.discount )
-                    .reduce( ( b, a ) => b + a );
-            }
-            return 0;
-        },
-        totalTaxes() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.tax_value )
-                    .reduce( ( b, a ) => b + a );
-            }
-            return 0;
-        },
-        totalOrders() {
-            if ( this.orders.length > 0 ) {
-                return this.orders
-                    .map( order => order.total )
-                    .reduce( ( b, a ) => b + a );
-            }
-            return 0;
-        },
+        // ..
     },
     methods: {
         printSaleReport() {
@@ -57,7 +55,36 @@ export default {
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
-            console.log( this.startDate );
+        },
+
+        async openSettings() {
+            try {
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsSelectPopupVue, {
+                        ...this.reportType,
+                        resolve, 
+                        reject
+                    });
+                });
+
+                this.reportType.value   =   result[0].name;
+                this.result             =   [];
+                this.loadReport();
+            } catch( exception ) {
+                // ...
+            }
+        },
+
+        getType( type ) {
+            const option    =   this.reportType.options.filter( option => {
+                return option.name === type;
+            });
+
+            if ( option.length > 0 ) {
+                return option[0].label;
+            }
+
+            return __( 'Unknown' );
         },
 
         loadReport() {
@@ -74,12 +101,27 @@ export default {
 
             nsHttpClient.post( '/api/nexopos/v4/reports/sale-report', { 
                 startDate: this.startDate,
-                endDate: this.endDate
-            }).subscribe( orders => {
-                this.orders     =   orders;
-            }, ( error ) => {
-                nsSnackBar.error( error.message ).subscribe();
+                endDate: this.endDate,
+                type: this.reportType.value
+            }).subscribe({
+                next: response => {
+                    this.result     =   response.result;
+                    this.summary    =   response.summary;
+                }, 
+                error : ( error ) => {
+                    nsSnackBar.error( error.message ).subscribe();
+                }
             });
+        },
+
+        computeTotal( collection, attribute ) {
+            if ( collection.length > 0 ) {
+                console.log( 'computes' );
+                return collection.map( entry => parseFloat( entry[ attribute ] ) )
+                    .reduce( ( b, a ) => b + a );
+            }
+
+            return 0;
         },
 
         setEndDate( moment ) {

@@ -1,12 +1,14 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\Order;
+use App\Models\ProductCategory;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
@@ -496,7 +498,7 @@ class ReportService
      * @param string $sort
      * @return array
      */
-    public function getProductsReport( $startDate, $endDate, $sort )
+    public function getProductSalesDiff( $startDate, $endDate, $sort )
     {
         $startDate          =   Carbon::parse( $startDate );
         $endDate            =   Carbon::parse( $endDate ); 
@@ -662,6 +664,7 @@ class ReportService
                 ->join( $orderTable, $orderTable . '.id', '=', $orderProductTable . '.order_id' )
                 ->where( $orderTable . '.created_at', '>=', $report[ 'startDate' ] )
                 ->where( $orderTable . '.created_at', '<=', $report[ 'endDate' ] )
+                ->whereIn( $orderTable . '.payment_status', [ Order::PAYMENT_PAID ])
                 ->get()
                 ->map( function( $product ) {
                     $product->difference    =   0;
@@ -697,6 +700,124 @@ class ReportService
             ->sum();
 
         return $previousDates;
+    }
+
+    /**
+     * Will return a report based
+     * on the requested type
+     * @param string $start
+     * @param string $end
+     * @param string $type
+     * @return array
+     */
+    public function getSaleReport( $start, $end, $type )
+    {
+        switch( $type ) {
+            case 'products_report':
+                return $this->getProductsReports( $start, $end );
+            break;
+            case 'categories_report':
+            case 'categories_summary':
+                return $this->getCategoryReports( $start, $end );
+            break;
+        }
+    }
+
+    private function getSalesSummary( $orders )
+    {
+        $allSales   =   $orders->map( function( $order ) {
+            $salesTaxes             =   $order->tax_value - $order->products->sum( 'tax_value' );
+
+            return [
+                'sales_discounts'   =>  $order->discount,
+                'sales_taxes'       =>  $salesTaxes > 0 ? $salesTaxes : 0,
+                'producs_taxes'     =>  $order->products->sum( 'tax_value' ),
+                'total'             =>  $order->total - $order->products->sum( 'tax_value' ),
+                'subtotal'          =>  $order->subtotal,
+            ];
+        });
+
+        return [
+            'sales_discounts'   =>  Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
+            'producs_taxes'     =>  Currency::define( $allSales->sum( 'producs_taxes' ) )->getRaw(),
+            'sales_taxes'       =>  Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
+            'subtotal'         =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
+            'total'             =>  Currency::define( $allSales->sum( 'total' ) )->getRaw(),
+        ];
+    }
+
+    public function getProductsReports( $start, $end )
+    {
+        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )
+            ->from( $start )
+            ->to( $end )
+            ->with( 'products' )
+            ->get();
+
+        $summary        =   $this->getSalesSummary( $orders );
+
+        $products       =   $orders->map( fn( $order ) => $order->products )->flatten();
+
+        $productsIds    =   $products->map( fn( $product ) => $product->product_id )->unique();
+        
+        return [
+            'result'    =>  $productsIds->map( function( $id ) use ( $products ) {
+                $product            =   $products->where( 'product_id', $id )->first();
+                $filtredProdcuts    =   $products->where( 'product_id', $id )->all();
+                
+                $summable           =   [ 'quantity', 'discount', 'wholesale_tax_value', 'sale_tax_value', 'tax_value', 'total_gross_price', 'total_price', 'total_net_price', 'total_purchase_price' ];
+                foreach( $summable as $key ) {
+                    $product->$key  =   collect( $filtredProdcuts )->sum( $key );
+                }
+    
+                return $product;
+            })->values(),
+            'summary'   =>  $summary
+        ];
+    }
+
+    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc' )
+    {
+        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )
+            ->from( $start )
+            ->to( $end )
+            ->with( 'products' )
+            ->get();
+
+        /**
+         * We'll pull the sales
+         * summary
+         */
+        $summary        =   $this->getSalesSummary( $orders );
+
+        $products       =   $orders->map( fn( $order ) => $order->products )->flatten();
+        $category_ids   =   $orders->map( fn( $order ) => $order->products->map( fn( $product ) => $product->product_category_id ) );
+
+        $unitIds        =   $category_ids->flatten()->unique()->toArray();
+
+        /**
+         * We'll get all category that are listed
+         * on the product sold
+         */
+        $categories     =   ProductCategory::whereIn( 'id', $unitIds )
+            ->orderBy( $orderAttribute, $orderDirection )
+            ->get();
+
+        /**
+         * That will sum all the total prices
+         */
+        $categories->each( function( $category ) use( $products ) {
+            $category->products             =   collect( $products->where( 'product_category_id', $category->id )->all() )->values();
+            $category->total_tax_value      =   collect( $category->products )->sum( 'tax_value' );
+            $category->total_price          =   collect( $category->products )->sum( 'total_price' );
+            $category->total_discount       =   collect( $category->products )->sum( 'discount' );
+            $category->total_sold_items     =   collect( $category->products )->sum( 'quantity' );
+        });
+
+        return [
+            'result'    =>  $categories->toArray(),
+            'summary'   =>  $summary
+        ];
     }
 
     /**

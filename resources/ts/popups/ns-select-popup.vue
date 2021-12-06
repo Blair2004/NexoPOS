@@ -46,7 +46,6 @@ export default {
         this.options    =   this.$popupParams.options;
         this.label      =   this.$popupParams.label;
         this.type       =   this.$popupParams.type || this.type;
-        console.log( this.$popupParams );
     },
     methods: {
         popupCloser,

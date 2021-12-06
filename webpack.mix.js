@@ -1,6 +1,6 @@
-const tailwindcss = require('tailwindcss');
-const path = require( 'path' );
-const mix = require( 'laravel-mix' );
+const tailwindcss   = require('tailwindcss');
+const path          = require( 'path' );
+const mix           = require( 'laravel-mix' );
 
 /*
  |--------------------------------------------------------------------------
@@ -14,24 +14,6 @@ const mix = require( 'laravel-mix' );
  */
 mix
     .webpackConfig({
-        // module: {
-        //     rules: [
-        //         {
-        //             test: /\.tsx?$/,
-        //             loader: "ts-loader",
-        //             exclude: /node_modules/
-        //         },{
-        //             test: /\.m?js$/,
-        //             exclude: /(node_modules|bower_components)/,
-        //             use: {
-        //               loader: 'babel-loader',
-        //               options: {
-        //                 presets: ['@babel/preset-env'],
-        //               },
-        //             },
-        //         },
-        //     ]
-        // },
         resolve: {
             extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
             alias: {

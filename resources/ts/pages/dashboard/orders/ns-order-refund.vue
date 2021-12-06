@@ -85,11 +85,11 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import nsOrdersRefundProducts from "@/popups/ns-orders-refund-product-popup";
 import nsOrdersProductQuantityVue from '@/popups/ns-orders-product-quantity.vue';
 import nsNumpad from "@/components/ns-numpad";
-import { nsSelect } from '@/components/ns-select';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { Popup } from '@/libraries/popup';
 import { __ } from '@/libraries/lang';
+import Print from '@/libraries/print';
 
 export default {
     components: {
@@ -126,6 +126,7 @@ export default {
             refundables: [],
             paymentOptions: [],
             paymentField: [],
+            print: new Print({ settings: systemSettings, options: systemOptions }),
             refundShipping: false,
             selectedPaymentGateway: false,
             screen: 0,
@@ -199,6 +200,9 @@ export default {
                     next:  (result) => {
                         this.isSubmitting   =   false;
                         this.$emit( 'changed', true );
+
+                        this.print.printOrder( result.data.orderRefund.id );
+                        
                         nsSnackBar.success( result.message ).subscribe();
                     },
                     error: (error) => {

@@ -360,9 +360,9 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/reports/sales' )
                     ], 
                     'products-report'  =>  [
-                        'label' =>  __( 'Best Sales' ),
+                        'label' =>  __( 'Sales Progress' ),
                         'permissions'   =>  [ 'nexopos.reports.products-report' ],
-                        'href'  =>  ns()->url( '/dashboard/reports/products-report' )
+                        'href'  =>  ns()->url( '/dashboard/reports/sales-progress' )
                     ], 
                     'low-stock'  =>  [
                         'label' =>  __( 'Low Stock Report' ),

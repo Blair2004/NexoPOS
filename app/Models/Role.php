@@ -150,6 +150,15 @@ class Role extends NsRootModel
      */
     private static function __createRelation( $role, $permission, $silent = true )
     {
+        /**
+         * If we want it to be silent
+         * then we should'nt trigger any error
+         * if the $role is not a valid instance.
+         */
+        if ( ! $role instanceof Role && $silent === false ) {
+            return; // 
+        }
+
         $rolePermission     =   RolePermission::where( 'role_id', $role->id )
             ->where( 'permission_id', $permission->id )
             ->first();

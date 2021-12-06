@@ -57,6 +57,8 @@ import { __ } from "@/libraries/lang";
 import popupCloser from '@/libraries/popup-closer';
 import popupResolver from '@/libraries/popup-resolver';
 import { nsSnackBar } from '@/bootstrap';
+import Print from '@/libraries/print';
+
 export default {
     name: 'ns-orders-refund-popup',
     data() {
@@ -67,7 +69,8 @@ export default {
             previewed: null,
             loaded: false,
             options: systemOptions,
-            settings: systemSettings
+            settings: systemSettings,
+            print: new Print({ settings: systemSettings, options: systemOptions })
         }
     },
     methods: {
@@ -94,44 +97,8 @@ export default {
             this.$popup.close();
         },
 
-        processRegularPrinting( order_id ) {
-            const item  =   document.querySelector( 'printing-section' );
-
-            if ( item ) {
-                item.remove();
-            }
-
-            const url               =   this.settings.printing_url.replace( '{order_id}', order_id );
-            const printSection      =   document.createElement( 'iframe' );
-
-            printSection.id         =   'printing-section';
-            printSection.className  =   'hidden';
-            printSection.src        =   url;
-
-            document.body.appendChild( printSection );
-            
-            setTimeout( () => {
-                document.querySelector( '#printing-section' ).remove();
-            }, 100 );
-        },
-
         printRefundReceipt( refund ) {
-            this.printOrder( refund.id )
-        },
-
-        printOrder( order_id ) {
-            switch( this.options.ns_pos_printing_gateway ) {
-                case 'default' : this.processRegularPrinting( order_id ); break;
-                default: this.processCustomPrinting( order_id, this.options.ns_pos_printing_gateway ); break;
-            }
-        },
-
-        processCustomPrinting( order_id, gateway ) {
-            const result =  nsHooks.applyFilters( 'ns-order-custom-refund-print', { printed: false, order_id, gateway });
-            
-            if ( ! result.printed ) {
-                nsSnackBar.error( __( `Unsupported print gateway.` ) ).subscribe();
-            }
+            this.print.printOrder( refund.id )
         }
     },
     mounted() {

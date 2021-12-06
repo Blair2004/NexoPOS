@@ -396,7 +396,7 @@ class ExpenseService
              * made only for recording an history.
              */
             $expense                    =   new Expense;
-            $expense->value             =   $procurement->value;
+            $expense->value             =   $procurement->cost;
             $expense->active            =   true;
             $expense->author            =   Auth::id();
             $expense->procurement_id    =   $procurement->id;

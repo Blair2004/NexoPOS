@@ -64,4 +64,52 @@ class ProductCategoryService
         $category->total_items  =   $category->products()->count();
         $category->save();
     }
+
+    /**
+     * Retrieve all the child category
+     * that belongs to a specific category
+     * @param int $category_id
+     * @return array
+     */
+    public function getCategoryChildrens( $category_id )
+    {
+        $categories     =   ProductCategory::where( 'parent_id', $category_id )
+            ->get();
+
+        if ( $categories->count() > 0 ) {
+            return $categories
+                ->map( function( $category ) {
+                    return $this->getCategoryChildrens( $category->id );
+                })
+                ->flatten()
+                ->prepend( $category_id )
+                ->toArray();            
+        }
+
+        return [ $category_id ];
+    }
+
+    /**
+     * Retreive category parents
+     * @param int $category_id
+     * @return array
+     */
+    public function getCategoryParents( $category_id )
+    {
+        $current    =   ProductCategory::find( $category_id ); 
+        
+        if ( ! empty( $current->parent_id ) ) {
+            
+            $parent     =   ProductCategory::where( 'id', $current->parent_id )->first();
+        
+            if ( $parent instanceof ProductCategory ) {
+                return collect( $this->getCategoryParents( $parent->id ) )
+                    ->flatten()
+                    ->prepend( $current->id )
+                    ->toArray();
+            }
+        }
+
+        return [ $current->id ];
+    }
 }

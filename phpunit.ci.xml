@@ -9,6 +9,7 @@
     <testsuite name="Feature">
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
+      <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>

@@ -136,9 +136,16 @@ class Handler extends ExceptionHandler
                      * otherwise, we'll return the full message which might have 
                      * sensitive informations.
                      */
-                    return response()->json([
-                        'message' => ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
-                    ], $exceptionConfig[ 'code' ] ?? 500 );    
+                    if ( env( 'APP_DEBUG' ) ) {
+                        return response()->json( 
+                            $this->convertExceptionToArray( $exception ),
+                            500
+                        );
+                    } else {
+                        return response()->json([
+                            'message' => ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
+                        ], $exceptionConfig[ 'code' ] ?? 500 );    
+                    }
                 } 
     
                 return ( new $exceptionConfig[ 'use' ]( 

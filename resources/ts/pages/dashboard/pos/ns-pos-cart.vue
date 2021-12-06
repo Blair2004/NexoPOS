@@ -40,7 +40,7 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
-                            <div>
+                            <div v-if="options.ns_pos_quick_product === 'yes'">
                                 <button @click="openAddQuickProduct()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
                                     <i class="las la-plus"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
@@ -255,6 +255,8 @@ export default {
             products: [],
             visibleSection: null,
             visibleSectionSubscriber: null,
+            optionsSubscriber: null,
+            options: {},
             typeSubscribe: null,
             orderSubscribe: null,
             productSubscribe: null,
@@ -279,6 +281,9 @@ export default {
         }
     },
     mounted() {
+        this.optionsSubscriber  =   POS.options.subscribe( options => {
+            this.options    =   options;
+        });
         this.typeSubscribe  =   POS.types.subscribe( types => this.types = types );
         this.orderSubscribe  =   POS.order.subscribe( order => {
             this.order   =   order;
@@ -302,6 +307,7 @@ export default {
         this.orderSubscribe.unsubscribe();
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
     },
     methods: {
         __,
