@@ -30,7 +30,7 @@
         "pusher/pusher-php-server": "~3.0",
         "rct567/dom-query": "^0.8.0",
         "spatie/laravel-db-snapshots": "^1.7",
-        "tormjens/eventy": "^0.7.0"
+        "tormjens/eventy": "^0.8"
     },
     "require-dev": {
         "facade/ignition": "^2.3.6",
