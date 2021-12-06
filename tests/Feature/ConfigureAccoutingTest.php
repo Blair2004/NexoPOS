@@ -11,6 +11,7 @@ use Laravel\Sanctum\Sanctum;
 use App\Models\CashFlow;
 use App\Models\DashboardDay;
 use App\Models\ExpenseCategory;
+use App\Services\ReportService;
 use App\Services\TestService;
 use Tests\TestCase;
 
@@ -113,6 +114,20 @@ class ConfigureAccoutingTest extends TestCase
     public function testCheckSalesTaxes()
     {
         $this->authenticate();
+        
+        /**
+         * @var ReportService $reportService
+         */
+        $reportService          =   app()->make( ReportService::class );
+        
+        /**
+         * This will be used as a reference to check if
+         * there has been any change on the report.
+         */
+        $reportService->computeDayReport( 
+            ns()->date->copy()->startOfDay()->toDateTimeString(),
+            ns()->date->copy()->endOfDay()->toDateTimeString(),
+        );
 
         $dashboardDay           =   DashboardDay::forToday();
 
@@ -122,18 +137,16 @@ class ConfigureAccoutingTest extends TestCase
          * @var TestService
          */
         $procurementsDetails    =   app()->make( TestService::class );
+        $procurementData        =   $procurementsDetails->prepareProcurement( ns()->date->now(), [] );
+
         $response               =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementsDetails->prepareProcurement( ns()->date->now(), [] ) );
+            ->json( 'POST', 'api/nexopos/v4/procurements', $procurementData );
 
         $response->assertStatus(200);
 
         $array                  =   json_decode( $response->getContent(), true );
         $procurement            =   $array[ 'data' ][ 'procurement' ];
-        
-        /**
-         * This will be used as a reference to check if
-         * there has been any change on the report.
-         */
+
         $currentDashboardDay    =   DashboardDay::forToday();
 
         $expenseCategoryID      =   ns()->option->get( 'ns_procurement_cashflow_account' );
@@ -143,14 +156,14 @@ class ConfigureAccoutingTest extends TestCase
             ->sum( 'value' );
 
         $this->assertEquals( 
-            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'value' ] ), 
+            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'cost' ] ), 
             Currency::raw( $currentDashboardDay->day_expenses ), 
             __( 'hasn\'t affected the expenses' ) 
         );
 
         $this->assertEquals( 
             Currency::raw( $totalExpenses ), 
-            Currency::raw( $procurement[ 'value' ] ), 
+            Currency::raw( $procurement[ 'cost' ] ), 
             __( 'The procurement doesn\'t match with the cash flow.' ) 
         );
     }
