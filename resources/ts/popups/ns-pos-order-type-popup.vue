@@ -5,8 +5,8 @@
         </div>
         <div class="grid grid-flow-row grid-cols-1 grid-rows-1" v-if="types.length === 0">
             <div class="h-full w-full flex items-center justify-center flex-col">
-                <i class="las la-frown"></i>
-                <p class="text-center">{{ __( 'No payment type has been selected on the settings. Please check your Settings > POS > Features and choose the supported order type.' ) }}</p>
+                <i class="las la-frown text-6xl"></i>
+                <p class="text-center text-sm text-gray-600 p-4 w-2/3">{{ __( 'No payment type has been selected on the settings. Please check your Settings > POS > Features and choose the supported order type.' ) }}</p>
             </div>
         </div>
         <div class="grid grid-flow-row grid-cols-2 grid-rows-2" v-if="types.length > 0">
