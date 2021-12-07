@@ -3,7 +3,13 @@
         <div id="header" class="h-16 flex justify-center items-center">
             <h3 class="font-bold text-gray-700">{{ __( 'Define The Order Type' ) }}</h3>
         </div>
-        <div class="grid grid-flow-row grid-cols-2 grid-rows-2">
+        <div class="grid grid-flow-row grid-cols-1 grid-rows-1" v-if="types.length === 0">
+            <div class="h-full w-full flex items-center justify-center flex-col">
+                <i class="las la-frown"></i>
+                <p class="text-center">{{ __( 'No payment type has been selected on the settings. Please check your Settings > POS > Features and choose the supported order type.' ) }}</p>
+            </div>
+        </div>
+        <div class="grid grid-flow-row grid-cols-2 grid-rows-2" v-if="types.length > 0">
             <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'bg-blue-100' : ''" class="hover:bg-blue-100 h-56 flex items-center justify-center flex-col cursor-pointer border border-gray-200">
                 <img :src="type.icon" alt="" class="w-32 h-32">
                 <h4 class="font-semibold text-xl my-2 text-gray-700">{{ type.label }}</h4>
