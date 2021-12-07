@@ -2,7 +2,7 @@
     <div id="permission-wrapper">
         <div class="rounded shadow bg-white flex">
             <div id="permissions" class="w- bg-gray-800 flex-shrink-0">
-                <div class="py-4 px-2 border-b border-gray-700 text-gray-100 flex justify-between items-center">
+                <div class="h-24 py-4 px-2 border-b border-gray-700 text-gray-100 flex justify-between items-center">
                     <span v-if="! toggled">{{ __( 'Permissions' ) }}</span>
                     <div>
                         <button @click="toggled = ! toggled" class="rounded-full bg-white text-gray-700 h-6 w-6 flex items-center justify-center" v-if="! toggled">
@@ -23,7 +23,7 @@
             <div class="flex flex-auto overflow-hidden">
                 <div class="overflow-y-auto">
                     <div class="text-gray-700 flex">
-                        <div v-for="role of roles" :key="role.id" class="py-4 px-2 w-56 items-center border-b justify-center flex role flex-shrink-0 border-r border-gray-200">
+                        <div v-for="role of roles" :key="role.id" class="h-24 py-4 px-2 w-56 items-center border-b justify-center flex role flex-shrink-0 border-r border-gray-200">
                             <p class="mx-1"><span>{{ role.name }}</span></p>
                             <span class="mx-1"><ns-checkbox @change="selectAllPermissions( role )" :field="role.field"></ns-checkbox></span>
                         </div>
