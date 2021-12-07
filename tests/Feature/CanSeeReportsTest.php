@@ -24,7 +24,8 @@ class CanSeeReportsTest extends TestCase
         
         $reports    =   [
             '/dashboard/reports/sales',
-            '/dashboard/reports/products-report',
+            '/dashboard/reports/sales-progress',
+            '/dashboard/reports/low-stock',
             '/dashboard/reports/sold-stock',
             '/dashboard/reports/profit',
             '/dashboard/reports/cash-flow',
@@ -35,7 +36,7 @@ class CanSeeReportsTest extends TestCase
         foreach( $reports as $report ) {
             $response       =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'GET', $report );
-            dump( $report );
+
             $response->assertStatus(200);
         }
 
