@@ -624,10 +624,7 @@ class OrdersService
         if (!empty(@$fields['discount_type'])) {
 
             if ($fields['discount_type'] === 'percentage' && (floatval($fields['discount_percentage']) < 0) || (floatval($fields['discount_percentage']) > 100)) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('The percentage discount provided is not valid.')
-                ]);
+                throw new NotAllowedException( __('The percentage discount provided is not valid.') );
             } else if ($fields['discount_type'] === 'flat') {
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
@@ -905,18 +902,12 @@ class OrdersService
                 $this->optionsService->get( 'ns_orders_allow_partial', true ) === false &&
                 $totalPayments > 0
             ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Partially paid orders aren\'t allowed. This option could be changed on the settings.')
-                ]);
+                throw new NotAllowedException( __('Unable to proceed. Partially paid orders aren\'t allowed. This option could be changed on the settings.') );
             } else if (
                 $this->optionsService->get('ns_orders_allow_incomplete', true) === false &&
                 $totalPayments === 0
             ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.')
-                ]);
+                throw new NotAllowedException( __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.') );
             }
         }
 
@@ -928,6 +919,14 @@ class OrdersService
             $paymentStatus      =   Order::PAYMENT_UNPAID;
         } else if ( $totalPayments === 0 && ( isset( $fields[ 'payment_status' ] ) && ( $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) ) ){
             $paymentStatus      =   Order::PAYMENT_HOLD;
+        }
+
+        /**
+         * Ultimately, we'll check if a payment is provided
+         * if the logged user has right to perform a payment
+         */
+        if ( $totalPayments > 0 ) {
+            ns()->restrict( 'nexopos.make-payment.orders', __( 'You\'re not allowed to make payments.' ) );
         }
 
         return [
@@ -1566,10 +1565,7 @@ class OrdersService
         try {
             return $this->customerService->get($fields['customer_id']);
         } catch (NotFoundException $exception) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __('Unable to find the customer using the provided ID. The order creation has failed.')
-            ]);
+            throw new NotFoundException( __('Unable to find the customer using the provided ID. The order creation has failed.') );
         }
     }
 
@@ -1658,10 +1654,7 @@ class OrdersService
             OrderProductRefund::CONDITION_DAMAGED,
             OrderProductRefund::CONDITION_UNSPOILED
         ] ) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'unable to proceed to a refund as the provided status is not supported.' )
-            ]);
+            throw new NotAllowedException( __( 'unable to proceed to a refund as the provided status is not supported.' ) );
         }
 
         if ( ! in_array( $order->payment_status, [
@@ -1842,10 +1835,7 @@ class OrdersService
         $product    =   OrderProduct::find($product_id);
 
         if (!$product instanceof OrderProduct) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __('Unable to find the order product using the provided id.')
-            ]);
+            throw new NotFoundException( __('Unable to find the order product using the provided id.') );
         }
 
         return $product;
@@ -1903,10 +1893,7 @@ class OrdersService
             return $order;
         }
 
-        throw new NotAllowedException([
-            'status'    =>  'failed',
-            'message'   =>  __('Unable to fetch the order as the provided pivot argument is not supported.')
-        ]);
+        throw new NotAllowedException( __('Unable to fetch the order as the provided pivot argument is not supported.') );
     }
 
     /**
@@ -2112,10 +2099,7 @@ class OrdersService
             ];
         }
 
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __('Unable to find the requested product on the provider order.')
-        ]);
+        throw new NotFoundException( __('Unable to find the requested product on the provider order.') );
     }
 
     /**

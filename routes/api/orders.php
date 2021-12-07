@@ -31,7 +31,7 @@ Route::post( 'orders/{order}/refund', [ OrdersController::class, 'makeOrderRefun
 Route::post( 'orders/{order}/instalments', [ OrdersController::class, 'createInstalment' ])->middleware( 'ns.restrict:nexopos.create.orders-instalments' );
 
 Route::put( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'updateInstalment' ])->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
-Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ]);
+Route::put( 'orders/{id}', [ OrdersController::class, 'updateOrder' ])->middleware( 'ns.restrict:nexopos.update.orders' );
 
 Route::delete( 'orders/{order}/instalments/{instalment}', [ OrdersController::class, 'deleteInstalment' ])
     ->middleware( 'ns.restrict:nexopos.delete.orders-instalments' );
