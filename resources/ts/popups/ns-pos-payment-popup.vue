@@ -111,7 +111,7 @@ export default {
 
                     nsSnackBar.success( result.message ).subscribe();
 
-                    POS.printOrder( result.data.order.id );
+                    POS.printOrderReceipt( result.data.order );
     
                     // close payment popup
                     this.$popup.close();

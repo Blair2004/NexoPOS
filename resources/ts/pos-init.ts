@@ -822,6 +822,28 @@ export class POS {
         this.products.next(products);
     }
 
+    printOrderReceipt( order ) {
+        const options = this.options.getValue();
+
+        if (options.ns_pos_printing_enabled_for === 'disabled') {
+            return false;
+        }
+
+        /**
+         * There should be a better
+         * way of writing this.
+         */
+        if ( options.ns_pos_printing_enabled_for === 'all_orders' ) {
+            this.printOrder( order.id );
+        } else if ( options.ns_pos_printing_enabled_for === 'partially_paid_orders' && [ 'paid', 'partially_paid' ].includes( order.payment_status ) ) {
+            this.printOrder( order.id );
+        } else if ( options.ns_pos_printing_enabled_for === 'only_paid_ordes' && [ 'paid' ].includes( order.payment_status ) ) {
+            this.printOrder( order.id );
+        } else {
+            return false;
+        }
+    }
+
     printOrder(order_id) {
         const options = this.options.getValue();
 

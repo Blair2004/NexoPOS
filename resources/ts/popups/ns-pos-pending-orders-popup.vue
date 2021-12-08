@@ -88,7 +88,7 @@ export default {
             }, ( error ) => error );
         },
         printOrder( order ) {
-            POS.printOrder( order.id );
+            POS.printOrderReceipt( order );
         },
         proceedOpenOrder( order ) {
             const products  =   POS.products.getValue();
