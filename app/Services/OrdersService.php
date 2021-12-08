@@ -965,6 +965,9 @@ class OrdersService
 
         $order->gross_total     =   $order->total;
 
+        dump( 'tendered =>' . $order->tendered );
+        dump( 'total =>' . $order->total );
+
         /**
          * compute change
          */
