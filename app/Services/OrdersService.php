@@ -957,28 +957,35 @@ class OrdersService
          * increase the total with the
          * shipping fees and subtract the discounts
          */
-        $order->total           =   $this->currencyService->define( 
-                ( $order->subtotal + $order->shipping + ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) ) - 
-                ( $order->total_coupons + $order->discount ) 
+        $order->total           =   Currency::fresh( $order->subtotal )
+            ->additionateBy( $order->shipping )
+            ->additionateBy(
+                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
             )
-            ->get();
+            ->subtractBy(
+                Currency::fresh( $order->total_coupons )
+                    ->additionateBy( $order->discount )
+                    ->getRaw()
+            )
+            ->getRaw();
 
         $order->gross_total     =   $order->total;
-
-        dump( 'tendered =>' . $order->tendered );
-        dump( 'total =>' . $order->total );
 
         /**
          * compute change
          */
-        $order->change          =   Currency::raw( $order->tendered - $order->total );
+        $order->change          =   Currency::fresh( $order->tendered )
+            ->subtractBy( $order->total )
+            ->getRaw();
 
         /**
          * compute gross total
          */
-        $order->net_total     =   $this->currencyService
-            ->define( $order->subtotal - $order->discount - $order->total_coupons - $order->tax_value )
-            ->get();
+        $order->net_total     =   Currency::fresh( $order->subtotal )
+            ->subtractBy( $order->discount )
+            ->subtractBy( $order->total_coupons )
+            ->subtractBy( $order->tax_value )
+            ->getRaw();
 
         return $order;
     }
@@ -1989,8 +1996,19 @@ class OrdersService
         $order->subtotal        =   $productTotal;
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   ( $productTotal + $orderShipping + ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) ) - ( $order->discount + $order->total_coupons );
-        $order->change          =   Currency::raw( $order->tendered - $order->total );
+        $order->total           =   Currency::fresh( $productTotal )
+            ->additionateBy( $orderShipping )
+            ->additionateBy(
+                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
+            )
+            ->subtractBy( 
+                ns()->currency->fresh( $order->discount )
+                    ->additionateBy( $order->total_coupons )
+                    ->getRaw()
+            )
+            ->getRaw();
+
+        $order->change          =   Currency::fresh( $order->tendered )->subtractBy( $order->total )->getRaw();
 
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();

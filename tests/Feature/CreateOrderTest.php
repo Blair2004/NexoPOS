@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Classes\Currency;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
@@ -154,7 +155,10 @@ class CreateOrderTest extends TestCase
                         ->divideBy( 100 )
                         ->getRaw();
                 } else {
-                    $discount[ 'value' ]    =   10;
+                    $discount[ 'value' ]    =   Currency::fresh( $subtotal )
+                        ->divideBy( 2 )
+                        ->getRaw();
+
                     $discount[ 'rate' ]     =   0;
                 }
             }
@@ -205,82 +209,6 @@ class CreateOrderTest extends TestCase
                     ]
                 ] : []
             ], $this->customOrderParams );
-
-            // $orderData      =   [   
-            //     'customer_id' => 4,
-            //     'type' => [
-            //       'identifier' => 'takeaway'
-            //     ],
-            //     'discount_type' => 'percentage',
-            //     'created_at' => null,
-            //     'discount_percentage' => 3,
-            //     'discount' => 2.89,
-            //     'addresses' => [
-            //       'shipping' => [
-            //         'name' => 'First Name Delivery',
-            //         'surname' => 'Surname',
-            //         'country' => 'Cameroon',
-            //       ],
-            //       'billing' => [
-            //         'name' => 'EBENE Voundi',
-            //         'surname' => 'Antony Hervé',
-            //         'country' => 'United State Seattle',
-            //       ],
-            //     ],
-            //     'author' => 23,
-            //     'coupons' => [],
-            //     'subtotal' => 96.21,
-            //     'shipping' => 40,
-            //     'products' => [
-            //       0 => [
-            //         'name' => 'Fees',
-            //         'quantity' => 7,
-            //         'unit_price' => 1.43,
-            //         'tax_type' => 'inclusive',
-            //         'tax_group_id' => 1,
-            //         'unit_id' => 1,
-            //         'product_id' => 39,
-            //         'unit_quantity_id' => 39,
-            //       ],
-            //       1 => [
-            //         'name' => 'Fees',
-            //         'quantity' => 9,
-            //         'unit_price' => 1.8,
-            //         'tax_type' => 'inclusive',
-            //         'tax_group_id' => 1,
-            //         'unit_id' => 1,
-            //       ],
-            //       2 => [
-            //         'name' => 'Fees',
-            //         'quantity' => 4,
-            //         'unit_price' => 17.5,
-            //         'tax_type' => 'inclusive',
-            //         'tax_group_id' => 1,
-            //         'unit_id' => 1,
-            //         'product_id' => 96,
-            //         'unit_quantity_id' => 96,
-            //       ],
-            //     ],
-            //     'payments' => [],
-            //     'table' =>  [
-            //       'id' => 4,
-            //       'name' => 'Hall Area Table 4',
-            //       'description' => null,
-            //       'preview' => null,
-            //       'status' => 'available',
-            //       'allow_multi_clients' => 1,
-            //       'seats' => 15,
-            //       'author' => 23,
-            //       'area_id' => 1,
-            //       'booking_starts_at' => null,
-            //       'booking_ends_at' => null,
-            //       'created_at' => '2021-12-08T08:54:09.000000Z',
-            //       'updated_at' => '2021-12-08T09:43:02.000000Z',
-            //       'busy' => false,
-            //       'selected' => true,
-            //     ],
-            //     'gastro_order_status' => 'pending'
-            // ];
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );

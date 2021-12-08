@@ -14,7 +14,7 @@ class UpdateProcurementTableNov2521 extends Migration
     public function up()
     {
         Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) ) {
+            if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) && ! Schema::hasColumn( 'nexopos_procurements', 'cost' ) ) {
                 $table->renameColumn( 'value', 'cost' );   
             }
         });
@@ -34,8 +34,8 @@ class UpdateProcurementTableNov2521 extends Migration
     public function down()
     {
         Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
-            if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) ) {
-                $table->dropColumn( 'cost', 18, 5 );
+            if ( ! Schema::hasColumn( 'nexopos_procurements', 'value' ) && Schema::hasColumn( 'nexopos_procurements', 'cost' ) ) {
+                $table->renameColumn( 'cost', 'value' );
             }
         });
     }

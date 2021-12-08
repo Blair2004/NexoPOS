@@ -29,7 +29,6 @@
         "picqer/php-barcode-generator": "^2.1",
         "pusher/pusher-php-server": "~3.0",
         "rct567/dom-query": "^0.8.0",
-        "sentry/sentry-laravel": "^2.10",
         "spatie/laravel-db-snapshots": "^1.7",
         "tormjens/eventy": "^0.7.0"
     },
