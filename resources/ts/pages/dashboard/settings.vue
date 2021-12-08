@@ -67,31 +67,37 @@ export default {
         submitForm() {
             if ( this.validation.validateForm( this.form ).length === 0 ) {
                 this.validation.disableForm( this.form );
-                return nsHttpClient.post( this.url, this.validation.extractForm( this.form ) )
-                    .subscribe( result => {
-                        this.validation.enableForm( this.form );
-                        this.loadSettingsForm();
+                
+                const form  =   this.validation.extractForm( this.form );
 
-                        if ( result.data && result.data.results ) {
-                            result.data.results.forEach( response => {
-                                if ( response.status === 'failed' ) {
-                                    nsSnackBar.error( response.message ).subscribe();
-                                } else {
-                                    nsSnackBar.success( response.message ).subscribe();
-                                }
-                            });
+                return nsHttpClient.post( this.url, form )
+                    .subscribe({
+                        next: result => {
+                            this.validation.enableForm( this.form );
+                            this.loadSettingsForm();
+
+                            if ( result.data && result.data.results ) {
+                                result.data.results.forEach( response => {
+                                    if ( response.status === 'failed' ) {
+                                        nsSnackBar.error( response.message ).subscribe();
+                                    } else {
+                                        nsSnackBar.success( response.message ).subscribe();
+                                    }
+                                });
+                            }
+
+                            nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
+                            nsSnackBar.success( result.message ).subscribe();
+                        },
+                        error: ( error ) => {
+                            this.validation.enableForm( this.form );
+                            this.validation.triggerFieldsErrors( this.form, error );
+                            
+                            nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
+
+                            nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
+                                .subscribe();
                         }
-
-                        nsHooks.doAction( 'ns-settings-saved', { result, instance: this });
-                        nsSnackBar.success( result.message ).subscribe();
-                    }, ( error ) => {
-                        this.validation.enableForm( this.form );
-                        this.validation.triggerFieldsErrors( this.form, error );
-                        
-                        nsHooks.doAction( 'ns-settings-failed', { error, instance: this });
-
-                        nsSnackBar.error( error.message || __( 'Unable to proceed the form is not valid.' ) )
-                            .subscribe();
                     })
             }
 

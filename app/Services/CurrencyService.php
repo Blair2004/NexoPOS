@@ -38,9 +38,38 @@ class CurrencyService
         $this->thousand_separator   =   $thousand_separator ?? self::$_thousand_separator;
     }
 
+    /**
+     * Will intanciate a new instance
+     * using the default value
+     * 
+     * @param int|float $value
+     * @return CurrencyService
+     */
+    public function fresh( $value )
+    {
+        return new CurrencyService( $value, [
+            'currency_iso'          =>  $this->currency_iso,
+            'currency_symbol'       =>  $this->currency_symbol,
+            'currency_position'     =>  $this->currency_position,
+            'decimal_precision'     =>  $this->decimal_precision,
+            'decimal_separator'     =>  $this->decimal_separator,
+            'prefered_currency'     =>  $this->prefered_currency,
+            'thousand_separator'    =>  $this->thousand_separator,
+        ]);
+    }
+
+    /**
+     * Set a value for the current instance
+     * @param int|float $amount
+     * @return CurrencyService
+     */
     private static function __defineAmount( $amount ): CurrencyService
     {
-        return app()->make( CurrencyService::class )->value( $amount );
+        /**
+         * @var CurrencyService
+         */
+        $currencyService    =   app()->make( CurrencyService::class );
+        return $currencyService->value( $amount );
     }
 
     /**

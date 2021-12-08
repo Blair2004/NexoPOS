@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Events\ProductCategoryAfterCreatedEvent;
+use App\Exceptions\NotFoundException;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Auth;
 
@@ -98,18 +99,22 @@ class ProductCategoryService
     {
         $current    =   ProductCategory::find( $category_id ); 
         
-        if ( ! empty( $current->parent_id ) ) {
+        if ( $current instanceof ProductCategory ) {
+            if ( ! empty( $current->parent_id ) ) {
+                
+                $parent     =   ProductCategory::where( 'id', $current->parent_id )->first();
             
-            $parent     =   ProductCategory::where( 'id', $current->parent_id )->first();
-        
-            if ( $parent instanceof ProductCategory ) {
-                return collect( $this->getCategoryParents( $parent->id ) )
-                    ->flatten()
-                    ->prepend( $current->id )
-                    ->toArray();
+                if ( $parent instanceof ProductCategory ) {
+                    return collect( $this->getCategoryParents( $parent->id ) )
+                        ->flatten()
+                        ->prepend( $current->id )
+                        ->toArray();
+                }
             }
+    
+            return [ $current->id ];
         }
 
-        return [ $current->id ];
+        throw new NotFoundException( __( 'The requested category doesn\'t exists' ) );
     }
 }

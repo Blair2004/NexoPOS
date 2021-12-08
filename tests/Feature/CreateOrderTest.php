@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Classes\Currency;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
@@ -154,7 +155,10 @@ class CreateOrderTest extends TestCase
                         ->divideBy( 100 )
                         ->getRaw();
                 } else {
-                    $discount[ 'value' ]    =   10;
+                    $discount[ 'value' ]    =   Currency::fresh( $subtotal )
+                        ->divideBy( 2 )
+                        ->getRaw();
+
                     $discount[ 'rate' ]     =   0;
                 }
             }
@@ -315,7 +319,7 @@ class CreateOrderTest extends TestCase
                             )->sum(),
                         'products'  =>  $products,
                     ]);
-                
+
                 $response->assertJson([
                     'status'    =>  'success'
                 ]);

@@ -50,6 +50,20 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Register custom handler
+     * 
+     * @return void
+     */
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
+            if ($this->shouldReport($e) && app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
+        });
+    }
+
+    /**
      * We want to use our defined route
      * instead of what is provided by laravel.
      * @return \Illuminate\Routing\Redirector

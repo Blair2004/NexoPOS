@@ -164,13 +164,7 @@ export default class FormValidation {
 
     extractFields( fields, formValue = {} ) {
         fields.forEach( field => {
-            if ( [ 'multiselect' ].includes( field.type ) ) {
-                formValue[ field.name ]  =   field.options
-                    .filter( option => option.selected )
-                    .map( option => option.value );
-            } else {
-                formValue[ field.name ]  =   field.value;
-            }
+            formValue[ field.name ]  =   field.value;
         });
 
         return formValue;

@@ -624,10 +624,7 @@ class OrdersService
         if (!empty(@$fields['discount_type'])) {
 
             if ($fields['discount_type'] === 'percentage' && (floatval($fields['discount_percentage']) < 0) || (floatval($fields['discount_percentage']) > 100)) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('The percentage discount provided is not valid.')
-                ]);
+                throw new NotAllowedException( __('The percentage discount provided is not valid.') );
             } else if ($fields['discount_type'] === 'flat') {
 
                 $productsTotal    =   $fields[ 'products' ]->map(function ($product) {
@@ -905,18 +902,12 @@ class OrdersService
                 $this->optionsService->get( 'ns_orders_allow_partial', true ) === false &&
                 $totalPayments > 0
             ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Partially paid orders aren\'t allowed. This option could be changed on the settings.')
-                ]);
+                throw new NotAllowedException( __('Unable to proceed. Partially paid orders aren\'t allowed. This option could be changed on the settings.') );
             } else if (
                 $this->optionsService->get('ns_orders_allow_incomplete', true) === false &&
                 $totalPayments === 0
             ) {
-                throw new NotAllowedException([
-                    'status'    =>  'failed',
-                    'message'   =>  __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.')
-                ]);
+                throw new NotAllowedException( __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.') );
             }
         }
 
@@ -928,6 +919,14 @@ class OrdersService
             $paymentStatus      =   Order::PAYMENT_UNPAID;
         } else if ( $totalPayments === 0 && ( isset( $fields[ 'payment_status' ] ) && ( $fields[ 'payment_status' ] === Order::PAYMENT_HOLD ) ) ){
             $paymentStatus      =   Order::PAYMENT_HOLD;
+        }
+
+        /**
+         * Ultimately, we'll check if a payment is provided
+         * if the logged user has right to perform a payment
+         */
+        if ( $totalPayments > 0 ) {
+            ns()->restrict( 'nexopos.make-payment.orders', __( 'You\'re not allowed to make payments.' ) );
         }
 
         return [
@@ -958,25 +957,35 @@ class OrdersService
          * increase the total with the
          * shipping fees and subtract the discounts
          */
-        $order->total           =   $this->currencyService->define( 
-                ( $order->subtotal + $order->shipping + ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) ) - 
-                ( $order->total_coupons + $order->discount ) 
+        $order->total           =   Currency::fresh( $order->subtotal )
+            ->additionateBy( $order->shipping )
+            ->additionateBy(
+                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
             )
-            ->get();
+            ->subtractBy(
+                Currency::fresh( $order->total_coupons )
+                    ->additionateBy( $order->discount )
+                    ->getRaw()
+            )
+            ->getRaw();
 
         $order->gross_total     =   $order->total;
 
         /**
          * compute change
          */
-        $order->change          =   Currency::raw( $order->tendered - $order->total );
+        $order->change          =   Currency::fresh( $order->tendered )
+            ->subtractBy( $order->total )
+            ->getRaw();
 
         /**
          * compute gross total
          */
-        $order->net_total     =   $this->currencyService
-            ->define( $order->subtotal - $order->discount - $order->total_coupons - $order->tax_value )
-            ->get();
+        $order->net_total     =   Currency::fresh( $order->subtotal )
+            ->subtractBy( $order->discount )
+            ->subtractBy( $order->total_coupons )
+            ->subtractBy( $order->tax_value )
+            ->getRaw();
 
         return $order;
     }
@@ -1566,10 +1575,7 @@ class OrdersService
         try {
             return $this->customerService->get($fields['customer_id']);
         } catch (NotFoundException $exception) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __('Unable to find the customer using the provided ID. The order creation has failed.')
-            ]);
+            throw new NotFoundException( __('Unable to find the customer using the provided ID. The order creation has failed.') );
         }
     }
 
@@ -1658,10 +1664,7 @@ class OrdersService
             OrderProductRefund::CONDITION_DAMAGED,
             OrderProductRefund::CONDITION_UNSPOILED
         ] ) ) {
-            throw new NotAllowedException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'unable to proceed to a refund as the provided status is not supported.' )
-            ]);
+            throw new NotAllowedException( __( 'unable to proceed to a refund as the provided status is not supported.' ) );
         }
 
         if ( ! in_array( $order->payment_status, [
@@ -1842,10 +1845,7 @@ class OrdersService
         $product    =   OrderProduct::find($product_id);
 
         if (!$product instanceof OrderProduct) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __('Unable to find the order product using the provided id.')
-            ]);
+            throw new NotFoundException( __('Unable to find the order product using the provided id.') );
         }
 
         return $product;
@@ -1903,10 +1903,7 @@ class OrdersService
             return $order;
         }
 
-        throw new NotAllowedException([
-            'status'    =>  'failed',
-            'message'   =>  __('Unable to fetch the order as the provided pivot argument is not supported.')
-        ]);
+        throw new NotAllowedException( __('Unable to fetch the order as the provided pivot argument is not supported.') );
     }
 
     /**
@@ -1999,8 +1996,19 @@ class OrdersService
         $order->subtotal        =   $productTotal;
         $order->gross_total     =   $productGrossTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   ( $productTotal + $orderShipping + ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 ) ) - ( $order->discount + $order->total_coupons );
-        $order->change          =   Currency::raw( $order->tendered - $order->total );
+        $order->total           =   Currency::fresh( $productTotal )
+            ->additionateBy( $orderShipping )
+            ->additionateBy(
+                ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
+            )
+            ->subtractBy( 
+                ns()->currency->fresh( $order->discount )
+                    ->additionateBy( $order->total_coupons )
+                    ->getRaw()
+            )
+            ->getRaw();
+
+        $order->change          =   Currency::fresh( $order->tendered )->subtractBy( $order->total )->getRaw();
 
         $refunds                =   $order->refund;
         $totalRefunds           =   $refunds->map( fn( $refund ) => $refund->total )->sum();
@@ -2112,10 +2120,7 @@ class OrdersService
             ];
         }
 
-        throw new NotFoundException([
-            'status'    =>  'failed',
-            'message'   =>  __('Unable to find the requested product on the provider order.')
-        ]);
+        throw new NotFoundException( __('Unable to find the requested product on the provider order.') );
     }
 
     /**
