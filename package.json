@@ -52,7 +52,7 @@
     "postcss": "^8.1.10",
     "rx": "^4.1.0",
     "rxjs": "^7.0.1",
-    "tailwindcss": "^2.0.4",
+    "tailwindcss": "^3.0.0",
     "twitter_cldr": "^2.2.0",
     "vue": "^2.6.12",
     "vue-apexcharts": "^1.6.0",
