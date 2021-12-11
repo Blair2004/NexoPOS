@@ -39,10 +39,13 @@ export default {
 
             if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : __( 'Would you like to proceed ?' ) ) ) {
                 nsHttpClient.post( '/api/nexopos/v4/reset', fields )
-                    .subscribe( result => {
-                        nsSnackBar.success( result.message ).subscribe();
-                    }, error => {
-                        nsSnackBar.error( error.message ).subscribe();
+                    .subscribe({
+                        next: result => {
+                            nsSnackBar.success( result.message ).subscribe();
+                        },
+                        error: error => {
+                            nsSnackBar.error( error.message ).subscribe();
+                        }
                     })
             }
         }
@@ -56,13 +59,7 @@ export default {
                     name: 'mode',
                     description: __( 'Will apply various reset method on the system.' ),
                     type: 'select',
-                    options: [{
-                        label: __( 'Wipe Everything' ),
-                        value: 'wipe_all',
-                    }, {
-                        label: __( 'Wipe + Grocery Demo' ),
-                        value: 'wipe_plus_grocery',
-                    }],
+                    options: ResetData.options,
                     validation: 'required'
                 }
             ]

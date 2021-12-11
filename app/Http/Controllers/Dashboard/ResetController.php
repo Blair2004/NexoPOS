@@ -68,6 +68,9 @@ class ResetController extends DashboardController
             case 'default':
                 ( new DefaultSeeder )->run();
             break;
+            default:
+                $this->resetService->handleCustom( $request->input( 'mode' ) );
+            break;
         }
 
         return [

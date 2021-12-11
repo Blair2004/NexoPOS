@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -87,6 +89,12 @@ class CrudService
     public $disablePut       =   false;
 
     /**
+     * define all fiels that shouldn't be used for saving
+     * @param array
+     */
+    public $skippable          =   [];
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -103,6 +111,157 @@ class CrudService
          */
         $this->bulkDeleteSuccessMessage     =   __( '%s entries has been deleted' );
         $this->bulkDeleteDangerMessage      =   __( '%s entries has not been deleted' );
+    }
+
+    public function submitRequest( $namespace, $inputs, $id = null )
+    {
+        $resource   =   $this->getCrudInstance( $namespace );
+        $model      =   $resource->getModel();
+        $isEditing  =   $id !== null;
+        $entry      =   ! $isEditing ? new $model : $model::find( $id );
+
+        if ( method_exists( $resource, 'filterPostInputs' ) ) {
+            if ( $isEditing ) {
+                $inputs     =   $resource->filterPutInputs( $inputs, $entry );
+            } else {
+                $inputs     =   $resource->filterPostInputs( $inputs, $entry );
+            }
+        }
+
+        /**
+         * this trigger a global filter
+         * on the actual crud instance
+         */
+        $inputs     =   Hook::filter( 
+            get_class( $resource ) . $isEditing ? '@filterPutInputs' : '@filterPostInputs', 
+            $inputs
+        );
+
+
+        if ( method_exists( $resource, 'beforePost' ) && ! $isEditing ) {
+            $resource->beforePost( $inputs );
+        }
+
+        if ( method_exists( $resource, 'beforePut' ) && $isEditing ) {
+            $resource->beforePut( $inputs, $entry );
+        }
+
+        /**
+         * If we would like to handle the PUT request
+         * by any other handler than the CrudService
+         */
+        if ( 
+            ( ! $isEditing && ! $resource->disablePost ) ||
+            ( $isEditing && ! $resource->disablePut )
+        ) {
+
+            $fillable   =   Hook::filter( 
+                get_class( $resource ) . '@getFillable', 
+                $resource->getFillable()
+            );
+
+            foreach ( $inputs as $name => $value ) {
+
+                /**
+                 * If the fields where explicitely added
+                 * on field that must be ignored we should skip that.
+                 */
+                if ( ! in_array( $name, $resource->skippable ) ) {
+
+                    /**
+                     * If submitted field are part of fillable fields
+                     */
+                    if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
+    
+                        /**
+                         * We might give the capacity to filter fields 
+                         * before storing. This can be used to apply specific formating to the field.
+                         */
+                        if ( method_exists( $resource, 'filterPost' ) || method_exists( $resource, 'filterPut' ) ) {
+                            $entry->$name   =   $isEditing ? $resource->filterPut( $value, $name ) : $resource->filterPost( $value, $name );
+                        } else {
+                            $entry->$name   =   $value;
+                        }
+                    }
+    
+                    /**
+                     * sanitizing input to remove
+                     * all script tags
+                     */
+                    if ( ! empty( $entry->$name ) && ! array( $entry->$name ) ) {
+                        $entry->$name       =   strip_tags( $entry->$name );
+                    }
+                }
+            }
+            
+            /**
+             * If fillable is empty or if "author" it's explicitely
+             * mentionned on the fillable array.
+             */
+            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
+                $entry->author      =   Auth::id();
+            }
+
+            $entry->save();
+
+            /**
+             * loop the tabs relations
+             * and store it
+             */
+            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
+                $fields         =   request()->input( $tab );
+                $class          =   $relationParams[0];
+                $localKey       =   $relationParams[1];
+                $foreighKey     =   $relationParams[2];
+                
+                if ( ! empty( $fields ) ) {
+                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+
+                    /**
+                     * no relation has been found
+                     * so we'll store that.
+                     */
+                    if ( ! $model instanceof $class ) {
+                        $model  =   new $relationParams[0]; // should be the class;
+                    }
+
+                    /**
+                     * We're saving here all the fields for 
+                     * the related model
+                     */
+                    foreach( $fields as $name => $value ) {
+                        $model->$name   =   $value;
+                    }
+
+                    $model->$localKey   =   $entry->$foreighKey;
+                    $model->author      =   Auth::id();
+                    $model->save();
+                }
+            }
+        }
+
+        /**
+         * Create an event after crud POST
+         */
+        if ( ! $isEditing && method_exists( $resource, 'afterPost' ) ) {
+            $resource->afterPost( $inputs, $entry );
+        }
+
+        /**
+         * Create an event after crud POST
+         */
+        if ( $isEditing && method_exists( $resource, 'afterPut' ) ) {
+            $resource->afterPut( $inputs, $entry );
+        }
+
+        /**
+         * @todo adding a link to edit the new entry
+         */
+        return [
+            'status'    =>  'success',
+            'entry'     =>  $entry,
+            'message'   =>  __( 'A new entry has been successfully created.' )
+        ];
     }
 
     /**
@@ -677,7 +836,7 @@ class CrudService
 
     /**
      * Return plain data that can be used 
-     * for inserting. The data is parsed form the defined
+     * for inserting. The data is parsed from the defined
      * form on the Request
      * @param Crud $resource
      * @param Request $request
@@ -716,6 +875,18 @@ class CrudService
                 foreach( $tab[ 'fields' ] as $field ) {
                     $data[ $field[ 'name' ] ]   =   $request->input( $tabKey . '.' . $field[ 'name' ] ); 
                 }
+            }
+        }
+
+        /**
+         * We'll add custom fields
+         * that might be added by modules
+         */
+        $fieldsToIgnore     =   array_keys( $form[ 'tabs' ] );
+
+        foreach( $request->all() as $field => $value ) {
+            if ( ! in_array( $field, $fieldsToIgnore ) ) {
+                $data[ $field ]     =   $value;
             }
         }
 
