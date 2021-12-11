@@ -835,16 +835,14 @@ class CrudService
     }
 
     /**
-     * Return plain data that can be used 
-     * for inserting. The data is parsed from the defined
-     * form on the Request
-     * @param Crud $resource
-     * @param Request $request
-     * @return array
+     * Return flat fields for the form provided
+     * @param CrudService
+     * @param array $fields
+     * @param Model|null $model
      */
-    public function getPlainData( $crud, Request $request, $model = null )
+    public function getFlatForm( $crud, $fields, $model = null )
     {
-        $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+        $form       =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
 
         if ( is_subclass_of( $crud, CrudService::class ) ) {
             $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
@@ -853,7 +851,7 @@ class CrudService
         $data   =   [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {
-            $data[ $form[ 'main' ][ 'name' ] ]  =   $request->input( $form[ 'main' ][ 'name' ] );
+            $data[ $form[ 'main' ][ 'name' ] ]  =   $fields[ $form[ 'main' ][ 'name' ] ];
         }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
@@ -873,7 +871,7 @@ class CrudService
              */
             if ( ! in_array( $tabKey, $keys ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
-                    $data[ $field[ 'name' ] ]   =   $request->input( $tabKey . '.' . $field[ 'name' ] ); 
+                    $data[ $field[ 'name' ] ]   =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] ); 
                 }
             }
         }
@@ -884,13 +882,28 @@ class CrudService
          */
         $fieldsToIgnore     =   array_keys( $form[ 'tabs' ] );
 
-        foreach( $request->all() as $field => $value ) {
+        foreach( $fields as $field => $value ) {
             if ( ! in_array( $field, $fieldsToIgnore ) ) {
                 $data[ $field ]     =   $value;
             }
         }
 
         return $data;
+    }
+
+    /**
+     * Return plain data that can be used 
+     * for inserting. The data is parsed from the defined
+     * form on the Request
+     * @param Crud $resource
+     * @param Request $request
+     * @return array
+     */
+    public function getPlainData( $crud, Request $request, $model = null )
+    {
+        $fields     =   $request->all();
+        
+        return $this->getFlatForm( $crud, $fields, $model );
     }
 
     /**
