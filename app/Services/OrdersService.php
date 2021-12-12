@@ -2199,8 +2199,7 @@ class OrdersService
     {
         return Hook::filter( 'ns-order-types', [
             'delivery'          =>  __( 'Pending' ),
-            'takeaway'          =>  __( 'Ongoing' ),
-            'not-available'     =>  __( 'Ready' ),
+            'takeaway'          =>  __( 'Take Away' ),
             'not-available'     =>  __( 'Not Available' ),
         ]);
     }

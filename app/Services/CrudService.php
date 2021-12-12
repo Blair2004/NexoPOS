@@ -113,6 +113,21 @@ class CrudService
         $this->bulkDeleteDangerMessage      =   __( '%s entries has not been deleted' );
     }
 
+    /**
+     * Shorthand for preparing and submitting crud request
+     * @param string $namespace
+     * @param array $inputs
+     * @param mixed $id
+     * @return array as a crud response
+     */
+    public function submitPreparedRequest( $namespace, $inputs, $id = null )
+    {
+        $crudInstance   =   $this->getCrudInstance( $namespace );
+        $model          =   $id !== null ? $crudInstance->getModel()::find( $id ) : null;
+        $data           =   $this->getFlatForm( $crudInstance, $inputs, $model );
+        return $this->submitRequest( $namespace, $data, $id );
+    }
+
     public function submitRequest( $namespace, $inputs, $id = null )
     {
         $resource   =   $this->getCrudInstance( $namespace );
@@ -120,13 +135,10 @@ class CrudService
         $isEditing  =   $id !== null;
         $entry      =   ! $isEditing ? new $model : $model::find( $id );
 
-        if ( method_exists( $resource, 'filterPostInputs' ) ) {
-            if ( $isEditing ) {
-                $inputs     =   $resource->filterPutInputs( $inputs, $entry );
-            } else {
-                $inputs     =   $resource->filterPostInputs( $inputs, $entry );
-            }
-        }
+        /**
+         * let's keep old form inputs
+         */
+        $unfiltredInputs    =   $inputs;
 
         /**
          * this trigger a global filter
@@ -139,11 +151,11 @@ class CrudService
 
 
         if ( method_exists( $resource, 'beforePost' ) && ! $isEditing ) {
-            $resource->beforePost( $inputs );
+            $resource->beforePost( $unfiltredInputs, null, $inputs );
         }
 
         if ( method_exists( $resource, 'beforePut' ) && $isEditing ) {
-            $resource->beforePut( $inputs, $entry );
+            $resource->beforePut( $unfiltredInputs, $entry, $inputs );
         }
 
         /**
@@ -244,14 +256,14 @@ class CrudService
          * Create an event after crud POST
          */
         if ( ! $isEditing && method_exists( $resource, 'afterPost' ) ) {
-            $resource->afterPost( $inputs, $entry );
+            $resource->afterPost( $unfiltredInputs, $entry, $inputs );
         }
 
         /**
          * Create an event after crud POST
          */
         if ( $isEditing && method_exists( $resource, 'afterPut' ) ) {
-            $resource->afterPut( $inputs, $entry );
+            $resource->afterPut( $unfiltredInputs, $entry, $inputs );
         }
 
         /**
@@ -835,7 +847,7 @@ class CrudService
     }
 
     /**
-     * Return flat fields for the form provided
+     * Return flat fields for the crud form provided
      * @param CrudService
      * @param array $fields
      * @param Model|null $model
