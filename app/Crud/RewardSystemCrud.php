@@ -64,7 +64,9 @@ class RewardSystemCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable        =   [];
+
+    public $skippable       =   [ 'rules' ];
 
     protected $permissions = [
         'create' => 'nexopos.create.rewards',
@@ -222,7 +224,7 @@ class RewardSystemCrud extends CrudService
      */
     public function afterPost( $request, RewardSystem $entry )
     {
-        foreach( $request->input( 'rules' ) as $rule ) {
+        foreach( $request[ 'rules' ] as $rule ) {
             $newRule    =   new RewardSystemRule;
             $newRule->from          =   $rule[ 'from' ];
             $newRule->to            =   $rule[ 'to' ];
@@ -252,7 +254,7 @@ class RewardSystemCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
-        $rules      =   $request->input( 'rules' );
+        $rules      =   $request[ 'rules' ];
         
         /**
          * we filter the rules that are posted 

@@ -2,6 +2,7 @@
 namespace App\Crud;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
@@ -99,6 +100,8 @@ class CouponCrud extends CrudService
      * Fields which will be filled during post/put
      */
     public $fillable    =   [];
+
+    public $skippable   =   [ 'products', 'categories' ];
 
     /**
      * Define Constructor
@@ -273,7 +276,7 @@ class CouponCrud extends CrudService
             }
 
             return $field;
-        });
+        })->toArray();
 
         $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
             if ( ( in_array( $key, [ 
@@ -285,7 +288,7 @@ class CouponCrud extends CrudService
                 return false;
             }
             return true;
-        });
+        })->toArray();
 
         if ( ! empty( $inputs[ 'valid_hours_end' ] ) ) {
             $inputs[ 'valid_hours_end' ]    =   Carbon::parse( $inputs[ 'valid_hours_end' ] )->toDateTimeString();
@@ -316,7 +319,7 @@ class CouponCrud extends CrudService
             }
 
             return $field;
-        });
+        })->toArray();
 
         $inputs     =   collect( $inputs )->filter( function( $field, $key ) {
             if ( ( in_array( $key, [ 
@@ -328,7 +331,7 @@ class CouponCrud extends CrudService
                 return false;
             }
             return true;
-        });
+        })->toArray();
 
         if ( ! empty( $inputs[ 'valid_hours_end' ] ) ) {
             $inputs[ 'valid_hours_end' ]    =   Carbon::parse( $inputs[ 'valid_hours_end' ] )->toDateTimeString();
@@ -343,25 +346,29 @@ class CouponCrud extends CrudService
 
     /**
      * Before saving a record
-     * @param  Request $request
+     * @param  array $request
      * @return  void
      */
-    public function beforePost( $request )
+    public function beforePost( $inputs )
     {
         if ( $this->permissions[ 'create' ] !== false ) {
             ns()->restrict( $this->permissions[ 'create' ] );
 
-            foreach( $request->input( 'selected_products.products' ) as $product_id ) {
-                $product    =   Product::find( $product_id );
-                if ( ! $product instanceof Product ) {
-                    throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
+            if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
+                foreach( $inputs[ 'products' ] as $product_id ) {
+                    $product    =   Product::find( $product_id );
+                    if ( ! $product instanceof Product ) {
+                        throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
+                    }
                 }
             }
     
-            foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
-                $category    =   ProductCategory::find( $category_id );
-                if ( ! $category instanceof ProductCategory ) {
-                    throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
+            if ( isset( $inputs[ 'categories' ] ) && ! empty( $inputs[ 'categories' ] ) ) {
+                foreach( $inputs[ 'categories' ] as $category_id ) {
+                    $category    =   ProductCategory::find( $category_id );
+                    if ( ! $category instanceof ProductCategory ) {
+                        throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
+                    }
                 }
             }
 
@@ -369,7 +376,7 @@ class CouponCrud extends CrudService
             throw new NotAllowedException;
         }
 
-        return $request;
+        return $inputs;
     }
 
     /**
@@ -378,29 +385,33 @@ class CouponCrud extends CrudService
      * @param  Coupon $entry
      * @return  void
      */
-    public function afterPost( $request, Coupon $coupon )
+    public function afterPost( $inputs, Coupon $coupon )
     {
-        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
-            $productRelation                =   new CouponProduct();
-            $productRelation->coupon_id     =   $coupon->id;
-            $productRelation->product_id    =   $product_id;
-            $productRelation->save();
+        if ( isset( $inputs[ 'products' ] ) && ! empty( $inputs[ 'products' ] ) ) {
+            foreach( $inputs[ 'products' ] as $product_id ) {
+                $productRelation                =   new CouponProduct();
+                $productRelation->coupon_id     =   $coupon->id;
+                $productRelation->product_id    =   $product_id;
+                $productRelation->save();
+            }
         }
 
-        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
-            $categoryRelation                =   new CouponCategory();
-            $categoryRelation->coupon_id     =   $coupon->id;
-            $categoryRelation->category_id  =   $category_id;
-            $categoryRelation->save();
+        if ( isset( $inputs[ 'categories' ] ) && ! empty( $inputs[ 'categories' ] ) ) {
+            foreach( $inputs[ 'categories' ] as $category_id ) {
+                $categoryRelation                =   new CouponCategory();
+                $categoryRelation->coupon_id     =   $coupon->id;
+                $categoryRelation->category_id  =   $category_id;
+                $categoryRelation->save();
+            }
         }
 
         /**
          * @var CustomerService
          */
         $customersService   =   app()->make( CustomerService::class );
-        $customersService->setCoupon( $request->all(), $coupon );
+        $customersService->setCoupon( $inputs, $coupon );
         
-        return $request;
+        return $inputs;
     }
 
     

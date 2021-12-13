@@ -354,7 +354,7 @@ class CustomerCrud extends CrudService
                 }
             }
             return $value;
-        });
+        })->toArray();
     }
 
     /**
@@ -372,7 +372,7 @@ class CustomerCrud extends CrudService
                 }
             }
             return $value;
-        });
+        })->toArray();
     }
 
     /**

@@ -71,276 +71,33 @@ class CrudController extends DashboardController
     /**
      * Dashboard Crud POST
      * receive and treat POST request for CRUD Resource
-     * @param void
+     * @param string $namespace
+     * @param CrudPostRequest $request
      * @return void
      */
     public function crudPost( String $namespace, CrudPostRequest $request )
     {
-        $service    =   new CrudService;
-        $resource   =   $service->getCrudInstance( $namespace );
-        $model      =   $resource->getModel();
-        $entry      =   new $model;
-
-        /**
-         * Filter POST input
-         * check if on the CRUD resource the filter exists
-         */
+        $service        =   new CrudService;
         $inputs         =   $request->getPlainData( $namespace );
 
-        if ( method_exists( $resource, 'filterPostInputs' ) ) {
-            $inputs     =   $resource->filterPostInputs( $inputs, $entry );
-        }
-
-        /**
-         * this trigger a global filter
-         * on the actual crud instance
-         */
-        $inputs     =   Hook::filter( 
-            get_class( $resource ) . '@filterPostInputs', 
-            $inputs
-        );
-
-        if ( method_exists( $resource, 'beforePost' ) ) {
-            $resource->beforePost( $request );
-        }
-
-        /**
-         * If we would like to handle the PUT request
-         * by any other handler than the CrudService
-         */
-        if ( ! $resource->disablePut ) {
-
-            $fillable   =   Hook::filter( 
-                get_class( $resource ) . '@getFillable', 
-                $resource->getFillable()
-            );
-
-            foreach ( $inputs as $name => $value ) {
-
-                /**
-                 * If submitted field are part of fillable fields
-                 */
-                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
-
-                    /**
-                     * We might give the capacity to filter fields 
-                     * before storing. This can be used to apply specific formating to the field.
-                     */
-                    if ( method_exists( $resource, 'filterPost' ) ) {
-                        $entry->$name   =   $resource->filterPost( $value, $name );
-                    } else {
-                        $entry->$name   =   $value;
-                    }
-                }
-
-                /**
-                 * sanitizing input to remove
-                 * all script tags
-                 */
-                if ( ! empty( $entry->$name ) && ! array( $entry->$name ) ) {
-                    $entry->$name       =   strip_tags( $entry->$name );
-                }
-            }
-            
-            /**
-             * If fillable is empty or if "author" it's explicitely
-             * mentionned on the fillable array.
-             */
-            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
-                $entry->author      =   Auth::id();
-            }
-
-            $entry->save();
-
-            /**
-             * loop the tabs relations
-             * and store it
-             */
-            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
-                $fields         =   $request->input( $tab );
-                $class          =   $relationParams[0];
-                $localKey       =   $relationParams[1];
-                $foreighKey     =   $relationParams[2];
-                
-                if ( ! empty( $fields ) ) {
-                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
-
-                    /**
-                     * no relation has been found
-                     * so we'll store that.
-                     */
-                    if ( ! $model instanceof $class ) {
-                        $model  =   new $relationParams[0]; // should be the class;
-                    }
-
-                    /**
-                     * We're saving here all the fields for 
-                     * the related model
-                     */
-                    foreach( $fields as $name => $value ) {
-                        $model->$name   =   $value;
-                    }
-
-                    $model->$localKey   =   $entry->$foreighKey;
-                    $model->author      =   Auth::id();
-                    $model->save();
-                }
-            }
-        }
-
-        /**
-         * Create an event after crud POST
-         */
-        if ( method_exists( $resource, 'afterPost' ) ) {
-            $resource->afterPost( $request, $entry );
-        }
-
-        /**
-         * @todo adding a link to edit the new entry
-         */
-        return [
-            'status'    =>  'success',
-            'entry'     =>  $entry,
-            'message'   =>  __( 'A new entry has been successfully created.' )
-        ];
+        return $service->submitRequest( $namespace, $inputs );
     }
 
     /**
      * Dashboard CRUD PUT
      * receive and treat a PUT request for CRUD resource
-     * @param string resource namespace
-     * @param int primary key
-     * @param object request : CrudPutRequest
+     * @param string $namespace
+     * @param int $id primary key
+     * @param CrudPutRequest $request
      * @return void
      */
-    public function crudPut( String $namespace, $id, CrudPutRequest $request  ) 
+    public function crudPut( $namespace, $id, CrudPutRequest $request )
     {
-        $service    =   new CrudService;
-        $resource   =   $service->getCrudInstance( $namespace );
-        $model      =   $resource->getModel();
-        $entry      =   $model::find( $id );
-
-        /**
-         * Filter POST input
-         * check if on the CRUD resource the filter exists
-         */
-        $inputs         =   $request->getPlainData( $namespace, $entry );
-
-        if ( method_exists( $resource, 'filterPutInputs' ) ) {
-            $inputs     =   $resource->filterPutInputs( $inputs, $entry );
-        }
-
-        $inputs     =   Hook::filter( 
-            get_class( $resource ) . '@filterPutInputs', 
-            $inputs
-        );
-
-        if ( method_exists( $resource, 'beforePut' ) ) {
-            $resource->beforePut( $request, $entry );
-        }
-
-        /**
-         * If we would like to handle the PUT request
-         * by any other handler than the CrudService
-         */
-        if ( ! $resource->disablePut ) {
-
-            $fillable   =   Hook::filter( 
-                get_class( $resource ) . '@getFillable', 
-                $resource->getFillable()
-            );
-
-            foreach ( $inputs as $name => $value ) {
-    
-                /**
-                 * If submitted field are part of fillable fields
-                 */
-                if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
-    
-                    /**
-                     * We might give the capacity to filter fields 
-                     * before storing. This can be used to apply specific formating to the field.
-                     */
-                    if ( method_exists( $resource, 'filterPut' ) ) {
-                        $entry->$name   =   $resource->filterPut( $value, $name );
-                    } else {
-                        $entry->$name   =   $value;
-                    }
-                }
-    
-                /**
-                 * sanitizing input to remove
-                 * all script tags
-                 */
-                if ( ! empty( $entry->$name ) ) {
-                    $entry->$name       =   strip_tags( $entry->$name );
-                }
-            }
-            
-            /**
-             * If fillable is empty or if "author" it's explicitely
-             * mentionned on the fillable array.
-             */
-            if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
-                $entry->author      =   Auth::id();
-            }
-            
-            $entry->save();
-    
-            /**
-             * loop the tabs relations
-             * and store it
-             */
-            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
-                $fields         =   $request->input( $tab );
-                $class          =   $relationParams[0];
-                $localKey       =   $relationParams[1];
-                $foreighKey     =   $relationParams[2];
-                
-                if ( ! empty( $fields ) ) {
-                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
-    
-                    /**
-                     * no relation has been found
-                     * so we'll store that.
-                     */
-                    if ( ! $model instanceof $class ) {
-                        $model  =   new $relationParams[0]; // should be the class;
-                    }
-    
-                    /**
-                     * We're saving here all the fields for 
-                     * the related model
-                     */
-                    foreach( $fields as $name => $value ) {
-                        $model->$name   =   $value;
-                    }
-    
-                    $model->$localKey   =   $entry->$foreighKey;
-                    $model->author      =   Auth::id();
-                    $model->save();
-                }
-            }
-    
-        }
-        
-        /**
-         * Create an event after crud POST
-         */
-        if ( method_exists( $resource, 'afterPut' ) ) {
-            $resource->afterPut( $request, $entry );
-        }
-
-        /**
-         * @todo adding a link to edit the new entry
-         */
-        return [
-            'status'    =>  'success',
-            'entry'     =>  $entry,
-            'message'   =>  __( 'A new entry has been successfully created.' )
-        ];
+        $service        =   new CrudService;
+        $inputs         =   $request->getPlainData( $namespace );
+        return $service->submitRequest( $namespace, $inputs, $id );
     }
-
+    
     /**
      * Crud List
      * @return array of results

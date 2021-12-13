@@ -253,13 +253,13 @@ class ExpenseCrud extends CrudService
      * @param  Request $request
      * @return  void
      */
-    public function beforePost( $request )
+    public function beforePost( $inputs )
     {
         $this->allowedTo( 'create' );
 
-        event( new ExpenseBeforeCreateEvent( $request ) );
+        event( new ExpenseBeforeCreateEvent( $inputs ) );
 
-        return $request;
+        return $inputs;
     }
 
     /**
@@ -268,11 +268,11 @@ class ExpenseCrud extends CrudService
      * @param  Expense $entry
      * @return  void
      */
-    public function afterPost( $request, Expense $entry )
+    public function afterPost( $inputs, Expense $entry )
     {
-        event( new ExpenseAfterCreateEvent( $entry, $request ) );
+        event( new ExpenseAfterCreateEvent( $entry, $inputs ) );
 
-        return $request;
+        return $inputs;
     }
 
     public function hook( $query )

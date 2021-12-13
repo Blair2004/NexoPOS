@@ -18,16 +18,16 @@ class ExpenseBeforeCreateEvent
     /**
      * @param Request
      */
-    public $request;
+    public $inputs;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Request $request )
+    public function __construct( array $inputs )
     {
-        $this->request  =   $request;
+        $this->inputs  =   $inputs;
     }
 
     /**

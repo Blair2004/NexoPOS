@@ -44,14 +44,17 @@ class CreateOrderTest extends TestCase
         );
 
         $faker          =   Factory::create();
+        $responses      =   [];
         $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDays($this->totalDaysInterval);
 
         for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
             $date           =   $startOfWeek->addDay()->clone();
             $this->count    =   $this->count === false ? $faker->numberBetween(5,10) : $this->count;
             $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
-            $this->processOrders( $date, $callback );
+            $responses[]    =   $this->processOrders( $date, $callback );
         }        
+
+        return $responses;
     }
 
     private function output( $message )
@@ -64,7 +67,11 @@ class CreateOrderTest extends TestCase
 
     public function processOrders( $currentDate, $callback )
     {
+        $responses      =   [];
+
         for( $i = 0; $i < $this->count; $i++ ) {
+
+            $singleResponse     =   [];
 
             /**
              * @var CurrencyService
@@ -217,6 +224,8 @@ class CreateOrderTest extends TestCase
                 'status'    =>  'success'
             ]);
 
+            $singleResponse[ 'order-creation' ]   =   json_decode( $response->getContent(), true );
+
             if ( $this->shouldMakePayment ) {    
                 $netsubtotal    =   $currency
                     ->define( $subtotal )
@@ -239,6 +248,8 @@ class CreateOrderTest extends TestCase
                     ->subtractBy( $subtotal + $shippingFees - ( $discount[ 'rate' ] + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
                     ->getRaw() 
                 );
+
+                $singleResponse[ 'order-payment' ]   =   json_decode( $response->getContent() );
 
                 /**
                  * test if the order has updated
@@ -323,7 +334,13 @@ class CreateOrderTest extends TestCase
                 $response->assertJson([
                     'status'    =>  'success'
                 ]);
+
+                $singleResponse[ 'order-refund' ]   =   json_decode( $response->getContent() );
             }
+
+            $responses[]    =   $singleResponse;
         }
+
+        return $responses;
     }
 }

@@ -59,16 +59,18 @@ export default {
             this.types[ type ].selected     =   true;
             const selectedType              =   this.types[ type ];
 
-            POS.types.next( this.types );
-
             /**
              * treat all the promises
              * that are registered within 
              * the orderType queue
              */
-            await POS.triggerOrderTypeSelection( selectedType );
-
-            this.resolveIfQueued( selectedType );
+            try {
+                const result    =   await POS.triggerOrderTypeSelection( selectedType );
+                POS.types.next( this.types );
+                this.resolveIfQueued( selectedType );
+            } catch( exception ) {
+                // ...
+            }
         }
     }
 }

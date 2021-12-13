@@ -6,7 +6,6 @@ declare const paymentLabels;
 
 export default class Labels {
     getTypeLabel( label ) {
-        console.log( label );
         const type   =   typeLabels.filter( p => p.value === label );
         return type.length > 0 ? type[0].label : __( 'Unknown Status' );
     }

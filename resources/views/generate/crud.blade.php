@@ -109,7 +109,18 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
         $field      =   trim( $field );
     }
     @endphp
+
+    /**
+     * If few fields should only be filled
+     * those should be listed here.
+     */
     public $fillable    =   {!! json_encode( $fillable ?: [] ) !!};
+
+    /**
+     * If fields should be ignored during saving
+     * those fields should be listed here
+     */
+    public $skippable   =   [];
 
     /**
      * Define Constructor

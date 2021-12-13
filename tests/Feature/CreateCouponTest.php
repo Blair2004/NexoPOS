@@ -37,19 +37,20 @@ class CreateCouponTest extends TestCase
                     'limit_usage'       =>  $this->faker->randomElement([ 100, 200, 400 ]),        
                 ],
                 'selected_products'     =>  [
-                    'products'      =>  Product::select( 'id' )
+                    'products'          =>  Product::select( 'id' )
                         ->get()
                         ->map( fn( $product ) => $product->id )
                         ->toArray()
                 ],
-                'selected_categories'     =>  [
-                    'categories'      =>  ProductCategory::select( 'id' )
+                'selected_categories'   =>  [
+                    'categories'        =>    Product::select( 'id' )
                         ->get()
                         ->map( fn( $product ) => $product->id )
-                        ->toArray(),
+                        ->toArray()
                 ]
             ]);
 
+            $response->dump();
         $response->assertJsonPath( 'status', 'success' );
     }
 }

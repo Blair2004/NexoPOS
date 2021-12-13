@@ -191,11 +191,14 @@ export class POS {
             {
                 identifier: 'handle.delivery-order',
                 promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
-                    if (selectedType.identifier === 'delivery') {
+                    if ( selectedType && selectedType.identifier === 'delivery') {
                         return Popup.show(NSPosShippingPopup, { resolve, reject });
                     }
 
-                    reject(false);
+                    return resolve({
+                        status: 'success',
+                        message: 'Proceed'
+                    });
                 })
             }
         ]
@@ -766,50 +769,53 @@ export class POS {
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
             nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
-                .subscribe(async (order: any) => {
+                .subscribe({
+                    next: async (order: any) => {
 
-                    order = { ...this.defaultOrder(), ...order };
-
-                    /**
-                     * We'll rebuilt the product
-                     */
-                    const products = order.products.map((orderProduct: OrderProduct) => {
-                        orderProduct.$original = () => orderProduct.product;
-                        orderProduct.$quantities = () => orderProduct
-                            .product
-                            .unit_quantities
-                            .filter(unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id)[0];
-                        return orderProduct;
-                    });
-
-                    /**
-                     * we'll redefine the order type
-                     */
-                    order.type = Object.values(this.types.getValue()).filter((type: any) => type.identifier === order.type)[0];
-
-                    /**
-                     * the address is provided differently
-                     * then we need to rebuild it the way it's saved and used
-                     */
-                    order.addresses = {
-                        shipping: order.shipping_address,
-                        billing: order.billing_address
-                    }
-
-                    delete order.shipping_address;
-                    delete order.billing_address;
-
-
-                    /**
-                     * let's all set, let's load the order
-                     * from now. No further change is required
-                     */
-
-                    this.buildOrder(order);
-                    this.buildProducts(products);
-                    await this.selectCustomer(order.customer);
-                    resolve(order);
-                }, error => reject(error));
+                        order = { ...this.defaultOrder(), ...order };
+    
+                        /**
+                         * We'll rebuilt the product
+                         */
+                        const products = order.products.map((orderProduct: OrderProduct) => {
+                            orderProduct.$original = () => orderProduct.product;
+                            orderProduct.$quantities = () => orderProduct
+                                .product
+                                .unit_quantities
+                                .filter(unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id)[0];
+                            return orderProduct;
+                        });
+    
+                        /**
+                         * we'll redefine the order type
+                         */
+                        order.type = Object.values(this.types.getValue()).filter((type: any) => type.identifier === order.type)[0];
+    
+                        /**
+                         * the address is provided differently
+                         * then we need to rebuild it the way it's saved and used
+                         */
+                        order.addresses = {
+                            shipping: order.shipping_address,
+                            billing: order.billing_address
+                        }
+    
+                        delete order.shipping_address;
+                        delete order.billing_address;
+    
+    
+                        /**
+                         * let's all set, let's load the order
+                         * from now. No further change is required
+                         */
+    
+                        this.buildOrder(order);
+                        this.buildProducts(products);
+                        await this.selectCustomer(order.customer);
+                        resolve(order);
+                    }, 
+                    error: error => reject(error)
+                });
         })
     }
 
@@ -1484,11 +1490,14 @@ export class POS {
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
-                                .subscribe((result: any) => {
-                                    nsSnackBar.success(result.message).subscribe();
-                                    this.reset();
-                                }, (error) => {
-                                    return nsSnackBar.error(error.message).subscribe();
+                                .subscribe({
+                                    next: (result: any) => {
+                                        nsSnackBar.success(result.message).subscribe();
+                                        this.reset();
+                                    },
+                                    error: (error) => {
+                                        return nsSnackBar.error(error.message).subscribe();
+                                    }
                                 })
                         }
                     }
@@ -1501,11 +1510,7 @@ export class POS {
 
     async triggerOrderTypeSelection(selectedType) {
         for (let i = 0; i < this.orderTypeQueue.length; i++) {
-            try {
-                const result = await this.orderTypeQueue[i].promise(selectedType);
-            } catch (exception) {
-                console.log(exception);
-            }
+            const result = await this.orderTypeQueue[i].promise(selectedType);
         }
     }
 
