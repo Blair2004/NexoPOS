@@ -883,7 +883,12 @@ class CrudService
              */
             if ( ! in_array( $tabKey, $keys ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
-                    $data[ $field[ 'name' ] ]   =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] ); 
+                    switch( $field[ 'type' ] ) {
+                        case 'number': $defaultValue = 0; break;
+                        default: $defaultValue = ''; break;
+                    }
+
+                    $data[ $field[ 'name' ] ]   =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] ) ?: $defaultValue; 
                 }
             }
         }

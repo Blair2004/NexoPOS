@@ -101,6 +101,8 @@ class CouponCrud extends CrudService
      */
     public $fillable    =   [];
 
+    public $skippable   =   [ 'products', 'categories' ];
+
     /**
      * Define Constructor
      * @param  
