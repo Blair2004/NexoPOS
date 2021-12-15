@@ -27,7 +27,7 @@
         "laravie/parser": "^2.1",
         "phpoffice/phpspreadsheet": "^1.17",
         "picqer/php-barcode-generator": "^2.1",
-        "pusher/pusher-php-server": "~3.0",
+        "pusher/pusher-php-server": "~5.0",
         "rct567/dom-query": "^0.8.0",
         "spatie/laravel-db-snapshots": "^1.7",
         "tormjens/eventy": "^0.8"
