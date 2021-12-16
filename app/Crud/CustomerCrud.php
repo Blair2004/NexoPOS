@@ -164,7 +164,7 @@ class CustomerCrud extends CrudService
                             'type'          =>  'datetimepicker',
                             'label'         =>  __( 'Birth Date' ),
                             'name'          =>  'birth_date',
-                            'value'         =>  $entry instanceof Customer ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : '', 
+                            'value'         =>  $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null, 
                             'description'   =>  __( 'Displays the customer birth date' )
                         ], [
                             'type'          =>  'email',
