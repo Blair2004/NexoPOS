@@ -885,6 +885,11 @@ class CrudService
                 foreach( $tab[ 'fields' ] as $field ) {
                     switch( $field[ 'type' ] ) {
                         case 'number': $defaultValue = 0; break;
+                        case 'date': 
+                        case 'multiselect': 
+                        case 'datetime': 
+                        case 'datetimepicker':
+                        case 'select': $defaultValue = null; break;
                         default: $defaultValue = ''; break;
                     }
 

@@ -81,7 +81,25 @@ use App\Services\DateService;
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
             <div class="flex flex-auto flex-col overflow-hidden bg-gray-200">
                 <div class="overflow-y-auto flex-auto">
-                    @yield( 'layout.dashboard.body', View::make( 'common.dashboard.with-header' ) )
+                    @hasSection( 'layout.dashboard.body' )
+                        @yield( 'layout.dashboard.body' )
+                    @endif
+                    
+                    @hasSection( 'layout.dashboard.body.with-header' )
+                        @include( 'common.dashboard.with-header' )
+                    @endif
+
+                    @hasSection( 'layout.dashboard.with-header' )
+                        @include( 'common.dashboard.with-header' )
+                    @endif
+                    
+                    @hasSection( 'layout.dashboard.body.with-title' )
+                        @include( 'common.dashboard.with-title' )
+                    @endif
+
+                    @hasSection( 'layout.dashboard.with-title' )
+                        @include( 'common.dashboard.with-title' )
+                    @endif
                 </div>
                 <div class="p-2 text-xs flex justify-end text-gray-500">
                     {!! 

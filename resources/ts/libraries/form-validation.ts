@@ -303,7 +303,7 @@ export default class FormValidation {
         }
 
         if ( rule.identifier === 'email' ) {
-            if ( ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test( field.value ) ) {
+            if ( ! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test( field.value ) ) {
                 // because we would like to stop the validation here
                 return field.errors.push({
                     identifier: rule.identifier,

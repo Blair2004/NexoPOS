@@ -50,7 +50,6 @@ class CreateCouponTest extends TestCase
                 ]
             ]);
 
-            $response->dump();
         $response->assertJsonPath( 'status', 'success' );
     }
 }

@@ -98,7 +98,7 @@ class GenerateModuleCommand extends Command
              * Generate Sub Folders
              */
             Storage::disk( 'ns-modules' )->makeDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . '1.0' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
             Storage::disk( 'ns-modules' )->makeDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views' );
 
             /**

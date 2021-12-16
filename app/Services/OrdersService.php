@@ -866,14 +866,15 @@ class OrdersService
             ->getRaw();
 
         $allowedPaymentsGateways    =   Cache::remember( 'nexopos.pos.payments', 3600, function() {
-            return PaymentType::active()->get()->toArray();
+            return PaymentType::active()
+                ->get()
+                ->map( fn( $paymentType ) => $paymentType->identifier )
+                ->toArray();
         });
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {
-                
-
-                if (in_array($payment['identifier'], array_keys($allowedPaymentsGateways))) {
+                if (in_array($payment['identifier'], $allowedPaymentsGateways ) ) {
                     
                     /**
                      * check if the customer account are enough for the account-payment
@@ -1050,7 +1051,6 @@ class OrdersService
             $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
             $orderProduct->total_purchase_price =   $this->currencyService->define( $product[ 'total_purchase_price' ] ?? 0 )
-                ->subtractBy( $orderProduct->discount )
                 ->getRaw();
 
             $this->computeOrderProduct( $orderProduct );

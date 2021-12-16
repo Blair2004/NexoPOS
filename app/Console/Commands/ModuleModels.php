@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Services\Modules;
 use App\Services\Setup;
 use App\Services\Helper;
+use App\Services\ModulesService;
 
 class ModuleModels extends Command
 {
@@ -42,7 +43,7 @@ class ModuleModels extends Command
      */
     public function handle()
     {
-        $modules    =   app()->make( Modules::class );
+        $modules    =   app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
@@ -59,7 +60,7 @@ class ModuleModels extends Command
             if ( ! Storage::disk( 'ns-modules' )->exists( 
                 $fileName 
             ) ) {
-                Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'tendoo::generate.modules.model', compact(
+                Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.model', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
                 return $this->info( 'The model has been created !' );
