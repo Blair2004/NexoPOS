@@ -12,7 +12,7 @@
     "production": "npx mix --production"
   },
   "devDependencies": {
-    "@types/node": "^16.0.1",
+    "@types/node": "^17.0.0",
     "axios": "^0.24.0",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
