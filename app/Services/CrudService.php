@@ -885,6 +885,11 @@ class CrudService
                 foreach( $tab[ 'fields' ] as $field ) {
                     switch( $field[ 'type' ] ) {
                         case 'number': $defaultValue = 0; break;
+                        case 'date': 
+                        case 'datetime': 
+                        case 'datetimepicker': 
+                        case 'multiselect': 
+                        case 'select': $defaultValue = null; break;
                         default: $defaultValue = ''; break;
                     }
 
@@ -892,6 +897,14 @@ class CrudService
                 }
             }
         }
+
+        /**
+         * We'll remove all the field having
+         * a null value.
+         */
+        $data   =   collect( $data )
+            ->filter( fn( $value ) => ! empty( $value ) )
+            ->toArray();
 
         /**
          * We'll add custom fields

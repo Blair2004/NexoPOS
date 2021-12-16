@@ -157,6 +157,7 @@ class CustomerCrud extends CrudService
                             'label'         =>  __( 'Group' ),
                             'name'          =>  'group_id',
                             'value'         =>  $entry->group_id ?? '',
+                            'validation'    =>  'required',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
                         ], [

@@ -1,9 +1,4 @@
-import Vue from "vue";
-import moment from "moment";
-import { __ } from "@/libraries/lang";
-
-const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
-    template: `
+<template>
     <div class="picker mb-2">
         <label v-if="field" class="my-1 block leading-5 font-medium text-gray-700">{{ field.label }}</label>
         <div @click="visible = !visible" class="rounded cursor-pointer bg-white shadow px-1 py-1 flex items-center text-gray-700">
@@ -48,8 +43,7 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
                 <div class="border-t border-gray-200 w-full p-2">
                     <div class="-mx-2 flex justify-between">
                         <div class="px-2">
-                            <div class="flex rounded overflow-hidden">
-                            </div>
+                            <ns-icon-button @click="erase()" button-class="bg-red-400 text-white hover:bg-red-500" class-name="la-trash"></ns-icon-button>
                         </div>
                         <div class="px-2">
                             <div class="rounded flex">
@@ -63,7 +57,12 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
             </div>
         </div>
     </div>
-    `,
+</template>
+<script>
+import moment from "moment";
+import { __ } from "@/libraries/lang";
+export default {
+    name: 'ns-date-time-picker',
     props: [ 'field', 'date' ],
     data() {
         return {
@@ -105,6 +104,10 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
     },
     methods: {
         __,
+        erase() {
+            this.field.value    =   undefined;
+            this.$emit( 'change', this.field );
+        },
         detectHoursChange() {
             if ( parseFloat( this.hours ) < 0 ) {
                 this.hours  =   0;
@@ -192,6 +195,5 @@ const nsDateTimePicker  =   Vue.component( 'ns-date-time-picker', {
             }
         }
     }
-})
-
-export { nsDateTimePicker };
+}
+</script>
