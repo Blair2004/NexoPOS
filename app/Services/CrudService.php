@@ -898,7 +898,6 @@ class CrudService
             }
         }
 
-
         /**
          * We'll add custom fields
          * that might be added by modules

@@ -1,16 +1,20 @@
 <template>
     <div class="picker mb-2">
         <label v-if="field" class="block leading-5 font-medium text-gray-700">{{ field.label }}</label>
-        <div @click="visible = !visible" class="mt-1 border-2 rounded cursor-pointer bg-white px-1 py-1 flex items-center text-gray-700">
+        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded cursor-pointer bg-white px-1 py-1 flex items-center text-gray-700">
             <i class="las la-clock text-2xl"></i>
-            <span class="mx-1 text-sm" v-if="currentDay">
+            <span class="mx-1 text-sm" v-if="currentDay && field">
                 <span v-if="field.value !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
                 <span v-if="field.value === null">N/A</span>
+            </span>
+            <span class="mx-1 text-sm" v-if="currentDay && date">
+                <span v-if="date !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
+                <span v-if="date === null">N/A</span>
             </span>
         </div>
         <p class="text-sm text-gray-500 py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0" v-if="visible">
-            <div class="absolute -mt-4 w-72 mt-2 shadow-lg rounded bg-white anim-duration-300 zoom-in-entrance flex flex-col">
+            <div :class="field ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-lg rounded bg-white anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto" v-if="currentView === 'years'">
                     <div class="p-2 flex flex items-center">
                         <div>
@@ -95,7 +99,8 @@
                     <div class="-mx-1 flex justify-between">
                         <div class="px-1">
                             <div class="-mx-1 flex">
-                                <div class="px-1">
+                                <!-- Displays only if it's a field -->
+                                <div class="px-1" v-if="field">
                                     <button @click="erase()" class="border hover:text-white rounded w-8 h-8 flex items-center justify-center hover:bg-blue-500">
                                         <i class="las la-trash"></i>
                                     </button>
@@ -168,6 +173,8 @@ export default {
         } else {
             this.currentDay     =   [ undefined, '', null ].includes( this.date ) ? moment() : moment( this.date );
         }
+
+        console.log( this.date );
 
         this.hours      =   this.currentDay.format( 'HH' );
         this.minutes    =   this.currentDay.format( 'mm' );
@@ -246,10 +253,17 @@ export default {
                 this.currentDay     =   date;
                 this.currentDay.hours( this.hours );
                 this.currentDay.minutes( this.minutes );
-                this.field.value    =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
-                this.$emit( 'change', this.field );
+
+                if ( this.field ) {
+                    this.field.value    =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
+                }
+
+                this.$emit( 'change', this.field ? this.field : this.currentDay );
             } else {
-                this.field.value    =   null;
+                if ( this.field ) {
+                    this.field.value    =   null;
+                }
+                
                 this.$emit( 'change', null );
             }
         },
