@@ -1,11 +1,11 @@
 <{{ '?php' }}
 /**
- * {{ $module[ 'name'] }} Model
+ * {{ $module[ 'name' ] }} Model
  * @since {{ $module[ 'version' ] }}
 **/
 namespace Modules\{{ $module[ 'namespace' ] }}\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\NsModel;
 
 class {{ ucwords( $name ) }} extends Model
 {
