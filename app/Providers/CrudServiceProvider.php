@@ -78,7 +78,7 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.customers-coupons': return CustomerCouponCrud::class;
                 case 'ns.rewards-system': return RewardSystemCrud::class;
                 case 'ns.providers': return ProviderCrud::class;
-                case 'ns.expenses-categories': return ExpenseCategoryCrud::class;
+                case 'ns.accounting-accounts': return ExpenseCategoryCrud::class;
                 case 'ns.cash-flow-history': return CashFlowHistoryCrud::class;
                 case 'ns.expenses': return ExpenseCrud::class;
                 case 'ns.units-groups': return UnitGroupCrud::class;

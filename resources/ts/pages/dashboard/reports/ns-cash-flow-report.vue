@@ -1,6 +1,7 @@
 <script>
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
+import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 
 
@@ -9,7 +10,8 @@ export default {
     mounted() {
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsDateTimePicker,
     },
     data() {
         return {
@@ -38,13 +40,16 @@ export default {
             const endDate       =   moment( this.endDate );
 
             nsHttpClient.post( '/api/nexopos/v4/reports/cash-flow', { startDate, endDate })
-                .subscribe( result => {
-                    this.report     =   result;
-                    console.log( this.report );
-                }, ( error ) => {
-                    nsSnackBar
-                        .error( error.message )
-                        .subscribe();
+                .subscribe({
+                    next: result => {
+                        this.report     =   result;
+                        console.log( this.report );
+                    },
+                    error: ( error ) => {
+                        nsSnackBar
+                            .error( error.message )
+                            .subscribe();
+                    }
                 })
         }
     }
