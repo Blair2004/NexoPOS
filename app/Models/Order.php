@@ -8,6 +8,43 @@ use App\Services\DateService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int id
+ * @property string description
+ * @property string code
+ * @property string title
+ * @property string type
+ * @property string payment_status
+ * @property string process_status
+ * @property string delivery_status
+ * @property float discount
+ * @property string discount_type
+ * @property float discount_percentage
+ * @property float shipping
+ * @property float shipping_rate
+ * @property string shipping_type
+ * @property float gross_total
+ * @property float subtotal
+ * @property float net_total
+ * @property float total_coupons
+ * @property float total
+ * @property float tax_value
+ * @property int tax_group_id
+ * @property string tax_type
+ * @property float tendered
+ * @property float change
+ * @property string final_payment_date
+ * @property string total_instalments
+ * @property int customer_id
+ * @property string note
+ * @property string note_visibility
+ * @property int author
+ * @property string uuid
+ * @property int register_id
+ * @property string voidance_reason
+ * @property string created_at
+ * @property string updated_at
+ */
 class Order extends NsModel
 {
     use HasFactory;

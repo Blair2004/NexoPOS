@@ -893,7 +893,8 @@ class CrudService
                         default: $defaultValue = ''; break;
                     }
 
-                    $data[ $field[ 'name' ] ]   =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] ) ?: $defaultValue; 
+                    $value                      =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
+                    $data[ $field[ 'name' ] ]   =   empty( $value ) && ! $value === 0 ? $defaultValue : $value; 
                 }
             }
         }

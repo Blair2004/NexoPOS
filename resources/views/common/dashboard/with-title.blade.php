@@ -6,5 +6,6 @@
             <p class="text-gray-600">{{ $description ?? __( 'No description' ) }}</p>
         </div>
         @yield( 'layout.dashboard.body.with-title' )
+        @yield( 'layout.dashboard.with-title' )
     </div>
 </div>
