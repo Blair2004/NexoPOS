@@ -19,7 +19,7 @@ class ModuleMigrations extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:migration {namespace} {--delete=} {--forget}';
+    protected $signature = 'modules:migration {namespace} {--forget=}';
 
     /**
      * The console command description.
@@ -72,19 +72,7 @@ class ModuleMigrations extends Command
      */
     public function passDeleteMigration()
     {
-        /**
-         * if we would like to delete all migrations
-         */
-        if ( $this->option( 'delete' ) == 'all' ) {
-            Storage::disk( 'ns-modules' )->deleteDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
-            $this->info( sprintf( 'All %s migration folders has been deleted !', $this->module[ 'name' ] ) );
-            return false;
-        } else if( $this->option( 'delete' ) != '' ) {
-            Storage::disk( 'ns-modules' )->deleteDirectory( $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . $this->option( 'delete' ) );
-            $this->info( sprintf( 'The migration directory %s has been deleted.', $this->option( 'delete' ) ) );
-            return false;
-        } else if ( $this->option( 'forget' ) ) {
+        if ( $this->option( 'forget' ) === 'all' ) {
             /**
              * This will revert the migration
              * for a specific module.
@@ -99,6 +87,35 @@ class ModuleMigrations extends Command
              */
             ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )->delete();
             $this->info( sprintf( 'The migration for the module %s has been forgotten.', $this->module[ 'name' ] ) );
+
+            /**
+             * because we use the cache to prevent the system for overusing the
+             * database with too many requests.
+             */
+            Artisan::call( 'cache:clear' );
+
+            return false;
+        } else if ( ! empty( $this->option( 'forget' ) ) ) {
+            
+            $path   =   str_replace( 'modules/', '', $this->option( 'forget' ) );
+
+            /**
+             * This will revert the migration
+             * for a specific module.
+             * @var ModulesService
+             */
+            $moduleService  =   app()->make( ModulesService::class );
+            $moduleService->revertMigrations( $this->module, [ $path ]);
+
+            /**
+             * We'll make sure to clear the migration as
+             * being executed on the system.
+             */
+            ModuleMigration::where( 'namespace', $this->module[ 'namespace' ] )
+                ->where( 'file', $path )
+                ->delete();
+
+            $this->info( sprintf( 'The migration "%s" for the module %s has been forgotten.', $path, $this->module[ 'name' ] ) );
 
             /**
              * because we use the cache to prevent the system for overusing the

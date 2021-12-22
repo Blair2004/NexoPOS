@@ -34,7 +34,6 @@ public/css/*.map
 public/lang
 public/modules-lang/*
 !public/modules-lang/index.html
-public/mix-manifest.json
 public/mapping.json
 storage/module.zip
 tests/database.sqlite

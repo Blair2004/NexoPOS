@@ -1027,7 +1027,7 @@ class ModulesService
      * @param array $module
      * @return void
      */
-    public function revertMigrations( $module )
+    public function revertMigrations( $module, $only = [] )
     {
         /**
          * Run down method for all migrations 
@@ -1036,6 +1036,16 @@ class ModulesService
         $migrationFiles   =   Storage::disk( 'ns-modules' )->allFiles( 
             $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR
         );
+
+        /**
+         * If we would like to revert specific
+         * migration, we'll use the $only argument
+         */
+        if ( ! empty( $only ) ) {
+            $migrationFiles     =   collect( $migrationFiles )->filter( function( $file ) use ( $only ) {
+                return in_array( $file, $only );
+            })->toArray();
+        }
 
         /**
          * Checks if migration files exists

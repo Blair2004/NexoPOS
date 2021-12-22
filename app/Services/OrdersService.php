@@ -2198,7 +2198,7 @@ class OrdersService
     public function getTypeLabels() 
     {
         return Hook::filter( 'ns-order-types', [
-            'delivery'          =>  __( 'Pending' ),
+            'delivery'          =>  __( 'Delivery' ),
             'takeaway'          =>  __( 'Take Away' ),
             'not-available'     =>  __( 'Not Available' ),
         ]);
