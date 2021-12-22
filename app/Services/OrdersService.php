@@ -82,6 +82,11 @@ class OrdersService
     /** @var TaxService */
     protected $taxService;
 
+    /**
+     * @var ReportService
+     */
+    protected $reportService;
+
     public function __construct(
         CustomerService $customerService,
         ProductService $productService,
@@ -89,7 +94,8 @@ class OrdersService
         DateService $dateService,
         CurrencyService $currencyService,
         Options $optionsService,
-        TaxService $taxService
+        TaxService $taxService,
+        ReportService $reportService
     ) {
         $this->customerService  =   $customerService;
         $this->productService   =   $productService;
@@ -98,6 +104,7 @@ class OrdersService
         $this->currencyService  =   $currencyService;
         $this->optionsService   =   $optionsService;
         $this->taxService       =   $taxService;
+        $this->reportService    =   $reportService;
     }
 
     /**
@@ -2079,6 +2086,11 @@ class OrdersService
         $order->payments->each( function( $payment ) {
             $payment->delete();
         });
+
+        /**
+         * delete cash flow entries
+         */
+        $this->reportService->deleteOrderCashFlow( $order );
 
         $order->delete();
 

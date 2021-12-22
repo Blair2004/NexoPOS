@@ -891,17 +891,7 @@ class CrudService
              */
             if ( ! in_array( $tabKey, $keys ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
-                    switch( $field[ 'type' ] ) {
-                        case 'number': $defaultValue = 0; break;
-                        case 'date': 
-                        case 'multiselect': 
-                        case 'datetime': 
-                        case 'datetimepicker':
-                        case 'select': $defaultValue = null; break;
-                        default: $defaultValue = ''; break;
-                    }
-
-                    $value                      =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
+                    $value      =       data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 
                     /**
                      * if the field doesn't have any value

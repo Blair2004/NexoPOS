@@ -18,6 +18,9 @@ use Tests\TestCase;
 
 class DeleteOrderTest extends CreateOrderTest
 {
+    protected $count                =   1;
+    protected $totalDaysInterval    =   1;
+
     /**
      * A basic feature test example.
      *
@@ -66,6 +69,11 @@ class DeleteOrderTest extends CreateOrderTest
                     $order->id
                 )
             );
+
+            /**
+             * let's check if flow entry has been removed
+             */
+            $this->assertTrue( ! CashFlow::where( 'order_id', $order->id )->first() instanceof CashFlow, 'The cash flow hasn\'t been deleted.' );
 
             $products->each( function( OrderProduct $orderProduct ) use ( $productService ){
                 $originalProduct                =   $orderProduct->product;
