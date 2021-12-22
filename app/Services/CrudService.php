@@ -140,6 +140,14 @@ class CrudService
          */
         $unfiltredInputs    =   $inputs;
 
+        if ( method_exists( $resource, 'filterPostInputs' ) && ! $isEditing ) {
+            $inputs    =   $resource->filterPostInputs( $inputs, null );
+        }
+
+        if ( method_exists( $resource, 'filterPutInputs' ) && $isEditing ) {
+            $inputs    =   $resource->filterPutInputs( $inputs, $entry );
+        }
+
         /**
          * this trigger a global filter
          * on the actual crud instance
@@ -894,7 +902,14 @@ class CrudService
                     }
 
                     $value                      =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
-                    $data[ $field[ 'name' ] ]   =   empty( $value ) && ! $value === 0 ? $defaultValue : $value; 
+
+                    /**
+                     * if the field doesn't have any value
+                     * we'll omit it. To avoid filling wrong value
+                     */
+                    if ( ! empty( $value ) && ( int ) $value !== 0 ) {
+                        $data[ $field[ 'name' ] ]   =   $value;
+                    }
                 }
             }
         }

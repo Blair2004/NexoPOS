@@ -212,13 +212,14 @@ class ReportService
 
     public function computeIncome( $previousReport, $todayReport )
     {
-        $totalIncome         =   Order::from( $this->dayStarts )
+        $totalIncome         =   CashFlow::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->paymentStatus( Order::PAYMENT_PAID )
-            ->sum( 'net_total' );
+            ->operation( CashFlow::OPERATION_CREDIT )
+            ->sum( 'value' );
 
         $totalExpenses      =   CashFlow::from( $this->dayStarts )
             ->to( $this->dayEnds )
+            ->operation( CashFlow::OPERATION_DEBIT )
             ->sum( 'value' );
 
         $todayReport->day_income        =   $totalIncome - $totalExpenses;
@@ -365,8 +366,8 @@ class ReportService
         if ( $today instanceof DashboardDay ) {
             if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT ) {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );
-                $today->day_income        -=  $cashFlow->getRawOriginal( 'value' );
-                $today->total_income      =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
+                $today->day_income          -=  $cashFlow->getRawOriginal( 'value' );
+                $today->total_income        =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
                 $today->save();
             } else {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );

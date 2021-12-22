@@ -28,11 +28,16 @@ class CashFlow extends NsModel
 
     public function scopeFrom( $query, $date )
     {
-        return $query->where( 'created_at', '<=', $date );
+        return $query->where( 'created_at', '>=', $date );
+    }
+
+    public function scopeOperation( $query, $operation )
+    {
+        return $query->where( 'operation', $operation );
     }
 
     public function scopeTo( $query, $date )
     {
-        return $query->where( 'created_at', '>=', $date );
+        return $query->where( 'created_at', '<=', $date );
     }
 }
