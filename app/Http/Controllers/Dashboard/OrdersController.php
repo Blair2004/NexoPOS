@@ -188,6 +188,8 @@ class OrdersController extends DashboardController
 
     public function orderInvoice( Order $order )
     {
+        $optionsService     =   app()->make( Options::class );
+
         $order->load( 'customer' );
         $order->load( 'products' );
         $order->load( 'shipping_address' );
@@ -198,6 +200,7 @@ class OrdersController extends DashboardController
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order'     =>  $order,
+            'options'   =>  $optionsService->get(),
             'billing'   =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping'  =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title'     =>  sprintf( __( 'Order Invoice &mdash; %s' ), $order->code )
