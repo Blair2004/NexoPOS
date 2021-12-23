@@ -170,6 +170,20 @@ class Options
             return $this->rawOptions;
         }
 
+        /**
+         * In case an array of keys are provided
+         * those will be pulled and turned into an 
+         * associative array with key value pair.
+         */
+        if ( is_array( $key ) ) {
+            $array  =   [];
+            foreach( $key as $_key ) {
+                $array[ $_key ]     =   $this->rawOptions[ $key ] ?? $default;
+            }
+
+            return $array;
+        }
+
         $this->value    =   $default !== null ? $default : null;
 
         collect( $this->rawOptions )->map( function( $option ) use ( $key, $default ) {
