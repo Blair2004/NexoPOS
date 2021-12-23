@@ -146,7 +146,7 @@ class CreateOrderTest extends TestCase
             }
 
             $discount           =   [
-                'type'      =>      $faker->randomElement([ 'percentage', 'flat' ]),
+                'type'      =>  $faker->randomElement([ 'percentage', 'flat' ]),
                 'value'     =>  0,
                 'rate'      =>  0,
             ];

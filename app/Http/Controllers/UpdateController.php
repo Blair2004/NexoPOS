@@ -43,7 +43,7 @@ class UpdateController extends Controller
             $file   =   ns()->update->getMatchingFullPath( 
                 $request->input( 'file' ) 
             );
-    
+                
             Artisan::call( 'migrate --path=' . $file );
         }
 

@@ -79,7 +79,7 @@ class ConfigureAccoutingTest extends TestCase
              */
             if ( ! $expenseCategory instanceof ExpenseCategory ) {
                 $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses-categories', [
+                    ->json( 'POST', 'api/nexopos/v4/crud/ns.accounting-accounts', [
                         'name'          =>  $account[ 'name' ],
                         'general'       =>  [
                             'operation'     =>  $account[ 'operation' ],

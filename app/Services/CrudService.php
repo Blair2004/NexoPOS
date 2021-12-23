@@ -134,11 +134,18 @@ class CrudService
         $model      =   $resource->getModel();
         $isEditing  =   $id !== null;
         $entry      =   ! $isEditing ? new $model : $model::find( $id );
-
         /**
          * let's keep old form inputs
          */
         $unfiltredInputs    =   $inputs;
+
+        if ( method_exists( $resource, 'filterPostInputs' ) && ! $isEditing ) {
+            $inputs    =   $resource->filterPostInputs( $inputs, null );
+        }
+
+        if ( method_exists( $resource, 'filterPutInputs' ) && $isEditing ) {
+            $inputs    =   $resource->filterPutInputs( $inputs, $entry );
+        }
 
         /**
          * this trigger a global filter
@@ -883,17 +890,15 @@ class CrudService
              */
             if ( ! in_array( $tabKey, $keys ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
-                    switch( $field[ 'type' ] ) {
-                        case 'number': $defaultValue = 0; break;
-                        case 'date': 
-                        case 'multiselect': 
-                        case 'datetime': 
-                        case 'datetimepicker':
-                        case 'select': $defaultValue = null; break;
-                        default: $defaultValue = ''; break;
-                    }
+                    $value      =       data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 
-                    $data[ $field[ 'name' ] ]   =   data_get( $fields, $tabKey . '.' . $field[ 'name' ] ) ?: $defaultValue; 
+                    /**
+                     * if the field doesn't have any value
+                     * we'll omit it. To avoid filling wrong value
+                     */
+                    if ( ! empty( $value ) || ( int ) $value === 0 ) {
+                        $data[ $field[ 'name' ] ]   =   $value;
+                    }
                 }
             }
         }

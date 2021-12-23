@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashFlow;
 use App\Models\Order;
 use App\Models\OrderPayment;
+use App\Models\OrderProduct;
+use App\Models\Product;
 use App\Models\Role;
 use App\Services\OrdersService;
 use App\Services\ProductService;
@@ -13,14 +16,17 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class DeleteOrderTest extends TestCase
+class DeleteOrderTest extends CreateOrderTest
 {
+    protected $count                =   1;
+    protected $totalDaysInterval    =   1;
+
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_example()
+    public function test_delete_order()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -39,6 +45,11 @@ class DeleteOrderTest extends TestCase
             $product->previous_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
             return $product;
         });
+
+        /**
+         * let's check if the order has a cash flow entry
+         */
+        $this->assertTrue( CashFlow::where( 'order_id', $order->id )->first() instanceof CashFlow, 'No cash flow created for the order.' );
 
         if ( $order instanceof Order ) {
 
@@ -59,17 +70,26 @@ class DeleteOrderTest extends TestCase
                 )
             );
 
-            $products->each( function( $product ) use ( $productService ){
-                $product->actual_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
+            /**
+             * let's check if flow entry has been removed
+             */
+            $this->assertTrue( ! CashFlow::where( 'order_id', $order->id )->first() instanceof CashFlow, 'The cash flow hasn\'t been deleted.' );
 
-                /**
-                 * Let's check if the quantity has been restored 
-                 * to the default value.
-                 */
-                $this->assertTrue( 
-                    ( float ) $product->actual_quantity == ( float ) $product->previous_quantity + ( float ) $product->quantity,
-                    __( 'The new quantity was not restored to what it was before the deletion.')
-                );
+            $products->each( function( OrderProduct $orderProduct ) use ( $productService ){
+                $originalProduct                =   $orderProduct->product;
+
+                if ( $originalProduct->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
+                    $orderProduct->actual_quantity   =   $productService->getQuantity( $orderProduct->product_id, $orderProduct->unit_id );
+    
+                    /**
+                     * Let's check if the quantity has been restored 
+                     * to the default value.
+                     */
+                    $this->assertTrue( 
+                        ( float ) $orderProduct->actual_quantity == ( float ) $orderProduct->previous_quantity + ( float ) $orderProduct->quantity,
+                        __( 'The new quantity was not restored to what it was before the deletion.')
+                    );
+                }
             });
 
         } else {

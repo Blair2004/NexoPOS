@@ -204,10 +204,10 @@ class DemoCoreService
          */
         $reportService  =   app()->make( ReportService::class );
         $dates          =   [];
-        $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDay();
+        $startOfRange    =   ns()->date->clone()->subDays(7);
 
         for( $i = 0; $i < 7; $i++ ) {
-            $dates[]    =   $startOfWeek->addDay()->clone();
+            $dates[]    =   $startOfRange->addDay()->clone();
         }
 
         for( $i = 0; $i < $this->orderCount; $i++ ) {

@@ -213,6 +213,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( CurrencyService::class ),
                 $app->make( Options::class ),
                 $app->make( TaxService::class ),
+                $app->make( ReportService::class ),
             );
         });
 

@@ -2,14 +2,15 @@
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-
+import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
 
 export default {
     name : 'ns-low-stock-report',
     mounted() {
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsDateTimePicker,
     },
     data() {
         return {

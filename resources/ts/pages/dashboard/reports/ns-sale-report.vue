@@ -4,6 +4,7 @@
 <script>
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
+import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
@@ -44,7 +45,7 @@ export default {
     },
     components: {
         nsDatepicker,
-        // nsDatetimepicker,
+        nsDateTimePicker,
     },
     computed: {
         // ..

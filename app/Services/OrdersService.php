@@ -82,6 +82,11 @@ class OrdersService
     /** @var TaxService */
     protected $taxService;
 
+    /**
+     * @var ReportService
+     */
+    protected $reportService;
+
     public function __construct(
         CustomerService $customerService,
         ProductService $productService,
@@ -89,7 +94,8 @@ class OrdersService
         DateService $dateService,
         CurrencyService $currencyService,
         Options $optionsService,
-        TaxService $taxService
+        TaxService $taxService,
+        ReportService $reportService
     ) {
         $this->customerService  =   $customerService;
         $this->productService   =   $productService;
@@ -98,6 +104,7 @@ class OrdersService
         $this->currencyService  =   $currencyService;
         $this->optionsService   =   $optionsService;
         $this->taxService       =   $taxService;
+        $this->reportService    =   $reportService;
     }
 
     /**
@@ -2080,6 +2087,11 @@ class OrdersService
             $payment->delete();
         });
 
+        /**
+         * delete cash flow entries
+         */
+        $this->reportService->deleteOrderCashFlow( $order );
+
         $order->delete();
 
         event( new OrderAfterDeletedEvent( $order ) );
@@ -2198,7 +2210,7 @@ class OrdersService
     public function getTypeLabels() 
     {
         return Hook::filter( 'ns-order-types', [
-            'delivery'          =>  __( 'Pending' ),
+            'delivery'          =>  __( 'Delivery' ),
             'takeaway'          =>  __( 'Take Away' ),
             'not-available'     =>  __( 'Not Available' ),
         ]);
