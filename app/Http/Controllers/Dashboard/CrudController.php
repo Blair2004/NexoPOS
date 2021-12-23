@@ -4,22 +4,19 @@
  */
 namespace App\Http\Controllers\Dashboard;
 
+use App\Events\CrudAfterDeleteEvent;
 use App\Exceptions\NotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Exception;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\CrudPostRequest;
 use App\Http\Requests\CrudPutRequest;
 use App\Services\CrudService;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 class CrudController extends DashboardController
@@ -61,6 +58,11 @@ class CrudController extends DashboardController
         }
 
         $model->delete();
+
+        /**
+         * That will trigger everytime an instance is deleted.
+         */
+        CrudAfterDeleteEvent::dispatch( $resource );
 
         return [
             'status'    =>  'success',
@@ -287,6 +289,12 @@ class CrudController extends DashboardController
         ], 403 );
     }
 
+    /**
+     * Export the entries as a CSV file
+     * @param string $namespace
+     * @param Request $request
+     * @return array $response
+     */
     public function exportCrud( $namespace, Request $request )
     {
         $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );

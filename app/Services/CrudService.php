@@ -134,7 +134,6 @@ class CrudService
         $model      =   $resource->getModel();
         $isEditing  =   $id !== null;
         $entry      =   ! $isEditing ? new $model : $model::find( $id );
-
         /**
          * let's keep old form inputs
          */
@@ -897,7 +896,7 @@ class CrudService
                      * if the field doesn't have any value
                      * we'll omit it. To avoid filling wrong value
                      */
-                    if ( ! empty( $value ) && ( int ) $value !== 0 ) {
+                    if ( ! empty( $value ) || ( int ) $value === 0 ) {
                         $data[ $field[ 'name' ] ]   =   $value;
                     }
                 }
