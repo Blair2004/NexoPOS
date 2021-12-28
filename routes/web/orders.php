@@ -12,4 +12,5 @@ Route::get( '/orders/payments-types/edit/{paymentType}', [ OrdersController::cla
 Route::get( '/orders/invoice/{order}', [ OrdersController::class, 'orderInvoice' ]);
 Route::get( '/orders/receipt/{order}', [ OrdersController::class, 'orderReceipt' ]);
 Route::get( '/orders/refund-receipt/{refund}', [ OrdersController::class, 'orderRefundReceipt' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders-refund-receipt' ) );
+Route::get( '/orders/payment-receipt/{orderPayment}', [ OrdersController::class, 'getOrderPaymentReceipt' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.orders-payment-receipt' ) );
 Route::get( '/pos', [ OrdersController::class, 'showPOS' ])->name( Hook::filter( 'ns-route-name', 'ns.dashboard.pos' ) );

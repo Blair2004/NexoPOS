@@ -1,6 +1,6 @@
 <?php
 return [
-    'version'       =>  '4.6.8',
+    'version'       =>  '4.6.9',
     'languages'     =>  [
         'en'        =>  'English',
         'fr'        =>  'Français',

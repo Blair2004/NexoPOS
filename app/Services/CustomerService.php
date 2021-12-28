@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Currency;
 use App\Crud\CustomerCouponCrud;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
@@ -63,10 +64,7 @@ class CustomerService
         $customer   =   Customer::find( $id );
 
         if ( ! $customer instanceof Customer ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the customer using the provided id.' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the customer using the provided id.' ) );
         }
 
         Customer::find( $id )->delete();
@@ -158,10 +156,7 @@ class CustomerService
         $customer   =   Customer::find( $id );
 
         if ( ! $customer instanceof Customer ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the customer using the provided ID.' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the customer using the provided ID.' ) );
         }
 
         foreach( $fields as $field => $value ) {
@@ -250,10 +245,7 @@ class CustomerService
         $customer       =   Customer::byEmail( $email )->first();
 
         if ( ! $customer instanceof Customer ) {
-            throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the customer using the provided email.' )
-            ]);
+            throw new NotFoundException( __( 'Unable to find the customer using the provided email.' ) );
         }
 
         CustomerAddress::where( 'customer_id', $customer->id )->delete();
@@ -273,8 +265,15 @@ class CustomerService
      */
     public function saveTransaction( Customer $customer, $operation, $amount, $description = '' )
     {
-        if ( in_array( $operation, [ CustomerAccountHistory::OPERATION_DEDUCT ]) && $customer->account_amount - $amount < 0 ) {
-            throw new NotAllowedException( __( 'The operation will cause negative account for the customer.' ) );
+        if ( in_array( $operation, [ 
+            CustomerAccountHistory::OPERATION_DEDUCT,
+            CustomerAccountHistory::OPERATION_PAYMENT,
+        ]) && $customer->account_amount - $amount < 0 ) {
+            throw new NotAllowedException( sprintf(
+                __( 'Not enough credits on the customer account. Requested : %s, Remaining: %s.' ),
+                Currency::fresh( abs( $amount ) ),
+                Currency::fresh( $customer->account_amount ),
+            ) );
         }
 
         $customerAccount                =   new CustomerAccountHistory;

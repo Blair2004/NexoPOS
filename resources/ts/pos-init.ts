@@ -878,10 +878,10 @@ export class POS {
             item.remove();
         }
 
-        const printSection = document.createElement('iframe');
-        printSection.id = 'printing-section';
-        printSection.className = 'hidden';
-        printSection.src = this.settings.getValue()['urls']['printing_url'].replace('{id}', order_id);
+        const printSection          = document.createElement('iframe');
+        printSection.id             = 'printing-section';
+        printSection.className      = 'hidden';
+        printSection.src            = this.settings.getValue()['urls']['sale_printing_url'].replace('{id}', order_id);
 
         document.body.appendChild(printSection);
     }

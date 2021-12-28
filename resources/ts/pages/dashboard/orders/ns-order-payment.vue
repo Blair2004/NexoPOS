@@ -51,7 +51,7 @@
                 </h3>
                 <ul>
                     <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite bg-gray-300 mb-2">
-                        <span>{{ payment.identifier }}</span>
+                        <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
                         <span>{{ payment.value | currency }}</span>
                     </li>
                 </ul>
@@ -73,7 +73,19 @@ export default {
             labels: new Labels,
             validation: new FormValidation,
             inputValue: 0,
-            fields: []
+            fields: [],
+            paymentTypes, // must be exposed on the local environment
+        }
+    },
+    computed: {
+        paymentsLabels() {
+            const labels    =   new Object;
+
+            this.paymentTypes.forEach( payment => {
+                labels[ payment.value ]     =   payment.label;
+            })
+
+            return labels;
         }
     },
     methods: {

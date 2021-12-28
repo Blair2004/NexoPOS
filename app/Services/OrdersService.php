@@ -756,9 +756,9 @@ class OrdersService
             if ( $paymentToday->count() === 0 ) {
                 throw new NotFoundException( __( 'No payment is expected at the moment. If the customer want to pay early, consider adjusting instalment payments date.' ) );
             }
-        }        
-
-        $this->__saveOrderSinglePayment( $payment, $order );
+        }    
+        
+        $payment    =   $this->__saveOrderSinglePayment( $payment, $order );
         
         /**
          * let's refresh the order to check wether the 
@@ -771,6 +771,7 @@ class OrdersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The payment has been saved.' ),
+            'data'      =>  compact( 'payment' )
         ];
     }
 
@@ -792,12 +793,6 @@ class OrdersService
             $orderPayment       =   new OrderPayment;
         }
 
-        $orderPayment->order_id     =   $order->id;
-        $orderPayment->identifier   =   $payment['identifier'];
-        $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
-        $orderPayment->author       =   $order->author ?? Auth::id();
-        $orderPayment->save();
-
         /**
          * When the customer is making some payment
          * we store it on his history.
@@ -809,6 +804,12 @@ class OrdersService
                 $payment[ 'value' ] 
             );
         }
+
+        $orderPayment->order_id     =   $order->id;
+        $orderPayment->identifier   =   $payment['identifier'];
+        $orderPayment->value        =   $this->currencyService->getRaw( $payment['value'] );
+        $orderPayment->author       =   $order->author ?? Auth::id();
+        $orderPayment->save();
 
         event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
 
@@ -2147,6 +2148,22 @@ class OrdersService
     }
 
     /**
+     * Will return the active payments type.
+     * @return array
+     */
+    public function getPaymentTypes()
+    {
+        $payments         =   PaymentType::active()->get()->map( function( $payment, $index ) {
+            $payment->selected  =   $index === 0;
+            return $payment;
+        });
+
+        return collect( $payments )->mapWithKeys( function( $payment ) {
+            return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
+        })->toArray();
+    }
+
+    /**
      * It only returns what is the type of
      * the orders
      * @param string
@@ -2527,7 +2544,7 @@ class OrdersService
      * @param OrderInstalment $instalment
      * @return array
      */
-    public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment )
+    public function markInstalmentAsPaid( Order $order, OrderInstalment $instalment, $paymentType = OrderPayment::PAYMENT_CASH )
     {
         if ( $instalment->paid ) {
             throw new NotAllowedException( __( 'Unable to edit an already paid instalment.' ) );
@@ -2535,14 +2552,16 @@ class OrdersService
 
         $payment        =   [
             'order_id'      =>   $order->id,
-            'identifier'    =>   OrderPayment::PAYMENT_CASH, // hard coded for now,
+            'identifier'    =>   $paymentType,
             'author'        =>   Auth::id(),
             'value'         =>   $instalment->amount,
         ];
 
-        $this->makeOrderSinglePayment( $payment, $order );
+        $result     =   $this->makeOrderSinglePayment( $payment, $order );
+        $payment    =   $result[ 'data' ][ 'payment' ];
 
-        $instalment->paid   =   true;
+        $instalment->paid           =   true;
+        $instalment->payment_id     =   $payment->id;
         $instalment->save();
 
         OrderAfterInstalmentPaidEvent::dispatch( $instalment, $order );
@@ -2550,7 +2569,7 @@ class OrdersService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The instalment has been saved.' ),
-            'data'      =>  compact( 'instalment' )
+            'data'      =>  compact( 'instalment', 'payment' )
         ];
     }
 
