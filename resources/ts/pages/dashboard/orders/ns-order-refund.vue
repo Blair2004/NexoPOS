@@ -126,7 +126,7 @@ export default {
             refundables: [],
             paymentOptions: [],
             paymentField: [],
-            print: new Print({ settings: systemSettings, options: systemOptions }),
+            print: new Print({ settings: systemSettings, options: systemOptions, type: 'refund' }),
             refundShipping: false,
             selectedPaymentGateway: false,
             screen: 0,

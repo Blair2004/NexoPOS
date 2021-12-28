@@ -70,7 +70,7 @@ export default {
             loaded: false,
             options: systemOptions,
             settings: systemSettings,
-            print: new Print({ settings: systemSettings, options: systemOptions })
+            print: new Print({ settings: systemSettings, options: systemOptions, type: 'refund' })
         }
     },
     methods: {

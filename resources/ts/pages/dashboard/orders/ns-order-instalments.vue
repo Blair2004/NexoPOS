@@ -49,7 +49,10 @@
                                     </div>
                                 </div>
                                 <span v-if="instalment.paid" class="w-36 border-green-400 justify-center flex items-center px-2 h-full border-r">
-                                    {{ __( 'Paid' ) }}
+                                    <button @click="showReceipt( instalment )" class="px-3 text-xs py-1 rounded-full bg-blue-400 text-white">
+                                        <i class="las la-print"></i>
+                                        {{ __( 'Receipt' ) }}
+                                    </button>
                                 </span>
                             </div>
                         </li>
@@ -82,6 +85,9 @@ import Labels from "@/libraries/labels";
 import { __ } from '@/libraries/lang';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import nsPosOrderInstalmentsPayment from '@/pages/dashboard/orders/ns-order-instalments-payment.vue';
+import Print from '@/libraries/print';
+
 export default {
     props: [ 'order' ],
     name: 'ns-order-instalments',
@@ -89,7 +95,8 @@ export default {
         return {
             labels: new Labels,
             original: [],
-            instalments: []
+            instalments: [],
+            print: new Print({ settings: systemSettings, options: systemOptions, type: 'payment' }),
         }
     },
     mounted() {
@@ -119,6 +126,13 @@ export default {
                     });
                 })
         },
+        showReceipt( instalment ) {
+            if ( instalment.payment_id === null ) {
+                return nsSnackBar.error( __( 'This instalment doesn\'t have any payment attached.' ) ).subscribe();
+            }
+
+            this.print.printOrder( instalment.payment_id );
+        },
         addInstalment() {
             this.instalments.push({
                 date: ns.date.moment.format( 'YYYY-MM-DD' ),
@@ -133,11 +147,14 @@ export default {
                 onAction: action => {
                     if ( action ) {
                         nsHttpClient.post( `/api/nexopos/v4/orders/${this.order.id}/instalments`, { instalment })
-                            .subscribe( result => {
-                                this.loadInstalments();
-                                nsSnackBar.success( result.message ).subscribe();
-                            }, error => {
-                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            .subscribe({
+                                next: result => {
+                                    this.loadInstalments();
+                                    nsSnackBar.success( result.message ).subscribe();
+                                },
+                                error: error => {
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                }
                             })
                     }
                 }
@@ -150,33 +167,35 @@ export default {
                 onAction: action => {
                     if ( action ) {
                         nsHttpClient.delete( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}` )
-                            .subscribe( result => {
-                                const index     =   this.instalments.indexOf( instalment );
-                                this.instalments.splice( index, 1 );
-                                nsSnackBar.success( result.message ).subscribe();
-                            }, error => {
-                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            .subscribe({
+                                next: result => {
+                                    const index     =   this.instalments.indexOf( instalment );
+                                    this.instalments.splice( index, 1 );
+                                    nsSnackBar.success( result.message ).subscribe();
+                                },
+                                error: error => {
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                }
                             })
                     }
                 }
             })
         },
-        markAsPaid( instalment ) {
-            Popup.show( nsPosConfirmPopupVue, {
-                title: __( 'Confirm Your Action' ),
-                message: __( 'Would you like to make this as paid ?' ),
-                onAction: action => {
-                    if ( action ) {
-                        nsHttpClient.get( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}/paid` )
-                            .subscribe( result => {
-                                this.loadInstalments();
-                                nsSnackBar.success( result.message ).subscribe();
-                            }, error => {
-                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
-                            })
-                    }
-                }
-            })
+        async markAsPaid( instalment ) {
+            try {
+                const response  =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsPosOrderInstalmentsPayment, {
+                        order : this.order,
+                        instalment,
+                        resolve, 
+                        reject
+                    });
+                });
+
+                this.loadInstalments();
+            } catch ( exception ) {
+                // ...
+            }
         },
         togglePriceEdition( instalment ) {
             if ( ! instalment.paid ) {
@@ -196,10 +215,13 @@ export default {
                 onAction: action => {
                     if ( action ) {
                         nsHttpClient.put( `/api/nexopos/v4/orders/${this.order.id}/instalments/${instalment.id}`, { instalment })
-                            .subscribe( result => {
-                                nsSnackBar.success( result.message ).subscribe();
-                            }, error => {
-                                nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                            .subscribe({
+                                next: result => {
+                                    nsSnackBar.success( result.message ).subscribe();
+                                },
+                                error: error => {
+                                    nsSnackBar.error( error.message || __( 'An unexpected error has occured' ) ).subscribe();
+                                }
                             })
                     }
                 }

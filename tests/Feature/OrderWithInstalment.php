@@ -6,6 +6,7 @@ use App\Classes\Currency;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderInstalment;
+use App\Models\OrderPayment;
 use App\Models\Product;
 use App\Models\Role;
 use App\Services\CurrencyService;
@@ -44,7 +45,6 @@ class OrderWithInstalment extends TestCase
         $faker          =   Factory::create();
         $products       =   Product::with( 'unit_quantities' )->get()->shuffle()->take(1);
         $shippingFees   =   $faker->randomElement([100,150,200,250,300,350,400]);
-        // $shippingFees   =   200;
         $discountRate   =   $faker->numberBetween(1,5);
 
         $products       =   $products->map( function( $product ) use ( $faker ) {
@@ -68,12 +68,10 @@ class OrderWithInstalment extends TestCase
 
         $initialTotalInstallment    =   2;
         $discountValue              =   $orderService->computeDiscountValues( $discountRate, $subtotal );
-        // $discountValue              =   Currency::raw( 2.1504 );
         $total                      =   ns()->currency->getRaw( ( $subtotal + $shippingFees ) - $discountValue );
 
         $paymentAmount              =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
 
-        // ( ( $subtotal + $shippingFees ) - $discountValue ) / 2
         $instalmentPayment          =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
@@ -233,7 +231,10 @@ class OrderWithInstalment extends TestCase
             ->get()
             ->each( function( $instalment ) use ( $order ) {
                 $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-                    ->json( 'GET', 'api/nexopos/v4/orders/' . $order->id . '/instalments/' . $instalment->id . '/paid' );
+                    ->json( 'POST', 'api/nexopos/v4/orders/' . $order->id . '/instalments/' . $instalment->id . '/pay', [
+                        'payment_type'  =>  OrderPayment::PAYMENT_CASH
+                    ]);
+
                 $response->assertJson([
                     'status'    =>  'success'
                 ]);
