@@ -90,11 +90,6 @@ class ReportService
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
 
-        var_dump([
-            'dayStarts' =>  $this->dayStarts,
-            'dayEnds' =>  $this->dayEnds,
-        ]);
-
         $this->refreshFromDashboardDay( $todayReport );
 
         $todayReport->save();
@@ -330,14 +325,6 @@ class ReportService
             ->to( $this->dayEnds )
             ->operation( CashFlow::OPERATION_DEBIT )
             ->sum( 'value' );
-
-        var_dump([
-            'dayStarts' =>  $this->dayStarts,
-            'dayEnds'   =>  $this->dayEnds,
-            'total'     =>  $totalExpenses,
-            'todayReport_starts'   =>  $todayReport->range_starts,
-            'todayReport_ends'   =>  $todayReport->range_ends,
-        ]);
 
         $todayReport->day_expenses      =   $totalExpenses;
         $todayReport->day_income        =   $totalIncome - $totalExpenses;
