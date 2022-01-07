@@ -87,7 +87,7 @@ class ComputeDashboardExpensesJob implements ShouldQueue
                 $now->addMinute();
             });
 
-            event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds(10 ) ) );
+            event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds( 10 ) ) );
             event( new DashboardDayAfterUpdatedEvent );
         }
     }

@@ -4,6 +4,15 @@ namespace App\Models;
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int id
+ * @property int register_id
+ * @property string action
+ * @property int author
+ * @property float value
+ * @property string description
+ * @property string uuid
+ */
 class RegisterHistory extends NsModel
 {
     use HasFactory;

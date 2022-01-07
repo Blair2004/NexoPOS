@@ -1,14 +1,9 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Observers\UUIDObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-/**
- * @deprecated
- */
-class ExpenseCategory extends NsModel
+class AccountType extends NsModel
 {
     use HasFactory;
     
@@ -17,6 +12,11 @@ class ExpenseCategory extends NsModel
     public function expenses()
     {
         return $this->hasMany( Expense::class, 'category_id' );
+    }
+
+    public function scopeAccount( $query, $account )
+    {
+        return $query->where( 'account', $account );
     }
 
     public function cashFlowHistories()

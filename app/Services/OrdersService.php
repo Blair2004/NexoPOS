@@ -17,6 +17,7 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterDeletedEvent;
 use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductStockCheckedEvent;
 use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedDeliveryStatus;
@@ -115,6 +116,7 @@ class OrdersService
      */
     public function create( $fields, Order $order = null )
     {
+        $isNew                  =   ! $order instanceof Order;
         $customer               =   $this->__customerIsDefined($fields);
         $fields[ 'products' ]   =   $this->__buildOrderProducts( $fields['products'] );
 
@@ -228,7 +230,10 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        OrderAfterCreatedEvent::dispatch( $order, $fields );
+        switch( $isNew ) {
+            case true: OrderAfterCreatedEvent::dispatch( $order, $fields );
+            case false: OrderAfterUpdatedEvent::dispatch( $order, $fields );
+        }
 
         return [
             'status'    =>  'success',
@@ -1606,7 +1611,7 @@ class OrdersService
         $orderRefund->total             =   0;
         $orderRefund->save();
 
-        event( new OrderRefundPaymentAfterCreatedEvent( $orderRefund ) );
+        OrderRefundPaymentAfterCreatedEvent::dispatch( $orderRefund );
 
         $results                =   [];
 
@@ -1976,6 +1981,8 @@ class OrdersService
      */
     public function refreshOrder(Order $order)
     {
+        $previousPaymentStatus  =   $order->payment_status;
+        
         $products               =   $this->getOrderProducts($order->id);
 
         $productTotal           =   $products
@@ -2043,7 +2050,9 @@ class OrdersService
 
         $order->save();
 
-        event( new OrderAfterUpdatedEvent( $order ) );
+        OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
+
+        OrderAfterUpdatedEvent::dispatch( $order );
 
         return [
             'status'    =>  'success',

@@ -623,9 +623,7 @@ class ModulesService
                  * We should avoid to extract git stuff as well
                  */
                 if ( 
-                    strpos( $file, $namespace . '/.git' ) === false && 
-                    strpos( $file, $namespace . '/composer.json' ) ===  false &&
-                    strpos( $file, $namespace . '/composer.lock' ) ===  false
+                    strpos( $file, $namespace . '/.git' ) === false
                 ) {
                     $zipArchive->addFile( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file, $file );
                 }

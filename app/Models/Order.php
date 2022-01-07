@@ -44,6 +44,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string voidance_reason
  * @property string created_at
  * @property string updated_at
+ * 
+ * @method from( $startRange )
+ * @method to( $endRange )
+ * @method paid( )
+ * @method refunded( )
+ * @method paymentStatus( )
+ * @method paymentExpired( )
  */
 class Order extends NsModel
 {

@@ -4,6 +4,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id
+ * @property string $customer_id
+ * @property int $order_id
+ * @property float $amount
+ * @property string $operation
+ * @property int $author
+ * @property string $description
+ */
 class CustomerAccountHistory extends NsModel
 {
     use HasFactory;
