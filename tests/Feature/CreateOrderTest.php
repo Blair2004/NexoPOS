@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Classes\Currency;
+use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerCoupon;
@@ -24,7 +25,7 @@ class CreateOrderTest extends TestCase
     protected $customOrderParams    =   [];
     protected $processCoupon        =   true;
     protected $useDiscount          =   true;
-    protected $shouldRefund         =   false;
+    protected $shouldRefund         =   true;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
     protected $count                =   5;
@@ -293,17 +294,19 @@ class CreateOrderTest extends TestCase
                 $callback( $response,  $responseData );
             }
 
-            if ( $faker->randomElement([ true, false, false ]) === true && $this->shouldRefund ) {
+            if ( $faker->randomElement([ true ]) === true && $this->shouldRefund ) {
                 /**
                  * We'll keep original products amounts and quantity
                  * this means we're doing a full refund of price and quantities
                  */
-                $products   =   collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker ) {
+                $productCondition   =   $faker->randomElement([
+                    OrderProductRefund::CONDITION_DAMAGED,
+                    OrderProductRefund::CONDITION_UNSPOILED,
+                ]);
+
+                $products   =   collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker, $productCondition ) {
                     return array_merge( $product, [
-                        'condition'     =>  $faker->randomElement([
-                            OrderProductRefund::CONDITION_DAMAGED,
-                            OrderProductRefund::CONDITION_UNSPOILED,
-                        ]),
+                        'condition'     =>  $productCondition,
                         'description'   =>  __( 'A random description from the refund test' ),
                         'quantity'      =>  $faker->randomElement([
                             $product[ 'quantity' ],
@@ -334,6 +337,42 @@ class CreateOrderTest extends TestCase
                 $response->assertJson([
                     'status'    =>  'success'
                 ]);
+
+                /**
+                 * A single cash flow should be
+                 * created for that order for the sale account
+                 */
+                $totalCashFlow  =   CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                    ->where( 'operation', CashFlow::OPERATION_CREDIT )
+                    ->where( 'expense_category_id', ns()->option->get( 'ns_sales_cashflow_account' ) )
+                    ->count();
+
+                $this->assertTrue( $totalCashFlow === 1, 'More than 1 cash flow was created for the sale account.' );
+
+                /**
+                 * all refund transaction give a stock flow record.
+                 * We need to check if it has been created.
+                 */
+                $totalRefundedCashFlow   =   CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                    ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                    ->where( 'expense_category_id', ns()->option->get( 'ns_sales_refunds_account' ) )
+                    ->count();
+
+                $this->assertTrue( $totalRefundedCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
+
+                /**
+                 * in case the order is refunded with 
+                 * some defective products, we need to check if
+                 * the waste expense has been created.
+                 */
+                if ( $productCondition === OrderProductRefund::CONDITION_DAMAGED ) {
+                    $totalSpoiledCashFlow   =   CashFlow::where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
+                        ->where( 'operation', CashFlow::OPERATION_DEBIT )
+                        ->where( 'expense_category_id', ns()->option->get( 'ns_stock_return_spoiled_account' ) )
+                        ->count();
+
+                    $this->assertTrue( $totalSpoiledCashFlow === $products->count(), 'Not enough cash flow entry were created for the refunded product' );
+                }
 
                 $singleResponse[ 'order-refund' ]   =   json_decode( $response->getContent() );
             }

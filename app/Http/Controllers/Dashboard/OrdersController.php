@@ -202,10 +202,10 @@ class OrdersController extends DashboardController
                 'ns_pos_complete_sale_audio'            =>  ns()->option->get( 'ns_pos_complete_sale_audio', '' ),
             ]),
             'urls'              =>  [
-                'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
-                'orders_url'    =>      ns()->route( 'ns.dashboard.orders' ),
-                'dashboard_url' =>      ns()->route( 'ns.dashboard.home' ),
-                'registers_url' =>      ns()->route( 'ns.dashboard.registers-create' )
+                'sale_printing_url'     =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
+                'orders_url'            =>      ns()->route( 'ns.dashboard.orders' ),
+                'dashboard_url'         =>      ns()->route( 'ns.dashboard.home' ),
+                'registers_url'         =>      ns()->route( 'ns.dashboard.registers-create' )
             ],
             'paymentTypes'  =>  $this->paymentTypes
         ]);

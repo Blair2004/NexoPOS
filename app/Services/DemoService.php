@@ -84,6 +84,7 @@ class DemoService extends DemoCoreService
     {
         $this->prepareDefaultUnitSystem();
         $this->createCustomers();
+        $this->createAccountingAccounts();
         $this->createProviders();
         $this->createTaxes();
         $this->createProducts();

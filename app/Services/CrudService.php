@@ -134,6 +134,7 @@ class CrudService
         $model      =   $resource->getModel();
         $isEditing  =   $id !== null;
         $entry      =   ! $isEditing ? new $model : $model::find( $id );
+        
         /**
          * let's keep old form inputs
          */
@@ -152,8 +153,9 @@ class CrudService
          * on the actual crud instance
          */
         $inputs     =   Hook::filter( 
-            get_class( $resource ) . $isEditing ? '@filterPutInputs' : '@filterPostInputs', 
-            $inputs
+            get_class( $resource ) . ( $isEditing ? '@filterPutInputs' : '@filterPostInputs' ), 
+            $inputs,
+            $isEditing ? $entry : null
         );
 
 
@@ -196,8 +198,8 @@ class CrudService
                          * We might give the capacity to filter fields 
                          * before storing. This can be used to apply specific formating to the field.
                          */
-                        if ( method_exists( $resource, 'filterPost' ) || method_exists( $resource, 'filterPut' ) ) {
-                            $entry->$name   =   $isEditing ? $resource->filterPut( $value, $name ) : $resource->filterPost( $value, $name );
+                        if ( method_exists( $resource, 'filterPostInput' ) || method_exists( $resource, 'filterPutInput' ) ) {
+                            $entry->$name   =   $isEditing ? $resource->filterPutInput( $value, $name ) : $resource->filterPostInput( $value, $name );
                         } else {
                             $entry->$name   =   $value;
                         }

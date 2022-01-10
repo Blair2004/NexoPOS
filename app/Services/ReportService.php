@@ -60,8 +60,8 @@ class ReportService
 
     private function defineDate( DashboardDay $dashboardDay )
     {
-        $this->dayStarts      =   ! isset( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->created_at )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
-        $this->dayEnds        =   ! isset( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->created_at )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
+        $this->dayStarts      =   empty( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->range_starts )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
+        $this->dayEnds        =   empty( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->range_ends )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
     }
 
     /**
@@ -76,8 +76,8 @@ class ReportService
          * Before proceeding, let's clear everything 
          * that is not assigned during this specific time range.
          */
-        $this->clearUnassignedStockFlow( $this->dayStarts, $this->dayEnds );
-
+        $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
+        
         $todayReport        =   DashboardDay::from( $this->dayStarts )
             ->to( $this->dayEnds )
             ->first();
@@ -87,10 +87,11 @@ class ReportService
             $todayReport->day_of_year   =   Carbon::parse( $this->dayStarts )->dayOfYear;
         }
 
-        $this->refreshFromDashboardDay( $todayReport );
-
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
+
+        $this->refreshFromDashboardDay( $todayReport );
+
         $todayReport->save();
 
         return $todayReport;
@@ -227,7 +228,7 @@ class ReportService
      * @param string $endAt
      * @return void
      */
-    public function clearUnassignedStockFlow( $startAt, $endsAt )
+    public function clearUnassignedCashFlow( $startAt, $endsAt )
     {
         $cashFlows  =   CashFlow::where( 'created_at', '>=', $startAt )
             ->where( 'created_at', '<=', $endsAt )
@@ -325,8 +326,10 @@ class ReportService
             ->operation( CashFlow::OPERATION_DEBIT )
             ->sum( 'value' );
 
+        $todayReport->day_expenses      =   $totalExpenses;
         $todayReport->day_income        =   $totalIncome - $totalExpenses;
         $todayReport->total_income      =   ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
+        $todayReport->total_expenses    =   ( $previousReport->total_expenses ?? 0 ) + $todayReport->day_expenses;
     }
     
     /**
@@ -441,6 +444,7 @@ class ReportService
         $today  =   $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
+
             if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT ) {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );
                 $today->day_expenses        +=   $cashFlow->getRawOriginal( 'value' );
@@ -517,7 +521,7 @@ class ReportService
 
     /**
      * Will initialize a report for wasted good
-     * @param DashboarDay $dashboardDay
+     * @param DashboardDay $dashboardDay
      * @return void
      */
     public function initializeWastedGood( DashboardDay $dashboardDay )
@@ -845,7 +849,7 @@ class ReportService
             'sales_discounts'   =>  Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
             'producs_taxes'     =>  Currency::define( $allSales->sum( 'producs_taxes' ) )->getRaw(),
             'sales_taxes'       =>  Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
-            'subtotal'         =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
+            'subtotal'          =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
             'total'             =>  Currency::define( $allSales->sum( 'total' ) )->getRaw(),
         ];
     }
@@ -1042,5 +1046,37 @@ class ReportService
     public function getLowStockProducts()
     {
         return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
+    }
+
+    public function recomputeCashFlow( $fromDate, $toDate )
+    {
+        CashFlow::truncate();
+        DashboardDay::truncate();
+        DashboardMonth::truncate();
+        
+        $startDateString    =   $fromDate->startOfDay()->toDateTimeString();
+        $endDateString      =   $toDate->endOfDay()->toDateTimeString();
+                
+
+        /**
+         * @var ExpenseService
+         */
+        $expenseService     =   app()->make( ExpenseService::class );
+        
+        $expenseService->recomputeCashFlow( 
+            $startDateString, 
+            $endDateString
+        );
+
+        $days       =   ns()->date->getDaysInBetween( $fromDate, $toDate );
+
+        foreach( $days as $day ) {
+            $this->computeDayReport( 
+                $day->startOfDay()->toDateTimeString(), 
+                $day->endOfDay()->toDateTimeString()
+            );
+
+            $this->computeDashboardMonth( $day );
+        }
     }
 }

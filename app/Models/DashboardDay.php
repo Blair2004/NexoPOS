@@ -58,7 +58,17 @@ class DashboardDay extends NsModel
         $dashboardDay   =   DashboardDay::from( $date->startOfDay()->toDateTimeString() )
             ->to( $date->endOfDay()->toDateTimeString() )
             ->first();
+            
+        if ( $dashboardDay instanceof DashboardDay ) {
+            return $dashboardDay;
+        }
 
-        return $dashboardDay;
+        $previousDashboardDay                   =   new DashboardDay;
+        $previousDashboardDay->range_starts     =   $date->startOfDay()->toDateTimeString();
+        $previousDashboardDay->range_ends       =   $date->endOfDay()->toDateTimeString();
+        $previousDashboardDay->day_of_year      =   $date->dayOfYear;
+        $previousDashboardDay->save();
+
+        return $previousDashboardDay;
     }
 }

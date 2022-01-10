@@ -43,9 +43,13 @@ export default {
         } else {
             this.screenValue    =   0;
         }
+        console.log( 'has executed' );
     },
-    computed: {
-        // ...
+    watch: {
+        value() {
+            console.log( this.value );
+            this.screenValue    =   this.floating ? parseFloat( this.value / this.number ) : this.value;
+        }
     },
     methods: {
         increaseBy( key ) {

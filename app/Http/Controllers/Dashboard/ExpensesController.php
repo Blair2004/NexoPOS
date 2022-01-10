@@ -123,7 +123,7 @@ class ExpensesController extends DashboardController
     public function postExpenseCategory( Request $request )
     {
         $fields             =   $request->only([ 'name', 'description', 'account', 'operation' ]);
-        return $this->expenseService->createCategory( $fields );
+        return $this->expenseService->createAccount( $fields );
     }
 
     /**

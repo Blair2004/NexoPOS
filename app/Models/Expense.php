@@ -25,6 +25,11 @@ class Expense extends NsModel
         return $query->where( 'recurring', true );
     }
 
+    public function scopeNotRecurring( $query )
+    {
+        return $query->where( 'recurring', false );
+    }
+
     public function scopeActive( $query )
     {
         return $query->where( 'active', true );

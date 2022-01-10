@@ -44,6 +44,8 @@ class MakeProcurementTest extends TestCase
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/procurements', $procurementsDetails );
 
+        $response->assertOk();
+
         /**
          * We'll proceed to the verification
          * and check if the accounts are valid.

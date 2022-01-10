@@ -69,4 +69,28 @@ class DateService extends Carbon
             break;
         }
     }
+
+    /**
+     * get days between two dates
+     * @param Carbon $startRange
+     * @param Carbon $endRange
+     * @return array[Carbon]
+     */
+    public function getDaysInBetween( $startRange, $endRange )
+    {
+        if ( $startRange->lessThan( $endRange ) && $startRange->diffInDays( $endRange ) >= 1 ) {
+            $days       =   [];
+    
+            do {
+                $days[]     =   $startRange->copy();
+                $startRange->addDay();
+            } while ( ! $startRange->isSameDay( $endRange ) );
+    
+            $days[]     =   $endRange->copy();
+    
+            return $days;
+        }
+
+        return [];
+    }
 }
