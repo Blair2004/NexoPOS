@@ -1047,4 +1047,36 @@ class ReportService
     {
         return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
     }
+
+    public function recomputeCashFlow( $fromDate, $toDate )
+    {
+        CashFlow::truncate();
+        DashboardDay::truncate();
+        DashboardMonth::truncate();
+        
+        $startDateString    =   $fromDate->startOfDay()->toDateTimeString();
+        $endDateString      =   $toDate->endOfDay()->toDateTimeString();
+                
+
+        /**
+         * @var ExpenseService
+         */
+        $expenseService     =   app()->make( ExpenseService::class );
+        
+        $expenseService->recomputeCashFlow( 
+            $startDateString, 
+            $endDateString
+        );
+
+        $days       =   ns()->date->getDaysInBetween( $fromDate, $toDate );
+
+        foreach( $days as $day ) {
+            $this->computeDayReport( 
+                $day->startOfDay()->toDateTimeString(), 
+                $day->endOfDay()->toDateTimeString()
+            );
+
+            $this->computeDashboardMonth( $day );
+        }
+    }
 }

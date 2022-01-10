@@ -78,15 +78,19 @@ class DateService extends Carbon
      */
     public function getDaysInBetween( $startRange, $endRange )
     {
-        $days       =   [];
+        if ( $startRange->lessThan( $endRange ) && $startRange->diffInDays( $endRange ) >= 1 ) {
+            $days       =   [];
+    
+            do {
+                $days[]     =   $startRange->copy();
+                $startRange->addDay();
+            } while ( ! $startRange->isSameDay( $endRange ) );
+    
+            $days[]     =   $endRange->copy();
+    
+            return $days;
+        }
 
-        do {
-            $days[]     =   $startRange->copy();
-            $startRange->addDay();
-        } while ( ! $startRange->isSameDay( $endRange ) );
-
-        $days[]     =   $endRange->copy();
-
-        return $days;
+        return [];
     }
 }

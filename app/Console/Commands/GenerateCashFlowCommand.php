@@ -46,45 +46,17 @@ class GenerateCashFlowCommand extends Command
      */
     public function handle()
     {
+        $user               =   Role::namespace( 'admin' )->users->first();
+        Auth::login( $user );
+        
         $fromDate   =   Carbon::parse( $this->option( 'from') );
         $toDate     =   $this->option( 'to' ) === null ? Carbon::parse( $this->option( 'to' ) ) : ns()->date->copy()->endOfDay()->toDateTimeString();
         
-        CashFlow::truncate();
-        DashboardDay::truncate();
-        DashboardMonth::truncate();
-
-        $user               =   Role::namespace( 'admin' )->users->first();
-        $startDateString    =   $fromDate->startOfDay()->toDateTimeString();
-        $endDateString      =   $toDate->endOfDay()->toDateTimeString();
-        
-        Auth::login( $user );
-
         /**
-         * @var ExpenseService
-         */
-        $expenseService     =   app()->make( ExpenseService::class );
-        
-        $expenseService->recomputeCashFlow( 
-            $startDateString, 
-            $endDateString
-        );
-
-        /**
-         * recompute dashboard reports
-         * @var ReportService
+         * @var ReportService $reportService
          */
         $reportService      =   app()->make( ReportService::class );
-
-        $days       =   ns()->date->getDaysInBetween( $fromDate, $toDate );
-
-        foreach( $days as $day ) {
-            $reportService->computeDayReport( 
-                $day->startOfDay()->toDateTimeString(), 
-                $day->endOfDay()->toDateTimeString()
-            );
-
-            $reportService->computeDashboardMonth( $day );
-        }
+        $reportService->recomputeCashFlow( $fromDate, $toDate );
         
         $this->info( 'The cash flow has been generated.' );
     }
