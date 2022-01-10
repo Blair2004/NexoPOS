@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
+use App\Events\OrderAfterCheckPerformedEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -163,6 +164,12 @@ class OrdersService
          * valid regarding the total order price
          */
         $this->__checkProvidedInstalments( $fields );
+
+        /**
+         * If any other module wants to perform a verification
+         * and block processing, they might use this event.
+         */
+        OrderAfterCheckPerformedEvent::dispatch( $fields, $order );
 
         /**
          * ------------------------------------------
