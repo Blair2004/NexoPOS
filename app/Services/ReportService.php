@@ -60,8 +60,8 @@ class ReportService
 
     private function defineDate( DashboardDay $dashboardDay )
     {
-        $this->dayStarts      =   ! empty( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->range_starts )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
-        $this->dayEnds        =   ! empty( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->range_ends )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
+        $this->dayStarts      =   empty( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->range_starts )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
+        $this->dayEnds        =   empty( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->range_ends )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
     }
 
     /**
