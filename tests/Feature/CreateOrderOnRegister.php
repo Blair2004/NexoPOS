@@ -29,6 +29,11 @@ class CreateOrderOnRegister extends TestCase
             ['*']
         );
 
+        RegisterHistory::truncate();
+        Register::where( 'id', '>', 0 )->update([
+            'balance'   =>  0
+        ]);
+
         $cashRegister   =   Register::first();
         $previousValue  =   $cashRegister->balance;
 
@@ -42,6 +47,7 @@ class CreateOrderOnRegister extends TestCase
          */
         try {
             $cashRegisterService->closeRegister( $cashRegister, 0, __( 'Attempt closing' ) );
+            $cashRegister->refresh();
         } catch( NotAllowedException $exception ) {
             // it's probably not opened, let's proceed...
         }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Role;
@@ -19,7 +20,7 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateOrderWithPartialPayment()
     {
         Sanctum::actingAs(
             Role::namespace( 'admin' )->users->first(),
@@ -27,6 +28,11 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
         );
 
         $currency       =   app()->make( CurrencyService::class );
+        
+        $customer       =   Customer::first();
+        $customer->credit_limit_amount   =   0;
+        $customer->save();
+
         $product        =   Product::withStockEnabled()->with( 'unit_quantities' )->first();
         $shippingFees   =   150;
         $discountRate   =   3.5;
@@ -43,7 +49,7 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  1,
+                'customer_id'           =>  $customer->id,
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
                 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  $discountRate,
@@ -62,8 +68,10 @@ class PartiallyPaidOrderWithAdjustmentTest extends TestCase
                 'subtotal'              =>  $subtotal,
                 'shipping'              =>  $shippingFees,
                 'products'              =>  $products,
-                'payments'              =>  []
+                'payments'              =>  [],
+                'payment_status'        =>  Order::PAYMENT_UNPAID,
             ]);
+
         $response->assertJson([
             'status'    =>  'success'
         ]);

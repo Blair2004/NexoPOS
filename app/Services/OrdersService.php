@@ -937,6 +937,7 @@ class OrdersService
             if ( 
                 ( float ) $customer->credit_limit_amount > 0 
                 && $totalPayments === 0
+                && $fields[ 'payment_status' ] !== Order::PAYMENT_HOLD
                 && ( float ) $customer->credit_limit_amount < ( float ) $customer->owed_amount + ( float ) $total ) {
                     throw new NotAllowedException( sprintf(
                         __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),

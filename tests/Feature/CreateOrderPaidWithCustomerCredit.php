@@ -79,6 +79,7 @@ class CreateOrderPaidWithCustomerCredit extends CreateOrderTest
         $this->customOrderParams    =   [
             'customer_id'           =>  $customer->id,
             'products'              =>  $products->toArray(),
+            'payment_status'        =>  Order::PAYMENT_UNPAID,
             'payments'              =>  [] // no payment
         ];
 
