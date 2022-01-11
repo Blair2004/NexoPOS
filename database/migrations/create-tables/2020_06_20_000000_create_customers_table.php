@@ -27,12 +27,13 @@ class CreateCustomersTable extends Migration
                 $table->integer( 'author' );
                 $table->string( 'gender' )->nullable();
                 $table->string( 'phone' )->nullable();
-                $table->string( 'email' )->unique()->nullable();
+                $table->string( 'email' )->nullable();
                 $table->string( 'pobox' )->nullable();
                 $table->integer( 'group_id' );
                 $table->datetime( 'birth_date' )->nullable();
                 $table->float( 'purchases_amount', 18, 5 )->default(0);
                 $table->float( 'owed_amount', 18, 5 )->default(0);
+                $table->float( 'credit_limit_amount', 18, 5 )->default(0)->nullable();
                 $table->float( 'account_amount', 18, 5 )->default(0);
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();

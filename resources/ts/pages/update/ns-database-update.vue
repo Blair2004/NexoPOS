@@ -6,14 +6,14 @@
             </div>
             <div class="my-3 rounded shadow bg-white">
                 <div class="border-b border-gray-200 py-4 flex items-center justify-center">
-                    <h3 class="text-xl font-bold text-gray-700">Datebase Update</h3>
+                    <h3 class="text-xl font-bold text-gray-700">{{ __( 'Datebase Update' ) }}</h3>
                 </div>
                 <div class="p-2">
-                    <p class="text-center text-sm text-gray-600 py-4">In order to keep NexoPOS running smoothly with updates, we need to proceed to the database migration. In fact you don't need to do any action, just wait until the process is done and you'll be redirected.</p>
+                    <p class="text-center text-sm text-gray-600 py-4">{{ __( 'In order to keep NexoPOS running smoothly with updates, we need to proceed to the database migration. In fact you don\'t need to do any action, just wait until the process is done and you\'ll be redirected.' ) }}</p>
                     <div v-if="error" class="border-l-4 text-sm border-red-600 bg-red-200 p-4 text-gray-700">
                         <p>
-                            Looks like an error has occured during the update. Usually, giving another shot should fix that. However, if you still don't get any chance.
-                        Please report this message to the support : 
+                            {{ __( 'Looks like an error has occured during the update. Usually, giving another shot should fix that. However, if you still don\'t get any chance.' ) }}
+                            {{ __( 'Please report this message to the support : ' ) }}
                         </p>
                         <pre class="rounded whitespace-pre-wrap bg-gray-700 text-white my-2 p-2">{{ lastErrorMessage }}</pre>
                     </div>
@@ -22,20 +22,20 @@
                     <div>
                         <button v-if="error" @click="proceedUpdate()" class="rounded bg-red-400 shadow-inner text-white p-2">
                             <i class="las la-sync"></i>
-                            <span>Try Again</span>
+                            <span>{{ __( 'Try Again' ) }}</span>
                         </button>
                     </div>
                     <div class="flex">
                         <button v-if="updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-sync animate-spin"></i>
-                            <span v-if="! updatingModule">Updating...</span>
+                            <span v-if="! updatingModule">{{ __( 'Updating' ) }}...</span>
                             <span class="mr-1" v-if="! updatingModule">{{ index }}/{{ files.length }}</span>
-                            <span v-if="updatingModule">Updating Modules...</span>
+                            <span v-if="updatingModule">{{ __( 'Updating Modules' ) }}...</span>
                             <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
                         </button>
                         <a :href="returnLink" v-if="! updating" class="rounded bg-blue-400 shadow-inner text-white p-2">
                             <i class="las la-undo"></i>
-                            <span>Return</span>
+                            <span>{{ __( 'Return' ) }}</span>
                         </a>
                     </div>
                 </div>
@@ -78,6 +78,7 @@ export default {
             })
     },
     methods: {
+        __,
         async proceedUpdate() {
             this.updating   =   true;
 

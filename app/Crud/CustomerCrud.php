@@ -127,6 +127,11 @@ class CustomerCrud extends CrudService
         return false; // by default
     }
 
+    public function hook( $query )
+    {
+        $query->orderBy( 'updated_at', 'desc' );
+    }
+
     /**
      * Fields
      * @param  object/null
@@ -153,6 +158,12 @@ class CustomerCrud extends CrudService
                             'value'         =>  $entry->surname ?? '',
                             'description'   =>  __( 'Provide the customer surname' )
                         ], [
+                            'type'          =>  'number',
+                            'label'         =>  __( 'Credit Limit' ),
+                            'name'          =>  'credit_limit_amount',
+                            'value'         =>  $entry->credit_limit_amount ?? '',
+                            'description'   =>  __( 'Set what should be the limit of the purchase on credit.' )
+                        ], [
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
                             'name'          =>  'group_id',
@@ -171,12 +182,13 @@ class CustomerCrud extends CrudService
                             'label'         =>  __( 'Email' ),
                             'name'          =>  'email',
                             'value'         =>  $entry->email ?? '',
-                            'validation'    =>  [
-                                'required',
-                                'email',
-                                $entry instanceof Customer ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
-                            ],
-                            'description'   =>  __( 'Provide the customer email' )
+                            'validation'    =>  collect([
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
+                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
+                                ) : ''
+                            ])->filter()->toArray(),
+                            'description'   =>  __( 'Provide the customer email.' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'Phone Number' ),
@@ -556,6 +568,7 @@ class CustomerCrud extends CrudService
         $entry->surname                 =   $entry->surname ?? __( 'Not Defined' );
         $entry->pobox                   =   $entry->pobox ?? __( 'Not Defined' );
         $entry->reward_system_id        =   $entry->reward_system_id ?? __( 'Not Defined' );
+        $entry->email                   =   $entry->email ?: __( 'Not Defined' );
         
         switch( $entry->gender ) {
             case 'male': $entry->gender = __( 'Male' );break;

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Events\DueOrdersEvent;
+use App\Events\OrderAfterCheckPerformedEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -165,6 +166,12 @@ class OrdersService
         $this->__checkProvidedInstalments( $fields );
 
         /**
+         * If any other module wants to perform a verification
+         * and block processing, they might use this event.
+         */
+        OrderAfterCheckPerformedEvent::dispatch( $fields, $order );
+
+        /**
          * ------------------------------------------
          *                  WARNING
          * ------------------------------------------
@@ -230,10 +237,9 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        switch( $isNew ) {
-            case true: OrderAfterCreatedEvent::dispatch( $order, $fields );
-            case false: OrderAfterUpdatedEvent::dispatch( $order, $fields );
-        }
+        $isNew ? 
+            OrderAfterCreatedEvent::dispatch( $order, $fields ) : 
+            OrderAfterUpdatedEvent::dispatch( $order, $fields );
 
         return [
             'status'    =>  'success',
@@ -922,6 +928,21 @@ class OrdersService
                 $totalPayments === 0
             ) {
                 throw new NotAllowedException( __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.') );
+            }
+
+            /**
+             * We don't want the customer to be able to exceed a credit limit
+             * granted to his account.
+             */
+            if ( 
+                ( float ) $customer->credit_limit_amount > 0 
+                && $totalPayments === 0
+                && $fields[ 'payment_status' ] !== Order::PAYMENT_HOLD
+                && ( float ) $customer->credit_limit_amount < ( float ) $customer->owed_amount + ( float ) $total ) {
+                    throw new NotAllowedException( sprintf(
+                        __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
+                        ( string ) ns()->currency->fresh( $customer->credit_limit_amount )
+                    ) );
             }
         }
 
@@ -2051,8 +2072,6 @@ class OrdersService
         $order->save();
 
         OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
-
-        OrderAfterUpdatedEvent::dispatch( $order );
 
         return [
             'status'    =>  'success',
