@@ -18,6 +18,7 @@ use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Arr;
 use Tests\TestCase;
 use Faker\Factory;
+use Illuminate\Support\Facades\Event;
 
 class CreateOrderTest extends TestCase
 {
@@ -28,8 +29,8 @@ class CreateOrderTest extends TestCase
     protected $shouldRefund         =   true;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
-    protected $count                =   5;
-    protected $totalDaysInterval    =   30;
+    protected $count                =   1;
+    protected $totalDaysInterval    =   1;
     protected $users                =   [];
 
     /**

@@ -237,10 +237,9 @@ class OrdersService
          * let's notify when an
          * new order has been placed
          */
-        switch( $isNew ) {
-            case true: OrderAfterCreatedEvent::dispatch( $order, $fields );
-            case false: OrderAfterUpdatedEvent::dispatch( $order, $fields );
-        }
+        $isNew ? 
+            OrderAfterCreatedEvent::dispatch( $order, $fields ) : 
+            OrderAfterUpdatedEvent::dispatch( $order, $fields );
 
         return [
             'status'    =>  'success',
@@ -2058,8 +2057,6 @@ class OrdersService
         $order->save();
 
         OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
-
-        OrderAfterUpdatedEvent::dispatch( $order );
 
         return [
             'status'    =>  'success',

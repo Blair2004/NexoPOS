@@ -14,7 +14,6 @@ use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
-use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\AfterExpenseComputedJob;
 use App\Jobs\ComputeDashboardExpensesJob;
 use App\Jobs\RefreshExpenseJob;
