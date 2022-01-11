@@ -171,12 +171,13 @@ class CustomerCrud extends CrudService
                             'label'         =>  __( 'Email' ),
                             'name'          =>  'email',
                             'value'         =>  $entry->email ?? '',
-                            'validation'    =>  [
-                                'required',
-                                'email',
-                                $entry instanceof Customer ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
-                            ],
-                            'description'   =>  __( 'Provide the customer email' )
+                            'validation'    =>  collect([
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
+                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
+                                ) : ''
+                            ])->filter()->toArray(),
+                            'description'   =>  __( 'Provide the customer email.' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'Phone Number' ),

@@ -48,7 +48,7 @@ class CreateCustomerTest extends TestCase
                     'general'   =>  [
                         'group_id'  =>  $group->id,
                         'surname'   =>  $faker->lastName,
-                        'email'     =>  $faker->email
+                        'email'     =>  $faker->randomElement([ $faker->email, '' ])
                     ],
                     'shipping'  =>  [
                         'name'  =>  $faker->firstName,

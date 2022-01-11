@@ -19,6 +19,16 @@ return [
             ])
         ], [
             'type'  =>  'select',
+            'label' =>  __( 'Require Valid Email' ),
+            'description'   =>  __( 'Will for valid unique email for every customer.' ),
+            'name'          =>  'ns_customers_force_valid_email',
+            'value'         =>  $options->get( 'ns_customers_force_valid_email', 'no' ),
+            'options'       =>  Helper::kvToJsOptions([
+                'yes'       =>  __( 'Yes' ),
+                'no'        =>  __( 'No' )
+            ])
+        ], [
+            'type'  =>  'select',
             'label' =>  __( 'Default Customer Account' ),
             'description'   =>  __( 'You must create a customer to which each sales are attributed when the walking customer doesn\'t register.' ),
             'name'          =>  'ns_customers_default',
