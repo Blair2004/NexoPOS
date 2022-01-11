@@ -510,7 +510,7 @@ class CustomerService
      */
     public function updateCustomerOwedAmount( Customer $customer )
     {
-        $unpaid     =   Order::whereIn( 'payment_status', [
+        $unpaid     =   Order::where( 'customer_id', $customer->id )->whereIn( 'payment_status', [
             Order::PAYMENT_UNPAID
         ])->sum( 'total' );
 
@@ -518,7 +518,7 @@ class CustomerService
          * Change here will be negative, so we
          * want to be an absolute value.
          */
-        $orders     =   Order::whereIn( 'payment_status', [
+        $orders     =   Order::where( 'customer_id', $customer->id )->whereIn( 'payment_status', [
             Order::PAYMENT_PARTIALLY
         ]);
         

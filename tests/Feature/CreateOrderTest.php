@@ -32,6 +32,7 @@ class CreateOrderTest extends TestCase
     protected $count                =   1;
     protected $totalDaysInterval    =   1;
     protected $users                =   [];
+    protected $defaultProcessing    =   true;
 
     /**
      * A basic feature test example.
@@ -40,23 +41,27 @@ class CreateOrderTest extends TestCase
      */
     public function testPostingOrder( $callback = null )
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $faker          =   Factory::create();
-        $responses      =   [];
-        $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDays($this->totalDaysInterval);
-
-        for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
-            $date           =   $startOfWeek->addDay()->clone();
-            $this->count    =   $this->count === false ? $faker->numberBetween(5,10) : $this->count;
-            $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
-            $responses[]    =   $this->processOrders( $date, $callback );
-        }        
-
-        return $responses;
+        if ( $this->defaultProcessing ) {
+            Sanctum::actingAs(
+                Role::namespace( 'admin' )->users->first(),
+                ['*']
+            );
+    
+            $faker          =   Factory::create();
+            $responses      =   [];
+            $startOfWeek    =   ns()->date->clone()->startOfWeek()->subDays($this->totalDaysInterval);
+    
+            for( $i = 0; $i < $this->totalDaysInterval; $i++ ) {
+                $date           =   $startOfWeek->addDay()->clone();
+                $this->count    =   $this->count === false ? $faker->numberBetween(5,10) : $this->count;
+                $this->output( sprintf( "\e[32mWill generate for the day \"%s\", %s order(s)", $date->toFormattedDateString(), $this->count ) );
+                $responses[]    =   $this->processOrders( $date, $callback );
+            }        
+    
+            return $responses;
+        } else {
+            $this->assertTrue( true ); // because we haven't performed any test.
+        }
     }
 
     private function output( $message )
@@ -70,16 +75,16 @@ class CreateOrderTest extends TestCase
     public function processOrders( $currentDate, $callback )
     {
         $responses      =   [];
+        /**
+         * @var CurrencyService
+         */
+        $currency       =   app()->make( CurrencyService::class );
+        $faker          =   Factory::create();
 
         for( $i = 0; $i < $this->count; $i++ ) {
 
             $singleResponse     =   [];
-
-            /**
-             * @var CurrencyService
-             */
-            $currency       =   app()->make( CurrencyService::class );
-            $faker          =   Factory::create();
+            
             $products       =   Product::with( 'unit_quantities' )->get()->shuffle()->take(3);
             $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
             $discountRate   =   $faker->numberBetween(0,5);

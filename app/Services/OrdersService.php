@@ -929,6 +929,20 @@ class OrdersService
             ) {
                 throw new NotAllowedException( __('Unable to proceed. Unpaid orders aren\'t allowed. This option could be changed on the settings.') );
             }
+
+            /**
+             * We don't want the customer to be able to exceed a credit limit
+             * granted to his account.
+             */
+            if ( 
+                ( float ) $customer->credit_limit_amount > 0 
+                && $totalPayments === 0
+                && ( float ) $customer->credit_limit_amount < ( float ) $customer->owed_amount + ( float ) $total ) {
+                    throw new NotAllowedException( sprintf(
+                        __( 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: %s.' ),
+                        ( string ) ns()->currency->fresh( $customer->credit_limit_amount )
+                    ) );
+            }
         }
 
         if ( $totalPayments >= $total ) {
