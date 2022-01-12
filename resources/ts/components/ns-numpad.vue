@@ -38,15 +38,20 @@ export default {
         }
     },
     mounted() {
-        // ...
+        if( this.floating && this.value > 0 ) {
+            this.screenValue    =   parseFloat( this.value / this.number );
+        } else {
+            this.screenValue    =   0;
+        }
     },
     watch: {
-        value() {
-            console.log( this.value );
-            if( this.floating && this.value > 0 ) {
-                this.screenValue    =   parseFloat( this.value / this.number );
-            } else {
-                this.screenValue    =   0;
+        value() {        
+            if ( this.value.toString().length > 0 ) {
+                if ( this.floating ) {
+                    this.screenValue    =   Math.round( this.value * this.number ).toString();
+                } else {
+                    this.screenValue    =   this.value;
+                }
             }
         }
     },
