@@ -38,17 +38,16 @@ export default {
         }
     },
     mounted() {
-        if( this.floating && this.value > 0 ) {
-            this.screenValue    =   parseFloat( this.value / this.number );
-        } else {
-            this.screenValue    =   0;
-        }
-        console.log( 'has executed' );
+        // ...
     },
     watch: {
         value() {
             console.log( this.value );
-            this.screenValue    =   this.floating ? parseFloat( this.value / this.number ) : this.value;
+            if( this.floating && this.value > 0 ) {
+                this.screenValue    =   parseFloat( this.value / this.number );
+            } else {
+                this.screenValue    =   0;
+            }
         }
     },
     methods: {
