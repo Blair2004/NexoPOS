@@ -43,12 +43,16 @@ export default {
         } else {
             this.screenValue    =   0;
         }
-        console.log( 'has executed' );
     },
     watch: {
-        value() {
-            console.log( this.value );
-            this.screenValue    =   this.floating ? parseFloat( this.value / this.number ) : this.value;
+        value() {        
+            if ( this.value.toString().length > 0 ) {
+                if ( this.floating ) {
+                    this.screenValue    =   Math.round( this.value * this.number ).toString();
+                } else {
+                    this.screenValue    =   this.value;
+                }
+            }
         }
     },
     methods: {
