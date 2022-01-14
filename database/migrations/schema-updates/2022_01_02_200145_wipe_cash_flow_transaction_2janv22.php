@@ -20,24 +20,27 @@ class WipeCashFlowTransaction2janv22 extends Migration
     public function up()
     {
         $order          =   Order::first();
-        $fromDate       =   Carbon::parse( $order->created_at );
-        $toDate         =   ns()->date->copy()->endOfDay();
-        $wasLoggedIn    =   true;
-
-        if ( ! Auth::check() ) {
-            $wasLoggedIn        =   false;
-            $user               =   Role::namespace( 'admin' )->users->first();
-            Auth::login( $user );
-        }
         
-        /**
-         * @var ReportService $reportService
-         */
-        $reportService      =   app()->make( ReportService::class );
-        $reportService->recomputeCashFlow( $fromDate, $toDate );
+        if( $order instanceof Order ) {
+            $fromDate       =   Carbon::parse( $order->created_at );
+            $toDate         =   ns()->date->copy()->endOfDay();
+            $wasLoggedIn    =   true;
 
-        if ( ! $wasLoggedIn ) {
-            Auth::logout();
+            if ( ! Auth::check() ) {
+                $wasLoggedIn        =   false;
+                $user               =   Role::namespace( 'admin' )->users->first();
+                Auth::login( $user );
+            }
+            
+            /**
+             * @var ReportService $reportService
+             */
+            $reportService      =   app()->make( ReportService::class );
+            $reportService->recomputeCashFlow( $fromDate, $toDate );
+
+            if ( ! $wasLoggedIn ) {
+                Auth::logout();
+            }
         }
     }
 
