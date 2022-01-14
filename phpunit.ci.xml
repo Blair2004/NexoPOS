@@ -26,6 +26,7 @@
       <directory suffix="MakeProcurementTest.php">./tests/Feature</directory>
       <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="CreateRegisterTest.php">./tests/Feature</directory>
+      <directory suffix="CashRegisterActionsTest.php">./tests/Feature</directory>
       <directory suffix="CreateOrderOnRegister.php">./tests/Feature</directory>
       <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
       <directory suffix="CreateOrderPaidWithCustomerCredit.php">./tests/Feature</directory>

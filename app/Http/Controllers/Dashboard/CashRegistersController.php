@@ -77,7 +77,19 @@ class CashRegistersController extends DashboardController
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
+        } else if ( $action === RegisterHistory::ACTION_OPENING ) {
+            return $this->registersService->openRegister(
+                $register,
+                $request->input( 'amount' ),
+                $request->input( 'description' )
+            );
         } else if( $action === 'close' ) {
+            return $this->registersService->closeRegister(
+                $register,
+                $request->input( 'amount' ),
+                $request->input( 'description' )
+            );
+        } else if( $action === RegisterHistory::ACTION_CLOSING ) {
             return $this->registersService->closeRegister(
                 $register,
                 $request->input( 'amount' ),
