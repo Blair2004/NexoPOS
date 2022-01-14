@@ -1828,19 +1828,19 @@ class OrdersService
         }
 
         $orderProduct->total_gross_price    =   $this->currencyService
-            ->define( $orderProduct->gross_price )
+            ->fresh( $orderProduct->gross_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $total_gross_discount )
             ->get();
 
         $orderProduct->total_price          =   $this->currencyService
-            ->define( $orderProduct->unit_price )
+            ->fresh( $orderProduct->unit_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $total_discount )
             ->get();
 
         $orderProduct->total_net_price      =   $this->currencyService
-            ->define( $orderProduct->net_price )
+            ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $total_net_discount )
             ->get();

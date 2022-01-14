@@ -13,6 +13,7 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\CurrencyService;
+use App\Services\TaxService;
 use Exception;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Arr;
@@ -81,6 +82,11 @@ class CreateOrderTest extends TestCase
         $currency       =   app()->make( CurrencyService::class );
         $faker          =   Factory::create();
 
+        /**
+         * @var TaxService
+         */
+        $taxService     =   app()->make( TaxService::class );
+
         for( $i = 0; $i < $this->count; $i++ ) {
 
             $singleResponse     =   [];
@@ -89,11 +95,13 @@ class CreateOrderTest extends TestCase
             $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
             $discountRate   =   $faker->numberBetween(0,5);
 
-            $products           =   $products->map( function( $product ) use ( $faker ) {
+            $products           =   $products->map( function( $product ) use ( $faker, $taxService ) {
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
-
+                $discountRate   =   10;
                 $data           =   array_merge([
-                    'name'                  =>  'Fees',
+                    'name'                  =>  $product->name,
+                    'discount'              =>  $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ),
+                    'discount_percentage'   =>  $discountRate,
                     'quantity'              =>  $faker->numberBetween(1,10),
                     'unit_price'            =>  $unitElement->sale_price,
                     'tax_type'              =>  'inclusive',
@@ -153,9 +161,8 @@ class CreateOrderTest extends TestCase
             }
 
             $discount           =   [
-                'type'      =>  $faker->randomElement([ 'percentage', 'flat' ]),
-                'value'     =>  0,
-                'rate'      =>  0,
+                'type'      =>  $faker->randomElement([ 'percentage' ]),
+                'rate'      =>  5,
             ];
 
             if ( $this->useDiscount ) {
