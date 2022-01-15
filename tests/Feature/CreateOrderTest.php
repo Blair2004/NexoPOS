@@ -27,7 +27,7 @@ class CreateOrderTest extends TestCase
     protected $customOrderParams    =   [];
     protected $processCoupon        =   true;
     protected $useDiscount          =   true;
-    protected $shouldRefund         =   true;
+    protected $shouldRefund         =   false;
     protected $customDate           =   true;
     protected $shouldMakePayment    =   true;
     protected $count                =   1;
@@ -98,18 +98,20 @@ class CreateOrderTest extends TestCase
             $products           =   $products->map( function( $product ) use ( $faker, $taxService ) {
                 $unitElement    =   $faker->randomElement( $product->unit_quantities );
                 $discountRate   =   10;
+                $quantity       =   $faker->numberBetween(1,10);
                 $data           =   array_merge([
                     'name'                  =>  $product->name,
-                    'discount'              =>  $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ),
+                    'discount'              =>  $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ) * $quantity,
                     'discount_percentage'   =>  $discountRate,
-                    'quantity'              =>  $faker->numberBetween(1,10),
+                    'discount_type'         =>  $faker->randomElement([ 'flat', 'percentage' ]),
+                    'quantity'              =>  $quantity,
                     'unit_price'            =>  $unitElement->sale_price,
                     'tax_type'              =>  'inclusive',
                     'tax_group_id'          =>  1,
                     'unit_id'               =>  $unitElement->unit_id,
                 ], $this->customProductParams );
 
-                if ( $faker->randomElement([ false, true ]) ) {
+                if ( $faker->randomElement([ true, false ]) ) {
                     $data[ 'product_id' ]       =   $product->id;
                     $data[ 'unit_quantity_id' ] =   $unitElement->id;
                 }
@@ -128,8 +130,9 @@ class CreateOrderTest extends TestCase
 
             $subtotal   =   ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
                 return $currency
-                    ->define( $product[ 'unit_price' ] )
+                    ->fresh( $product[ 'unit_price' ] )
                     ->multiplyBy( $product[ 'quantity' ] )
+                    ->subtractBy( $product[ 'discount' ] )
                     ->getRaw();
             })->sum() );
 

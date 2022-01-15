@@ -80,16 +80,29 @@ class DemoService extends DemoCoreService
      * Will enable the basic grocery demo
      * @return void
      */
-    public function run()
+    public function run( $data )
     {
+        /**
+         * @var string $mode
+         * @var boolean $create_sales
+         * @var boolean $create_procurements
+         */
+        extract( $data );
+
         $this->prepareDefaultUnitSystem();
         $this->createCustomers();
         $this->createAccountingAccounts();
         $this->createProviders();
         $this->createTaxes();
         $this->createProducts();
-        $this->performProcurement();
-        $this->createSales();
+
+        if ( $create_procurements ) {
+            $this->performProcurement();
+        }
+        
+        if ( $create_sales && $create_procurements ) {
+            $this->createSales();
+        }
     }
 
     public function createProducts()

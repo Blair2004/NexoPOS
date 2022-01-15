@@ -1108,8 +1108,8 @@ class OrdersService
                     'unit_id'       =>  $product[ 'unit_id' ],
                     'product_id'    =>  $product[ 'product' ]->id,
                     'quantity'      =>  $product[ 'quantity' ],
-                    'unit_price'    =>  $orderProduct->unit_price,
-                    'total_price'   =>  $orderProduct->total_price
+                    'unit_price'    =>  $orderProduct->net_price,
+                    'total_price'   =>  $orderProduct->total_net_price
                 ];
 
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -1280,7 +1280,7 @@ class OrdersService
             isset( $fields[ 'discount_type' ] ) && 
             $fields[ 'discount_type' ] === 'percentage' &&
             empty( $fields[ 'discount' ] ) ) {
-                $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 );
+                $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 ) * $fields[ 'quantity' ] );
         } else {
             $fields[ 'discount' ]       =   $fields[ 'discount' ] ?? 0;
         }
@@ -1809,6 +1809,7 @@ class OrdersService
         $total_gross_discount   =   ( float ) $orderProduct->discount;
         $total_discount         =   ( float ) $orderProduct->discount;
         $total_net_discount     =   ( float ) $orderProduct->discount;
+        $net_discount           =   ( float ) 0;
 
         if ( $orderProduct->discount_type === 'percentage' ) {
             $total_gross_discount       =   $this->computeDiscountValues( 
@@ -1825,24 +1826,31 @@ class OrdersService
                 $orderProduct->discount_percentage,
                 $orderProduct->total_gross_price
             );
+
+            $net_discount               =   $this->computeDiscountValues(
+                $orderProduct->discount_percentage,
+                $orderProduct->unit_price
+            );
         }
+
+        $orderProduct->net_price        =   $this->currencyService
+            ->fresh( $orderProduct->unit_price )
+            ->subtractBy( $net_discount )
+            ->get();
 
         $orderProduct->total_gross_price    =   $this->currencyService
             ->fresh( $orderProduct->gross_price )
             ->multiplyBy( $orderProduct->quantity )
-            ->subtractBy( $total_gross_discount )
             ->get();
 
         $orderProduct->total_price          =   $this->currencyService
-            ->fresh( $orderProduct->unit_price )
+            ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
-            ->subtractBy( $total_discount )
             ->get();
 
         $orderProduct->total_net_price      =   $this->currencyService
             ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
-            ->subtractBy( $total_net_discount )
             ->get();
 
         OrderProductAfterComputedEvent::dispatch( 

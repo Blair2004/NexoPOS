@@ -114,8 +114,15 @@ class ResetService
         ];
     }
 
-    public function handleCustom( $mode )
+    public function handleCustom( $data )
     {
+        /**
+         * @var string $mode
+         * @var boolean $create_sales
+         * @var boolean $create_procurements
+         */
+        extract( $data );
+
         return Hook::filter( 'ns-handle-custom-reset', [
             'status'    =>  'failed',
             'message'   =>  __( 'No custom handler for the reset "' . $mode . '"' )
