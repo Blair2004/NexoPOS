@@ -182,11 +182,6 @@ class OrdersService
         $order      =   $this->__initOrder( $fields, $paymentStatus, $order );
 
         /**
-         * save order instalments
-         */
-        $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
-
-        /**
          * if we're editing an order. We need to loop the products in order
          * to recover all the products that has been deleted from the POS and therefore
          * aren't tracked no more.
@@ -206,6 +201,11 @@ class OrdersService
         ] ) ) {
             $this->__saveOrderPayments( $order, $payments, $customer );
         }
+
+        /**
+         * save order instalments
+         */
+        $this->__saveOrderInstalments( $order, $fields[ 'instalments' ] ?? [] );
 
         /**
          * save order coupons
@@ -263,8 +263,31 @@ class OrdersService
              */
             $order->instalments->each( fn( $instalment ) => $instalment->delete() );
 
+            $tracked    =   [];
+
             foreach( $instalments as $instalment ) {
+
                 $newInstalment              =   new OrderInstalment;
+                
+                if ( isset( $instalment[ 'paid' ] ) && $instalment[ 'paid' ] ) {
+                    $payment    =   OrderPayment::where( 'order_id', $order->id )
+                        ->where( 'value', $instalment[ 'amount' ] )
+                        ->whereNotIn( 'id', $tracked )
+                        ->first();
+    
+                    /**
+                     * We keep a reference to avoid
+                     * having to track that twice.
+                     */
+                    $tracked[]  =   $payment->id;
+
+                    /**
+                     * let's attach the payment
+                     * id to the instalment.
+                     */
+                    $newInstalment->payment_id  =   $payment->id ?? null;
+                }
+                
                 $newInstalment->amount      =   $instalment[ 'amount' ];
                 $newInstalment->order_id    =   $order->id;
                 $newInstalment->paid        =   $instalment[ 'paid' ] ?? false;

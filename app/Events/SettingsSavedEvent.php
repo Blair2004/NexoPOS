@@ -15,6 +15,8 @@ class SettingsSavedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $options;
+    public $inputs;
+    public $class;
 
     /**
      * Create a new event instance.
@@ -22,9 +24,11 @@ class SettingsSavedEvent
      * @return void
      */
 
-    public function __construct( $options )
+    public function __construct( $options, $inputs, $class )
     {
         $this->options      =   $options;
+        $this->inputs       =   $inputs;
+        $this->class        =   $class;
     }
 
     /**

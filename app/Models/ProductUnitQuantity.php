@@ -7,6 +7,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property integer $id
+ * @property integer $product_id
+ * @property string $type
+ * @property string $preview_url
+ * @property string $expiration_date
+ * @property integer $unit_id
+ * @property string $barcode
+ * @property float $quantity
+ * @property float $low_quantity
+ * @property boolean $stock_alert_enabled
+ * @property float $sale_price
+ * @property float $sale_price_edit
+ * @property float $excl_tax_sale_price
+ * @property float $incl_tax_sale_price
+ * @property float $sale_price_tax
+ * @property float $wholesale_price
+ * @property float $wholesale_price_edit
+ * @property float $incl_tax_wholesale_price
+ * @property float $excl_tax_wholesale_price
+ * @property float $wholesale_price_tax
+ * @property float $custom_price
+ * @property float $custom_price_edit
+ * @property float $incl_tax_custom_price
+ * @property float $excl_tax_custom_price
+ */
 class ProductUnitQuantity extends NsModel
 {
     use HasFactory;

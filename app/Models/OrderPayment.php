@@ -5,6 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ * @property integer $order_id
+ * @property float $value
+ * @property integer $author
+ * @property string $identifier
+ * @property string $uuid
+ */
 class OrderPayment extends NsModel
 {
     use HasFactory;
