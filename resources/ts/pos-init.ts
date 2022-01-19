@@ -652,24 +652,27 @@ export class POS {
                             .replace('{amount}', Vue.filter('currency')(firstSlice))
                             .replace('{paymentType}', paymentType.label),
                         onAction: (action) => {
-
-                            const payment: Payment = {
-                                identifier: paymentType.identifier,
-                                label: paymentType.label,
-                                value: firstSlice,
-                                readonly: false,
-                                selected: true,
+                            if ( action ) {
+                                const payment: Payment = {
+                                    identifier: paymentType.identifier,
+                                    label: paymentType.label,
+                                    value: firstSlice,
+                                    readonly: false,
+                                    selected: true,
+                                }
+    
+                                this.addPayment(payment);   
+                                
+                                /**
+                                 * The expected slice
+                                 * should be marked as paid once submitted
+                                 */
+                                expectedSlice[0].paid   =   true;
+    
+                                resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
+                            } else {
+                                reject({ status: 'failed', message: __( 'The request was canceled' ) })
                             }
-
-                            this.addPayment(payment);   
-                            
-                            /**
-                             * The expected slice
-                             * should be marked as paid once submitted
-                             */
-                            expectedSlice[0].paid   =   true;
-
-                            resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
                         }
                     });
                 }
