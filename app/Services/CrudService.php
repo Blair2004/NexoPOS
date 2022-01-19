@@ -1117,8 +1117,25 @@ class CrudService
         return $this->permissions[ $name ] ?? false;
     }
 
+    /**
+     * Provide a callback notation for 
+     * a specific method
+     * @param string $methodName
+     * @return string
+     */
     public static function method( $methodName )
     {
         return get_called_class() . '@' . $methodName;
+    }
+
+    /**
+     * Shortcut for filtering CRUD methods
+     * @param string $methodName
+     * @param callback $callback
+     * @return mixed
+     */
+    public static function filterMethod( $methodName, $callback )
+    {
+        return Hook::filter( self::method( $methodName ), $callback );
     }
 }

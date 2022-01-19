@@ -8,30 +8,20 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithUnitTest;
 
 class CreateUnitGroupTest extends TestCase
 {
+    use WithAuthentication, WithUnitTest;
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateUnitGroup()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.units-groups', [
-                'name'          =>  __( 'Liquids' ),
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-                
-        $response->assertStatus(200);
+        $this->attemptAuthenticate();
+        $this->attemptCreateUnitGroup();
     }
 }

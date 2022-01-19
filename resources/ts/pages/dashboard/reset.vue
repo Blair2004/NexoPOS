@@ -30,6 +30,10 @@ export default {
     methods: {
         __,
         submit() {
+            if ( this.fields.length === 0 ) {
+                return nsSnackBar.error( __( 'This form is not completely loaded.' ) ).susbcribe();
+            }
+
             if ( ! this.validation.validateFields( this.fields ) ) {
                 this.$forceUpdate();
                 return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'Invalid Form' ).subscribe(); 
@@ -48,20 +52,27 @@ export default {
                         }
                     })
             }
+        },
+        loadFields() {
+            nsHttpClient.get( '/api/nexopos/v4/fields/ns.reset' )
+                .subscribe({
+                    next: fields => {
+                        this.fields     =   this.validation.createFields( fields );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error.message ).subscribe();
+                    }
+                })
         }
+    },
+    mounted() {
+        this.loadFields();
     },
     data() {
         return {
             validation: new FormValidation,
             fields: [
-                {
-                    label: 'Choose Option',
-                    name: 'mode',
-                    description: __( 'Will apply various reset method on the system.' ),
-                    type: 'select',
-                    options: ResetData.options,
-                    validation: 'required'
-                }
+                // ...
             ]
         }
     },

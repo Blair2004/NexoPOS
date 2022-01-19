@@ -8,9 +8,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithCashRegisterTest;
 
 class DeleteRegisterTest extends TestCase
 {
+    use WithAuthentication, WithCashRegisterTest;
+
     public $data;
 
     /**
@@ -20,47 +24,13 @@ class DeleteRegisterTest extends TestCase
      */
     public function testCreateRegister()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        global $argv;
-
-        $argv       =   json_decode( $response->getContent(), true );
+        $this->attemptAuthenticate();
+        $this->attemptCreateRegister();
     }
 
     public function testDeleteRegister()
     {
-        global $argv;
-
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-        ->json( 'DELETE', 'api/nexopos/v4/crud/ns.registers/' . $argv[ 'entry' ][ 'id' ], [
-            'name'                  =>  __( 'Register' ),
-            'general'               =>  [
-                'status'            =>  Register::STATUS_CLOSED
-            ]
-        ]);        
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptDeleteRegister();
     }
 }

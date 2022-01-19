@@ -197,6 +197,16 @@ class CurrencyService
     }
 
     /**
+     * Will return the full raw without
+     * rounding.
+     * @return float $value
+     */
+    public function getFullRaw()
+    {
+        return $this->value;
+    }
+
+    /**
      * Define accuracy of the current
      * Currency object
      * @param int precision number

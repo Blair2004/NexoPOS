@@ -126,7 +126,7 @@ class SettingsPage
             }
         }
 
-        event( new SettingsSavedEvent( $options->get() ) );
+        SettingsSavedEvent::dispatch( $options->get(), $request->all(), get_class( $this ) );
 
         return [
             'status'    =>  'success',

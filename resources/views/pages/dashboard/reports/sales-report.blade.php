@@ -61,23 +61,23 @@
                                         <table class="table w-full">
                                             <tbody class="text-gray-700">
                                                 <tr class="">
-                                                    <td width="150" class="font-semibold p-2 border text-left bg-blue-100 border-blue-200">{{ __( 'Sub Total' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-blue-100 border-blue-200">{{ __( 'Sub Total' ) }}</td>
                                                     <td class="p-2 border text-right border-blue-200">@{{ summary.subtotal | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Discounts' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Discounts' ) }}</td>
                                                     <td class="p-2 border text-right border-red-200">@{{ summary.sales_discounts | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Taxes' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Sales Taxes' ) }}</td>
                                                     <td class="p-2 border text-right border-red-200">@{{ summary.sales_taxes | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="150" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Products Taxes' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-red-100 border-red-200">{{ __( 'Products Taxes' ) }}</td>
                                                     <td class="p-2 border text-right border-red-200">@{{ summary.producs_taxes | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="150" class="font-semibold p-2 border text-left bg-green-100 border-green-200">{{ __( 'Total' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-green-100 border-green-200">{{ __( 'Total' ) }}</td>
                                                     <td class="p-2 border text-right border-blue-200">@{{ summary.total | currency }}</td>
                                                 </tr>
                                             </tbody>

@@ -14,7 +14,7 @@ class ResetUserStatsTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function testResetUserStats()
     {
         User::get()->each( function( $user ) {
             $user->total_sales_count    =   0;

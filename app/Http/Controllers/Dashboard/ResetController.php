@@ -60,7 +60,7 @@ class ResetController extends DashboardController
 
         switch( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
-                $this->demoService->run();
+                $this->demoService->run( $request->all() );
             break;
             case 'wipe_plus_simple':
                 ( new FirstDemoSeeder )->run();
@@ -69,7 +69,9 @@ class ResetController extends DashboardController
                 ( new DefaultSeeder )->run();
             break;
             default:
-                $this->resetService->handleCustom( $request->input( 'mode' ) );
+                $this->resetService->handleCustom( 
+                    $request->all()
+                );
             break;
         }
 
