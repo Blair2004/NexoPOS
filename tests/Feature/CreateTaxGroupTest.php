@@ -7,9 +7,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithTaxTest;
 
 class CreateTaxGroupTest extends TestCase
 {
+    use WithAuthentication, WithTaxTest;
+
     /**
      * A basic feature test example.
      *
@@ -17,18 +21,7 @@ class CreateTaxGroupTest extends TestCase
      */
     public function testCreateTaxGroup()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', '/api/nexopos/v4/crud/ns.taxes-groups', [
-                'name'          =>  __( 'GST' ),
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptCreateTaxGroup();
     }
 }

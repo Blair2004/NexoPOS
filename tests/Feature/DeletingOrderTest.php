@@ -10,9 +10,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithOrderTest;
 
 class DeletingOrderTest extends TestCase
 {
+    use WithAuthentication, WithOrderTest;
+
     /**
      * A basic feature test example.
      *
@@ -20,21 +24,7 @@ class DeletingOrderTest extends TestCase
      */
     public function testDeleteOrder()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $order          =   Order::latest()->limit(1)->get()->first();
-
-        if ( $order instanceof Order ) {
-            $response = $this
-                ->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'DELETE', '/api/nexopos/v4/orders/' . $order->id );
-
-            return $response->assertJsonPath( 'status', 'success' );
-        }
-        
-        throw new Exception( __( 'Not able to find an order to perform the tests' ) );
+        $this->attemptAuthenticate();
+        $this->attemptDeleteOrder();
     }
 }

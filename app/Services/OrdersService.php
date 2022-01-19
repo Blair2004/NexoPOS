@@ -1101,6 +1101,10 @@ class OrdersService
                 $orderProduct->tax_value            =   $product[ 'tax_value' ];
             }
 
+            /**
+             * @todo we need to solve the issue with the
+             * gross price and determine where we should pull it.
+             */
             $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
             $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price ?? 0 )->getRaw();
             $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price ?? 0 )->getRaw();
@@ -1301,8 +1305,7 @@ class OrdersService
         if ( 
             isset( $fields[ 'discount_percentage' ] ) && 
             isset( $fields[ 'discount_type' ] ) && 
-            $fields[ 'discount_type' ] === 'percentage' &&
-            empty( $fields[ 'discount' ] ) ) {
+            $fields[ 'discount_type' ] === 'percentage' ) {
                 $fields[ 'discount' ]       =   ( $fields[ 'discount' ] ?? ( ( $sale_price * $fields[ 'discount_percentage' ] ) / 100 ) * $fields[ 'quantity' ] );
         } else {
             $fields[ 'discount' ]       =   $fields[ 'discount' ] ?? 0;
@@ -1852,13 +1855,17 @@ class OrdersService
 
             $net_discount               =   $this->computeDiscountValues(
                 $orderProduct->discount_percentage,
-                $orderProduct->unit_price
+                $orderProduct->unit_price * $orderProduct->quantity
             );
+        } else if ( $orderProduct->discount_type === 'flat' ) {
+            $total_discount             =   $orderProduct->discount;
+            $total_gross_discount       =   $orderProduct->discount;
+            $total_net_discount         =   $orderProduct->discount;
+            $net_discount               =   $orderProduct->discount;
         }
 
         $orderProduct->net_price        =   $this->currencyService
             ->fresh( $orderProduct->unit_price )
-            ->subtractBy( $net_discount )
             ->get();
 
         $orderProduct->total_gross_price    =   $this->currencyService
@@ -1869,11 +1876,13 @@ class OrdersService
         $orderProduct->total_price          =   $this->currencyService
             ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $net_discount )
             ->get();
 
         $orderProduct->total_net_price      =   $this->currencyService
             ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $net_discount )
             ->get();
 
         OrderProductAfterComputedEvent::dispatch( 

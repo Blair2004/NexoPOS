@@ -2,15 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
-use App\Models\TaxGroup;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithTaxTest;
 
 class CreateTaxTest extends TestCase
 {
+    use WithAuthentication, WithTaxTest;
+
     /**
      * A basic feature test example.
      *
@@ -18,37 +17,7 @@ class CreateTaxTest extends TestCase
      */
     public function testCreateTaxes()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $group          =   TaxGroup::get()->shuffle()->first();
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
-                'name'          =>  __( 'SGST' ),
-                'general'       =>  [
-                    'rate'      =>  5.5,
-                    'tax_group_id'  =>  $group->id
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
-                'name'          =>  __( 'CGST' ),
-                'general'       =>  [
-                    'rate'      =>  6.5,
-                    'tax_group_id'  =>  $group->id
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptCreateTax();
     }
 }

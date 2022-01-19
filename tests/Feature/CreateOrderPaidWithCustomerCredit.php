@@ -20,14 +20,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithOrderTest;
 
-class CreateOrderPaidWithCustomerCredit extends CreateOrderTest
+class CreateOrderPaidWithCustomerCredit extends TestCase
 {
+    use WithAuthentication, WithOrderTest;
+
     protected $count                =   1;
     protected $totalDaysInterval    =   1;
     protected $shouldMakePayment    =   true;
-    protected $defaultProcessing    =   false;
-
+    
     public function test_make_order_on_credit()
     {
         Sanctum::actingAs(
@@ -88,9 +91,11 @@ class CreateOrderPaidWithCustomerCredit extends CreateOrderTest
          * over a table.
          */
         $this->defaultProcessing    =   true;
-        $response   =   $this->testPostingOrder( function( $response, $data ) {
+        
+        $response   =   $this->attemptPostOrder( function( $response, $data ) {
             $order  =   Order::find( $data[ 'data' ][ 'order' ][ 'id' ] );
         });
+
         $this->defaultProcessing    =   false;
     }
 

@@ -17,6 +17,7 @@
       <directory suffix="CreateCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateCustomerGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateCustomerTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerCreditTest.php">./tests/Feature</directory>
       <directory suffix="CreateUnitGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateUnitTest.php">./tests/Feature</directory>
       <directory suffix="CreateProductTest.php">./tests/Feature</directory>      
@@ -27,12 +28,15 @@
       <directory suffix="PerformStockAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="CreateRegisterTest.php">./tests/Feature</directory>
       <directory suffix="CashRegisterActionsTest.php">./tests/Feature</directory>
+      <directory suffix="CreateCustomPaymentTypeAndOrder.php">./tests/Feature</directory>
       <directory suffix="CreateOrderOnRegister.php">./tests/Feature</directory>
       <directory suffix="CreateOrderTest.php">./tests/Feature</directory>
       <directory suffix="CreateOrderPaidWithCustomerCredit.php">./tests/Feature</directory>
+      <directory suffix="CreateOrderWithDifferentProductPriceMode.php">./tests/Feature</directory>
       <directory suffix="CombiningProductsTest.php">./tests/Feature</directory>
       <directory suffix="ComputeTaxesFromSales.php">./tests/Feature</directory>
       <directory suffix="DeleteOrderTest.php">./tests/Feature</directory>
+      <directory suffix="DeleteRegisterTest.php">./tests/Feature</directory>
       <directory suffix="CanSeeReportsTest.php">./tests/Feature</directory>
       <directory suffix="OrderHoldTest.php">./tests/Feature</directory>
       <directory suffix="OrderWithInstalment.php">./tests/Feature</directory>
@@ -45,15 +49,7 @@
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
-      <!--  -->
-      <!-- <directory suffix="StoreRefundOrder.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="TestStoreCrud.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreApproveStockRequestTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreApproveStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreRejectStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCancelStockTransferTest.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCreateStockTransfer.php">./tests/Feature</directory> -->
-      <!-- <directory suffix="StoreCreatePendingStockTransfer.php">./tests/Feature</directory> -->
+      <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>
