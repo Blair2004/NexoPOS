@@ -32,7 +32,8 @@ trait WithProductTest
         $sale_price     =   $faker->numberBetween(5,10);
         $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
             ->get()
-            ->map( fn( $cat ) => $cat->id );
+            ->map( fn( $cat ) => $cat->id )
+            ->toArray();
 
         for( $i = 0; $i < 30; $i++ ) {
             $response   = $this
@@ -77,6 +78,7 @@ trait WithProductTest
                 ]
             ]);
 
+            $response->dump();
             $result     =   json_decode( $response->getContent(), true );
 
             if ( $taxType === 'exclusive' ) {
@@ -88,6 +90,8 @@ trait WithProductTest
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price', 0 ), $sale_price );
             }
+
+            
 
             $response->assertStatus(200);
         }
