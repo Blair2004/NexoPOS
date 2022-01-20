@@ -782,7 +782,7 @@ export class POS {
                             orderProduct.$quantities = () => orderProduct
                                 .product
                                 .unit_quantities
-                                .filter(unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id)[0];
+                                .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id )[0];
                             return orderProduct;
                         });
     
