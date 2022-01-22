@@ -3,13 +3,13 @@
         <div class="flex justify-between items-center">
             <div class="flex justify-between items-center -mx-2">
                 <span class="px-2">
-                    <a @click="refreshModules()" class="items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow flex px-3 py-1 hover:bg-blue-400 hover:text-white">
+                    <a @click="refreshModules()" class="items-center justify-center rounded cursor-pointer text-gray-600 bg-white dark:text-slate-200 dark:bg-slate-700 shadow flex px-3 py-1 hover:bg-blue-400 hover:text-white">
                         <i class="las la-sync"></i>
                         <span class="mx-2">{{ __( 'Refresh' ) }}</span>
                     </a>
                 </span>
                 <span class="px-2">
-                    <a :href="upload" class="flex items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white">
+                    <a :href="upload" class="flex items-center justify-center rounded cursor-pointer text-gray-600 bg-white shadow dark:text-slate-200 dark:bg-slate-700 px-3 py-1 hover:bg-blue-400 hover:text-white">
                         <span>{{ __( 'Upload' ) }}</span>                        
                         <i class="las la-angle-right"></i>
                     </a>

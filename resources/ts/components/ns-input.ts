@@ -27,7 +27,7 @@ const nsInput      =   Vue.component( 'ns-input', {
     template: `
     <div class="flex flex-col mb-2 flex-auto">
         <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700 dark:text-slate-200'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400' : 'border-gray-200 dark:border-slate-200'" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
+        <div :class="hasError ? 'border-red-400' : 'border-gray-200 dark:border-slate-200'" class="mt-1 relative border-2 rounded-md focus:shadow-sm mb-2">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="text-gray-500 dark:text-slate-200 sm:text-sm sm:leading-5">
                 {{ leading }}

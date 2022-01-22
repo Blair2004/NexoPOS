@@ -81,7 +81,7 @@ use Illuminate\Support\Facades\Auth;
                 </div>
             </div>
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
-            <div class="flex flex-auto flex-col overflow-hidden dark:bg-slate-600 bg-gray-200">
+            <div class="flex flex-auto flex-col overflow-hidden dark:bg-slate-900 bg-gray-200">
                 <div class="overflow-y-auto flex-auto">
                     @hasSection( 'layout.dashboard.body' )
                         @yield( 'layout.dashboard.body' )
