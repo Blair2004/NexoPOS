@@ -47,18 +47,16 @@ class Role extends NsRootModel
     **/
     public function users()
     {
-        return $this->hasMany( User::class );
+        return $this->hasManyThrough( 
+            User::class, 
+            UserRoleRelation::class, 
+            'role_id', // "UserRoleRelation" is linked to "Role" by "role_id" column
+            'id', // "User" is linked to "UserRoleRelation" by "id" column
+            'id', // "Role" column
+            'user_id', // the column that links "User" and "UserRoleRelation"
+        );
     }
     
-    /**
-     * Relation with users
-     * @return void
-     * @deprecated
-    **/
-    public function user()
-    {
-        return $this->hasMany( User::class );
-    }
 
     /**
      * Relation with Permissions

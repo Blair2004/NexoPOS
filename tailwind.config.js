@@ -51,7 +51,7 @@ const widthDims = {
 }
 
 module.exports = {
-  purge: [
+  content: [
     './resources/**/*.html',
     './resources/**/*.vue',
     './resources/**/*.ts',
@@ -60,6 +60,7 @@ module.exports = {
     './modules/**/*.vue',
     './modules/**/*.ts',
   ],
+  darkMode: 'class',
   corePlugins: {
     float: false
   },
@@ -121,7 +122,4 @@ module.exports = {
       },
     }
   },
-  variants: {
-    opacity: [ 'responsive', 'hover', 'active' ]
-  }
 }

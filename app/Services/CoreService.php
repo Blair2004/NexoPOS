@@ -162,8 +162,7 @@ class CoreService
         $passed     =   false;
 
         collect( $permissions )->each( function( $permission ) use ( &$passed ) {
-            $userPermissionsNamespaces    =   collect( Auth::user()->role->permissions )
-                ->map( fn( $permission ) => $permission->namespace )
+            $userPermissionsNamespaces    =   collect( Auth::user()->permissions() )
                 ->toArray();
 
             /**

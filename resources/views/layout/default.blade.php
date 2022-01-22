@@ -6,7 +6,7 @@ use App\Services\Helper;
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{{ Auth::user()->attribute->theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

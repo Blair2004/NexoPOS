@@ -150,6 +150,7 @@ class RolesCrud extends CrudService
                             'label' =>  __( 'Dashboard Identifier' ),
                             'validation'    =>  'required',
                             'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-dashboard-identifiers', [
+                                'none'      =>  __( 'No Dashboard' ),
                                 'store'     =>  __( 'Store Dashboard' ),
                                 'cashier'   =>  __( 'Cashier Dashboard' ),
                                 'default'   =>  __( 'Default Dashboard' ),

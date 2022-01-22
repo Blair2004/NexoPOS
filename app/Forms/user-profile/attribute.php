@@ -19,6 +19,16 @@ return [
             'type'          =>  'text',
             'description'   =>  __( 'Define what is the user second name. If not provided, the username is used instead.' ),
         ], [
+            'label'         =>  __( 'Theme' ),
+            'name'          =>  'theme',
+            'value'         =>  Auth::user()->attribute->theme ?? '',
+            'type'          =>  'select',
+            'options'       =>  Helper::kvToJsOptions([
+                'dark'      =>  __( 'Dark' ),
+                'light'     =>  __( 'Light' )
+            ]),
+            'description'   =>  __( 'Define what is the theme that applies to the dashboard.' ),
+        ], [
             'label'         =>  __( 'Avatar' ),
             'name'          =>  'avatar_link',
             'value'         =>  Auth::user()->attribute->avatar_link ?? '',

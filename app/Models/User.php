@@ -76,9 +76,16 @@ class User extends Authenticatable
      * Relation with roles
      * @return void
     **/
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo( Role::class );
+        return $this->hasManyThrough( 
+            Role::class,
+            UserRoleRelation::class,
+            'user_id',
+            'id',
+            'id',
+            'role_id'
+        );
     }
 
     /**
@@ -90,30 +97,43 @@ class User extends Authenticatable
         /**
          * If user id is not provided
          */
-        $user_id = $user_id ?: Auth::user()->role_id;
+        $user       =   $user_id === null ? User::find( Auth::id() ) : User::find( $user_id );
 
-        if ( empty( @self::$permissions[ $user_id ] ) ) {
+        $roles_id   =   $user
+            ->roles()
+            ->get()
+            ->map( fn( $role ) => $role->id )
+            ->toArray();
 
-            $rawPermissions   =   Role::find( $user_id )->permissions;
+        foreach( $roles_id as $role_id ) {
+            if ( empty( @self::$permissions[ $role_id ] ) ) {
 
-            /**
-             * if the permissions hasn't yet been cached
-             */
-            
-            // start caching the user permissions
-            self::$permissions[ $user_id ]    =   [];
+                $rawPermissions   =   Role::find( $role_id )->permissions;
     
-            /**
-             * if there is a rawPermission available
-             */
-            if ( $rawPermissions->count() ) {
-                foreach ( $rawPermissions as $permission ) {
-                    self::$permissions[ $user_id ][]  =   $permission->namespace;
+                /**
+                 * if the permissions hasn't yet been cached
+                 */
+                
+                // start caching the user permissions
+                self::$permissions[ $role_id ]    =   [];
+        
+                /**
+                 * if there is a rawPermission available
+                 */
+                if ( $rawPermissions->count() ) {
+                    foreach ( $rawPermissions as $permission ) {
+                        self::$permissions[ $role_id ][]  =   $permission->namespace;
+                    }
                 }
             }
         }
 
-        return self::$permissions[ $user_id ];
+        return collect( self::$permissions )->filter( function( $permission, $key ) use ( $roles_id ) {
+                return in_array( $key, $roles_id );
+            })
+            ->flatten()
+            ->unique()
+            ->toArray();
     }
 
     /**
@@ -177,16 +197,26 @@ class User extends Authenticatable
      * @param role name
      * @return boolean
      */
-    public static function setAs( $id, $roleName )
+    public static function setAs( $user, $roleName )
     {
         if ( $role = Role::namespace( $roleName ) ) {
-            /**
-             * check if model is already provided
-             */
-            $user = is_object( $id ) ? $id : self::find( $id );
+            if ( $user instanceof User ) {
+                $combinaison    =   UserRoleRelation::combinaison( $user, $role )->first();
 
-            $user->role()->associate( $role );
-            $user->save();
+                if ( ! $combinaison instanceof UserRoleRelation ) {
+                    $combinaison    =   new UserRoleRelation;
+                }
+
+                $combinaison->user_id   =   $user->id;
+                $combinaison->role_id   =   $role->id;
+                $combinaison->save();
+            } else {
+                $user   =   User::find( $user );
+
+                if ( $user instanceof User ) {
+                    return User::setAs( $user, $roleName );
+                }
+            }
         }
         return false;
     }

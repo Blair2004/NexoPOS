@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Crud\UserCrud;
 use App\Crud\RolesCrud;
-use App\Models\ProductCategory;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Users;
@@ -58,13 +57,6 @@ class UsersController extends DashboardController
 
         if ( $user->id === Auth::id() ) {
             return redirect( ns()->route( 'ns.dashboard.users.profile' ) );
-        }
-
-        /**
-         * @temp
-         */
-        if ( Auth::user()->role->namespace !== 'admin' ) {
-            throw new Exception( __( 'Access Denied' ) );
         }
         
         return UserCrud::form( $user );
