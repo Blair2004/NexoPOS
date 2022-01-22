@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UserRoleRelation extends Model
 {
-    protected $table = 'users_roles_relations';
+    protected $table = 'nexopos_users_roles_relations';
 
     use HasFactory;
 

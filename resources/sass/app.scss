@@ -52,6 +52,7 @@ body {
  * Forms
 **/
 .form-input {
+    @apply outline-0;
     label {
         @apply text-gray-800 py-2 font-semibold;
     }
@@ -164,4 +165,26 @@ body {
     h3 {
         @apply font-semibold;
     }
+}
+
+.dark .notification-card {
+    h1 {
+        @apply text-slate-300
+    }
+    p {
+        @apply text-slate-400
+    }
+
+    @apply border-slate-500
+}
+
+.notification-card {
+    h1 {
+        @apply text-gray-700
+    }
+    p {
+        @apply text-gray-600
+    }
+
+    @apply border-gray-200
 }

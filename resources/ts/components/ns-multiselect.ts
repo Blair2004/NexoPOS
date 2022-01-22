@@ -66,9 +66,9 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     },
     template: `
     <div class="flex flex-col">
-        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
+        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700 dark:text-slate-300'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="bg-white flex flex-col">
-            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-gray-200 p-2 items-center">
+            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-gray-200 dark:border-slate-600 p-2 items-center">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-blue-400 text-white flex justify-between p-1 items-center">
@@ -86,23 +86,23 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             </div>
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
                 <div class="bg-white shadow">
-                    <div class="search border-b border-gray-200">
+                    <div class="search border-b border-gray-200 dark:border-slate-600">
                         <input v-model="search" class="p-2 w-full text-gray-600 outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
-                        <div @click="addOption( option )" v-for="(option, index) of _options" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">
+                        <div @click="addOption( option )" v-for="(option, index) of _options" :class="option.selected ? 'bg-blue-300 text-white' : 'text-gray-600 dark:text-slate-300'" class="option p-2 flex justify-between cursor-pointer hover:bg-blue-200 hover:text-white">
                             <span>{{ option.label }}</span>
                             <span>
                                 <i v-if="option.checked" class="las la-check"></i>
                             </span>
                         </div>
                     </div>
-                    <div v-if="_options.length === 0" class="p-2 text-center text-gray-400">{{ __( 'Nothing to display' ) }}</div>
+                    <div v-if="_options.length === 0" class="p-2 text-center text-gray-400 dark:text-slate-200">{{ __( 'Nothing to display' ) }}</div>
                 </div>
             </div>
         </div>
         <div class="my-2">
-            <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
+            <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500 dark:text-slate-600"><slot name="description"></slot></p>
             <p v-for="error of field.errors" class="text-xs text-red-400">
                 <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
                 <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
