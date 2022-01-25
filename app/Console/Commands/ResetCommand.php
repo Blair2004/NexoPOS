@@ -69,7 +69,11 @@ class ResetCommand extends Command
             case 'grocery':
                 $this->softReset();
                 $this->initializeRole();
-                $this->demoService->run();
+                $this->demoService->run([
+                    'mode'                  =>  'grocery',
+                    'create_sales'          =>  true,
+                    'create_procurements'   =>  true,
+                ]);
                 $this->info( __( 'The demo has been enabled.' ) );
             break;
         }

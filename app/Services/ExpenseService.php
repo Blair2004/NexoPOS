@@ -767,8 +767,12 @@ class ExpenseService
             $expense->created_at                    =   $order->created_at;
             $expense->updated_at                    =   $order->updated_at;
 
-            $order->customer->purchases_amount     +=  $order->total;
-            $order->customer->save();
+            $customer   =   Customer::find( $order->customer_id );
+
+            if ( $customer instanceof Customer ) {
+                $customer->purchases_amount     +=  $order->total;
+                $customer->save();
+            }
 
             $this->recordCashFlowHistory( $expense );
         });

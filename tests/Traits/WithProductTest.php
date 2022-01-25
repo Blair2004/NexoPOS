@@ -32,7 +32,8 @@ trait WithProductTest
         $sale_price     =   $faker->numberBetween(5,10);
         $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
             ->get()
-            ->map( fn( $cat ) => $cat->id );
+            ->map( fn( $cat ) => $cat->id )
+            ->toArray();
 
         for( $i = 0; $i < 30; $i++ ) {
             $response   = $this

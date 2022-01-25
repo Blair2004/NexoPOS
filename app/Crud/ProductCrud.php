@@ -251,8 +251,8 @@ class ProductCrud extends CrudService
                                     'type'  =>  'switch',
                                     'description'   =>  __( 'Determine if the product can be searched on the POS.' ),
                                     'options'   =>  Helper::kvToJsOptions([
-                                        true      =>  __( 'Yes' ),
-                                        false     =>  __( 'No' ),
+                                        1   =>  __( 'Yes' ),
+                                        0   =>  __( 'No' ),
                                     ]),
                                     'name'  =>  'searchable',
                                     'label' =>  __( 'Searchable' ),
