@@ -448,23 +448,23 @@ class ProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_LOST : 
             case ProductHistory::ACTION_REMOVED : 
             case ProductHistory::ACTION_VOID_RETURN : 
-                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm dark:text-slate-300 dark:bg-red-600 dark:border-red-700';
             break;
             case ProductHistory::ACTION_SOLD : 
             case ProductHistory::ACTION_RETURNED : 
             case ProductHistory::ACTION_ADDED : 
             case ProductHistory::ACTION_STOCKED : 
-                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm dark:text-slate-300 dark:bg-green-700 dark:border-green-800';
             break;
             case ProductHistory::ACTION_TRANSFER_OUT : 
             case ProductHistory::ACTION_TRANSFER_IN : 
-                $entry->{ '$cssClass' }             =   'bg-blue-100 border-blue-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-blue-100 border-blue-200 border text-sm dark:text-slate-300 dark:bg-blue-600 dark:border-blue-700';
             break;
             case ProductHistory::ACTION_ADJUSTMENT_RETURN : 
             case ProductHistory::ACTION_TRANSFER_REJECTED : 
             case ProductHistory::ACTION_TRANSFER_CANCELED : 
             case ProductHistory::ACTION_ADJUSTMENT_SALE : 
-                $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm dark:text-slate-300 dark:bg-yellow-600 dark:border-yellow-700';
             break;
         }
 

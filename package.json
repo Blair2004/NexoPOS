@@ -56,6 +56,7 @@
     "twitter_cldr": "^2.2.0",
     "vue": "^2.6.12",
     "vue-apexcharts": "^1.6.0",
+    "vue-custom-scrollbar": "^1.4.3",
     "vue-html-to-paper": "1.3.0",
     "vue-router": "^3.4.3",
     "vue-upload-component": "^2.8.20",

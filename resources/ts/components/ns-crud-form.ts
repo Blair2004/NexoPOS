@@ -120,25 +120,41 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
         <div v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center" v-if="form.main">
-                    <label for="title" class="font-bold my-2 text-gray-700">
+                    <label for="title" class="font-bold my-2 text-gray-700 dark:text-slate-300">
                         <span v-if="form.main.name">{{ form.main.label }}</span>
                     </label>
-                    <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:border-red-600 hover:bg-red-600 hover:text-white bg-white px-2 py-1">{{ __( 'Go Back' ) }}</a>
+                    <div for="title" class="text-sm my-2 text-gray-700 dark:text-slate-300">
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full
+                        border
+                        px-2
+                        py-1
+
+                        border-gray-400
+                        dark:text-slate-300
+                        bg-white
+                        
+                        hover:border-red-600
+                        hover:bg-red-600
+                        hover:text-white
+
+                        dark:bg-transparent
+                        dark:border-slate-600
+                        dark:hover:bg-slate-600
+                        ">{{ __( 'Go Back' ) }}</a>
                     </div>
                 </div>
                 <template v-if="form.main.name">
-                    <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
+                    <div :class="form.main.disabled ? 'border-gray-500 dark:bg-slate-600' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500 dark:border-slate-600'" class="flex border-2 rounded overflow-hidden">
                         <input v-model="form.main.value" 
                             @blur="formValidation.checkField( form.main )" 
                             @change="formValidation.checkField( form.main )" 
                             :disabled="form.main.disabled"
                             type="text" 
                             :class="form.main.disabled ? 'bg-gray-400' : ''"
-                            class="flex-auto text-gray-700 outline-none h-10 px-2">
-                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                            class="flex-auto text-gray-700 outline-none h-10 px-2 dark:bg-slate-800 dark:text-slate-300">
+                        <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500 dark:bg-slate-600'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
                     </div>
-                    <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                    <p class="text-xs text-gray-600 dark:text-slate-300 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                     <p class="text-xs py-1 text-red-500" v-for="error of form.main.errors">
                         <span v-if="error.identifier=== 'required'"><slot name="error-required">{{ error.identifier }}</slot></span>
                         <span v-if="error.identifier=== 'invalid'"><slot name="error-invalid">{{ error.message }}</slot></span>
@@ -149,10 +165,10 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                 <div class="header flex" style="margin-bottom: -1px;">
                     <div v-for="( tab , identifier ) of form.tabs" 
                         @click="toggle( identifier )" 
-                        :class="tab.active ? 'border-b-0 bg-white' : 'border bg-gray-200'" 
-                        class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                        :class="tab.active ? 'border-b-0 bg-white dark:bg-slate-700' : 'border bg-gray-200 dark:bg-slate-800'" 
+                        class="tab rounded-tl rounded-tr border dark:border-slate-800 border-gray-400  px-3 py-2 text-gray-700 dark:text-slate-300 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
-                <div class="border border-gray-400 p-4 bg-white">
+                <div class="border border-gray-400 p-4 bg-white dark:bg-slate-700 dark:border-slate-800">
                     <div class="-mx-4 flex flex-wrap">
                         <div :class="fieldClass || 'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="field of activeTabFields">
                             <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>

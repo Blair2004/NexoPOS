@@ -8,10 +8,7 @@ use App\Classes\Output;
 <div>
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
-        <div class="page-inner-header mb-4">
-            <h3 class="text-3xl text-gray-700 font-bold">{{ $title ?? __( 'Unamed Table' ) }}</h3>
-            <p class="text-gray-600">{{ $description ?? __( 'No description' ) }}</p>
-        </div>
+        @include( 'common.dashboard.title' )
         @include( 'components.session-message' )
         <ns-crud 
             src="{{ $src }}" 

@@ -1,19 +1,51 @@
 <template>
-    <div id="crud-table" class="w-full rounded-lg bg-white" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b border-gray-200 flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+    <div id="crud-table" class="w-full rounded-lg bg-white dark:bg-slate-600" :class="mode !== 'light' ? 'shadow mb-8': ''">
+        <div id="crud-table-header" class="p-2 border-b dark:border-slate-700 border-gray-200 flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
-                    <a :href="createUrl || '#'" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 flex items-center justify-center cursor-pointer bg-white px-3 outline-none text-gray-800 border border-gray-400"><i class="las la-plus"></i></a>
+                    <a :href="createUrl || '#'" class="rounded-full  text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border
+                        text-gray-800
+                        bg-white
+                        border-gray-400
+
+                        hover:text-white 
+                        hover:bg-blue-400
+                        hover:border-blue-400
+
+                        dark:border-slate-700
+                        dark:bg-slate-600
+                        dark:text-slate-300
+                        dark:hover:bg-slate-500
+                        dark:hover:border-slate-600
+                        "><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
-                    <div class="rounded-full p-1 bg-gray-200 flex">
-                        <input v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
-                        <button @click="search()" class="rounded-full w-8 h-8 bg-white outline-none hover:bg-blue-400 hover:text-white"><i class="las la-search"></i></button>
+                    <div class="rounded-full p-1 bg-gray-200 dark:bg-slate-700 flex">
+                        <input v-model="searchInput" type="text" class="dark:text-slate-300 w-36 md:w-auto bg-transparent outline-none px-2">
+                        <button @click="search()" class="rounded-full w-8 h-8 bg-white dark:bg-slate-600 dark:hover:bg-slate-500 dark:text-slate-300 outline-none hover:bg-blue-400 hover:text-white"><i class="las la-search"></i></button>
                         <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-red-400 text-white outline-none hover:bg-red-500 hover:text-white"><i class="las la-times"></i></button>
                     </div>
                 </div>
                 <div class="px-2 flex">
-                    <button @click="refresh()" class="rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 bg-white px-3 outline-none text-gray-800 border border-gray-400"><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
+                    <button @click="refresh()" class="rounded-full
+                    text-sm
+                    h-10
+                    px-3
+                    outline-none
+                    border
+                    bg-white
+                    text-gray-800
+                    hover:border-blue-400
+                    hover:text-white
+                    hover:bg-blue-400
+                    border-gray-400
+
+                    dark:bg-slate-600
+                    dark:border-slate-700
+                    dark:text-slate-300
+                    dark:hover:bg-slate-500
+                    dark:hover:border-slate-500
+                    "><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
                 </div>
                 <div class="px-2 flex" v-if="showQueryFilters">
                     <button @click="openQueryFilter()" :class="withFilters ? 'bg-blue-100 border-blue-200' : 'text-gray-800 border-gray-400'" class="border rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 px-3 outline-none bg-white">
@@ -39,11 +71,11 @@
             <div class="overflow-x-auto flex-auto">
                 <table class="table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
-                        <tr class="text-gray-700 border-b border-gray-200">
-                            <th class="text-center px-2 border-gray-200 bg-gray-100 border w-16 py-2">
+                        <tr class="dark:text-gray-300 dark:border-slate-200 text-gray-700 border-b border-gray-200">
+                            <th class="text-center px-2 dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border bg-gray-100 text-left px-2 border-gray-200 py-2">
+                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border dark:bg-slate-600 bg-gray-100 text-left px-2 dark:border-slate-700 border-gray-200 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">
@@ -52,7 +84,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th class="text-left px-2 py-2 w-16 border border-gray-200 bg-gray-100"></th>
+                            <th class="text-left px-2 py-2 w-16 border dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,7 +99,7 @@
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
                         </template>
                         <tr v-if="! result || result.data.length === 0">
-                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 py-3">{{ __( 'There is nothing to display...' ) }}</td>
+                            <td :colspan="Object.values( columns ).length + 2" class="text-center text-gray-600 dark:text-slate-300 py-3">{{ __( 'There is nothing to display...' ) }}</td>
                         </tr>
                     </tbody>
                 </table>
