@@ -167,7 +167,6 @@ class PaymentTypeCrud extends CrudService
                             'type'  =>  'number',
                             'name'  =>  'priority',
                             'label' =>  __( 'Priority' ),
-                            'validation'    =>  'required',
                             'value' =>  $entry->priority ?? '',
                             'description'   =>  __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' )
                         ], [
