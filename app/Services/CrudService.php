@@ -406,7 +406,7 @@ class CrudService
             foreach( $columns as $index => $column ) {
                 $__name             =   $table . '.' . $column;
                 $columnsLongName[]  =   $__name;
-                $select[]           =  $__name . ' as ' . $column;
+                $select[]           =   $__name . ' as ' . $column;
             }
 
             /**
