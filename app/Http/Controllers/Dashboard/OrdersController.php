@@ -49,9 +49,12 @@ class OrdersController extends DashboardController
         $this->ordersService        =   $ordersService;
 
         $this->middleware( function( $request, $next ) {
-            $this->paymentTypes         =   PaymentType::active()->get()->map( function( $payment, $index ) {
-                $payment->selected  =   $index === 0;
-                return $payment;
+            $this->paymentTypes         =   PaymentType::orderBy( 'priority', 'asc' )
+                ->active()
+                ->get()
+                ->map( function( $payment, $index ) {
+                    $payment->selected  =   $index === 0;
+                    return $payment;
             });
 
             return $next( $request );
