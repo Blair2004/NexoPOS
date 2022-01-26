@@ -285,7 +285,8 @@ trait WithOrderTest
                 'label'         =>  __( 'PayPal' ),
                 'general'       =>  [
                     'identifier'    =>  'paypal-payment',
-                    'active'        =>  true
+                    'active'        =>  true,
+                    'priority'      =>  0,
                 ]
             ]);
 
