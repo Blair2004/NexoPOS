@@ -42,6 +42,15 @@ export default {
         
         this.typeSubscription   =   POS.types.subscribe( types => {
             this.types  =   types;
+
+            if ( Object.values( this.types ).length === 1 ) {
+                /**
+                 * we'll automatically select the first payment type
+                 * if only one is provided. 
+                 */ 
+                
+                this.select( Object.keys( this.types )[0] );
+            }
         });
     },
     destroyed() {

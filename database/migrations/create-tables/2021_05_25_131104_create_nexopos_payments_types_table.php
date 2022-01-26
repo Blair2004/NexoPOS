@@ -17,6 +17,7 @@ class CreateNexoposPaymentsTypesTable extends Migration
             $table->id();
             $table->string( 'label' );
             $table->string( 'identifier' );
+            $table->integer( 'priority' )->default(0);
             $table->text( 'description' )->nullable();
             $table->integer( 'author' );
             $table->boolean( 'active' )->default( true );

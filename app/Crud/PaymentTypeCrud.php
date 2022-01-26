@@ -164,6 +164,12 @@ class PaymentTypeCrud extends CrudService
                             'validation'    =>  'required',
                             'value' =>  $entry->active ?? '',
                         ], [
+                            'type'  =>  'number',
+                            'name'  =>  'priority',
+                            'label' =>  __( 'Priority' ),
+                            'value' =>  $entry->priority ?? '',
+                            'description'   =>  __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' )
+                        ], [
                             'type'  =>  'text',
                             'name'  =>  'identifier',
                             'label' =>  __( 'Identifier' ),
@@ -190,6 +196,8 @@ class PaymentTypeCrud extends CrudService
     {
         $payment    =   PaymentType::where( 'identifier', $inputs[ 'identifier' ] )->first();
 
+        $inputs[ 'priority' ]   =   ( int ) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
+
         if ( $payment instanceof PaymentType ) {
             throw new NotAllowedException( __( 'A payment type having the same identifier already exists.' ) );
         }
@@ -204,6 +212,8 @@ class PaymentTypeCrud extends CrudService
      */
     public function filterPutInputs( $inputs, PaymentType $entry )
     {
+        $inputs[ 'priority' ]   =   ( int ) $inputs[ 'priority' ] < 0 ? 0 : $inputs[ 'priority' ];
+
         /**
          * the identifier should not
          * be edited for readonly payment type
@@ -339,6 +349,11 @@ class PaymentTypeCrud extends CrudService
                 'label'  =>  __( 'Active' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
+            ],
+            'priority'  =>  [
+                'label'  =>  __( 'Priority' ),
+                '$direction'    =>  '',
+                '$sort'         =>  true
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created On' ),
