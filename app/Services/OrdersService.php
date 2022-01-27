@@ -1234,7 +1234,6 @@ class OrdersService
         $orderProduct                           =   $this->computeProduct( $orderProduct, $product, $productUnitQuantity );
         $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id ?? $orderProduct[ 'unit_id' ] ?? 0;
         $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id ?? 0;
-        $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
         $orderProduct[ 'product' ]              =   $product;
         $orderProduct[ 'mode' ]                 =   $orderProduct[ 'mode' ] ?? 'normal';
         $orderProduct[ 'unitQuantity' ]         =   $productUnitQuantity;
@@ -1333,10 +1332,9 @@ class OrdersService
          * let's compute that
          */
         if ( empty( $fields[ 'total_price' ] ) ) {
-            $fields[ 'total_price' ]    =   ( 
-                $sale_price - 
-                $fields[ 'discount' ]
-            ) * floatval( $fields[ 'quantity' ] );
+            $fields[ 'total_price' ]    =  ( 
+                $sale_price  * floatval( $fields[ 'quantity' ] )
+            ) - $fields[ 'discount' ];
         }
 
         if ( $product instanceof Product ) {
@@ -1864,9 +1862,11 @@ class OrdersService
             $net_discount               =   $orderProduct->discount;
         }
 
+        $orderProduct->discount     =   $net_discount;
+
         $orderProduct->net_price        =   $this->currencyService
             ->fresh( $orderProduct->unit_price )
-            ->get();
+            ->getFullRaw();
 
         $orderProduct->total_gross_price    =   $this->currencyService
             ->fresh( $orderProduct->gross_price )
@@ -1889,7 +1889,8 @@ class OrdersService
             $orderProduct, 
             $total_gross_discount,
             $total_discount,
-            $total_net_discount 
+            $total_net_discount,
+            $net_discount
         );
     }
 
@@ -2100,7 +2101,7 @@ class OrdersService
                 $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
             } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
                 $order->payment_status      =       Order::PAYMENT_PAID;
-            } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
+            } else if ( ( float ) $order->tendered < ( float ) $order->total && ( float ) $order->tendered > 0 ) {
                 $order->payment_status      =       Order::PAYMENT_PARTIALLY;
             } else if ( $order->total == 0 && $totalRefunds == 0 ) {
                 $order->payment_status      =       Order::PAYMENT_UNPAID;

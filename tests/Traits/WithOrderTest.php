@@ -15,6 +15,7 @@ use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\PaymentType;
 use App\Models\Product;
+use App\Models\ProductUnitQuantity;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Models\TaxGroup;
@@ -693,9 +694,13 @@ trait WithOrderTest
 
     protected function attemptCreateHoldOrder()
     {
-        $product    =   Product::get()->random();
-        $unit       =   $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
-        $subtotal   =   $unit->sale_price * 5;
+        $unitQuantity   =   ProductUnitQuantity::where( 'quantity', '>', 0 )->get()->random();
+
+        if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
+            throw new Exception( 'No valid unit is provided.' );
+        }
+
+        $subtotal   =   $unitQuantity->sale_price * 5;
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -720,15 +725,17 @@ trait WithOrderTest
                 'shipping'              =>  150,
                 'products'              =>  [
                     [
-                        'product_id'            =>  $product->id,
+                        'product_id'            =>  $unitQuantity->product->id,
                         'quantity'              =>  5,
                         'unit_price'            =>  12,
-                        'unit_quantity_id'      =>  $unit->id,
+                        'unit_quantity_id'      =>  $unitQuantity->id,
                     ]
                 ],
             ]);
         
         $response->assertJsonPath( 'data.order.payment_status', 'hold' );
+
+        return json_decode( $response->getContent(), true );
     }
 
     protected function attemptDeleteOrder()
