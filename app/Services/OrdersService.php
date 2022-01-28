@@ -896,9 +896,9 @@ class OrdersService
         
         $totalPayments  =   0;
 
-        $subtotal       =   collect( $fields[ 'products' ] )->map(function ($product) {
+        $subtotal       =   Currency::raw( collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum();
+        })->sum() );
 
         $total          =   $this->currencyService->define( 
                 $subtotal + $this->__getShippingFee($fields) 
@@ -1855,6 +1855,7 @@ class OrdersService
                 $orderProduct->discount_percentage,
                 $orderProduct->unit_price * $orderProduct->quantity
             );
+
         } else if ( $orderProduct->discount_type === 'flat' ) {
             $total_discount             =   $orderProduct->discount;
             $total_gross_discount       =   $orderProduct->discount;
@@ -1877,7 +1878,7 @@ class OrdersService
             ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $net_discount )
-            ->get();
+            ->getFullRaw();
 
         $orderProduct->total_net_price      =   $this->currencyService
             ->fresh( $orderProduct->net_price )
@@ -1904,7 +1905,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return Currency::raw( ( $value * $rate ) / 100 );
+            return Currency::fresh( ( $value * $rate ) / 100 )->getFullRaw();
         }
 
         return 0;
@@ -2070,10 +2071,10 @@ class OrdersService
         /**
          * let's refresh all the order values
          */
-        $order->subtotal        =   $productTotal;
+        $order->subtotal        =   Currency::raw( $productTotal );
         $order->gross_total     =   $productGrossTotal;
-        $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   Currency::fresh( $productTotal )
+        $order->discount        =   $this->computeOrderDiscount( $order );  
+        $order->total           =   Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
             ->additionateBy(
                 ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )

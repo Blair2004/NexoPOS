@@ -45,6 +45,7 @@ trait WithOrderTest
     protected $totalDaysInterval    =   1;
     protected $users                =   [];
     protected $defaultProcessing    =   true;
+    protected $allowQuickProducts   =   true;
 
     protected function attemptPostOrder( $callback )
     {
@@ -342,7 +343,10 @@ trait WithOrderTest
                     'unit_id'               =>  $unitElement->unit_id,
                 ], $this->customProductParams );
 
-                if ( $faker->randomElement([ true, false ]) ) {
+                if ( ! $this->allowQuickProducts ) {
+                    $data[ 'product_id' ]       =   $product->id;
+                    $data[ 'unit_quantity_id' ] =   $unitElement->id;
+                } else if ( $faker->randomElement([ true, false ]) ) {
                     $data[ 'product_id' ]       =   $product->id;
                     $data[ 'unit_quantity_id' ] =   $unitElement->id;
                 }
@@ -356,8 +360,6 @@ trait WithOrderTest
              * testing customer balance
              */
             $customer                   =   Customer::get()->random();
-            $customerFirstPurchases     =   $customer->purchases_amount;
-            $customerFirstOwed          =   $customer->owed_amount;
 
             $subtotal   =   ns()->currency->getRaw( $products->map( function( $product ) use ($currency) {
                 $productSubTotal    =   $currency
@@ -467,6 +469,23 @@ trait WithOrderTest
                 ] : []
             ], $this->customOrderParams );
 
+            $pathName   =   'tests/Post/process-orders.json';
+
+            /**
+             * used for reproducing orders that cause a bug
+             */
+            // $orderData  =   json_decode( file_get_contents( base_path( $pathName ) ), true );
+
+            $customer                   =   Customer::find( $orderData[ 'customer_id' ] );
+            $customerFirstPurchases     =   $customer->purchases_amount;
+            $customerFirstOwed          =   $customer->owed_amount;
+
+            /**
+             * We might need this to reproduce a sale that caused
+             * an error.
+             */
+            file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
                             
@@ -478,26 +497,26 @@ trait WithOrderTest
 
             if ( $this->shouldMakePayment ) {    
                 $netsubtotal    =   $currency
-                    ->define( $subtotal )
+                    ->define( $orderData[ 'subtotal' ] )
                     ->subtractBy( $totalCoupons )
-                    ->subtractBy( $discount[ 'value' ] )
+                    ->subtractBy( $orderData[ 'discount' ] )
                     ->getRaw();
     
                 $total          =   $currency->define( $netsubtotal )
-                    ->additionateBy( $shippingFees )
+                    ->additionateBy( $orderData[ 'shipping' ] )
                     ->getRaw() ;
 
-                $response->assertJsonPath( 'data.order.subtotal', $currency->getRaw( $subtotal ) );
-                
+                $response->assertJsonPath( 'data.order.subtotal', $currency->getRaw( $orderData[ 'subtotal' ] ) );
+
                 $response->assertJsonPath( 'data.order.total', $currency->define( $netsubtotal )
-                    ->additionateBy( $shippingFees )
+                    ->additionateBy( $orderData[ 'shipping' ] )
                     ->getRaw() 
                 );
     
-                $response->assertJsonPath( 'data.order.change',     $currency->define( $subtotal + $shippingFees - ( $discount[ 'rate' ] + $totalCoupons ) )
-                    ->subtractBy( $subtotal + $shippingFees - ( $discount[ 'rate' ] + ( $allCoupons[0][ 'value' ] ?? 0 ) ) )
-                    ->getRaw() 
-                );
+                $change     =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum() - (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] );
+                $change     =   Currency::raw( $change );
+
+                $response->assertJsonPath( 'data.order.change', $change );
 
                 $singleResponse[ 'order-payment' ]   =   json_decode( $response->getContent() );
 
@@ -509,7 +528,7 @@ trait WithOrderTest
                 $customerSecondPurchases    =   $customer->purchases_amount;
                 $customerSecondOwed         =   $customer->owed_amount;
 
-                if ( ( float ) trim( $customerFirstPurchases + $total ) != ( float ) trim( $customerSecondPurchases ) ) {
+                if ( ( float ) trim( $customerFirstPurchases + ( $orderData[ 'payments' ][0][ 'value' ] ?? 0 ) ) != ( float ) trim( $customerSecondPurchases ) ) {
                     throw new Exception( 
                         sprintf(
                             __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
