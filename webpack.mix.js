@@ -45,6 +45,7 @@ mix
     .ts( 'resources/ts/setup.ts', mix.inProduction() ? 'public/js/setup.min' : 'public/js')
     .ts( 'resources/ts/popups.ts', mix.inProduction() ? 'public/js/popups.min' : 'public/js/' )
     .sass('resources/sass/app.scss', 'public/css')
+    .sass('resources/sass/dark.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ tailwindcss('./tailwind.config.js') ],
