@@ -33,10 +33,12 @@
 import { __ } from '@/libraries/lang';
 import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
 import FormValidation from '../../libraries/form-validation';
+import { nsField } from '@/components/ns-field';
 
 export default {
     name: 'ns-settings',
     props: [ 'url' ],
+    components: { nsField },
     data() {
         return {
             validation: new FormValidation,

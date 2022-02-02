@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded shadow overflow-hidden transition-all duration-100">
+    <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
         <div class="p-3 -my-2">
             <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
                 <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
@@ -11,7 +11,7 @@
         <div class="flex w-full items-center justify-center py-4" v-if="showRecoveryLink">
             <a href="/password-lost" class="hover:underline text-blue-600 text-sm">{{ __( 'Password Forgotten ?' ) }}</a>
         </div>
-        <div class="flex justify-between items-center bg-gray-200 p-3">
+        <div class="flex justify-between items-center login-footer p-3">
             <div>
                 <ns-button @click="signIn()" class="justify-between" type="info">
                     <ns-spinner class="mr-2" v-if="isSubitting" size="6" border="2"></ns-spinner>
@@ -24,6 +24,14 @@
         </div>
     </div>
 </template>
+<style scoped>
+.dark .login-footer {
+    @apply bg-slate-600
+}
+.light .login-footer {
+    @apply bg-gray-200;
+}
+</style>
 <script>
 import { forkJoin } from 'rxjs';
 import FormValidation from '@/libraries/form-validation';

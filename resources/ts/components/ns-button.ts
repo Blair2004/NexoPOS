@@ -9,10 +9,10 @@ const nsButton      =   Vue.component( 'ns-button', {
     },
     props: [ 'type', 'disabled', 'link', 'href', 'routerLink', 'to' ],
     template: `
-    <div class="flex" @click="$emit( 'click' )">
-        <button :disabled="isDisabled" v-if="!link" :class="buttonclass" class="flex items-center rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></button>
-        <router-link  :to="to" v-if="routerLink" :class="buttonclass" class="flex items-center rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
-        <a v-if="link" :href="href" :class="buttonclass" class="flex items-center rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
+    <div class="flex ns-button rounded overflow-hidden" :class="type ? ( 'ns-button-' + type ) : 'ns-button-default'" @click="$emit( 'click' )">
+        <button :disabled="isDisabled" v-if="!link" :class="buttonclass" class="flex rounded items-center cursor-pointer py-2 px-3 font-semibold"><slot></slot></button>
+        <router-link  :to="to" v-if="routerLink" :class="buttonclass" class="flex rounded items-center cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
+        <a v-if="link" :href="href" :class="buttonclass" class="flex rounded items-center cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
     </div>
     `,
     mounted() {
@@ -28,19 +28,19 @@ const nsButton      =   Vue.component( 'ns-button', {
 
             switch( this.type ) {
                 case 'info':
-                    className = `${this.isDisabled ? 'bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600' : 'shadow bg-blue-400 text-white' }`;
+                    className = `${this.isDisabled ? 'ns-disabled' : 'shadow ns-enabled' }`;
                 break;
                 case 'success':
-                    className = `${this.isDisabled ? 'bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600' : 'shadow bg-green-400 text-white' }`;
+                    className = `${this.isDisabled ? 'ns-disabled' : 'shadow ns-enabled' }`;
                 break;
                 case 'danger':
-                    className = `${this.isDisabled ? 'bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600' : 'shadow bg-red-400 text-white' }`;
+                    className = `${this.isDisabled ? 'ns-disabled' : 'shadow ns-enabled' }`;
                 break;
                 case 'warning':
-                    className = `${this.isDisabled ? 'bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600' : 'shadow bg-orange-400 text-white' }`;
+                    className = `${this.isDisabled ? 'ns-disabled' : 'shadow ns-enabled' }`;
                 break;
                 default:
-                    className = `${this.isDisabled ? 'bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600' : 'shadow bg-white text-gray-800' }`;
+                    className = `${this.isDisabled ? 'ns-disabled' : 'shadow ns-enabled' }`;
                 break;
             }
 

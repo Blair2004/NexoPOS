@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded shadow overflow-hidden transition-all duration-100">
+    <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
         <div class="p-3 -my-2">
             <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
                 <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
@@ -9,9 +9,9 @@
             <ns-spinner></ns-spinner>
         </div>
         <div class="flex w-full items-center justify-center py-4">
-            <a href="/sign-in" class="hover:underline text-blue-600 text-sm">{{ __( 'Already registered ?' ) }}</a>
+            <a href="/sign-in" class="link hover:underline text-sm">{{ __( 'Already registered ?' ) }}</a>
         </div>
-        <div class="flex justify-between items-center bg-gray-200 p-3">
+        <div class="flex justify-between items-center register-footer p-3">
             <div>
                 <ns-button @click="register()" type="info">{{ __( 'Register' ) }}</ns-button>
             </div>
@@ -21,6 +21,25 @@
         </div>
     </div>
 </template>
+<style scoped>
+.dark {
+    .login-footer {
+        @apply bg-slate-600;
+    }
+    div .link {
+        @apply text-blue-400;
+    }
+}
+.light {
+    div .link {
+        @apply text-blue-600;
+    }
+
+    .login-footer {
+        @apply bg-gray-200;
+    }
+}
+</style>
 <script>
 import FormValidation from '@/libraries/form-validation';
 import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';

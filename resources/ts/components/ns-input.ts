@@ -14,7 +14,7 @@ const nsInput      =   Vue.component( 'ns-input', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-transparent';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : 'ns-enabled';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass
@@ -25,11 +25,11 @@ const nsInput      =   Vue.component( 'ns-input', {
     },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
     template: `
-    <div class="flex flex-col mb-2 flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-red-600' : 'text-gray-700 dark:text-slate-300'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400 dark:border-red-600' : 'border-gray-200 dark:border-slate-600'" class="mt-1 relative border-2 rounded-md focus:shadow-sm mb-2">
+    <div class="flex flex-col mb-2 flex-auto ns-input">
+        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'has-error' : 'is-pristine'" class="mt-1 relative border-2 rounded-md focus:shadow-sm mb-2">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 dark:text-slate-300 sm:text-sm sm:leading-5">
+                <span class="leading sm:text-sm sm:leading-5">
                 {{ leading }}
                 </span>
             </div>
@@ -39,10 +39,10 @@ const nsInput      =   Vue.component( 'ns-input', {
                 @blur="$emit( 'blur', this )" 
                 @change="$emit( 'change', this )" 
                 :id="field.name" :type="type || field.type || 'text'" 
-                :class="inputClass" class="form-input block w-full sm:text-sm sm:leading-5 h-10 dark:text-slate-300" :placeholder="placeholder" />
+                :class="inputClass" class="block w-full sm:text-sm sm:leading-5 h-10" :placeholder="placeholder" />
         </div>
-        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500 dark:text-slate-300"><slot name="description"></slot></p>
-        <p v-for="error of field.errors" class="text-xs text-red-400 dark:text-red-600">
+        <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description"><slot name="description"></slot></p>
+        <p v-for="error of field.errors" class="text-xs ns-error">
             <slot v-if="error.identifier === 'required'" :name="error.identifier">This field is required.</slot>
             <slot v-if="error.identifier === 'email'" :name="error.identifier">This field must contain a valid email address.</slot>
             <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>

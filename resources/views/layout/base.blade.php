@@ -3,15 +3,18 @@
 use App\Classes\Hook;
 use App\Services\DateService;
 use App\Services\Helper;
+use Illuminate\Support\Facades\Auth;
 
+$theme  =   Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_theme', 'light' );
 ?>
 <!DOCTYPE html>
-<html lang="en" class="{{ Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_theme', 'light' ) }}">
+<html lang="en" class="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
     <link rel="stylesheet" href="{{ mix( 'css/app.css' ) }}">
+    <link rel="stylesheet" href="{{ mix( 'css/' . $theme . '.css' ) }}">
     @yield( 'layout.base.header' )
     <script>
         /**

@@ -1,20 +1,7 @@
 <div id="dashboard-header" class="w-full flex justify-between p-4">
     <div class="flex items-center">
         <div>
-            <div @click="toggleSideMenu()" class="
-                rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex text-gray-800 border 
-                
-                border-gray-400 
-                hover:bg-white 
-                hover:text-gray-700 
-                hover:shadow-lg 
-                hover:border-opacity-0 
-                
-                dark:text-slate-300 
-                dark:border-slate-600 
-                dark:bg-slate-600 
-                dark:hover:text-slate-200                
-                ">
+            <div @click="toggleSideMenu()" class="rounded-full h-10 w-10 cursor-pointer font-bold text-2xl justify-center items-center flex border ns-toggle-button">
                 <i class="las la-bars"></i>
             </div>
         </div>
@@ -24,12 +11,8 @@
             <ns-notifications></ns-notifications>
         </div>
         <div class="px-2">
-            <div @click="toggleMenu()" :class="menuToggled ? 'dark:bg-slate-600 dark:text-slate-300 bg-white border-transparent shadow-lg rounded-t-lg' : 'border-gray-400 rounded-lg'" class="
-                text-gray-600
-                hover:bg-white
-                dark:text-slate-300 
-                dark:hover:bg-slate-600
-                dark:hover:text-slate-300
+            <div @click="toggleMenu()" :class="menuToggled ? 'toggled shadow-lg rounded-t-lg' : 'untoggled rounded-lg'" class="
+                ns-avatar
                 w-32 md:w-56 flex flex-col border py-2 justify-center hover:border-opacity-0 cursor-pointer hover:shadow-lg">
                 <ns-avatar 
                     display-name="{{ Auth::user()->username }}"

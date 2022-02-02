@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import { nsEvent, nsHttpClient, nsSnackBar } from "@/bootstrap";
+import { __ } from '@/libraries/lang';
 
 const nsTableRow    =   Vue.component( 'ns-table-row', {
     props: [
@@ -12,8 +13,11 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         }
     },
     mounted() {
+        
     },
     methods: {
+        __,
+
         sanitizeHTML(s) {
             var div         = document.createElement('div');
             div.innerHTML   = s;
@@ -79,21 +83,21 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         }
     },
     template: `
-    <tr :class="row.$cssClass ? row.$cssClass : 'border-gray-200 dark:border-slate-700 border text-sm'">
-        <td class="text-gray-700 dark:text-slate-300 font-sans border-gray-200 dark:border-slate-700 p-2">
+    <tr class="ns-table-row" :class="row.$cssClass ? row.$cssClass : 'border text-sm'">
+        <td class="font-sans p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
-        <td v-for="(column, identifier) of columns" class="text-gray-700 dark:text-slate-300 font-sans border-gray-200 dark:border-slate-700 p-2" v-html="sanitizeHTML( row[ identifier ] )"></td>
-        <td class="text-gray-700 font-sans border-gray-200 p-2 flex flex-col items-start justify-center">
-            <button @click="toggleMenu( $event )" class="outline-none rounded-full w-24 text-sm p-1 border dark:bg-slate-600 dark:hover:bg-slate-500 dark:hover:text-slate-300 dark:text-slate-300 dark:border-slate-700 dark:hover:border-transparent border-gray-400 hover:bg-blue-400 hover:text-white hover:border-transparent"><i class="las la-ellipsis-h"></i> Options</button>
+        <td v-for="(column, identifier) of columns" class="font-sans p-2" v-html="sanitizeHTML( row[ identifier ] )"></td>
+        <td class="font-sans p-2 flex flex-col items-start justify-center">
+            <button @click="toggleMenu( $event )" class="ns-row-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
             <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
             <div class="relative">
-                <div v-if="row.$toggled" class="zoom-in-entrance anim-duration-300 z-50 origin-bottom-right -ml-32 w-56 mt-2 absolute rounded-md shadow-lg">
-                    <div class="rounded-md bg-white dark:bg-slate-600 shadow-xs">
+                <div v-if="row.$toggled" class="zoom-in-entrance anim-duration-300 z-50 origin-bottom-right -ml-32 w-56 mt-2 absolute rounded-md shadow-lg ns-menu-wrapper">
+                    <div class="rounded-md shadow-xs">
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             <template v-for="action of row.$actions">
-                                <a :href="action.url" v-if="action.type === 'GOTO'" class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-slate-300 dark:hover:bg-slate-500 dark:hover:text-slate-200 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
-                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-slate-300 dark:hover:bg-slate-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                <a :href="action.url" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                             </template>
                         </div>
                     </div>

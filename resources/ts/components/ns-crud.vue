@@ -3,21 +3,7 @@
         <div id="crud-table-header" class="p-2 border-b dark:border-slate-700 border-gray-200 flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
-                    <a :href="createUrl || '#'" class="rounded-full  text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border
-                        text-gray-800
-                        bg-white
-                        border-gray-400
-
-                        hover:text-white 
-                        hover:bg-blue-400
-                        hover:border-blue-400
-
-                        dark:border-slate-700
-                        dark:bg-slate-600
-                        dark:text-slate-300
-                        dark:hover:bg-slate-500
-                        dark:hover:border-slate-600
-                        "><i class="las la-plus"></i></a>
+                    <a :href="createUrl || '#'" class="rounded-full create-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 bg-gray-200 dark:bg-slate-700 flex">
@@ -48,7 +34,7 @@
                     "><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
                 </div>
                 <div class="px-2 flex" v-if="showQueryFilters">
-                    <button @click="openQueryFilter()" :class="withFilters ? 'bg-blue-100 border-blue-200' : 'text-gray-800 border-gray-400'" class="border rounded-full hover:border-blue-400 hover:text-white hover:bg-blue-400 text-sm h-10 px-3 outline-none bg-white">
+                    <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-query-filter border rounded-full text-sm h-10 px-3 outline-none ">
                         <i v-if="! withFilters" class="las la-filter"></i>
                         <i v-if="withFilters" class="las la-check"></i>
                         <span v-if="! withFilters">{{ __( 'Filters' ) }}</span>

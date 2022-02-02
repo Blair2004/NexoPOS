@@ -534,31 +534,31 @@ class OrderCrud extends CrudService
 
         switch( $entry->payment_status ) {
             case Order::PAYMENT_PAID : 
-                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-green-600 dark:border-green-800 bg-green-100 border-green-200 border text-sm';
             break;
             case Order::PAYMENT_UNPAID : 
-                $entry->{ '$cssClass' }             =   'bg-gray-100 border-gray-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-gray-600 dark:border-gray-800 bg-gray-100 border-gray-200 border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY : 
-                $entry->{ '$cssClass' }             =   'bg-yellow-100 border-yellow-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-yellow-600 dark:border-yellow-800 bg-yellow-100 border-yellow-200 border text-sm';
             break;
             case Order::PAYMENT_HOLD : 
-                $entry->{ '$cssClass' }             =   'bg-gray-200 border-gray-300 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-gray-600 dark:border-gray-800 bg-gray-200 border-gray-300 border text-sm';
             break;
             case Order::PAYMENT_VOID : 
-                $entry->{ '$cssClass' }             =   'bg-yellow-200 border-yellow-300 text-gray-700 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-yellow-600 dark:border-yellow-800 bg-yellow-200 border-yellow-300 text-gray-700 border text-sm';
             break;
             case Order::PAYMENT_REFUNDED : 
-                $entry->{ '$cssClass' }             =   'bg-red-200 border-red-300 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-red-600 dark:border-red-800 bg-red-200 border-red-300 border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY_REFUNDED : 
-                $entry->{ '$cssClass' }             =   'bg-orange-100 border-orange-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-orange-600 dark:border-orange-800 bg-orange-100 border-orange-200 border text-sm';
             break;
             case Order::PAYMENT_DUE : 
-                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-red-600 dark:border-red-800 bg-red-100 border-red-200 border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY_DUE : 
-                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'dark:bg-red-600 dark:border-red-800 bg-red-100 border-red-200 border text-sm';
             break;
         }
 

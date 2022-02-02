@@ -4,9 +4,9 @@ import { default as nsMedia } from "@/pages/dashboard/ns-media.vue";
 
 const nsMediaInput   =   Vue.component( 'ns-media-input', {
     template: `
-    <div class="flex flex-col mb-2 flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700 dark:text-slate-300'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400' : 'border-gray-200 dark:border-slate-600'" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
+    <div class="flex flex-col mb-2 flex-auto ns-media">
+        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'has-error' : 'is-pristine'" class="mt-1 relative border-2 rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="text-gray-500 sm:text-sm sm:leading-5">
                 {{ leading }}
@@ -24,6 +24,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
                 <input 
                     v-if="! field.data || field.data.type === 'undefined' || field.data.type === 'url'"
                     v-model="field.value" 
+                    :disabled="field.disabled"
                     @blur="$emit( 'blur', this )" 
                     @change="$emit( 'change', this )" 
                     :id="field.name" :type="type || field.type || 'text'" 
@@ -51,7 +52,7 @@ const nsMediaInput   =   Vue.component( 'ns-media-input', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-transparent';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : 'ns-enabled';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass

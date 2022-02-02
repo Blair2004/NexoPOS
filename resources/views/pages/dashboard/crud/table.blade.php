@@ -13,8 +13,7 @@ use App\Classes\Output;
         <ns-crud 
             src="{{ $src }}" 
             :query-params='@json( $queryParams ?? [] )'
-            create-url="{{ $createUrl ?? '#' }}"
-            id="crud-table-body">
+            create-url="{{ $createUrl ?? '#' }}">
             <template v-slot:bulk-label>{{ $bulkLabel ?? __( 'Bulk Actions' ) }}</template>
         </ns-crud>
     </div>
