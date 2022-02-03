@@ -24,12 +24,13 @@ mix
 
 
 mix.disableNotifications();
-mix.sourceMaps();
 mix.extract();
 mix.vue({ version: 2 })
 
 if ( mix.inProduction() ) {
     mix.version();
+} else {
+    mix.sourceMaps();
 }
 
 mix
@@ -47,6 +48,7 @@ mix
     .sass('resources/sass/app.scss', 'public/css')
     .sass('resources/sass/dark.scss', 'public/css')
     .sass('resources/sass/light.scss', 'public/css')
+    .minify()
     .options({
         processCssUrls: false,
         postCss: [ 

@@ -119,13 +119,28 @@ export default {
                             .filter( v => v.selected )
                             .map( v => v.id )
                     })
-                    .subscribe( result => {
-                        nsSnackBar.success( result.message ).subscribe();
-                        this.loadGallery();
-                    }, error => {
-                        nsSnackBar.error( error.message ).subscribe();
-                    })
+                    .subscribe({ 
+                        next: result => {
+                            nsSnackBar.success( result.message ).subscribe();
+                            this.loadGallery();
+                        },
+                        error: error => {
+                            nsSnackBar.error( error.message ).subscribe();
+                        }
+                    });
             }
+        },
+
+        loadUploadScreen() {
+            setTimeout( () => {
+                document.addEventListener( 'drop', ( e ) => this.handleDrop( e ) );
+                console.log( 'ok' );
+            }, 1000 );
+        },
+
+        handleDrop( e ) {
+            console.log( e );
+            e.preventDefault();
         },
 
         /**
@@ -141,6 +156,8 @@ export default {
 
             if ( page.name === 'gallery' ) {
                 this.loadGallery();
+            } else if ( page.name === 'upload' ) {
+                this.loadUploadScreen();
             }
         },
 
@@ -205,28 +222,17 @@ export default {
             </ul>
         </div>
         <div class="content w-full overflow-hidden flex" v-if="currentPage.name === 'upload'">
-            <vue-upload
-                ref="upload"
-                :drop="true"
-                class=" flex-auto flex bg-white shadow"
-                v-model="files"
-                :multiple="true"
-                :headers="{ 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN' : csrf }"
-                accept="image/*"
-                :post-action="postMedia"
-                >
-                <div class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
-                    <h3 class="text-3xl font-bold text-gray-600 mb-4">{{ __( 'Click Here Or Drop Your File To Upload' ) }}</h3>
-                    <div class="rounded w-full md:w-2/3 text-gray-700 bg-gray-500 h-56 overflow-y-auto p-2">
-                        <ul>
-                            <li v-for="(file, index) of files" :key="index" class="p-2 mb-2 shadow bg-white flex items-center justify-between rounded">
-                                <span>{{ file.name }}</span>
-                                <span class="rounded bg-blue-400 flex items-center justify-center text-xs p-2">{{ file.progress }}%</span>
-                            </li>
-                        </ul>
-                    </div>
+            <div id="dropping-zone" class="border-dashed border-2 flex flex-auto m-2 p-2 flex-col border-blue-400 items-center justify-center">
+                <h3 class="text-3xl font-bold text-gray-600 mb-4">{{ __( 'EEEEClick Here Or Drop Your File To Upload' ) }}</h3>
+                <div class="rounded w-full md:w-2/3 text-gray-700 bg-gray-500 h-56 overflow-y-auto p-2">
+                    <ul>
+                        <li v-for="(file, index) of files" :key="index" class="p-2 mb-2 shadow bg-white flex items-center justify-between rounded">
+                            <span>{{ file.name }}</span>
+                            <span class="rounded bg-blue-400 flex items-center justify-center text-xs p-2">{{ file.progress }}%</span>
+                        </li>
+                    </ul>
                 </div>
-            </vue-upload>
+            </div>
         </div>
         <div class="content flex-col w-full overflow-hidden flex" v-if="currentPage.name === 'gallery'">
             <div class="p-2 flex flex-shrink-0 justify-between bg-gray-200" v-if="popup">
