@@ -1,0 +1,74 @@
+#main-container, #page-container {
+    @apply bg-gray-900;
+}
+
+.ns-toggle-button { 
+    @apply text-slate-300 border-slate-800;
+
+    &:hover {
+        @apply text-slate-200 bg-slate-600 border-slate-600;
+    }
+    
+    .toggled {
+        @apply bg-slate-600 text-slate-300;
+    }
+
+    .untoggled {
+        @apply border-gray-400;
+    }
+}
+
+.ns-avatar { 
+    @apply text-slate-300 border-slate-800;
+
+    &:hover {
+        @apply bg-slate-600 text-slate-300 border-slate-600;
+    }
+
+    &.toggled {
+        @apply bg-slate-600 text-slate-300 border-slate-600;
+    }
+}
+
+/**
+ * Notifications Wrapper
+**/
+
+#notificaton-wrapper {
+    #notification-button {
+        &.panel-visible {
+            @apply bg-slate-600;
+        }
+        &.panel-hidden {
+            @apply border-slate-800;
+        }
+
+        &:hover {
+            @apply bg-slate-600 border-slate-600 text-slate-300;
+        }
+
+        @apply text-slate-300;
+    }
+
+    #notification-center > div > div {
+        @apply bg-slate-600;
+    }
+
+    .clear-all {
+        @apply text-slate-300;
+        &:hover {
+            @apply bg-slate-500 text-red-300;
+        }
+    }
+
+    .notification-card {
+        h1 {
+            @apply text-slate-200
+        }
+        p {
+            @apply text-slate-300
+        }
+    
+        @apply border-slate-500
+    }
+}

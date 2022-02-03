@@ -1,0 +1,23 @@
+.ns-box {
+    @apply bg-slate-700 text-slate-300;
+
+    .ns-box-header {
+        @apply border-slate-800 text-slate-300
+    }
+
+    .ns-box-body {
+        @apply text-slate-300;
+    }
+
+    .ns-box-footer {
+        @apply border-slate-800;
+    }
+
+    h3 {
+        @apply text-slate-300;
+    }
+
+    p {
+        @apply text-slate-200;
+    }
+}

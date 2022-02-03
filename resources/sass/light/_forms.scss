@@ -1,0 +1,132 @@
+/**
+ * Fields
+**/
+
+// .ns-switch
+.ns-switch button.selected {
+    @apply bg-blue-500 text-white;
+} 
+.ns-switch button.unselected {
+    @apply bg-slate-600 text-slate-400;
+}
+
+// .ns-select
+.ns-select select {
+    @apply text-slate-300;
+    option {
+        @apply bg-slate-600;
+    }
+}
+
+// ns-input, ns-switch, .ns-select
+.ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
+    [disabled] {
+        @apply bg-slate-800;
+    }
+    
+    .ns-enabled {
+        @apply bg-transparent;
+    }
+
+    label {
+        .has-error {
+            @apply text-red-600;
+        }
+    
+        .is-pristine {
+            @apply text-slate-300;
+        }
+    }
+
+    div {
+        &.has-error {
+            @apply border-red-600;
+        }
+        &.is-pristine {
+            @apply border-slate-600;
+        }
+    }
+
+    .leading {
+        @apply text-slate-300;
+    }
+
+    input {
+        @apply text-slate-300 outline-none;
+    }
+
+    p.ns-description {
+        @apply text-slate-300;
+    }
+
+    p.ns-error {
+       @apply text-red-600; 
+    }
+}
+
+/**
+ * Forms
+**/
+.form-input {
+    @apply outline-0;
+    label {
+        @apply text-gray-800;
+    }
+    input {
+        @apply border-blue-200 bg-blue-100 rounded;
+        &[disabled] {
+            @apply bg-gray-800;
+        }
+    }
+    p {
+        @apply text-gray-600;
+    }
+}
+
+.form-input-invalid {
+    label {
+        @apply text-red-500;
+    }
+    input {
+        @apply border-red-400 bg-red-100 rounded;
+    }
+    p {
+        @apply text-red-500;
+    }
+}
+.btn-blue {
+    @apply border-blue-600 bg-blue-600 text-white;
+}
+.btn-red {
+    @apply border-red-600 bg-red-600 text-white;
+}
+
+/**
+ * Buttons
+**/
+.ns-button {
+    &.ns-button-success {
+        @apply bg-green-600 text-white;
+    }
+    &.ns-button-danger {
+        @apply bg-red-600 text-white;
+    }
+    &.ns-button-warning {
+        @apply bg-orange-400 text-white;
+    }
+    &.ns-button-default {
+        @apply bg-white text-gray-800;
+    }
+    &.ns-button-info {
+        @apply bg-blue-600 text-white;
+    }
+    .ns-disabled {
+        @apply bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600;
+    }
+}
+
+.ns-close-button {
+    &:hover {
+        @apply bg-red-400 text-white border-red-400;
+    }
+}

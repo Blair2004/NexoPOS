@@ -1,0 +1,10 @@
+.notification-card {
+    h1 {
+        @apply text-gray-700
+    }
+    p {
+        @apply text-gray-600
+    }
+
+    @apply border-gray-200
+}

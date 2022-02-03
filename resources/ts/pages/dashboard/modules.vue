@@ -27,16 +27,16 @@
                 </div>
             </div>
             <div class="px-4 w-full md:w-1/2 lg:w-1/3 py-4" :key="moduleNamespace" v-for="(moduleObject,moduleNamespace) of modules">
-                <div class="rounded shadow overflow-hidden">
-                    <div class="module-head h-40 p-2 bg-white">
-                        <h3 class="font-semibold text-lg text-gray-700">{{ moduleObject[ 'name' ] }}</h3>
-                        <p class="text-gray-600 text-xs flex justify-between">
+                <div class="ns-modules rounded shadow overflow-hidden ns-box">
+                    <div class="module-head h-40 p-2">
+                        <h3 class="font-semibold text-lg">{{ moduleObject[ 'name' ] }}</h3>
+                        <p class="text-xs flex justify-between">
                             <span>{{ moduleObject[ 'author' ] }}</span>
                             <strong>v{{ moduleObject[ 'version' ] }}</strong>
                         </p>
-                        <p class="py-2 text-gray-700 text-sm">{{ moduleObject[ 'description' ] }}</p>
+                        <p class="py-2 text-sm">{{ moduleObject[ 'description' ] }}</p>
                     </div>
-                    <div class="footer bg-gray-200 p-2 flex justify-between">
+                    <div class="ns-box-footer border-t p-2 flex justify-between">
                         <ns-button v-if="! moduleObject.enabled" @click="enableModule( moduleObject )" type="info">{{ __( 'Enable' ) }}</ns-button>
                         <ns-button v-if="moduleObject.enabled" @click="disableModule( moduleObject )" type="success">{{ __( 'Disable' ) }}</ns-button>
                         <div class="flex -mx-1">

@@ -1,0 +1,88 @@
+.ns-table {
+    @apply w-full;
+    thead th {
+        @apply border-gray-300 bg-gray-200 text-gray-700;
+    }
+    tbody td {
+        @apply border-gray-200 text-gray-700;
+    }
+    tfoot td {
+        @apply border-gray-200 text-gray-700;
+    }
+
+    tbody > tr.info {
+        @apply bg-blue-200;
+    }
+
+    tbody > tr.danger {
+        @apply bg-red-200;
+    }
+
+    tbody > tr.success {
+        @apply bg-green-200;
+    }
+
+    tbody > tr.green {
+        @apply bg-yellow-200;
+    }
+}
+
+/**
+ * Crud
+**/
+#crud-table {
+    .create-button { 
+        @apply border-slate-700 bg-slate-600 text-slate-300;    
+        &:hover {
+            @apply bg-slate-500 border-slate-600;
+        }
+    } 
+    
+    .ns-table-row {
+        @apply border-slate-700;
+
+        td {
+            @apply border-slate-700 text-slate-300;
+        }
+
+        .ns-row-button {
+            @apply bg-slate-600 text-slate-300 border-slate-700;
+
+            &:hover {
+                @apply bg-slate-500 text-slate-300 border-transparent;
+            }
+        }
+
+        .ns-menu-wrapper > div {
+            @apply bg-slate-600;
+        }
+
+        .ns-action-button {
+            @apply text-slate-300;
+
+            &:hover {
+                @apply bg-slate-500 text-slate-200;
+            }
+
+            &:focus {
+                @apply focus:outline-none focus:bg-slate-800 focus:text-slate-200;
+            }
+        }
+    }
+
+    .ns-query-filter {
+        @apply border-slate-800;
+
+        &.table-filters-enabled {
+            @apply bg-blue-400 text-slate-200;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-slate-300 border-slate-700;
+        }
+
+        &:hover {
+            @apply border-slate-500 text-white bg-slate-500;
+        }
+    }
+}
