@@ -1,0 +1,19 @@
+#alert-popup, #confirm-popup {
+    @apply bg-white;
+
+    h2 {
+        @apply text-gray-700;
+    }
+
+    p {
+        @apply text-gray-600;
+    }
+
+    .action-buttons {
+        @apply border-gray-200 text-gray-700;
+
+        button:hover {
+            @apply bg-gray-100;
+        }
+    }
+}

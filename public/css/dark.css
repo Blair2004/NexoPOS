@@ -469,6 +469,131 @@
   color: rgb(203 213 225 / var(--tw-text-opacity));
 }
 
+.login-footer {
+  --tw-bg-opacity: 1;
+  background-color: rgb(71 85 105 / var(--tw-bg-opacity));
+}
+
+#ns-orders-chart .head {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+#ns-orders-chart .foot {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+#ns-orders-chart .foot > div {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+}
+#ns-orders-chart .foot > div span {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#ns-orders-chart .foot > div h2 {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
+}
+
+#ns-orders-summary .title {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+}
+#ns-orders-summary .head, #ns-orders-summary .title {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+#ns-orders-summary .head h3, #ns-orders-summary .head i, #ns-orders-summary .head h4, #ns-orders-summary .head p, #ns-orders-summary .title h3, #ns-orders-summary .title i, #ns-orders-summary .title h4, #ns-orders-summary .title p {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
+}
+#ns-orders-summary .head .paid-order, #ns-orders-summary .title .paid-order {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+#ns-orders-summary .head .other-order, #ns-orders-summary .title .other-order {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#ns-orders-summary .head .single-order, #ns-orders-summary .title .single-order {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+}
+#ns-orders-summary .head .paid-currency, #ns-orders-summary .title .paid-currency {
+  --tw-text-opacity: 1;
+  color: rgb(187 247 208 / var(--tw-text-opacity));
+}
+#ns-orders-summary .head .unpaid-currency, #ns-orders-summary .title .unpaid-currency {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+
+#ns-best-customers, #ns-best-cashiers {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+#ns-best-customers .head, #ns-best-cashiers .head {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#ns-best-customers .body, #ns-best-cashiers .body {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#ns-best-customers .body .single-customer, #ns-best-cashiers .body .single-customer {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+}
+
+.ns-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.ns-scrollbar::-webkit-scrollbar-track {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+.ns-scrollbar::-webkit-scrollbar-thumb {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / var(--tw-bg-opacity));
+}
+
+#alert-popup, #confirm-popup {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+}
+#alert-popup h2, #confirm-popup h2 {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
+}
+#alert-popup p, #confirm-popup p {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#alert-popup .action-buttons, #confirm-popup .action-buttons {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+#alert-popup .action-buttons button:hover, #confirm-popup .action-buttons button:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(71 85 105 / var(--tw-bg-opacity));
+}
+#alert-popup .action-buttons hr, #confirm-popup .action-buttons hr {
+  --tw-border-opacity: 1;
+  border-color: rgb(30 41 59 / var(--tw-border-opacity));
+}
+
 .pos-button-clicked {
   box-shadow: inset 0px 0px 5px 0px #a4a5a7;
 }

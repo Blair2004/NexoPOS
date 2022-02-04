@@ -21,25 +21,6 @@
         </div>
     </div>
 </template>
-<style scoped>
-.dark {
-    .login-footer {
-        @apply bg-slate-600;
-    }
-    div .link {
-        @apply text-blue-400;
-    }
-}
-.light {
-    div .link {
-        @apply text-blue-600;
-    }
-
-    .login-footer {
-        @apply bg-gray-200;
-    }
-}
-</style>
 <script>
 import FormValidation from '@/libraries/form-validation';
 import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';

@@ -3,10 +3,10 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import * as components from './components/components';
 import FormValidation from './libraries/form-validation';
 
-const nsRegister            =   require( '@/pages/auth/ns-register' ).default;
-const nsLogin               =   require( '@/pages/auth/ns-login' ).default;
-const nsPasswordLost        =   require( '@/pages/auth/ns-password-lost' ).default;
-const nsNewPassword         =   require( '@/pages/auth/ns-new-password' ).default;
+const nsRegister            =   () => import( './pages/auth/ns-register.vue' );
+const nsLogin               =   () => import( './pages/auth/ns-login.vue' );
+const nsPasswordLost        =   () => import( './pages/auth/ns-password-lost.vue' );
+const nsNewPassword         =   () => import( './pages/auth/ns-new-password.vue' );
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ];

@@ -22,18 +22,18 @@ import moment from "moment";
  * these are dynamic component
  * that are loaded conditionally
  */
-const NsPosDashboardButton = (<any>window).NsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
-const NsPosPendingOrderButton = (<any>window).NsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
-const NsPosOrderTypeButton = (<any>window).NsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
-const NsPosCustomersButton = (<any>window).NsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
-const NsPosResetButton = (<any>window).NsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
-const NsPosCashRegister = (<any>window).NsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
-const NsAlertPopup = (<any>window).NsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
-const NsConfirmPopup = (<any>window).NsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
-const NsPOSLoadingPopup = (<any>window).NsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
-const NsPromptPopup = (<any>window).NsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
-const NsLayawayPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
-const NSPosShippingPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
+const NsPosDashboardButton = (<any>window).NsPosDashboardButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue');
+const NsPosPendingOrderButton = (<any>window).NsPosPendingOrderButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button.vue');
+const NsPosOrderTypeButton = (<any>window).NsPosOrderTypeButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button.vue');
+const NsPosCustomersButton = (<any>window).NsPosCustomersButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue');
+const NsPosResetButton = (<any>window).NsPosResetButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue');
+const NsPosCashRegister = (<any>window).NsPosCashRegister = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue');
+const NsAlertPopup = (<any>window).NsAlertPopup = () => import('./popups/ns-' + 'alert' + '-popup.vue');
+const NsConfirmPopup = (<any>window).NsConfirmPopup = () => import('./popups/ns-pos-' + 'confirm' + '-popup.vue');
+const NsPOSLoadingPopup = (<any>window).NsPOSLoadingPopup = () => import('./popups/ns-pos-' + 'loading' + '-popup.vue');
+const NsPromptPopup = (<any>window).NsPromptPopup = () => import('./popups/ns-' + 'prompt' + '-popup.vue');
+const NsLayawayPopup = (<any>window).NsLayawayPopup = () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue');
+const NSPosShippingPopup = (<any>window).NsLayawayPopup = () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue');
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;

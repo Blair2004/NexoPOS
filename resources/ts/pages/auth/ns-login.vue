@@ -24,14 +24,6 @@
         </div>
     </div>
 </template>
-<style scoped>
-.dark .login-footer {
-    @apply bg-slate-600
-}
-.light .login-footer {
-    @apply bg-gray-200;
-}
-</style>
 <script>
 import { forkJoin } from 'rxjs';
 import FormValidation from '@/libraries/form-validation';

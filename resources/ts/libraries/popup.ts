@@ -40,7 +40,11 @@ export class Popup {
         return popup;
     }
 
-    open( component, params = {} ) {
+    async open( component, params = {} ) {
+        if ( typeof component === 'function' ) {
+            component = (await component()).default;
+        }
+
         const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         this.parentWrapper.style.filter     =   'blur(4px)';
         body.style.filter                   =   'blur(6px)';

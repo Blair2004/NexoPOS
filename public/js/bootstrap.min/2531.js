@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkNexoPOS_4x=self.webpackChunkNexoPOS_4x||[]).push([[2531],{2531:(e,n,t)=>{t.r(n),t.d(n,{default:()=>o});const l={template:"#ns-procurement-invoice",methods:{printInvoice:function(){this.$htmlToPaper("printable-container")}}};const o=(0,t(1900).Z)(l,undefined,undefined,!1,null,null,null).exports}}]);

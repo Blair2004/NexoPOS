@@ -222,30 +222,31 @@
 </template>
 <script>
 import { Popup } from '@/libraries/popup';
-import PosPaymentPopup from '@/popups/ns-pos-payment-popup';
-import PosConfirmPopup from '@/popups/ns-pos-confirm-popup';
-import nsPosQuantityPopupVue from '@/popups/ns-pos-quantity-popup.vue';
 import { ProductQuantityPromise } from "./queues/products/product-quantity";
-import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
-import nsPosOrderTypePopupVue from '@/popups/ns-pos-order-type-popup.vue';
 import { nsHooks, nsSnackBar } from '@/bootstrap';
-import nsPosCustomerPopupVue from '@/popups/ns-pos-customer-select-popup.vue';
 import { ProductsQueue } from "./queues/order/products-queue";
 import { CustomerQueue } from "./queues/order/customer-queue";
 import { PaymentQueue } from "./queues/order/payment-queue";
 import { TypeQueue } from "./queues/order/type-queue";
 import switchTo from "@/libraries/pos-section-switch";
-import nsPosShippingPopupVue from '@/popups/ns-pos-shipping-popup.vue';
-import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
-import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
-import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
-import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
-import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
-import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
-import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';
-import nsPosProductPricePopupVue from '@/popups/ns-pos-product-price-popup.vue';
-import nsPosQuickProductPopupVue from '@/popups/ns-pos-quick-product-popup.vue';
+
+const nsPosCustomerPopupVue = () => import( '@/popups/ns-pos-customer-select-popup.vue' );
+const PosPaymentPopup = () => import( '@/popups/ns-pos-payment-popup' );
+const PosConfirmPopup = () => import( '@/popups/ns-pos-confirm-popup' );
+const nsPosQuantityPopupVue = () => import( '@/popups/ns-pos-quantity-popup.vue' );
+const nsPosDiscountPopupVue = () => import( '@/popups/ns-pos-discount-popup.vue' );
+const nsPosOrderTypePopupVue = () => import( '@/popups/ns-pos-order-type-popup.vue' );
+const nsPosShippingPopupVue = () => import( '@/popups/ns-pos-shipping-popup.vue' );
+const nsPosHoldOrdersPopupVue = () => import( '@/popups/ns-pos-hold-orders-popup.vue' );
+const nsPosLoadingPopupVue = () => import( '@/popups/ns-pos-loading-popup.vue' );
+const nsPosNotePopupVue = () => import( '@/popups/ns-pos-note-popup.vue' );
+const nsPosTaxPopupVue = () => import( '@/popups/ns-pos-tax-popup.vue' );
+const nsPosCouponsPopupVue = () => import( '@/popups/ns-pos-coupons-popup.vue' );
+const nsPosCouponsLoadPopupVue = () => import( '@/popups/ns-pos-coupons-load-popup.vue' );
+const nsPosOrderSettingsVue = () => import( '@/popups/ns-pos-order-settings.vue' );
+const nsPosProductPricePopupVue = () => import( '@/popups/ns-pos-product-price-popup.vue' );
+const nsPosQuickProductPopupVue = () => import( '@/popups/ns-pos-quick-product-popup.vue' );
 
 export default {
     name: 'ns-pos-cart',

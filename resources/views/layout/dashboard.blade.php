@@ -57,7 +57,7 @@ $theme  =   Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_the
     <div class="h-full w-full flex flex-col">
         <div id="dashboard-body" class="overflow-hidden flex flex-auto">
             <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-50 absolute md:static flex-shrink-0 bg-gray-900 dark:bg-slate-900 h-full flex-col overflow-hidden">
-                <div class="overflow-y-auto h-full text-sm">
+                <div class="ns-scrollbar overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
                         @if ( ns()->option->get( 'ns_store_rectangle_logo' ) )
                         <img src="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" class="w-11/12" alt="logo"/>

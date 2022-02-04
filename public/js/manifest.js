@@ -97,6 +97,39 @@
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames not based on template
+/******/ 			if ({"resources_ts_pages_dashboard_rewards-system_vue":1,"resources_ts_pages_dashboard_create-coupons_vue":1,"resources_ts_pages_dashboard_settings_vue":1,"resources_ts_pages_dashboard_reset_vue":1,"resources_ts_pages_dashboard_modules_vue":1,"resources_ts_pages_dashboard_ns-permissions_vue":1,"resources_ts_pages_dashboard_procurements_ns-procurement_vue":1,"resources_ts_pages_dashboard_procurements_manage-products_vue":1,"resources_ts_pages_dashboard_procurements_ns-procurement-invoice_vue":1,"resources_ts_pages_dashboard_ns-notifications_vue":1,"resources_ts_pages_dashboard_reports_ns-low-stock-report_vue":1,"resources_ts_pages_dashboard_reports_ns-sale-report_vue":1,"resources_ts_pages_dashboard_reports_ns-sold-stock-report_vue":1,"resources_ts_pages_dashboard_reports_ns-profit-report_vue":1,"resources_ts_pages_dashboard_reports_ns-cash-flow-report_vue":1,"resources_ts_pages_dashboard_reports_ns-yearly-report_vue":1,"resources_ts_pages_dashboard_reports_ns-best-products-report_vue":1,"resources_ts_pages_dashboard_reports_ns-payment-types-report_vue":1,"resources_ts_pages_dashboard_home_ns-dashboard-cards_vue":1,"resources_ts_pages_dashboard_home_ns-best-customers_vue":1,"resources_ts_pages_dashboard_home_ns-best-cashiers_vue":1,"resources_ts_pages_dashboard_home_ns-orders-summary_vue":1,"resources_ts_pages_dashboard_home_ns-orders-chart_vue":1,"resources_ts_pages_dashboard_home_ns-cashier-dashboard_vue":1,"resources_ts_pages_dashboard_products_ns-stock-adjustment_vue":1,"resources_ts_pages_dashboard_orders_ns-order-invoice_vue":1,"resources_ts_popups_ns-prompt-popup_vue":1,"resources_ts_popups_ns-alert-popup_vue":1,"resources_ts_popups_ns-pos-loading-popup_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-dashboard-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-pending-orders-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-order-type-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-customers-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-reset-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-registers-button_vue":1,"resources_ts_popups_ns-pos-confirm-popup_vue":1,"resources_ts_popups_ns-pos-layaway-popup_vue":1,"resources_ts_popups_ns-pos-shipping-popup_vue":1,"resources_ts_pages_dashboard_pos_ns-pos_vue":1,"resources_ts_pages_dashboard_pos_ns-pos-cart_vue":1,"resources_ts_pages_dashboard_pos_ns-pos-grid_vue":1,"resources_ts_pages_auth_ns-register_vue":1,"resources_ts_pages_auth_ns-login_vue":1,"resources_ts_pages_auth_ns-password-lost_vue":1,"resources_ts_pages_auth_ns-new-password_vue":1,"resources_ts_popups_ns-pos-hold-orders-popup_vue":1,"resources_ts_popups_ns-pos-note-popup_vue":1,"resources_ts_popups_ns-pos-tax-popup_vue":1,"resources_ts_popups_ns-pos-coupons-popup_vue":1,"resources_ts_popups_ns-pos-order-settings_vue":1,"resources_ts_popups_ns-pos-product-price-popup_vue":1,"resources_ts_popups_ns-pos-quick-product-popup_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference all chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".css";
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -112,6 +145,52 @@
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "NexoPOS-4x:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			;
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -134,6 +213,11 @@
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/";
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
 /******/ 	(() => {
 /******/ 		// no baseURI
@@ -148,7 +232,44 @@
 /******/ 			"css/app": 0
 /******/ 		};
 /******/ 		
-/******/ 		// no chunk on demand loading
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(!/^(css\/(app|dark|light)|\/js\/manifest)$/.test(chunkId)) {
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
 /******/ 		
 /******/ 		// no prefetching
 /******/ 		

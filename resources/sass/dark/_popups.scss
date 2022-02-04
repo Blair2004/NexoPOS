@@ -1,0 +1,23 @@
+#alert-popup, #confirm-popup {
+    @apply bg-slate-700;
+
+    h2 {
+        @apply text-slate-200;
+    }
+
+    p {
+        @apply text-slate-300;
+    }
+
+    .action-buttons {
+        @apply border-slate-800 text-slate-300;
+
+        button:hover {
+            @apply bg-slate-600;
+        }
+
+        hr {
+            @apply border-slate-800;
+        }
+    }
+}

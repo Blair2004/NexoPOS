@@ -1,0 +1,57 @@
+#ns-orders-chart {
+    .head {
+        @apply bg-slate-700;
+    }
+    .foot {
+        @apply bg-slate-700; 
+        > div {
+            @apply border-slate-800;
+            span {
+                @apply text-slate-300;
+            }
+            h2 {
+                @apply text-slate-200; 
+            }
+        }
+    }
+}
+
+#ns-orders-summary {
+    .title {
+        @apply border-slate-800;
+    }
+    .head, .title {
+        @apply bg-slate-700;
+        h3, i, h4, p {
+            @apply text-slate-200;
+        }
+        .paid-order {
+            @apply bg-green-600 text-white;
+        }
+        .other-order {
+            @apply bg-slate-700 text-slate-300;
+        }
+        .single-order {
+            @apply border-slate-800;
+        }
+        .paid-currency {
+            @apply text-green-200;
+        }
+        .unpaid-currency {
+            @apply text-slate-300;
+        }
+    }
+}
+
+#ns-best-customers, #ns-best-cashiers {
+    @apply bg-slate-700;
+    .head {
+        @apply bg-slate-700 border-slate-800 text-slate-300;
+    }
+    .body {
+        @apply text-slate-300 bg-slate-700;
+        .single-customer {
+            @apply border-slate-800;
+        }
+    }
+}

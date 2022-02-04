@@ -48,7 +48,6 @@ mix
     .sass('resources/sass/app.scss', 'public/css')
     .sass('resources/sass/dark.scss', 'public/css')
     .sass('resources/sass/light.scss', 'public/css')
-    .minify()
     .options({
         processCssUrls: false,
         postCss: [ 

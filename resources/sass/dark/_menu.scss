@@ -1,0 +1,13 @@
+.ns-scrollbar {
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply bg-slate-700;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        @apply bg-slate-300;
+    }
+}

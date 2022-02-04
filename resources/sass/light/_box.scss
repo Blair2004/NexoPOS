@@ -1,0 +1,11 @@
+.ns-box {
+    @apply bg-white;
+
+    .ns-box-header {
+        @apply border-gray-200 text-gray-700
+    }
+
+    .ns-box-footer {
+        @apply border-gray-200;
+    }
+}

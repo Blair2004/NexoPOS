@@ -1,22 +1,9 @@
-.ns-box {
-    @apply bg-white;
-
-    .ns-box-header {
-        @apply border-gray-200 text-gray-700
-    }
-
-    .ns-box-footer {
-        @apply border-gray-200;
-    }
-}
-
-.ns-notice-danger {
-    @apply border-red-600 bg-red-200 text-gray-700;
-
-    pre {
-        @apply bg-gray-700 text-white
-    }
-}
+@import 'light/_dashboard.scss';
+@import 'light/_forms.scss';
+@import 'light/_login.scss';
+@import 'light/_popups.scss';
+@import 'light/_box.scss';
+@import 'light/_notices.scss';
 
 .ns-normal-text {
     @apply text-gray-800;

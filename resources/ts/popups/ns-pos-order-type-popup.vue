@@ -24,7 +24,6 @@
 </template>
 <script>
 import resolveIfQueued from '@/libraries/popup-resolver';
-import nsPosShippingPopupVue from './ns-pos-shipping-popup.vue';
 import { __ } from '@/libraries/lang';
 export default {
     data() {

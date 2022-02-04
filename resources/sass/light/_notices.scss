@@ -1,0 +1,7 @@
+.ns-notice-danger {
+    @apply border-red-600 bg-red-200 text-gray-700;
+
+    pre {
+        @apply bg-gray-700 text-white
+    }
+}
