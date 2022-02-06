@@ -7,7 +7,7 @@ namespace Modules\{{ $module[ 'namespace' ] }}\Models;
 
 use App\Models\NsModel;
 
-class {{ ucwords( $name ) }} extends Model
+class {{ ucwords( $name ) }} extends NsModel
 {
     //
 }

@@ -29,11 +29,11 @@
     }
 
     label {
-        .has-error {
+        &.has-error {
             @apply text-red-600;
         }
     
-        .is-pristine {
+        &.is-pristine {
             @apply text-slate-300;
         }
     }
@@ -105,6 +105,8 @@
  * Buttons
 **/
 .ns-button {
+    @apply shadow;
+    
     &.ns-button-success {
         @apply bg-green-600 text-white;
     }

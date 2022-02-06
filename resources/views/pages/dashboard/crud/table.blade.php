@@ -9,7 +9,6 @@ use App\Classes\Output;
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
         @include( 'common.dashboard.title' )
-        @include( 'components.session-message' )
         <ns-crud 
             src="{{ $src }}" 
             :query-params='@json( $queryParams ?? [] )'

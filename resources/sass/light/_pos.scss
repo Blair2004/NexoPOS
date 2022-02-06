@@ -1,0 +1,228 @@
+#pos-container {
+    @apply bg-gray-300;
+
+    #header-buttons {
+        button {
+            @apply bg-white text-gray-700;
+        }
+    }
+
+    #pos-cart {
+        #tools {
+            .switch-cart {
+                @apply bg-white font-semibold text-gray-700;
+                > span {
+                    @apply bg-green-500 text-white;
+                }
+            }
+            .switch-grid {
+                @apply bg-gray-300 border-gray-300 text-gray-600;
+            }
+        }
+
+        #cart-container {
+            @apply bg-white;
+            #cart-toolbox {
+                @apply border-gray-300;
+                > div {
+                    @apply border-gray-300;
+
+                    button {
+                        @apply bg-gray-200 border-gray-300;
+                    }
+                }
+            }
+            #cart-table-header {
+                @apply text-gray-700;
+                > div {
+                    @apply border-gray-200 bg-gray-100
+                }
+            }
+            #cart-products-table {
+                > div {
+                    @apply text-gray-700;
+
+                    .product-item {
+                        @apply border-gray-200;
+
+                        .remove-product {
+                            @apply border-red-400;   
+
+                            &:hover {
+                                @apply text-red-400;
+                            }
+                        }
+
+                        .price {
+                            &:hover {
+                                @apply text-blue-600;
+                            }
+                        }
+
+                        .wholesale-mode {
+                            @apply text-green-600 border-green-600;
+                            &:hover {
+                                @apply text-green-700;
+                            }
+                        }
+
+                        .normal-mode {
+                            @apply border-blue-400;
+
+                            &:hover {
+                                @apply text-blue-400;
+                            }
+                        }
+
+                        .product-controls {
+
+                        }
+                    }
+
+                    .quantity-changer {
+                        @apply border-gray-200;
+
+                        > span {
+                            @apply border-blue-400;   
+                        }
+
+                        &:hover {
+                            @apply bg-blue-100;
+                        }
+                    }
+
+                    .product-price {
+                        @apply border-gray-200;
+                    }
+                }
+                .empty-cart {
+                    @apply border-gray-200;
+                    h3 {
+                        @apply text-gray-600;
+                    }
+                }
+            }
+
+            #cart-products-summary {
+                table {
+                    @apply text-gray-700;
+                    td {
+                        @apply border-gray-300;
+                        a {
+                            @apply border-blue-400;
+
+                            &:hover {
+                                @apply text-blue-400;
+                            }
+                        }
+                    }
+
+                    .summary-line {
+                        @apply bg-green-200;
+                    }
+                }
+            }
+
+            #cart-bottom-buttons {
+                @apply border-gray-200; 
+
+                #pay-button {
+                    @apply bg-green-500 text-white  border-r border-green-600;
+
+                    &:hover {
+                        @apply bg-green-600;
+                    }
+                }
+
+                #hold-button {
+                    @apply bg-blue-500 text-white border-r border-blue-600;
+
+                    &:hover {
+                        @apply bg-blue-600;
+                    }
+                }
+
+                #discount-button {
+                    @apply bg-white border-r border-gray-200 text-gray-700;
+
+                    &:hover {
+                        @apply bg-indigo-100;
+                    }
+                }
+
+                #void-button {
+                    @apply bg-red-500 text-white border-gray-200 hover:bg-red-600;
+
+                    &:hover {
+                        @apply bg-red-600;
+                    }
+                }
+            }
+        }
+    }
+
+    #pos-grid {
+        .switch-cart {
+            @apply bg-gray-300 border-gray-300 text-gray-600;
+
+            .products-count {
+                @apply bg-green-500 text-white;
+            }
+        }
+        .switch-grid {
+            @apply bg-white text-gray-700;
+        }
+
+        #grid-container {
+            @apply bg-white;
+            #grid-header {
+                @apply border-gray-200;
+                > div {
+                    @apply border-gray-300;
+                    button {
+                        @apply bg-gray-200 border-gray-300;
+                        &.pos-button-clicked {
+                            @apply bg-gray-300;
+                            box-shadow: inset 0px 0px 5px 0px #a4a5a7;
+                        }
+                    }
+                    input {
+                        @apply bg-gray-100;
+                    }
+                }
+            }
+
+            #grid-breadscrumb {
+                @apply border-gray-200;
+
+                ul > li {
+                    @apply text-gray-700;
+                }
+            }
+
+            #grid-items {
+                @apply text-gray-600;
+
+                .cell-item {
+                    @apply border-gray-200;
+
+                    .cell-item-label {
+                        background:rgb(255 255 255 / 73%);
+                    }
+
+                    &:hover {
+                        @apply bg-gray-200;
+                    }
+
+                    h3 {
+                        @apply text-gray-700;
+                    }
+
+                    i, span {
+                        @apply text-gray-600;
+                    }
+                }
+            }
+        }
+    }
+}

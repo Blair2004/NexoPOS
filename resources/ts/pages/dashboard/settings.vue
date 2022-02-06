@@ -7,7 +7,7 @@
                 v-for="( tab, key ) of form.tabs" 
                 class="text-gray-700 dark:text-white cursor-pointer flex items-center px-4 py-2 rounded-tl-lg rounded-tr-lg">
                 <span>{{ tab.label }}</span>
-                <span v-if="tab.errors.length > 0" class="ml-2 rounded-full bg-red-400 text-white text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
+                <span v-if="tab.errors && tab.errors.length > 0" class="ml-2 rounded-full bg-red-400 text-white text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
             </div>
         </div>
         <div class="card-body bg-white dark:bg-slate-700 dark:text-white rounded-br-lg rounded-bl-lg shadow">
@@ -43,7 +43,7 @@ export default {
         return {
             validation: new FormValidation,
             form: {},
-            test: ''
+            test: '',
         }
     },
     computed: {
@@ -110,7 +110,9 @@ export default {
             for( let tab in this.form.tabs ) {
                 this.form.tabs[ tab ].active     =   false;
             }
+
             tab.active  =   true;
+
             nsHooks.doAction( 'ns-settings-change-tab', { tab, instance: this });
         },
         loadSettingsForm() {
@@ -139,7 +141,7 @@ export default {
                 nsHooks.doAction( 'ns-settings-loaded', this );
 
                 nsHooks.doAction( 'ns-settings-change-tab', { tab : this.activeTab, instance: this });
-            })
+            });
         }
     }
 }

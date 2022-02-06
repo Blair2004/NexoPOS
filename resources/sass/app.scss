@@ -87,12 +87,9 @@ body {
     @apply border-red-600 bg-red-600 text-white;
 }
 
-.pos-button-clicked {
-    box-shadow: inset 0px 0px 5px 0px #a4a5a7;
-}
-
 .ns-table {
     @apply w-full;
+    
     thead th {
         @apply border border-gray-300 bg-gray-200 p-2 text-gray-700;
     }
