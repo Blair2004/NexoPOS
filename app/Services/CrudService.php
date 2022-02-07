@@ -845,9 +845,11 @@ class CrudService
         }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
-            foreach( $tab[ 'fields' ] as $field ) {
-                if ( isset( $field[ 'validation' ] ) ) {
-                    $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+            if ( ! empty( $tab[ 'fields' ] ) ) {
+                foreach( $tab[ 'fields' ] as $field ) {
+                    if ( isset( $field[ 'validation' ] ) ) {
+                        $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+                    }
                 }
             }
         }
@@ -890,7 +892,7 @@ class CrudService
              * We're ignoring the tabs
              * that are linked to a model.
              */
-            if ( ! in_array( $tabKey, $keys ) ) {
+            if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
                     $value      =       data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 

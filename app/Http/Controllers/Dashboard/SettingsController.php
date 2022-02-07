@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\SettingsRequest;
 use App\Services\CrudService;
@@ -165,10 +166,11 @@ class SettingsController extends DashboardController
     public function resetSettings()
     {
         /**
-         * @temp
+         * Users who can manage options can 
+         * reset the system.
          */
-        if ( Auth::user()->role->namespace !== 'admin' ) {
-            throw new Exception( __( 'Access Denied' ) );
+        if ( ! Auth::user()->allowedTo([ 'manage.options' ]) ) {
+            throw new NotAllowedException( __( 'Access Denied' ) );
         }
 
         return $this->view( 'pages.dashboard.settings.reset', [

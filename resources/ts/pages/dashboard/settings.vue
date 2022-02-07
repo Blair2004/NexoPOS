@@ -134,6 +134,15 @@ export default {
                         form.tabs[ tab ].active  =   this.form.tabs[ tab ].active;
                     }
                     i++;
+
+                    /**
+                     * to avoid unnecessary errors
+                     * let's create empty fields if those
+                     * aren't provided.
+                     */
+                    if ( form.tabs[ tab ].fields === undefined ) {
+                        form.tabs[ tab ].fields     =   [];
+                    }
                 }
 
                 this.form  =    this.validation.createForm( form );

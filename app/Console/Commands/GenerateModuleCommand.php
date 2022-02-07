@@ -161,7 +161,8 @@ class GenerateModuleCommand extends Command
             break;
             case 'event'     :   
             return view( 'generate.modules.event', [
-                'module'    =>  $this->module
+                'module'    =>  $this->module,
+                'name'      =>  $this->module[ 'namespace' ] . 'Event'
             ]); 
             break;
         }

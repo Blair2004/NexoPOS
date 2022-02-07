@@ -23,17 +23,22 @@ export default class FormValidation {
         const globalErrors          =   [];
         
         for( let key in form.tabs ) {
-            const tabsInvalidity    =   [];
-            const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
-            
-            if ( validErrors.length > 0 ) {
-                tabsInvalidity.push(
-                    validErrors
-                );
+            /**
+             * Only tabs having fields can be verified.
+             */
+            if ( form.tabs[ key ].fields ) {
+                const tabsInvalidity    =   [];
+                const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
+                
+                if ( validErrors.length > 0 ) {
+                    tabsInvalidity.push(
+                        validErrors
+                    );
+                }
+    
+                form.tabs[ key ].errors     =   tabsInvalidity.flat();
+                globalErrors.push( tabsInvalidity.flat() );
             }
-
-            form.tabs[ key ].errors     =   tabsInvalidity.flat();
-            globalErrors.push( tabsInvalidity.flat() );
         }
 
         return globalErrors.flat().filter( error => error !== undefined );
