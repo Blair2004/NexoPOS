@@ -15,7 +15,7 @@ const mix           = require( 'laravel-mix' );
 mix
     .webpackConfig({
         resolve: {
-            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
+            extensions: [ ".vue", ".ts" ],
             alias: {
                 '@': path.resolve( __dirname, 'resources/ts/')
             }
@@ -46,8 +46,8 @@ mix
     .ts( 'resources/ts/setup.ts', mix.inProduction() ? 'public/js/setup.min' : 'public/js')
     .ts( 'resources/ts/popups.ts', mix.inProduction() ? 'public/js/popups.min' : 'public/js/' )
     .sass('resources/sass/app.scss', 'public/css')
-    .sass('resources/sass/dark.scss', 'public/css')
-    .sass('resources/sass/light.scss', 'public/css')
+    // .sass('resources/sass/dark.scss', 'public/css')
+    // .sass('resources/sass/light.scss', 'public/css')
     .options({
         processCssUrls: false,
         postCss: [ 

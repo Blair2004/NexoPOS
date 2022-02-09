@@ -7,6 +7,10 @@
         }
     }
 
+    #pos-app {
+        @apply bg-gray-200;
+    }
+
     #pos-cart {
         #tools {
             .switch-cart {

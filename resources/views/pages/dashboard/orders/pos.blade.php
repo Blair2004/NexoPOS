@@ -10,8 +10,8 @@ use App\Models\User;
 
 @section( 'layout.base.body' )
 <div id="pos-app" class="h-full w-full relative">
-    <ns-pos></ns-pos>
-    <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full h-full flex flex-col items-center justify-center bg-gray-200">
+    <!-- <ns-pos></ns-pos> -->
+    <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full h-full flex flex-col items-center justify-center">
         @if ( ns()->option->get( 'ns_store_square_logo', false ) )
         <img src="{{ ns()->option->get( 'ns_store_square_logo' ) }}" alt="POS">
         @else
