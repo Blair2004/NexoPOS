@@ -26,15 +26,17 @@ module.exports = (ctx) => {
     syntax: 'postcss-scss',
     parser: 'postcss-scss',
     plugins: {
-      'autoprefixer': {},
+      'postcss-css-variables': {},
       'postcss-import': {},
+      'postcss-nesting': {},
+      'autoprefixer': {},
+      'tailwindcss/nesting': require('tailwindcss/nesting'),
+      'tailwindcss': require('tailwindcss'),      
       'postcss-hash': ctx.env === 'production' ? {
         algorithm: 'sha256',
           trim: 20,
           manifest: './public/css-manifest.json'
       } : false,
-      'tailwindcss/nesting' : {},
-      'tailwindcss': require('tailwindcss'),      
       'cssnano': ctx.env === 'production' ? {} : false
     }
   };

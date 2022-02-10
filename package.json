@@ -29,6 +29,7 @@
     "postcss": "^8.4.6",
     "postcss-advanced-variables": "^3.0.1",
     "postcss-cli": "^9.1.0",
+    "postcss-css-variables": "^0.18.0",
     "postcss-custom-properties": "^12.1.4",
     "postcss-hash": "^3.0.0",
     "postcss-import": "^14.0.2",

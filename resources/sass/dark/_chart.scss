@@ -10,7 +10,7 @@
                 @apply text-slate-300;
             }
             h2 {
-                color: var(--ns-text-light-color);
+                @apply text-slate-200;
             }
         }
     }
