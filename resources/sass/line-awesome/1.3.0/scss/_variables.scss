@@ -8,7 +8,7 @@ $la-inverse: #fff !default;
 $la-version: 1.3.0 !default;
 $la-li-width: math.div(20em, 14) !default;
 
-@function la-content($la-var) {
+@function la-content( $la-var ) {
   @return unquote("\"#{ $la-var }\"");
 }
 

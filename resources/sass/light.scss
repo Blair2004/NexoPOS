@@ -1,15 +1,15 @@
-// @import 'light/_box.scss';
-// @import 'light/_notices.scss';
-// @import 'light/_modules.scss';
-// @import 'light/_forms.scss';
-// @import 'light/_crud.scss';
-// @import 'light/_dashboard.scss';
-// @import 'light/_login.scss';
-// @import 'light/_chart.scss';
-// @import 'light/_menu.scss';
-// @import 'light/_popups.scss';
-// @import 'light/_pos.scss';
-// @import 'light/_welcome.scss';
+@import 'light/_box.scss';
+@import 'light/_notices.scss';
+@import 'light/_modules.scss';
+@import 'light/_forms.scss';
+@import 'light/_crud.scss';
+@import 'light/_dashboard.scss';
+@import 'light/_login.scss';
+@import 'light/_chart.scss';
+@import 'light/_menu.scss';
+@import 'light/_popups.scss';
+@import 'light/_pos.scss';
+@import 'light/_welcome.scss';
 
 .ns-normal-text {
     @apply text-gray-800;
@@ -46,7 +46,6 @@
 /**
  * Fields
 **/
-// .ns-switch
 .ns-switch button.selected {
     @apply bg-blue-400 text-white;
 }
@@ -54,12 +53,10 @@
     @apply bg-gray-100 text-gray-800;
 }
 
-// .ns-select
 .ns-select select {
     @apply text-gray-700;
 }
 
-// .ns-input, .ns-switch, .ns-select
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media
 {
     [disabled] {

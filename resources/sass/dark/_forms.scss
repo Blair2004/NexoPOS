@@ -2,7 +2,6 @@
  * Fields
 **/
 
-// .ns-switch
 .ns-switch button.selected {
     @apply bg-blue-500 text-white;
 } 
@@ -10,7 +9,6 @@
     @apply bg-slate-600 text-slate-400;
 }
 
-// .ns-select
 .ns-select select {
     @apply text-slate-300;
     option {
@@ -18,7 +16,6 @@
     }
 }
 
-// ns-input, ns-switch, .ns-select
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
         @apply bg-slate-800;

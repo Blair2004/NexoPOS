@@ -54,7 +54,6 @@ module.exports = {
   content: [
     './app/Crud/**/*.php',
     './resources/**/*.{vue,ts,php}',
-    './modules/**/Resources/*.{php,vue,ts}',
   ],
   darkMode: 'class',
   corePlugins: {
