@@ -53,8 +53,8 @@ const widthDims = {
 module.exports = {
   content: [
     './app/Crud/**/*.php',
-    // './resources/**/*.{html,vue,ts,php}',
-    // './modules/**/*.{php,vue,ts}',
+    './resources/**/*.{vue,ts,php}',
+    './modules/**/Resources/*.{php,vue,ts}',
   ],
   darkMode: 'class',
   corePlugins: {
