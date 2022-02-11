@@ -142,7 +142,7 @@ export default {
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div v-if="register.total_sale_amount && register.balance">
+        <div v-if="register.total_sale_amount !== undefined && register.balance !== undefined">
             <div class="h-16 text-3xl bg-blue-400 text-white flex items-center justify-between px-3">
                 <span class="">{{ __( 'Sales' ) }}</span>
                 <span class="font-bold">{{ register.total_sale_amount | currency }}</span>
