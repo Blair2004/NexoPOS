@@ -6,7 +6,7 @@ use App\Observers\UUIDObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @deprecated
+ * @deprecated App\Models\AccountType is the replacement.
  */
 class ExpenseCategory extends NsModel
 {

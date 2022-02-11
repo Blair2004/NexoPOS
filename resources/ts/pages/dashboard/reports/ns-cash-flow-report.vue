@@ -15,8 +15,8 @@ export default {
     },
     data() {
         return {
-            startDate: moment(),
-            endDate: moment(),
+            startDate: moment().format( 'YYYY/MM/DD HH:mm' ),
+            endDate: moment().format( 'YYYY/MM/DD HH:mm' ),
             report: []
         }
     },
@@ -30,14 +30,14 @@ export default {
     },
     methods: {
         setStartDate( moment ) {
-            this.startDate  =   moment.format();
+            this.startDate  =   moment.format( 'YYYY/MM/DD HH:mm' );
         },
         setEndDate( moment ) {
-            this.endDate    =   moment.format();
+            this.endDate    =   moment.format( 'YYYY/MM/DD HH:mm' );
         },
         loadReport() {
-            const startDate     =   moment( this.startDate );
-            const endDate       =   moment( this.endDate );
+            const startDate     =   this.startDate;
+            const endDate       =   this.endDate;
 
             nsHttpClient.post( '/api/nexopos/v4/reports/cash-flow', { startDate, endDate })
                 .subscribe({
