@@ -188,11 +188,23 @@
         --tw-text-opacity: 1;
         color: rgb(255 255 255 / var(--tw-text-opacity));
 }
+.ns-button.ns-button-success span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(22 163 74 / var(--tw-text-opacity));
+}
 .ns-button.ns-button-danger {
         --tw-bg-opacity: 1;
         background-color: rgb(220 38 38 / var(--tw-bg-opacity));
         --tw-text-opacity: 1;
         color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-button.ns-button-danger span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 .ns-button.ns-button-warning {
         --tw-bg-opacity: 1;
@@ -200,17 +212,35 @@
         --tw-text-opacity: 1;
         color: rgb(255 255 255 / var(--tw-text-opacity));
 }
+.ns-button.ns-button-warning span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(234 88 12 / var(--tw-text-opacity));
+}
 .ns-button.ns-button-default {
         --tw-bg-opacity: 1;
         background-color: rgb(255 255 255 / var(--tw-bg-opacity));
         --tw-text-opacity: 1;
         color: rgb(31 41 55 / var(--tw-text-opacity));
 }
+.ns-button.ns-button-default span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity));
+}
 .ns-button.ns-button-info {
         --tw-bg-opacity: 1;
         background-color: rgb(37 99 235 / var(--tw-bg-opacity));
         --tw-text-opacity: 1;
         color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-button.ns-button-info span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(37 99 235 / var(--tw-text-opacity));
 }
 .ns-button .ns-disabled {
         cursor: not-allowed;
@@ -219,6 +249,12 @@
         border-color: rgb(107 114 128 / var(--tw-border-opacity));
         --tw-bg-opacity: 1;
         background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+.ns-button .ns-disabled span.ns-label {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 255 255 / var(--tw-bg-opacity));
         --tw-text-opacity: 1;
         color: rgb(75 85 99 / var(--tw-text-opacity));
 }

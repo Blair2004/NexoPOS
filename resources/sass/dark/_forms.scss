@@ -106,21 +106,45 @@
     
     &.ns-button-success {
         @apply bg-green-600 text-white;
+
+        span.ns-label {
+            @apply bg-white text-green-600;
+        }
     }
     &.ns-button-danger {
         @apply bg-red-600 text-white;
+
+        span.ns-label {
+            @apply bg-white text-red-600;
+        }
     }
     &.ns-button-warning {
         @apply bg-orange-400 text-white;
+
+        span.ns-label {
+            @apply bg-white text-orange-600;
+        }
     }
     &.ns-button-default {
         @apply bg-white text-gray-800;
+
+        span.ns-label {
+            @apply bg-gray-800 text-white;
+        }
     }
     &.ns-button-info {
         @apply bg-blue-600 text-white;
+
+        span.ns-label {
+            @apply bg-white text-blue-600;
+        }
     }
     .ns-disabled {
         @apply bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600;
+
+        span.ns-label {
+            @apply bg-white text-gray-600;
+        }
     }
 }
 
