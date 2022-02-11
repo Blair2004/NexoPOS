@@ -150,7 +150,7 @@ class GeneralSettings extends SettingsPage
                             'description'   =>  __( 'Define the symbol that indicate decimal number. By default "." is used.' ),
                         ], [
                             'name'  =>  'ns_currency_precision',
-                            'value'          =>  $options->get( 'ns_currency_precision' ),
+                            'value'          =>  $options->get( 'ns_currency_precision', '0' ),
                             'label' =>  __( 'Currency Precision' ), 
                             'type'          =>  'select',
                             'options'       =>  collect([0,1,2,3,4,5])->map( function( $index ) {
