@@ -125,6 +125,7 @@ class CrudService
         $crudInstance   =   $this->getCrudInstance( $namespace );
         $model          =   $id !== null ? $crudInstance->getModel()::find( $id ) : null;
         $data           =   $this->getFlatForm( $crudInstance, $inputs, $model );
+        
         return $this->submitRequest( $namespace, $data, $id );
     }
 
