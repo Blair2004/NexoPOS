@@ -27,7 +27,13 @@ export default Vue.extend({
     },
     watch: {
         dateRange() {
-            this.field.value    =   this.dateRange;
+            const value     =   {
+                startDate: moment( this.dateRange.startDate ).format( 'YYYY-MM-DD HH:mm' ),
+                endDate: moment( this.dateRange.endDate ).format( 'YYYY-MM-DD HH:mm' ),
+            };
+
+            this.field.value    =   value;
+            
             this.$emit( 'change', this );
         }
     },
@@ -87,8 +93,6 @@ export default Vue.extend({
                 :autoApply="false"
                 :appendToBody="true"
                 v-model="dateRange"
-                @blur="$emit( 'blur', this )" 
-                @update="$emit( 'change', this )"
                 :disabled="field.disabled" 
                 :linkedCalendars="true"
                 >
