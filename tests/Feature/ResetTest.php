@@ -24,10 +24,14 @@ class ResetTest extends TestCase
             );
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'POST', 'api/nexopos/v4/reset' );
+                ->json( 'POST', 'api/nexopos/v4/reset', [
+                    'mode'                  =>  'wipe_plus_grocery',
+                    'create_sales'          =>  true,
+                    'create_procurements'   =>  true
+                ]);
             
             $response->assertJson([
-                'status'    =>  'success'
+                'status'    =>  'success',
             ]);
     
             $response->assertStatus(200);
