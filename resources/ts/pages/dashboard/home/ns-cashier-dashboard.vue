@@ -12,7 +12,7 @@
                         </div>
                         <div class="w-1/2 md:w-full flex flex-col px-2 justify-end items-end">
                             <h6 class="font-bold inline-block text-right md:hidden">{{ __( 'Total Sales' ) }}</h6>
-                            <h4 class="text-xs text-right">+{{ ( report.total_sales_amount ) | currency }} {{ __( 'Today' ) }}</h4>
+                            <h4 class="text-xs text-right">+{{ ( report.today_sales_amount ) | currency }} {{ __( 'Today' ) }}</h4>
                         </div>
                     </div>
                 </div>
