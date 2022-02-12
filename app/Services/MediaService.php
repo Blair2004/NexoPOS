@@ -77,11 +77,20 @@ class MediaService
             $year           =   $this->date->year;
             $month          =   sprintf( "%02d", $this->date->month );
             $folderPath     =   Hook::filter( 'ns-media-path', $year . DIRECTORY_SEPARATOR . $month . DIRECTORY_SEPARATOR );
+            $indexPath      =   $folderPath . 'index.html';
+
+            /**
+             * If the storage folder hasn't been created
+             * we'll create one and save an empty index within.
+             */
+            if ( ! Storage::disk( 'public' )->exists( $indexPath ) ) {
+                Storage::disk( 'public' )->put( $indexPath, '' );
+            }
             
             $filePath       =   Storage::disk( 'public' )->putFileAs( 
-                '', 
+                $folderPath, 
                 $file,
-                $folderPath . $fullFileName
+                $fullFileName
             );
 
             if ( in_array( $extension, $this->images_extensions ) ) {
