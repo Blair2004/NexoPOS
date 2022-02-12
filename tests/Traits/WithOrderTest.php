@@ -484,7 +484,7 @@ trait WithOrderTest
              * We might need this to reproduce a sale that caused
              * an error.
              */
-            file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
+            // file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
