@@ -2,6 +2,7 @@
 namespace Tests\Traits;
 
 use App\Models\TaxGroup;
+use App\Models\Unit;
 use App\Models\UnitGroup;
 
 trait WithUnitTest
@@ -23,7 +24,6 @@ trait WithUnitTest
     protected function attemptCreateUnit()
     {
         $group          =   UnitGroup::get()->shuffle()->first();
-
         $response       =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.units', [
                 'name'          =>  __( 'Piece' ),

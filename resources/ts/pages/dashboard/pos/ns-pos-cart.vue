@@ -350,7 +350,6 @@ export default {
                      * to avoid restoring the original prices.
                      */
                     product.mode        =   'custom';
-
                     product     =   POS.computeProductTax( product );
                                         
                     POS.refreshProducts( POS.products.getValue() );

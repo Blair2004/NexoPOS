@@ -62,7 +62,7 @@ class CashRegistersService
             );
         }
 
-        if ( ( float ) $register->balance !== ( float ) $amount ) {
+        if ( ( float ) $register->balance !== ( float ) $amount ) {            
             throw new NotAllowedException( 
                 sprintf( 
                     __( 'The specified amount %s doesn\'t match the cash register balance %s.' ),
@@ -295,6 +295,7 @@ class CashRegistersService
             $register->opening_balance      =   $history->value;
             $register->total_sale_amount    =   Order::paid()
                 ->where( 'register_id', $register->id )
+                ->where( 'created_at', '>=', $history->created_at )
                 ->sum( 'total' );
         }
 

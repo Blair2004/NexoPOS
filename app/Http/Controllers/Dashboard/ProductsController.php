@@ -493,6 +493,27 @@ class ProductsController extends DashboardController
             ) {
                 throw new Exception( sprintf( __( 'Unsupported action for the product %s.' ), $unit[ 'name' ] ) );
             }
+
+            /**
+             * let's check for every operation if there is enough inventory
+             */
+            $productUnitQuantity    =   ProductUnitQuantity::where( 'product_id', $unit[ 'id' ])
+                ->where( 'unit_id', $unit[ 'adjust_unit' ][ 'unit_id' ] )
+                ->first();
+
+            if ( $productUnitQuantity instanceof ProductUnitQuantity && in_array( $unit[ 'adjust_action' ], ProductHistory::STOCK_REDUCE ) ) {
+                $remaining  =   $productUnitQuantity->quantity - ( float ) $unit[ 'adjust_quantity' ];
+
+                if ( $remaining < 0 ) {
+                    throw new NotAllowedException( 
+                        sprintf( 
+                            __( 'The operation will cause a negative stock for the product "%s" (%s).' ),
+                            $productUnitQuantity->product->name,
+                            $remaining 
+                        )
+                    );
+                }
+            }            
         }
 
         /**

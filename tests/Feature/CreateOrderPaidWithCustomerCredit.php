@@ -208,7 +208,7 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
                     
             $response->assertStatus(401);
-            $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: USD 5,00 .' );
+            $response->assertJsonPath( 'message', 'By proceeding this order, the customer will exceed the maximum credit allowed for his account: USD 5 .' );
         }
 
         return $responses;

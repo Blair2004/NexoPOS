@@ -174,8 +174,6 @@ export default {
             this.currentDay     =   [ undefined, '', null ].includes( this.date ) ? moment() : moment( this.date );
         }
 
-        console.log( this.date );
-
         this.hours      =   this.currentDay.format( 'HH' );
         this.minutes    =   this.currentDay.format( 'mm' );
         this.build();        
@@ -257,6 +255,8 @@ export default {
                 if ( this.field ) {
                     this.field.value    =   this.currentDay.format( 'YYYY/MM/DD HH:mm' );
                 }
+
+                console.log( this.hours, this.minutes );
 
                 this.$emit( 'change', this.field ? this.field : this.currentDay );
             } else {

@@ -896,9 +896,9 @@ class OrdersService
         
         $totalPayments  =   0;
 
-        $subtotal       =   collect( $fields[ 'products' ] )->map(function ($product) {
+        $subtotal       =   Currency::raw( collect( $fields[ 'products' ] )->map(function ($product) {
             return floatval($product['total_price']);
-        })->sum();
+        })->sum() );
 
         $total          =   $this->currencyService->define( 
                 $subtotal + $this->__getShippingFee($fields) 
@@ -1234,7 +1234,6 @@ class OrdersService
         $orderProduct                           =   $this->computeProduct( $orderProduct, $product, $productUnitQuantity );
         $orderProduct[ 'unit_id' ]              =   $productUnitQuantity->unit->id ?? $orderProduct[ 'unit_id' ] ?? 0;
         $orderProduct[ 'unit_quantity_id' ]     =   $productUnitQuantity->id ?? 0;
-        $orderProduct[ 'total_price' ]          =   $orderProduct[ 'total_price' ];
         $orderProduct[ 'product' ]              =   $product;
         $orderProduct[ 'mode' ]                 =   $orderProduct[ 'mode' ] ?? 'normal';
         $orderProduct[ 'unitQuantity' ]         =   $productUnitQuantity;
@@ -1333,10 +1332,9 @@ class OrdersService
          * let's compute that
          */
         if ( empty( $fields[ 'total_price' ] ) ) {
-            $fields[ 'total_price' ]    =   ( 
-                $sale_price - 
-                $fields[ 'discount' ]
-            ) * floatval( $fields[ 'quantity' ] );
+            $fields[ 'total_price' ]    =  ( 
+                $sale_price  * floatval( $fields[ 'quantity' ] )
+            ) - $fields[ 'discount' ];
         }
 
         if ( $product instanceof Product ) {
@@ -1857,6 +1855,7 @@ class OrdersService
                 $orderProduct->discount_percentage,
                 $orderProduct->unit_price * $orderProduct->quantity
             );
+
         } else if ( $orderProduct->discount_type === 'flat' ) {
             $total_discount             =   $orderProduct->discount;
             $total_gross_discount       =   $orderProduct->discount;
@@ -1864,9 +1863,11 @@ class OrdersService
             $net_discount               =   $orderProduct->discount;
         }
 
+        $orderProduct->discount     =   $net_discount;
+
         $orderProduct->net_price        =   $this->currencyService
             ->fresh( $orderProduct->unit_price )
-            ->get();
+            ->getFullRaw();
 
         $orderProduct->total_gross_price    =   $this->currencyService
             ->fresh( $orderProduct->gross_price )
@@ -1877,7 +1878,7 @@ class OrdersService
             ->fresh( $orderProduct->net_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $net_discount )
-            ->get();
+            ->getFullRaw();
 
         $orderProduct->total_net_price      =   $this->currencyService
             ->fresh( $orderProduct->net_price )
@@ -1889,7 +1890,8 @@ class OrdersService
             $orderProduct, 
             $total_gross_discount,
             $total_discount,
-            $total_net_discount 
+            $total_net_discount,
+            $net_discount
         );
     }
 
@@ -1903,7 +1905,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return Currency::raw( ( $value * $rate ) / 100 );
+            return Currency::fresh( ( $value * $rate ) / 100 )->getFullRaw();
         }
 
         return 0;
@@ -2069,10 +2071,10 @@ class OrdersService
         /**
          * let's refresh all the order values
          */
-        $order->subtotal        =   $productTotal;
+        $order->subtotal        =   Currency::raw( $productTotal );
         $order->gross_total     =   $productGrossTotal;
-        $order->discount        =   $this->computeOrderDiscount( $order );
-        $order->total           =   Currency::fresh( $productTotal )
+        $order->discount        =   $this->computeOrderDiscount( $order );  
+        $order->total           =   Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )
             ->additionateBy(
                 ( $order->tax_type === 'exclusive' ? $order->tax_value : 0 )
@@ -2100,7 +2102,7 @@ class OrdersService
                 $order->payment_status      =       Order::PAYMENT_PARTIALLY_REFUNDED;
             } else if ( $order->tendered >= $order->total && $order->total > 0 ) {
                 $order->payment_status      =       Order::PAYMENT_PAID;
-            } else if ( ( float ) $order->tendered < ( float ) $order->total ) {
+            } else if ( ( float ) $order->tendered < ( float ) $order->total && ( float ) $order->tendered > 0 ) {
                 $order->payment_status      =       Order::PAYMENT_PARTIALLY;
             } else if ( $order->total == 0 && $totalRefunds == 0 ) {
                 $order->payment_status      =       Order::PAYMENT_UNPAID;
