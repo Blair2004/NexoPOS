@@ -1,12 +1,12 @@
 <template>
-    <div class="bg-white shadow-lg rounded w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between items-center border-b border-gray-400">
-            <h3 class="font-semibold text-gray-700">{{ __( 'Customers' ) }}</h3>
+    <div id="ns-pos-customers" class="shadow-lg rounded w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
+        <div class="ns-header p-2 flex justify-between items-center border-b">
+            <h3 class="font-semibold">{{ __( 'Customers' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto flex p-2 bg-gray-200 overflow-y-auto">
+        <div class="ns-body flex-auto flex p-2 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
@@ -18,17 +18,17 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
-                    <div class="h-full flex-col w-full flex items-center justify-center">
-                        <i class="lar la-hand-paper text-6xl text-gray-700"></i>
-                        <h3 class="font-medium text-2xl text-gray-700">{{ __( 'Not Authorized' ) }}</h3>
-                        <p class="text-gray-600">{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
+                    <div v-if="options.ns_pos_customers_creation_enabled !== 'yes'" class="h-full flex-col w-full flex items-center justify-center">
+                        <i class="lar la-hand-paper ns-icon"></i>
+                        <h3 class="font-medium text-2xl">{{ __( 'Not Authorized' ) }}</h3>
+                        <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
-                        <i class="lar la-frown text-6xl text-gray-700"></i>
-                        <h3 class="font-medium text-2xl text-gray-700">{{ __( 'No Customer Selected' ) }}</h3>
-                        <p class="text-gray-600">{{ __( 'In order to see a customer account, you need to select one customer.' ) }}</p>
+                        <i class="lar la-frown text-6xl"></i>
+                        <h3 class="font-medium text-2xl">{{ __( 'No Customer Selected' ) }}</h3>
+                        <p>{{ __( 'In order to see a customer account, you need to select one customer.' ) }}</p>
                         <div class="my-2">
                             <ns-button @click="openCustomerSelection()" type="info">{{ __( 'Select Customer' ) }}</ns-button>
                         </div>
@@ -37,13 +37,13 @@
                         <div class="flex-auto p-2 flex flex-col">
                             <div class="-mx-4 flex flex-wrap">
                                 <div class="px-4 mb-4 w-full">
-                                    <h2 class="font-semibold text-gray-700">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
+                                    <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                            <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>

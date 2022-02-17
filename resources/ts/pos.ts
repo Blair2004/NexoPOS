@@ -17,6 +17,9 @@ Vue.use( VirtualCollection );
 
 new Vue({
     el: '#pos-app',
+    mounted() {
+        console.log( this );
+    },
     components: {
         NsPos,
         NsPosCart,

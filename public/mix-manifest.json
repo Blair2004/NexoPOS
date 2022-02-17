@@ -1,15 +1,15 @@
 {
-    "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=a07e8313a8e35bdd17bd",
-    "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=5e0385e8162c56aa7823",
-    "/js/app.min.js": "/js/app.min.js?id=627c54fb5bd1d569a583",
-    "/js/dashboard.min.js": "/js/dashboard.min.js?id=9ddcf1b4f2d3fb043278",
-    "/js/cashier.min.js": "/js/cashier.min.js?id=4d30ed8b36fef3e1c647",
-    "/js/update.min.js": "/js/update.min.js?id=6c4a97b2470faebea982",
-    "/js/pos-init.min.js": "/js/pos-init.min.js?id=e5996761d6bcf3d309d7",
-    "/js/pos.min.js": "/js/pos.min.js?id=de39f54dde78ecd8411a",
-    "/js/auth.min.js": "/js/auth.min.js?id=db1407b72d930a88a390",
-    "/js/setup.min.js": "/js/setup.min.js?id=3687e76ac9d6179ce1e8",
-    "/js/popups.min.js": "/js/popups.min.js?id=b088188fc6200289a017",
-    "/js/manifest.js": "/js/manifest.js?id=a15bb69e945a7258bf32",
-    "/js/vendor.js": "/js/vendor.js?id=5b0aeee726b3addc1236"
+    "/js/bootstrap.js": "/js/bootstrap.js",
+    "/js/lang-loader.js": "/js/lang-loader.js",
+    "/js/app.js": "/js/app.js",
+    "/js/dashboard.js": "/js/dashboard.js",
+    "/js/cashier.js": "/js/cashier.js",
+    "/js/update.js": "/js/update.js",
+    "/js/pos-init.js": "/js/pos-init.js",
+    "/js/pos.js": "/js/pos.js",
+    "/js/auth.js": "/js/auth.js",
+    "/js/setup.js": "/js/setup.js",
+    "/js/popups.js": "/js/popups.js",
+    "/js/manifest.js": "/js/manifest.js",
+    "/js/vendor.js": "/js/vendor.js"
 }

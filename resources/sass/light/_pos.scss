@@ -1,3 +1,9 @@
+#loader {
+    @apply bg-gray-300;
+    p {
+        @apply text-gray-700;
+    }
+}
 #pos-container {
     @apply bg-gray-300;
 
@@ -228,5 +234,18 @@
                 }
             }
         }
+    }
+}
+
+#ns-pos-customers {
+    @apply bg-white;
+    .ns-header {
+        @apply border-gray-400;
+        h3 {
+            @apply text-gray-700;
+        }
+    }
+    .ns-body {
+        @apply bg-gray-200;
     }
 }

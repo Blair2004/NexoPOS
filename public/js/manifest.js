@@ -1,1 +1,315 @@
-(()=>{"use strict";var t,s,o,r={},e={};function n(t){var s=e[t];if(void 0!==s)return s.exports;var o=e[t]={id:t,loaded:!1,exports:{}};return r[t].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}n.m=r,t=[],n.O=(s,o,r,e)=>{if(!o){var a=1/0;for(b=0;b<t.length;b++){for(var[o,r,e]=t[b],i=!0,j=0;j<o.length;j++)(!1&e||a>=e)&&Object.keys(n.O).every((t=>n.O[t](o[j])))?o.splice(j--,1):(i=!1,e<a&&(a=e));if(i){t.splice(b--,1);var p=r();void 0!==p&&(s=p)}}return s}e=e||0;for(var b=t.length;b>0&&t[b-1][2]>e;b--)t[b]=t[b-1];t[b]=[o,r,e]},n.n=t=>{var s=t&&t.__esModule?()=>t.default:()=>t;return n.d(s,{a:s}),s},n.d=(t,s)=>{for(var o in s)n.o(s,o)&&!n.o(t,o)&&Object.defineProperty(t,o,{enumerable:!0,get:s[o]})},n.f={},n.e=t=>Promise.all(Object.keys(n.f).reduce(((s,o)=>(n.f[o](t,s),s)),[])),n.u=t=>6722===t?"js/bootstrap.min/6722.js":1693===t?"js/bootstrap.min/1693.js":3712===t?"js/bootstrap.min/3712.js":1374===t?"js/bootstrap.min/1374.js":9506===t?"js/bootstrap.min/9506.js":3099===t?"js/bootstrap.min/3099.js":9630===t?"js/bootstrap.min/9630.js":2848===t?"js/bootstrap.min/2848.js":2531===t?"js/bootstrap.min/2531.js":4038===t?"js/bootstrap.min/4038.js":6348===t?"js/bootstrap.min/6348.js":9740===t?"js/bootstrap.min/9740.js":9015===t?"js/bootstrap.min/9015.js":523===t?"js/bootstrap.min/523.js":6317===t?"js/bootstrap.min/6317.js":5232===t?"js/bootstrap.min/5232.js":6441===t?"js/bootstrap.min/6441.js":8759===t?"js/bootstrap.min/8759.js":2372===t?"js/bootstrap.min/2372.js":5795===t?"js/bootstrap.min/5795.js":3278===t?"js/bootstrap.min/3278.js":2880===t?"js/bootstrap.min/2880.js":7149===t?"js/bootstrap.min/7149.js":805===t?"js/bootstrap.min/805.js":2264===t?"js/bootstrap.min/2264.js":19===t?"js/bootstrap.min/19.js":3793===t?"js/bootstrap.min/3793.js":9110===t?"js/bootstrap.min/9110.js":2004===t?"js/bootstrap.min/2004.js":1970===t?"js/bootstrap.min/1970.js":3802===t?"js/bootstrap.min/3802.js":3670===t?"js/bootstrap.min/3670.js":3558===t?"js/bootstrap.min/3558.js":6770===t?"js/bootstrap.min/6770.js":1793===t?"js/bootstrap.min/1793.js":1096===t?"js/bootstrap.min/1096.js":4202===t?"js/bootstrap.min/4202.js":7585===t?"js/bootstrap.min/7585.js":3261===t?"js/bootstrap.min/3261.js":3190===t?"js/bootstrap.min/3190.js":3647===t?"js/bootstrap.min/3647.js":4177===t?"js/bootstrap.min/4177.js":411===t?"js/bootstrap.min/411.js":6179===t?"js/bootstrap.min/6179.js":3669===t?"js/bootstrap.min/3669.js":7391===t?"js/bootstrap.min/7391.js":8104===t?"js/bootstrap.min/8104.js":4237===t?"js/bootstrap.min/4237.js":1708===t?"js/bootstrap.min/1708.js":6110===t?"js/bootstrap.min/6110.js":2796===t?"js/bootstrap.min/2796.js":1912===t?"js/bootstrap.min/1912.js":void 0,n.miniCssF=t=>{},n.g=function(){if("object"==typeof globalThis)return globalThis;try{return this||new Function("return this")()}catch(t){if("object"==typeof window)return window}}(),n.o=(t,s)=>Object.prototype.hasOwnProperty.call(t,s),s={},o="NexoPOS-4x:",n.l=(t,r,e,a)=>{if(s[t])s[t].push(r);else{var i,j;if(void 0!==e)for(var p=document.getElementsByTagName("script"),b=0;b<p.length;b++){var m=p[b];if(m.getAttribute("src")==t||m.getAttribute("data-webpack")==o+e){i=m;break}}i||(j=!0,(i=document.createElement("script")).charset="utf-8",i.timeout=120,n.nc&&i.setAttribute("nonce",n.nc),i.setAttribute("data-webpack",o+e),i.src=t),s[t]=[r];var l=(o,r)=>{i.onerror=i.onload=null,clearTimeout(d);var e=s[t];if(delete s[t],i.parentNode&&i.parentNode.removeChild(i),e&&e.forEach((t=>t(r))),o)return o(r)},d=setTimeout(l.bind(null,void 0,{type:"timeout",target:i}),12e4);i.onerror=l.bind(null,i.onerror),i.onload=l.bind(null,i.onload),j&&document.head.appendChild(i)}},n.r=t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.nmd=t=>(t.paths=[],t.children||(t.children=[]),t),n.p="/",(()=>{var t={8929:0};n.f.j=(s,o)=>{var r=n.o(t,s)?t[s]:void 0;if(0!==r)if(r)o.push(r[2]);else if(8929!=s){var e=new Promise(((o,e)=>r=t[s]=[o,e]));o.push(r[2]=e);var a=n.p+n.u(s),i=new Error;n.l(a,(o=>{if(n.o(t,s)&&(0!==(r=t[s])&&(t[s]=void 0),r)){var e=o&&("load"===o.type?"missing":o.type),a=o&&o.target&&o.target.src;i.message="Loading chunk "+s+" failed.\n("+e+": "+a+")",i.name="ChunkLoadError",i.type=e,i.request=a,r[1](i)}}),"chunk-"+s,s)}else t[s]=0},n.O.j=s=>0===t[s];var s=(s,o)=>{var r,e,[a,i,j]=o,p=0;if(a.some((s=>0!==t[s]))){for(r in i)n.o(i,r)&&(n.m[r]=i[r]);if(j)var b=j(n)}for(s&&s(o);p<a.length;p++)e=a[p],n.o(t,e)&&t[e]&&t[e][0](),t[e]=0;return n.O(b)},o=self.webpackChunkNexoPOS_4x=self.webpackChunkNexoPOS_4x||[];o.forEach(s.bind(null,0)),o.push=s.bind(null,o.push.bind(o))})()})();
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/chunk loaded */
+/******/ 	(() => {
+/******/ 		var deferred = [];
+/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 			if(chunkIds) {
+/******/ 				priority = priority || 0;
+/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 				deferred[i] = [chunkIds, fn, priority];
+/******/ 				return;
+/******/ 			}
+/******/ 			var notFulfilled = Infinity;
+/******/ 			for (var i = 0; i < deferred.length; i++) {
+/******/ 				var [chunkIds, fn, priority] = deferred[i];
+/******/ 				var fulfilled = true;
+/******/ 				for (var j = 0; j < chunkIds.length; j++) {
+/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 						chunkIds.splice(j--, 1);
+/******/ 					} else {
+/******/ 						fulfilled = false;
+/******/ 						if(priority < notFulfilled) notFulfilled = priority;
+/******/ 					}
+/******/ 				}
+/******/ 				if(fulfilled) {
+/******/ 					deferred.splice(i--, 1)
+/******/ 					var r = fn();
+/******/ 					if (r !== undefined) result = r;
+/******/ 				}
+/******/ 			}
+/******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames not based on template
+/******/ 			if ({"resources_ts_pages_dashboard_rewards-system_vue":1,"resources_ts_pages_dashboard_create-coupons_vue":1,"resources_ts_pages_dashboard_settings_vue":1,"resources_ts_pages_dashboard_reset_vue":1,"resources_ts_pages_dashboard_modules_vue":1,"resources_ts_pages_dashboard_ns-permissions_vue":1,"resources_ts_pages_dashboard_procurements_ns-procurement_vue":1,"resources_ts_pages_dashboard_procurements_manage-products_vue":1,"resources_ts_pages_dashboard_procurements_ns-procurement-invoice_vue":1,"resources_ts_pages_dashboard_ns-notifications_vue":1,"resources_ts_pages_dashboard_reports_ns-low-stock-report_vue":1,"resources_ts_pages_dashboard_reports_ns-sale-report_vue":1,"resources_ts_pages_dashboard_reports_ns-sold-stock-report_vue":1,"resources_ts_pages_dashboard_reports_ns-profit-report_vue":1,"resources_ts_pages_dashboard_reports_ns-cash-flow-report_vue":1,"resources_ts_pages_dashboard_reports_ns-yearly-report_vue":1,"resources_ts_pages_dashboard_reports_ns-best-products-report_vue":1,"resources_ts_pages_dashboard_reports_ns-payment-types-report_vue":1,"resources_ts_pages_dashboard_home_ns-dashboard-cards_vue":1,"resources_ts_pages_dashboard_home_ns-best-customers_vue":1,"resources_ts_pages_dashboard_home_ns-best-cashiers_vue":1,"resources_ts_pages_dashboard_home_ns-orders-summary_vue":1,"resources_ts_pages_dashboard_home_ns-orders-chart_vue":1,"resources_ts_pages_dashboard_home_ns-cashier-dashboard_vue":1,"resources_ts_pages_dashboard_products_ns-stock-adjustment_vue":1,"resources_ts_pages_dashboard_orders_ns-order-invoice_vue":1,"resources_ts_popups_ns-prompt-popup_vue":1,"resources_ts_popups_ns-alert-popup_vue":1,"resources_ts_popups_ns-pos-loading-popup_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-dashboard-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-pending-orders-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-order-type-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-customers-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-reset-button_vue":1,"resources_ts_pages_dashboard_pos_header-buttons_ns-pos-registers-button_vue":1,"resources_ts_popups_ns-pos-confirm-popup_vue":1,"resources_ts_popups_ns-pos-layaway-popup_vue":1,"resources_ts_popups_ns-pos-shipping-popup_vue":1,"resources_ts_pages_dashboard_pos_ns-pos_vue":1,"resources_ts_pages_dashboard_pos_ns-pos-cart_vue":1,"resources_ts_pages_dashboard_pos_ns-pos-grid_vue":1,"resources_ts_pages_auth_ns-register_vue":1,"resources_ts_pages_auth_ns-login_vue":1,"resources_ts_pages_auth_ns-password-lost_vue":1,"resources_ts_pages_auth_ns-new-password_vue":1,"resources_ts_popups_ns-pos-hold-orders-popup_vue":1,"resources_ts_popups_ns-pos-note-popup_vue":1,"resources_ts_popups_ns-pos-tax-popup_vue":1,"resources_ts_popups_ns-pos-coupons-popup_vue":1,"resources_ts_popups_ns-pos-order-settings_vue":1,"resources_ts_popups_ns-pos-product-price-popup_vue":1,"resources_ts_popups_ns-pos-quick-product-popup_vue":1}[chunkId]) return "js/" + chunkId + ".js";
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference all chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "NexoPOS-4x:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			;
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/";
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = {
+/******/ 			"/js/manifest": 0
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if("/js/manifest" != chunkId) {
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						} else installedChunks[chunkId] = 0;
+/******/ 					}
+/******/ 				}
+/******/ 		};
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		// no HMR
+/******/ 		
+/******/ 		// no HMR manifest
+/******/ 		
+/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 		
+/******/ 		// install a JSONP callback for chunk loading
+/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 			var [chunkIds, moreModules, runtime] = data;
+/******/ 			// add "moreModules" to the modules object,
+/******/ 			// then flag all "chunkIds" as loaded and fire callback
+/******/ 			var moduleId, chunkId, i = 0;
+/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 				for(moduleId in moreModules) {
+/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 					}
+/******/ 				}
+/******/ 				if(runtime) var result = runtime(__webpack_require__);
+/******/ 			}
+/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 			for(;i < chunkIds.length; i++) {
+/******/ 				chunkId = chunkIds[i];
+/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 					installedChunks[chunkId][0]();
+/******/ 				}
+/******/ 				installedChunks[chunkId] = 0;
+/******/ 			}
+/******/ 			return __webpack_require__.O(result);
+/******/ 		}
+/******/ 		
+/******/ 		var chunkLoadingGlobal = self["webpackChunkNexoPOS_4x"] = self["webpackChunkNexoPOS_4x"] || [];
+/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	
+/******/ })()
+;

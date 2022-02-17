@@ -1,0 +1,15 @@
+.ns-tab {
+    .tab {
+        @apply border-gray-400 text-gray-700;
+        
+        &.ns-active {
+            @apply bg-white;
+        }
+        &.ns-inactive {
+            @apply bg-gray-200;
+        }
+    }
+}
+.ns-tab-item {
+    @apply border-gray-400 bg-white;
+}
