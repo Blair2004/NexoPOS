@@ -85,7 +85,7 @@ export default Vue.extend({
             <date-range-picker
                 class="w-full flex items-center"
                 ref="picker"
-                :locale-data="{ firstDay: 1, format: 'dd-mm-yyyy HH:mm:ss' }"
+                :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd HH:mm:ss' }"
                 :timePicker="true"
                 :timePicker24Hour="true"
                 :showWeekNumbers="true"
