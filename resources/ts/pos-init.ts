@@ -1410,7 +1410,6 @@ export class POS {
     }
 
     refreshProducts(products = null) {
-        console.log( products );
         products.forEach(product => {
             this.computeProduct(product);
         });
@@ -1428,7 +1427,6 @@ export class POS {
     }
 
     computeProductTax( product: OrderProduct ) {
-        console.log( product.mode );
         switch( product.mode ) {
             case 'custom':
                 return this.computeCustomProductTax( product );
@@ -1492,7 +1490,6 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
 
-        console.log( quantities, result );
 
         quantities.excl_tax_custom_price    =   result.price_without_tax;
         quantities.incl_tax_custom_price    =   result.price_with_tax;
@@ -1542,7 +1539,6 @@ export class POS {
          * determining what is the 
          * real sale price
          */
-        console.log( 'processed' );
         if (product.mode === 'normal') {
             product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().sale_price_tax * product.quantity;
@@ -1553,8 +1549,6 @@ export class POS {
             product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
-
-        console.log( product.unit_price );
 
         /**
          * computing the discount when it's 
