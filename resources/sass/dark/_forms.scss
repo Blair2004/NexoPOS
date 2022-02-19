@@ -102,37 +102,39 @@
  * Buttons
 **/
 .ns-button {
-    @apply shadow;
+    a, button {
+        @apply shadow;
+    }
     
-    &.ns-button-success {
+    &.ns-button-success > button, &.ns-button-success > a {
         @apply bg-green-600 text-white;
 
         span.ns-label {
             @apply bg-white text-green-600;
         }
     }
-    &.ns-button-danger {
+    &.ns-button-danger > button, &.ns-button-danger > a {
         @apply bg-red-600 text-white;
 
         span.ns-label {
             @apply bg-white text-red-600;
         }
     }
-    &.ns-button-warning {
+    &.ns-button-warning > button, &.ns-button-warning > a {
         @apply bg-orange-400 text-white;
 
         span.ns-label {
             @apply bg-white text-orange-600;
         }
     }
-    &.ns-button-default {
+    &.ns-button-default > button, &.ns-button-default > a {
         @apply bg-white text-gray-800;
 
         span.ns-label {
             @apply bg-gray-800 text-white;
         }
     }
-    &.ns-button-info {
+    &.ns-button-info > button, &.ns-button-info > a {
         @apply bg-blue-600 text-white;
 
         span.ns-label {

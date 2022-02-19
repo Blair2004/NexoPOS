@@ -911,7 +911,7 @@ class CrudService
          * We'll add custom fields
          * that might be added by modules
          */
-        $fieldsToIgnore     =   array_keys( $form[ 'tabs' ] );
+        $fieldsToIgnore     =   array_keys( collect( $form[ 'tabs' ] )->toArray() );
 
         foreach( $fields as $field => $value ) {
             if ( ! in_array( $field, $fieldsToIgnore ) ) {
