@@ -484,7 +484,7 @@ trait WithOrderTest
              * We might need this to reproduce a sale that caused
              * an error.
              */
-            file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
+            // file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
@@ -513,8 +513,10 @@ trait WithOrderTest
                     ->getRaw() 
                 );
     
-                $change     =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum() - (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] );
-                $change     =   Currency::raw( $change );
+                $couponValue    =   ( ! empty( $orderData[ 'coupons' ] ) ? ( float ) $orderData[ 'coupons' ][0][ 'value' ] : 0 );
+                $totalPayments  =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum();
+                $change         =   $totalPayments - (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] - $couponValue );
+                $change         =   Currency::raw( $change );
 
                 $response->assertJsonPath( 'data.order.change', $change );
 

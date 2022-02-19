@@ -6,7 +6,8 @@ return [
         'fr'        =>  'Français',
         'es'        =>  'Espanol',
         'it'        =>  'Italian',
-        'ar'        =>  'Arabic'
+        'ar'        =>  'Arabic',
+        'pt'        =>  'Portuguese',
     ],
     'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [

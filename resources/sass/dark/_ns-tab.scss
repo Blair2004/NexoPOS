@@ -1,0 +1,15 @@
+.ns-tab {
+    .tab {
+        @apply border-slate-800 text-slate-300;
+        
+        &.ns-active {
+            @apply bg-slate-700;
+        }
+        &.ns-inactive {
+            @apply bg-slate-800;
+        }
+    }
+}
+.ns-tab-item {
+    @apply border-slate-800 bg-slate-700;
+}

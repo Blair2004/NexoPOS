@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
+use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\DashboardDay;
 use App\Models\ExpenseCategory;
@@ -132,38 +133,36 @@ class ReportsController extends DashboardController
 
     public function getCashFlow( Request $request )
     {
-        $startOfDay     =   Carbon::parse( $request->input( 'startDate' ) )
-            ->startOfDay()
+        $rangeStarts     =   Carbon::parse( $request->input( 'startDate' ) )
             ->toDateTimeString();
 
-        $endOfDay       =   Carbon::parse( $request->input( 'endDate' ) )
-            ->endOfDay()
+        $rangeEnds       =   Carbon::parse( $request->input( 'endDate' ) )
             ->toDateTimeString();
 
-        $entries        =   $this->reportService->getFromTimeRange( $startOfDay, $endOfDay );
+        $entries        =   $this->reportService->getFromTimeRange( $rangeStarts, $rangeEnds );
         $total          =   $entries->count() > 0 ? $entries->first()->toArray() : [];
-        $creditCashFlow =   ExpenseCategory::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $startOfDay, $endOfDay ) {
-                $query->where( 'created_at', '>=', $startOfDay )
-                    ->where( 'created_at', '<=', $endOfDay );
+        $creditCashFlow =   AccountType::where( 'operation', CashFlow::OPERATION_CREDIT )->with([
+            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+                $query->where( 'created_at', '>=', $rangeStarts )
+                    ->where( 'created_at', '<=', $rangeEnds );
             }
         ])  
         ->get()
-        ->map( function( $expenseCategory ) {
-            $expenseCategory->total     =   $expenseCategory->cashFlowHistories->count() > 0 ? $expenseCategory->cashFlowHistories->sum( 'value' ) : 0;
-            return $expenseCategory;
+        ->map( function( $accountType ) {
+            $accountType->total     =   $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+            return $accountType;
         });
 
-        $debitCashFlow =   ExpenseCategory::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
-            'cashFlowHistories' => function( $query ) use ( $startOfDay, $endOfDay ) {
-                $query->where( 'created_at', '>=', $startOfDay )
-                    ->where( 'created_at', '<=', $endOfDay );
+        $debitCashFlow =   AccountType::where( 'operation', CashFlow::OPERATION_DEBIT )->with([
+            'cashFlowHistories' => function( $query ) use ( $rangeStarts, $rangeEnds ) {
+                $query->where( 'created_at', '>=', $rangeStarts )
+                    ->where( 'created_at', '<=', $rangeEnds );
             }
         ])  
         ->get()
-        ->map( function( $expenseCategory ) {
-            $expenseCategory->total     =   $expenseCategory->cashFlowHistories->count() > 0 ? $expenseCategory->cashFlowHistories->sum( 'value' ) : 0;
-            return $expenseCategory;
+        ->map( function( $accountType ) {
+            $accountType->total     =   $accountType->cashFlowHistories->count() > 0 ? $accountType->cashFlowHistories->sum( 'value' ) : 0;
+            return $accountType;
         });
 
         return [

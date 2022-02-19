@@ -769,6 +769,78 @@ export class POS {
         });
     }
 
+    defineQuantities( product, units = [] ) {
+        return new Promise ( ( resolve, reject ) => { 
+            const unit  =   units.filter( unit => unit.id === product.unit_id );
+            const quantities    =   {
+                unit: unit[0] || {},
+                
+                incl_tax_sale_price: parseFloat( product.unit_price ),
+                excl_tax_sale_price: parseFloat( product.unit_price ),
+                sale_price: parseFloat( product.unit_price ),
+                sale_price_tax: 0,
+                sale_price_edit: 0,
+
+                wholesale_price_tax: 0,
+                incl_tax_wholesale_price: 0,
+                excl_tax_wholesale_price: 0,
+                wholesale_price: 0,
+                wholesale_price_edit: 0,
+
+                custom_price_tax : 0,
+                custom_price : 0,
+                custom_price_edit: 0,
+                incl_tax_custom_price: 0,
+                excl_tax_custom_price: 0
+            };
+
+            let tax_group;
+
+            /**
+             * this will get the taxes
+             * and compute it for the product
+             */
+            if( [ 'inclusive', 'exclusive' ].includes( product.tax_type ) ) {
+                try {
+                    if( product.tax_group_id ) {
+                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
+                            .subscribe({
+                                next: (taxGroup: any) => {
+                                    quantities.sale_price_tax  =   taxGroup.taxes.map( tax => {
+                                        return this.getVatValue( quantities.sale_price, tax.rate, product.tax_type );
+                                    }).reduce( ( b, a ) => b + a );
+        
+                                    quantities.wholesale_price_tax  =   taxGroup.taxes.map( tax => {
+                                        return this.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
+                                    }).reduce( ( b, a ) => b + a );
+        
+                                    quantities.excl_tax_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
+                                    quantities.incl_tax_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
+                                    
+                                    tax_group            =   taxGroup;
+        
+                                    return resolve( quantities );
+                                },
+                                error:  error => {
+                                    reject( false );
+                                }
+                            })
+                    } else {
+                        quantities.sale_price_tax       =   0;
+                        quantities.wholesale_price_tax  =   0;
+                        quantities.excl_tax_sale_price  =  product.unit_price;
+                        
+                        return resolve( quantities );
+                    }
+                } catch( exception ) {
+                    return nsSnackBar.error( __( 'An error has occured while computing the product.' ) ).subscribe();
+                }
+            }
+            
+            return resolve( quantities );
+        });
+    }
+
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
             nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
@@ -780,14 +852,35 @@ export class POS {
                         /**
                          * We'll rebuilt the product
                          */
-                        const products = order.products.map((orderProduct: OrderProduct) => {
+                        const products  =   [];
+                        
+                        for( let i = 0; i < order.products.length ; i++ ) {
+                            
+                            const orderProduct      =   order.products[i];
+
+                            /**
+                             * in case the orderProduct is a quick product
+                             * we need to fill back the $quantities function
+                             */
+                             if ( orderProduct.product === null ) {
+                                orderProduct.product    =   {
+                                    mode: 'custom',
+                                    name: orderProduct.name,
+                                    unit_id: orderProduct.unit_id,
+                                    unit_quantities :   [
+                                        await this.defineQuantities( orderProduct )
+                                    ]
+                                }
+                            }
+
                             orderProduct.$original = () => orderProduct.product;
                             orderProduct.$quantities = () => orderProduct
                                 .product
                                 .unit_quantities
-                                .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id )[0];
-                            return orderProduct;
-                        });
+                                .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
+
+                            products.push( orderProduct );
+                        }
     
                         /**
                          * we'll redefine the order type
@@ -805,8 +898,7 @@ export class POS {
     
                         delete order.shipping_address;
                         delete order.billing_address;
-    
-    
+        
                         /**
                          * let's all set, let's load the order
                          * from now. No further change is required
@@ -814,7 +906,9 @@ export class POS {
     
                         this.buildOrder(order);
                         this.buildProducts(products);
+
                         await this.selectCustomer(order.customer);
+
                         resolve(order);
                     }, 
                     error: error => reject(error)
@@ -1315,14 +1409,24 @@ export class POS {
         this._products.next(products);
     }
 
-    refreshProducts(products) {
+    refreshProducts(products = null) {
         products.forEach(product => {
             this.computeProduct(product);
         });
     }
 
+    getProductUnitPrice( mode, quantities ) {
+        switch( mode ) {
+            case 'custom':
+                return quantities.custom_price_edit;
+            case 'normal':
+                return quantities.sale_price_edit;
+            case 'wholesale':
+                return quantities.wholesale_price_edit;
+        }
+    }
+
     computeProductTax( product: OrderProduct ) {
-        console.log( product.mode );
         switch( product.mode ) {
             case 'custom':
                 return this.computeCustomProductTax( product );
@@ -1339,11 +1443,11 @@ export class POS {
         const originalProduct   =   product.$original();
         const taxGroup          =   originalProduct.tax_group;
 
-        let price_without_tax   =   0;
+        let price_without_tax   =   this.getProductUnitPrice( product.mode, product.$quantities() );
         let tax_value           =   0;
-        let price_with_tax      =   0;
+        let price_with_tax      =   this.getProductUnitPrice( product.mode, product.$quantities() );
 
-        if ( taxGroup.taxes !== undefined ) {
+        if ( taxGroup !== undefined && taxGroup.taxes !== undefined ) {
 
             /**
              * get summarize rates
@@ -1385,6 +1489,7 @@ export class POS {
         const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
+
 
         quantities.excl_tax_custom_price    =   result.price_without_tax;
         quantities.incl_tax_custom_price    =   result.price_with_tax;

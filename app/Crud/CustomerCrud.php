@@ -4,6 +4,7 @@ namespace App\Crud;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
+use App\Exceptions\NotAllowedException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -168,7 +169,6 @@ class CustomerCrud extends CrudService
                             'label'         =>  __( 'Group' ),
                             'name'          =>  'group_id',
                             'value'         =>  $entry->group_id ?? '',
-                            'validation'    =>  'required',
                             'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
                             'description'   =>  __( 'Assign the customer to a group' )
                         ], [
@@ -360,13 +360,19 @@ class CustomerCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         return collect( $inputs )->map( function( $value, $key ) {
+            
             if ( $key === 'group_id' && empty( $value ) ) {
-                $value    =   $this->options->get( 'ns_customers_default_group', false );
-                if ( $value === false ) {
-                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+                
+                $value      =   $this->options->get( 'ns_customers_default_group', false );
+                $group      =   CustomerGroup::find( $value );
+    
+                if ( ! $group instanceof CustomerGroup ) {
+                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or is not defined.' ) );
                 }
             }
+
             return $value;
+
         })->toArray();
     }
 
@@ -378,13 +384,19 @@ class CustomerCrud extends CrudService
     public function filterPutInputs( $inputs, \App\Models\Customer $entry )
     {
         return collect( $inputs )->map( function( $value, $key ) {
+            
             if ( $key === 'group_id' && empty( $value ) ) {
-                $value    =   $this->options->get( 'ns_customers_default_group', false );
-                if ( $value === false ) {
-                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+
+                $value      =   $this->options->get( 'ns_customers_default_group', false );
+                $group      =   CustomerGroup::find( $value );
+    
+                if ( ! $group instanceof CustomerGroup ) {
+                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or is not defined.' ) );
                 }
             }
+
             return $value;
+
         })->toArray();
     }
 
@@ -460,7 +472,7 @@ class CustomerCrud extends CrudService
      * before creating
      * @return  void
      */
-    public function beforePost( $request ) {
+    public function beforePost( $inputs ) {
         $this->allowedTo( 'create' );
     }
 
@@ -468,7 +480,7 @@ class CustomerCrud extends CrudService
      * before updating
      * @return  void
      */
-    public function beforePut( $request, $customer ) {
+    public function beforePut( $inputs, $customer ) {
         $this->allowedTo( 'update' );
     }
 

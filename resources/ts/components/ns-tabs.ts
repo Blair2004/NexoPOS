@@ -26,9 +26,9 @@ const nsTabs    =   Vue.component( 'ns-tabs', {
         this.childrens          =   this.$children;
     },
     template: `
-    <div class="tabs flex flex-col flex-auto">
+    <div class="tabs flex flex-col flex-auto ns-tab">
         <div class="header flex" style="margin-bottom: -1px;">
-            <div v-for="( tab , identifier ) of childrens" @click="toggle( tab )" :class="active === tab.identifier ? 'border-b-0 bg-white z-10' : 'border bg-gray-200'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-gray-700 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+            <div v-for="( tab , identifier ) of childrens" @click="toggle( tab )" :class="active === tab.identifier ? 'border-b-0 ns-active z-10' : 'border ns-inactive'" class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
         </div>
         <slot></slot>
     </div>
@@ -43,7 +43,7 @@ const nsTabsItem    =   Vue.component( 'ns-tabs-item', {
     },
     props: [ 'label', 'identifier', 'padding' ],
     template: `
-    <div :class="( padding || 'p-4' )" class="border flex-auto border-gray-400 bg-white" v-if="$parent.active === identifier">
+    <div :class="( padding || 'p-4' )" class="ns-tab-item border flex-auto" v-if="$parent.active === identifier">
         <slot></slot>
     </div>
     `

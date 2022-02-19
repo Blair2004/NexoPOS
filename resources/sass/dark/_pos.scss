@@ -1,3 +1,9 @@
+#loader {
+    @apply bg-slate-900;
+    p {
+        @apply text-slate-300;
+    }
+}
 #pos-container {
     @apply bg-slate-900;
 
@@ -234,4 +240,17 @@
 
 .pos-button-clicked {
     box-shadow: inset 0px 0px 5px 0px #a4a5a7;
+}
+
+#ns-pos-customers {
+    @apply bg-slate-700;
+    .ns-header {
+        @apply border-slate-800;
+        h3 {
+            @apply text-slate-300;
+        }
+    }
+    .ns-body {
+        @apply bg-slate-700;
+    }
 }
