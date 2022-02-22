@@ -180,9 +180,12 @@ class CoreService
      * @param string $role 
      * @return boolean
      */
-    public function hasRole( $role )
+    public function hasRole( $roleNamespace )
     {
-        return Auth::user()->role->namespace === $role;
+        return Auth::user()
+            ->roles()
+            ->get()
+            ->filter( fn( $role ) => $role->namespace === $roleNamespace )->count() > 0;
     }
 
     /**
