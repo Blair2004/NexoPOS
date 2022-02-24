@@ -23,6 +23,7 @@ use App\Crud\OrderInstalmentCrud;
 use App\Crud\PaymentTypeCrud;
 use App\Exceptions\NotAllowedException;
 use App\Models\OrderInstalment;
+use App\Models\OrderPayment;
 use App\Models\OrderRefund;
 use App\Models\PaymentType;
 use Modules\NsMultiStore\Models\Store;
@@ -48,9 +49,12 @@ class OrdersController extends DashboardController
         $this->ordersService        =   $ordersService;
 
         $this->middleware( function( $request, $next ) {
-            $this->paymentTypes         =   PaymentType::active()->get()->map( function( $payment, $index ) {
-                $payment->selected  =   $index === 0;
-                return $payment;
+            $this->paymentTypes         =   PaymentType::orderBy( 'priority', 'asc' )
+                ->active()
+                ->get()
+                ->map( function( $payment, $index ) {
+                    $payment->selected  =   $index === 0;
+                    return $payment;
             });
 
             return $next( $request );
@@ -82,6 +86,30 @@ class OrdersController extends DashboardController
     {
         $order      =   $this->ordersService->getOrder( $order_id );
         return $this->ordersService->addProducts( $order, $request->input( 'products' ) );
+    }
+
+    public function getOrderPaymentReceipt( OrderPayment $orderPayment, Request $request )
+    {
+        $order                  =   $orderPayment->order;
+        $order->load( 'customer' );
+        $order->load( 'products' );
+        $order->load( 'shipping_address' );
+        $order->load( 'billing_address' );
+        $order->load( 'user' );
+
+        $orderPayment->load( 'order' );
+
+        return $this->view( 'pages.dashboard.orders.templates.payment-receipt', [
+            'payment'           =>  $orderPayment,
+            'order'             =>  $order,
+            'paymentTypes'      =>  collect( $this->paymentTypes )->mapWithKeys( function( $payment ) {
+                return [ $payment[ 'identifier' ] => $payment[ 'label' ] ];
+            }),
+            'ordersService'     =>  app()->make( OrdersService::class ),
+            'billing'           =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+            'shipping'          =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
+            'title'             =>  sprintf( __( 'Payment Receipt &mdash; %s' ), $order->code )
+        ]);
     }
 
     public function listOrders()
@@ -177,10 +205,10 @@ class OrdersController extends DashboardController
                 'ns_pos_complete_sale_audio'            =>  ns()->option->get( 'ns_pos_complete_sale_audio', '' ),
             ]),
             'urls'              =>  [
-                'printing_url'  =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
-                'orders_url'    =>      ns()->route( 'ns.dashboard.orders' ),
-                'dashboard_url' =>      ns()->route( 'ns.dashboard.home' ),
-                'registers_url' =>      ns()->route( 'ns.dashboard.registers-create' )
+                'sale_printing_url'     =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
+                'orders_url'            =>      ns()->route( 'ns.dashboard.orders' ),
+                'dashboard_url'         =>      ns()->route( 'ns.dashboard.home' ),
+                'registers_url'         =>      ns()->route( 'ns.dashboard.registers-create' )
             ],
             'paymentTypes'  =>  $this->paymentTypes
         ]);
@@ -188,6 +216,8 @@ class OrdersController extends DashboardController
 
     public function orderInvoice( Order $order )
     {
+        $optionsService     =   app()->make( Options::class );
+
         $order->load( 'customer' );
         $order->load( 'products' );
         $order->load( 'shipping_address' );
@@ -198,6 +228,7 @@ class OrdersController extends DashboardController
 
         return $this->view( 'pages.dashboard.orders.templates.invoice', [
             'order'     =>  $order,
+            'options'   =>  $optionsService->get(),
             'billing'   =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
             'shipping'  =>  ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'shipping' ][ 'fields' ],
             'title'     =>  sprintf( __( 'Order Invoice &mdash; %s' ), $order->code )
@@ -323,6 +354,15 @@ class OrdersController extends DashboardController
         }
 
         return $this->ordersService->markInstalmentAsPaid( $order, $instalment );
+    }
+
+    public function payInstalment( Order $order, OrderInstalment $instalment, Request $request )
+    {
+        if ( ( int ) $order->id !== ( int) $instalment->order_id ) {
+            throw new NotAllowedException( __( 'There is a mismatch between the provided order and the order attached to the instalment.' ) );
+        }
+
+        return $this->ordersService->markInstalmentAsPaid( $order, $instalment, $request->input( 'payment_type' ) );
     }
 
     /**

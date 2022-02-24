@@ -42,5 +42,3 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
 } else {
     include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php' );
 }
-
-

@@ -2,37 +2,31 @@
 
 namespace Tests\Feature;
 
+use App\Exceptions\NotAllowedException;
+use App\Models\CashFlow;
 use App\Models\Register;
+use App\Models\RegisterHistory;
 use App\Models\Role;
+use App\Services\CashRegistersService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithCashRegisterTest;
 
 class CreateRegisterTest extends TestCase
 {
+    use WithAuthentication, WithCashRegisterTest;
+
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateRegister()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.registers', [
-                'name'                  =>  __( 'Cash Register' ),
-                'general'               =>  [
-                    'status'            =>  Register::STATUS_CLOSED
-                ]
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptCreateRegisterTransactions();
     }
 }

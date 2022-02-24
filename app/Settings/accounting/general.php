@@ -53,13 +53,6 @@ return [
             'options'       =>  Helper::toJsOptions( $expenses, [ 'id', 'name' ]),
             'type'          =>  'select',
         ], [
-            'label'     =>  __( 'Stock Return Account (Unspoiled Items)' ),
-            'name'      =>  'ns_stock_return_unspoiled_account',
-            'value'     =>  ns()->option->get( 'ns_stock_return_unspoiled_account' ),
-            'description'   =>  __( 'Stock return for unspoiled items will be attached to this account' ),
-            'options'       =>  Helper::toJsOptions( $expenses, [ 'id', 'name' ]),
-            'type'          =>  'select',
-        ], [
             'label'     =>  __( 'Cash Register Cash-In Account' ),
             'name'      =>  'ns_cashregister_cashin_cashflow_account',
             'value'     =>  ns()->option->get( 'ns_cashregister_cashin_cashflow_account' ),

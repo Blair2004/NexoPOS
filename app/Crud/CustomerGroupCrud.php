@@ -9,6 +9,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\CustomerGroup;
 use App\Models\RewardSystem;
 use Exception;
+use Illuminate\Database\Query\Builder;
 
 class CustomerGroupCrud extends CrudService
 {
@@ -157,6 +158,16 @@ class CustomerGroupCrud extends CrudService
                 ]
             ]
         ];
+    }
+
+    /**
+     * Let's sort the customers
+     * @param Builder $query
+     * @return void
+     */
+    public function hook( $query )
+    {
+        $query->orderBy( 'updated_at', 'desc' );
     }
 
     /**

@@ -7,28 +7,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithProviderTest;
 
 class CreateProviderTest extends TestCase
 {
+    use WithAuthentication, WithProviderTest;
+
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateProvider()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/crud/ns.providers', [
-                'name'                  =>  __( 'Computers' ),
-            ]);
-
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptCreateProvider();        
     }
 }

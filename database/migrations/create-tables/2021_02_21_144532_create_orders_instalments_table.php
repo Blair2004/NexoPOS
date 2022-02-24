@@ -18,6 +18,7 @@ class CreateOrdersInstalmentsTable extends Migration
             $table->float( 'amount', 18, 5 )->default(0);
             $table->integer( 'order_id' )->nullable();
             $table->boolean( 'paid' )->default(false);
+            $table->integer( 'payment_id' )->nullable();
             $table->datetime( 'date' );
         });
     }

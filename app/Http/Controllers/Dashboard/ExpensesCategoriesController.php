@@ -14,8 +14,6 @@ use App\Services\CrudService;
 use App\Services\Options;
 use Illuminate\Support\Facades\View;
 
-// use Tendoo\Core\Services\Page;
-
 class ExpensesCategoriesController extends DashboardController
 {
     public function __construct( Options $options )

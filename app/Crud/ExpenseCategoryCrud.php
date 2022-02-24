@@ -20,13 +20,13 @@ class ExpenseCategoryCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.expenses-categories';
+    protected $mainRoute      =   'ns.accounting-accounts';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.expenses-categories';
+    protected $namespace  =   'ns.accounting-accounts';
 
     /**
      * Model Used
@@ -83,15 +83,15 @@ class ExpenseCategoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Expenses Categories List' ),
-            'list_description'      =>  __( 'Display All Expense Categories.' ),
-            'no_entry'              =>  __( 'No Expense Category has been registered' ),
-            'create_new'            =>  __( 'Add a new Expense Category' ),
-            'create_title'          =>  __( 'Create a new Expense Category' ),
-            'create_description'    =>  __( 'Register a new Expense Category and save it.' ),
-            'edit_title'            =>  __( 'Edit Expense Category' ),
-            'edit_description'      =>  __( 'Modify An Expense Category.' ),
-            'back_to_list'          =>  __( 'Return to Expense Categories' ),
+            'list_title'            =>  __( 'Accounts List' ),
+            'list_description'      =>  __( 'Display All Accounts.' ),
+            'no_entry'              =>  __( 'No Account has been registered' ),
+            'create_new'            =>  __( 'Add a new Account' ),
+            'create_title'          =>  __( 'Create a new Account' ),
+            'create_description'    =>  __( 'Register a new Account and save it.' ),
+            'edit_title'            =>  __( 'Edit Account' ),
+            'edit_description'      =>  __( 'Modify An Account.' ),
+            'back_to_list'          =>  __( 'Return to Accounts' ),
         ];
     }
 
@@ -252,7 +252,7 @@ class ExpenseCategoryCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == 'ns.expenses-categories' ) {
+        if ( $namespace == 'ns.accounting-accounts' ) {
             $this->allowedTo( 'delete' );
         }
     }
@@ -308,12 +308,12 @@ class ExpenseCategoryCrud extends CrudService
                 'namespace'     =>      'edit',
                 'type'          =>      'GOTO',
                 'index'         =>      'id',
-                'url'           =>      ns()->url( '/dashboard/' . 'expenses/categories' . '/edit/' . $entry->id )
+                'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
             ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses-categories/' . $entry->id ),
+                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -371,11 +371,11 @@ class ExpenseCategoryCrud extends CrudService
     public function getLinks()
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'expenses/categories' ),
-            'create'    => ns()->url( 'dashboard/' . 'expenses/categories/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'expenses/categories/edit/' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/ns.expenses-categories' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/ns.expenses-categories/{id}' ),
+            'list'      => ns()->url( 'dashboard/' . 'accounting/accounts' ),
+            'create'    => ns()->url( 'dashboard/' . 'accounting/accounts/create' ),
+            'edit'      => ns()->url( 'dashboard/' . 'accounting/accounts/edit/' ),
+            'post'      => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts' ),
+            'put'       => ns()->url( 'api/nexopos/v4/crud/ns.accounting-accounts/{id}' ),
         ];
     }
 

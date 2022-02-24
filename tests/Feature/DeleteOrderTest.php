@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\CashFlow;
 use App\Models\Order;
 use App\Models\OrderPayment;
+use App\Models\OrderProduct;
+use App\Models\Product;
 use App\Models\Role;
 use App\Services\OrdersService;
 use App\Services\ProductService;
@@ -12,69 +15,25 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithOrderTest;
 
-class DeleteOrderTest extends TestCase
+class DeleteOrderTest extends CreateOrderTest
 {
+    use WithAuthentication, WithOrderTest;
+
+    protected $count                =   1;
+    protected $totalDaysInterval    =   1;
+
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function test_example()
+    public function test_delete_order()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        /**
-         * @var ProductService
-         */
-        $productService     =   app()->make( ProductService::class );
-
-        $order      =   Order::paid()->first();
-        $products   =  $order->products
-            ->filter( fn( $product ) => $product->product_id > 0 )
-            ->map( function( $product ) use ( $productService ) {
-            $product->previous_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
-            return $product;
-        });
-
-        if ( $order instanceof Order ) {
-
-            $order_id   =   $order->id;
-
-            /**
-             * @var OrdersService
-             */
-            $orderService   =   app()->make( OrdersService::class );
-            $orderService->deleteOrder( $order );
-
-            $totalPayments    =   OrderPayment::where( 'order_id', $order_id )->count();
-
-            $this->assertTrue( $totalPayments === 0, 
-                sprintf(
-                    __( 'An order payment hasn\'t been deleted along with the order (%s).' ),
-                    $order->id
-                )
-            );
-
-            $products->each( function( $product ) use ( $productService ){
-                $product->actual_quantity   =   $productService->getQuantity( $product->product_id, $product->unit_id );
-
-                /**
-                 * Let's check if the quantity has been restored 
-                 * to the default value.
-                 */
-                $this->assertTrue( 
-                    ( float ) $product->actual_quantity == ( float ) $product->previous_quantity + ( float ) $product->quantity,
-                    __( 'The new quantity was not restored to what it was before the deletion.')
-                );
-            });
-
-        } else {
-            throw new Exception( __( 'No order where found to perform the test.' ) );
-        }
+        $this->attemptAuthenticate();
+        $this->attemptDeleteOrder();
 
     }
 }

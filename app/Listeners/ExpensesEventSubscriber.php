@@ -11,8 +11,9 @@ use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use App\Events\OrderAfterCreatedEvent;
+use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
-use App\Events\OrderAfterUpdatedEvent;
 use App\Jobs\AfterExpenseComputedJob;
 use App\Jobs\ComputeDashboardExpensesJob;
 use App\Jobs\RefreshExpenseJob;
@@ -75,17 +76,17 @@ class ExpensesEventSubscriber
         );
 
         /**
-         * Will record a cash flow for every
-         * completed sales generated.
+         * When we detect a payment
+         * status has changed from one state to another
          */
         $event->listen(
-            OrderAfterCreatedEvent::class,
-            fn( OrderAfterCreatedEvent $event ) => $this->expenseService->handleSales( $event->order )
+            OrderAfterPaymentStatusChangedEvent::class,
+            fn( OrderAfterPaymentStatusChangedEvent $event ) => $this->expenseService->handlePaymentStatus( $event )
         );
 
         $event->listen(
-            OrderAfterUpdatedEvent::class,
-            fn( OrderAfterUpdatedEvent $event ) => $this->expenseService->handleSales( $event->order )
+            OrderAfterCreatedEvent::class,
+            fn( OrderAfterCreatedEvent $event ) => $this->expenseService->handleCreatedOrder( $event->order )
         );
 
         /**
@@ -106,18 +107,17 @@ class ExpensesEventSubscriber
             fn( $event ) => ComputeDashboardExpensesJob::dispatch( $event )
         );
 
-        $event->listen( 
-            CashRegisterHistoryAfterCreatedEvent::class,
-            fn( CashRegisterHistoryAfterCreatedEvent $event ) => $this->expenseService->handleCashRegisterHistory( $event->registerHistory )
-        );
-
         /**
          * Will dispatch event for refreshing expenses
          * for a specific date
          */
         $event->listen(
             ExpenseBeforeRefreshEvent::class,
-            fn( $event ) => RefreshExpenseJob::dispatch( $event->dashboardDay )->delay( $event->date )
+            
+            fn( $event ) => RefreshExpenseJob::dispatch( 
+                $event->dashboardDay->range_starts, 
+                $event->dashboardDay->range_ends 
+            )->delay( $event->date )
         );
 
         /**

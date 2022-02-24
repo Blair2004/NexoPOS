@@ -16,15 +16,17 @@ class OrderAfterUpdatedEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $order;
+    public $fields;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order )
+    public function __construct( Order $order, $fields = [] )
     {
         $this->order    =   $order;
+        $this->fields   =   $fields;
     }
 
     /**

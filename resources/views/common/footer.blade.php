@@ -18,7 +18,7 @@ $json               =   [
     'ns_currency_position'              =>  $options->get( 'ns_currency_position', 'before' ),
     'ns_currency_thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', ',' ),
     'ns_currency_decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', '.' ),
-    'ns_currency_precision'             =>  $options->get( 'ns_currency_precision', '2' ),
+    'ns_currency_precision'             =>  $options->get( 'ns_currency_precision', '0' ),
     'ns_currency_prefered'              =>  $options->get( 'ns_currency_prefered', 'iso' ),
 ];
 ?>
@@ -29,10 +29,10 @@ ns.base_url         =   '{{ url( "/" ) }}';
 </script>
 
 @if ( ns()->isProduction() )
-<script src="{{ asset( 'js/manifest.js' ) }}"></script>
-<script src="{{ asset( 'js/vendor.js' ) }}"></script>
-<script src="{{ asset( 'js/bootstrap.min.js' ) }}"></script>
-<script src="{{ asset( 'js/popups.min.js' ) }}"></script>
+<script src="{{ mix( 'js/manifest.js' ) }}"></script>
+<script src="{{ mix( 'js/vendor.js' ) }}"></script>
+<script src="{{ mix( 'js/bootstrap.min.js' ) }}"></script>
+<script src="{{ mix( 'js/popups.min.js' ) }}"></script>
 @else
 <script src="{{ asset( 'js/manifest.js' ) }}"></script>
 <script src="{{ asset( 'js/vendor.js' ) }}"></script>

@@ -940,7 +940,7 @@ class ProductService
      * make an unit adjustment for 
      * a specific product
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
-     * @param array<$unit_id,$product_id,$unit_price,?$totalprice,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> data to manage
+     * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
      * @return ProductHistory
      */
     public function stockAdjustment( $action, $data )

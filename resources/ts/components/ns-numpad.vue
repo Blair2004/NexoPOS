@@ -44,8 +44,16 @@ export default {
             this.screenValue    =   0;
         }
     },
-    computed: {
-        // ...
+    watch: {
+        value() {        
+            if ( this.value.toString().length > 0 ) {
+                if ( this.floating ) {
+                    this.screenValue    =   Math.round( this.value * this.number ).toString();
+                } else {
+                    this.screenValue    =   this.value;
+                }
+            }
+        }
     },
     methods: {
         increaseBy( key ) {

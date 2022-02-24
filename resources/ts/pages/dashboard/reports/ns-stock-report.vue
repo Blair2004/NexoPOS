@@ -6,6 +6,8 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
+
 export default {
     name: 'ns-sale-report',
     data() {
@@ -16,7 +18,8 @@ export default {
         }
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsDateTimePicker,
     },
     computed: {
         totalDiscounts() {

@@ -4,6 +4,7 @@ namespace App\Crud;
 use App\Events\CustomerAfterCreatedEvent;
 use App\Events\CustomerAfterUpdatedEvent;
 use App\Events\CustomerBeforeDeletedEvent;
+use App\Exceptions\NotAllowedException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -127,6 +128,11 @@ class CustomerCrud extends CrudService
         return false; // by default
     }
 
+    public function hook( $query )
+    {
+        $query->orderBy( 'updated_at', 'desc' );
+    }
+
     /**
      * Fields
      * @param  object/null
@@ -153,6 +159,12 @@ class CustomerCrud extends CrudService
                             'value'         =>  $entry->surname ?? '',
                             'description'   =>  __( 'Provide the customer surname' )
                         ], [
+                            'type'          =>  'number',
+                            'label'         =>  __( 'Credit Limit' ),
+                            'name'          =>  'credit_limit_amount',
+                            'value'         =>  $entry->credit_limit_amount ?? '',
+                            'description'   =>  __( 'Set what should be the limit of the purchase on credit.' )
+                        ], [
                             'type'          =>  'select',
                             'label'         =>  __( 'Group' ),
                             'name'          =>  'group_id',
@@ -163,19 +175,20 @@ class CustomerCrud extends CrudService
                             'type'          =>  'datetimepicker',
                             'label'         =>  __( 'Birth Date' ),
                             'name'          =>  'birth_date',
-                            'value'         =>  $entry instanceof Customer ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : '', 
+                            'value'         =>  $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null, 
                             'description'   =>  __( 'Displays the customer birth date' )
                         ], [
                             'type'          =>  'email',
                             'label'         =>  __( 'Email' ),
                             'name'          =>  'email',
                             'value'         =>  $entry->email ?? '',
-                            'validation'    =>  [
-                                'required',
-                                'email',
-                                $entry instanceof Customer ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
-                            ],
-                            'description'   =>  __( 'Provide the customer email' )
+                            'validation'    =>  collect([
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
+                                ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
+                                    $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
+                                ) : ''
+                            ])->filter()->toArray(),
+                            'description'   =>  __( 'Provide the customer email.' )
                         ], [
                             'type'          =>  'text',
                             'label'         =>  __( 'Phone Number' ),
@@ -347,14 +360,20 @@ class CustomerCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         return collect( $inputs )->map( function( $value, $key ) {
+            
             if ( $key === 'group_id' && empty( $value ) ) {
-                $value    =   $this->options->get( 'ns_customers_default_group', false );
-                if ( $value === false ) {
-                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+                
+                $value      =   $this->options->get( 'ns_customers_default_group', false );
+                $group      =   CustomerGroup::find( $value );
+    
+                if ( ! $group instanceof CustomerGroup ) {
+                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or is not defined.' ) );
                 }
             }
+
             return $value;
-        });
+
+        })->toArray();
     }
 
     /**
@@ -365,14 +384,20 @@ class CustomerCrud extends CrudService
     public function filterPutInputs( $inputs, \App\Models\Customer $entry )
     {
         return collect( $inputs )->map( function( $value, $key ) {
+            
             if ( $key === 'group_id' && empty( $value ) ) {
-                $value    =   $this->options->get( 'ns_customers_default_group', false );
-                if ( $value === false ) {
-                    throw new Exception( __( 'No group selected and no default group configured.' ) );
+
+                $value      =   $this->options->get( 'ns_customers_default_group', false );
+                $group      =   CustomerGroup::find( $value );
+    
+                if ( ! $group instanceof CustomerGroup ) {
+                    throw new NotAllowedException( __( 'The assigned default customer group doesn\'t exist or is not defined.' ) );
                 }
             }
+
             return $value;
-        });
+
+        })->toArray();
     }
 
     /**
@@ -447,7 +472,7 @@ class CustomerCrud extends CrudService
      * before creating
      * @return  void
      */
-    public function beforePost( $request ) {
+    public function beforePost( $inputs ) {
         $this->allowedTo( 'create' );
     }
 
@@ -455,7 +480,7 @@ class CustomerCrud extends CrudService
      * before updating
      * @return  void
      */
-    public function beforePut( $request, $customer ) {
+    public function beforePut( $inputs, $customer ) {
         $this->allowedTo( 'update' );
     }
 
@@ -555,6 +580,7 @@ class CustomerCrud extends CrudService
         $entry->surname                 =   $entry->surname ?? __( 'Not Defined' );
         $entry->pobox                   =   $entry->pobox ?? __( 'Not Defined' );
         $entry->reward_system_id        =   $entry->reward_system_id ?? __( 'Not Defined' );
+        $entry->email                   =   $entry->email ?: __( 'Not Defined' );
         
         switch( $entry->gender ) {
             case 'male': $entry->gender = __( 'Male' );break;

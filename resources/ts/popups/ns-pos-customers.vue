@@ -39,7 +39,7 @@
                                 <div class="px-4 mb-4 w-full">
                                     <h2 class="font-semibold text-gray-700">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
-                                <div class="px-4 mb-4 w-full md:w-1/3">
+                                <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-4 mb-4 w-full md:w-1/3">
+                                <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
@@ -55,11 +55,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-4 mb-4 w-full md:w-1/3">
+                                <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Account Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="px-4 mb-4 w-full md:w-1/4">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
+                                        <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
+                                        <div class="w-full flex justify-end">
+                                            <h2 class="text-2xl font-bold">{{ customer.credit_limit_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>

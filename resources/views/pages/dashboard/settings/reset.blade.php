@@ -1,3 +1,9 @@
+<?php
+
+use App\Classes\Hook;
+use App\Services\Helper;
+
+?>
 @extends( 'layout.dashboard' )
 
 @section( 'layout.dashboard.body' )
@@ -15,4 +21,16 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section( 'layout.dashboard.footer' )
+    @parent
+<script>
+    const ResetData     =   {
+        options: <?php echo json_encode( Helper::kvToJsOptions( Hook::filter( 'ns-reset-options', [
+            'wipe_all'              =>  __( 'Wipe All' ),
+            'wipe_plus_grocery'     =>  __( 'Wipe Plus Grocery' ),
+        ])));?>
+    }
+</script>
 @endsection

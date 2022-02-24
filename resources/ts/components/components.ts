@@ -19,7 +19,7 @@ import { nsCloseButton }                from  './ns-close-button';
 import { nsIconButton }                 from  './ns-icon-button';
 import { nsCkeditor }                   from  './ns-ckeditor';
 import { nsTabs, nsTabsItem }           from  './ns-tabs';
-import { nsDateTimePicker }             from  './ns-date-time-picker';
+import { default as nsDateTimePicker }  from  './ns-date-time-picker.vue';
 import { default as nsCrud }            from  './ns-crud.vue';
 import { default as nsNumpad }          from  './ns-numpad.vue';
 import { default as nsAvatar }          from  './ns-avatar.vue';

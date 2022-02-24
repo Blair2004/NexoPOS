@@ -6,9 +6,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Services\ReportService;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithReportTest;
 
 class RefreshReportForPassDaysTest extends TestCase
 {
+    use WithAuthentication, WithReportTest;
+
     protected $totalDaysInterval     =   40;
 
     /**
@@ -16,23 +20,9 @@ class RefreshReportForPassDaysTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function testRefreshReportForPastDays()
     {
-        /**
-         * @var ReportService
-         */
-        $service        =   app()->make( ReportService::class );
-        $startInterval  =   ns()->date->clone()->subDays( $this->totalDaysInterval )->subDay();
-
-        for( $i = 0; $i <= $this->totalDaysInterval; $i++ ) {
-            $today      =   $startInterval->addDay()->clone();
-
-            $service->computeDayReport(
-                $today->startOfDay()->toDateTimeString(),
-                $today->endOfDay()->toDateTimeString()
-            );
-        }
-
-        $this->assertTrue( true );        
+        $this->attemptAuthenticate();
+        $this->attemptRefreshReportForPastDays();
     }
 }

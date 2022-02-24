@@ -15,9 +15,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithOrderTest;
 
 class OrderRefundTest extends TestCase
 {
+    use WithOrderTest, WithAuthentication;
+
     /**
      * A basic feature test example.
      *
@@ -25,175 +29,7 @@ class OrderRefundTest extends TestCase
      */
     public function testRefund()
     {
-        Sanctum::actingAs(
-            Role::namespace( 'admin' )->users->first(),
-            ['*']
-        );
-
-        /**
-         * @var CurrencyService
-         */
-        $currency       =   app()->make( CurrencyService::class );
-        
-        $firstFetchCustomer     =   Customer::first();        
-        $firstFetchCustomer->save();
-
-        $product        =   Product::withStockEnabled()->with( 'unit_quantities' )->first();
-        $shippingFees   =   150;
-        $discountRate   =   3.5;
-        $products       =   [
-            /**
-             * this is a sample product/service
-             */
-            [
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
-                'unit_id'               =>  $product->unit_quantities[0]->unit_id
-            ], 
-            
-            /**
-             * An existing product
-             */
-            [
-                'product_id'            =>  $product->id,
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
-                'unit_id'               =>  $product->unit_quantities[0]->unit_id
-            ]
-        ];
-
-        $subtotal   =   collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
-        $netTotal   =   $subtotal   +   $shippingFees;
-        
-        /**
-         * We'll add taxes to the order in
-         * case we have some tax group defined.
-         */
-        $taxes      =   [];
-        $taxGroup   =   TaxGroup::first();
-        if ( $taxGroup instanceof TaxGroup ) {
-            $taxes  =   $taxGroup->taxes->map( function( $tax ) {
-                return [
-                    'tax_name'  =>  $tax->name,
-                    'tax_id'    =>  $tax->id,
-                    'rate'      =>  $tax->rate
-                ];
-            });
-        }
-
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  $firstFetchCustomer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  $discountRate,
-                'taxes'                 =>  $taxes,
-                'tax_group_id'          =>  $taxGroup->id,
-                'tax_type'              =>  'inclusive',
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
-                    ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
-                    ]
-                ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products,
-                'payments'              =>  [
-                    [
-                        'identifier'    =>  OrderPayment::PAYMENT_CASH,
-                        'value'         =>  $netTotal
-                    ]
-                ]
-            ]);        
-        
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
-
-        $responseData           =   json_decode( $response->getContent(), true );
-        
-        $secondFetchCustomer    =   $firstFetchCustomer->fresh();
-        
-        if ( $currency->define( $secondFetchCustomer->purchases_amount )
-            ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
-            ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
-            throw new Exception( 
-                sprintf(
-                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
-                    $secondFetchCustomer->purchases_amount - ( float ) $responseData[ 'data' ][ 'order' ][ 'tendered' ],
-                    $firstFetchCustomer->purchases_amount
-                )
-            );
-        }
-
-        /**
-         * We'll keep original products amounts and quantity
-         * this means we're doing a full refund of price and quantities
-         */
-        $responseData[ 'data' ][ 'order' ][ 'products' ]    =   collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) {
-            $product[ 'condition' ]     =   OrderProductRefund::CONDITION_DAMAGED;
-            $product[ 'quantity' ]      =   1;
-            $product[ 'description' ]   =   __( 'Test : The product wasn\'t properly manufactured, causing external damage to the device during the shipment.' );
-            return $product;
-        })->toArray();
-
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-            ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
-                'payment'   =>  [
-                    'identifier'    =>  'account-payment',
-                ],
-                'total'     =>  $responseData[ 'data' ][ 'order' ][ 'total' ],
-                'products'  =>  $responseData[ 'data' ][ 'order' ][ 'products' ],
-            ]);
-
-        $response->assertStatus(200);
-        $responseData           =   json_decode( $response->getContent(), true );
-
-        $thirdFetchCustomer      =   $secondFetchCustomer->fresh();
-
-        if ( 
-            $currency->define( $thirdFetchCustomer->purchases_amount )
-                ->additionateBy( $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] )
-                ->getRaw() !== $currency->getRaw( $secondFetchCustomer->purchases_amount ) ) {
-
-            throw new Exception( 
-                sprintf(
-                    __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
-                    $secondFetchCustomer->purchases_amount,
-                    $thirdFetchCustomer->purchases_amount + ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ]
-                )
-            );
-        }
-
-        /**
-         * let's check if an expense has been created accordingly
-         */
-        // ns_sales_refunds_cashflow_account
-        $expenseCategory    =   ExpenseCategory::find( ns()->option->get( 'ns_sales_refunds_account' ) );
-
-        if ( ! $expenseCategory instanceof ExpenseCategory ) {
-            throw new Exception( __( 'An expense hasn\'t been created after the refund.' ) );
-        }
-
-        $expenseValue    =   $expenseCategory->cashFlowHistories()
-            ->where( 'order_id', $responseData[ 'data' ][ 'order' ][ 'id' ] )
-            ->sum( 'value' );
-
-        if ( ( float ) $expenseValue != ( float ) $responseData[ 'data' ][ 'orderRefund' ][ 'total' ] ) {
-            throw new Exception( __( 'The expense created after the refund doesn\'t match the order refund total.' ) );
-        }  
-        
-        $response->assertJson([
-            'status'    =>  'success'
-        ]);
+        $this->attemptAuthenticate();
+        $this->attemptRefundOrder();
     }
 }

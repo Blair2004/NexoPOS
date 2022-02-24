@@ -79,6 +79,7 @@ export default {
                 this.totalWeekIncome    =   0;
                 this.totalWeekExpenses  =   0;
                 this.totalWeekTaxes     =   0;
+
                 this.report.result.forEach( ( result, index ) => {
                     /**
                      * current week
@@ -89,15 +90,15 @@ export default {
 
                         if ( sales.length > 0 ) {
                             total       =   sales.reduce( ( b, a ) => b + a );
-
-                            /**
-                             * this compute the week expenses
-                             * and taxes for the current week
-                             */
-                            this.totalWeekExpenses  +=  result.current.entries.map( dashboardDay => dashboardDay.day_expenses );
-                            this.totalWeekTaxes     +=  result.current.entries.map( dashboardDay => dashboardDay.day_taxes );
-                            this.totalWeekIncome    +=  result.current.entries.map( dashboardDay => dashboardDay.day_income );
                         }
+
+                        /**
+                         * this compute the week expenses
+                         * and taxes for the current week
+                         */
+                        this.totalWeekExpenses  +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_expenses ) ).reduce( ( b, a ) => b + a );
+                        this.totalWeekTaxes     +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_taxes ) ).reduce( ( b, a ) => b + a );
+                        this.totalWeekIncome    +=  result.current.entries.map( dashboardDay => parseFloat( dashboardDay.day_income ) ).reduce( ( b, a ) => b + a );
 
                         this.series[ 0 ].data.push( total );
                         

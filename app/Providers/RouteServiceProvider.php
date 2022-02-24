@@ -115,24 +115,60 @@ class RouteServiceProvider extends ServiceProvider
                 }
             }
 
+            $domain     =   pathinfo( env( 'APP_URL' ) );
+
             /**
              * will load all web.php file as dashboard routes.
              */
             if ( $module[ 'routes-file' ] !== false ) {
-                Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ])
-                    ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
-                    ->group( $module[ 'routes-file' ] );
+                if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+                    /**
+                     * The defined route should only be applicable
+                     * to the main domain.
+                     */
+                    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+
+                    Route::domain( $domainString )->group( function() use ( $module ) {
+                        $this->mapModuleWebRoutes( $module );
+                    });
+                } else {
+                    $this->mapModuleWebRoutes( $module );
+                }
             }
 
             /**
              * will load api.php file has api file
              */
             if ( $module[ 'api-file' ] !== false ) {
-                Route::prefix( 'api/nexopos/v4' )
+                if ( env( 'NS_WILDCARD_ENABLED' ) ) {
+                    /**
+                     * The defined route should only be applicable
+                     * to the main domain.
+                     */
+                    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+
+                    Route::domain( $domainString )->group( function() use ( $module ) {
+                        $this->mapModuleApiRoutes( $module );
+                    });
+                } else {
+                    $this->mapModuleApiRoutes( $module );
+                }
+            }
+        }
+    }
+
+    public function mapModuleWebRoutes( $module )
+    {
+        Route::middleware([ 'web', 'ns.installed', 'ns.check-application-health', CheckMigrationStatus::class ])
+            ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
+            ->group( $module[ 'routes-file' ] );
+    }
+
+    public function mapModuleApiRoutes( $module )
+    {
+        Route::prefix( 'api/nexopos/v4' )
                     ->middleware([ 'ns.installed', 'api' ])
                     ->namespace( 'Modules\\' . $module[ 'namespace' ] . '\Http\Controllers' )
                     ->group( $module[ 'api-file' ] );
-            }
-        }
     }
 }

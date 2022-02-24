@@ -14,6 +14,7 @@ use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
 use App\Fields\PosOrderSettingsFields;
 use App\Fields\RefundProductFields;
+use App\Fields\ResetFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -92,6 +93,9 @@ class FormsProvider extends ServiceProvider
                 case 'ns.pos-order-settings':
                     return new PosOrderSettingsFields;
                 break;     
+                case 'ns.reset':
+                    return new ResetFields;
+                break;
                 default:
                     return $class;
                 break;       

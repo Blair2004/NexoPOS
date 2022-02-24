@@ -156,7 +156,7 @@ class AppServiceProvider extends ServiceProvider
             $options    =   app()->make( Options::class );
             return new CurrencyService( 
                 0, [
-                    'decimal_precision'     =>  $options->get( 'ns_currency_precision', 2 ),
+                    'decimal_precision'     =>  $options->get( 'ns_currency_precision', 0 ),
                     'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
                     'thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', '.' ),
                     'currency_position'     =>  $options->get( 'ns_currency_position', 'before' ),
@@ -214,6 +214,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( CurrencyService::class ),
                 $app->make( Options::class ),
                 $app->make( TaxService::class ),
+                $app->make( ReportService::class ),
             );
         });
 

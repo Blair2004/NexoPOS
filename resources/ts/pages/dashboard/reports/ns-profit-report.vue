@@ -4,6 +4,7 @@
 <script>
 import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
+import nsDateTimePicker from "@/components/ns-date-time-picker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 export default {
@@ -16,7 +17,8 @@ export default {
         }
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsDateTimePicker
     },
     computed: {
         totalQuantities() {
@@ -66,7 +68,6 @@ export default {
         },
         setStartDate( moment ) {
             this.startDate  =   moment.format();
-            console.log( this.startDate );
         },
 
         loadReport() {
@@ -84,14 +85,18 @@ export default {
             nsHttpClient.post( '/api/nexopos/v4/reports/profit-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
-            }).subscribe( products => {
-                this.products     =   products;
-            }, ( error ) => {
-                nsSnackBar.error( error.message ).subscribe();
+            }).subscribe({
+                next: products => {
+                    this.products     =   products;
+                },
+                error: ( error ) => {
+                    nsSnackBar.error( error.message ).subscribe();
+                }
             });
         },
 
         setEndDate( moment ) {
+            console.log( moment );
             this.endDate    =   moment.format();
         },
     }

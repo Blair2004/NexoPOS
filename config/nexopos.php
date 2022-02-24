@@ -1,12 +1,13 @@
 <?php
 return [
-    'version'       =>  '4.6.5',
+    'version'       =>  '4.6.12',
     'languages'     =>  [
         'en'        =>  'English',
         'fr'        =>  'Français',
         'es'        =>  'Espanol',
         'it'        =>  'Italian',
-        'ar'        =>  'Arabic'
+        'ar'        =>  'Arabic',
+        'pt'        =>  'Portuguese',
     ],
     'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [

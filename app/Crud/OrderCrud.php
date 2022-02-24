@@ -110,6 +110,7 @@ class OrderCrud extends CrudService
                 'description'   =>  __( 'Restrict the orders by the payment status.' ),
                 'options'   =>  Helper::kvToJsOptions([
                     Order::PAYMENT_PAID                 =>  __( 'Paid' ),
+                    Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
                     Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
                     Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
                     Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),

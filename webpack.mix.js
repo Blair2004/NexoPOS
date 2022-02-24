@@ -27,6 +27,11 @@ mix.disableNotifications();
 mix.sourceMaps();
 mix.extract();
 mix.vue({ version: 2 })
+
+if ( mix.inProduction() ) {
+    mix.version();
+}
+
 mix
     .ts( 'resources/ts/bootstrap.ts', mix.inProduction() ? 'public/js/bootstrap.min' : 'public/js')
     .ts( 'resources/ts/lang-loader.ts', mix.inProduction() ? 'public/js/lang-loader.min' : 'public/js')

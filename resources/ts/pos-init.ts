@@ -191,11 +191,14 @@ export class POS {
             {
                 identifier: 'handle.delivery-order',
                 promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
-                    if (selectedType.identifier === 'delivery') {
+                    if ( selectedType && selectedType.identifier === 'delivery') {
                         return Popup.show(NSPosShippingPopup, { resolve, reject });
                     }
 
-                    reject(false);
+                    return resolve({
+                        status: 'success',
+                        message: 'Proceed'
+                    });
                 })
             }
         ]
@@ -649,24 +652,27 @@ export class POS {
                             .replace('{amount}', Vue.filter('currency')(firstSlice))
                             .replace('{paymentType}', paymentType.label),
                         onAction: (action) => {
-
-                            const payment: Payment = {
-                                identifier: paymentType.identifier,
-                                label: paymentType.label,
-                                value: firstSlice,
-                                readonly: false,
-                                selected: true,
+                            if ( action ) {
+                                const payment: Payment = {
+                                    identifier: paymentType.identifier,
+                                    label: paymentType.label,
+                                    value: firstSlice,
+                                    readonly: false,
+                                    selected: true,
+                                }
+    
+                                this.addPayment(payment);   
+                                
+                                /**
+                                 * The expected slice
+                                 * should be marked as paid once submitted
+                                 */
+                                expectedSlice[0].paid   =   true;
+    
+                                resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
+                            } else {
+                                reject({ status: 'failed', message: __( 'The request was canceled' ) })
                             }
-
-                            this.addPayment(payment);   
-                            
-                            /**
-                             * The expected slice
-                             * should be marked as paid once submitted
-                             */
-                            expectedSlice[0].paid   =   true;
-
-                            resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
                         }
                     });
                 }
@@ -763,53 +769,150 @@ export class POS {
         });
     }
 
+    defineQuantities( product, units = [] ) {
+        return new Promise ( ( resolve, reject ) => { 
+            const unit  =   units.filter( unit => unit.id === product.unit_id );
+            const quantities    =   {
+                unit: unit[0] || {},
+                
+                incl_tax_sale_price: parseFloat( product.unit_price ),
+                excl_tax_sale_price: parseFloat( product.unit_price ),
+                sale_price: parseFloat( product.unit_price ),
+                sale_price_tax: 0,
+                sale_price_edit: 0,
+
+                wholesale_price_tax: 0,
+                incl_tax_wholesale_price: 0,
+                excl_tax_wholesale_price: 0,
+                wholesale_price: 0,
+                wholesale_price_edit: 0,
+
+                custom_price_tax : 0,
+                custom_price : 0,
+                custom_price_edit: 0,
+                incl_tax_custom_price: 0,
+                excl_tax_custom_price: 0
+            };
+
+            let tax_group;
+
+            /**
+             * this will get the taxes
+             * and compute it for the product
+             */
+            if( [ 'inclusive', 'exclusive' ].includes( product.tax_type ) ) {
+                try {
+                    if( product.tax_group_id ) {
+                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
+                            .subscribe({
+                                next: (taxGroup: any) => {
+                                    quantities.sale_price_tax  =   taxGroup.taxes.map( tax => {
+                                        return this.getVatValue( quantities.sale_price, tax.rate, product.tax_type );
+                                    }).reduce( ( b, a ) => b + a );
+        
+                                    quantities.wholesale_price_tax  =   taxGroup.taxes.map( tax => {
+                                        return this.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
+                                    }).reduce( ( b, a ) => b + a );
+        
+                                    quantities.excl_tax_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
+                                    quantities.incl_tax_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
+                                    
+                                    tax_group            =   taxGroup;
+        
+                                    return resolve( quantities );
+                                },
+                                error:  error => {
+                                    reject( false );
+                                }
+                            })
+                    } else {
+                        quantities.sale_price_tax       =   0;
+                        quantities.wholesale_price_tax  =   0;
+                        quantities.excl_tax_sale_price  =  product.unit_price;
+                        
+                        return resolve( quantities );
+                    }
+                } catch( exception ) {
+                    return nsSnackBar.error( __( 'An error has occured while computing the product.' ) ).subscribe();
+                }
+            }
+            
+            return resolve( quantities );
+        });
+    }
+
     loadOrder(order_id) {
         return new Promise((resolve, reject) => {
             nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
-                .subscribe(async (order: any) => {
+                .subscribe({
+                    next: async (order: any) => {
 
-                    order = { ...this.defaultOrder(), ...order };
+                        order = { ...this.defaultOrder(), ...order };
+    
+                        /**
+                         * We'll rebuilt the product
+                         */
+                        const products  =   [];
+                        
+                        for( let i = 0; i < order.products.length ; i++ ) {
+                            
+                            const orderProduct      =   order.products[i];
 
-                    /**
-                     * We'll rebuilt the product
-                     */
-                    const products = order.products.map((orderProduct: OrderProduct) => {
-                        orderProduct.$original = () => orderProduct.product;
-                        orderProduct.$quantities = () => orderProduct
-                            .product
-                            .unit_quantities
-                            .filter(unitQuantity => unitQuantity.id === orderProduct.unit_quantity_id)[0];
-                        return orderProduct;
-                    });
+                            /**
+                             * in case the orderProduct is a quick product
+                             * we need to fill back the $quantities function
+                             */
+                             if ( orderProduct.product === null ) {
+                                orderProduct.product    =   {
+                                    mode: 'custom',
+                                    name: orderProduct.name,
+                                    unit_id: orderProduct.unit_id,
+                                    unit_quantities :   [
+                                        await this.defineQuantities( orderProduct )
+                                    ]
+                                }
+                            }
 
-                    /**
-                     * we'll redefine the order type
-                     */
-                    order.type = Object.values(this.types.getValue()).filter((type: any) => type.identifier === order.type)[0];
+                            orderProduct.$original = () => orderProduct.product;
+                            orderProduct.$quantities = () => orderProduct
+                                .product
+                                .unit_quantities
+                                .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
 
-                    /**
-                     * the address is provided differently
-                     * then we need to rebuild it the way it's saved and used
-                     */
-                    order.addresses = {
-                        shipping: order.shipping_address,
-                        billing: order.billing_address
-                    }
+                            products.push( orderProduct );
+                        }
+    
+                        /**
+                         * we'll redefine the order type
+                         */
+                        order.type = Object.values(this.types.getValue()).filter((type: any) => type.identifier === order.type)[0];
+    
+                        /**
+                         * the address is provided differently
+                         * then we need to rebuild it the way it's saved and used
+                         */
+                        order.addresses = {
+                            shipping: order.shipping_address,
+                            billing: order.billing_address
+                        }
+    
+                        delete order.shipping_address;
+                        delete order.billing_address;
+        
+                        /**
+                         * let's all set, let's load the order
+                         * from now. No further change is required
+                         */
+    
+                        this.buildOrder(order);
+                        this.buildProducts(products);
 
-                    delete order.shipping_address;
-                    delete order.billing_address;
+                        await this.selectCustomer(order.customer);
 
-
-                    /**
-                     * let's all set, let's load the order
-                     * from now. No further change is required
-                     */
-
-                    this.buildOrder(order);
-                    this.buildProducts(products);
-                    await this.selectCustomer(order.customer);
-                    resolve(order);
-                }, error => reject(error));
+                        resolve(order);
+                    }, 
+                    error: error => reject(error)
+                });
         })
     }
 
@@ -872,10 +975,10 @@ export class POS {
             item.remove();
         }
 
-        const printSection = document.createElement('iframe');
-        printSection.id = 'printing-section';
-        printSection.className = 'hidden';
-        printSection.src = this.settings.getValue()['urls']['printing_url'].replace('{id}', order_id);
+        const printSection          = document.createElement('iframe');
+        printSection.id             = 'printing-section';
+        printSection.className      = 'hidden';
+        printSection.src            = this.settings.getValue()['urls']['sale_printing_url'].replace('{id}', order_id);
 
         document.body.appendChild(printSection);
     }
@@ -1306,10 +1409,22 @@ export class POS {
         this._products.next(products);
     }
 
-    refreshProducts(products) {
+    refreshProducts(products = null) {
+        console.log( products );
         products.forEach(product => {
             this.computeProduct(product);
         });
+    }
+
+    getProductUnitPrice( mode, quantities ) {
+        switch( mode ) {
+            case 'custom':
+                return quantities.custom_price_edit;
+            case 'normal':
+                return quantities.sale_price_edit;
+            case 'wholesale':
+                return quantities.wholesale_price_edit;
+        }
     }
 
     computeProductTax( product: OrderProduct ) {
@@ -1330,11 +1445,11 @@ export class POS {
         const originalProduct   =   product.$original();
         const taxGroup          =   originalProduct.tax_group;
 
-        let price_without_tax   =   0;
+        let price_without_tax   =   this.getProductUnitPrice( product.mode, product.$quantities() );
         let tax_value           =   0;
-        let price_with_tax      =   0;
+        let price_with_tax      =   this.getProductUnitPrice( product.mode, product.$quantities() );
 
-        if ( taxGroup.taxes !== undefined ) {
+        if ( taxGroup !== undefined && taxGroup.taxes !== undefined ) {
 
             /**
              * get summarize rates
@@ -1376,6 +1491,8 @@ export class POS {
         const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
+
+        console.log( quantities, result );
 
         quantities.excl_tax_custom_price    =   result.price_without_tax;
         quantities.incl_tax_custom_price    =   result.price_with_tax;
@@ -1425,6 +1542,7 @@ export class POS {
          * determining what is the 
          * real sale price
          */
+        console.log( 'processed' );
         if (product.mode === 'normal') {
             product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().sale_price_tax * product.quantity;
@@ -1435,6 +1553,8 @@ export class POS {
             product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
+
+        console.log( product.unit_price );
 
         /**
          * computing the discount when it's 
@@ -1484,11 +1604,14 @@ export class POS {
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
-                                .subscribe((result: any) => {
-                                    nsSnackBar.success(result.message).subscribe();
-                                    this.reset();
-                                }, (error) => {
-                                    return nsSnackBar.error(error.message).subscribe();
+                                .subscribe({
+                                    next: (result: any) => {
+                                        nsSnackBar.success(result.message).subscribe();
+                                        this.reset();
+                                    },
+                                    error: (error) => {
+                                        return nsSnackBar.error(error.message).subscribe();
+                                    }
                                 })
                         }
                     }
@@ -1501,11 +1624,7 @@ export class POS {
 
     async triggerOrderTypeSelection(selectedType) {
         for (let i = 0; i < this.orderTypeQueue.length; i++) {
-            try {
-                const result = await this.orderTypeQueue[i].promise(selectedType);
-            } catch (exception) {
-                console.log(exception);
-            }
+            const result = await this.orderTypeQueue[i].promise(selectedType);
         }
     }
 

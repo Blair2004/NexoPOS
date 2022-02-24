@@ -154,14 +154,14 @@ class MenuService
                         'href'          =>  ns()->url( '/dashboard/cash-flow/history' )
                     ],
                     'expenses-categories'   =>  [
-                        'label' =>  __( 'Expense Accounts'),
+                        'label' =>  __( 'Accounts'),
                         'permissions'   =>  [ 'nexopos.read.expenses-categories' ],
-                        'href'  =>  ns()->url( '/dashboard/expenses/categories' )
+                        'href'  =>  ns()->url( '/dashboard/accounting/accounts' )
                     ],
                     'create-expenses-categories'   =>  [
-                        'label' =>  __( 'Create Expense Account'),
+                        'label' =>  __( 'Create Account'),
                         'permissions'   =>  [ 'nexopos.create.expenses-categories' ],
-                        'href'  =>  ns()->url( '/dashboard/expenses/categories/create' )
+                        'href'  =>  ns()->url( '/dashboard/accounting/accounts/create' )
                     ],
                 ]
             ], 

@@ -62,6 +62,16 @@ class CashRegistersService
             );
         }
 
+        if ( ( float ) $register->balance !== ( float ) $amount ) {            
+            throw new NotAllowedException( 
+                sprintf( 
+                    __( 'The specified amount %s doesn\'t match the cash register balance %s.' ),
+                    ( string ) ns()->currency->fresh( $amount ),
+                    ( string ) ns()->currency->fresh( $register->balance )
+                )
+            );
+        }
+
         $registerHistory    =   new RegisterHistory;
         $registerHistory->register_id   =   $register->id;
         $registerHistory->action        =   RegisterHistory::ACTION_CLOSING;
@@ -285,6 +295,7 @@ class CashRegistersService
             $register->opening_balance      =   $history->value;
             $register->total_sale_amount    =   Order::paid()
                 ->where( 'register_id', $register->id )
+                ->where( 'created_at', '>=', $history->created_at )
                 ->sum( 'total' );
         }
 

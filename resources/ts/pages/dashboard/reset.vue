@@ -30,6 +30,10 @@ export default {
     methods: {
         __,
         submit() {
+            if ( this.fields.length === 0 ) {
+                return nsSnackBar.error( __( 'This form is not completely loaded.' ) ).susbcribe();
+            }
+
             if ( ! this.validation.validateFields( this.fields ) ) {
                 this.$forceUpdate();
                 return nsSnackBar.error( this.$slots[ 'error-form-invalid' ] ? this.$slots[ 'error-form-invalid' ][0].text : 'Invalid Form' ).subscribe(); 
@@ -39,32 +43,36 @@ export default {
 
             if ( confirm( this.$slots[ 'confirm-message' ] ? this.$slots[ 'confirm-message' ][0].text : __( 'Would you like to proceed ?' ) ) ) {
                 nsHttpClient.post( '/api/nexopos/v4/reset', fields )
-                    .subscribe( result => {
-                        nsSnackBar.success( result.message ).subscribe();
-                    }, error => {
-                        nsSnackBar.error( error.message ).subscribe();
+                    .subscribe({
+                        next: result => {
+                            nsSnackBar.success( result.message ).subscribe();
+                        },
+                        error: error => {
+                            nsSnackBar.error( error.message ).subscribe();
+                        }
                     })
             }
+        },
+        loadFields() {
+            nsHttpClient.get( '/api/nexopos/v4/fields/ns.reset' )
+                .subscribe({
+                    next: fields => {
+                        this.fields     =   this.validation.createFields( fields );
+                    },
+                    error: error => {
+                        nsSnackBar.error( error.message ).subscribe();
+                    }
+                })
         }
+    },
+    mounted() {
+        this.loadFields();
     },
     data() {
         return {
             validation: new FormValidation,
             fields: [
-                {
-                    label: 'Choose Option',
-                    name: 'mode',
-                    description: __( 'Will apply various reset method on the system.' ),
-                    type: 'select',
-                    options: [{
-                        label: __( 'Wipe Everything' ),
-                        value: 'wipe_all',
-                    }, {
-                        label: __( 'Wipe + Grocery Demo' ),
-                        value: 'wipe_plus_grocery',
-                    }],
-                    validation: 'required'
-                }
+                // ...
             ]
         }
     },

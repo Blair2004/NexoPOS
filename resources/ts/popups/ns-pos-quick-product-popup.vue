@@ -48,68 +48,7 @@ export default {
             }
 
             const product       =   this.validation.extractFields( this.fields );
-            const quantities    =   {
-                unit: this.units.filter( unit => unit.id === product.unit_id )[0],
-                
-                incl_tax_sale_price: parseFloat( product.unit_price ),
-                excl_tax_sale_price: parseFloat( product.unit_price ),
-                sale_price: parseFloat( product.unit_price ),
-                sale_price_tax: 0,
-                sale_price_edit: 0,
-
-                wholesale_price_tax: 0,
-                incl_tax_wholesale_price: 0,
-                excl_tax_wholesale_price: 0,
-                wholesale_price: 0,
-                wholesale_price_edit: 0,
-
-                custom_price_tax : 0,
-                custom_price : 0,
-                custom_price_edit: 0,
-                incl_tax_custom_price: 0,
-                excl_tax_custom_price: 0
-            };
-
-            let tax_group;
-
-            /**
-             * this will get the taxes
-             * and compute it for the product
-             */
-            try {
-                await new Promise ( ( resolve, reject ) => {
-                    if( product.tax_group_id ) {
-                        nsHttpClient.get( `/api/nexopos/v4/taxes/groups/${product.tax_group_id}` )
-                            .subscribe( taxGroup => {
-                                quantities.sale_price_tax  =   taxGroup.taxes.map( tax => {
-                                    return POS.getVatValue( quantities.sale_price, tax.rate, product.tax_type );
-                                }).reduce( ( b, a ) => b + a );
-    
-                                quantities.wholesale_price_tax  =   taxGroup.taxes.map( tax => {
-                                    return POS.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
-                                }).reduce( ( b, a ) => b + a );
-    
-                                quantities.excl_tax_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
-                                quantities.incl_tax_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
-                                
-                                tax_group            =   taxGroup;
-    
-                                resolve( true );
-                            }, error => {
-                                reject( false );
-                            })
-                    } else {
-                        quantities.sale_price_tax       =   0;
-                        quantities.wholesale_price_tax  =   0;
-                        quantities.excl_tax_sale_price  =  product.unit_price;
-                        
-                        resolve( true );
-                    }
-                });
-
-            } catch( exception ) {
-                return nsSnackBar.error( __( 'An error has occured while computing the product.' ) ).subscribe();
-            }
+            const quantities    =   await POS.defineQuantities( product, this.units );
             
             product.$quantities     =   () => quantities;
 
@@ -117,7 +56,8 @@ export default {
                 return {
                     stock_management: 'disabled',
                     category_id: 0,
-                    tax_group,
+                    tax_group: this.tax_groups.filter( taxGroup => parseInt( taxGroup.id ) === parseInt( product.tax_group_id ) )[0],
+                    tax_group_id: product.tax_group_id,
                     tax_type: product.tax_type
                 }
             }

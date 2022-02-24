@@ -8,9 +8,12 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
+use Tests\Traits\WithReportTest;
 
 class CanSeeReportsTest extends TestCase
 {
+    use WithReportTest;
+
     /**
      * A basic feature test example.
      *
@@ -22,23 +25,6 @@ class CanSeeReportsTest extends TestCase
             Role::namespace( 'admin' )->users->first()->id 
         );
         
-        $reports    =   [
-            '/dashboard/reports/sales',
-            '/dashboard/reports/sales-progress',
-            '/dashboard/reports/low-stock',
-            '/dashboard/reports/sold-stock',
-            '/dashboard/reports/profit',
-            '/dashboard/reports/cash-flow',
-            '/dashboard/reports/annual-report',
-            '/dashboard/reports/payment-types',
-        ];
-
-        foreach( $reports as $report ) {
-            $response       =   $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'GET', $report );
-
-            $response->assertStatus(200);
-        }
-
+        $this->attemptSeeReports();
     }
 }

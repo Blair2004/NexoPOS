@@ -409,7 +409,10 @@ class TaxService
      */
     public function getPercentageOf( $value, $rate )
     {
-        return $this->currency->getRaw( ( $value * $rate ) / 100 );
+        return $this->currency->fresh( $value )
+            ->multipliedBy( $rate )
+            ->dividedBy( 100 )
+            ->getFullRaw();
     }
 
     /**

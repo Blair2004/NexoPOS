@@ -1,10 +1,12 @@
 <?php
 namespace App\Services;
 
+use App\Classes\Hook;
 use App\Models\Role;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use Exception;
+use Faker\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -16,6 +18,7 @@ class DemoService extends DemoCoreService
     protected $procurementService;
     protected $orderService;
     protected $user;
+    protected $faker;
     
     public function __construct(
         ProductCategoryService $categoryService,
@@ -27,21 +30,79 @@ class DemoService extends DemoCoreService
         $this->productService       =   $productService;
         $this->procurementService   =   $procurementService;
         $this->orderService         =   $ordersService;
+        $this->faker                =   (new Factory)->create();
+    }
+
+    public function extractProductFields( $fields )
+    {
+        $primary    =   collect( $fields[ 'variations' ] )
+            ->filter( fn( $variation ) => isset( $variation[ '$primary' ] ) )
+            ->first();
+
+        $source                                 =   $primary;
+        $units                                  =   $primary[ 'units' ];
+
+        /**
+         * this is made to ensure the array 
+         * provided aren't flatten
+         */
+        unset( $primary[ 'units' ] );
+        unset( $primary[ 'images' ] );
+
+        $primary[ 'identification' ][ 'name' ]          =   $fields[ 'name' ];
+        $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
+        $primary[ 'product_type' ]                      =   'product';
+
+        /**
+         * let's restore the fields before
+         * storing that.
+         */
+        $primary[ 'images' ]        =   $source[ 'images' ];
+        $primary[ 'units' ]         =   $source[ 'units' ];
+        
+        unset( $primary[ '$primary' ] );
+
+        /**
+         * As foreign fields aren't handled with 
+         * they are complex (array), this methods allow
+         * external script to reinject those complex fields.
+         */
+        $primary        =   Hook::filter( 'ns-create-products-inputs', $primary, $source );
+
+        /**
+         * the method "create" is capable of 
+         * creating either a product or a variable product
+         */
+        return $primary;
     }
 
     /**
      * Will enable the basic grocery demo
      * @return void
      */
-    public function run()
+    public function run( $data )
     {
+        /**
+         * @var string $mode
+         * @var boolean $create_sales
+         * @var boolean $create_procurements
+         */
+        extract( $data );
+
         $this->prepareDefaultUnitSystem();
         $this->createCustomers();
+        $this->createAccountingAccounts();
         $this->createProviders();
         $this->createTaxes();
         $this->createProducts();
-        $this->performProcurement();
-        $this->createSales();
+
+        if ( $create_procurements ) {
+            $this->performProcurement();
+        }
+        
+        if ( $create_sales && $create_procurements ) {
+            $this->createSales();
+        }
     }
 
     public function createProducts()

@@ -5,12 +5,16 @@ use App\Classes\Currency;
 use App\Classes\Hook;
 use App\Models\CashFlow;
 use App\Models\Customer;
+use App\Models\CustomerAccountHistory;
 use App\Models\DashboardDay;
 use App\Models\DashboardMonth;
 use App\Models\Order;
+use App\Models\OrderRefund;
+use App\Models\Procurement;
 use App\Models\ProductCategory;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
+use App\Models\RegisterHistory;
 use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -56,8 +60,8 @@ class ReportService
 
     private function defineDate( DashboardDay $dashboardDay )
     {
-        $this->dayStarts      =   ! isset( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->created_at )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
-        $this->dayEnds        =   ! isset( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->created_at )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
+        $this->dayStarts      =   empty( $this->dayStarts ) ? ( Carbon::parse( $dashboardDay->range_starts )->startOfDay()->toDateTimeString() ) : $this->dayStarts;
+        $this->dayEnds        =   empty( $this->dayEnds ) ? ( Carbon::parse( $dashboardDay->range_ends )->endOfDay()->toDateTimeString() ) : $this->dayEnds;
     }
 
     /**
@@ -68,6 +72,12 @@ class ReportService
         $this->dayStarts      =   $dateStart ?: $this->dateService->copy()->startOfDay()->toDateTimeString();
         $this->dayEnds        =   $dateEnd ?: $this->dateService->copy()->endOfDay()->toDateTimeString();
 
+        /**
+         * Before proceeding, let's clear everything 
+         * that is not assigned during this specific time range.
+         */
+        $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
+        
         $todayReport        =   DashboardDay::from( $this->dayStarts )
             ->to( $this->dayEnds )
             ->first();
@@ -77,10 +87,11 @@ class ReportService
             $todayReport->day_of_year   =   Carbon::parse( $this->dayStarts )->dayOfYear;
         }
 
-        $this->refreshFromDashboardDay( $todayReport );
-
         $todayReport->range_starts  =   $this->dayStarts;
         $todayReport->range_ends    =   $this->dayEnds;
+
+        $this->refreshFromDashboardDay( $todayReport );
+
         $todayReport->save();
 
         return $todayReport;
@@ -210,19 +221,115 @@ class ReportService
         ];
     }
 
+    /**
+     * Clear all orphan stock flow
+     * to avoid inaccurate computing
+     * @param string $startAt
+     * @param string $endAt
+     * @return void
+     */
+    public function clearUnassignedCashFlow( $startAt, $endsAt )
+    {
+        $cashFlows  =   CashFlow::where( 'created_at', '>=', $startAt )
+            ->where( 'created_at', '<=', $endsAt )
+            ->get();
+
+        $cashFlows->each( function( $cashFlow ) {
+            /**
+             * let's clear unassigned to orders
+             */
+            if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT && ! empty( $cashFlow->order_id ) ) {
+                $order  =   Order::find( $cashFlow->order_id );
+
+                if( ! $order instanceof Order ) {
+                    $cashFlow->delete();
+                }
+            }
+
+            /**
+             * let's clear unassigned to procurements
+             */
+            if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT && ! empty( $cashFlow->procurement_id ) ) {
+                $order  =   Procurement::find( $cashFlow->procurement_id );
+
+                if( ! $order instanceof Procurement ) {
+                    $cashFlow->delete();
+                }
+            }
+
+            /**
+             * let's clear unassigned to order refund
+             */
+            if ( ! empty( $cashFlow->order_refund_id ) ) {
+                $order  =   OrderRefund::find( $cashFlow->order_refund_id );
+
+                if( ! $order instanceof OrderRefund ) {
+                    $cashFlow->delete();
+                }
+            }
+
+            /**
+             * let's clear unassigned to register history
+             */
+            if ( ! empty( $cashFlow->register_history_id ) ) {
+                $history  =   RegisterHistory::find( $cashFlow->register_history_id );
+
+                if( ! $history instanceof RegisterHistory ) {
+                    $cashFlow->delete();
+                }
+            }
+
+            /**
+             * let's clear unassigned to customer account history
+             */
+            if ( ! empty( $cashFlow->customer_account_history_id ) ) {
+                $history  =   CustomerAccountHistory::find( $cashFlow->customer_account_history_id );
+
+                if( ! $history instanceof CustomerAccountHistory ) {
+                    $cashFlow->delete();
+                }
+            }
+        });
+    }
+
+    /**
+     * Will delete all cash flow
+     * related to the specific order
+     * @param Order $order
+     * @return void
+     */
+    public function deleteOrderCashFlow( Order $order )
+    {
+        CashFlow::where( 'order_id', $order->id )->delete();
+    }
+
+    /**
+     * Will delete all procurement
+     * related to a specific cash flow
+     * @param Procurement $procurement
+     * @return void
+     */
+    public function deleteProcurementCashFlow( Procurement $procurement )
+    {
+        CashFlow::where( 'procurement_id', $procurement->id )->delete();
+    }
+
     public function computeIncome( $previousReport, $todayReport )
     {
-        $totalIncome         =   Order::from( $this->dayStarts )
+        $totalIncome         =   CashFlow::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->paymentStatus( Order::PAYMENT_PAID )
-            ->sum( 'net_total' );
+            ->operation( CashFlow::OPERATION_CREDIT )
+            ->sum( 'value' );
 
         $totalExpenses      =   CashFlow::from( $this->dayStarts )
             ->to( $this->dayEnds )
+            ->operation( CashFlow::OPERATION_DEBIT )
             ->sum( 'value' );
 
+        $todayReport->day_expenses      =   $totalExpenses;
         $todayReport->day_income        =   $totalIncome - $totalExpenses;
         $todayReport->total_income      =   ( $previousReport->total_income ?? 0 ) + $todayReport->day_income;
+        $todayReport->total_expenses    =   ( $previousReport->total_expenses ?? 0 ) + $todayReport->day_expenses;
     }
     
     /**
@@ -337,6 +444,7 @@ class ReportService
         $today  =   $today === null ? DashboardDay::forToday() : $today;
 
         if ( $today instanceof DashboardDay ) {
+
             if ( $cashFlow->operation === CashFlow::OPERATION_DEBIT ) {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );
                 $today->day_expenses        +=   $cashFlow->getRawOriginal( 'value' );
@@ -365,8 +473,8 @@ class ReportService
         if ( $today instanceof DashboardDay ) {
             if ( $cashFlow->operation === CashFlow::OPERATION_CREDIT ) {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );
-                $today->day_income        -=  $cashFlow->getRawOriginal( 'value' );
-                $today->total_income      =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
+                $today->day_income          -=  $cashFlow->getRawOriginal( 'value' );
+                $today->total_income        =   ( $yesterday->total_income ?? 0 ) + $today->day_income;
                 $today->save();
             } else {
                 $yesterday                  =   DashboardDay::forLastRecentDay( $today );
@@ -413,7 +521,7 @@ class ReportService
 
     /**
      * Will initialize a report for wasted good
-     * @param DashboarDay $dashboardDay
+     * @param DashboardDay $dashboardDay
      * @return void
      */
     public function initializeWastedGood( DashboardDay $dashboardDay )
@@ -741,7 +849,7 @@ class ReportService
             'sales_discounts'   =>  Currency::define( $allSales->sum( 'sales_discounts' ) )->getRaw(),
             'producs_taxes'     =>  Currency::define( $allSales->sum( 'producs_taxes' ) )->getRaw(),
             'sales_taxes'       =>  Currency::define( $allSales->sum( 'sales_taxes' ) )->getRaw(),
-            'subtotal'         =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
+            'subtotal'          =>  Currency::define( $allSales->sum( 'subtotal' ) )->getRaw(),
             'total'             =>  Currency::define( $allSales->sum( 'total' ) )->getRaw(),
         ];
     }
@@ -938,5 +1046,37 @@ class ReportService
     public function getLowStockProducts()
     {
         return ProductUnitQuantity::with( 'product', 'unit' )->whereRaw( 'low_quantity > quantity' )->get();
+    }
+
+    public function recomputeCashFlow( $fromDate, $toDate )
+    {
+        CashFlow::truncate();
+        DashboardDay::truncate();
+        DashboardMonth::truncate();
+        
+        $startDateString    =   $fromDate->startOfDay()->toDateTimeString();
+        $endDateString      =   $toDate->endOfDay()->toDateTimeString();
+                
+
+        /**
+         * @var ExpenseService
+         */
+        $expenseService     =   app()->make( ExpenseService::class );
+        
+        $expenseService->recomputeCashFlow( 
+            $startDateString, 
+            $endDateString
+        );
+
+        $days       =   ns()->date->getDaysInBetween( $fromDate, $toDate );
+
+        foreach( $days as $day ) {
+            $this->computeDayReport( 
+                $day->startOfDay()->toDateTimeString(), 
+                $day->endOfDay()->toDateTimeString()
+            );
+
+            $this->computeDashboardMonth( $day );
+        }
     }
 }

@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Classes\Schema;
+use App\Events\OnCustomResetModeEvent;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -111,5 +112,20 @@ class ResetService
             'status'    =>  'success',
             'message'   =>  __( 'The database has been hard reset.' )
         ];
+    }
+
+    public function handleCustom( $data )
+    {
+        /**
+         * @var string $mode
+         * @var boolean $create_sales
+         * @var boolean $create_procurements
+         */
+        extract( $data );
+
+        return Hook::filter( 'ns-handle-custom-reset', [
+            'status'    =>  'failed',
+            'message'   =>  __( 'No custom handler for the reset "' . $mode . '"' )
+        ], $data );
     }
 }

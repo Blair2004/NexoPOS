@@ -13,6 +13,7 @@ use App\Http\Middleware\InstalledStateMiddleware;
 use App\Http\Middleware\NotInstalledStateMiddleware;
 use dekor\ArrayToTextTable;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([ 'web' ])->group( function() {
@@ -72,9 +73,10 @@ if ( env( 'APP_DEBUG' ) ) {
     Route::get( '/routes', function() {
         $values     =   collect( array_values( ( array ) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
             return [
+                'domain'    =>  $route->getDomain(),
                 'uri'       =>  $route->uri(),
                 'methods'   =>  collect( $route->methods() )->join( ', ' ),
-                'name'      =>  $route->getName()
+                'name'      =>  $route->getName(),
             ];
         })->values();
     

@@ -6,6 +6,8 @@ import moment from "moment";
 import nsDatepicker from "@/components/ns-datepicker";
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
+
 export default {
     name: 'ns-sold-stock-report',
     data() {
@@ -16,7 +18,8 @@ export default {
         }
     },
     components: {
-        nsDatepicker
+        nsDatepicker,
+        nsDateTimePicker,
     },
     computed: {
         totalQuantity() {
@@ -68,10 +71,13 @@ export default {
             nsHttpClient.post( '/api/nexopos/v4/reports/sold-stock-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate
-            }).subscribe( products => {
-                this.products     =   products;
-            }, ( error ) => {
-                nsSnackBar.error( error.message ).subscribe();
+            }).subscribe({
+                next: products => {
+                    this.products     =   products;
+                },
+                error: ( error ) => {
+                    nsSnackBar.error( error.message ).subscribe();
+                }
             });
         },
 

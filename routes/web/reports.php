@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use App\Http\Controllers\Dashboard\ReportsController;
 use Illuminate\Support\Facades\Route;
