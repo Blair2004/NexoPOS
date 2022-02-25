@@ -1,23 +1,23 @@
 .ns-box {
-    @apply bg-slate-700 text-slate-300;
+    @apply bg-normal text-primary;
 
     .ns-box-header {
-        @apply border-slate-800 text-slate-300
+        @apply border-hard text-primary
     }
 
     .ns-box-body {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     .ns-box-footer {
-        @apply border-slate-800 border-slate-600;
+        @apply border-hard bg-normal;
     }
 
     h3 {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     p {
-        @apply text-slate-200;
+        @apply text-secondary;
     }
 }

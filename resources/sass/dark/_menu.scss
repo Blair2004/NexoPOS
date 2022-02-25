@@ -11,3 +11,13 @@
         @apply bg-slate-300;
     }
 }
+
+ul.ns-vertical-menu {
+    @apply bg-normal;
+    li {
+        @apply text-primary;
+        &:hover {
+            @apply bg-slate-500 text-slate-300;
+        }
+    }
+}

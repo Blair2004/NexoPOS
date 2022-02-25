@@ -1,5 +1,14 @@
 const colors  = require( 'tailwindcss/colors' );
 
+function withOpacityValue(variable) {
+  return ({ opacityValue }) => {
+    if (opacityValue === undefined) {
+      return `rgb(var(${variable}))`
+    }
+    return `rgb(var(${variable}) / ${opacityValue})`
+  }
+}
+
 const heightDims = {
   '6/7-screen': '85.71vh',
   '5/7-screen': '71.42vh',
@@ -69,7 +78,14 @@ module.exports = {
       colors: {
         teal: colors.teal,
         orange: colors.orange,
-        cyan: colors.cyan
+        cyan: colors.cyan,
+        primary: withOpacityValue('--primary'),
+        secondary: withOpacityValue('--secondary'),  
+        tertiary: withOpacityValue('--tertiary'),  
+        smooth: withOpacityValue('--smooth'),  
+        normal: withOpacityValue('--normal'),  
+        hard: withOpacityValue('--hard'),  
+        'extra-hard': withOpacityValue('--extra-hard'),  
       },
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,

@@ -102,9 +102,7 @@
  * Buttons
 **/
 .ns-button {
-    a, button {
-        @apply shadow;
-    }
+    @apply shadow;
     
     &.ns-button-success > button, &.ns-button-success > a {
         @apply bg-green-600 text-white;

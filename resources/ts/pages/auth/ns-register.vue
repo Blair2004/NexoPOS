@@ -1,22 +1,24 @@
 <template>
     <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
-        <div class="p-3 -my-2">
-            <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
-                <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
+        <div class="ns-box-body">
+            <div class="p-3 -my-2">
+                <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">
+                    <ns-field :key="index" v-for="(field, index) of fields" :field="field"></ns-field>
+                </div>
+            </div>
+            <div class="flex items-center justify-center" v-if="fields.length === 0">
+                <ns-spinner></ns-spinner>
+            </div>
+            <div class="flex w-full items-center justify-center py-4">
+                <a href="/sign-in" class="link hover:underline text-sm">{{ __( 'Already registered ?' ) }}</a>
             </div>
         </div>
-        <div class="flex items-center justify-center" v-if="fields.length === 0">
-            <ns-spinner></ns-spinner>
-        </div>
-        <div class="flex w-full items-center justify-center py-4">
-            <a href="/sign-in" class="link hover:underline text-sm">{{ __( 'Already registered ?' ) }}</a>
-        </div>
-        <div class="flex justify-between items-center register-footer p-3">
+        <div class="flex ns-box-footer border-t justify-between items-center p-3">
             <div>
                 <ns-button @click="register()" type="info">{{ __( 'Register' ) }}</ns-button>
             </div>
             <div>
-                <ns-link :href="'/sign-in'" type="success">{{ __( 'Sign In' ) }}</ns-link>
+                <ns-button :link="true" :href="'/sign-in'" type="success">{{ __( 'Sign In' ) }}</ns-button>
             </div>
         </div>
     </div>

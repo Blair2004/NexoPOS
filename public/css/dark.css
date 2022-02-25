@@ -1,38 +1,42 @@
 :root {
-    --ns-bg-color: rgb(15 23 42 / var(--tw-bg-opacity)) !important;
-    --ns-box-bg-color: rgb(51 65 85 / var(--tw-bg-opacity)) !important;
-    --ns-text-color: rgb(203 213 225 / var(--tw-text-opacity)) !important;
-    --ns-light-text-color: rgb(226 232 240 / var(--tw-text-opacity)) !important;
-    --ns-border-color: rgb(30 41 59 / var(--tw-border-opacity)) !important;
+    --primary: 203 213 225;
+    --secondary: 226 232 240;
+    --teriary: 148 163 184;
+
+    --normal: 51 65 85;
+    --smooth: 71 85 105;
+    --hard: 30 41 59;
+    --extra-hard: 15 23 42;
 }
 .ns-box {
     --tw-bg-opacity: 1;
-    background-color: rgb(51 65 85 / var(--tw-bg-opacity));
+    background-color: rgb(var(--normal) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(203 213 225 / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box .ns-box-header {
     --tw-border-opacity: 1;
-    border-color: rgb(30 41 59 / var(--tw-border-opacity));
+    border-color: rgb(var(--hard) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(203 213 225 / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box .ns-box-body {
     --tw-text-opacity: 1;
-    color: rgb(203 213 225 / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box .ns-box-footer {
-    border-color: rgb(30 41 59 / var(--tw-border-opacity));
     --tw-border-opacity: 1;
-    border-color: rgb(71 85 105 / var(--tw-border-opacity));
+    border-color: rgb(var(--hard) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--normal) / var(--tw-bg-opacity));
 }
 .ns-box h3 {
     --tw-text-opacity: 1;
-    color: rgb(203 213 225 / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box p {
     --tw-text-opacity: 1;
-    color: rgb(226 232 240 / var(--tw-text-opacity));
+    color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
 .ns-notice-danger {
     --tw-border-opacity: 1;
@@ -179,7 +183,7 @@
 /**
  * Buttons
 **/
-.ns-button a, .ns-button button {
+.ns-button {
     --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
@@ -590,6 +594,20 @@
 .ns-scrollbar::-webkit-scrollbar-thumb {
     --tw-bg-opacity: 1;
     background-color: rgb(203 213 225 / var(--tw-bg-opacity));
+}
+ul.ns-vertical-menu {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--normal) / var(--tw-bg-opacity));
+}
+ul.ns-vertical-menu li {
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+ul.ns-vertical-menu li:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(100 116 139 / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(203 213 225 / var(--tw-text-opacity));
 }
 #alert-popup, #confirm-popup {
     --tw-bg-opacity: 1;
