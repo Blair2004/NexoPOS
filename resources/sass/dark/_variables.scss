@@ -1,10 +1,35 @@
 :root {
-    --primary: 203 213 225;
-    --secondary: 226 232 240;
-    --teriary: 148 163 184;
+    --primary: 226 232 240;
+    --secondary: 203 213 225;
+    --tertiary: 148 163 184;
 
-    --normal: 51 65 85;
-    --smooth: 71 85 105;
-    --hard: 30 41 59;
-    --extra-hard: 15 23 42;
+    --info-primary: 96 165 250;
+    --info-secondary: 59 130 246;
+    --info-tertiary: 37 99 235;
+
+    --error-primary: 248 113 113;
+    --error-secondary: 239 68 68;
+    --error-tertiary: 220 38 38;
+
+    --success-primary: 34 197 94;
+    --success-secondary: 22 163 74;
+    --success-tertiary: 21 128 61;
+
+    --warning-primary: 251 146 60;
+    --warning-secondary: 249 115 22;
+    --warning-tertiary: 234 88 12;
+
+    --danger-primary: 202 138 4;
+    --danger-secondary: 161 98 7;
+    --danger-tertiary: 133 77 14;
+
+    --default-primary: 75 85 99;
+    --default-secondary: 55 65 81;
+    --default-tertiary: 31 41 55;
+
+    --surface-primary: 100 116 139;
+    --surface-secondary: 71 85 105;
+    --surface-tertiary: 51 65 85;
+    --surface-quaternary: 30 41 59;
+    --surface-quinary: 15 23 42;
 }

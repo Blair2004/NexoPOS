@@ -1,32 +1,32 @@
 #main-container, #page-container {
-    @apply bg-gray-900;
+    @apply bg-surface-quaternary;
 }
 
 .ns-toggle-button { 
-    @apply text-slate-300 border-slate-800;
+    @apply text-primary border-surface-quaternary;
 
-    &:hover {
-        @apply text-slate-200 bg-slate-600 border-slate-600;
+    &:hover {   
+        @apply text-secondary bg-surface-tertiary border-surface-tertiary;
     }
     
     .toggled {
-        @apply bg-slate-600 text-slate-300;
+        @apply bg-surface-tertiary text-primary;
     }
 
     .untoggled {
-        @apply border-gray-400;
+        @apply border-secondary;
     }
 }
 
 .ns-avatar { 
-    @apply text-slate-300 border-slate-800;
+    @apply text-primary border-surface-quaternary;
 
     &:hover {
-        @apply bg-slate-600 text-slate-300 border-slate-600;
+        @apply bg-surface-tertiary text-primary border-transparent;
     }
 
     &.toggled {
-        @apply bg-slate-600 text-slate-300 border-slate-600;
+        @apply bg-surface-tertiary text-primary border-transparent;
     }
 }
 
@@ -37,38 +37,39 @@
 #notificaton-wrapper {
     #notification-button {
         &.panel-visible {
-            @apply bg-slate-600;
+            @apply bg-surface-tertiary;
         }
         &.panel-hidden {
-            @apply border-slate-800;
+            @apply border-surface-quaternary;
         }
 
         &:hover {
-            @apply bg-slate-600 border-slate-600 text-slate-300;
+            @apply bg-surface-tertiary text-primary;
         }
 
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     #notification-center > div > div {
-        @apply bg-slate-600;
+        @apply bg-surface-tertiary;
     }
 
     .clear-all {
-        @apply text-slate-300;
+        @apply text-primary;
+
         &:hover {
-            @apply bg-slate-500 text-red-300;
+            @apply bg-surface-secondary text-white;
         }
     }
 
     .notification-card {
         h1 {
-            @apply text-slate-200
+            @apply text-secondary;
         }
         p {
-            @apply text-slate-300
+            @apply text-primary;
         }
     
-        @apply border-slate-500
+        @apply border-surface-quaternary;
     }
 }

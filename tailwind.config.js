@@ -79,13 +79,40 @@ module.exports = {
         teal: colors.teal,
         orange: colors.orange,
         cyan: colors.cyan,
+        
         primary: withOpacityValue('--primary'),
         secondary: withOpacityValue('--secondary'),  
         tertiary: withOpacityValue('--tertiary'),  
-        smooth: withOpacityValue('--smooth'),  
-        normal: withOpacityValue('--normal'),  
-        hard: withOpacityValue('--hard'),  
-        'extra-hard': withOpacityValue('--extra-hard'),  
+
+        'info-primary': withOpacityValue('--info-primary'),
+        'info-secondary': withOpacityValue('--info-secondary'),  
+        'info-tertiary': withOpacityValue('--info-tertiary'),  
+        
+        'success-primary': withOpacityValue('--success-primary'),
+        'success-secondary': withOpacityValue('--success-secondary'),  
+        'success-tertiary': withOpacityValue('--success-tertiary'),  
+        
+        'error-primary': withOpacityValue('--error-primary'),
+        'error-secondary': withOpacityValue('--error-secondary'),  
+        'error-tertiary': withOpacityValue('--error-tertiary'),  
+        
+        'warning-primary': withOpacityValue('--warning-primary'),
+        'warning-secondary': withOpacityValue('--warning-secondary'),  
+        'warning-tertiary': withOpacityValue('--warning-tertiary'),  
+
+        'default-primary': withOpacityValue('--default-primary'),
+        'default-secondary': withOpacityValue('--default-secondary'),  
+        'default-tertiary': withOpacityValue('--default-tertiary'),  
+
+        'danger-primary': withOpacityValue('--danger-primary'),
+        'danger-secondary': withOpacityValue('--danger-secondary'),  
+        'danger-tertiary': withOpacityValue('--danger-tertiary'),  
+
+        'surface-primary': withOpacityValue('--surface-primary'),  
+        'surface-secondary': withOpacityValue('--surface-secondary'),  
+        'surface-tertiary': withOpacityValue('--surface-tertiary'),  
+        'surface-quaternary': withOpacityValue('--surface-quaternary'),  
+        'surface-quinary': withOpacityValue('--surface-quinary'),  
       },
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,

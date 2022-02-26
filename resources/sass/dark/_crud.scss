@@ -1,88 +1,83 @@
-.ns-table {
-    @apply w-full;
-    thead th {
-        @apply border-gray-300 bg-gray-200 text-gray-700;
-    }
-    tbody td {
-        @apply border-gray-200 text-gray-700;
-    }
-    tfoot td {
-        @apply border-gray-200 text-gray-700;
-    }
-
-    tbody > tr.info {
-        @apply bg-blue-200;
-    }
-
-    tbody > tr.danger {
-        @apply bg-red-200;
-    }
-
-    tbody > tr.success {
-        @apply bg-green-200;
-    }
-
-    tbody > tr.green {
-        @apply bg-yellow-200;
-    }
-}
-
 /**
  * Crud
 **/
 #crud-table {
-    .create-button { 
-        @apply border-slate-700 bg-slate-600 text-slate-300;    
-        &:hover {
-            @apply bg-slate-500 border-slate-600;
+    * {
+        @apply text-primary;
+    }
+
+    .ns-crud-input {
+        @apply bg-surface-tertiary;
+
+        input {
+            @apply text-primary;
         }
-    } 
+    }
     
     .ns-table-row {
-        @apply border-slate-700;
+        @apply border-surface-tertiary;
+
+        &.ns-row-success {
+            @apply bg-success-secondary border-success-tertiary text-white;
+        }
+        &.ns-row-error {
+            @apply bg-error-primary border-error-secondary text-white;
+        }
+        &.ns-row-info {
+            @apply bg-info-primary border-info-secondary text-white;
+        }
+        &.ns-row-warning {
+            @apply bg-warning-primary border-warning-secondary text-white;
+        }
+        &.ns-row-default {
+            @apply bg-default-primary border-default-secondary text-white;
+        }
+        &.ns-row-danger {
+            @apply bg-danger-primary border-danger-secondary text-white;
+        }
 
         td {
-            @apply border-slate-700 text-slate-300;
+            @apply border-surface-tertiary text-white;
         }
 
         .ns-row-button {
-            @apply bg-slate-600 text-slate-300 border-slate-700;
+            @apply bg-surface-secondary text-secondary border-surface-tertiary;
 
             &:hover {
-                @apply bg-slate-500 text-slate-300 border-transparent;
+                @apply bg-surface-primary text-secondary border-transparent;
             }
         }
 
         .ns-menu-wrapper > div {
-            @apply bg-slate-600;
+            @apply bg-surface-secondary;
         }
 
         .ns-action-button {
-            @apply text-slate-300;
+            @apply text-secondary;
 
             &:hover {
-                @apply bg-slate-500 text-slate-200;
+                @apply bg-surface-primary text-primary;
             }
 
             &:focus {
-                @apply focus:outline-none focus:bg-slate-800 focus:text-slate-200;
+                @apply outline-none bg-surface-tertiary focus:text-primary;
             }
         }
     }
 
-    .ns-query-filter {
-        @apply border-slate-800;
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-surface-tertiary bg-surface-secondary text-white;
 
         &.table-filters-enabled {
-            @apply bg-blue-400 text-slate-200;
+            @apply bg-info-primary text-primary;
         }
     
         &.table-filters-disabled {
-            @apply text-slate-300 border-slate-700;
+            @apply text-secondary border-surface-tertiary;
         }
 
         &:hover {
-            @apply border-slate-500 text-white bg-slate-500;
+            @apply border-surface-primary bg-surface-primary text-white;
         }
     }
 }

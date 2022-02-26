@@ -1,15 +1,15 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="p-2 flex justify-between items-center border-b border-gray-200">
+    <div class="ns-box shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="p-2 flex justify-between items-center border-b ns-box-header">
             <h3 class="text-blog">{{ __( 'Tax & Summary' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 bg-gray-50">
+        <div class="p-2 ns-box-body">
             <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
                 <ns-tabs-item padding="0" :label="__( 'Settings' )" identifier="settings" :active="true">
-                    <div class="p-2 border-b border-gray-200">
+                    <div class="p-2 border-surface-tertiary border-b">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
                     </div>
                     <div class="flex justify-end p-2">
@@ -22,7 +22,7 @@
                             <span>{{ tax.tax_name }}</span>
                             <span>{{ tax.tax_value | currency  }}</span>
                         </div>
-                        <div class="p-2 text-center text-gray-600" v-if="order.taxes.length === 0">No tax is active</div>
+                        <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">No tax is active</div>
                     </div>
                 </ns-tabs-item>
             </ns-tabs>

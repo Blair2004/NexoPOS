@@ -1,11 +1,11 @@
 :root {
-    --text-normal: 55 65 81;
-    --text-smooth: 75 85 99;
-    --text-hard: 31 41 55;
+    --text-primary: 55 65 81;
+    --text-surface-secondary: 75 85 99;
+    --text-surface-tertiary: 31 41 55;
     --bg-normal: 255 255 255;
-    --bg-smooth: 226 232 240;
-    --bg-hard: 203 213 225;
-    --bg-extra-hard: 148 163 184;
+    --bg-surface-secondary: 226 232 240;
+    --bg-surface-tertiary: 203 213 225;
+    --bg-extra-surface-tertiary: 148 163 184;
 }
 .ns-box {
     --tw-bg-opacity: 1;
@@ -15,14 +15,14 @@
     --tw-border-opacity: 1;
     border-color: rgb(229 231 235 / var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--normal) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box .ns-box-footer {
     border-color: rgb(229 231 235 / var(--tw-border-opacity));
     --tw-border-opacity: 1;
     border-color: rgb(209 213 219 / var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--normal) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-notice-danger {
     --tw-border-opacity: 1;

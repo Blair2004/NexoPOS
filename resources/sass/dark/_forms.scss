@@ -2,23 +2,25 @@
  * Fields
 **/
 
-.ns-switch button.selected {
-    @apply bg-blue-500 text-white;
+.ns-switch {
+    button.selected {
+        @apply bg-info-primary text-white;
+    }
+    button.unselected {
+        @apply bg-surface-tertiary text-primary;
+    }
 } 
-.ns-switch button.unselected {
-    @apply bg-slate-600 text-slate-400;
-}
 
 .ns-select select {
-    @apply text-slate-300;
+    @apply text-primary;
     option {
-        @apply bg-slate-600;
+        @apply bg-surface-tertiary;
     }
 }
 
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
-        @apply bg-slate-800;
+        @apply bg-surface-quaternary;
     }
     
     .ns-enabled {
@@ -27,37 +29,37 @@
 
     label {
         &.has-error {
-            @apply text-red-600;
+            @apply text-error-secondary;
         }
     
         &.is-pristine {
-            @apply text-slate-300;
+            @apply text-primary;
         }
     }
 
     div {
         &.has-error {
-            @apply border-red-600;
+            @apply border-error-secondary;
         }
         &.is-pristine {
-            @apply border-slate-600;
+            @apply border-surface-tertiary;
         }
     }
 
     .leading {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     input {
-        @apply text-slate-300 outline-none;
+        @apply text-primary outline-none;
     }
 
     p.ns-description {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     p.ns-error {
-       @apply text-red-600; 
+       @apply text-error-secondary; 
     }
 }
 
@@ -67,12 +69,12 @@
 .form-input {
     @apply outline-0;
     label {
-        @apply text-gray-800;
+        @apply text-surface-quaternary;
     }
     input {
         @apply border-blue-200 bg-blue-100 rounded;
         &[disabled] {
-            @apply bg-gray-800;
+            @apply bg-surface-quaternary;
         }
     }
     p {
@@ -82,20 +84,14 @@
 
 .form-input-invalid {
     label {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
     input {
-        @apply border-red-400 bg-red-100 rounded;
+        @apply border-error-primary bg-white rounded;
     }
     p {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
-}
-.btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white;
-}
-.btn-red {
-    @apply border-red-600 bg-red-600 text-white;
 }
 
 /**
@@ -105,38 +101,38 @@
     @apply shadow;
     
     &.ns-button-success > button, &.ns-button-success > a {
-        @apply bg-green-600 text-white;
+        @apply bg-success-secondary text-white;
 
         span.ns-label {
-            @apply bg-white text-green-600;
+            @apply bg-white text-success-primary;
         }
     }
     &.ns-button-danger > button, &.ns-button-danger > a {
-        @apply bg-red-600 text-white;
+        @apply bg-error-secondary text-white;
 
         span.ns-label {
-            @apply bg-white text-red-600;
+            @apply bg-white text-error-secondary;
         }
     }
     &.ns-button-warning > button, &.ns-button-warning > a {
-        @apply bg-orange-400 text-white;
+        @apply bg-warning-primary text-white;
 
         span.ns-label {
-            @apply bg-white text-orange-600;
+            @apply bg-white text-warning-secondary;
         }
     }
     &.ns-button-default > button, &.ns-button-default > a {
-        @apply bg-white text-gray-800;
+        @apply bg-white text-surface-quaternary;
 
         span.ns-label {
-            @apply bg-gray-800 text-white;
+            @apply bg-surface-quaternary text-white;
         }
     }
     &.ns-button-info > button, &.ns-button-info > a {
-        @apply bg-blue-600 text-white;
+        @apply bg-info-secondary text-white;
 
         span.ns-label {
-            @apply bg-white text-blue-600;
+            @apply bg-white text-info-secondary;
         }
     }
     .ns-disabled {
@@ -149,9 +145,12 @@
 }
 
 .ns-close-button {
-    @apply border-slate-300 text-slate-300;
+    @apply border-surface-tertiary text-primary;
 
     &:hover {
-        @apply text-red-600 border-red-600;
+        @apply bg-error-secondary border-transparent;
+        > i {
+            @apply text-white;
+        }
     }
 }

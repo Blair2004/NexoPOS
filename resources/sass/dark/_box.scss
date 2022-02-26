@@ -1,8 +1,8 @@
 .ns-box {
-    @apply bg-normal text-primary;
+    @apply bg-surface-secondary text-primary;
 
     .ns-box-header {
-        @apply border-hard text-primary
+        @apply border-surface-tertiary text-primary
     }
 
     .ns-box-body {
@@ -10,7 +10,7 @@
     }
 
     .ns-box-footer {
-        @apply border-hard bg-normal;
+        @apply border-surface-tertiary bg-surface-secondary;
     }
 
     h3 {

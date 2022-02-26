@@ -14,12 +14,12 @@
                 </div>
                 <table class="table w-full" v-if="customers.length > 0">
                     <thead>
-                        <tr v-for="customer of customers" :key="customer.id" class="single-customer border-b text-sm">
+                        <tr v-for="customer of customers" :key="customer.id" class="entry border-b text-sm">
                             <th class="p-2">
                                 <div class="-mx-1 flex justify-start items-center">
                                     <div class="px-1">
-                                        <div class="rounded-full h-6 w-6 ">
-                                            <img src="/images/user.png"/>
+                                        <div class="rounded-full">
+                                            <i class="las la-user-circle text-xl"></i>
                                         </div>
                                     </div>
                                     <div class="px-1 justify-center">

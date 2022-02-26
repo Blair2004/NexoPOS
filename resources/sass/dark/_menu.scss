@@ -4,20 +4,20 @@
     }
 
     &::-webkit-scrollbar-track {
-        @apply bg-slate-700;
+        @apply bg-surface-quinary;
     }
 
     &::-webkit-scrollbar-thumb {
-        @apply bg-slate-300;
+        @apply bg-surface-tertiary;
     }
 }
 
 ul.ns-vertical-menu {
-    @apply bg-normal;
+    @apply bg-surface-tertiary;
     li {
         @apply text-primary;
         &:hover {
-            @apply bg-slate-500 text-slate-300;
+            @apply bg-surface-secondary text-primary;
         }
     }
 }

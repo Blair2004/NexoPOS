@@ -3,11 +3,11 @@
 
     .ns-box-header {
         @apply border-gray-200;
-        @apply text-normal;
+        @apply text-primary;
     }
 
     .ns-box-footer {
         @apply border-gray-200 border-gray-300;
-        @apply text-normal;
+        @apply text-primary;
     }
 }
