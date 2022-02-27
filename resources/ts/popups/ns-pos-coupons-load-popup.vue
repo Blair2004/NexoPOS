@@ -12,18 +12,18 @@
                     :label="__( 'Apply A Coupon' )" 
                     padding="p-2"
                     identifier="apply-coupon">
-                    <div class="border-2 border-blue-400 rounded flex">
-                        <input ref="coupon" v-model="couponCode" type="text" class="w-full p-2" :placeholder="placeHolder">
-                        <button @click="loadCoupon()" class="bg-blue-400 text-white px-3 py-2">{{ __( 'Load' ) }}</button>
+                    <div class="border-2 border-info-secondary rounded flex">
+                        <input ref="coupon" v-model="couponCode" type="text" class="w-full bg-surface-quaternary text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <button @click="loadCoupon()" class="bg-info-secondary text-white px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
-                        <p class="p-2 text-center bg-green-100 text-green-600">{{ __( 'Input the coupon code that should apply to the POS. If a coupon is issued for a customer, that customer must be selected priorly.' ) }}</p>
+                        <p class="p-2 text-center ns-notice-info">{{ __( 'Input the coupon code that should apply to the POS. If a coupon is issued for a customer, that customer must be selected priorly.' ) }}</p>
                     </div>
                     <div @click="selectCustomer()" class="pt-2" v-if="order && order.customer_id === undefined">
-                        <p class="p-2 cursor-pointer text-center bg-red-100 text-red-600">{{ __( 'Click here to choose a customer.' ) }}</p>
+                        <p class="p-2 cursor-pointer text-center ns-notice-error">{{ __( 'Click here to choose a customer.' ) }}</p>
                     </div>
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
-                        <p class="p-2 text-center bg-green-100 text-green-600">{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</p>
+                        <p class="p-2 text-center ns-notice-success">{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</p>
                     </div>
                     <div class="overflow-hidden">
                         <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto h-64" v-if="customerCoupon">

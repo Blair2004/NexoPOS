@@ -17,7 +17,7 @@
         @apply text-primary;
     }
 
-    p {
+    p:not([class]){
         @apply text-secondary;
     }
 }

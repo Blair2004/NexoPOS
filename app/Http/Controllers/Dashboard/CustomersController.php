@@ -176,7 +176,7 @@ class CustomersController extends DashboardController
     }
 
     public function listCoupons()
-    {
+    {         
         return CouponCrud::table();
     }
 

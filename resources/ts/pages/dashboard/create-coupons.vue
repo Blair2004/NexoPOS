@@ -1,7 +1,5 @@
 <script>
 import FormValidation from '../../libraries/form-validation';
-import { Subject, BehaviorSubject } from "rxjs";
-import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
 import { __ } from '@/libraries/lang';
 export default { 
@@ -150,42 +148,42 @@ export default {
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700"><slot name="title">No title Provided</slot></label>
-                    <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                    <label for="title" class="font-bold my-2 text-primary"><slot name="title">No title Provided</slot></label>
+                    <div for="title" class="text-sm my-2 text-primary">
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-tertiary hover:bg-error-primary hover:border-transparent hover:text-white bg-surface-tertiary px-2 py-1">Return</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? 'border-surface-quaternary' : form.main.errors.length > 0 ? 'border-error-primary' : 'border-surface-secondary'" class="flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
                         :disabled="form.main.disabled"
                         type="text" 
-                        :class="form.main.disabled ? 'bg-gray-400' : ''"
-                        class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">Save</slot></button>
+                        :class="form.main.disabled ? 'bg-surface-quaternary' : 'bg-surface-quaternary'"
+                        class="flex-auto text-primary outline-none h-10 px-2">
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-surface-quaternary border-surface-quaternary' : form.main.errors.length > 0 ? 'bg-error-primary border-error-secondary' : 'bg-surface-secondary border-surface-secondary'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-tertia"><slot name="save">Save</slot></button>
                 </div>
-                <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
+                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full md:w-1/2">
-                    <div class="rounded bg-white shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
+                    <div class="rounded bg-surface-tertiary shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
                         <ns-field v-bind:key="index" v-for="( field, index ) of tab.fields" :field="field"></ns-field>
                     </div>
                 </div>
                 <div class="px-4 w-full md:w-1/2">
                     <div id="tabbed-card">
                         <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'bg-surface-tertiary' : 'bg-surface-quaternary'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg text-white">
                                 {{ tab.label }}
                             </div>
                         </div>
-                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
+                        <div class="card-body bg-surface-tertiary rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
-                                <ns-field  :field="field"></ns-field>
+                                <ns-field :field="field"></ns-field>
                             </div>
                         </div>
                     </div>

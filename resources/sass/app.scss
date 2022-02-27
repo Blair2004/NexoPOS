@@ -78,6 +78,7 @@ body {
         @apply text-xs text-red-500 py-1;
     }
 }
+/** @deprecated **/
 .btn {
     @apply text-center rounded shadow border py-2 px-3;
 }

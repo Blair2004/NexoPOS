@@ -14,7 +14,7 @@ const nsSelect      =   Vue.component( 'ns-select', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : 'ns-enabled';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : '';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass
@@ -27,7 +27,7 @@ const nsSelect      =   Vue.component( 'ns-select', {
     template: `
     <div class="flex flex-col flex-auto ns-select">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-2">
+        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-2 overflow-hidden">
             <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 appearance-none">
                 <option :value="option.value" v-for="option of field.options" class="py-2">{{ option.label }}</option>
             </select>

@@ -433,19 +433,19 @@ class CouponCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function beforePut( $request, $entry )
+    public function beforePut( $inputs, $entry )
     {
         if ( $this->permissions[ 'update' ] !== false ) {
             ns()->restrict( $this->permissions[ 'update' ] );
 
-            foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+            foreach( $inputs[ 'products' ] as $product_id ) {
                 $product    =   Product::find( $product_id );
                 if ( ! $product instanceof Product ) {
                     throw new Exception( __( 'Unable to save the coupon product as this product doens\'t exists.' ) );
                 }
             }
     
-            foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+            foreach( $inputs[ 'categories' ] as $category_id ) {
                 $category    =   ProductCategory::find( $category_id );
                 if ( ! $category instanceof ProductCategory ) {
                     throw new Exception( __( 'Unable to save the coupon category as this category doens\'t exists.' ) );
@@ -455,7 +455,7 @@ class CouponCrud extends CrudService
             throw new NotAllowedException;
         }
 
-        return $request;
+        return $inputs;
     }
 
     /**
@@ -464,21 +464,21 @@ class CouponCrud extends CrudService
      * @param  object entry
      * @return  void
      */
-    public function afterPut( $request, $coupon )
+    public function afterPut( $inputs, $coupon )
     {
-        $coupon->categories->each( function( $category ) use ( $request ) {
-            if ( ! in_array( $category->category_id, $request->input( 'selected_categories.categories' ) ) ) {
+        $coupon->categories->each( function( $category ) use ( $inputs ) {
+            if ( ! in_array( $category->category_id, $inputs[ 'categories' ] ) ) {
                 $category->delete();
             }
         });
 
-        $coupon->products->each( function( $product ) use ( $request ) {
-            if ( ! in_array( $product->product_id, $request->input( 'selected_products.products' ) ) ) {
+        $coupon->products->each( function( $product ) use ( $inputs ) {
+            if ( ! in_array( $product->product_id, $inputs[ 'products' ] ) ) {
                 $product->delete();
             }
         });
 
-        foreach( $request->input( 'selected_products.products' ) as $product_id ) {
+        foreach( $inputs[ 'products' ] as $product_id ) {
             $productRelation                  =   CouponProduct::where( 'coupon_id', $coupon->id )
                 ->where( 'product_id', $product_id )
                 ->first();
@@ -492,7 +492,7 @@ class CouponCrud extends CrudService
             $productRelation->save();
         }
 
-        foreach( $request->input( 'selected_categories.categories' ) as $category_id ) {
+        foreach( $inputs[ 'categories' ] as $category_id ) {
             $categoryRelation                  =   CouponCategory::where( 'coupon_id', $coupon->id )
                 ->where( 'category_id', $category_id )
                 ->first();
@@ -510,9 +510,9 @@ class CouponCrud extends CrudService
          * @var CustomerService
          */
         $customersService   =   app()->make( CustomerService::class );
-        $customersService->setCoupon( $request->all(), $coupon );
+        $customersService->setCoupon( $inputs, $coupon );
         
-        return $request;
+        return $inputs;
     }
 
     /**

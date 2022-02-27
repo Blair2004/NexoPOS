@@ -1,8 +1,40 @@
 .ns-notice-danger {
-    @apply border-red-600 bg-red-400 text-white;
+    @apply border-danger-secondary bg-danger-primary text-white;
 
     pre {
         @apply bg-gray-700 text-white
+    }
+}
+
+.ns-notice-warning {
+    @apply border-warning-secondary bg-warning-primary text-white;
+
+    pre {
+        @apply bg-gray-700 text-white
+    }
+}
+
+.ns-notice-success {
+    @apply border-success-secondary bg-success-primary text-white;
+
+    pre {
+        @apply bg-surface-tertiary text-white
+    }
+}
+
+.ns-notice-error {
+    @apply border-error-secondary bg-error-primary text-white;
+
+    pre {
+        @apply bg-surface-tertiary text-white
+    }
+}
+
+.ns-notice-info {
+    @apply border-info-secondary bg-info-primary text-white;
+
+    pre {
+        @apply bg-surface-tertiary text-white
     }
 }
 

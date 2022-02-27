@@ -7,7 +7,7 @@
         @apply bg-info-primary text-white;
     }
     button.unselected {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-surface-quaternary text-primary;
     }
 } 
 
@@ -42,7 +42,7 @@
             @apply border-error-secondary;
         }
         &.is-pristine {
-            @apply border-surface-tertiary;
+            @apply border-surface-secondary;
         }
     }
 
@@ -50,8 +50,8 @@
         @apply text-primary;
     }
 
-    input {
-        @apply text-primary outline-none;
+    input, select, textarea {
+        @apply text-primary outline-none bg-surface-quaternary;
     }
 
     p.ns-description {
