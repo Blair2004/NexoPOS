@@ -5,14 +5,11 @@
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div class="flex-auto flex flex-col" id="dashboard-content">
         <div class="px-4">
-            <div class="page-inner-header mb-4">
-                <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
-                <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
-            </div>
+            @include( '../common/dashboard/title' )
         </div>
         <ns-yearly-report inline-template v-cloak>
             <div class="px-4">
-                <ns-notice color="red" v-if="timezone === ''">
+                <ns-notice color="error" v-if="timezone === ''">
                     <template v-slot:title>{{ __( 'An Error Has Occured' ) }}</template>
                     <template v-slot:description>{{ __( 'Unable to load the report as the timezone is not set on the settings.' ) }}</template>
                 </ns-notice>

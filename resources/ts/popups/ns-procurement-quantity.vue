@@ -1,9 +1,9 @@
 <template>
-    <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
-        <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center">{{ __( 'Define Quantity' ) }}</h1>
+    <div class="bg-surface-tertiary shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
+        <div class="flex-shrink-0 py-2 border-b border-surface-secondary">
+            <h1 class="text-xl font-bold text-primary text-center">{{ __( 'Define Quantity' ) }}</h1>
         </div>
-        <div id="screen" class="h-16 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
+        <div id="screen" class="h-16 border-b bg-gray-800 text-white border-surface-secondary flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
@@ -11,7 +11,7 @@
                 @click="inputValue( key )"
                 :key="index" 
                 v-for="(key,index) of keys" 
-                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-24 flex items-center justify-center cursor-pointer">
+                class="hover:bg-info-primary hover:text-white hover:border-blue-600 text-xl font-bold border border-surface-secondary h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
             </div>

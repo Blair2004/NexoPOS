@@ -88,25 +88,49 @@ module.exports = {
         'info-secondary': withOpacityValue('--info-secondary'),  
         'info-tertiary': withOpacityValue('--info-tertiary'),  
         
+        'info-light-primary': withOpacityValue('--info-light-primary'),  
+        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
+        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
+        
         'success-primary': withOpacityValue('--success-primary'),
         'success-secondary': withOpacityValue('--success-secondary'),  
         'success-tertiary': withOpacityValue('--success-tertiary'),  
+        
+        'success-light-primary': withOpacityValue('--success-light-primary'),  
+        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
+        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
         
         'error-primary': withOpacityValue('--error-primary'),
         'error-secondary': withOpacityValue('--error-secondary'),  
         'error-tertiary': withOpacityValue('--error-tertiary'),  
         
+        'error-light-primary': withOpacityValue('--error-light-primary'),  
+        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
+        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
+        
         'warning-primary': withOpacityValue('--warning-primary'),
         'warning-secondary': withOpacityValue('--warning-secondary'),  
         'warning-tertiary': withOpacityValue('--warning-tertiary'),  
+        
+        'warning-light-primary': withOpacityValue('--warning-light-primary'),  
+        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
+        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
 
         'default-primary': withOpacityValue('--default-primary'),
         'default-secondary': withOpacityValue('--default-secondary'),  
         'default-tertiary': withOpacityValue('--default-tertiary'),  
+        
+        'default-light-primary': withOpacityValue('--default-light-primary'),  
+        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
+        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
 
         'danger-primary': withOpacityValue('--danger-primary'),
         'danger-secondary': withOpacityValue('--danger-secondary'),  
         'danger-tertiary': withOpacityValue('--danger-tertiary'),  
+        
+        'danger-light-primary': withOpacityValue('--danger-light-primary'),  
+        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
+        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
 
         'surface-primary': withOpacityValue('--surface-primary'),  
         'surface-secondary': withOpacityValue('--surface-secondary'),  

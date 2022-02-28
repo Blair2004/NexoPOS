@@ -1,15 +1,15 @@
 <template>
-    <div class="shadow-lg ns-box w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="p-2 flex justify-between items-center border-b ns-box-header">
+    <div class="shadow-lg bg-surface-tertiary w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="p-2 flex justify-between items-center border-b border-surface-secondary">
             <h3 class="font-bold">{{ __( 'Order Note' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 ns-box-body">
+        <div class="p-2">
             <ns-field v-for="(field, index) of fields" :key="index" :field="field"></ns-field>
         </div>
-        <div class="p-2 flex justify-end border-t ns-box-footer">
+        <div class="p-2 flex justify-end border-t border-surface-secondary">
             <ns-button type="info" @click="saveNote()">Save</ns-button>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw md:w-4/6-screen lg:w-half overflow-hidden">
+    <div class="bg-surface-tertiary shadow-lg w-95vw md:w-4/6-screen lg:w-half overflow-hidden">
         <div id="header" class="p-2 flex justify-between items-center">
             <h3 class="font-bold">{{ __( 'Register History' ) }}</h3>
             <div>
@@ -8,8 +8,8 @@
         </div>
         <div class="flex w-full">
             <div class="flex flex-auto">
-                <div class="w-full md:w-1/2 text-right bg-green-400 text-white font-bold text-3xl p-3">{{ totalIn | currency }}</div>
-                <div class="w-full md:w-1/2 text-right bg-red-400 text-white font-bold text-3xl p-3">{{ totalOut | currency }}</div>
+                <div class="w-full md:w-1/2 text-right bg-success-primary text-white font-bold text-3xl p-3">{{ totalIn | currency }}</div>
+                <div class="w-full md:w-1/2 text-right bg-error-primary text-white font-bold text-3xl p-3">{{ totalOut | currency }}</div>
             </div>
         </div>
         <div class="flex flex-col overflow-y-auto h-120">
@@ -22,7 +22,7 @@
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>
-                <div :key="history.id" v-if="[ 'register-close' ].includes( history.action )"  class="flex border-b border-teal-200 bg-teal-100">
+                <div :key="history.id" v-if="[ 'register-close' ].includes( history.action )"  class="flex border-b border-teal-200 bg-surface-secondary">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>

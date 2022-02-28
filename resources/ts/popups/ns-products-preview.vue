@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg w-6/7-screen lg:w-3/5-screen h-6/7-screen lg:h-4/5-screen bg-white overflow-hidden flex flex-col">
-        <div class="p-2 border-b border-gray-200 text-gray-700 text-center font-medium flex justify-between items-center">
+    <div class="shadow-lg w-6/7-screen lg:w-3/5-screen h-6/7-screen lg:h-4/5-screen bg-surface-tertiary overflow-hidden flex flex-col">
+        <div class="p-2 border-b border-surface-secondary text-primary text-center font-medium flex justify-between items-center">
             <div>
                 {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
@@ -15,10 +15,10 @@
                         <table class="table w-full" v-if="hasLoadedUnitQuantities">
                             <thead>
                                 <tr>
-                                    <th class="p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Unit' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Sale Price' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Wholesale Price' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Quantity' ) }}</th>
+                                    <th class="p-1 bg-blue-100 border-info-primary text-blue-700 border">{{ __( 'Unit' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-info-primary text-blue-700 border">{{ __( 'Sale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-info-primary text-blue-700 border">{{ __( 'Wholesale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 bg-blue-100 border-info-primary text-blue-700 border">{{ __( 'Quantity' ) }}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -1,7 +1,7 @@
 <template>
-    <div class="shadow-xl bg-white w-6/7-screen md:w-4/7-screen lg:w-3/7-screen overflow-hidden">
-        <div class="p-2 flex justify-between border-b border-gray-200">
-            <span class="text-semibold text-gray-700">
+    <div class="shadow-xl bg-surface-tertiary w-6/7-screen md:w-4/7-screen lg:w-3/7-screen overflow-hidden">
+        <div class="p-2 flex justify-between border-b border-surface-secondary">
+            <span class="text-semibold text-primary">
                 {{ label }}
             </span>
             <div>
@@ -11,10 +11,10 @@
         <div class="flex-auto overflow-y-auto">
             <ul>
                 <template v-if="type === 'select'">
-                    <li @click="select( option )" class="p-2 border-b border-gray-200 text-gray-700 cursor-pointer hover:bg-gray-100" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    <li @click="select( option )" class="p-2 border-b border-surface-secondary text-primary cursor-pointer hover:bg-surface-secondary" v-for="option of options" :key="option.value">{{ option.label }}</li>
                 </template>
                 <template v-if="type === 'multiselect'">
-                    <li @click="toggle(option)" :class="isSelected( option ) ? 'bg-blue-100 border-blue-200' : 'border-gray-200'" class="p-2 border-b text-gray-700 cursor-pointer hover:bg-gray-100" v-for="option of options" :key="option.value">{{ option.label }}</li>
+                    <li @click="toggle(option)" :class="isSelected( option ) ? 'bg-surface-secondary border-surface-secondary' : 'border-surface-secondary'" class="p-2 border-b text-primary cursor-pointer hover:bg-surface-secondary" v-for="option of options" :key="option.value">{{ option.label }}</li>
                 </template>
             </ul>
         </div>

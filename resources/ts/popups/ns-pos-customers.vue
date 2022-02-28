@@ -18,8 +18,8 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
-                    <div v-if="options.ns_pos_customers_creation_enabled !== 'yes'" class="h-full flex-col w-full flex items-center justify-center">
-                        <i class="lar la-hand-paper ns-icon"></i>
+                    <div v-if="options.ns_pos_customers_creation_enabled !== 'yes'" class="h-full flex-col w-full flex items-center justify-center text-primary">
+                        <i class="lar la-hand-paper ns-icon text-6xl"></i>
                         <h3 class="font-medium text-2xl">{{ __( 'Not Authorized' ) }}</h3>
                         <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
                     </div>
@@ -40,7 +40,7 @@
                                     <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-primary to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
@@ -48,7 +48,7 @@
                                     </div>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="text-2xl font-bold">{{ customer.owed_amount | currency }}</h2>
@@ -76,29 +76,29 @@
                                 <ns-tabs :active="selectedTab" @changeTab="doChangeTab( $event )">
                                     <ns-tabs-item identifier="orders" :label="__( 'Orders' )">
                                         <div class="py-2 w-full">
-                                            <h2 class="font-semibold text-gray-700">{{ __( 'Last Purchases' ) }}</h2>
+                                            <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
                                         </div>
                                         <div class="flex-auto flex-col flex overflow-hidden">
                                             <div class="flex-auto overflow-y-auto">
-                                                <table class="table w-full">
+                                                <table class="table ns-table w-full">
                                                     <thead>
-                                                        <tr class="text-gray-700">
-                                                            <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
-                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
-                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
-                                                            <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
+                                                        <tr class="text-primary">
+                                                            <th width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
+                                                            <th class="p-2 border font-semibold">{{ __( 'Total' ) }}</th>
+                                                            <th class="p-2 border font-semibold">{{ __( 'Status' ) }}</th>
+                                                            <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="text-gray-700">
+                                                    <tbody class="text-primary">
                                                         <tr v-if="orders.length === 0">
-                                                            <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
+                                                            <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
                                                         </tr>
                                                         <tr v-for="order of orders" :key="order.id">
-                                                            <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
-                                                            <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
-                                                            <td class="border border-gray-200 p-2 text-right">{{ order.human_status }}</td>
-                                                            <td class="border border-gray-200 p-2 text-center">
-                                                                <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
+                                                            <td class="border p-2 text-center">{{ order.code }}</td>
+                                                            <td class="border p-2 text-center">{{ order.total | currency }}</td>
+                                                            <td class="border p-2 text-right">{{ order.human_status }}</td>
+                                                            <td class="border p-2 text-center">
+                                                                <button v-if="allowedForPayment( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-surface-tertiary">
                                                                     <i class="las la-wallet"></i>
                                                                     <span class="ml-1">{{ __( 'Payment' ) }}</span>
                                                                 </button>
@@ -115,33 +115,33 @@
                                         </div>
                                         <template v-if="! isLoadingCoupons">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-gray-700">{{ __( 'Coupons' ) }}</h2>
+                                                <h2 class="font-semibold text-primary">{{ __( 'Coupons' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
-                                                    <table class="table w-full">
+                                                    <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-gray-700">
-                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Type' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold"></th>
+                                                            <tr class="text-primary">
+                                                                <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Type' ) }}</th>
+                                                                <th class="p-2 border font-semibold"></th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-gray-700 text-sm">
+                                                        <tbody class="text-primary text-sm">
                                                             <tr v-if="coupons.length === 0">
-                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
+                                                                <td class="border p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
                                                             </tr>
                                                             <tr v-for="coupon of coupons" :key="coupon.id">
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3>{{ coupon.name }}</h3>
                                                                     <div class="">
                                                                         <ul class="-mx-2 flex">
-                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
-                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
+                                                                            <li class="text-xs text-primary px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
+                                                                            <li class="text-xs text-primary px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
                                                                         </ul>
                                                                     </div>
                                                                 </td>
-                                                                <td class="border border-gray-200 p-2 text-center">{{ getType( coupon.coupon.type ) }} 
+                                                                <td class="border p-2 text-center">{{ getType( coupon.coupon.type ) }} 
                                                                     <span v-if="coupon.coupon.type === 'percentage_discount'">
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
@@ -149,7 +149,7 @@
                                                                         ({{ coupon.coupon.discount_value | currency }})
                                                                     </span>
                                                                 </td>
-                                                                <td class="border border-gray-200 p-2 text-right">
+                                                                <td class="border p-2 text-right">
                                                                     <ns-button @click="applyCoupon( coupon )" type="info">{{ __( 'Use Coupon' ) }}</ns-button>
                                                                 </td>
                                                             </tr>
@@ -165,30 +165,30 @@
                                         </div>
                                         <template v-if="! isLoadingRewards">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-gray-700">{{ __( 'Rewards' ) }}</h2>
+                                                <h2 class="font-semibold text-primary">{{ __( 'Rewards' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
-                                                    <table class="table w-full">
+                                                    <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-gray-700">
-                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Points' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Target' ) }}</th>
+                                                            <tr class="text-primary">
+                                                                <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Points' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Target' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-gray-700 text-sm" v-if="rewardsResponse.data">
+                                                        <tbody class="text-primary text-sm" v-if="rewardsResponse.data">
                                                             <tr v-if="rewardsResponse.data.length === 0">
-                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
+                                                                <td class="border p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
                                                             </tr>
                                                             <tr v-for="reward of rewardsResponse.data" :key="reward.id">
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.reward_name }}</h3>
                                                                 </td>
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.points }}</h3>
                                                                 </td>
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.target }}</h3>
                                                                 </td>
                                                             </tr>
@@ -204,7 +204,7 @@
                                 </ns-tabs>
                             </div>
                         </div>
-                        <div class="p-2 border-t border-gray-400 flex justify-between">
+                        <div class="p-2 border-t border-surface-secondary flex justify-between">
                             <div></div>
                             <div>
                                 <ns-button @click="newTransaction( customer )" type="info">{{ __( 'Account Transaction' ) }}</ns-button>

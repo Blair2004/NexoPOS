@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg bg-white w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="border-b border-gray-200 p-2 flex justify-between items-center">
+    <div class="shadow-lg bg-surface-tertiary w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="border-b border-surface-secondary p-2 flex justify-between items-center">
             <h3 class="font-bold">{{ __( 'Coupons' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>

@@ -1,9 +1,9 @@
 <template>
-    <div class="bg-white shadow-lg w-6/7-screen md:w-5/7-screen lg:w-3/7-screen">
-        <div class="p-2 border-b border-gray-200">
+    <div class="bg-surface-tertiary shadow-lg w-6/7-screen md:w-5/7-screen lg:w-3/7-screen">
+        <div class="p-2 border-b border-surface-secondary">
             <h5 class="font-semibold">Options</h5>
         </div>
-        <div class="p-2 border-b border-gray-200">
+        <div class="p-2 border-b border-surface-secondary">
             <ns-field class="w-full" :field="field" v-for="(field,index) of fields" :key="index"></ns-field>
         </div>
         <div class="p-2 flex justify-end">

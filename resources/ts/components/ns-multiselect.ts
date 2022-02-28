@@ -68,7 +68,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     <div class="flex flex-col">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-surface-secondary p-2 items-center">
+            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-surface-primary p-2 items-center">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">

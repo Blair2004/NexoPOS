@@ -160,8 +160,8 @@ window.nsOrderPreviewPopup      =   nsOrderPreviewPopup;
 export default nsOrderPreviewPopup;
 </script>
 <template>
-    <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl bg-white flex flex-col">
-        <div class="border-b border-gray-300 p-3 flex items-center justify-between">
+    <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl bg-surface-tertiary flex flex-col">
+        <div class="border-b border-surface-secondary p-3 flex items-center justify-between">
             <div>
                 <h3>{{ __( 'Order Options' ) }}</h3>
             </div>
@@ -169,7 +169,7 @@ export default nsOrderPreviewPopup;
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-scroll bg-gray-100 flex flex-auto">
+        <div class="p-2 overflow-scroll bg-surface-quaternary flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
@@ -200,7 +200,7 @@ export default nsOrderPreviewPopup;
                 <ns-spinner></ns-spinner>
             </div>
         </div> 
-        <div class="p-2 flex justify-between border-t border-gray-200">
+        <div class="p-2 flex justify-between border-t border-surface-tertiary">
             <div>
                 <ns-button v-if="isVoidable" @click="voidOrder()" type="danger">
                     <i class="las la-ban"></i>

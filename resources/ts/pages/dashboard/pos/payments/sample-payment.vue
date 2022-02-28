@@ -2,23 +2,23 @@
     <div class="h-full w-full py-2">
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
-                <div id="details" class="h-16 flex justify-between items-center bg-blue-400 text-white text-xl md:text-3xl p-2">
+                <div id="details" class="h-16 flex justify-between items-center bg-info-primary text-white text-xl md:text-3xl p-2">
                     <span>{{ __( 'Total' ) }} : </span>
                     <span>{{ order.total | currency }}</span>
                 </div>
-                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-red-400 text-white text-xl md:text-3xl p-2">
+                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-error-primary text-white text-xl md:text-3xl p-2">
                     <span>{{ __( 'Discount' ) }} : </span>
                     <span>{{ order.discount | currency }}</span>
                 </div>
-                <div id="paid" class="h-16 flex justify-between items-center bg-green-400 text-white text-xl md:text-3xl p-2">
+                <div id="paid" class="h-16 flex justify-between items-center bg-success-primary text-white text-xl md:text-3xl p-2">
                     <span>{{ __( 'Paid' ) }} : </span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
-                <div id="change" class="h-16 flex justify-between items-center bg-teal-400 text-white text-xl md:text-3xl p-2">
+                <div id="change" class="h-16 flex justify-between items-center bg-warning-primary text-white text-xl md:text-3xl p-2">
                     <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-gray-300 text-gray-800 text-xl md:text-3xl p-2">
+                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-surface-tertiary text-primary text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ backValue / number | currency }}</span>
                 </div>
@@ -33,13 +33,13 @@
                             :key="index" 
                             v-for="(key,index) of keys" 
                             style="margin:-1px;"
-                            class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
                             <span v-if="key.value !== undefined">{{ key.value }}</span>
                             <i v-if="key.icon" class="las" :class="key.icon"></i>
                         </div>
                         <div
                             @click="makeFullPayment()"
-                            class="hover:bg-green-500 col-span-3 bg-green-400 text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
+                            class="hover:bg-green-500 col-span-3 bg-success-secondary border-success-tertiary text-2xl text-white border h-16 flex items-center justify-center cursor-pointer">
                             {{ __( 'Full Payment' ) }}</div>
                     </div>
                 </div>
@@ -47,17 +47,17 @@
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
                             @click="increaseBy({ value : 100 })"
-                            class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
                             <span>{{ 100 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 500 })"
-                            class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 500 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 1000 })"
-                            class="hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 1000 | currency }}</span>
                         </div>
                     </div>

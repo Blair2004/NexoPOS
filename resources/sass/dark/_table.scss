@@ -1,0 +1,46 @@
+.ns-tab-item {
+    .ns-table {
+        thead {
+            th {
+                @apply bg-surface-primary text-white border-surface-primary;
+            }
+        }
+        tbody {
+            @apply text-primary;
+            td {
+                @apply border-surface-primary text-white;
+            }
+        }
+    }
+}
+
+.ns-table {
+    @apply w-full;
+    thead {
+        th {
+            @apply bg-surface-secondary text-white border-surface-secondary;
+        }
+    }
+    tbody, tfoot {
+        @apply text-primary;
+        td {
+            @apply border-surface-secondary text-white;
+        }
+
+        tr.info {
+            @apply bg-info-primary;
+        }
+    
+        tr.danger {
+            @apply bg-error-primary
+        }
+    
+        tr.success {
+            @apply bg-success-primary;
+        }
+    
+        tr.green {
+            @apply bg-warning-primary;
+        }
+    }
+}

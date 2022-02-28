@@ -5,10 +5,7 @@
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div class="flex-auto flex flex-col" id="dashboard-content">
         <div class="px-4">
-            <div class="page-inner-header mb-4">
-                <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
-                <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
-            </div>
+            @include( '../common/dashboard/title' )
         </div>
         <ns-payment-types-report inline-template v-cloak>
             <div id="report-section" class="px-4">

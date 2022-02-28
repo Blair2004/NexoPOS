@@ -1,12 +1,12 @@
 <template>
-    <div class="shadow-lg flex flex-col bg-white w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen lg:w-2/5-screen">
-        <div class="p-2 border-b items-center flex justify-between">
+    <div class="shadow-lg flex flex-col bg-surface-secondary w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen lg:w-2/5-screen">
+        <div class="p-2 border-b border-surface-tertiary items-center flex justify-between">
             <h3 class="text-semibold">{{ __( 'Order Settings' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 flex-auto bg-gray-100 overflow-y-auto">
+        <div class="p-2 flex-auto border-b border-surface-tertiary bg-surface-secondary overflow-y-auto">
             <ns-field :field="field" v-for="(field, index) of fields" :key="index"></ns-field>
         </div>
         <div class="p-2 flex justify-end">

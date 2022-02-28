@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-lg bg-white w-95vw md:w-1/3-screen">
+    <div class="shadow-lg bg-surface-tertiary w-95vw md:w-1/3-screen">
         <div class="p-2 flex justify-between border-b">
             <h3>{{ __( 'Payment Method' ) }}</h3>
             <div>
@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="p-2">
-            <div class="py-2 p-4 text-center border border-gray-200 bg-gray-100 text-gray-700 rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</div>
+            <div class="py-2 p-4 text-center border border-surface-secondary bg-surface-primary text-primary rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</div>
             <ns-field :key="index" v-for="(field,index) of fields" :field="field"></ns-field>
         </div>
         <div class="border-t p-2 flex justify-end">

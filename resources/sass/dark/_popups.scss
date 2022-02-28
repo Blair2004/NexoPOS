@@ -1,23 +1,27 @@
 #alert-popup, #confirm-popup {
-    @apply bg-slate-700;
+    @apply bg-surface-tertiary;
 
     h2 {
-        @apply text-slate-200;
+        @apply text-secondary;
     }
 
     p {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     .action-buttons {
-        @apply border-slate-800 text-slate-300;
+        @apply border-surface-secondary text-primary;
 
         button:hover {
-            @apply bg-slate-600;
+            @apply bg-info-secondary;
         }
 
         hr {
-            @apply border-slate-800;
+            @apply border-surface-secondary;
         }
     }
+}
+
+.is-popup {
+    background: rgb(0 0 0 / 40%);
 }

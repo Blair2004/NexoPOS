@@ -8,7 +8,7 @@
                 <span>{{ __( 'Selected' ) }} : </span>
                 <div class="flex items-center justify-between">
                     <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
-                    <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-gray-200 hover:bg-blue-400 hover:text-white hover:border-transparent">
+                    <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-surface-secondary hover:bg-info-primary hover:text-white hover:border-transparent">
                         <i class="las la-eye"></i>
                     </button>
                 </div>
@@ -30,13 +30,13 @@
                     <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-primary" v-if="customers && customers.length === 0">
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
-                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-surface-primary p-2 border-b border-surface-tertiary text-primary flex justify-between items-center">
+                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-surface-secondary p-2 border-b border-surface-quaternary text-primary flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
                             <span class="text-success-primary">{{ customer.purchases_amount | currency }}</span>
-                            <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-surface-tertiary hover:bg-info-secondary hover:text-white hover:border-transparent">
+                            <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-surface-quaternary hover:bg-info-secondary hover:text-white hover:border-transparent">
                                 <i class="las la-eye"></i>
                             </button>
                         </p>

@@ -1,6 +1,6 @@
 <template>
-    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-6/7-screen md:h-5/7-screen lg:h-5/7-screen overflow-hidden shadow-lg bg-white flex flex-col relative">
-        <div class="p-2 border-b border-gray-200 flex justify-between items-center">
+    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-6/7-screen md:h-5/7-screen lg:h-5/7-screen overflow-hidden shadow-lg bg-surface-tertiary flex flex-col relative">
+        <div class="p-2 border-b border-surface-secondary flex justify-between items-center">
             <h2 class="font-semibold">{{ __( 'New Transaction' ) }}</h2>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -14,7 +14,7 @@
                 <ns-field :field="field" v-for="(field, index) of fields" :key="index"></ns-field>
             </div>
         </div>
-        <div class="p-2 bg-white justify-between border-t border-gray-200 flex">
+        <div class="p-2 bg-surface-tertiary justify-between border-t border-surface-secondary flex">
             <div></div>
             <div class="px-1">
                 <div class="-mx-2 flex flex-wrap">
@@ -61,15 +61,18 @@ export default {
             this.isSubmiting    =   true;
 
             nsHttpClient.post( `/api/nexopos/v4/customers/${customer.id}/account-history`, form )
-                .subscribe( result => {
-                    this.isSubmiting    =   false;
-                    nsSnackBar.success( result.message ).subscribe();
-                    this.$popupParams.resolve( result );
-                    this.$popup.close();
-                }, ( error ) => {
-                    this.isSubmiting    =   false;
-                    nsSnackBar.error( error.message ).subscribe();
-                    this.$popupParams.reject( error );
+                .subscribe({
+                    next: result => {
+                        this.isSubmiting    =   false;
+                        nsSnackBar.success( result.message ).subscribe();
+                        this.$popupParams.resolve( result );
+                        this.$popup.close();
+                    },
+                    error: ( error ) => {
+                        this.isSubmiting    =   false;
+                        nsSnackBar.error( error.message ).subscribe();
+                        this.$popupParams.reject( error );
+                    }
                 })
         },
 
@@ -80,8 +83,10 @@ export default {
 
         loadTransactionFields() {
             nsHttpClient.get( '/api/nexopos/v4/fields/ns.customers-account' )
-                .subscribe( fields => {
-                    this.fields     =   this.formValidation.createFields( fields );
+                .subscribe({
+                    next: fields => {
+                        this.fields     =   this.formValidation.createFields( fields );
+                    }
                 })
         }
     }

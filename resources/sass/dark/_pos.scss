@@ -1,29 +1,29 @@
 #loader {
-    @apply bg-slate-900;
+    @apply bg-surface-quinary;
     p {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 }
 #pos-container {
-    @apply bg-slate-900;
+    @apply bg-surface-quinary;
 
     #header-buttons {
         button {
-            @apply bg-slate-600 text-slate-300;
+            @apply bg-surface-secondary text-primary;
         }
     }
 
     #pos-cart {
         #tools {
             .switch-cart {
-                @apply bg-surface-tertiary font-semibold text-slate-300;
+                @apply bg-surface-tertiary font-semibold text-primary;
                 > span.products-count {
-                    @apply bg-green-400 text-white;
+                    @apply bg-success-primary text-white;
                 }
             }
 
             .switch-grid {
-                @apply bg-slate-800 border-transparent text-slate-500;
+                @apply bg-surface-tertiary border-transparent text-surface-secondary;
             }
         }
 
@@ -35,52 +35,52 @@
                     @apply border-surface-quaternary;
 
                     button {
-                        @apply bg-slate-600 border-surface-quaternary text-slate-300;
+                        @apply bg-surface-secondary border-surface-quaternary text-primary;
                         &:hover {
-                            @apply bg-slate-500;
+                            @apply bg-surface-primary;
                         }
                     }
                 }
             }
             #cart-table-header {
-                @apply text-slate-300;
+                @apply text-primary;
                 > div {
                     @apply border-surface-quaternary bg-surface-tertiary;
                 }
             }
             #cart-products-table {
                 > div {
-                    @apply text-slate-300;
+                    @apply text-primary;
 
                     .product-item {
                         @apply border-surface-quaternary;
 
                         .remove-product {
-                            @apply border-red-500;   
+                            @apply border-error-primary;   
 
                             &:hover {
-                                @apply text-red-500;
+                                @apply text-error-primary;
                             }
                         }
 
                         .price {
                             &:hover {
-                                @apply text-blue-600;
+                                @apply text-info-secondary;
                             }
                         }
 
                         .wholesale-mode {
-                            @apply text-green-500 border-green-500;
+                            @apply text-success-primary bg-transparent border-success-primary;
                             &:hover {
-                                @apply text-green-600;
+                                @apply text-success-primary bg-transparent;
                             }
                         }
 
                         .normal-mode {
-                            @apply border-blue-500;
+                            @apply border-info-primary;
 
                             &:hover {
-                                @apply text-blue-500;
+                                @apply text-info-primary;
                             }
                         }
 
@@ -93,11 +93,11 @@
                         @apply border-surface-quaternary;
 
                         > span {
-                            @apply border-blue-500;   
+                            @apply border-info-primary;   
                         }
 
                         &:hover {
-                            @apply bg-slate-600;
+                            @apply bg-surface-secondary;
                         }
                     }
 
@@ -108,27 +108,36 @@
                 .empty-cart {
                     @apply border-surface-quaternary;
                     h3 {
-                        @apply text-slate-200;
+                        @apply text-secondary;
                     }
                 }
             }
 
             #cart-products-summary {
                 table {
-                    @apply text-slate-300;
+                    @apply text-primary;
                     td {
                         @apply border-surface-quaternary;
+                        
                         a {
-                            @apply border-blue-500;
+                            @apply border-info-primary;
 
                             &:hover {
-                                @apply text-blue-500;
+                                @apply text-info-primary;
                             }
                         }
                     }
 
                     .summary-line {
-                        @apply bg-green-500 text-white;
+                        @apply bg-success-primary text-white;
+
+                        a {
+                            @apply border-white;
+
+                            &:hover {
+                                @apply text-white;
+                            }
+                        }
                     }
                 }
             }
@@ -137,34 +146,34 @@
                 @apply border-surface-quaternary; 
 
                 #pay-button {
-                    @apply bg-green-500 text-white border-r border-green-600;
+                    @apply bg-success-primary text-white border-r border-success-primary;
 
-                    &:hover {
-                        @apply bg-green-600;
+                    &:hover, &:active {
+                        @apply bg-success-secondary;
                     }
                 }
 
                 #hold-button {
-                    @apply bg-blue-500 text-white border-r border-blue-600;
+                    @apply bg-info-secondary text-white border-r border-info-secondary;
 
-                    &:hover {
-                        @apply bg-blue-600;
+                    &:hover, &:active {
+                        @apply bg-info-tertiary;
                     }
                 }
 
                 #discount-button {
-                    @apply bg-surface-tertiary border-r border-surface-quaternary text-slate-300;
+                    @apply bg-surface-tertiary border-r border-surface-quaternary text-primary;
 
-                    &:hover {
-                        @apply bg-slate-600;
+                    &:hover, &:active {
+                        @apply bg-surface-quaternary;
                     }
                 }
 
                 #void-button {
-                    @apply bg-red-500 text-white border-surface-quaternary hover:bg-red-600;
+                    @apply bg-error-primary text-white border-surface-quaternary hover:bg-error-secondary;
 
-                    &:hover {
-                        @apply bg-red-600;
+                    &:hover, &:active {
+                        @apply bg-error-secondary;
                     }
                 }
             }
@@ -173,32 +182,32 @@
 
     #pos-grid {
         .switch-cart {
-            @apply bg-slate-800 border-transparent text-slate-400;
+            @apply bg-surface-tertiary border-transparent text-slate-400;
 
             .products-count {
-                @apply bg-green-500 text-white;
+                @apply bg-success-primary text-white;
             }
         }
         .switch-grid {
-            @apply bg-surface-tertiary text-slate-300;
+            @apply bg-surface-tertiary text-primary;
         }
 
         #grid-container {
             @apply bg-surface-tertiary;
 
             #grid-header {
-                @apply border-surface-quaternary;
+                @apply border-surface-quaternary text-primary;
                 > div {
                     @apply border-surface-quaternary;
                     button {
-                        @apply bg-slate-600 border-surface-quaternary;
+                        @apply bg-surface-secondary border-surface-quaternary;
                         &.pos-button-clicked {
                             @apply bg-surface-tertiary;
                             box-shadow: inset 0px 0px 5px 0px #303131;
                         }
                     }
                     input {
-                        @apply bg-slate-800;
+                        @apply bg-surface-tertiary;
                     }
                 }
             }
@@ -207,12 +216,12 @@
                 @apply border-surface-quaternary;
 
                 ul > li {
-                    @apply text-slate-300;
+                    @apply text-primary;
                 }
             }
 
             #grid-items {
-                @apply text-slate-200;
+                @apply text-secondary;
 
                 .cell-item {
                     @apply border-surface-quaternary;
@@ -222,11 +231,11 @@
                     }
 
                     &:hover {
-                        @apply bg-slate-800;
+                        @apply bg-surface-tertiary;
                     }
 
                     h3 {
-                        @apply text-slate-300;
+                        @apply text-primary;
                     }
 
                     i, span {
@@ -245,7 +254,7 @@
 #ns-pos-customers {
     @apply bg-surface-tertiary;
     .ns-header {
-        @apply border-surface-quaternary;
+        @apply border-surface-secondary;
         h3 {
             @apply text-primary;
         }

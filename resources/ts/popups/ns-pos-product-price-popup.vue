@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
+    <div class="bg-surface-tertiary shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
         <div class="popup-heading">
             <h3>{{ __( 'Product Price' ) }}</h3>
             <div>

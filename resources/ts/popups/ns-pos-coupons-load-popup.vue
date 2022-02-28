@@ -30,38 +30,38 @@
                             <table class="w-full">
                                 <thead>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Coupon Name' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.name }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Coupon Name' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.name }}</td>
                                     </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Usage' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Usage' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Valid From' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.coupon.valid_hours_start }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Valid From' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.coupon.valid_hours_start }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Valid Till' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ customerCoupon.coupon.valid_hours_end }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Valid Till' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.coupon.valid_hours_end }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Categories' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Categories' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border border-gray-200" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
+                                                <li class="rounded-full px-3 py-1 border border-surface-secondary" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
                                             </ul>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">{{ __( 'Products' ) }}</td>
-                                        <td class="p-2 w-1/2 text-gray-700 border border-gray-200">
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Products' ) }}</td>
+                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border border-gray-200" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
+                                                <li class="rounded-full px-3 py-1 border border-surface-secondary" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -72,9 +72,9 @@
                 </ns-tabs-item>
                 <ns-tabs-item :label="__( 'Active Coupons' )" padding="p-1" identifier="active-coupons">
                     <ul v-if="order">
-                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between bg-gray-100 items-center px-2 py-1">
+                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between bg-surface-secondary items-center px-2 py-1">
                             <div class="flex-auto">
-                                <h3 class="font-semibold text-gray-700 p-2 flex justify-between">
+                                <h3 class="font-semibold text-primary p-2 flex justify-between">
                                     <span>{{ customerCoupon.name }}</span>
                                     <span>{{ getDiscountValue( customerCoupon ) }}</span>
                                 </h3>
@@ -83,7 +83,7 @@
                                 <ns-close-button @click="removeCoupon( index )"></ns-close-button>
                             </div>
                         </li>
-                        <li v-if="order.coupons.length === 0" class="flex justify-between bg-gray-100 items-center p-2">
+                        <li v-if="order.coupons.length === 0" class="flex justify-between bg-surface-secondary items-center p-2">
                             No coupons applies to the cart.
                         </li>
                     </ul>
@@ -91,10 +91,10 @@
             </ns-tabs>
         </div>
         <div class="flex" v-if="customerCoupon">
-            <button @click="apply()" class="w-1/2 px-3 py-2 bg-green-400 text-white font-bold">
+            <button @click="apply()" class="w-1/2 px-3 py-2 bg-success-primary text-white font-bold">
                 {{ __( 'Apply' ) }}
             </button>
-            <button @click="cancel()" class="w-1/2 px-3 py-2 bg-red-400 text-white font-bold">
+            <button @click="cancel()" class="w-1/2 px-3 py-2 bg-error-primary text-white font-bold">
                 {{ __( 'Cancel' ) }}
             </button>
         </div>

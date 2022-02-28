@@ -1,6 +1,6 @@
 <template>
-    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-3/5-screen bg-white">
-        <div class="header bg-white border-b flex justify-between p-2 items-center">
+    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-3/5-screen bg-surface-tertiary">
+        <div class="header bg-surface-tertiary border-b flex justify-between p-2 items-center">
             <h3>{{ __( 'Product / Service' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>

@@ -1,9 +1,9 @@
 <template>
-    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen bg-white flex flex-col overflow-hidden">
+    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen bg-surface-tertiary flex flex-col overflow-hidden">
         <div class="border-b p-2 flex items-center justify-between">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">
-                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-blue-400 hover:text-white mr-1">{{ __( 'Go Back' ) }}</div>
+                <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-info-primary hover:text-white mr-1">{{ __( 'Go Back' ) }}</div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>            
@@ -20,16 +20,16 @@
                         <div class="w-full md:flex-auto p-2">
                             <h3 class="font-semibold mb-1">{{ order.code }}</h3>
                             <div>
-                                <ul class="flex -mx-1 text-sm text-gray-700">
+                                <ul class="flex -mx-1 text-sm text-primary">
                                     <li class="px-1">{{ __( 'Total' ) }} : {{ refund.total | currency }}</li>
                                     <li class="px-1">{{ __( 'By' ) }} : {{ refund.author.username }}</li>
                                 </ul>
                             </div>
                         </div>
-                        <div @click="toggleProductView( refund )" class="w-full md:w-16 cursor-pointer hover:bg-blue-400 hover:border-blue-400 hover:text-white text-lg flex items-center justify-center md:border-l">
+                        <div @click="toggleProductView( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-primary hover:border-info-primary hover:text-white text-lg flex items-center justify-center md:border-l">
                             <i class="las la-eye"></i>
                         </div>
-                        <div @click="printRefundReceipt( refund )" class="w-full md:w-16 cursor-pointer hover:bg-blue-400 hover:border-blue-400 hover:text-white text-lg flex items-center justify-center md:border-l">
+                        <div @click="printRefundReceipt( refund )" class="w-full md:w-16 cursor-pointer hover:bg-info-primary hover:border-info-primary hover:text-white text-lg flex items-center justify-center md:border-l">
                             <i class="las la-print"></i>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     <div class="w-full md:flex-auto p-2">
                         <h3 class="font-semibold mb-1">{{ product.product.name }}</h3>
                         <div>
-                            <ul class="flex -mx-1 text-sm text-gray-700">
+                            <ul class="flex -mx-1 text-sm text-primary">
                                 <li class="px-1">{{ __( 'Condition' ) }} : {{ product.condition }}</li>
                                 <li class="px-1">{{ __( 'Quantity' ) }} : {{ product.quantity }}</li>
                                 <li class="px-1">{{ __( 'Total' ) }} : {{ product.total_price | currency }}</li>

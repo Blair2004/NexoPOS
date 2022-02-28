@@ -40,8 +40,8 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg bg-white w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between text-gray-700 items-center border-b">
+    <div class="shadow-lg bg-surface-tertiary w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
+        <div class="p-2 flex justify-between text-primary items-center border-b border-surface-secondary">
             <h3 class="font-semibold">{{ __( 'Products' ) }} &mdash; {{ order.code }} <span v-if="order.title">({{ order.title }})</span></h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -55,12 +55,12 @@ export default {
             </div>
             <template v-if="! isLoading">
                 <div class="item" v-for="product of products" :key="product.id">
-                    <div class="flex-col border-b border-blue-400 py-2">
-                        <div class="title font-semibold text-gray-700 flex justify-between">
+                    <div class="flex-col border-b border-info-primary py-2">
+                        <div class="title font-semibold text-primary flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
                             <span>{{ product.total_price | currency }}</span>
                         </div>
-                        <div class="text-sm text-gray-600">
+                        <div class="text-sm text-primary">
                             <ul>
                                 <li>{{ __( 'Unit' ) }} : {{ product.unit.name }}</li>
                             </ul>
@@ -69,7 +69,7 @@ export default {
                 </div>
             </template>
         </div>
-        <div class="flex justify-end p-2 border-t border-gray-400">
+        <div class="flex justify-end p-2 border-t border-surface-secondary">
             <div class="px-1">
                 <div class="-mx-2 flex">
                     <div class="px-1">

@@ -76,7 +76,6 @@ export class Popup {
             event.stopImmediatePropagation();
         });
 
-        this.container.style.background     =   'rgb(51 51 51 / 20%)';
         this.container.id                   =   'popup-container-' + document.querySelectorAll( '.is-popup' ).length;
         this.popupBody.setAttribute( 'class', ' zoom-out-entrance' );
         this.popupBody.innerHTML            =   '<div class="popup-body"></div>';

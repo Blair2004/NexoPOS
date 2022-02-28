@@ -1,3 +1,28 @@
+.is-popup {
+    .ns-box {
+        @apply bg-surface-tertiary text-primary;
+
+        .ns-box-header {
+            @apply border-surface-secondary text-primary
+        }
+
+        .ns-box-body {
+            @apply text-primary;
+        }
+
+        .ns-box-footer {
+            @apply border-surface-secondary bg-surface-tertiary;
+        }
+
+        h3 {
+            @apply text-primary;
+        }
+
+        p:not([class]){
+            @apply text-primary;
+        }
+    }
+}
 .ns-box {
     @apply bg-surface-secondary text-primary;
 

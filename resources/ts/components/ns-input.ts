@@ -14,7 +14,7 @@ const nsInput      =   Vue.component( 'ns-input', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : 'xxxxxxxxxx';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : '';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass

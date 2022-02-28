@@ -34,19 +34,19 @@ const nsSelectAudio      =   Vue.component( 'ns-select-audio', {
     },
     template: `
     <div class="flex flex-col flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400' : 'border-gray-200'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-2">
-            <div @click="playSelectedSound()" class="border-r-2 border-gray-200 flex-auto flex items-center justify-center hover:bg-blue-400 hover:text-white">
+        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'border-error-primary' : 'border-surface-secondary'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-2 form-input">
+            <div @click="playSelectedSound()" class="border-r-2 border-surface-secondary flex-auto flex items-center justify-center hover:bg-info-primary hover:text-white">
                 <button class="w-10 flex item-center justify-center">
                     <i class="las la-play text-2xl"></i>
                 </button>
             </div>
-            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-gray-700 form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10">
+            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-primary block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 outline-none">
                 <option :value="option.value" v-for="option of field.options" class="py-2">{{ option.label }}</option>
             </select>
         </div>
-        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
-        <p v-for="error of field.errors" class="text-xs text-red-400">
+        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-secondary"><slot name="description"></slot></p>
+        <p v-for="error of field.errors" class="text-xs text-error-primary">
             <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
             <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
             <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>

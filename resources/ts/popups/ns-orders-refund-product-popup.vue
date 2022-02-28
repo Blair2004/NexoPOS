@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-xl bg-white w-95vw md:w-3/5-screen lg:w-3/7-screen h-95vh md:h-3/5-screen lg:h-3/7-screen overflow-hidden flex flex-col">
-        <div class="p-2 flex justify-between border-b border-gray-200 items-center">
+    <div class="shadow-xl bg-surface-tertiary w-95vw md:w-3/5-screen lg:w-3/7-screen h-95vh md:h-3/5-screen lg:h-3/7-screen overflow-hidden flex flex-col">
+        <div class="p-2 flex justify-between border-b border-surface-secondary items-center">
             <h3 class="text-semibold">{{ __( 'Products' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -14,7 +14,7 @@
                 <ns-spinner></ns-spinner>
             </div>
         </div>
-        <div class="p-2 flex justify-between items-center border-t border-gray-200">
+        <div class="p-2 flex justify-between items-center border-t border-surface-secondary">
             <div></div>
             <div>
                 <ns-button @click="addProduct()" type="info">{{ __( 'Add Product' ) }}</ns-button>

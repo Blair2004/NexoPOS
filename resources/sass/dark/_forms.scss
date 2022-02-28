@@ -1,20 +1,63 @@
 /**
  * Fields
 **/
-
 .ns-switch {
     button.selected {
         @apply bg-info-primary text-white;
     }
     button.unselected {
-        @apply bg-surface-quaternary text-primary;
+        @apply bg-surface-secondary text-primary;
     }
 } 
 
-.ns-select select {
-    @apply text-primary;
-    option {
+.input-group.ns-primary {
+    @apply border-surface-secondary;
+    input {
+        @apply bg-surface-tertiary text-primary;
+    }
+    button {
+        @apply bg-surface-secondary;
+        i, span {
+            @apply text-white;
+        }
+    }
+}
+
+.input-group.ns-secondary {
+    @apply border-surface-tertiary;
+    input {
+        @apply bg-surface-quaternary text-primary;
+    }
+    button {
         @apply bg-surface-tertiary;
+        i, span {
+            @apply text-white;
+        }
+    }
+}
+
+.input-group.ns-info-secondary {
+    @apply border-info-tertiary;
+    input {
+        @apply bg-surface-tertiary text-primary;
+    }
+    button {
+        @apply bg-info-tertiary text-white;
+        i, span {
+            @apply text-white;
+        }
+    }
+}
+
+.ns-select {
+    select {
+        @apply bg-surface-tertiary text-primary;
+        option {
+            @apply bg-surface-secondary;
+            &:hover {
+                @apply bg-surface-primary;
+            }
+        }
     }
 }
 
@@ -50,7 +93,7 @@
         @apply text-primary;
     }
 
-    input, select, textarea {
+    input, textarea {
         @apply text-primary outline-none bg-surface-quaternary;
     }
 
@@ -70,6 +113,15 @@
     @apply outline-0;
     label {
         @apply text-surface-quaternary;
+    }
+    select {
+        @apply bg-surface-tertiary text-primary;
+        option {
+            @apply bg-surface-secondary;
+            &:hover {
+                @apply bg-surface-primary;
+            }
+        } 
     }
     input {
         @apply border-blue-200 bg-blue-100 rounded;
@@ -145,7 +197,7 @@
 }
 
 .ns-close-button {
-    @apply border-surface-tertiary text-primary;
+    @apply border-surface-secondary text-primary;
 
     &:hover {
         @apply bg-error-secondary border-transparent;

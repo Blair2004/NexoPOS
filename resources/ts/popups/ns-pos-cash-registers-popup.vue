@@ -87,13 +87,13 @@ export default {
                     return 'bg-teal-200 text-gray-800 cursor-not-allowed';
                 break;
                 case 'disabled':
-                    return 'bg-gray-200 text-gray-700 cursor-not-allowed';
+                    return 'bg-surface-secondary text-primary cursor-not-allowed';
                 break;
                 case 'available':
                     return 'bg-green-100 text-gray-800';
                 break;
             }
-            return 'border-gray-200 cursor-pointer hover:bg-blue-400 hover:text-white';
+            return 'border-surface-secondary cursor-pointer hover:bg-info-primary hover:text-white';
         }
     }
 }
@@ -103,12 +103,12 @@ export default {
         <div v-if="priorVerification === false" class="h-full w-full py-10 flex justify-center items-center">
             <ns-spinner size="24" border="8"></ns-spinner>
         </div>
-        <div v-if="priorVerification" class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-white' : ''">
+        <div v-if="priorVerification" class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg bg-surface-tertiary' : ''">
             <template>
-                <div class="title p-2 border-b border-gray-200 flex justify-between items-center">
+                <div class="title p-2 border-b border-surface-secondary flex justify-between items-center">
                     <h3 class="font-semibold">{{ __( 'Open The Register' ) }}</h3>
                     <div v-if="settings">
-                        <a :href="settings.urls.orders_url" class="hover:bg-red-400 hover:border-red-500 hover:text-white rounded-full border border-gray-200 px-3 text-sm py-1">{{ __( 'Exit To Orders' ) }}</a>
+                        <a :href="settings.urls.orders_url" class="hover:bg-error-primary hover:border-error-secondary hover:text-white rounded-full border border-surface-secondary px-3 text-sm py-1">{{ __( 'Exit To Orders' ) }}</a>
                     </div>
                 </div>                
                 <div v-if="! hasLoadedRegisters" class="py-10 flex-auto overflow-y-auto flex items-center justify-center">
@@ -124,7 +124,7 @@ export default {
                             <span class="text-sm">({{ register.status_label }})</span>
                         </div>
                     </div>
-                    <div v-if="registers.length === 0" class="p-2 bg-red-400 text-white">
+                    <div v-if="registers.length === 0" class="p-2 bg-error-primary text-white">
                         {{ __( 'Looks like there is no registers. At least one register is required to proceed.' ) }} &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">{{ __( 'Create Cash Register' ) }}</a>
                     </div>
                 </div>
