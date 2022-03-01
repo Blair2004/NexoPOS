@@ -27,6 +27,8 @@ class CreateRegistersHistoryTable extends Migration
                 $table->float( 'value', 18, 5 )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->string( 'uuid' )->nullable();
+                $table->string( 'diff_type' )->nullable(); // can be "negative", "positive".
+                $table->flaot( 'diff_amount' )->default(0);
                 $table->timestamps();
             });
         }
