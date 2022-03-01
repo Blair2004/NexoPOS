@@ -510,7 +510,7 @@ export class POS {
              * we'll pull that rather than doing a new request.
              */
             if (groups && groups[order.tax_group_id] !== undefined) {
-                order.taxes = order.taxes.map(tax => {
+                order.taxes = groups[order.tax_group_id].taxes.map(tax => {
                     tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
                     return tax;
                 });
