@@ -407,6 +407,8 @@ trait WithOrderTest
                 'rate'      =>  5,
             ];
 
+            $discountCoupons    =   0;
+            
             if ( $this->useDiscount ) {
                 /**
                  * If the discount is percentage or flat.
@@ -424,11 +426,12 @@ trait WithOrderTest
 
                     $discount[ 'rate' ]     =   0;
                 }
+
+                $discountCoupons    =   $currency->define( $discount[ 'value' ] )
+                    ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
+                    ->getRaw();
             }
             
-            $discountCoupons    =   $currency->define( $discount[ 'value' ] )
-                ->additionateBy( $allCoupons[0][ 'value' ] ?? 0 )
-                ->getRaw();
 
             $dateString         =   $currentDate->startOfDay()->addHours( 
                 $faker->numberBetween( 0,23 ) 
@@ -473,22 +476,9 @@ trait WithOrderTest
                 ] : []
             ], $this->customOrderParams );
 
-            $pathName   =   'tests/Post/process-orders.json';
-
-            /**
-             * used for reproducing orders that cause a bug
-             */
-            // $orderData  =   json_decode( file_get_contents( base_path( $pathName ) ), true );
-
             $customer                   =   Customer::find( $orderData[ 'customer_id' ] );
             $customerFirstPurchases     =   $customer->purchases_amount;
             $customerFirstOwed          =   $customer->owed_amount;
-
-            /**
-             * We might need this to reproduce a sale that caused
-             * an error.
-             */
-            // file_put_contents( base_path( $pathName ), json_encode( $orderData ) );
 
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
@@ -518,7 +508,7 @@ trait WithOrderTest
                 );
     
                 $couponValue    =   ( ! empty( $orderData[ 'coupons' ] ) ? ( float ) $orderData[ 'coupons' ][0][ 'value' ] : 0 );
-                $totalPayments  =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum();
+                $totalPayments  =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum() ?: 0;
                 $change         =   $totalPayments - (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] - $couponValue );
                 $change         =   Currency::raw( $change );
 
