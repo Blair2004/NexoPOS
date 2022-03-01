@@ -89,13 +89,14 @@ trait WithOrderTest
             // it's probably not opened, let's proceed...
         }
 
-        $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
+        $result     =   $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
+        $previousValue  =   $result[ 'data' ][ 'history' ]->value;
         
         /**
          * Step 1 : let's prepare the order
          * before submitting that.
          */
-        $this->registerOrderForCashRegister( $cashRegister ); 
+        $response   =   $this->registerOrderForCashRegister( $cashRegister ); 
 
         /**
          * between each operation
@@ -104,6 +105,7 @@ trait WithOrderTest
         $cashRegister->refresh();
 
         $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
+        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue + $response[ 'data' ][ 'order' ][ 'total' ] ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
         
         /**
          * Step 2 : disburse (cash-out) some cash
@@ -187,6 +189,8 @@ trait WithOrderTest
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
         
         $response->assertStatus( 200 );
+
+        return $response   =   json_decode( $response->getContent(), true );
     }
 
     /**
