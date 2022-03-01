@@ -1027,9 +1027,10 @@ trait WithOrderTest
         $discountValue              =   $orderService->computeDiscountValues( $discountRate, $subtotal );
         $total                      =   ns()->currency->getRaw( ( $subtotal + $shippingFees ) - $discountValue );
 
-        $paymentAmount              =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
+        $paymentAmount              =   ns()->currency->getRaw( $total / 2 );
 
-        $instalmentPayment          =   ns()->currency->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 );
+        $instalmentSlice            =   $total / 2;
+        $instalmentPayment          =   ns()->currency->getRaw( $instalmentSlice );
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
@@ -1056,7 +1057,7 @@ trait WithOrderTest
                 'shipping'              =>  $shippingFees,
                 'total'                 =>  $total,
                 'tendered'              =>  ns()->currency
-                    ->getRaw( ( ( $subtotal + $shippingFees ) - $discountValue ) / 2 ),
+                    ->getRaw( $total / 2 ),
                 'total_instalments'     =>  $initialTotalInstallment,
                 'instalments'           =>  [
                     [
@@ -1075,6 +1076,8 @@ trait WithOrderTest
                     ]
                 ]
             ]);
+
+        $response->dump();
         
         $response->assertJson([
             'status'    =>  'success'
