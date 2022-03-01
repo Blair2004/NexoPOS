@@ -1,7 +1,7 @@
 {
   "private": true,
   "engines": {
-    "node": "14.x"
+    "node": ">14.x"
   },
   "scripts": {
     "prod": "npm run production",
