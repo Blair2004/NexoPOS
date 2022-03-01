@@ -149,7 +149,7 @@ class AuthController extends Controller
 
         AfterSuccessfulLoginEvent::dispatch( Auth::user() );
         
-        return [
+        $data   =   [
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully connected.' ),
             'data'      =>  [
@@ -159,6 +159,8 @@ class AuthController extends Controller
                 )
             ]
         ];
+
+        return $data;
     }
 
     public function postPasswordLost( PostPasswordLostRequest $request )

@@ -510,7 +510,7 @@ export class POS {
              * we'll pull that rather than doing a new request.
              */
             if (groups && groups[order.tax_group_id] !== undefined) {
-                order.taxes = order.taxes.map(tax => {
+                order.taxes = groups[order.tax_group_id].taxes.map(tax => {
                     tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
                     return tax;
                 });
@@ -702,7 +702,7 @@ export class POS {
              * order is not "hold".
              */
             if (order.payment_status !== 'hold') {
-                if (order.payments.length === 0 || order.total > order.tendered) {
+                if (order.payments.length === 0 && order.total > 0 && order.total > order.tendered) {
                     if (this.options.getValue().ns_orders_allow_partial === 'no') {
                         const message = __('Partially paid orders are disabled.');
                         return reject({ status: 'failed', message });
@@ -1410,7 +1410,6 @@ export class POS {
     }
 
     refreshProducts(products = null) {
-        console.log( products );
         products.forEach(product => {
             this.computeProduct(product);
         });
@@ -1428,7 +1427,6 @@ export class POS {
     }
 
     computeProductTax( product: OrderProduct ) {
-        console.log( product.mode );
         switch( product.mode ) {
             case 'custom':
                 return this.computeCustomProductTax( product );
@@ -1492,8 +1490,6 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
 
-        console.log( quantities, result );
-
         quantities.excl_tax_custom_price    =   result.price_without_tax;
         quantities.incl_tax_custom_price    =   result.price_with_tax;
         quantities.custom_price_tax         =   result.tax_value;
@@ -1542,7 +1538,6 @@ export class POS {
          * determining what is the 
          * real sale price
          */
-        console.log( 'processed' );
         if (product.mode === 'normal') {
             product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().sale_price_tax * product.quantity;
@@ -1554,7 +1549,7 @@ export class POS {
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
 
-        console.log( product.unit_price );
+        console.log( product );
 
         /**
          * computing the discount when it's 

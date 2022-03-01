@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import FormValidation from '@/libraries/form-validation';
 import popupCloser from '@/libraries/popup-closer';
 import popupResolver from '@/libraries/popup-resolver';
@@ -55,6 +55,7 @@ export default {
                     type: 'select',
                     disabled: true,
                     value: '',
+                    validation: 'required',
                     options: []
                 }, {
                     label: __( 'Type' ),
@@ -63,6 +64,7 @@ export default {
                     value: '',
                     description: __( 'Define how the tax is computed' ),
                     type: 'select',
+                    validation: 'required',
                     options: [{
                         label: __( 'Exclusive' ),
                         value: 'exclusive',
@@ -118,6 +120,10 @@ export default {
         },
 
         saveTax() {
+            if ( ! this.validation.validateFields( this.group_fields ) ) {
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+            }
+
             const fields    =   this.validation.extractFields( this.group_fields );
             this.popupResolver( fields );
         },  

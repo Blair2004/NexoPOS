@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
@@ -190,6 +191,9 @@ class CashRegistersService
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function increaseFromOrderPayment( OrderAfterPaymentCreatedEvent $event )
     {
         if ( $event->order->register_id !== null ) {
@@ -203,6 +207,65 @@ class CashRegistersService
             /**
              * @todo : not really proud of this. :'(    
              */
+            $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
+
+            $this->updateRegisterAmount( $event );
+        }
+    }
+
+    /**
+     * Listen for payment status changes event
+     * that only occurs if the order is updated
+     * and will update the register history accordingly.
+     * @param OrderAfterPaymentStatusChangedEvent $event
+     * @return void
+     */
+    public function increaseFromPaidOrder( OrderAfterPaymentStatusChangedEvent $event )
+    {
+        /**
+         * If the payment status changed from
+         * supported payment status to a "Paid" status.
+         */
+        if ( $event->order->register_id !== null && in_array( $event->previous, [
+            Order::PAYMENT_DUE,
+            Order::PAYMENT_HOLD,
+            Order::PAYMENT_PARTIALLY,
+            Order::PAYMENT_UNPAID,
+        ] ) && $event->new === Order::PAYMENT_PAID ) {
+            $registerHistory                =   new RegisterHistory;
+            $registerHistory->value         =   $event->order->total;
+            $registerHistory->register_id   =   $event->order->register_id;
+            $registerHistory->action        =   RegisterHistory::ACTION_SALE;
+            $registerHistory->author        =   Auth::id();
+            $registerHistory->saveQuietly();
+
+            $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
+
+            $this->updateRegisterAmount( $event );
+        }
+    }
+
+    /**
+     * Listen to order created and
+     * will update the cash register if any order
+     * is marked as paid.
+     * @param OrderAfterCreatedEvent $event
+     * @return void
+     */
+    public function increaseFromOrderCreatedEvent( OrderAfterCreatedEvent $event )
+    {
+        /**
+         * If the payment status changed from
+         * supported payment status to a "Paid" status.
+         */
+        if ( $event->order->register_id !== null && $event->order->payment_status === Order::PAYMENT_PAID ) {
+            $registerHistory                =   new RegisterHistory;
+            $registerHistory->value         =   $event->order->total;
+            $registerHistory->register_id   =   $event->order->register_id;
+            $registerHistory->action        =   RegisterHistory::ACTION_SALE;
+            $registerHistory->author        =   Auth::id();
+            $registerHistory->saveQuietly();
+
             $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
 
             $this->updateRegisterAmount( $event );

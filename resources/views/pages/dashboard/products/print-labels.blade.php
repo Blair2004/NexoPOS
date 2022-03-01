@@ -293,6 +293,10 @@ Vue.component( 'label-printing', {
                                 <h3 class="font-bold text-xl text-center" v-if="visibility.show_store_name">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
                                 <div class="flex justify-between py-1" v-if="visibility.show_product_name">
                                     <span>{{ __( 'Product' ) }}</span>
+                                    <span>@{{ item.name }}</span>
+                                </div>
+                                <div class="flex justify-between py-1" v-if="visibility.show_product_name">
+                                    <span>{{ __( 'Unit' ) }}</span>
                                     <span>@{{ item.selectedUnitQuantity.unit.name }}</span>
                                 </div>
                                 <div class="flex justify-between py-1" v-if="visibility.show_barcode_text">
