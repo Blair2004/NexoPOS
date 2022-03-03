@@ -1,5 +1,5 @@
 #alert-popup, #confirm-popup {
-    @apply bg-surface-tertiary;
+    @apply bg-popup-surface;
 
     h2 {
         @apply text-secondary;
@@ -10,14 +10,14 @@
     }
 
     .action-buttons {
-        @apply border-surface-secondary text-primary;
+        @apply border-box-edge text-primary;
 
         button:hover {
             @apply bg-info-secondary;
         }
 
         hr {
-            @apply border-surface-secondary;
+            @apply border-box-edge;
         }
     }
 }

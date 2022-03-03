@@ -80,6 +80,45 @@ module.exports = {
         orange: colors.orange,
         cyan: colors.cyan,
         
+        typography: withOpacityValue('--typography'),
+        surface: withOpacityValue('--surface'),
+
+        'popup-surface': withOpacityValue('--popup-surface'),
+
+        'input-edge': withOpacityValue('--input-edge'),
+        'input-background': withOpacityValue('--input-background'),
+        'input-disabled': withOpacityValue('--input-disabled'),
+        'input-button': withOpacityValue('--input-button'),
+        'input-button-hover': withOpacityValue('--input-button-hover'),
+        'input-button-active': withOpacityValue('--input-button-active'),
+        'input-option-hover': withOpacityValue('--input-option-hover'),
+
+        'box-background': withOpacityValue('--box-background'),
+        'box-edge': withOpacityValue('--box-edge'),
+
+        'option-hover': withOpacityValue('--option-hover'),
+        'crud-button-edge': withOpacityValue('--crud-button-edge'),
+        'pos-button-edge': withOpacityValue('--pos-button-edge'),
+
+        'numpad-background': withOpacityValue('--numpad-background'),
+        'numpad-edge': withOpacityValue('--numpad-edge'),
+        'numpad-hover': withOpacityValue('--numpad-hover'),
+        'numpad-hover-edge': withOpacityValue('--numpad-hover-edge'),
+
+        'tab-table-th': withOpacityValue('--tab-table-th'),
+        'tab-table-th-edge': withOpacityValue('--tab-table-th-edge'),
+        'table-th': withOpacityValue('--table-th'),
+        'table-th-edge': withOpacityValue('--table-th-edge'),
+
+        'scroll-thumb': withOpacityValue('--scroll-thumb'),
+        'scroll-track': withOpacityValue('--scroll-track'),
+        
+        'pre': withOpacityValue('--pre'),
+
+        'tab-active': withOpacityValue('--tab-active'),
+        'tab-active-border': withOpacityValue('--tab-active-border'),
+        'tab-inactive': withOpacityValue('--tab-inactive'),
+
         primary: withOpacityValue('--primary'),
         secondary: withOpacityValue('--secondary'),  
         tertiary: withOpacityValue('--tertiary'),  
@@ -89,7 +128,7 @@ module.exports = {
         'info-tertiary': withOpacityValue('--info-tertiary'),  
         
         'info-light-primary': withOpacityValue('--info-light-primary'),  
-        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
+        'info-light-secondary': withOpacityValue('--info-light-secondary'),  
         'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
         
         'success-primary': withOpacityValue('--success-primary'),
@@ -97,7 +136,7 @@ module.exports = {
         'success-tertiary': withOpacityValue('--success-tertiary'),  
         
         'success-light-primary': withOpacityValue('--success-light-primary'),  
-        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
+        'success-light-secondary': withOpacityValue('--success-light-secondary'),  
         'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
         
         'error-primary': withOpacityValue('--error-primary'),
@@ -105,7 +144,7 @@ module.exports = {
         'error-tertiary': withOpacityValue('--error-tertiary'),  
         
         'error-light-primary': withOpacityValue('--error-light-primary'),  
-        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
+        'error-light-success': withOpacityValue('--error-light-success'),  
         'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
         
         'warning-primary': withOpacityValue('--warning-primary'),
@@ -113,7 +152,7 @@ module.exports = {
         'warning-tertiary': withOpacityValue('--warning-tertiary'),  
         
         'warning-light-primary': withOpacityValue('--warning-light-primary'),  
-        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
+        'warning-light-success': withOpacityValue('--warning-light-success'),  
         'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
 
         'default-primary': withOpacityValue('--default-primary'),
@@ -121,7 +160,7 @@ module.exports = {
         'default-tertiary': withOpacityValue('--default-tertiary'),  
         
         'default-light-primary': withOpacityValue('--default-light-primary'),  
-        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
+        'default-light-success': withOpacityValue('--default-light-success'),  
         'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
 
         'danger-primary': withOpacityValue('--danger-primary'),
@@ -129,7 +168,7 @@ module.exports = {
         'danger-tertiary': withOpacityValue('--danger-tertiary'),  
         
         'danger-light-primary': withOpacityValue('--danger-light-primary'),  
-        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
+        'danger-light-success': withOpacityValue('--danger-light-success'),  
         'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
 
         'surface-primary': withOpacityValue('--surface-primary'),  

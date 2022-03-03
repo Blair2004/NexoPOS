@@ -1,19 +1,27 @@
 #alert-popup, #confirm-popup {
-    @apply bg-white;
+    @apply bg-surface-tertiary;
 
     h2 {
-        @apply text-gray-700;
+        @apply text-secondary;
     }
 
     p {
-        @apply text-gray-600;
+        @apply text-primary;
     }
 
     .action-buttons {
-        @apply border-gray-200 text-gray-700;
+        @apply border-surface-secondary text-primary;
 
         button:hover {
-            @apply bg-gray-100;
+            @apply bg-info-secondary;
+        }
+
+        hr {
+            @apply border-surface-secondary;
         }
     }
+}
+
+.is-popup {
+    background: rgb(0 0 0 / 40%);
 }

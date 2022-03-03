@@ -1,10 +1,63 @@
-.notification-card {
-    h1 {
-        @apply text-gray-700
-    }
-    p {
-        @apply text-gray-600
+#main-container, #page-container {
+    @apply bg-surface;
+}
+
+#dashboard-cards * {
+    @apply text-white;
+}
+
+.ns-avatar { 
+    @apply text-primary border-surface-quaternary;
+
+    &:hover {
+        @apply bg-white text-primary border-transparent;
     }
 
-    @apply border-gray-200
+    &.toggled {
+        @apply bg-white text-primary border-transparent;
+    }
+}
+
+/**
+ * Notifications Wrapper
+**/
+
+#notificaton-wrapper {
+    #notification-button {
+        &.panel-visible {
+            @apply bg-white;
+        }
+        &.panel-hidden {
+            @apply border-surface-quaternary;
+        }
+
+        &:hover {
+            @apply bg-white text-primary;
+        }
+
+        @apply text-primary;
+    }
+
+    #notification-center > div > div {
+        @apply bg-white;
+    }
+
+    .clear-all {
+        @apply text-primary;
+
+        &:hover {
+            @apply bg-surface-secondary text-typography;
+        }
+    }
+
+    .notification-card {
+        h1 {
+            @apply text-secondary;
+        }
+        p {
+            @apply text-primary;
+        }
+    
+        @apply border-surface-quaternary;
+    }
 }

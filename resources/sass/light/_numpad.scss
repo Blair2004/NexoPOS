@@ -1,0 +1,6 @@
+.ns-numpad-key {
+    @apply text-primary bg-surface-tertiary border-surface-secondary;
+    &:hover {
+        @apply bg-info-primary border-info-primary;
+    }
+}

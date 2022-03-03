@@ -8,12 +8,12 @@
         <div>
             <div class="flex justify-between items-center">
                 <div class="">
-                    <a href="{{ ns()->route( 'ns.dashboard.modules-list' ) }}" class="rounded-lg text-gray-600 bg-white shadow px-3 py-1 hover:bg-blue-400 hover:text-white"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
+                    <a href="{{ ns()->route( 'ns.dashboard.modules-list' ) }}" class="rounded-lg text-primary bg-surface-secondary shadow px-3 py-1 hover:bg-info-secondary hover:text-typography"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
                 </div>
             </div>
             <form action="{{ ns()->route( 'ns.dashboard.modules-upload-post' ) }}" method="post" enctype="multipart/form-data">
                 @csrf
-                <div class="module-section my-4 flex flex-wrap -mx-4">
+                <div class="module-section my-4 flex flex-wrap -mx-4 text-primary">
                     <div class="px-4">
                         <div class="{{ $errors->any() ? 'form-input-invalid' : 'form-input' }}">
                             <label for="file">{{ __( 'Your Module' ) }}</label>
@@ -23,7 +23,7 @@
                     </div>    
                 </div>
                 <div>
-                    <button class="rounded-lg px-3 py-2 bg-white hover:bg-blue-400 hover:text-white text-gray-700 shadow" type="submit">{{ __( 'Upload' ) }}</button>
+                    <button class="rounded-lg px-3 py-2 bg-surface-secondary hover:bg-info-secondary hover:text-typography text-secondary shadow" type="submit">{{ __( 'Upload' ) }}</button>
                 </div>            
             </form>
         </div>

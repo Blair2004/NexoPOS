@@ -1,7 +1,43 @@
 .ns-notice-danger {
-    @apply border-red-600 bg-red-200 text-gray-700;
+    @apply border-danger-secondary bg-danger-primary text-typography;
 
     pre {
-        @apply bg-gray-700 text-white
+        @apply bg-surface-primary text-typography
     }
+}
+
+.ns-notice-warning {
+    @apply border-warning-secondary bg-warning-primary text-typography;
+
+    pre {
+        @apply bg-surface-primary text-typography
+    }
+}
+
+.ns-notice-success {
+    @apply border-success-secondary bg-success-primary text-typography;
+
+    pre {
+        @apply bg-surface-tertiary text-typography
+    }
+}
+
+.ns-notice-error {
+    @apply border-error-secondary bg-error-primary text-typography;
+
+    pre {
+        @apply bg-surface-tertiary text-typography
+    }
+}
+
+.ns-notice-info {
+    @apply border-info-secondary bg-info-primary text-typography;
+
+    pre {
+        @apply bg-surface-tertiary text-typography
+    }
+}
+
+.ns-normal-text {
+    @apply text-primary;
 }

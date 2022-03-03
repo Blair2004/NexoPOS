@@ -1,43 +1,43 @@
 .ns-notice-danger {
-    @apply border-danger-secondary bg-danger-primary text-white;
+    @apply border-danger-secondary bg-danger-primary text-primary;
 
     pre {
-        @apply bg-gray-700 text-white
+        @apply bg-pre text-primary;
     }
 }
 
 .ns-notice-warning {
-    @apply border-warning-secondary bg-warning-primary text-white;
+    @apply border-warning-secondary bg-warning-primary text-primary;
 
     pre {
-        @apply bg-gray-700 text-white
+        @apply bg-pre text-primary;
     }
 }
 
 .ns-notice-success {
-    @apply border-success-secondary bg-success-primary text-white;
+    @apply border-success-secondary bg-success-primary text-primary;
 
     pre {
-        @apply bg-surface-tertiary text-white
+        @apply bg-pre text-primary;
     }
 }
 
 .ns-notice-error {
-    @apply border-error-secondary bg-error-primary text-white;
+    @apply border-error-secondary bg-error-primary text-primary;
 
     pre {
-        @apply bg-surface-tertiary text-white
+        @apply bg-pre text-primary;
     }
 }
 
 .ns-notice-info {
-    @apply border-info-secondary bg-info-primary text-white;
+    @apply border-info-secondary bg-info-primary text-primary;
 
     pre {
-        @apply bg-surface-tertiary text-white
+        @apply bg-pre text-primary;
     }
 }
 
 .ns-normal-text {
-    @apply text-slate-300;
+    @apply text-primary;
 }

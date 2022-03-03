@@ -2,13 +2,13 @@
     .ns-table {
         thead {
             th {
-                @apply bg-tab-table-th text-primary border-tab-table-th-edge;
+                @apply bg-surface-primary text-typography border-surface-primary;
             }
         }
         tbody {
             @apply text-primary;
             td {
-                @apply border-tab-table-th-edge text-primary;
+                @apply border-surface-primary text-typography;
             }
         }
     }
@@ -18,13 +18,13 @@
     @apply w-full;
     thead {
         th {
-            @apply bg-table-th text-primary border-table-th-edge;
+            @apply bg-surface-secondary text-typography border-surface-secondary;
         }
     }
     tbody, tfoot {
         @apply text-primary;
         td {
-            @apply border-table-th-edge text-primary;
+            @apply border-surface-secondary text-typography;
         }
 
         tr.info {

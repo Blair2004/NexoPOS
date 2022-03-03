@@ -1,32 +1,27 @@
 #main-container, #page-container {
-    @apply bg-surface-quaternary;
+    @apply bg-surface;
 }
 
-.ns-toggle-button { 
-    @apply text-primary border-surface-quaternary;
+#dashboard-cards * {
+    @apply text-typography;
+}
 
-    &:hover {   
-        @apply text-secondary bg-surface-tertiary border-surface-tertiary;
-    }
-    
-    .toggled {
-        @apply bg-surface-tertiary text-primary;
-    }
-
-    .untoggled {
-        @apply border-secondary;
+.ns-toggle-button {
+    @apply border-box-edge text-primary;
+    &:hover {
+        @apply bg-tab-active border-transparent text-white;
     }
 }
 
 .ns-avatar { 
-    @apply text-primary border-surface-quaternary;
+    @apply text-primary border-box-edge;
 
     &:hover {
-        @apply bg-surface-tertiary text-primary border-transparent;
+        @apply bg-tab-active text-primary border-transparent;
     }
 
     &.toggled {
-        @apply bg-surface-tertiary text-primary border-transparent;
+        @apply bg-tab-active text-primary border-transparent;
     }
 }
 
@@ -37,28 +32,28 @@
 #notificaton-wrapper {
     #notification-button {
         &.panel-visible {
-            @apply bg-surface-tertiary;
+            @apply bg-box-background;
         }
         &.panel-hidden {
-            @apply border-surface-quaternary;
+            @apply border-box-edge;
         }
 
         &:hover {
-            @apply bg-surface-tertiary text-primary;
+            @apply bg-box-background text-primary;
         }
 
         @apply text-primary;
     }
 
     #notification-center > div > div {
-        @apply bg-surface-tertiary;
+        @apply bg-box-background;
     }
 
     .clear-all {
         @apply text-primary;
 
         &:hover {
-            @apply bg-surface-secondary text-white;
+            @apply bg-input-button-hover text-typography;
         }
     }
 
@@ -70,6 +65,6 @@
             @apply text-primary;
         }
     
-        @apply border-surface-quaternary;
+        @apply border-box-edge;
     }
 }

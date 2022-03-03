@@ -1,0 +1,23 @@
+.ns-scrollbar {
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        @apply bg-black/50;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        @apply bg-blue-800;
+    }
+}
+
+ul.ns-vertical-menu {
+    @apply bg-white;
+    li {
+        @apply text-primary;
+        &:hover {
+            @apply bg-surface-primary text-primary;
+        }
+    }
+}

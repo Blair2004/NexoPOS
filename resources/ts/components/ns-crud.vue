@@ -1,5 +1,5 @@
 <template>
-    <div id="crud-table" class="w-full rounded-lg bg-surface-secondary" :class="mode !== 'light' ? 'shadow mb-8': ''">
+    <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
         <div id="crud-table-header" class="p-2 border-b border-surface-tertiary flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
@@ -44,13 +44,13 @@
         </div>
         <div class="flex">
             <div class="overflow-x-auto flex-auto">
-                <table class="table w-full" v-if="Object.values( columns ).length > 0">
+                <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
-                        <tr class="dark:text-gray-300 dark:border-slate-200 text-gray-700 border-b border-gray-200">
-                            <th class="text-center px-2 dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100 border w-16 py-2">
+                        <tr>
+                            <th class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border dark:bg-slate-600 bg-gray-100 text-left px-2 dark:border-slate-700 border-gray-200 py-2">
+                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border text-left px-2 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">
@@ -59,7 +59,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th class="text-left px-2 py-2 w-16 border dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100"></th>
+                            <th class="text-left px-2 py-2 w-16 border"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,7 +89,7 @@
                 <button @click="bulkDo()" class="ns-crud-input-button h-8 w-8 outline-none rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Go' ) }}</slot></button>
             </div>
             <div class="flex">
-                <div class="items-center flex text-gray-600 mx-4">{{ resultInfo }}</div>
+                <div class="items-center flex text-primary mx-4">{{ resultInfo }}</div>
                 <div id="pagination" class="flex -mx-1">
                     <template v-if="result.current_page">
                         <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">

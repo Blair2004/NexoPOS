@@ -1,4 +1,42 @@
 :root {
+    --typography: 255 255 255;
+    --surface: 15 23 42;
+    --popup-surface: 51 65 85;
+    --input-edge: 71 85 105;
+    --input-background: 51 65 85;
+    --input-disabled: 30 41 59;
+    --input-button: 71 85 105;
+    --input-button-hover: 96 165 250; /** blue-400 **/
+    --input-button-active: 59 130 246; /** blue-500 **/
+    --input-option-hover: 100 116 139;
+
+    --box-background: 51 65 85;
+    --box-edge: 71 85 105;
+    
+    --crud-button-edge: 30 41 59;
+    --pos-button-edge: 30 41 59;
+
+    --numpad-background: 71 85 105;
+    --numpad-edge: 100 116 139;
+    --numpad-hover: 100 116 139;
+    --numpad-hover-edge: 100 116 139;
+
+    --option-hover: 100 116 139;
+
+    --scroll-thumb: 51 65 85;
+    --scroll-track: 0 0 0;
+
+    --pre: 100 116 139;
+
+    --tab-active: 51 65 85;
+    --tab-active-border: 30 41 59;
+    --tab-inactive: 30 41 59;
+
+    --tab-table-th: 100 116 139;
+    --tab-table-th-edge: 100 116 139;
+    --table-th: 30 41 59;
+    --table-th-edge: 71 85 105;
+
     --primary: 226 232 240;
     --secondary: 203 213 225;
     --tertiary: 148 163 184;

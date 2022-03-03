@@ -3,35 +3,36 @@
 **/
 .ns-switch {
     button.selected {
-        @apply bg-info-primary text-white;
+        @apply bg-input-button-active text-typography;
     }
     button.unselected {
-        @apply bg-surface-secondary text-primary;
+        @apply bg-slate-600 text-primary;
     }
 } 
 
 .input-group.ns-primary {
-    @apply border-surface-secondary;
+    @apply border-input-edge;
     input {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-input-background text-primary;
     }
     button {
-        @apply bg-surface-secondary;
+        @apply bg-input-background;
         i, span {
-            @apply text-white;
+            @apply text-typography;
         }
     }
 }
 
+/** @deprecated ? */
 .input-group.ns-secondary {
     @apply border-surface-tertiary;
     input {
-        @apply bg-surface-quaternary text-primary;
+        @apply bg-surface text-primary;
     }
     button {
         @apply bg-surface-tertiary;
         i, span {
-            @apply text-white;
+            @apply text-typography;
         }
     }
 }
@@ -42,20 +43,20 @@
         @apply bg-surface-tertiary text-primary;
     }
     button {
-        @apply bg-info-tertiary text-white;
+        @apply bg-info-tertiary text-typography;
         i, span {
-            @apply text-white;
+            @apply text-typography;
         }
     }
 }
 
 .ns-select {
     select {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-input-background text-primary;
         option {
-            @apply bg-surface-secondary;
+            @apply bg-input-background;
             &:hover {
-                @apply bg-surface-primary;
+                @apply bg-input-option-hover text-white;
             }
         }
     }
@@ -63,7 +64,7 @@
 
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
-        @apply bg-surface-quaternary;
+        @apply bg-input-background border-input-edge text-tertiary;
     }
     
     .ns-enabled {
@@ -85,7 +86,7 @@
             @apply border-error-secondary;
         }
         &.is-pristine {
-            @apply border-surface-secondary;
+            @apply border-input-edge;
         }
     }
 
@@ -94,7 +95,14 @@
     }
 
     input, textarea {
-        @apply text-primary outline-none bg-surface-quaternary;
+        @apply text-primary outline-none bg-input-background;
+    }
+
+    button {
+        @apply border-input-edge;
+        &:hover {
+            @apply bg-input-button-hover;
+        }
     }
 
     p.ns-description {
@@ -112,25 +120,25 @@
 .form-input {
     @apply outline-0;
     label {
-        @apply text-surface-quaternary;
+        @apply text-primary;
     }
     select {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-input-background text-primary;
         option {
-            @apply bg-surface-secondary;
+            @apply bg-input-background;
             &:hover {
-                @apply bg-surface-primary;
+                @apply bg-input-option-hover;
             }
         } 
     }
     input {
-        @apply border-blue-200 bg-blue-100 rounded;
+        @apply border-input-edge bg-input-background rounded;
         &[disabled] {
-            @apply bg-surface-quaternary;
+            @apply bg-input-disabled;
         }
     }
     p {
-        @apply text-gray-600;
+        @apply text-secondary;
     }
 }
 
@@ -139,7 +147,7 @@
         @apply text-error-secondary;
     }
     input {
-        @apply border-error-primary bg-white rounded;
+        @apply border-error-primary bg-error-secondary rounded;
     }
     p {
         @apply text-error-secondary;
@@ -153,45 +161,45 @@
     @apply shadow;
     
     &.ns-button-success > button, &.ns-button-success > a {
-        @apply bg-success-secondary text-white;
+        @apply bg-success-secondary text-typography;
 
         span.ns-label {
-            @apply bg-white text-success-primary;
+            @apply bg-input-background text-success-primary;
         }
     }
     &.ns-button-danger > button, &.ns-button-danger > a {
-        @apply bg-error-secondary text-white;
+        @apply bg-error-secondary text-typography;
 
         span.ns-label {
-            @apply bg-white text-error-secondary;
+            @apply bg-input-background text-error-secondary;
         }
     }
     &.ns-button-warning > button, &.ns-button-warning > a {
-        @apply bg-warning-primary text-white;
+        @apply bg-warning-primary text-typography;
 
         span.ns-label {
-            @apply bg-white text-warning-secondary;
+            @apply bg-input-background text-warning-secondary;
         }
     }
     &.ns-button-default > button, &.ns-button-default > a {
-        @apply bg-white text-surface-quaternary;
+        @apply bg-input-background text-surface-quaternary;
 
         span.ns-label {
-            @apply bg-surface-quaternary text-white;
+            @apply bg-surface text-typography;
         }
     }
     &.ns-button-info > button, &.ns-button-info > a {
-        @apply bg-info-secondary text-white;
+        @apply bg-info-secondary text-typography;
 
         span.ns-label {
-            @apply bg-white text-info-secondary;
+            @apply bg-input-background text-info-secondary;
         }
     }
     .ns-disabled {
-        @apply bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600;
+        @apply bg-input-background border border-surface-secondary cursor-not-allowed text-surface-tertiary;
 
         span.ns-label {
-            @apply bg-white text-gray-600;
+            @apply bg-input-background text-surface-secondary;
         }
     }
 }
@@ -202,7 +210,7 @@
     &:hover {
         @apply bg-error-secondary border-transparent;
         > i {
-            @apply text-white;
+            @apply text-typography;
         }
     }
 }

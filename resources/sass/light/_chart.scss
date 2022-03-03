@@ -1,0 +1,57 @@
+#ns-orders-chart {
+    .head {
+        @apply bg-white;
+    }
+    .foot {
+        @apply bg-white; 
+        > div {
+            @apply border-surface-primary;
+            span {
+                @apply text-primary;
+            }
+            h2 {
+                @apply text-primary;
+            }
+        }
+    }
+}
+
+#ns-orders-summary {
+    .title {
+        @apply border-surface-primary;
+    }
+    .head, .title {
+        @apply bg-white;
+        h3, i, h4, p, span {
+            @apply text-typography;
+        }
+        .paid-order {
+            @apply bg-success-light-primary text-typography;
+        }
+        .other-order {
+            @apply bg-white text-primary;
+        }
+        .single-order {
+            @apply border-success-light-tertiary;
+        }
+        .paid-currency {
+            @apply text-typography;
+        }
+        .unpaid-currency {
+            @apply text-primary;
+        }
+    }
+}
+
+#ns-best-customers, #ns-best-cashiers {
+    @apply bg-white;
+    .head {
+        @apply bg-white border-surface-tertiary text-primary;
+    }
+    .body {
+        @apply text-primary bg-white;
+        .entry {
+            @apply border-surface-tertiary;
+        }
+    }
+}

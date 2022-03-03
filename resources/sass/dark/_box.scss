@@ -1,9 +1,9 @@
 .is-popup {
     .ns-box {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-box-background text-primary;
 
         .ns-box-header {
-            @apply border-surface-secondary text-primary
+            @apply border-box-edge text-primary
         }
 
         .ns-box-body {
@@ -11,7 +11,7 @@
         }
 
         .ns-box-footer {
-            @apply border-surface-secondary bg-surface-tertiary;
+            @apply border-box-edge bg-box-background;
         }
 
         h3 {
@@ -24,10 +24,10 @@
     }
 }
 .ns-box {
-    @apply bg-surface-secondary text-primary;
+    @apply bg-box-background text-primary;
 
     .ns-box-header {
-        @apply border-surface-tertiary text-primary
+        @apply border-box-edge text-primary
     }
 
     .ns-box-body {
@@ -35,7 +35,7 @@
     }
 
     .ns-box-footer {
-        @apply border-surface-tertiary bg-surface-secondary;
+        @apply border-box-edge bg-box-background;
     }
 
     h3 {

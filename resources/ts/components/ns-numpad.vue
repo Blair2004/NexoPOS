@@ -5,7 +5,7 @@
             :key="index" 
             v-for="(key,index) of keys" 
             style="margin:-1px;"
-            class="select-none hover:bg-info-primary hover:border-info-primary text-primary bg-surface-tertiary border-surface-secondary border h-16 flex items-center justify-center cursor-pointer">
+            class="select-none ns-numpad-key border h-16 flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>

@@ -1,0 +1,6 @@
+.ns-numpad-key {
+    @apply text-primary bg-numpad-background border-numpad-edge;
+    &:hover {
+        @apply bg-numpad-hover border-numpad-hover-edge;
+    }
+}

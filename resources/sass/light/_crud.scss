@@ -1,0 +1,84 @@
+/**
+ * Crud
+**/
+#crud-table {
+    @apply bg-surface-primary;
+    > * {
+        @apply text-primary;
+    }
+
+    .ns-crud-input {
+        @apply bg-surface-tertiary;
+
+        input {
+            @apply text-primary;
+        }
+    }
+    
+    .ns-table-row {
+        @apply border-surface-tertiary;
+
+        &.ns-row-success {
+            @apply bg-success-light-primary border-success-primary text-typography;
+        }
+        &.ns-row-error {
+            @apply bg-error-light-primary border-error-primary text-typography;
+        }
+        &.ns-row-info {
+            @apply bg-info-light-primary border-info-primary text-typography;
+        }
+        &.ns-row-warning {
+            @apply bg-warning-light-primary border-warning-primary text-typography;
+        }
+        &.ns-row-default {
+            @apply bg-default-light-primary border-default-primary text-typography;
+        }
+        &.ns-row-danger {
+            @apply bg-danger-light-primary border-danger-primary text-typography;
+        }
+
+        td {
+            @apply border-surface-tertiary text-typography;
+        }
+
+        .ns-row-button {
+            @apply bg-surface-secondary text-secondary border-surface-tertiary;
+
+            &:hover {
+                @apply bg-info-primary text-secondary border-transparent;
+            }
+        }
+
+        .ns-menu-wrapper > div {
+            @apply bg-surface-secondary;
+        }
+
+        .ns-action-button {
+            @apply text-secondary;
+
+            &:hover {
+                @apply bg-info-primary text-primary;
+            }
+
+            &:focus {
+                @apply outline-none bg-surface-tertiary focus:text-primary;
+            }
+        }
+    }
+
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-surface-tertiary bg-surface-secondary text-typography;
+
+        &.table-filters-enabled {
+            @apply bg-info-primary text-primary;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-secondary border-surface-tertiary;
+        }
+
+        &:hover {
+            @apply border-info-primary bg-info-primary text-white;
+        }
+    }
+}

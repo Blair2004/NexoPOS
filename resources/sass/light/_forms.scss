@@ -1,27 +1,69 @@
 /**
  * Fields
 **/
-
-// .ns-switch
-.ns-switch button.selected {
-    @apply bg-blue-500 text-white;
+.ns-switch {
+    button.selected {
+        @apply bg-info-primary text-typography;
+    }
+    button.unselected {
+        @apply bg-surface-secondary text-primary;
+    }
 } 
-.ns-switch button.unselected {
-    @apply bg-slate-600 text-slate-400;
-}
 
-// .ns-select
-.ns-select select {
-    @apply text-slate-300;
-    option {
-        @apply bg-slate-600;
+.input-group.ns-primary {
+    @apply border-surface-secondary;
+    input {
+        @apply bg-surface-tertiary text-primary;
+    }
+    button {
+        @apply bg-surface-secondary;
+        i, span {
+            @apply text-typography;
+        }
     }
 }
 
-// ns-input, ns-switch, .ns-select
+.input-group.ns-secondary {
+    @apply border-surface-tertiary;
+    input {
+        @apply bg-surface-quaternary text-primary;
+    }
+    button {
+        @apply bg-surface-tertiary;
+        i, span {
+            @apply text-typography;
+        }
+    }
+}
+
+.input-group.ns-info-secondary {
+    @apply border-info-tertiary;
+    input {
+        @apply bg-surface-tertiary text-primary;
+    }
+    button {
+        @apply bg-info-tertiary text-typography;
+        i, span {
+            @apply text-typography;
+        }
+    }
+}
+
+.ns-select {
+    select {
+        @apply bg-surface-tertiary text-primary;
+        option {
+            @apply bg-surface-secondary;
+            &:hover {
+                @apply bg-surface-primary;
+            }
+        }
+    }
+}
+
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
-        @apply bg-slate-800;
+        @apply bg-surface-quaternary border-surface-quaternary text-tertiary;
     }
     
     .ns-enabled {
@@ -29,38 +71,45 @@
     }
 
     label {
-        .has-error {
-            @apply text-red-600;
+        &.has-error {
+            @apply text-error-secondary;
         }
     
-        .is-pristine {
-            @apply text-slate-300;
+        &.is-pristine {
+            @apply text-primary;
         }
     }
 
     div {
         &.has-error {
-            @apply border-red-600;
+            @apply border-error-secondary;
         }
         &.is-pristine {
-            @apply border-slate-600;
+            @apply border-surface-primary;
         }
     }
 
     .leading {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
-    input {
-        @apply text-slate-300 outline-none;
+    input, textarea {
+        @apply text-primary outline-none bg-surface-tertiary;
+    }
+
+    button {
+        @apply border-surface-primary;
+        &:hover {
+            @apply bg-surface-primary
+        }
     }
 
     p.ns-description {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     p.ns-error {
-       @apply text-red-600; 
+       @apply text-error-secondary; 
     }
 }
 
@@ -70,63 +119,97 @@
 .form-input {
     @apply outline-0;
     label {
-        @apply text-gray-800;
+        @apply text-primary;
+    }
+    select {
+        @apply bg-surface-tertiary text-primary;
+        option {
+            @apply bg-surface-secondary;
+            &:hover {
+                @apply bg-surface-primary;
+            }
+        } 
     }
     input {
-        @apply border-blue-200 bg-blue-100 rounded;
+        @apply border-surface-secondary bg-surface-tertiary rounded;
         &[disabled] {
-            @apply bg-gray-800;
+            @apply bg-surface-quaternary;
         }
     }
     p {
-        @apply text-gray-600;
+        @apply text-secondary;
     }
 }
 
 .form-input-invalid {
     label {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
     input {
-        @apply border-red-400 bg-red-100 rounded;
+        @apply border-error-primary bg-error-secondary rounded;
     }
     p {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
-}
-.btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white;
-}
-.btn-red {
-    @apply border-red-600 bg-red-600 text-white;
 }
 
 /**
  * Buttons
 **/
 .ns-button {
-    &.ns-button-success {
-        @apply bg-green-600 text-white;
+    @apply shadow;
+    
+    &.ns-button-success > button, &.ns-button-success > a {
+        @apply bg-success-secondary text-white;
+
+        span.ns-label {
+            @apply bg-surface-secondary text-success-primary;
+        }
     }
-    &.ns-button-danger {
-        @apply bg-red-600 text-white;
+    &.ns-button-danger > button, &.ns-button-danger > a {
+        @apply bg-error-secondary text-white;
+
+        span.ns-label {
+            @apply bg-surface-secondary text-error-secondary;
+        }
     }
-    &.ns-button-warning {
-        @apply bg-orange-400 text-white;
+    &.ns-button-warning > button, &.ns-button-warning > a {
+        @apply bg-warning-primary text-white;
+
+        span.ns-label {
+            @apply bg-surface-secondary text-warning-secondary;
+        }
     }
-    &.ns-button-default {
-        @apply bg-white text-gray-800;
+    &.ns-button-default > button, &.ns-button-default > a {
+        @apply bg-surface-secondary text-surface-quaternary;
+
+        span.ns-label {
+            @apply bg-surface-quaternary text-white;
+        }
     }
-    &.ns-button-info {
-        @apply bg-blue-600 text-white;
+    &.ns-button-info > button, &.ns-button-info > a {
+        @apply bg-info-secondary text-white;
+
+        span.ns-label {
+            @apply bg-surface-secondary text-info-secondary;
+        }
     }
     .ns-disabled {
-        @apply bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600;
+        @apply bg-surface-secondary border border-surface-secondary cursor-not-allowed text-surface-tertiary;
+
+        span.ns-label {
+            @apply bg-surface-secondary text-surface-secondary;
+        }
     }
 }
 
 .ns-close-button {
+    @apply border-surface-secondary text-primary;
+
     &:hover {
-        @apply bg-red-400 text-white border-red-400;
+        @apply bg-error-secondary border-transparent;
+        > i {
+            @apply text-white;
+        }
     }
 }

@@ -43,6 +43,11 @@ $theme  =   Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_the
         }
 
         /**
+         * Let's define the actul theme used
+         */
+        window.ns.theme     =   `{{ $theme }}`;
+
+        /**
          * define the current language selected by the user or
          * the language that applies to the system by default.
          */

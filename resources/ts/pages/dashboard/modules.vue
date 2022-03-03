@@ -22,8 +22,8 @@
         </div>
         <div class="module-section flex-auto flex flex-wrap -mx-4">
             <div v-if="noModules" class="p-4 flex-auto flex">
-                <div class="flex h-full flex-auto border-dashed border-2 border-gray-600 bg-white justify-center items-center">
-                    <h2 class="font-bold text-xl text-gray-700">{{ noModuleMessage }}</h2>
+                <div class="flex h-full flex-auto border-dashed border-2 border-box-edge bg-surface justify-center items-center">
+                    <h2 class="font-bold text-xl text-primary">{{ noModuleMessage }}</h2>
                 </div>
             </div>
             <div class="px-4 w-full md:w-1/2 lg:w-1/3 py-4" :key="moduleNamespace" v-for="(moduleObject,moduleNamespace) of modules">
