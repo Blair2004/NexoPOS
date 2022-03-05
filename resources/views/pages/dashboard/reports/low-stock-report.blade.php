@@ -11,13 +11,13 @@
             <div id="report-section" class="px-4">
                 <div class="flex -mx-2">
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center text-gray-700 px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between bg-box-background text-primary shadow py-1 items-center px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center text-gray-700 px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between border-box-background text-primary shadow py-1 items-center px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div class="text-primary shadow rounded my-4">
-                        <div class="border-b border-surface-secondary">
+                        <div class="border-b border-box-edge">
                             <table class="table ns-table w-full">
                                 <thead>
                                     <tr>

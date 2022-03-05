@@ -119,6 +119,9 @@ module.exports = {
         'tab-active-border': withOpacityValue('--tab-active-border'),
         'tab-inactive': withOpacityValue('--tab-inactive'),
 
+        'floating-menu': withOpacityValue('--floating-menu'),
+        'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
+
         primary: withOpacityValue('--primary'),
         secondary: withOpacityValue('--secondary'),  
         tertiary: withOpacityValue('--tertiary'),  

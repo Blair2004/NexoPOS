@@ -42,10 +42,10 @@
         }
 
         .ns-row-button {
-            @apply bg-box-background text-secondary border-surface-tertiary;
+            @apply bg-input-button text-secondary border-input-edge;
 
             &:hover {
-                @apply bg-surface-primary text-secondary border-transparent;
+                @apply bg-input-button-hover text-secondary border-transparent;
             }
         }
 

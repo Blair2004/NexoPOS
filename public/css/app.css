@@ -587,10 +587,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: -0.75rem !important;
   margin-right: -0.75rem !important;
 }
-.mx-2 {
-  margin-left: 0.5rem !important;
-  margin-right: 0.5rem !important;
-}
 .mr-2 {
   margin-right: 0.5rem !important;
 }
@@ -732,9 +728,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .h-28 {
   height: 7rem !important;
 }
-.h-6 {
-  height: 1.5rem !important;
-}
 .min-h-2\/5-screen {
   min-height: 40vh !important;
 }
@@ -831,9 +824,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .w-3\/4 {
   width: 75% !important;
 }
-.w-6 {
-  width: 1.5rem !important;
-}
 .flex-auto {
   flex: 1 1 auto !important;
 }
@@ -864,9 +854,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .cursor-not-allowed {
   cursor: not-allowed !important;
-}
-.cursor-pointer {
-  cursor: pointer !important;
 }
 .select-none {
   -webkit-user-select: none !important;
@@ -1025,9 +1012,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-0 {
   border-width: 0px !important;
 }
-.border-2 {
-  border-width: 2px !important;
-}
 .border-b {
   border-bottom-width: 1px !important;
 }
@@ -1101,9 +1085,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(254 215 170 / var(--tw-border-opacity)) !important;
 }
-.border-surface-tertiary {
+.border-input-edge {
   --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity)) !important;
+  border-color: rgb(var(--input-edge) / var(--tw-border-opacity)) !important;
 }
 .border-gray-200 {
   --tw-border-opacity: 1 !important;
@@ -1124,6 +1108,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-blue-500 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(59 130 246 / var(--tw-border-opacity)) !important;
+}
+.border-surface-tertiary {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity)) !important;
 }
 .border-surface-primary {
   --tw-border-opacity: 1 !important;
@@ -1216,6 +1204,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(0 0 0 / var(--tw-border-opacity)) !important;
 }
+.border-box-background {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--box-background) / var(--tw-border-opacity)) !important;
+}
 .border-success-tertiary {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--success-tertiary) / var(--tw-border-opacity)) !important;
@@ -1223,10 +1215,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-gray-800 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(31 41 55 / var(--tw-border-opacity)) !important;
-}
-.border-input-edge {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--input-edge) / var(--tw-border-opacity)) !important;
 }
 .bg-green-100 {
   --tw-bg-opacity: 1 !important;
@@ -1268,9 +1256,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(75 85 99 / var(--tw-bg-opacity)) !important;
 }
-.bg-surface-secondary {
+.bg-input-background {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity)) !important;
+  background-color: rgb(var(--input-background) / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-200 {
   --tw-bg-opacity: 1 !important;
@@ -1307,10 +1295,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity)) !important;
 }
-.bg-gray-100 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
-}
 .bg-surface-quaternary {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity)) !important;
@@ -1322,6 +1306,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-surface-tertiary {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity)) !important;
+}
+.bg-surface-secondary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity)) !important;
 }
 .bg-blue-400 {
   --tw-bg-opacity: 1 !important;
@@ -1354,6 +1342,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-teal-200 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(153 246 228 / var(--tw-bg-opacity)) !important;
+}
+.bg-gray-100 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
 }
 .bg-error-secondary {
   --tw-bg-opacity: 1 !important;
@@ -1395,13 +1387,17 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(129 140 248 / var(--tw-bg-opacity)) !important;
 }
+.bg-box-background {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--box-background) / var(--tw-bg-opacity)) !important;
+}
 .bg-gray-50 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity)) !important;
 }
-.bg-input-background {
+.bg-input-button {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--input-background) / var(--tw-bg-opacity)) !important;
+  background-color: rgb(var(--input-button) / var(--tw-bg-opacity)) !important;
 }
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
@@ -2998,10 +2994,6 @@ body {
   --tw-border-opacity: 1 !important;
   border-color: rgb(30 41 59 / var(--tw-border-opacity)) !important;
 }
-.dark .dark\:border-slate-200 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(226 232 240 / var(--tw-border-opacity)) !important;
-}
 .dark .dark\:border-slate-700 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(51 65 85 / var(--tw-border-opacity)) !important;
@@ -3044,10 +3036,6 @@ body {
 .dark .dark\:text-slate-300 {
   --tw-text-opacity: 1 !important;
   color: rgb(203 213 225 / var(--tw-text-opacity)) !important;
-}
-.dark .dark\:text-gray-300 {
-  --tw-text-opacity: 1 !important;
-  color: rgb(209 213 219 / var(--tw-text-opacity)) !important;
 }
 .dark .dark\:text-slate-600 {
   --tw-text-opacity: 1 !important;

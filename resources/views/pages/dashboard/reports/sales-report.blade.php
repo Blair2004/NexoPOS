@@ -17,19 +17,19 @@
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between bg-surface-tertiary shadow py-1 items-center text-primary px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between bg-surface-tertiary shadow py-1 items-center text-primary px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="openSettings()" class="rounded flex justify-between bg-surface-tertiary shadow py-1 items-center text-primary px-2">
+                        <button @click="openSettings()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
                             <i class="las la-cogs text-xl"></i>
                             <span class="pl-2">{{ __( 'Type' ) }} : @{{ getType( reportType.value ) }}</span>
                         </button>
@@ -53,9 +53,9 @@
                     <div>
                         <div class="-mx-4 flex md:flex-row flex-col">
                             <div class="w-full md:w-1/2 px-4">
-                                <div class="bg-surface-tertiary shadow rounded my-4">
-                                    <div class="border-b border-surface-secondary">
-                                        <table class="table w-full">
+                                <div class="shadow rounded my-4">
+                                    <div class="border-b">
+                                        <table class="table ns-tablea w-full">
                                             <tbody class="text-white">
                                                 <tr class="">
                                                     <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary">{{ __( 'Sub Total' ) }}</td>
@@ -86,8 +86,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-surface-tertiary shadow rounded my-4" v-if="reportType.value === 'products_report'">
-                        <div class="border-b border-surface-secondary">
+                    <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'products_report'">
+                        <div class="border-b border-box-edge">
                             <table class="table ns-table w-full">
                                 <thead class="text-primary">
                                     <tr>
@@ -119,8 +119,8 @@
                             </table>
                         </div>
                     </div>
-                    <div class="bg-surface-tertiary shadow rounded my-4" v-if="reportType.value === 'categories_report'">
-                        <div class="border-b border-surface-secondary">
+                    <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_report'">
+                        <div class="border-b border-box-edge">
                             <table class="table ns-table w-full">
                                 <thead class="text-primary">
                                     <tr>
@@ -144,7 +144,7 @@
                                                 <td class="p-2 border text-right">@{{ product.total_price | currency }}</td>
                                             </tr>
                                         </template>
-                                        <tr :key="categoryIndex"  class="bg-info-primary text-surface-terbg-surface-tertiary">
+                                        <tr :key="categoryIndex"  class="bg-info-primary">
                                             <td colspan="2" class="p-2 border border-info-primary">@{{ category.name }}</td>
                                             <td class="p-2 border text-right border-info-primary">@{{ computeTotal( category.products, 'quantity' ) }}</td>
                                             <td class="p-2 border text-right border-info-primary">@{{ computeTotal( category.products, 'discount' ) | currency }}</td>
@@ -165,8 +165,8 @@
                             </table>
                         </div>
                     </div>
-                    <div class="bg-surface-tertiary shadow rounded my-4" v-if="reportType.value === 'categories_summary'">
-                        <div class="border-b border-surface-secondary">
+                    <div class="bg-box-background shadow rounded my-4" v-if="reportType.value === 'categories_summary'">
+                        <div class="border-b border-box-edge">
                             <table class="table ns-table w-full">
                                 <thead class="text-primary">
                                     <tr>

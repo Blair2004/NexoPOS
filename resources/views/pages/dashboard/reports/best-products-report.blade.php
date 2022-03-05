@@ -17,13 +17,13 @@
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center  px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between border-box-background text-primary shadow py-1 items-center  px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center  px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between border-box-background text-primary shadow py-1 items-center  px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="flex -mx-2">
                     <div class="px-2">
-                        <select v-model="sort" class="text-primary bg-surface-secondary shadow rounded p-2">
+                        <select v-model="sort" class="text-primary border-box-background shadow rounded p-2">
                             <option value="">{{ __( 'Sort Results' ) }}</option>
                             <option value="using_quantity_asc">{{ __( 'Using Quantity Ascending' ) }}</option>
                             <option value="using_quantity_desc">{{ __( 'Using Quantity Descending' ) }}</option>
@@ -57,8 +57,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-surface-secondary shadow rounded my-4">
-                        <div class="border-b border-surface-secondary">
+                    <div class="border-box-background shadow rounded my-4">
+                        <div class="border-b border-box-edge">
                             <table class="table ns-table w-full">
                                 <thead class="">
                                     <tr>

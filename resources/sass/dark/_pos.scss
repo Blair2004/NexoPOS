@@ -97,7 +97,7 @@
                         }
 
                         &:hover {
-                            @apply bg-surface-secondary;
+                            @apply bg-input-button-hover;
                         }
                     }
 
@@ -165,7 +165,7 @@
                     @apply bg-box-background border-r border-pos-button-edge text-primary;
 
                     &:hover, &:active {
-                        @apply bg-surface-quaternary;
+                        @apply bg-input-button-active;
                     }
                 }
 
@@ -182,25 +182,25 @@
 
     #pos-grid {
         .switch-cart {
-            @apply bg-surface-quaternary border-transparent text-secondary;
+            @apply bg-tab-inactive border-transparent text-secondary;
 
             .products-count {
                 @apply bg-success-primary text-typography;
             }
         }
         .switch-grid {
-            @apply bg-box-background text-primary;
+            @apply bg-tab-active text-primary;
         }
 
         #grid-container {
-            @apply bg-box-background;
+            @apply bg-tab-active;
 
             #grid-header {
                 @apply border-pos-button-edge text-primary;
                 > div {
                     @apply border-pos-button-edge;
                     button {
-                        @apply bg-surface-secondary border-pos-button-edge;
+                        @apply border-pos-button-edge;
                         &.pos-button-clicked {
                             @apply bg-box-background;
                             box-shadow: inset 0px 0px 5px 0px #303131;
@@ -323,7 +323,7 @@
                 @apply bg-warning-primary text-white;
             }
             .ns-payment-button {
-                @apply bg-surface-secondary text-white;
+                @apply bg-input-button text-white;
                 .ns-label {
                     @apply bg-success-primary text-white;
                 }

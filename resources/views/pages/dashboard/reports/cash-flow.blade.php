@@ -17,13 +17,13 @@
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center  px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between border-box-background text-primary shadow py-1 items-center  px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between bg-surface-secondary text-primary shadow py-1 items-center  px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between border-box-background text-primary shadow py-1 items-center  px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>
@@ -34,9 +34,9 @@
                         <div class="my-4 flex justify-between w-full">
                             <div class="text-primary">
                                 <ul>
-                                    <li class="pb-1 border-b border-dashed border-surface-secondary">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-surface-secondary">{{ __( 'Document : Sale Report' ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-surface-secondary">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Document : Sale Report' ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
                                 </ul>
                             </div>
                             <div>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                     <div class="shadow rounded my-4">
-                        <div class="border-b border-surface-secondary">
+                        <div class="border-b border-box-edge">
                             <table class="ns-table table w-full">
                                 <thead class="">
                                     <tr>

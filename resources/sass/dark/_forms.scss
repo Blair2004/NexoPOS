@@ -25,12 +25,12 @@
 
 /** @deprecated ? */
 .input-group.ns-secondary {
-    @apply border-surface-tertiary;
+    @apply border-input-edge;
     input {
         @apply bg-surface text-primary;
     }
     button {
-        @apply bg-surface-tertiary;
+        @apply bg-input-button;
         i, span {
             @apply text-typography;
         }
@@ -40,7 +40,7 @@
 .input-group.ns-info-secondary {
     @apply border-info-tertiary;
     input {
-        @apply bg-surface-tertiary text-primary;
+        @apply bg-input-background text-primary;
     }
     button {
         @apply bg-info-tertiary text-typography;
@@ -182,7 +182,7 @@
         }
     }
     &.ns-button-default > button, &.ns-button-default > a {
-        @apply bg-input-background text-surface-quaternary;
+        @apply bg-input-background text-input-disabled;
 
         span.ns-label {
             @apply bg-surface text-typography;
@@ -196,16 +196,16 @@
         }
     }
     .ns-disabled {
-        @apply bg-input-background border border-surface-secondary cursor-not-allowed text-surface-tertiary;
+        @apply bg-input-background border border-input-edge cursor-not-allowed text-primary;
 
         span.ns-label {
-            @apply bg-input-background text-surface-secondary;
+            @apply bg-input-background text-primary;
         }
     }
 }
 
 .ns-close-button {
-    @apply border-surface-secondary text-primary;
+    @apply border-input-edge text-primary;
 
     &:hover {
         @apply bg-error-secondary border-transparent;

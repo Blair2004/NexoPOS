@@ -1,6 +1,6 @@
 <template>
-    <div :class="'bg-' + actualColor + '-primary border-l-4 border-' + actualColor + '-tertiary text-' + actualColor + '-primary'" class="p-4" role="alert">
-        <p class="font-bold"><slot name="title"></slot></p>
+    <div :class="'ns-notice-' + actualColor" class="p-4 border-l-4 text-primary ns-notice" role="alert">
+        <h2 class="font-bold"><slot name="title"></slot></h2>
         <p><slot name="description"></slot></p>
     </div>
 </template>

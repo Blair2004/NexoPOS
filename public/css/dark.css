@@ -37,6 +37,9 @@
     --table-th: 30 41 59;
     --table-th-edge: 71 85 105;
 
+    --floating-menu: 51 65 85;
+    --floating-menu-hover: 71 85 105;
+
     --primary: 226 232 240;
     --secondary: 203 213 225;
     --tertiary: 148 163 184;
@@ -155,13 +158,19 @@
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
+.ns-notice h1, .ns-notice h2, .ns-notice h3, .ns-notice h4, .ns-notice h5 {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-notice p {
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
 .ns-notice-danger {
     --tw-border-opacity: 1;
     border-color: rgb(var(--danger-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--danger-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-notice-danger pre {
     --tw-bg-opacity: 1;
@@ -174,8 +183,6 @@
     border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-notice-warning pre {
     --tw-bg-opacity: 1;
@@ -188,8 +195,6 @@
     border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-notice-success pre {
     --tw-bg-opacity: 1;
@@ -199,9 +204,9 @@
 }
 .ns-notice-error {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
+    border-color: rgb(var(--error-tertiary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -216,8 +221,6 @@
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-notice-info pre {
     --tw-bg-opacity: 1;
@@ -265,7 +268,7 @@
 /** @deprecated ? */
 .input-group.ns-secondary {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
 }
 .input-group.ns-secondary input {
     --tw-bg-opacity: 1;
@@ -275,7 +278,7 @@
 }
 .input-group.ns-secondary button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
 }
 .input-group.ns-secondary button i, .input-group.ns-secondary button span {
     --tw-text-opacity: 1;
@@ -287,7 +290,7 @@
 }
 .input-group.ns-info-secondary input {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -474,7 +477,7 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--surface-quaternary) / var(--tw-text-opacity));
+    color: rgb(var(--input-disabled) / var(--tw-text-opacity));
 }
 .ns-button.ns-button-default > button span.ns-label, .ns-button.ns-button-default > a span.ns-label {
     --tw-bg-opacity: 1;
@@ -498,21 +501,21 @@
     cursor: not-allowed;
     border-width: 1px;
     --tw-border-opacity: 1;
-    border-color: rgb(var(--surface-secondary) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--surface-tertiary) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-button .ns-disabled span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--surface-secondary) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-close-button {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--surface-secondary) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -604,16 +607,16 @@
 }
 #crud-table .ns-table-row .ns-row-button {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-row-button:hover {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
@@ -837,15 +840,15 @@
         width: 5px;
     }
 .ns-scrollbar::-webkit-scrollbar-track {
-    background-attachment: scroll;
+    background-color: rgb(0 0 0 / 0.5);
 }
 .ns-scrollbar::-webkit-scrollbar-thumb {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--scroll-thumb) / var(--tw-bg-opacity));
 }
 ul.ns-vertical-menu {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--floating-menu) / var(--tw-bg-opacity));
 }
 ul.ns-vertical-menu li {
     --tw-text-opacity: 1;
@@ -853,7 +856,7 @@ ul.ns-vertical-menu li {
 }
 ul.ns-vertical-menu li:hover {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--floating-menu-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1011,7 +1014,7 @@ ul.ns-vertical-menu li:hover {
 }
 #pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer:hover {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
 }
 #pos-container #pos-cart #cart-container #cart-products-table > div .product-price {
     --tw-border-opacity: 1;
@@ -1096,7 +1099,7 @@ ul.ns-vertical-menu li:hover {
 }
 #pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:active {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button-active) / var(--tw-bg-opacity));
 }
 #pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button {
     --tw-border-opacity: 1;
@@ -1117,7 +1120,7 @@ ul.ns-vertical-menu li:hover {
 #pos-container #pos-grid .switch-cart {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--tab-inactive) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
@@ -1129,13 +1132,13 @@ ul.ns-vertical-menu li:hover {
 }
 #pos-container #pos-grid .switch-grid {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 #pos-container #pos-grid #grid-container {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }
 #pos-container #pos-grid #grid-container #grid-header {
     --tw-border-opacity: 1;
@@ -1150,8 +1153,6 @@ ul.ns-vertical-menu li:hover {
 #pos-container #pos-grid #grid-container #grid-header > div button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity));
 }
 #pos-container #pos-grid #grid-container #grid-header > div button.pos-button-clicked {
     --tw-bg-opacity: 1;
@@ -1302,7 +1303,7 @@ ul.ns-vertical-menu li:hover {
 }
 #ns-payment-popup > div .ns-payment-buttons .ns-payment-button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
