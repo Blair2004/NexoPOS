@@ -44,7 +44,10 @@ class UpdateController extends Controller
                 $request->input( 'file' ) 
             );
     
-            Artisan::call( 'migrate --path=' . $file, [ '--force' => true ]);
+            Artisan::call( 'migrate', [ 
+                '--path'    => $file,
+                '--force'   => true 
+            ]);
         }
 
         /**
