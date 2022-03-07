@@ -145,7 +145,7 @@
                         </tr>
                         <tr class="bg-green-200">
                             <td width="200" class="border border-gray-300 p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Tax : {{ order.tax_value | currency }}</a>
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
                             </td>
                             <td width="200" class="border border-gray-300 p-2">{{ __( 'Total' ) }}</td>
                             <td width="200" class="border border-gray-300 p-2 text-right">{{ order.total | currency }}</td>
