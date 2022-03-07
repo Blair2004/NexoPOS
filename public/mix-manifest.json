@@ -1,15 +1,15 @@
 {
-    "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=adb892d65cf353bb7c05",
-    "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=5e0385e8162c56aa7823",
-    "/js/app.min.js": "/js/app.min.js?id=e4a7d967cfb2326e0ebc",
-    "/js/dashboard.min.js": "/js/dashboard.min.js?id=faf6d63657efeb63c27a",
-    "/js/cashier.min.js": "/js/cashier.min.js?id=aa6e3c298c11e8746452",
-    "/js/update.min.js": "/js/update.min.js?id=82ad854f0a7ad2dcac8e",
-    "/js/pos-init.min.js": "/js/pos-init.min.js?id=75dd3fda4ee40f2aec1d",
-    "/js/pos.min.js": "/js/pos.min.js?id=9968be2eda05af8695e9",
-    "/js/auth.min.js": "/js/auth.min.js?id=21903425be213f971304",
-    "/js/setup.min.js": "/js/setup.min.js?id=d77ba826d211453b5bde",
-    "/js/popups.min.js": "/js/popups.min.js?id=05795b0138c9c13bc1a6",
-    "/js/manifest.js": "/js/manifest.js?id=c047d5572748e7259841",
-    "/js/vendor.js": "/js/vendor.js?id=efc6f4de1b99edd9fa3b"
+    "/js/bootstrap.min/bootstrap.js": "/js/bootstrap.min/bootstrap.js?id=adb892d65cf353bb7c056d6d9a264593",
+    "/js/lang-loader.min.js": "/js/lang-loader.min.js?id=5e0385e8162c56aa7823fcaeaccaa24d",
+    "/js/app.min.js": "/js/app.min.js?id=e4a7d967cfb2326e0ebc63dda243a4b3",
+    "/js/dashboard.min.js": "/js/dashboard.min.js?id=faf6d63657efeb63c27ac55c26bf6af2",
+    "/js/cashier.min.js": "/js/cashier.min.js?id=aa6e3c298c11e87464524aa179406ef4",
+    "/js/update.min.js": "/js/update.min.js?id=82ad854f0a7ad2dcac8e2b0c955886b8",
+    "/js/pos-init.min.js": "/js/pos-init.min.js?id=75dd3fda4ee40f2aec1d663109e53de8",
+    "/js/pos.min.js": "/js/pos.min.js?id=9968be2eda05af8695e91cb89f2680fc",
+    "/js/auth.min.js": "/js/auth.min.js?id=21903425be213f971304297db0e4b476",
+    "/js/setup.min.js": "/js/setup.min.js?id=d77ba826d211453b5bdeab4bf28998c5",
+    "/js/popups.min.js": "/js/popups.min.js?id=05795b0138c9c13bc1a650e49342af0e",
+    "/js/manifest.js": "/js/manifest.js?id=c047d5572748e725984156c50d9ae36d",
+    "/js/vendor.js": "/js/vendor.js?id=d2d232b9bc511065e1bdbca93fd196d3"
 }
