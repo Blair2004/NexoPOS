@@ -1,15 +1,15 @@
 <template>
-    <div class="bg-surface-tertiary shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="p-2 flex justify-between items-center border-b border-surface-secondary">
+    <div class="bg-white shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="p-2 flex justify-between items-center border-b border-gray-200">
             <h3 class="text-blog">{{ __( 'Tax & Summary' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2">
+        <div class="p-2 bg-gray-50">
             <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
                 <ns-tabs-item padding="0" :label="__( 'Settings' )" identifier="settings" :active="true">
-                    <div class="p-2 border-surface-tertiary border-b">
+                    <div class="p-2 border-b border-gray-200">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
                     </div>
                     <div class="flex justify-end p-2">
@@ -18,11 +18,11 @@
                 </ns-tabs-item>
                 <ns-tabs-item padding="0" :label="__( 'Summary' )" identifier="summary" :active="false">
                     <div class="p-2" v-if="order">
-                        <div v-for="tax of order.taxes" :key="tax.id" class="border-blue-200 mb-2 border bg-blue-100 shadow p-2 w-full flex justify-between items-center text-primary">
+                        <div v-for="tax of order.taxes" :key="tax.id" class="border-blue-200 mb-2 border bg-blue-100 shadow p-2 w-full flex justify-between items-center text-gray-700">
                             <span>{{ tax.tax_name }}</span>
                             <span>{{ tax.tax_value | currency  }}</span>
                         </div>
-                        <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">No tax is active</div>
+                        <div class="p-2 text-center text-gray-600" v-if="order.taxes.length === 0">No tax is active</div>
                     </div>
                 </ns-tabs-item>
             </ns-tabs>
@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
+import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import FormValidation from '@/libraries/form-validation';
 import popupCloser from '@/libraries/popup-closer';
 import popupResolver from '@/libraries/popup-resolver';
@@ -55,6 +55,7 @@ export default {
                     type: 'select',
                     disabled: true,
                     value: '',
+                    validation: 'required',
                     options: []
                 }, {
                     label: __( 'Type' ),
@@ -63,6 +64,7 @@ export default {
                     value: '',
                     description: __( 'Define how the tax is computed' ),
                     type: 'select',
+                    validation: 'required',
                     options: [{
                         label: __( 'Exclusive' ),
                         value: 'exclusive',
@@ -118,6 +120,10 @@ export default {
         },
 
         saveTax() {
+            if ( ! this.validation.validateFields( this.group_fields ) ) {
+                return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
+            }
+
             const fields    =   this.validation.extractFields( this.group_fields );
             this.popupResolver( fields );
         },  

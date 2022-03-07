@@ -311,7 +311,7 @@ class OrdersService
             $total          =   Currency::define( $instalments->sum( 'amount' ) )->getRaw();
             $customer       =   Customer::find( $fields[ 'customer_id' ] );
 
-            if ( $customer->group->minimal_credit_payment > 0 ) {
+            if ( ( float ) $customer->group->minimal_credit_payment > 0 ) {
                 $minimal        =   Currency::define( $fields[ 'total' ] )
                     ->multipliedBy( $customer->group->minimal_credit_payment )
                     ->dividedBy( 100 )

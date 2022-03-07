@@ -2,24 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Classes\Currency;
-use App\Models\AccountType;
-use App\Models\CashFlow;
-use App\Models\Customer;
-use App\Models\CustomerCoupon;
-use App\Models\OrderPayment;
-use App\Models\OrderProductRefund;
-use App\Models\Product;
-use App\Models\Role;
-use App\Models\User;
-use App\Services\CurrencyService;
-use App\Services\TaxService;
-use Exception;
-use Laravel\Sanctum\Sanctum;
-use Illuminate\Support\Arr;
+use App\Models\Order;
 use Tests\TestCase;
-use Faker\Factory;
-use Illuminate\Support\Facades\Event;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
 
@@ -38,6 +22,33 @@ class CreateOrderTest extends TestCase
             $this->attemptAuthenticate();
     
             return $this->attemptPostOrder( $callback );
+        } else {
+            $this->assertTrue( true ); // because we haven't performed any test.
+        }
+    }
+
+    public function testCreateOrderWithNoPayment( $callback = null )
+    {
+        if ( $this->defaultProcessing ) {
+            $this->attemptAuthenticate();
+    
+            $this->count                =   1;
+            $this->totalDaysInterval    =   1;
+            $this->processCoupon        =   false;
+            $this->useDiscount          =   false;
+            $this->shouldMakePayment    =   false;
+            $this->customOrderParams    =   [
+                'shipping'  =>  0,
+            ];
+            $this->customProductParams  =   [
+                'unit_price'    =>  0,
+                'discount'      =>  0,
+            ];
+
+            $responses  =   $this->attemptPostOrder( $callback );
+
+            $this->assertEquals( Order::PAYMENT_PAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
+
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
         }

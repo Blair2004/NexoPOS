@@ -5,7 +5,7 @@
             :key="index" 
             v-for="(key,index) of keys" 
             style="margin:-1px;"
-            class="select-none hover:bg-info-primary hover:border-info-primary text-primary bg-surface-tertiary border-surface-secondary border h-16 flex items-center justify-center cursor-pointer">
+            class="select-none hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
@@ -103,11 +103,7 @@ export default {
                 }
             } 
 
-            if ( ( this.screenValue ) === "0" ) {
-                this.screenValue      =   '';
-            }
-
-            const emitted   =   this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue;
+            const emitted   =   this.floating && this.screenValue.length > 0 && this.screenValue !== '0' ? parseFloat( this.screenValue / this.number ) : this.screenValue;
 
             this.$emit( 'changed', emitted );
         }
