@@ -22,18 +22,18 @@ import moment from "moment";
  * these are dynamic component
  * that are loaded conditionally
  */
-const NsPosDashboardButton = (<any>window).NsPosDashboardButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue');
-const NsPosPendingOrderButton = (<any>window).NsPosPendingOrderButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button.vue');
-const NsPosOrderTypeButton = (<any>window).NsPosOrderTypeButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button.vue');
-const NsPosCustomersButton = (<any>window).NsPosCustomersButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue');
-const NsPosResetButton = (<any>window).NsPosResetButton = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue');
-const NsPosCashRegister = (<any>window).NsPosCashRegister = () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue');
-const NsAlertPopup = (<any>window).NsAlertPopup = () => import('./popups/ns-' + 'alert' + '-popup.vue');
-const NsConfirmPopup = (<any>window).NsConfirmPopup = () => import('./popups/ns-pos-' + 'confirm' + '-popup.vue');
-const NsPOSLoadingPopup = (<any>window).NsPOSLoadingPopup = () => import('./popups/ns-pos-' + 'loading' + '-popup.vue');
-const NsPromptPopup = (<any>window).NsPromptPopup = () => import('./popups/ns-' + 'prompt' + '-popup.vue');
-const NsLayawayPopup = (<any>window).NsLayawayPopup = () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue');
-const NSPosShippingPopup = (<any>window).NsLayawayPopup = () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue');
+const NsPosDashboardButton = (<any>window).NsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
+const NsPosPendingOrderButton = (<any>window).NsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
+const NsPosOrderTypeButton = (<any>window).NsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
+const NsPosCustomersButton = (<any>window).NsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
+const NsPosResetButton = (<any>window).NsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
+const NsPosCashRegister = (<any>window).NsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
+const NsAlertPopup = (<any>window).NsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
+const NsConfirmPopup = (<any>window).NsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
+const NsPOSLoadingPopup = (<any>window).NsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
+const NsPromptPopup = (<any>window).NsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
+const NsLayawayPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
+const NSPosShippingPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -510,7 +510,7 @@ export class POS {
              * we'll pull that rather than doing a new request.
              */
             if (groups && groups[order.tax_group_id] !== undefined) {
-                order.taxes = order.taxes.map(tax => {
+                order.taxes = groups[order.tax_group_id].taxes.map(tax => {
                     tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
                     return tax;
                 });
@@ -702,7 +702,7 @@ export class POS {
              * order is not "hold".
              */
             if (order.payment_status !== 'hold') {
-                if (order.payments.length === 0 || order.total > order.tendered) {
+                if (order.payments.length === 0 && order.total > 0 && order.total > order.tendered) {
                     if (this.options.getValue().ns_orders_allow_partial === 'no') {
                         const message = __('Partially paid orders are disabled.');
                         return reject({ status: 'failed', message });
@@ -1490,7 +1490,6 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
 
-
         quantities.excl_tax_custom_price    =   result.price_without_tax;
         quantities.incl_tax_custom_price    =   result.price_with_tax;
         quantities.custom_price_tax         =   result.tax_value;
@@ -1549,6 +1548,8 @@ export class POS {
             product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
+
+        console.log( product );
 
         /**
          * computing the discount when it's 

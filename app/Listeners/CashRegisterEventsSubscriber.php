@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
+use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
+use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Services\CashRegistersService;
 
 class CashRegisterEventsSubscriber
@@ -46,8 +48,13 @@ class CashRegisterEventsSubscriber
         );
 
         $event->listen( 
-            OrderAfterPaymentCreatedEvent::class,
-            [ $this->registerService, 'increaseFromOrderPayment' ]
+            OrderAfterPaymentStatusChangedEvent::class,
+            [ $this->registerService, 'increaseFromPaidOrder' ]
+        );
+
+        $event->listen( 
+            OrderAfterCreatedEvent::class,
+            [ $this->registerService, 'increaseFromOrderCreatedEvent' ]
         );
 
         $event->listen(

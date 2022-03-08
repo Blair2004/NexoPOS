@@ -52,8 +52,39 @@ class SettingsController extends DashboardController
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
             case 'accounting'; return $this->accountingSettings(); break;
+            case 'about': return $this->aboutSettings(); break;
             default : return $this->handleDefaultSettings( $identifier );break;
         }
+    }
+
+    /**
+     * Show the about page about the system.
+     * Where you'll get details about your setup
+     * including PHP version, mysql, etc.
+     */
+    public function aboutSettings()
+    {
+        return view( 'pages.dashboard.about', [
+            'menus' =>  $this->menuService,
+            'title' =>  __( 'About' ),
+            'description'   =>  __( 'Details about the environment.' ),
+            'details'  =>  [
+                __( 'Core Version'  )   =>  config( 'nexopos.version' ),
+                __( 'PHP Version' )     =>  phpversion(),
+            ],
+            'extensions'      =>  [
+                __( 'Mb String Enabled' )   =>  extension_loaded( 'mbstring' ),
+                __( 'Zip Enabled' )         =>  extension_loaded( 'zip' ),
+                __( 'Curl Enabled' )        =>  extension_loaded( 'curl' ),
+                __( 'Math Enabled' )        =>  extension_loaded( 'bcmath' ),
+                __( 'XML Enabled' )         =>  extension_loaded( 'xml' ),
+            ],
+            'configurations'     =>      [
+                __( 'File Upload Enabled' )     =>  (( bool ) ini_get( 'file_uploads' )) ? __( 'Yes' ) : __( 'No' ),
+                __( 'File Upload Size' )        =>  ini_get( 'upload_max_filesize' ),
+                __( 'Post Max Size' )           =>  ini_get( 'post_max_size' ),
+            ]        
+        ]);
     }
 
     public function handleDefaultSettings( $identifier )

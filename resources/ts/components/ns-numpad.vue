@@ -103,11 +103,7 @@ export default {
                 }
             } 
 
-            if ( ( this.screenValue ) === "0" ) {
-                this.screenValue      =   '';
-            }
-
-            const emitted   =   this.floating && this.screenValue.length > 0 ? parseFloat( this.screenValue / this.number ) : this.screenValue;
+            const emitted   =   this.floating && this.screenValue.length > 0 && this.screenValue !== '0' ? parseFloat( this.screenValue / this.number ) : this.screenValue;
 
             this.$emit( 'changed', emitted );
         }
