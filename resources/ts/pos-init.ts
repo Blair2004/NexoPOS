@@ -527,15 +527,17 @@ export class POS {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            order.tax_groups = order.tax_groups || [];
-                            order.taxes = tax.taxes.map(tax => {
+                            tax.taxes   =   tax.taxes.map(_tax => {
                                 return {
-                                    tax_id: tax.id,
-                                    tax_name: tax.name,
-                                    rate: parseFloat(tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal, tax.rate, order.tax_type)
+                                    tax_id: _tax.id,
+                                    tax_name: _tax.name,
+                                    rate: parseFloat(_tax.rate),
+                                    tax_value: this.getVatValue(order.subtotal, _tax.rate, order.tax_type)
                                 };
                             });
+
+                            order.tax_groups = order.tax_groups || [];
+                            order.taxes = tax.taxes;
     
                             /**
                              * this is set to cache the 
@@ -1548,8 +1550,6 @@ export class POS {
             product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
-
-        console.log( product );
 
         /**
          * computing the discount when it's 
