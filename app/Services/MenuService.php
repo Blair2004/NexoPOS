@@ -446,7 +446,11 @@ class MenuService
                     'reset'         =>  [
                         'label'     =>  __( 'Reset'),
                         'href'      =>  ns()->url( '/dashboard/settings/reset' )
-                    ]
+                    ],
+                    'about'             =>  [
+                        'label'         =>  __( 'About' ),
+                        'href'          =>  ns()->url( '/dashboard/settings/about' ),
+                    ],
                 ]
             ],
         ];

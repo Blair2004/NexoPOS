@@ -103,6 +103,15 @@ class Role extends NsRootModel
     }
 
     /**
+     * An alias of "addPermissions"
+     * @see self::addPermissions 
+     */
+    public function addPermission( $permission )
+    {
+        return $this->addPermissions( $permission );
+    }
+
+    /**
      * Add permission to an existing role
      * @param array|string Permissions
      * @param boolean silent
