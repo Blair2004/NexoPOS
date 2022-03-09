@@ -12,67 +12,72 @@
                     :label="__( 'Apply A Coupon' )" 
                     padding="p-2"
                     identifier="apply-coupon">
-                    <div class="border-2 border-info-secondary rounded flex">
-                        <input ref="coupon" v-model="couponCode" type="text" class="w-full bg-surface-quaternary text-primary p-2 outline-none" :placeholder="placeHolder">
-                        <button @click="loadCoupon()" class="bg-info-secondary text-white px-3 py-2">{{ __( 'Load' ) }}</button>
+                    <div class="border-2 input-group info rounded flex">
+                        <input ref="coupon" v-model="couponCode" type="text" class="w-full text-primary p-2 outline-none" :placeholder="placeHolder">
+                        <button @click="loadCoupon()" class="px-3 py-2">{{ __( 'Load' ) }}</button>
                     </div>
                     <div class="pt-2">
-                        <p class="p-2 text-center ns-notice-info">{{ __( 'Input the coupon code that should apply to the POS. If a coupon is issued for a customer, that customer must be selected priorly.' ) }}</p>
+                        <ns-notice color="info">
+                            <template v-slot:description>{{ __( 'Input the coupon code that should apply to the POS. If a coupon is issued for a customer, that customer must be selected priorly.' ) }}</template>
+                        </ns-notice>
                     </div>
-                    <div @click="selectCustomer()" class="pt-2" v-if="order && order.customer_id === undefined">
-                        <p class="p-2 cursor-pointer text-center ns-notice-error">{{ __( 'Click here to choose a customer.' ) }}</p>
+                    <div class="pt-2 flex" v-if="order && order.customer_id === undefined">
+                        <button @click="selectCustomer()"  class="w-full border p-2 outline-none ns-numpad-key info cursor-pointer text-center">{{ __( 'Click here to choose a customer.' ) }}</button>
                     </div>
                     <div class="pt-2" v-if="order && order.customer_id !== undefined">
-                        <p class="p-2 text-center ns-notice-success">{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</p>
+                        <ns-notice color="success">
+                            <template v-slot:description>{{ __( 'Loading Coupon For : ' ) + `${order.customer.name} ${order.customer.surname}` }}</template>
+                        </ns-notice>
+                        
                     </div>
                     <div class="overflow-hidden">
-                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto h-64" v-if="customerCoupon">
-                            <table class="w-full">
-                                <thead>
+                        <div class="pt-2 fade-in-entrance anim-duration-500 overflow-y-auto ns-scrollbar h-64" v-if="customerCoupon">
+                            <table class="w-full ns-table">
+                                <tbody>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Coupon Name' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.name }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Coupon Name' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.name }}</td>
                                     </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Discount' ) }} ({{ getCouponType( customerCoupon.coupon.type ) }})</td>
+                                        <td class="p-2 w-1/2 border">{{ getDiscountValue( customerCoupon.coupon ) }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Usage' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Usage' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.usage + '/' + ( customerCoupon.limit_usage || __( 'Unlimited' ) ) }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Valid From' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.coupon.valid_hours_start }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Valid From' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_start }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Valid Till' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ customerCoupon.coupon.valid_hours_end }}</td>
+                                        <td class="p-2 w-1/2 border">{{ __( 'Valid Till' ) }}</td>
+                                        <td class="p-2 w-1/2 border">{{ customerCoupon.coupon.valid_hours_end }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Categories' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">
+                                        <td class="p-2 w-1/2 border">{{ __( 'Categories' ) }}</td>
+                                        <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border border-surface-secondary" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="category.id" v-for="category of customerCoupon.coupon.categories">{{ category.category.name }}</li>
                                             </ul>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">{{ __( 'Products' ) }}</td>
-                                        <td class="p-2 w-1/2 text-primary border border-surface-secondary">
+                                        <td class="p-2 w-1/2 border">{{ __( 'Products' ) }}</td>
+                                        <td class="p-2 w-1/2 border">
                                             <ul>
-                                                <li class="rounded-full px-3 py-1 border border-surface-secondary" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
+                                                <li class="rounded-full px-3 py-1 border" :key="product.id" v-for="product of customerCoupon.coupon.products">{{ product.product.name }}</li>
                                             </ul>
                                         </td>
                                     </tr>
-                                </thead>
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item :label="__( 'Active Coupons' )" padding="p-1" identifier="active-coupons">
                     <ul v-if="order">
-                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between bg-surface-secondary items-center px-2 py-1">
+                        <li v-for="( customerCoupon, index) of order.coupons" :key="index" class="flex justify-between elevation-surface border items-center px-2 py-1">
                             <div class="flex-auto">
                                 <h3 class="font-semibold text-primary p-2 flex justify-between">
                                     <span>{{ customerCoupon.name }}</span>
@@ -83,8 +88,8 @@
                                 <ns-close-button @click="removeCoupon( index )"></ns-close-button>
                             </div>
                         </li>
-                        <li v-if="order.coupons.length === 0" class="flex justify-between bg-surface-secondary items-center p-2">
-                            No coupons applies to the cart.
+                        <li v-if="order.coupons.length === 0" class="flex justify-between elevation-surface border items-center p-2">
+                            {{ __( 'No coupons applies to the cart.' ) }}
                         </li>
                     </ul>
                 </ns-tabs-item>
@@ -107,8 +112,13 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from "@/libraries/lang";
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
 import { SnackBar } from '@/libraries/snackbar';
+import nsNotice from '@/components/ns-notice.vue';
+
 export default {
     name: 'ns-pos-coupons-load-popup',
+    components: {
+        nsNotice
+    },
     data() {
         return {
             placeHolder: __( 'Coupon Code' ),

@@ -10,42 +10,67 @@
     }
 } 
 
-.input-group.ns-primary {
+.input-group {
     @apply border-input-edge;
     input {
         @apply bg-input-background text-primary;
     }
     button {
-        @apply bg-input-background;
+        @apply bg-input-edge text-white outline-none;
         i, span {
-            @apply text-typography;
+            @apply text-white;
         }
     }
-}
 
-/** @deprecated ? */
-.input-group.ns-secondary {
-    @apply border-input-edge;
-    input {
-        @apply bg-surface text-primary;
-    }
-    button {
-        @apply bg-input-button;
-        i, span {
-            @apply text-typography;
+    &.info {
+        @apply border-info-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-info-primary text-white;
+            i, span {
+                @apply text-typography;
+            }
         }
     }
-}
 
-.input-group.ns-info-secondary {
-    @apply border-info-tertiary;
-    input {
-        @apply bg-input-background text-primary;
+    &.error {
+        @apply border-error-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-error-primary text-white;
+            i, span {
+                @apply text-typography;
+            }
+        }
     }
-    button {
-        @apply bg-info-tertiary text-typography;
-        i, span {
-            @apply text-typography;
+
+    &.warning {
+        @apply border-error-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-error-primary text-white;
+            i, span {
+                @apply text-typography;
+            }
+        }
+    }
+    
+    &.success {
+        @apply border-success-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-success-primary text-white;
+            i, span {
+                @apply text-typography;
+            }
         }
     }
 }

@@ -1144,18 +1144,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--surface-secondary) / var(--tw-border-opacity)) !important;
 }
-.border-teal-200 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(153 246 228 / var(--tw-border-opacity)) !important;
-}
-.border-success-secondary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--success-secondary) / var(--tw-border-opacity)) !important;
-}
-.border-error-secondary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
-}
 .border-surface-tertiary {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity)) !important;
@@ -1187,6 +1175,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-input-button {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--input-button) / var(--tw-border-opacity)) !important;
+}
+.border-error-secondary {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
 }
 .border-box-edge {
   --tw-border-opacity: 1 !important;
@@ -1243,6 +1235,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-box-background {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--box-background) / var(--tw-border-opacity)) !important;
+}
+.border-success-secondary {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--success-secondary) / var(--tw-border-opacity)) !important;
 }
 .border-success-tertiary {
   --tw-border-opacity: 1 !important;
@@ -1375,10 +1371,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity)) !important;
 }
-.bg-surface-tertiary {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity)) !important;
-}
 .bg-success-primary {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--success-primary) / var(--tw-bg-opacity)) !important;
@@ -1387,17 +1379,17 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity)) !important;
 }
-.bg-teal-200 {
+.bg-surface-tertiary {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(153 246 228 / var(--tw-bg-opacity)) !important;
-}
-.bg-surface-quaternary {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity)) !important;
+  background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
+}
+.bg-surface-quaternary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity)) !important;
 }
 .bg-error-secondary {
   --tw-bg-opacity: 1 !important;
@@ -2894,10 +2886,6 @@ body {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
 }
-.hover\:border-error-secondary:hover {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
-}
 .hover\:border-transparent:hover {
   border-color: transparent !important;
 }
@@ -2956,18 +2944,6 @@ body {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
 }
-.hover\:bg-warning-secondary:hover {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity)) !important;
-}
-.hover\:bg-success-primary:hover {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--success-primary) / var(--tw-bg-opacity)) !important;
-}
-.hover\:bg-error-primary:hover {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--error-primary) / var(--tw-bg-opacity)) !important;
-}
 .hover\:bg-blue-200:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(191 219 254 / var(--tw-bg-opacity)) !important;
@@ -2975,6 +2951,10 @@ body {
 .hover\:bg-surface-secondary:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface-secondary) / var(--tw-bg-opacity)) !important;
+}
+.hover\:bg-error-primary:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--error-primary) / var(--tw-bg-opacity)) !important;
 }
 .hover\:bg-surface-primary:hover {
   --tw-bg-opacity: 1 !important;

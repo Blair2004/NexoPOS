@@ -240,7 +240,6 @@ import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
 import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
-import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
 import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
 import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';

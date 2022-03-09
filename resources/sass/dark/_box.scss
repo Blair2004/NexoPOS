@@ -17,10 +17,6 @@
         h3 {
             @apply text-primary;
         }
-
-        p:not([class]){
-            @apply text-primary;
-        }
     }
 }
 .ns-box {
@@ -40,9 +36,5 @@
 
     h3 {
         @apply text-primary;
-    }
-
-    p:not([class]){
-        @apply text-secondary;
     }
 }

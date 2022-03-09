@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-auto flex-col overflow-hidden">
         <div class="p-1">
-            <div class="flex rounded border-2 input-group ns-secondary">
+            <div class="flex rounded border-2 input-group">
                 <input @keyup.enter="searchOrder()" v-model="searchField" type="text" class="p-2 outline-none flex-auto">
                 <button @click="searchOrder()" class="w-16 md:w-24">
                     <i class="las la-search"></i>
