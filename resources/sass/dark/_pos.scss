@@ -254,7 +254,7 @@
 #ns-pos-customers {
     @apply bg-box-background;
     .ns-header {
-        @apply border-surface-secondary;
+        @apply border-box-edge;
         h3 {
             @apply text-primary;
         }

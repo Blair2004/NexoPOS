@@ -214,3 +214,16 @@
         }
     }
 }
+
+.ns-inset-button {
+    @apply border-input-option-hover text-primary;
+    &:hover {
+        @apply bg-default-tertiary text-white border-transparent;
+    }
+    &.info:hover {
+        @apply bg-input-button-hover text-white border-transparent;
+    }
+    &.error:hover  {
+        @apply bg-error-primary text-white border-transparent;
+    }
+}

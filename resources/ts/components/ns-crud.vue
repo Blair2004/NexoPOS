@@ -1,6 +1,6 @@
 <template>
     <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b border-surface-tertiary flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+        <div id="crud-table-header" class="p-2 border-b border-popup-surface flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
@@ -83,8 +83,8 @@
         <div class="p-2 flex flex-col md:flex-row justify-between">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
                 <select class="outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
-                    <option class="bg-surface-quaternary" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
-                    <option class="bg-surface-quaternary" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
+                    <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
+                    <option class="bg-input-disabled" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
                 <button @click="bulkDo()" class="ns-crud-input-button h-8 w-8 outline-none rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Go' ) }}</slot></button>
             </div>

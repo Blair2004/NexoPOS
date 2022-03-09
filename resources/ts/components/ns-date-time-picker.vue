@@ -1,7 +1,7 @@
 <template>
     <div class="picker mb-2">
         <label v-if="field" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
-        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded border-surface-primary cursor-pointer bg-surface-quaternary px-1 py-1 flex items-center text-primary">
+        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded border-numpad-edge cursor-pointer px-1 py-1 flex items-center text-primary">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm" v-if="currentDay && field">
                 <span v-if="field.value !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
@@ -14,27 +14,27 @@
         </div>
         <p class="text-sm text-secondary py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0" v-if="visible">
-            <div :class="field ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-xl rounded bg-surface-tertiary anim-duration-300 zoom-in-entrance flex flex-col">
+            <div :class="field ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-xl rounded bg-floating-menu anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto" v-if="currentView === 'years'">
                     <div class="p-2 flex items-center">
                         <div>
-                            <button @click="subMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-left"></i></button>
+                            <button @click="subMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-background rounded"><i class="las la-angle-left"></i></button>
                         </div>
                         <div class="flex flex-auto font-semibold text-primary justify-center">
                             <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                             <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                         </div>
                         <div>
-                            <button @click="addMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-right"></i></button>
+                            <button @click="addMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-background rounded"><i class="las la-angle-right"></i></button>
                         </div>
                     </div>
                     <div class="h-32 flex items-center justify-center text-primary">
-                        <div class="rounded border-surface-primary border-2 flex w-2/3 overflow-hidden">
-                            <button @click="subYear()" class="bg-surface-secondary text-white px-4 py-2">
+                        <div class="rounded border-numpad-edge border-2 flex w-2/3 overflow-hidden">
+                            <button @click="subYear()" class="bg-numpad-background text-white px-4 py-2">
                                 <i class="las la-minus"></i>
                             </button>
-                            <input type="text" ref="year" class="p-2 w-24 text-center bg-surface-quaternary outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
-                            <button @click="addYear()" class="bg-surface-secondary text-white px-4 py-2">
+                            <input type="text" ref="year" class="p-2 w-24 text-center bg-input-disabled outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
+                            <button @click="addYear()" class="bg-numpad-background text-white px-4 py-2">
                                 <i class="las la-plus"></i>
                             </button>
                         </div>
@@ -43,20 +43,20 @@
                 <div class="flex-auto" v-if="currentView === 'months'">
                     <div class="p-2 flex items-center">
                         <div>
-                            <button @click="subMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-left"></i></button>
+                            <button @click="subMonth()" class="w-8 h-8 border ns-inset-button outline-none ns-inset-button rounded"><i class="las la-angle-left"></i></button>
                         </div>
                         <div class="flex flex-auto font-semibold text-primary justify-center">
                             <span class="mr-2 border-b border-info-secondary border-dashed">{{ currentDay.format( 'MMM' ) }}</span>
                             <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                         </div>
                         <div>
-                            <button @click="addMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-right"></i></button>
+                            <button @click="addMonth()" class="w-8 h-8 border ns-inset-button outline-none ns-inset-button rounded"><i class="las la-angle-right"></i></button>
                         </div>
                     </div>
                     <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-primary">
                         <div :key="_index" v-for="( monthIndex, _index ) in months" class="h-8 flex justify-center items-center text-sm">
                             <template class="h-full w-full">
-                                <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white border border-info-secondary' : 'hover:bg-surface-secondary border border-surface-primary'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
+                                <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white border border-info-secondary' : 'hover:bg-numpad-background border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
                                     {{ momentCopy.format( 'MMM' ) }}
                                 </div>
                             </template>
@@ -66,47 +66,47 @@
                 <div class="flex-auto" v-if="currentView === 'days'">
                     <div class="p-2 flex items-center">
                         <div>
-                            <button @click="subMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-left"></i></button>
+                            <button @click="subMonth()" class="w-8 h-8 border outline-none ns-inset-button rounded"><i class="las la-angle-left"></i></button>
                         </div>
                         <div class="flex flex-auto font-semibold text-primary justify-center">
                             <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                             <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                         </div>
                         <div>
-                            <button @click="addMonth()" class="w-8 h-8 border border-surface-primary outline-none hover:bg-surface-secondary rounded"><i class="las la-angle-right"></i></button>
+                            <button @click="addMonth()" class="w-8 h-8 border outline-none ns-inset-button rounded"><i class="las la-angle-right"></i></button>
                         </div>
                     </div>
                     <div class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-primary">
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Sun' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Mon' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Tue' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Wed' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Thr' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Fri' ) }}</div>
-                        <div class="border border-surface-primary h-8 flex justify-center items-center text-sm">{{ __( 'Sat' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Sun' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Mon' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Tue' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Wed' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Thr' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Fri' ) }}</div>
+                        <div class="border border-numpad-edge h-8 flex justify-center items-center text-sm">{{ __( 'Sat' ) }}</div>
                     </div>
                     <div v-for="( week, index ) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-primary">
                         <div :key="_index" v-for="( dayOfWeek, _index ) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
                             <template v-for="(day,_dayIndex) of week" class="h-full w-full">
-                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'text-white border border-info-secondary bg-info-secondary' : 'hover:bg-surface-secondary border border-surface-primary'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
+                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'text-white border border-info-secondary bg-info-secondary' : 'hover:bg-numpad-background border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
                                     {{ day.date.format( 'DD' ) }}
                                 </div>
                             </template>
                         </div>
                     </div>
                 </div>
-                <div class="border-t border-surface-primary w-full p-2">
+                <div class="border-t border-numpad-edge w-full p-2">
                     <div class="-mx-1 flex justify-between">
                         <div class="px-1">
                             <div class="-mx-1 flex">
                                 <!-- Displays only if it's a field -->
                                 <div class="px-1" v-if="field">
-                                    <button @click="erase()" class="border border-surface-primary hover:border-transparent hover:text-white rounded w-8 h-8 flex items-center justify-center hover:bg-error-secondary">
+                                    <button @click="erase()" class="border ns-inset-button error hover:text-white rounded w-8 h-8 flex items-center justify-center">
                                         <i class="las la-trash"></i>
                                     </button>
                                 </div>
                                 <div class="px-1" v-if="currentView !== 'days'">
-                                    <button @click="toggleView( 'days' )" class="border border-surface-primary hover:border-transparent hover:text-white rounded w-8 h-8 flex items-center justify-center hover:bg-error-primary">
+                                    <button @click="toggleView( 'days' )" class="border ns-inset-button error hover:text-white rounded w-8 h-8 flex items-center justify-center">
                                         <i class="las la-sign-out-alt"></i>
                                     </button>
                                 </div>
@@ -114,9 +114,9 @@
                         </div>
                         <div class="px-2">
                             <div class="rounded flex">
-                                <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-surface-primary bg-surface-quaternary text-primary active:border-surface-primary" v-model="hours" type="number">
+                                <input placeholder="HH" ref="hours" @change="detectHoursChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-disabled text-primary active:border-numpad-edge" v-model="hours" type="number">
                                 <span class="mx-1">:</span>
-                                <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-surface-primary bg-surface-quaternary text-primary active:border-surface-primary" v-model="minutes" type="number">
+                                <input placeholder="mm" ref="minutes" @change="detectMinuteChange( $event )" class="w-12 p-1 text-center border border-numpad-edge bg-input-disabled text-primary active:border-numpad-edge" v-model="minutes" type="number">
                             </div>
                         </div>
                     </div>

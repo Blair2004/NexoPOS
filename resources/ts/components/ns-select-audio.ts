@@ -35,8 +35,8 @@ const nsSelectAudio      =   Vue.component( 'ns-select-audio', {
     template: `
     <div class="flex flex-col flex-auto">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-error-primary' : 'border-surface-secondary'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-2 form-input">
-            <div @click="playSelectedSound()" class="border-r-2 border-surface-secondary flex-auto flex items-center justify-center hover:bg-info-primary hover:text-white">
+        <div :class="hasError ? 'border-error-primary' : 'border-input-edge'" class="border-2 mt-1 flex relative overflow-hidden rounded-md shadow-sm mb-2 form-input">
+            <div @click="playSelectedSound()" class="border-r-2 border-input-edge flex-auto flex items-center justify-center hover:bg-info-primary hover:text-white">
                 <button class="w-10 flex item-center justify-center">
                     <i class="las la-play text-2xl"></i>
                 </button>

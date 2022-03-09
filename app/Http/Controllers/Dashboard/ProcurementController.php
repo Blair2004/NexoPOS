@@ -12,11 +12,7 @@ use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
 use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 use App\Services\Validation;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use App\Fields\ProcurementFields;
 use App\Http\Controllers\DashboardController;
 use App\Services\ProcurementService;
 use App\Services\Options;
@@ -27,7 +23,6 @@ use App\Models\ProcurementProduct;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Services\ProductService;
-use Tendoo\Core\Exceptions\AccessDeniedException;
 
 
 class ProcurementController extends DashboardController
@@ -143,7 +138,7 @@ class ProcurementController extends DashboardController
             return $this->procurementService->updateProcurementProduct( $product_id, $request->only([ 'quantity', 'unit_id', 'purchase_price' ] ) );
         }
 
-        throw new AccessDeniedException( 
+        throw new NotAllowedException( 
             sprintf( 
                 __( 'The product which id is %s doesnt\'t belong to the procurement which id is %s' ),
                 $product_id,
@@ -216,7 +211,7 @@ class ProcurementController extends DashboardController
 
         return $this->view( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
             'title'         =>  __( 'New Procurement' ),
-            'description'   =>  __( 'Make a new procurement' )
+            'description'   =>  __( 'Make a new procurement.' )
         ] ) );
     }
 

@@ -17,6 +17,7 @@
     --pos-button-edge: 30 41 59;
 
     --numpad-background: 71 85 105;
+    --numpad-typography: 250 250 250;
     --numpad-edge: 100 116 139;
     --numpad-hover: 100 116 139;
     --numpad-hover-edge: 100 116 139;
@@ -34,11 +35,11 @@
 
     --tab-table-th: 100 116 139;
     --tab-table-th-edge: 100 116 139;
-    --table-th: 30 41 59;
+    --table-th: 51 65 85;
     --table-th-edge: 71 85 105;
 
-    --floating-menu: 51 65 85;
-    --floating-menu-hover: 71 85 105;
+    --floating-menu: 71 85 105;
+    --floating-menu-hover: 100 116 139;
 
     --primary: 226 232 240;
     --secondary: 203 213 225;
@@ -527,6 +528,33 @@
 .ns-close-button:hover > i {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-inset-button {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-option-hover) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+.ns-inset-button:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--default-tertiary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-inset-button.info:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-inset-button.error:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 /**
  * Crud
@@ -1203,7 +1231,7 @@ ul.ns-vertical-menu li:hover {
 }
 #ns-pos-customers .ns-header {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--surface-secondary) / var(--tw-border-opacity));
+    border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
 }
 #ns-pos-customers .ns-header h3 {
     --tw-text-opacity: 1;
@@ -1385,24 +1413,30 @@ p {
 .ns-table tbody td, .ns-table tfoot td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-table tbody tr.info, .ns-table tfoot tr.info {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.danger, .ns-table tfoot tr.danger {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.success, .ns-table tfoot tr.success {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.green, .ns-table tfoot tr.green {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 @-webkit-keyframes loader-animation {
     0% {

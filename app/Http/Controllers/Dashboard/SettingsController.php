@@ -43,7 +43,6 @@ class SettingsController extends DashboardController
             case 'invoices'; return $this->invoiceSettings(); break;
             case 'orders'; return $this->ordersSettings(); break;
             case 'pos'; return $this->posSettings(); break;
-            case 'supplies-deliveries'; return $this->suppliesDeliveries(); break;
             case 'reports'; return $this->reportsSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
@@ -175,14 +174,6 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.pos', [
             'title'     =>      __( 'POS Settings' ),
             'description'   =>  __( 'Configure the pos settings.' )
-        ]);
-    }
-
-    public function suppliesDeliveries()
-    {
-        return $this->view( 'pages.dashboard.settings.supplies-deliveries', [
-            'title'     =>      __( 'Supplies & Deliveries Settings' ),
-            'description'   =>  __( 'Configure the supplies and deliveries settings.' )
         ]);
     }
 

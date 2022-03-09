@@ -6,8 +6,8 @@
                     <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Instalments' ) }}</h3>
                 </div>
                 <div class="px-4">
-                    <ul class="border-surface-secondary border-t text-primary">
-                        <li :class="instalment.paid ? 'bg-success-secondary border-success-primary' : 'bg-surface-primary border-info-primary'"
+                    <ul class="border-table-th-edge border-t text-primary">
+                        <li :class="instalment.paid ? 'bg-success-secondary border-success-primary' : 'bg-default-tertiary border-info-primary'"
                             class="border-b border-l flex justify-between" 
                             :key="instalment.id" 
                             v-for="instalment of instalments">
@@ -56,7 +56,7 @@
                                 </span>
                             </div>
                         </li>
-                        <li class="flex justify-between p-2 bg-surface-secondary border-r border-b border-l border-surface-tertiary">
+                        <li class="flex justify-between p-2 bg-table-th-edge border-r border-b border-l border-table-th-edge">
                             <div class="flex items-center justify-center">
                                 <span>
                                     {{ __( 'Total :' ) }} {{ order.total | currency }}

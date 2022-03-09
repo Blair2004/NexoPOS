@@ -101,6 +101,7 @@ module.exports = {
         'pos-button-edge': withOpacityValue('--pos-button-edge'),
 
         'numpad-background': withOpacityValue('--numpad-background'),
+        'numpad-typography': withOpacityValue('--numpad-typography'),
         'numpad-edge': withOpacityValue('--numpad-edge'),
         'numpad-hover': withOpacityValue('--numpad-hover'),
         'numpad-hover-edge': withOpacityValue('--numpad-hover-edge'),
