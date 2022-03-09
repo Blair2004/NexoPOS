@@ -11,6 +11,13 @@
         @apply bg-scroll-thumb;
     }
 }
+.is-popup {
+    .ns-scrollbar {
+        &::-webkit-scrollbar-thumb {
+            @apply bg-scroll-popup-thumb;
+        }
+    }
+}
 
 ul.ns-vertical-menu {
     @apply bg-floating-menu;

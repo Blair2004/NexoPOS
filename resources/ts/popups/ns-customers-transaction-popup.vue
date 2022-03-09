@@ -1,6 +1,6 @@
 <template>
-    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-6/7-screen md:h-5/7-screen lg:h-5/7-screen overflow-hidden shadow-lg bg-surface-tertiary flex flex-col relative">
-        <div class="p-2 border-b border-surface-secondary flex justify-between items-center">
+    <div class="w-6/7-screen md:w-5/7-screen lg:w-4/7-screen h-6/7-screen md:h-5/7-screen lg:h-5/7-screen overflow-hidden shadow-lg ns-box flex flex-col relative">
+        <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h2 class="font-semibold">{{ __( 'New Transaction' ) }}</h2>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -14,7 +14,7 @@
                 <ns-field :field="field" v-for="(field, index) of fields" :key="index"></ns-field>
             </div>
         </div>
-        <div class="p-2 bg-surface-tertiary justify-between border-t border-surface-secondary flex">
+        <div class="p-2 ns-box-footer justify-between border-t flex">
             <div></div>
             <div class="px-1">
                 <div class="-mx-2 flex flex-wrap">

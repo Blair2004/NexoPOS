@@ -135,8 +135,8 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-2/4-screen bg-surface-tertiary">
-        <div class="p-2 border-b border-surface-secondary flex items-center justify-between">
+    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-2/4-screen ns-box">
+        <div class="p-2 border-b ns-box-header flex items-center justify-between">
             <h3>{{ __( 'Register Options' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
@@ -152,25 +152,25 @@ export default {
                 <span class="font-bold">{{ register.balance | currency }}</span>
             </div>
         </div>
-        <div class="h-32 border-surface-secondary border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">
+        <div class="h-32 ns-box-body border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">
             <div>
                 <ns-spinner border="4" size="16"></ns-spinner>
             </div>
         </div>
         <div class="grid grid-cols-2 text-primary">
-            <div @click="closeCashRegister()" class="hover:bg-warning-secondary border-info-secondary border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="closeCashRegister()" class="border-r border-b py-4 ns-numpad-key info cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-sign-out-alt text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Close' ) }}</h3>
             </div>
-            <div @click="cashIn()" class="hover:bg-success-primary border-success-secondary border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashIn()" class="ns-numpad-key success border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-plus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash In' ) }}</h3>
             </div>
-            <div @click="cashOut()" class="hover:bg-error-primary border-error-secondary border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashOut()" class="ns-numpad-key error border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-minus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash Out' ) }}</h3>
             </div>
-            <div @click="historyPopup()" class="hover:bg-info-primary border-info-secondary border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="historyPopup()" class="ns-numpad-key info border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-history text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'History' ) }}</h3>
             </div>

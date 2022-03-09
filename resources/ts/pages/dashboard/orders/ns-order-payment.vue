@@ -35,7 +35,7 @@
                     </h3>
                     <div class="py-2">
                         <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
-                        <div class="my-2 px-2 h-12 flex justify-end items-center bg-surface-primary">
+                        <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
                             {{ inputValue | currency }}
                         </div>
                         <ns-numpad :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad>
@@ -50,7 +50,7 @@
                     {{ __( 'Payment History' ) }}
                 </h3>
                 <ul>
-                    <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite bg-surface-primary mb-2">
+                    <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
                         <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
                         <span>{{ payment.value | currency }}</span>
                     </li>

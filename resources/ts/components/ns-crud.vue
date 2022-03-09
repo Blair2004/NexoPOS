@@ -50,6 +50,7 @@
                             <th class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
+                            <th v-if="prependOptions" class="text-left px-2 py-2 w-16 border"></th>
                             <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border text-left px-2 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
@@ -59,7 +60,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th class="text-left px-2 py-2 w-16 border"></th>
+                            <th v-if="!prependOptions" class="text-left px-2 py-2 w-16 border"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +70,7 @@
                                 @updated="refreshRow( $event )" 
                                 v-for="(row,index) of result.data" 
                                 :columns="columns" 
+                                :prependOptions="prependOptions"
                                 :row="row" 
                                 @reload="refresh()"
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
@@ -122,6 +124,7 @@ declare const nsCrudHandler;
 export default {
     data: () => {
         return {
+            prependOptions: false,
             isRefreshing: false,
             sortColumn: '',
             searchInput: '',
@@ -299,7 +302,8 @@ export default {
             request.subscribe( (f:any) => {
                 this.columns        =   f.columns;
                 this.bulkActions    =   f.bulkActions;
-                this.queryFilters   =   f.queryFilters
+                this.queryFilters   =   f.queryFilters;
+                this.prependOptions =   f.prependOptions;
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();

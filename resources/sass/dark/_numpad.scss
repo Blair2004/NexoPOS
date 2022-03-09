@@ -3,4 +3,19 @@
     &:hover {
         @apply bg-numpad-hover border-numpad-hover-edge;
     }
+    &.error:hover {
+        @apply bg-error-primary border-error-secondary;
+    }
+    &.success:hover {
+        @apply bg-success-primary border-success-secondary;
+    }
+    &.info:hover {
+        @apply bg-info-primary border-info-secondary;
+    }
+    &.warning:hover {
+        @apply bg-warning-primary border-warning-secondary;
+    }
+    &.default:hover {
+        @apply bg-default-primary border-default-secondary;
+    }
 }

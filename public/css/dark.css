@@ -12,6 +12,9 @@
 
     --box-background: 51 65 85;
     --box-edge: 71 85 105;
+    --box-elevation-background: 71 85 105;
+    --box-elevation-edge: 100 116 139;
+    --box-elevation-hover: 100 116 139;
     
     --crud-button-edge: 30 41 59;
     --pos-button-edge: 30 41 59;
@@ -26,6 +29,7 @@
 
     --scroll-thumb: 51 65 85;
     --scroll-track: 0 0 0;
+    --scroll-popup-thumb: 71 85 105;
 
     --pre: 100 116 139;
 
@@ -142,6 +146,8 @@
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-box .ns-box-body {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -874,6 +880,10 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--scroll-thumb) / var(--tw-bg-opacity));
 }
+.is-popup .ns-scrollbar::-webkit-scrollbar-thumb {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--scroll-popup-thumb) / var(--tw-bg-opacity));
+}
 ul.ns-vertical-menu {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--floating-menu) / var(--tw-bg-opacity));
@@ -916,6 +926,76 @@ ul.ns-vertical-menu li:hover {
 }
 .is-popup {
     background: rgb(0 0 0 / 40%);
+}
+.is-popup .elevation-surface {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--box-elevation-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-surface.hoverable:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-hover) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-success-surface {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-success-surface.hoverable:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-error-surface {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-error-surface.hoverable:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-info-surface {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-info-surface.hoverable:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-warning-surface {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.is-popup .elevation-warning-surface.hoverable:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #loader {
     --tw-bg-opacity: 1;
@@ -1500,4 +1580,34 @@ p {
     border-color: rgb(var(--numpad-hover-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--numpad-hover) / var(--tw-bg-opacity));
+}
+.ns-numpad-key.error:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+}
+.ns-numpad-key.success:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+}
+.ns-numpad-key.info:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+}
+.ns-numpad-key.warning:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+}
+.ns-numpad-key.default:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--default-secondary) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--default-primary) / var(--tw-bg-opacity));
 }

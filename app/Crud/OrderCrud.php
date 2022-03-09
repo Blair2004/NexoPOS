@@ -66,6 +66,12 @@ class OrderCrud extends CrudService
     protected $whereIn      =   [];
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   true;
+
+    /**
      * Fields which will be filled during post/put
      */
     public $fillable    =   [];
@@ -448,12 +454,14 @@ class OrderCrud extends CrudService
             'code'  =>  [
                 'label'  =>  __( 'Code' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
+                'width'        =>  '120px',
             ],
             'nexopos_customers_name'  =>  [
                 'label'         =>  __( 'Customer' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
+                'width'        =>  '120px',
             ],
             'nexopos_customers_phone'   =>  [
                 'label'         =>  __( 'Phone' ),

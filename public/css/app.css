@@ -1144,10 +1144,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--surface-secondary) / var(--tw-border-opacity)) !important;
 }
-.border-surface-tertiary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity)) !important;
-}
 .border-teal-200 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(153 246 228 / var(--tw-border-opacity)) !important;
@@ -1159,6 +1155,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-error-secondary {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
+}
+.border-surface-tertiary {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--surface-tertiary) / var(--tw-border-opacity)) !important;
 }
 .border-surface-primary {
   --tw-border-opacity: 1 !important;
@@ -1379,10 +1379,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface-tertiary) / var(--tw-bg-opacity)) !important;
 }
-.bg-surface-quaternary {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity)) !important;
-}
 .bg-success-primary {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--success-primary) / var(--tw-bg-opacity)) !important;
@@ -1394,6 +1390,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-teal-200 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(153 246 228 / var(--tw-bg-opacity)) !important;
+}
+.bg-surface-quaternary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--surface-quaternary) / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1 !important;
@@ -1454,10 +1454,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-table-th-edge {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--table-th-edge) / var(--tw-bg-opacity)) !important;
-}
-.bg-surface-primary {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--surface-primary) / var(--tw-bg-opacity)) !important;
 }
 .bg-teal-400 {
   --tw-bg-opacity: 1 !important;
@@ -2890,9 +2886,6 @@ body {
   --tw-border-opacity: 1 !important;
   border-color: rgb(220 38 38 / var(--tw-border-opacity)) !important;
 }
-.hover\:border-transparent:hover {
-  border-color: transparent !important;
-}
 .hover\:border-blue-600:hover {
   --tw-border-opacity: 1 !important;
   border-color: rgb(37 99 235 / var(--tw-border-opacity)) !important;
@@ -2904,6 +2897,9 @@ body {
 .hover\:border-error-secondary:hover {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
+}
+.hover\:border-transparent:hover {
+  border-color: transparent !important;
 }
 .hover\:border-error-primary:hover {
   --tw-border-opacity: 1 !important;
@@ -2931,10 +2927,6 @@ body {
 .hover\:bg-numpad-background:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--numpad-background) / var(--tw-bg-opacity)) !important;
-}
-.hover\:bg-error-primary:hover {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--error-primary) / var(--tw-bg-opacity)) !important;
 }
 .hover\:bg-gray-100:hover {
   --tw-bg-opacity: 1 !important;
@@ -2971,6 +2963,10 @@ body {
 .hover\:bg-success-primary:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--success-primary) / var(--tw-bg-opacity)) !important;
+}
+.hover\:bg-error-primary:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--error-primary) / var(--tw-bg-opacity)) !important;
 }
 .hover\:bg-blue-200:hover {
   --tw-bg-opacity: 1 !important;
@@ -3051,10 +3047,6 @@ body {
 .hover\:text-typography:hover {
   --tw-text-opacity: 1 !important;
   color: rgb(var(--typography) / var(--tw-text-opacity)) !important;
-}
-.hover\:text-primary:hover {
-  --tw-text-opacity: 1 !important;
-  color: rgb(var(--primary) / var(--tw-text-opacity)) !important;
 }
 .hover\:underline:hover {
   -webkit-text-decoration-line: underline !important;

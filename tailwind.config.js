@@ -95,6 +95,9 @@ module.exports = {
 
         'box-background': withOpacityValue('--box-background'),
         'box-edge': withOpacityValue('--box-edge'),
+        'box-elevation-background': withOpacityValue('--box-elevation-background'),
+        'box-elevation-edge': withOpacityValue('--box-elevation-edge'),
+        'box-elevation-hover': withOpacityValue('--box-elevation-hover'),
 
         'option-hover': withOpacityValue('--option-hover'),
         'crud-button-edge': withOpacityValue('--crud-button-edge'),
@@ -113,6 +116,7 @@ module.exports = {
 
         'scroll-thumb': withOpacityValue('--scroll-thumb'),
         'scroll-track': withOpacityValue('--scroll-track'),
+        'scroll-popup-thumb': withOpacityValue('--scroll-popup-thumb'),
         
         'pre': withOpacityValue('--pre'),
 
