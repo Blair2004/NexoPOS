@@ -31,7 +31,7 @@
     "webpack": "^5.50.0"
   },
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^32.0.0",
+    "@ckeditor/ckeditor5-build-classic": "^33.0.0",
     "@ckeditor/ckeditor5-vue": "^2.0.1",
     "@ckeditor/ckeditor5-vue2": "^1.0.5",
     "@dicebear/avatars": "^4.9.0",
