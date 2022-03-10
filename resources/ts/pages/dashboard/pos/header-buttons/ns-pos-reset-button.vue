@@ -29,8 +29,8 @@ export default {
 }
 </script>
 <template>
-    <div class="ns-button shadow rounded hover-error">
-        <button @click="reset()" class="flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
+    <div class="ns-button hover-error">
+        <button @click="reset()" class="rounded shadow flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
             <i class="mr-1 text-xl  las la-eraser"></i>
             <span>{{ __( 'Reset' ) }}</span>
         </button>

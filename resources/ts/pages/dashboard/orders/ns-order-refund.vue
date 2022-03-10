@@ -4,71 +4,71 @@
             <ns-spinner></ns-spinner>
         </div>
         <div class="px-4 w-full lg:w-1/2">
-            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">{{ __( 'Refund With Products' ) }}</h3>
+            <h3 class="py-2 border-b-2 text-primary border-info-primary">{{ __( 'Refund With Products' ) }}</h3>
             <div class="my-2">
                 <ul>
-                    <li class="border-b border-blue-400 flex justify-between items-center mb-2">
+                    <li class="border-b border-info-primary flex justify-between items-center mb-2">
                         <div class="flex-auto flex-col flex">
                             <div class="p-2 flex">
                                 <ns-field v-for="(field,index) of selectFields" :field="field" :key="index"></ns-field>
                             </div>
                             <div class="flex justify-between p-2">
-                                <div class="flex items-center text-gray-700">
+                                <div class="flex items-center text-primary">
                                     <span v-if="order.shipping > 0" class="mr-2">{{ __( 'Refund Shipping' ) }}</span>
                                     <ns-checkbox v-if="order.shipping > 0" @change="toggleRefundShipping( $event )" :checked="refundShipping"></ns-checkbox>
                                 </div>
                                 <div>
-                                    <button @click="addProduct()" class="border-2 rounded-full border-gray-200 px-2 py-1 hover:bg-blue-400 hover:text-white text-gray-700">{{ __( 'Add Product' ) }}</button>
+                                    <button @click="addProduct()" class="border-2 rounded-full px-2 py-1 ns-inset-button info">{{ __( 'Add Product' ) }}</button>
                                 </div>
                             </div>
                         </div>
                     </li>
                     <li>
-                        <h4 class="py-1 border-b-2 text-gray-700 border-blue-400">{{ __( 'Products' ) }}</h4>
+                        <h4 class="py-1 border-b-2 text-primary border-info-primary">{{ __( 'Products' ) }}</h4>
                     </li>
-                    <li v-for="product of refundables" :key="product.id" class="bg-gray-100 border-b border-blue-400 flex justify-between items-center mb-2">
-                        <div class="px-2 text-gray-700 flex justify-between flex-auto">
+                    <li v-for="product of refundables" :key="product.id" class="elevation-surface border flex justify-between items-center mb-2">
+                        <div class="px-2 text-primary flex justify-between flex-auto">
                             <div class="flex flex-col">
                                 <p class="py-2">
                                     <span>{{ product.name }}</span>
-                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-red-400 mx-2 text-white">{{ __( 'Damaged' ) }}</span>
-                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-green-400 mx-2 text-white">{{ __( 'Unspoiled' ) }}</span>
+                                    <span v-if="product.condition === 'damaged'" class="rounded-full px-2 py-1 text-xs bg-error-primary mx-2 text-white">{{ __( 'Damaged' ) }}</span>
+                                    <span v-if="product.condition === 'unspoiled'" class="rounded-full px-2 py-1 text-xs bg-success-primary mx-2 text-white">{{ __( 'Unspoiled' ) }}</span>
                                 </p>
                                 <small>{{ product.unit.name }}</small>
                             </div>
                             <div class="flex items-center justify-center">
-                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-blue-400">{{ product.unit_price * product.quantity | currency }}</span>
+                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-info-primary">{{ product.unit_price * product.quantity | currency }}</span>
                             </div>
                         </div>
                         <div class="flex">
-                            <p @click="openSettings( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">
+                            <p @click="openSettings( product )" class="p-2 border-l border-info-primary cursor-pointer text-primary ns-numpad-key w-16 h-16 flex items-center justify-center">
                                 <i class="las la-cog text-xl"></i>
                             </p>
-                            <p @click="deleteProduct( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">
+                            <p @click="deleteProduct( product )" class="p-2 border-l border-info-primary cursor-pointer text-primary ns-numpad-key w-16 h-16 flex items-center justify-center">
                                 <i class="las la-trash"></i>
                             </p>
-                            <p @click="changeQuantity( product )" class="p-2 border-l border-blue-400 cursor-pointer text-gray-600 hover:bg-blue-100 w-16 h-16 flex items-center justify-center">{{ product.quantity }}</p>
+                            <p @click="changeQuantity( product )" class="p-2 border-l border-info-primary cursor-pointer text-primary ns-numpad-key w-16 h-16 flex items-center justify-center">{{ product.quantity }}</p>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
         <div class="px-4 w-full lg:w-1/2">
-            <h3 class="py-2 border-b-2 text-gray-700 border-blue-400">{{ __( 'Summary' ) }}</h3>
+            <h3 class="py-2 border-b-2 text-primary border-info-primary">{{ __( 'Summary' ) }}</h3>
             <div class="py-2">
-                <div class="bg-blue-400 text-white font-semibold flex mb-2 p-2 justify-between">
+                <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Total' ) }}</span>
                     <span>{{ total | currency }}</span>
                 </div>
-                <div class="bg-teal-400 text-white font-semibold flex mb-2 p-2 justify-between">
+                <div class="elevation-surface border success font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Paid' ) }}</span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
-                <div @click="selectPaymentGateway()" class="bg-indigo-400 text-white font-semibold flex mb-2 p-2 justify-between cursor-pointer">
+                <div @click="selectPaymentGateway()" class="elevation-surface border info font-semibold flex mb-2 p-2 justify-between cursor-pointer">
                     <span>{{ __( 'Payment Gateway' ) }}</span>
                     <span>{{ selectedPaymentGateway ? selectedPaymentGateway.label : 'N/A' }}</span>
                 </div>
-                <div class="bg-gray-300 text-gray-900 font-semibold flex mb-2 p-2 justify-between">
+                <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Screen' ) }}</span>
                     <span>{{ screenValue | currency }}</span>
                 </div>

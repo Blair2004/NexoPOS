@@ -12,7 +12,7 @@
 
 .input-group {
     @apply border-input-edge;
-    input {
+    input, select {
         @apply bg-input-background text-primary;
     }
     button {
@@ -124,7 +124,7 @@
     }
 
     button {
-        @apply border-input-edge;
+        @apply border-input-edge text-white;
         &:hover {
             @apply bg-input-button-hover;
         }
@@ -183,9 +183,13 @@
  * Buttons
 **/
 .ns-button {
-    @apply shadow bg-input-button text-white border-input-edge;
+    @apply shadow text-white border-input-edge;
 
-    &:hover {
+    button {
+        @apply bg-input-button;
+    }
+
+    &:hover button {
         @apply bg-input-button-hover border-transparent;
     }
     
@@ -307,9 +311,9 @@
 }
 
 .ns-inset-button {
-    @apply border-input-option-hover text-primary;
-    &:hover {
-        @apply bg-default-tertiary text-white border-transparent;
+    @apply border-input-button text-primary;
+    &:hover, &.active {
+        @apply bg-input-button text-white border-transparent;
     }
     &.info:hover, &.info.active {
         @apply bg-info-primary text-white border-transparent;

@@ -1,40 +1,52 @@
-.ns-notice-danger {
-    @apply border-danger-secondary bg-danger-primary text-typography;
-
-    pre {
-        @apply bg-surface-primary text-typography
+.ns-notice {
+    @apply text-white;
+    &
+    h1, h2, h3, h4, h5 {
+        @apply text-white;
     }
-}
 
-.ns-notice-warning {
-    @apply border-warning-secondary bg-warning-primary text-typography;
-
-    pre {
-        @apply bg-surface-primary text-typography
+    p {
+        @apply text-white;
     }
-}
 
-.ns-notice-success {
-    @apply border-success-secondary bg-success-primary text-typography;
-
-    pre {
-        @apply bg-surface-tertiary text-typography
+    .danger {
+        @apply border-danger-secondary bg-danger-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
     }
-}
-
-.ns-notice-error {
-    @apply border-error-secondary bg-error-primary text-typography;
-
-    pre {
-        @apply bg-surface-tertiary text-typography
+    
+    &.warning {
+        @apply border-warning-secondary bg-warning-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
     }
-}
-
-.ns-notice-info {
-    @apply border-info-secondary bg-info-primary text-typography;
-
-    pre {
-        @apply bg-surface-tertiary text-typography
+    
+    &.success {
+        @apply border-success-secondary bg-success-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.error {
+        @apply border-error-tertiary bg-error-secondary text-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.info {
+        @apply border-info-secondary bg-info-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
     }
 }
 

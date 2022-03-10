@@ -222,68 +222,74 @@ export default {
 </script>
 <template>
     <div>
-        <div class="input-field flex border-2 border-blue-400 rounded">
-            <input @keyup.esc="closeSearch()" v-model="search" type="text" class="p-2 bg-white flex-auto outline-none">
-            <button class="px-3 py-2 bg-blue-400 text-white">{{ __( 'Search' ) }}</button>
+        <div class="input-field flex border-2 input-group rounded">
+            <input @keyup.esc="closeSearch()" v-model="search" type="text" class="p-2 flex-auto outline-none">
+            <button class="px-3 py-2">{{ __( 'Search' ) }}</button>
         </div>
         <div class="h-0" v-if="suggestions.length > 0">
-            <div class="shadow h-96 relative z-10 bg-white text-gray-700 zoom-in-entrance anim-duration-300 overflow-y-auto">
-                <ul>
-                    <li @click="addSuggestion( suggestion )" v-for="suggestion of suggestions" :key="suggestion.id" class="cursor-pointer hover:bg-gray-100 border-b border-gray-200 p-2 flex justify-between">
+            <div class="">
+                <ul class="shadow h-96 relative z-10 ns-vertical-menu zoom-in-entrance anim-duration-300 overflow-y-auto">
+                    <li @click="addSuggestion( suggestion )" v-for="suggestion of suggestions" :key="suggestion.id" class="cursor-pointer border-b p-2 flex justify-between">
                         <span>{{ suggestion.name }}</span>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="table shadow bg-white my-2 w-full ">
-            <table class="table w-full">
-                <thead class="border-b border-gray-400">
+        <div class="ns-box rounded shadow my-2 w-full ">
+            <table class="table w-full ns-table">
+                <thead class="border-b">
                     <tr>
-                        <td class="p-2 text-gray-700">{{ __( 'Product' ) }}</td>
-                        <td width="120" class="p-2 text-center text-gray-700">{{ __( 'Unit' ) }}</td>
-                        <td width="120" class="p-2 text-center text-gray-700">{{ __( 'Operation' ) }}</td>
-                        <td width="120" class="p-2 text-center text-gray-700">{{ __( 'Procurement' ) }}</td>
-                        <td width="120" class="p-2 text-center text-gray-700">{{ __( 'Quantity' ) }}</td>
-                        <td width="120" class="p-2 text-center text-gray-700">{{ __( 'Value' ) }}</td>
-                        <td width="150" class="p-2 text-center text-gray-700">{{ __( 'Actions' ) }}</td>
+                        <td class="p-2">{{ __( 'Product' ) }}</td>
+                        <td width="120" class="p-2 text-center">{{ __( 'Unit' ) }}</td>
+                        <td width="120" class="p-2 text-center">{{ __( 'Operation' ) }}</td>
+                        <td width="120" class="p-2 text-center">{{ __( 'Procurement' ) }}</td>
+                        <td width="120" class="p-2 text-center">{{ __( 'Quantity' ) }}</td>
+                        <td width="120" class="p-2 text-center">{{ __( 'Value' ) }}</td>
+                        <td width="150" class="p-2 text-center">{{ __( 'Actions' ) }}</td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="products.length === 0">
-                        <td class="p-2 text-center text-gray-700" colspan="6">{{ __( 'Search and add some products' ) }}</td>
+                        <td class="p-2 text-center" colspan="6">{{ __( 'Search and add some products' ) }}</td>
                     </tr>
                     <tr :key="product.id" v-for="product of products">
-                        <td class="p-2 text-gray-600">{{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</td>
-                        <td class="p-2 text-gray-600">
-                            <select @change="recalculateProduct( product )" v-model="product.adjust_unit" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
-                                <option :key="quantity.id" v-for="quantity of product.quantities" :value="quantity">{{ quantity.unit.name }}</option>
-                            </select>
+                        <td class="p-2">{{ product.name }} ({{ ( product.accurate_tracking === 1 ? product.available_quantity : product.adjust_unit.quantity ) || 0 }})</td>
+                        <td class="p-2">
+                            <div class="input-group border-2 info">
+                                <select @change="recalculateProduct( product )" v-model="product.adjust_unit" class="outline-none p-2 w-full">
+                                    <option :key="quantity.id" v-for="quantity of product.quantities" :value="quantity">{{ quantity.unit.name }}</option>
+                                </select>
+                            </div>
                         </td>
-                        <td class="p-2 text-gray-600">
-                            <select @change="recalculateProduct( product )" v-model="product.adjust_action" name="" id="" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
-                                <option v-for="action of actions" :key="action.value" :value="action.value">{{ action.label }}</option>
-                            </select>
+                        <td class="p-2">
+                            <div class="input-group border-2 info">
+                                <select @change="recalculateProduct( product )" v-model="product.adjust_action" name="" id="" class="outline-none p-2 w-full">
+                                    <option v-for="action of actions" :key="action.value" :value="action.value">{{ action.label }}</option>
+                                </select>
+                            </div>
                         </td>
-                        <td class="p-2 text-gray-600">
-                            <select v-if="product.accurate_tracking === 1" @change="recalculateProduct( product )" v-model="product.procurement_product_id" name="" id="" class="outline-none p-2 bg-white w-full border-2 border-blue-400">
-                                <option v-for="action of product.procurement_history" :key="action.value" :value="action.value">{{ action.label }}</option>
-                            </select>
+                        <td class="p-2">
+                            <div v-if="product.accurate_tracking === 1" class="input-group border-2 info">
+                                <select @change="recalculateProduct( product )" v-model="product.procurement_product_id" name="" id="" class="outline-none p-2 bg-white w-full">
+                                    <option v-for="action of product.procurement_history" :key="action.value" :value="action.value">{{ action.label }}</option>
+                                </select>
+                            </div>
                         </td>
-                        <td class="p-2 text-gray-600 flex items-center justify-center cursor-pointer" @click="openQuantityPopup( product )">
+                        <td class="p-2 flex items-center justify-center cursor-pointer" @click="openQuantityPopup( product )">
                             <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ product.adjust_quantity }}</span>
                         </td>
-                        <td class="p-2 text-gray-600">
+                        <td class="p-2">
                             <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ product.adjust_value | currency }}</span>
                         </td>
-                        <td class="p-2 text-gray-600">
+                        <td class="p-2">
                             <div class="-mx-1 flex justify-end">
                                 <div class="px-1">
-                                    <button @click="provideReason( product )" class="bg-blue-400 text-white outline-none rounded-full shadow h-10 w-10">
+                                    <button @click="provideReason( product )" class="ns-inset-button active info border outline-none rounded-full shadow h-10 w-10">
                                         <i class="las la-comment-dots"></i>
                                     </button>
                                 </div>
                                 <div class="px-1">
-                                    <button @click="removeProduct( product )" class="bg-red-400 text-white outline-none rounded-full shadow h-10 w-10">
+                                    <button @click="removeProduct( product )" class="ns-inset-button active error border outline-none rounded-full shadow h-10 w-10">
                                         <i class="las la-times"></i>
                                     </button>
                                 </div>
@@ -292,7 +298,7 @@ export default {
                     </tr>
                 </tbody>
             </table>
-            <div class="border-t border-gray-200 p-2 flex justify-end">
+            <div class="border-t ns-box-footer p-2 flex justify-end">
                 <ns-button @click="proceedStockAdjustment()" type="info">{{ __( 'Proceed' ) }}</ns-button>
             </div>
         </div>

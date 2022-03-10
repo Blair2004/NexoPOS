@@ -1,43 +1,37 @@
 #loader {
-    @apply bg-surface-tertiary;
+    @apply bg-surface;
     p {
         @apply text-primary;
     }
 }
 #pos-container {
-    @apply bg-surface-tertiary;
-
-    #header-buttons {
-        button {
-            @apply bg-white text-primary;
-        }
-    }
+    @apply bg-surface;
 
     #pos-cart {
         #tools {
             .switch-cart {
-                @apply bg-white font-semibold text-primary;
+                @apply bg-tab-active font-semibold text-primary;
                 > span.products-count {
-                    @apply bg-success-primary text-white;
+                    @apply bg-success-primary text-typography;
                 }
             }
 
             .switch-grid {
-                @apply bg-surface-secondary border-transparent text-secondary;
+                @apply bg-tab-inactive border-transparent text-secondary;
             }
         }
 
         #cart-container {
-            @apply bg-white;
+            @apply bg-tab-active;
             #cart-toolbox {
-                @apply border-surface-tertiary;
+                @apply border-pos-button-edge;
                 > div {
-                    @apply border-surface-tertiary;
+                    @apply border-pos-button-edge;
 
                     button {
-                        @apply bg-surface-secondary border-surface-tertiary text-primary;
+                        @apply bg-input-button border-pos-button-edge text-primary;
                         &:hover {
-                            @apply bg-surface-primary;
+                            @apply bg-input-button-hover text-white;
                         }
                     }
                 }
@@ -45,7 +39,7 @@
             #cart-table-header {
                 @apply text-primary;
                 > div {
-                    @apply border-surface-tertiary bg-white;
+                    @apply border-pos-button-edge;
                 }
             }
             #cart-products-table {
@@ -53,7 +47,7 @@
                     @apply text-primary;
 
                     .product-item {
-                        @apply border-surface-tertiary;
+                        @apply border-pos-button-edge;
 
                         .remove-product {
                             @apply border-error-primary;   
@@ -85,28 +79,28 @@
                         }
 
                         .product-controls {
-
+                            @apply text-primary;
                         }
                     }
 
                     .quantity-changer {
-                        @apply border-surface-tertiary;
+                        @apply border-pos-button-edge;
 
                         > span {
                             @apply border-info-primary;   
                         }
 
                         &:hover {
-                            @apply bg-white;
+                            @apply bg-input-button-hover;
                         }
                     }
 
                     .product-price {
-                        @apply border-surface-tertiary;
+                        @apply border-pos-button-edge;
                     }
                 }
                 .empty-cart {
-                    @apply border-surface-tertiary;
+                    @apply border-pos-button-edge;
                     h3 {
                         @apply text-secondary;
                     }
@@ -117,7 +111,7 @@
                 table {
                     @apply text-primary;
                     td {
-                        @apply border-surface-tertiary;
+                        @apply border-pos-button-edge;
                         
                         a {
                             @apply border-info-primary;
@@ -129,7 +123,7 @@
                     }
 
                     .summary-line {
-                        @apply bg-success-light-primary text-primary;
+                        @apply bg-success-primary text-typography;
 
                         a {
                             @apply border-white;
@@ -143,10 +137,10 @@
             }
 
             #cart-bottom-buttons {
-                @apply border-surface-tertiary; 
+                @apply border-pos-button-edge; 
 
                 #pay-button {
-                    @apply bg-success-primary text-white border-r border-success-primary;
+                    @apply bg-success-primary text-typography border-r border-success-primary;
 
                     &:hover, &:active {
                         @apply bg-success-secondary;
@@ -154,7 +148,7 @@
                 }
 
                 #hold-button {
-                    @apply bg-info-secondary text-white border-r border-info-secondary;
+                    @apply bg-info-secondary text-typography border-r border-info-secondary;
 
                     &:hover, &:active {
                         @apply bg-info-tertiary;
@@ -162,15 +156,15 @@
                 }
 
                 #discount-button {
-                    @apply bg-white border-r border-surface-tertiary text-primary;
+                    @apply bg-box-background border-r border-pos-button-edge text-primary;
 
                     &:hover, &:active {
-                        @apply bg-surface-tertiary;
+                        @apply bg-input-button-active;
                     }
                 }
 
                 #void-button {
-                    @apply bg-error-primary text-primary border-surface-tertiary hover:bg-error-secondary;
+                    @apply bg-error-primary text-typography border-pos-button-edge hover:bg-error-secondary;
 
                     &:hover, &:active {
                         @apply bg-error-secondary;
@@ -182,38 +176,38 @@
 
     #pos-grid {
         .switch-cart {
-            @apply bg-surface-secondary border-transparent text-primary;
+            @apply bg-tab-inactive border-transparent text-secondary;
 
             .products-count {
-                @apply bg-success-primary text-white;
+                @apply bg-success-primary text-typography;
             }
         }
         .switch-grid {
-            @apply bg-white text-primary;
+            @apply bg-tab-active text-primary;
         }
 
         #grid-container {
-            @apply bg-white;
+            @apply bg-tab-active;
 
             #grid-header {
-                @apply border-surface-tertiary text-primary;
+                @apply border-pos-button-edge text-primary;
                 > div {
-                    @apply border-surface-tertiary;
+                    @apply border-pos-button-edge;
                     button {
-                        @apply bg-surface-secondary border-surface-tertiary;
+                        @apply border-pos-button-edge;
                         &.pos-button-clicked {
-                            @apply bg-surface-tertiary;
+                            @apply bg-box-background;
                             box-shadow: inset 0px 0px 5px 0px #303131;
                         }
                     }
                     input {
-                        @apply bg-surface-primary;
+                        @apply bg-box-background;
                     }
                 }
             }
 
             #grid-breadscrumb {
-                @apply border-surface-tertiary;
+                @apply border-pos-button-edge;
 
                 ul > li {
                     @apply text-primary;
@@ -224,14 +218,14 @@
                 @apply text-secondary;
 
                 .cell-item {
-                    @apply border-surface-tertiary;
+                    @apply border-pos-button-edge;
 
                     .cell-item-label {
-                        background:rgb(250 250 250 / 73%);
+                        background:rgb(0 0 0 / 73%);
                     }
 
                     &:hover {
-                        @apply bg-white;
+                        @apply bg-box-background;
                     }
 
                     h3 {
@@ -239,7 +233,7 @@
                     }
 
                     i, span {
-                        @apply text-secondary;
+                        @apply text-slate-400;
                     }
                 }
             }
@@ -252,20 +246,20 @@
 }
 
 #ns-pos-customers {
-    @apply bg-white;
+    @apply bg-box-background;
     .ns-header {
-        @apply border-white;
+        @apply border-box-edge;
         h3 {
             @apply text-primary;
         }
     }
     .ns-body {
-        @apply bg-white;
+        @apply bg-box-background;
     }
 }
 
 #ns-order-type {
-    @apply bg-white;
+    @apply bg-box-background;
     h3 {
         @apply text-primary;
     }
@@ -274,7 +268,7 @@
             @apply text-error-primary;
         }
         div > p {
-            @apply text-secondary;
+            @apply text-primary;
         }
     }
     div h4 {
@@ -284,32 +278,35 @@
 
 #ns-units-selector {
     .overlay {
-        background:rgb(250 250 250 / 73%);
+        background:rgb(0 0 0 / 73%);
     }
 }
 
 #ns-payment-popup {
+    .ns-pos-screen {
+        @apply text-primary;
+    }
     > div {
-        @apply bg-white;
+        @apply bg-tab-inactive;
         h3 {
             @apply text-primary;
         }
         ul li{
             @apply text-primary;
-            &.ns-payment-gateway.ns-visible {
+            &.ns-payment-gateway.ns-visible, &.ns-payment-list.ns-visible {
                 @apply bg-tab-active;
             }
             &:hover {
-                @apply bg-surface-secondary;
+                @apply bg-tab-active;
             }
             span.ns-label {
                 @apply bg-success-primary text-white;
             }
         }
         .ns-payment-wrapper {
-            @apply bg-surface-quaternary;
+            @apply bg-tab-active;
             ul li {
-                @apply bg-surface-secondary text-primary;
+                @apply bg-input-button text-primary;
                 button {
                     @apply bg-error-primary text-white;
                 }
@@ -326,17 +323,17 @@
                 @apply bg-warning-primary text-white;
             }
             .ns-payment-button {
-                @apply bg-surface-secondary text-white;
+                @apply bg-input-button text-white;
                 .ns-label {
                     @apply bg-success-primary text-white;
                 }
             }
         }
         .ns-payment-list {
-            @apply border-t-tab-active-border;
+            @apply border-t-tab-active;
         }
         .ns-payment-footer {
-            @apply bg-white;
+            @apply bg-tab-inactive;
         }
     }
 }

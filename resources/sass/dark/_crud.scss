@@ -18,35 +18,8 @@
     .ns-table-row {
         @apply border-table-th-edge;
 
-        &.ns-row-success {
-            @apply bg-success-secondary border-success-tertiary text-typography;
-        }
-        &.ns-row-error {
-            @apply bg-error-primary border-error-secondary text-typography;
-        }
-        &.ns-row-info {
-            @apply bg-info-primary border-info-secondary text-typography;
-        }
-        &.ns-row-warning {
-            @apply bg-warning-primary border-warning-secondary text-typography;
-        }
-        &.ns-row-default {
-            @apply bg-default-primary border-default-secondary text-typography;
-        }
-        &.ns-row-danger {
-            @apply bg-danger-primary border-danger-secondary text-typography;
-        }
-
         td {
             @apply border-table-th-edge text-typography;
-        }
-
-        .ns-row-button {
-            @apply bg-info-secondary text-white border-transparent;
-
-            &:hover {
-                @apply bg-info-primary text-white border-transparent;
-            }
         }
 
         .ns-menu-wrapper > div {
@@ -79,6 +52,31 @@
 
         &:hover {
             @apply border-transparent bg-input-button-hover text-typography;
+        }
+    }
+}
+
+#crud-form {
+    .ns-crud-button, .ns-crud-input-button {
+        @apply border-crud-button-edge bg-transparent text-typography;
+
+        &.table-filters-enabled {
+            @apply bg-info-primary text-primary;
+        }
+    
+        &.table-filters-disabled {
+            @apply text-secondary border-crud-button-edge;
+        }
+
+        &:hover {
+            @apply border-transparent bg-input-button-hover text-typography;
+        }
+    }
+    .ns-crud-input {
+        @apply bg-input-background border-input-background;
+
+        input {
+            @apply text-primary bg-crud-button-edge;
         }
     }
 }

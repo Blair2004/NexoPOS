@@ -1,11 +1,11 @@
 #ns-orders-chart {
     .head {
-        @apply bg-white;
+        @apply bg-box-background;
     }
     .foot {
-        @apply bg-white; 
+        @apply bg-box-background; 
         > div {
-            @apply border-surface-primary;
+            @apply border-box-edge;
             span {
                 @apply text-primary;
             }
@@ -18,21 +18,21 @@
 
 #ns-orders-summary {
     .title {
-        @apply border-surface-primary;
+        @apply border-box-edge;
     }
     .head, .title {
-        @apply bg-white;
+        @apply bg-box-background;
         h3, i, h4, p, span {
             @apply text-typography;
         }
         .paid-order {
-            @apply bg-success-light-primary text-typography;
+            @apply bg-success-primary text-typography;
         }
         .other-order {
-            @apply bg-white text-primary;
+            @apply bg-box-background text-primary;
         }
         .single-order {
-            @apply border-success-light-tertiary;
+            @apply border-success-tertiary;
         }
         .paid-currency {
             @apply text-typography;
@@ -44,14 +44,14 @@
 }
 
 #ns-best-customers, #ns-best-cashiers {
-    @apply bg-white;
+    @apply bg-box-background;
     .head {
-        @apply bg-white border-surface-tertiary text-primary;
+        @apply bg-box-background border-box-edge text-primary;
     }
     .body {
-        @apply text-primary bg-white;
+        @apply text-primary bg-box-background;
         .entry {
-            @apply border-surface-tertiary;
+            @apply border-box-edge;
         }
     }
 }

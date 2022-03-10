@@ -124,6 +124,8 @@ module.exports = {
         'tab-inactive': withOpacityValue('--tab-inactive'),
 
         'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
+        'floating-menu': withOpacityValue('--floating-menu'),
+        'floating-menu-edge': withOpacityValue('--floating-menu-edge'),
 
         primary: withOpacityValue('--primary'),
         secondary: withOpacityValue('--secondary'),  
@@ -176,12 +178,6 @@ module.exports = {
         'danger-light-primary': withOpacityValue('--danger-light-primary'),  
         'danger-light-success': withOpacityValue('--danger-light-success'),  
         'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
-
-        'surface-primary': withOpacityValue('--surface-primary'),  
-        'surface-secondary': withOpacityValue('--surface-secondary'),  
-        'surface-tertiary': withOpacityValue('--surface-tertiary'),  
-        'surface-quaternary': withOpacityValue('--surface-quaternary'),  
-        'surface-quinary': withOpacityValue('--surface-quinary'),  
       },
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,

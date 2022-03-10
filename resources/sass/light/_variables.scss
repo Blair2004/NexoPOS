@@ -1,53 +1,54 @@
 :root {
-    --typography: 75 85 99;
-    --surface: 226 232 240;
-    --popup-surface: 226 232 240;
-    --input-edge: 203 213 225;
-    --input-background: 226 232 240;
-    --input-disabled: 226 232 240;
-    --input-button: 203 213 225;
-    --input-button-hover: 100 116 139;
-    --input-button-active: 100 116 139;
-    --input-option-hover: 203 213 225;
+    --typography: 255 255 255;
+    --surface: 15 23 42;
+    --popup-surface: 51 65 85;
+    --input-edge: 30 41 59;
+    --input-background: 51 65 85;
+    --input-disabled: 30 41 59;
+    --input-button: 71 85 105;
+    --input-button-hover: 59 130 246; /** blue-400 **/
+    --input-button-active: 59 130 246; /** blue-500 **/
+    --input-option-hover: 100 116 139;
 
-    --box-background: 203 213 225;
-    --box-edge: 203 213 225;
-    --box-elevation-background: 203 213 225;
+    --box-background: 51 65 85;
+    --box-edge: 71 85 105;
+    --box-elevation-background: 71 85 105;
     --box-elevation-edge: 100 116 139;
     --box-elevation-hover: 100 116 139;
-
-    --crud-button-edge: 100 116 139;
+    
+    --crud-button-edge: 30 41 59;
     --pos-button-edge: 30 41 59;
 
-    --numpad-background: 15 23 42;
-    --numpad-typography: 0 0 0;
-    --numpad-edge: 100 116 139;
-    --numpad-hover: 100 116 139;
-    --numpad-hover-edge: 100 116 139;
+    --numpad-background: 71 85 105;
+    --numpad-typography: 250 250 250;
+    --numpad-edge: 71 85 105;
+    --numpad-hover: 71 85 105;
+    --numpad-hover-edge: 71 85 105;
 
-    --option-hover: 203 213 225;
+    --option-hover: 100 116 139;
 
     --scroll-thumb: 51 65 85;
     --scroll-track: 0 0 0;
-    --scroll-popup-thumb: 30 41 59;
+    --scroll-popup-thumb: 71 85 105;
 
     --pre: 100 116 139;
 
-    --tab-active: 250 250 250;
-    --tab-active-border: 51 65 85;
-    --tab-inactive: 51 65 85;
+    --tab-active: 51 65 85;
+    --tab-active-border: 30 41 59;
+    --tab-inactive: 30 41 59;
 
     --tab-table-th: 100 116 139;
     --tab-table-th-edge: 100 116 139;
-    --table-th: 71 85 105;
+    --table-th: 51 65 85;
     --table-th-edge: 71 85 105;
 
-    --floating-menu: 51 65 85;
-    --floating-menu-hover: 71 85 105;
+    --floating-menu: 71 85 105;
+    --floating-menu-hover: 100 116 139;
+    --floating-menu-edge: 51 65 85;
 
-    --primary: 55 65 81;
-    --secondary: 31 41 55;
-    --tertiary: 17 24 39;
+    --primary: 226 232 240;
+    --secondary: 203 213 225;
+    --tertiary: 148 163 184;
 
     --info-primary: 96 165 250;
     --info-secondary: 59 130 246;
@@ -96,10 +97,4 @@
     --default-light-primary: 226 232 240;
     --default-light-secondary: 203 213 225;
     --default-light-tertiary: 148 163 184;
-
-    --surface-primary: 243 244 246;
-    --surface-secondary: 229 231 235;
-    --surface-tertiary: 209 213 219;
-    --surface-quaternary: 241 245 249;
-    --surface-quinary: 107 114 128;
 }

@@ -18,8 +18,8 @@ export default {
 }
 </script>
 <template>
-    <div class="ns-button shadow rounded">
-        <button @click="openPendingOrdersPopup()" class="flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
+    <div class="ns-button">
+        <button @click="openPendingOrdersPopup()" class="rounded shadow flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
             <i class="mr-1 text-xl las la-truck"></i>
             <span>{{ __( 'Order Type' ) }}</span>
         </button>

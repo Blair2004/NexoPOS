@@ -2,13 +2,13 @@
     .ns-table {
         thead {
             th {
-                @apply bg-surface-primary text-typography border-surface-primary;
+                @apply bg-tab-table-th text-primary border-tab-table-th-edge;
             }
         }
         tbody {
             @apply text-primary;
             td {
-                @apply border-surface-primary text-typography;
+                @apply border-tab-table-th-edge text-primary;
             }
         }
     }
@@ -18,29 +18,49 @@
     @apply w-full;
     thead {
         th {
-            @apply bg-surface-secondary text-typography border-surface-secondary;
+            @apply bg-table-th text-primary border-table-th-edge;
         }
     }
     tbody, tfoot {
         @apply text-primary;
         td {
-            @apply border-surface-secondary text-typography;
+            @apply border-table-th-edge;
         }
 
         tr.info {
-            @apply bg-info-primary;
+            @apply bg-info-secondary text-white;
         }
     
         tr.danger {
-            @apply bg-error-primary
+            @apply bg-error-secondary text-white;
         }
     
         tr.success {
-            @apply bg-success-primary;
+            @apply bg-success-secondary text-white;
         }
     
         tr.green {
-            @apply bg-warning-primary;
+            @apply bg-warning-secondary text-white;
         }
+    }
+
+    td {
+        @apply border-table-th-edge;
+    }
+
+    tr.info {
+        @apply bg-info-secondary text-white;
+    }
+
+    tr.danger {
+        @apply bg-error-secondary text-white;
+    }
+
+    tr.success {
+        @apply bg-success-secondary text-white;
+    }
+
+    tr.green {
+        @apply bg-warning-secondary text-white;
     }
 }

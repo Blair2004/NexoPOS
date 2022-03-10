@@ -20,6 +20,7 @@
 }
 
 ul.ns-vertical-menu {
+    @apply bg-box-background;
     li {
         @apply text-primary border-box-edge;
         &:hover, .active {

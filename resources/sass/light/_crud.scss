@@ -2,13 +2,13 @@
  * Crud
 **/
 #crud-table {
-    @apply bg-surface-primary;
-    > * {
+    @apply bg-box-background;
+    * {
         @apply text-primary;
     }
 
     .ns-crud-input {
-        @apply bg-surface-tertiary;
+        @apply bg-crud-button-edge;
 
         input {
             @apply text-primary;
@@ -16,69 +16,42 @@
     }
     
     .ns-table-row {
-        @apply border-surface-tertiary;
-
-        &.ns-row-success {
-            @apply bg-success-light-primary border-success-primary text-typography;
-        }
-        &.ns-row-error {
-            @apply bg-error-light-primary border-error-primary text-typography;
-        }
-        &.ns-row-info {
-            @apply bg-info-light-primary border-info-primary text-typography;
-        }
-        &.ns-row-warning {
-            @apply bg-warning-light-primary border-warning-primary text-typography;
-        }
-        &.ns-row-default {
-            @apply bg-default-light-primary border-default-primary text-typography;
-        }
-        &.ns-row-danger {
-            @apply bg-danger-light-primary border-danger-primary text-typography;
-        }
+        @apply border-table-th-edge;
 
         td {
-            @apply border-surface-tertiary text-typography;
-        }
-
-        .ns-row-button {
-            @apply bg-surface-secondary text-secondary border-surface-tertiary;
-
-            &:hover {
-                @apply bg-info-primary text-secondary border-transparent;
-            }
+            @apply border-table-th-edge text-typography;
         }
 
         .ns-menu-wrapper > div {
-            @apply bg-surface-secondary;
+            @apply bg-box-background;
         }
 
         .ns-action-button {
             @apply text-secondary;
 
             &:hover {
-                @apply bg-info-primary text-primary;
+                @apply bg-info-secondary text-white;
             }
 
             &:focus {
-                @apply outline-none bg-surface-tertiary focus:text-primary;
+                @apply outline-none;
             }
         }
     }
 
     .ns-crud-button, .ns-crud-input-button {
-        @apply border-surface-tertiary bg-surface-secondary text-typography;
+        @apply border-crud-button-edge bg-transparent text-typography;
 
         &.table-filters-enabled {
             @apply bg-info-primary text-primary;
         }
     
         &.table-filters-disabled {
-            @apply text-secondary border-surface-tertiary;
+            @apply text-secondary border-crud-button-edge;
         }
 
         &:hover {
-            @apply border-info-primary bg-info-primary text-white;
+            @apply border-transparent bg-input-button-hover text-typography;
         }
     }
 }

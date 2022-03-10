@@ -17,30 +17,31 @@
 .ns-table {
     @apply w-full;
     thead {
+        @apply border-table-th-edge;
         th {
             @apply bg-table-th text-primary border-table-th-edge;
         }
     }
     tbody, tfoot {
-        @apply text-primary;
+        @apply text-primary border-table-th-edge;
         td {
             @apply border-table-th-edge;
         }
 
         tr.info {
-            @apply bg-info-primary text-white;
+            @apply bg-info-secondary text-white;
         }
     
         tr.danger {
-            @apply bg-error-primary text-white;
+            @apply bg-error-secondary text-white;
         }
     
         tr.success {
-            @apply bg-success-primary text-white;
+            @apply bg-success-secondary text-white;
         }
     
         tr.green {
-            @apply bg-warning-primary text-white;
+            @apply bg-warning-secondary text-white;
         }
     }
 
@@ -49,18 +50,18 @@
     }
 
     tr.info {
-        @apply bg-info-primary text-white;
+        @apply bg-info-secondary text-white;
     }
 
     tr.danger {
-        @apply bg-error-primary text-white;
+        @apply bg-error-secondary text-white;
     }
 
     tr.success {
-        @apply bg-success-primary text-white;
+        @apply bg-success-secondary text-white;
     }
 
     tr.green {
-        @apply bg-warning-primary text-white;
+        @apply bg-warning-secondary text-white;
     }
 }

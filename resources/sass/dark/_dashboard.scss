@@ -17,11 +17,11 @@
     @apply text-primary border-box-edge;
 
     &:hover {
-        @apply bg-tab-active text-primary border-transparent;
+        @apply bg-box-background text-primary border-transparent;
     }
 
     &.toggled {
-        @apply bg-tab-active text-primary border-transparent;
+        @apply bg-box-background text-primary border-transparent;
     }
 }
 

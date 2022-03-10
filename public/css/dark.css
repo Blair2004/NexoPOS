@@ -44,6 +44,7 @@
 
     --floating-menu: 71 85 105;
     --floating-menu-hover: 100 116 139;
+    --floating-menu-edge: 51 65 85;
 
     --primary: 226 232 240;
     --secondary: 203 213 225;
@@ -96,12 +97,6 @@
     --default-light-primary: 226 232 240;
     --default-light-secondary: 203 213 225;
     --default-light-tertiary: 148 163 184;
-
-    --surface-primary: 100 116 139;
-    --surface-secondary: 71 85 105;
-    --surface-tertiary: 51 65 85;
-    --surface-quaternary: 30 41 59;
-    --surface-quinary: 15 23 42;
 }
 .is-popup .ns-box {
     --tw-bg-opacity: 1;
@@ -157,7 +152,12 @@
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice h1, .ns-notice h2, .ns-notice h3, .ns-notice h4, .ns-notice h5 {
+.ns-notice {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-notice
+    h1, .ns-notice h2, .ns-notice h3, .ns-notice h4, .ns-notice h5 {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -165,43 +165,43 @@
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-notice-danger {
+.ns-notice .danger {
     --tw-border-opacity: 1;
     border-color: rgb(var(--danger-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--danger-primary) / var(--tw-bg-opacity));
 }
-.ns-notice-danger pre {
+.ns-notice .danger pre {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--pre) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice-warning {
+.ns-notice.warning {
     --tw-border-opacity: 1;
     border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
 }
-.ns-notice-warning pre {
+.ns-notice.warning pre {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--pre) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice-success {
+.ns-notice.success {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
 }
-.ns-notice-success pre {
+.ns-notice.success pre {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--pre) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice-error {
+.ns-notice.error {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-tertiary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -209,19 +209,19 @@
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice-error pre {
+.ns-notice.error pre {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--pre) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-notice-info {
+.ns-notice.info {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
 }
-.ns-notice-info pre {
+.ns-notice.info pre {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--pre) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -250,7 +250,7 @@
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
 }
-.input-group input {
+.input-group input, .input-group select {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -408,6 +408,8 @@
 .ns-input button, .ns-switch button, .ns-select button, .ns-textarea button, .ns-media button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-input button:hover, .ns-switch button:hover, .ns-select button:hover, .ns-textarea button:hover, .ns-media button:hover {
     --tw-bg-opacity: 1;
@@ -481,15 +483,17 @@
 .ns-button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
     --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-.ns-button:hover {
+.ns-button button {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
+}
+.ns-button:hover button {
     border-color: transparent;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
@@ -668,14 +672,14 @@
 }
 .ns-inset-button {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--input-option-hover) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-button) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-inset-button:hover {
+.ns-inset-button:hover, .ns-inset-button.active {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--default-tertiary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -730,73 +734,11 @@
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
 }
-#crud-table .ns-table-row.ns-row-success {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--success-tertiary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row.ns-row-error {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row.ns-row-info {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row.ns-row-warning {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row.ns-row-default {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--default-secondary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--default-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row.ns-row-danger {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--danger-secondary) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--danger-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
-}
 #crud-table .ns-table-row td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row .ns-row-button {
-    border-color: transparent;
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-#crud-table .ns-table-row .ns-row-button:hover {
-    border-color: transparent;
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-menu-wrapper > div {
     --tw-bg-opacity: 1;
@@ -842,6 +784,44 @@
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
+#crud-form .ns-crud-button, #crud-form .ns-crud-input-button {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--crud-button-edge) / var(--tw-border-opacity));
+    background-color: transparent;
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button.table-filters-enabled, #crud-form .ns-crud-input-button.table-filters-enabled {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button.table-filters-disabled, #crud-form .ns-crud-input-button.table-filters-disabled {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--crud-button-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--secondary) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button:hover, #crud-form .ns-crud-input-button:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-input {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-background) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+}
+#crud-form .ns-crud-input input {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--crud-button-edge) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
 #main-container, #page-container {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
@@ -872,14 +852,14 @@
 .ns-avatar:hover {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-avatar.toggled {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1021,6 +1001,10 @@
 .is-popup .ns-scrollbar::-webkit-scrollbar-thumb {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--scroll-popup-thumb) / var(--tw-bg-opacity));
+}
+ul.ns-vertical-menu {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
 }
 ul.ns-vertical-menu li {
     --tw-border-opacity: 1;
@@ -1608,6 +1592,10 @@ p {
 .ns-table {
     width: 100%;
 }
+.ns-table thead {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+}
 .ns-table thead th {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
@@ -1617,6 +1605,8 @@ p {
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-table tbody, .ns-table tfoot {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1626,25 +1616,25 @@ p {
 }
 .ns-table tbody tr.info, .ns-table tfoot tr.info {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.danger, .ns-table tfoot tr.danger {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.success, .ns-table tfoot tr.success {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody tr.green, .ns-table tfoot tr.green {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -1654,25 +1644,25 @@ p {
 }
 .ns-table tr.info {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tr.danger {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tr.success {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tr.green {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
