@@ -7,12 +7,6 @@
 #pos-container {
     @apply bg-surface;
 
-    #header-buttons {
-        button {
-            @apply bg-input-button text-primary;
-        }
-    }
-
     #pos-cart {
         #tools {
             .switch-cart {
@@ -85,7 +79,7 @@
                         }
 
                         .product-controls {
-
+                            @apply text-primary;
                         }
                     }
 
@@ -282,9 +276,15 @@
     }
 }
 
+#ns-units-selector {
+    .overlay {
+        background:rgb(0 0 0 / 73%);
+    }
+}
+
 #ns-payment-popup {
     .ns-pos-screen {
-        @apply bg-numpad-background border-numpad-edge text-primary;
+        @apply text-primary;
     }
     > div {
         @apply bg-tab-inactive;

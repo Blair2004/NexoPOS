@@ -1549,8 +1549,6 @@ export class POS {
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
 
-        console.log( product );
-
         /**
          * computing the discount when it's 
          * based on a percentage
@@ -1583,11 +1581,14 @@ export class POS {
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
-                                .subscribe((result: any) => {
-                                    nsSnackBar.success(result.message).subscribe();
-                                    this.reset();
-                                }, (error) => {
-                                    return nsSnackBar.error(error.message).subscribe();
+                                .subscribe({
+                                    next: (result: any) => {
+                                        nsSnackBar.success(result.message).subscribe();
+                                        this.reset();
+                                    },
+                                    error: (error) => {
+                                        return nsSnackBar.error(error.message).subscribe();
+                                    }
                                 })
                         }
                     }
@@ -1595,7 +1596,7 @@ export class POS {
             } else {
                 Popup.show(NsPromptPopup, {
                     title: 'Void The Order',
-                    message: 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
+                    message: 'The current order will be voided. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })

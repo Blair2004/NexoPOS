@@ -19,7 +19,7 @@
             <div class="px-1">
                 <div class="-mx-2 flex flex-wrap">
                     <div class="px-1">
-                        <ns-button type="danger" @click="close()">{{ __( 'Close' ) }}</ns-button>
+                        <ns-button type="error" @click="close()">{{ __( 'Close' ) }}</ns-button>
                     </div>
                     <div class="px-1">
                         <ns-button type="info" @click="proceed()">{{ __( 'Proceed' ) }}</ns-button>

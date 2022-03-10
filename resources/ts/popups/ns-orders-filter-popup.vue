@@ -11,7 +11,7 @@
         </div>
         <div class="p-2 flex justify-between ns-box-footer border-t">
             <div>
-                <ns-button @click="clearFilters()" type="danger">{{ __( 'Clear Filters' ) }}</ns-button>
+                <ns-button @click="clearFilters()" type="error">{{ __( 'Clear Filters' ) }}</ns-button>
             </div>
             <div>
                 <ns-button @click="useFilters()" type="info">{{ __( 'Use Filters' ) }}</ns-button>

@@ -282,10 +282,13 @@
     }
 }
 
-#ns-payment-popup {
-    .ns-pos-screen {
-        @apply bg-numpad-background border-numpad-edge text-primary;
+#ns-units-selector {
+    .overlay {
+        background:rgb(250 250 250 / 73%);
     }
+}
+
+#ns-payment-popup {
     > div {
         @apply bg-white;
         h3 {

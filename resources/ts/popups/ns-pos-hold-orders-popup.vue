@@ -1,17 +1,19 @@
 <template>
-    <div class="bg-surface-tertiary shadow-lg w-6/7-screen md:w-3/7-screen lg:w-2/6-screen">
-        <div class="p-2 flex justify-between border-b items-center">
+    <div class="ns-box shadow-lg w-6/7-screen md:w-3/7-screen lg:w-2/6-screen">
+        <div class="p-2 flex ns-box-header justify-between border-b items-center">
             <h3 class="font-semibold">{{ __( 'Hold Order' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto">
+        <div class="flex-auto ns-box-body">
             <div class="border-b h-16 flex items-center justify-center">
                 <span class="text-5xl text-primary">{{ order.total | currency }}</span>
             </div>
             <div class="p-2">
-                <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" placeholder="Order Reference" class="rounded border-2 border-info-primary bg-surface-tertiary p-2 w-full">
+                <div class="input-group info">
+                    <input @keyup.enter="submitHold()" v-model="title" ref="reference" type="text" placeholder="Order Reference" class="outline-none rounded border-2 p-2 w-full">
+                </div>
             </div>
             <div class="p-2">
                 <p class="text-secondary">
@@ -19,7 +21,7 @@
                 </p>
             </div>
         </div>
-        <div class="flex">
+        <div class="flex ns-box-footer">
             <div @click="submitHold()" class=" cursor-pointer w-1/2 py-3 flex justify-center items-center bg-green-500 text-white font-semibold">
                 {{ __( 'Confirm' ) }}
             </div>

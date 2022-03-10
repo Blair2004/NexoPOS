@@ -28,7 +28,7 @@ const nsTabs    =   Vue.component( 'ns-tabs', {
     template: `
     <div class="tabs flex flex-col flex-auto ns-tab">
         <div class="header flex" style="margin-bottom: -1px;">
-            <div v-for="( tab , identifier ) of childrens" @click="toggle( tab )" :class="active === tab.identifier ? 'border-b-0 ns-active z-10' : 'border ns-inactive'" class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+            <div v-for="( tab , identifier ) of childrens" @click="toggle( tab )" :class="active === tab.identifier ? 'border-b-0 active z-10' : 'border inactive'" class="tab rounded-tl rounded-tr border  px-3 py-2 cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
         </div>
         <slot></slot>
     </div>

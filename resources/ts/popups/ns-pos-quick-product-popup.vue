@@ -1,12 +1,12 @@
 <template>
-    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-3/5-screen bg-surface-tertiary">
-        <div class="header bg-surface-tertiary border-b flex justify-between p-2 items-center">
+    <div class="w-95vw flex flex-col h-95vh shadow-lg md:w-3/5-screen lg:w-2/5-screen md:h-3/5-screen ns-box">
+        <div class="header ns-box-header border-b flex justify-between p-2 items-center">
             <h3>{{ __( 'Product / Service' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 flex-auto overflow-y-auto">
+        <div class="ns-box-body p-2 flex-auto overflow-y-auto">
             <div class="h-full w-full flex justify-center items-center" v-if="! loaded">
                 <ns-spinner></ns-spinner>
             </div>
@@ -14,7 +14,7 @@
                 <ns-field v-for="(field, key) of fields" :key="key" :field="field"></ns-field>
             </template>
         </div>
-        <div class="border-t flex justify-between p-2">
+        <div class="ns-box-footer border-t flex justify-between p-2">
             <div></div>
             <div>
                 <ns-button @click="addProduct()" type="info">{{ __( 'Create' ) }}</ns-button>

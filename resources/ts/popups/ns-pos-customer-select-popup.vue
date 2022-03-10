@@ -25,14 +25,14 @@
                 </div>
             </div>
             <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">
-                <ul>
+                <ul class="ns-vertical-menu">
                     <li class="p-2 text-center text-primary" v-if="customers && customers.length === 0">
                         {{ __( 'No customer match your query...' ) }}
                     </li>
                     <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-primary" v-if="customers && customers.length === 0">
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
-                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer bg-floating-menu p-2 border-b text-primary flex justify-between items-center">
+                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>

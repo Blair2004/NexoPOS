@@ -2,10 +2,10 @@
     .tab {
         @apply border-tab-active-border text-primary;
         
-        &.ns-active {
+        &.active {
             @apply bg-tab-active;
         }
-        &.ns-inactive {
+        &.inactive {
             @apply bg-tab-inactive;
         }
     }

@@ -1226,14 +1226,9 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#ns-payment-popup .ns-pos-screen {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--numpad-edge) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--numpad-background) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
-}
+#ns-units-selector .overlay {
+        background:rgb(250 250 250 / 73%);
+    }
 #ns-payment-popup > div {
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255 / var(--tw-bg-opacity));

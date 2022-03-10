@@ -10,7 +10,7 @@
                 </div>
                 <div class="p-2 ns-box-body">
                     <p class="text-center text-sm py-4">{{ __( 'In order to keep NexoPOS running smoothly with updates, we need to proceed to the database migration. In fact you don\'t need to do any action, just wait until the process is done and you\'ll be redirected.' ) }}</p>
-                    <div v-if="error" class="border-l-4 text-sm ns-notice-danger p-4">
+                    <div v-if="error" class="border-l-4 text-sm ns-notice error p-4">
                         <p>
                             {{ __( 'Looks like an error has occured during the update. Usually, giving another shot should fix that. However, if you still don\'t get any chance.' ) }}
                             {{ __( 'Please report this message to the support : ' ) }}
@@ -20,23 +20,23 @@
                 </div>
                 <div class="border-t ns-box-footer p-2 flex justify-between">
                     <div>
-                        <button v-if="error" @click="proceedUpdate()" class="rounded ns-button-danger shadow-inner p-2">
+                        <ns-button v-if="error" @click="proceedUpdate()" type="error" class="rounded shadow-inner p-2">
                             <i class="las la-sync"></i>
                             <span>{{ __( 'Try Again' ) }}</span>
-                        </button>
+                        </ns-button>
                     </div>
                     <div class="flex">
-                        <button v-if="updating" class="rounded shadow-inner ns-button-info p-2">
+                        <ns-button type="info" v-if="updating" class="rounded shadow-inner p-2">
                             <i class="las la-sync animate-spin"></i>
                             <span v-if="! updatingModule">{{ __( 'Updating' ) }}...</span>
                             <span class="mr-1" v-if="! updatingModule">{{ index }}/{{ files.length }}</span>
                             <span v-if="updatingModule">{{ __( 'Updating Modules' ) }}...</span>
                             <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
-                        </button>
-                        <a :href="returnLink" v-if="! updating" class="rounded ns-button-info shadow-inner p-2">
+                        </ns-button>
+                        <ns-button :href="returnLink" v-if="! updating" class="rounded shadow-inner p-2">
                             <i class="las la-undo"></i>
                             <span>{{ __( 'Return' ) }}</span>
-                        </a>
+                        </ns-button>
                     </div>
                 </div>
             </div>

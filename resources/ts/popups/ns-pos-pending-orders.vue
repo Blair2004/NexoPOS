@@ -11,7 +11,7 @@
         </div>
         <div class="overflow-y-auto flex flex-auto">
             <div class="flex p-2 flex-auto flex-col overflow-y-auto">
-                <div :data-order-id="order.id" class="border-b border-surface-primary w-full py-2" v-for="order of orders" :key="order.id">
+                <div :data-order-id="order.id" class="border-b ns-box-body w-full py-2" v-for="order of orders" :key="order.id">
                     <h3 class="text-primary">{{ order.title || 'Untitled Order' }}</h3>
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
@@ -29,10 +29,10 @@
                         </div>
                     </div>
                     <div class="flex justify-end w-full mt-2">
-                        <div class="flex rounded-lg overflow-hidden buttons-container">
-                            <button @click="proceedOpenOrder( order )" class="text-white bg-success-primary outline-none px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
-                            <button @click="previewOrder( order )" class="text-white bg-info-primary outline-none px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
-                            <button @click="printOrder( order )" class="text-surface-secondary bg-default-primary outline-none px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
+                        <div class="flex rounded-lg overflow-hidden ns-buttons">
+                            <button @click="proceedOpenOrder( order )" class="info outline-none px-2 py-1"><i class="las la-lock-open"></i> {{ __( 'Open' ) }}</button>
+                            <button @click="previewOrder( order )" class="success outline-none px-2 py-1"><i class="las la-eye"></i> {{ __( 'Products' ) }}</button>
+                            <button @click="printOrder( order )" class="warning outline-none px-2 py-1"><i class="las la-print"></i> {{ __( 'Print' ) }}</button>
                         </div>
                     </div>
                 </div>

@@ -1,28 +1,30 @@
 <template>
-    <div class="bg-surface-tertiary w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
-        <div class="p-2 border-b border-surface-secondary flex justify-between items-center">
+    <div class="ns-box w-6/7-screen md:w-4/5-screen lg:w-3/5-screen h-6/7-screen md:h-4/5-screen shadow-lg flex flex-col overflow-hidden">
+        <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="font-bold text-primary">{{ __( 'Shipping & Billing' ) }}</h3>
             <div class="tools">
-                <button @click="closePopup()" class="hover:bg-error-primary hover:text-white hover:border-red-600 rounded-full h-8 w-8 border items-center justify-center">
+                <button @click="closePopup()" class="ns-close-button rounded-full h-8 w-8 border items-center justify-center">
                     <i class="las la-times"></i>
                 </button>
             </div>
         </div>
-        <div class="flex-auto bg-surface-secondary p-4 overflow-y-auto">
-            <div id="tabs-container" class="my-5">
+        <div class="flex-auto ns-box-body p-2 overflow-y-auto ns-tab">
+            <div id="tabs-container">
                 <div class="header flex" style="margin-bottom: -1px;">
-                    <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 bg-surface-tertiary' : 'border bg-surface-secondary'" class="tab rounded-tl rounded-tr border border-gray-400  px-3 py-2 text-primary cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
+                    <div :key="identifier" v-for="( tab , identifier ) of tabs" @click="toggle( identifier )" :class="tab.active ? 'border-b-0 active' : 'inactive'" class="tab rounded-tl rounded-tr border tab  px-3 py-2 text-primary cursor-pointer" style="margin-right: -1px">{{ tab.label }}</div>
                 </div>
-                <div class="border border-gray-400 p-4 bg-surface-tertiary">
-                    <div class="-mx-4 flex flex-wrap">
-                        <div :key="index" :class="'px-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,index) of activeTabFields">
-                            <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                <div class="border ns-tab-item">
+                    <div class="px-4">
+                        <div class="-mx-4 flex flex-wrap">
+                            <div :key="index" :class="'p-4 w-full md:w-1/2 lg:w-1/3'" v-for="(field,index) of activeTabFields">
+                                <ns-field @blur="formValidation.checkField( field )" @change="formValidation.checkField( field )" :field="field"/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="p-2 flex justify-between border-t border-gray-300">
+        <div class="p-2 flex justify-between border-t ns-box-footer">
             <div></div>
             <div>
                 <ns-button @click="submitInformations()" type="info">{{ __( 'Save' ) }}</ns-button>

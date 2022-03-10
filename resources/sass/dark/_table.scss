@@ -43,4 +43,24 @@
             @apply bg-warning-primary text-white;
         }
     }
+
+    td {
+        @apply border-table-th-edge;
+    }
+
+    tr.info {
+        @apply bg-info-primary text-white;
+    }
+
+    tr.danger {
+        @apply bg-error-primary text-white;
+    }
+
+    tr.success {
+        @apply bg-success-primary text-white;
+    }
+
+    tr.green {
+        @apply bg-warning-primary text-white;
+    }
 }

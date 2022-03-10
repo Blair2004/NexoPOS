@@ -1,7 +1,7 @@
 <template>
     <div class="picker mb-2">
         <label v-if="field" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
-        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded border-numpad-edge cursor-pointer px-1 py-1 flex items-center text-primary">
+        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded ns-button cursor-pointer px-1 py-1 flex items-center text-primary">
             <i class="las la-clock text-2xl"></i>
             <span class="mx-1 text-sm" v-if="currentDay && field">
                 <span v-if="field.value !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
@@ -14,27 +14,27 @@
         </div>
         <p class="text-sm text-secondary py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0" v-if="visible">
-            <div :class="field ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-xl rounded bg-floating-menu anim-duration-300 zoom-in-entrance flex flex-col">
+            <div :class="field ? '-mt-4' : 'mt-2'" class="absolute w-72 shadow-xl rounded ns-box anim-duration-300 zoom-in-entrance flex flex-col">
                 <div class="flex-auto" v-if="currentView === 'years'">
                     <div class="p-2 flex items-center">
                         <div>
-                            <button @click="subMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-background rounded"><i class="las la-angle-left"></i></button>
+                            <button @click="subMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-hover rounded"><i class="las la-angle-left"></i></button>
                         </div>
                         <div class="flex flex-auto font-semibold text-primary justify-center">
                             <span class="mr-2 cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'months' )">{{ currentDay.format( 'MMM' ) }}</span>
                             <span class="cursor-pointer border-b border-info-secondary border-dashed" @click="toggleView( 'years' )">{{ currentDay.format( 'YYYY' ) }}</span>
                         </div>
                         <div>
-                            <button @click="addMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-background rounded"><i class="las la-angle-right"></i></button>
+                            <button @click="addMonth()" class="w-8 h-8 border border-numpad-edge outline-none text-numpad-text hover:bg-numpad-hover rounded"><i class="las la-angle-right"></i></button>
                         </div>
                     </div>
                     <div class="h-32 flex items-center justify-center text-primary">
                         <div class="rounded border-numpad-edge border-2 flex w-2/3 overflow-hidden">
-                            <button @click="subYear()" class="bg-numpad-background text-white px-4 py-2">
+                            <button @click="subYear()" class="text-white px-4 py-2">
                                 <i class="las la-minus"></i>
                             </button>
                             <input type="text" ref="year" class="p-2 w-24 text-center bg-input-disabled outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
-                            <button @click="addYear()" class="bg-numpad-background text-white px-4 py-2">
+                            <button @click="addYear()" class="text-white px-4 py-2">
                                 <i class="las la-plus"></i>
                             </button>
                         </div>
@@ -56,7 +56,7 @@
                     <div class="grid grid-flow-row grid-cols-3 grid-rows-1 gap-0 text-primary">
                         <div :key="_index" v-for="( monthIndex, _index ) in months" class="h-8 flex justify-center items-center text-sm">
                             <template class="h-full w-full">
-                                <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white border border-info-secondary' : 'hover:bg-numpad-background border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
+                                <div :class="momentCopy.month( monthIndex ).format( 'MM' ) === currentDay.format( 'MM' ) ? 'bg-info-secondary text-white border border-info-secondary' : 'hover:bg-numpad-hover border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="setMonth( monthIndex )">
                                     {{ momentCopy.format( 'MMM' ) }}
                                 </div>
                             </template>
@@ -88,7 +88,7 @@
                     <div v-for="( week, index ) of calendar" :key="index" class="grid grid-flow-row grid-cols-7 grid-rows-1 gap-0 text-primary">
                         <div :key="_index" v-for="( dayOfWeek, _index ) in daysOfWeek" class="h-8 flex justify-center items-center text-sm">
                             <template v-for="(day,_dayIndex) of week" class="h-full w-full">
-                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'text-white border border-info-secondary bg-info-secondary' : 'hover:bg-numpad-background border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
+                                <div :key="_dayIndex" v-if="day.dayOfWeek === dayOfWeek" :class="day.date.format( 'DD' ) === currentDay.format( 'DD' ) ? 'text-white border border-info-secondary bg-info-secondary' : 'hover:bg-numpad-hover border border-numpad-edge'" class="h-full w-full flex items-center justify-center cursor-pointer" @click="selectDate( day.date )">
                                     {{ day.date.format( 'DD' ) }}
                                 </div>
                             </template>

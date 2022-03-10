@@ -2,11 +2,11 @@
     --typography: 255 255 255;
     --surface: 15 23 42;
     --popup-surface: 51 65 85;
-    --input-edge: 71 85 105;
+    --input-edge: 30 41 59;
     --input-background: 51 65 85;
     --input-disabled: 30 41 59;
     --input-button: 71 85 105;
-    --input-button-hover: 96 165 250; /** blue-400 **/
+    --input-button-hover: 59 130 246; /** blue-400 **/
     --input-button-active: 59 130 246; /** blue-500 **/
     --input-option-hover: 100 116 139;
 
@@ -21,9 +21,9 @@
 
     --numpad-background: 71 85 105;
     --numpad-typography: 250 250 250;
-    --numpad-edge: 100 116 139;
-    --numpad-hover: 100 116 139;
-    --numpad-hover-edge: 100 116 139;
+    --numpad-edge: 71 85 105;
+    --numpad-hover: 71 85 105;
+    --numpad-hover-edge: 71 85 105;
 
     --option-hover: 100 116 139;
 
@@ -396,6 +396,8 @@
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-input input, .ns-input textarea, .ns-switch input, .ns-switch textarea, .ns-select input, .ns-select textarea, .ns-textarea input, .ns-textarea textarea, .ns-media input, .ns-media textarea {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -477,65 +479,76 @@
  * Buttons
 **/
 .ns-button {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
     --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-.ns-button.ns-button-success > button, .ns-button.ns-button-success > a {
+.ns-button:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+}
+.ns-button.hover-success:hover button, .ns-button.hover-success:hover a, .ns-button.success button, .ns-button.success a {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-success > button span.ns-label, .ns-button.ns-button-success > a span.ns-label {
+.ns-button.hover-success:hover button span.ns-label, .ns-button.hover-success:hover a span.ns-label, .ns-button.success button span.ns-label, .ns-button.success a span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-danger > button, .ns-button.ns-button-danger > a {
+.ns-button.hover-error:hover button, .ns-button.hover-error:hover a, .ns-button.error button, .ns-button.error a {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-danger > button span.ns-label, .ns-button.ns-button-danger > a span.ns-label {
+.ns-button.hover-error:hover button span.ns-label, .ns-button.hover-error:hover a span.ns-label, .ns-button.error button span.ns-label, .ns-button.error a span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--error-secondary) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-warning > button, .ns-button.ns-button-warning > a {
+.ns-button.hover-warning:hover button, .ns-button.hover-warning:hover a, .ns-button.warning button, .ns-button.warning a {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-warning > button span.ns-label, .ns-button.ns-button-warning > a span.ns-label {
+.ns-button.hover-warning:hover button span.ns-label, .ns-button.hover-warning:hover a span.ns-label, .ns-button.warning button span.ns-label, .ns-button.warning a span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--warning-secondary) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-default > button, .ns-button.ns-button-default > a {
+.ns-button.hover-default:hover button, .ns-button.hover-default:hover a, .ns-button.default button, .ns-button.default a {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--input-disabled) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-default > button span.ns-label, .ns-button.ns-button-default > a span.ns-label {
+.ns-button.hover-default:hover button span.ns-label, .ns-button.hover-default:hover a span.ns-label, .ns-button.default button span.ns-label, .ns-button.default a span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-info > button, .ns-button.ns-button-info > a {
+.ns-button.hover-info:hover button, .ns-button.hover-info:hover a, .ns-button.info button, .ns-button.info a {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-.ns-button.ns-button-info > button span.ns-label, .ns-button.ns-button-info > a span.ns-label {
+.ns-button.hover-info:hover button span.ns-label, .ns-button.hover-info:hover a span.ns-label, .ns-button.info button span.ns-label, .ns-button.info a span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -552,6 +565,87 @@
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-button .ns-disabled span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+.ns-buttons {
+    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.ns-buttons button.success, .ns-buttons a.success {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-buttons button.success span.ns-label, .ns-buttons a.success span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--success-primary) / var(--tw-text-opacity));
+}
+.ns-buttons button.error, .ns-buttons a.error {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-buttons button.error span.ns-label, .ns-buttons a.error span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--error-secondary) / var(--tw-text-opacity));
+}
+.ns-buttons button.warning, .ns-buttons a.warning {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-buttons button.warning span.ns-label, .ns-buttons a.warning span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--warning-secondary) / var(--tw-text-opacity));
+}
+.ns-buttons button.default, .ns-buttons a.default {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--input-disabled) / var(--tw-text-opacity));
+}
+.ns-buttons button.default span.ns-label, .ns-buttons a.default span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--surface) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-buttons button.info, .ns-buttons a.info {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+.ns-buttons button.info span.ns-label, .ns-buttons a.info span.ns-label {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--info-secondary) / var(--tw-text-opacity));
+}
+.ns-buttons .ns-disabled {
+    cursor: not-allowed;
+    border-width: 1px;
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+.ns-buttons .ns-disabled span.ns-label {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -585,14 +679,28 @@
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-inset-button.info:hover {
+.ns-inset-button.info:hover, .ns-inset-button.info.active {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-inset-button.error:hover {
+.ns-inset-button.success:hover, .ns-inset-button.success.active {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-inset-button.warning:hover, .ns-inset-button.warning.active {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-inset-button.error:hover, .ns-inset-button.error.active {
     border-color: transparent;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
@@ -677,19 +785,18 @@
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-row-button {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--secondary) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-row-button:hover {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--secondary) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-menu-wrapper > div {
     --tw-bg-opacity: 1;
@@ -701,19 +808,13 @@
 }
 #crud-table .ns-table-row .ns-action-button:hover {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #crud-table .ns-table-row .ns-action-button:focus {
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button-active) / var(--tw-bg-opacity));
     outline: 2px solid transparent;
     outline-offset: 2px;
-}
-#crud-table .ns-table-row .ns-action-button:focus:focus {
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 #crud-table .ns-crud-button, #crud-table .ns-crud-input-button {
     --tw-border-opacity: 1;
@@ -921,15 +1022,13 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--scroll-popup-thumb) / var(--tw-bg-opacity));
 }
-ul.ns-vertical-menu {
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--floating-menu) / var(--tw-bg-opacity));
-}
 ul.ns-vertical-menu li {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-ul.ns-vertical-menu li:hover {
+ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--floating-menu-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -978,7 +1077,7 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-success-surface {
+.is-popup .elevation-surface.success {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -986,13 +1085,13 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-success-surface.hoverable:hover {
+.is-popup .elevation-surface.success.hoverable:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-error-surface {
+.is-popup .elevation-surface.error {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1000,13 +1099,13 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-error-surface.hoverable:hover {
+.is-popup .elevation-surface.error.hoverable:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-info-surface {
+.is-popup .elevation-surface.info {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1014,13 +1113,13 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-info-surface.hoverable:hover {
+.is-popup .elevation-surface.info.hoverable:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-warning-surface {
+.is-popup .elevation-surface.warning {
     --tw-border-opacity: 1;
     border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1028,7 +1127,7 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.is-popup .elevation-warning-surface.hoverable:hover {
+.is-popup .elevation-surface.warning.hoverable:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1045,12 +1144,6 @@ ul.ns-vertical-menu li:hover {
 #pos-container {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
-}
-#pos-container #header-buttons button {
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 #pos-container #pos-cart #tools .switch-cart {
     --tw-bg-opacity: 1;
@@ -1147,8 +1240,9 @@ ul.ns-vertical-menu li:hover {
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
 #pos-container #pos-cart #cart-container #cart-products-table > div .product-item .product-controls {
-
-                        }
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
 #pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
@@ -1378,11 +1472,10 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
+#ns-units-selector .overlay {
+        background:rgb(0 0 0 / 73%);
+    }
 #ns-payment-popup .ns-pos-screen {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--numpad-edge) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--numpad-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1472,11 +1565,11 @@ ul.ns-vertical-menu li:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-.ns-tab .tab.ns-active {
+.ns-tab .tab.active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }
-.ns-tab .tab.ns-inactive {
+.ns-tab .tab.inactive {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-inactive) / var(--tw-bg-opacity));
 }
@@ -1555,6 +1648,34 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
+.ns-table td {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+}
+.ns-table tr.info {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table tr.danger {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table tr.success {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table tr.green {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
 @-webkit-keyframes loader-animation {
     0% {
         left: -100%;
@@ -1607,8 +1728,6 @@ p {
 .ns-numpad-key {
     --tw-border-opacity: 1;
     border-color: rgb(var(--numpad-edge) / var(--tw-border-opacity));
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--numpad-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1618,31 +1737,31 @@ p {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--numpad-hover) / var(--tw-bg-opacity));
 }
-.ns-numpad-key.error:hover {
+.ns-numpad-key.error:hover, .ns-numpad-key.error.active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
 }
-.ns-numpad-key.success:hover {
+.ns-numpad-key.success:hover, .ns-numpad-key.success.active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
 }
-.ns-numpad-key.info:hover {
+.ns-numpad-key.info:hover, .ns-numpad-key.info.active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
 }
-.ns-numpad-key.warning:hover {
+.ns-numpad-key.warning:hover, .ns-numpad-key.warning.active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--warning-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
 }
-.ns-numpad-key.default:hover {
+.ns-numpad-key.default:hover, .ns-numpad-key.default.active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--default-secondary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;

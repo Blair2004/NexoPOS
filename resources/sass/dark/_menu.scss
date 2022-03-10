@@ -20,10 +20,9 @@
 }
 
 ul.ns-vertical-menu {
-    @apply bg-floating-menu;
     li {
-        @apply text-primary;
-        &:hover {
+        @apply text-primary border-box-edge;
+        &:hover, .active {
             @apply bg-floating-menu-hover text-primary;
         }
     }

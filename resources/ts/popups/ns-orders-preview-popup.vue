@@ -202,11 +202,11 @@ export default nsOrderPreviewPopup;
         </div> 
         <div class="p-2 flex justify-between border-t ns-box-footer">
             <div>
-                <ns-button v-if="isVoidable" @click="voidOrder()" type="danger">
+                <ns-button v-if="isVoidable" @click="voidOrder()" type="error">
                     <i class="las la-ban"></i>
                     {{ __( 'Void' ) }}
                 </ns-button>
-                <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="danger">
+                <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="error">
                     <i class="las la-trash"></i>
                     {{ __( 'Delete' ) }}
                 </ns-button>

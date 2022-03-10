@@ -40,14 +40,14 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg bg-surface-tertiary w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between text-primary items-center border-b border-surface-secondary">
+    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
+        <div class="p-2 flex justify-between text-primary items-center border-b ns-box-header">
             <h3 class="font-semibold">{{ __( 'Products' ) }} &mdash; {{ order.code }} <span v-if="order.title">({{ order.title }})</span></h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto p-2 overflow-y-auto">
+        <div class="flex-auto p-2 overflow-y-auto ns-box-body">
             <div class="flex-auto relative" v-if="isLoading">
                 <div class="h-full w-full flex items-center justify-center">
                     <ns-spinner></ns-spinner>
@@ -69,14 +69,14 @@ export default {
                 </div>
             </template>
         </div>
-        <div class="flex justify-end p-2 border-t border-surface-secondary">
+        <div class="flex justify-end p-2 border-t ns-box-footer">
             <div class="px-1">
                 <div class="-mx-2 flex">
                     <div class="px-1">
                         <ns-button @click="openOrder()" type="info">{{ __( 'Open' ) }}</ns-button>
                     </div>
                     <div class="px-1">
-                        <ns-button @click="close()" type="danger">{{ __( 'Close' ) }}</ns-button>
+                        <ns-button @click="close()" type="error">{{ __( 'Close' ) }}</ns-button>
                     </div>
                 </div>
             </div>

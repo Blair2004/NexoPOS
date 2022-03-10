@@ -98,7 +98,7 @@
                                                             <td class="border p-2 text-center">{{ order.total | currency }}</td>
                                                             <td class="border p-2 text-right">{{ order.human_status }}</td>
                                                             <td class="border p-2 text-center">
-                                                                <button v-if="allowedForPayment( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-surface-tertiary">
+                                                                <button v-if="allowedForPayment( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button">
                                                                     <i class="las la-wallet"></i>
                                                                     <span class="ml-1">{{ __( 'Payment' ) }}</span>
                                                                 </button>
@@ -204,7 +204,7 @@
                                 </ns-tabs>
                             </div>
                         </div>
-                        <div class="p-2 border-t border-surface-secondary flex justify-between">
+                        <div class="p-2 border-t border-box-edge flex justify-between">
                             <div></div>
                             <div>
                                 <ns-button @click="newTransaction( customer )" type="info">{{ __( 'Account Transaction' ) }}</ns-button>

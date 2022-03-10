@@ -161,7 +161,7 @@ export default {
                                 <ns-field class="mb-2" :field="field" v-bind:key="fieldIndex" v-for="(field,fieldIndex) of rule"></ns-field>
                             </div>
                             <div class="header border-t border-gray-200 p-2 flex justify-end">
-                                <ns-button @click="removeRule(index)" type="danger">
+                                <ns-button @click="removeRule(index)" type="error">
                                     <i class="las la-times"></i>
                                 </ns-button>
                             </div>

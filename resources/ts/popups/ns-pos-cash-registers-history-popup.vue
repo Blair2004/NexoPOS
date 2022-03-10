@@ -14,7 +14,7 @@
         </div>
         <div class="flex flex-col overflow-y-auto h-120">
             <template v-for="history of histories">
-                <div :key="history.id" v-if="[ 'register-sale', 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-success-surface">
+                <div :key="history.id" v-if="[ 'register-sale', 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface success">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>
@@ -22,11 +22,11 @@
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>
-                <div :key="history.id" v-if="[ 'register-close' ].includes( history.action )"  class="flex border-b elevation-info-surface">
+                <div :key="history.id" v-if="[ 'register-close' ].includes( history.action )"  class="flex border-b elevation-surface info">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>
-                <div :key="history.id" v-if="[ 'register-refund', 'register-cash-out' ].includes( history.action )"  class="flex border-b elevation-error-surface">
+                <div :key="history.id" v-if="[ 'register-refund', 'register-cash-out' ].includes( history.action )"  class="flex border-b elevation-surface error">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
                     <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
                 </div>

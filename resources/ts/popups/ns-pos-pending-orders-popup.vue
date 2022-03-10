@@ -1,12 +1,12 @@
 <template>
-    <div class="shadow-lg bg-surface-tertiary w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between text-primary items-center border-surface-secondary border-b">
+    <div class="shadow-lg ns-box w-6/7-screen md:w-3/5-screen lg:w-2/5-screen h-6/7-screen flex flex-col overflow-hidden">
+        <div class="p-2 flex justify-between text-primary items-center ns-box-header border-b">
             <h3 class="font-semibold">{{ __( 'Orders' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 flex overflow-hidden flex-auto">
+        <div class="p-2 flex overflow-hidden flex-auto ns-box-body">
             <ns-tabs :active="active" @changeTab="setActiveTab( $event )">
                 <ns-tabs-item identifier="ns.hold-orders" :label="__( 'On Hold' )" padding="p-0" class="flex flex-col overflow-hidden">
                     <ns-pos-pending-orders :orders="orders" 
@@ -34,10 +34,10 @@
                 </ns-tabs-item>
             </ns-tabs>
         </div>
-        <div class="p-2 flex justify-between border-surface-secondary border-t bg-surface-secondary">
+        <div class="p-2 flex justify-between ns-box-footer border-t">
             <div></div>
             <div>
-                <ns-button>{{ __( 'Close' ) }}</ns-button>
+                <ns-button type="info">{{ __( 'Close' ) }}</ns-button>
             </div>
         </div>
     </div>

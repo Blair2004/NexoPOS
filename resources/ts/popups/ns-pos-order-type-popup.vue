@@ -3,7 +3,7 @@
         <div id="header" class="h-16 flex justify-center items-center">
             <h3 class="font-bold">{{ __( 'Define The Order Type' ) }}</h3>
         </div>
-        <div class="grid grid-flow-row grid-cols-1 grid-rows-1" v-if="Object.values( types ).length === 0">
+        <div class="ns-box-body grid grid-flow-row grid-cols-1 grid-rows-1" v-if="Object.values( types ).length === 0">
             <div class="h-full w-full flex items-center justify-center flex-col">
                 <i class="las la-frown text-7xl"></i>
                 <div class="p-4 md:w-2/3">
@@ -14,8 +14,8 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-flow-row grid-cols-2 grid-rows-2" v-if="Object.values( types ).length > 0">
-            <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'bg-info-primary' : ''" class="hover:bg-info-primary h-56 flex items-center justify-center flex-col cursor-pointer border border-surface-secondary">
+        <div class="ns-box-body grid grid-flow-row grid-cols-2 grid-rows-2" v-if="Object.values( types ).length > 0">
+            <div @click="select( type.identifier )" :key="type.identifier" v-for="type of types" :class="type.selected ? 'active' : ''" class="ns-numpad-key info h-56 flex items-center justify-center flex-col cursor-pointer border">
                 <img :src="type.icon" alt="" class="w-32 h-32">
                 <h4 class="font-semibold text-xl my-2">{{ type.label }}</h4>
             </div>

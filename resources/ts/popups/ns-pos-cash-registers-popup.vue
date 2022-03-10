@@ -84,13 +84,13 @@ export default {
         getClass( register ) {
             switch( register.status ) {
                 case 'in-use':
-                    return 'elevation-warning-surface cursor-not-allowed';
+                    return 'elevation-surface warning cursor-not-allowed';
                 break;
                 case 'disabled':
                     return 'elevation-surface cursor-not-allowed';
                 break;
                 case 'available':
-                    return 'elevation-success';
+                    return 'elevation-surface success';
                 break;
             }
             return 'elevation-surface hoverable cursor-pointer';

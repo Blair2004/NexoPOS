@@ -47,7 +47,7 @@
                                     </ns-button>
                                 </div>
                                 <div class="px-1 flex">
-                                    <ns-button @click="removeModule( moduleObject )" type="danger"><i class="las la-trash"></i></ns-button>
+                                    <ns-button @click="removeModule( moduleObject )" type="error"><i class="las la-trash"></i></ns-button>
                                 </div>
                             </div>
                         </div>

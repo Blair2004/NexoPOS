@@ -103,7 +103,6 @@ module.exports = {
         'crud-button-edge': withOpacityValue('--crud-button-edge'),
         'pos-button-edge': withOpacityValue('--pos-button-edge'),
 
-        'numpad-background': withOpacityValue('--numpad-background'),
         'numpad-typography': withOpacityValue('--numpad-typography'),
         'numpad-edge': withOpacityValue('--numpad-edge'),
         'numpad-hover': withOpacityValue('--numpad-hover'),
@@ -124,7 +123,6 @@ module.exports = {
         'tab-active-border': withOpacityValue('--tab-active-border'),
         'tab-inactive': withOpacityValue('--tab-inactive'),
 
-        'floating-menu': withOpacityValue('--floating-menu'),
         'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
 
         primary: withOpacityValue('--primary'),
