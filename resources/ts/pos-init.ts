@@ -527,15 +527,17 @@ export class POS {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            order.tax_groups = order.tax_groups || [];
-                            order.taxes = tax.taxes.map(tax => {
+                            tax.taxes   =   tax.taxes.map(_tax => {
                                 return {
-                                    tax_id: tax.id,
-                                    tax_name: tax.name,
-                                    rate: parseFloat(tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal, tax.rate, order.tax_type)
+                                    tax_id: _tax.id,
+                                    tax_name: _tax.name,
+                                    rate: parseFloat(_tax.rate),
+                                    tax_value: this.getVatValue(order.subtotal, _tax.rate, order.tax_type)
                                 };
                             });
+
+                            order.tax_groups = order.tax_groups || [];
+                            order.taxes = tax.taxes;
     
                             /**
                              * this is set to cache the 
@@ -1581,14 +1583,11 @@ export class POS {
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
-                                .subscribe({
-                                    next: (result: any) => {
-                                        nsSnackBar.success(result.message).subscribe();
-                                        this.reset();
-                                    },
-                                    error: (error) => {
-                                        return nsSnackBar.error(error.message).subscribe();
-                                    }
+                                .subscribe((result: any) => {
+                                    nsSnackBar.success(result.message).subscribe();
+                                    this.reset();
+                                }, (error) => {
+                                    return nsSnackBar.error(error.message).subscribe();
                                 })
                         }
                     }
@@ -1596,7 +1595,7 @@ export class POS {
             } else {
                 Popup.show(NsPromptPopup, {
                     title: 'Void The Order',
-                    message: 'The current order will be voided. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
+                    message: 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
