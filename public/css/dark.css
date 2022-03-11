@@ -242,23 +242,23 @@
 }
 .ns-switch button.unselected {
     --tw-bg-opacity: 1;
-    background-color: rgb(71 85 105 / var(--tw-bg-opacity));
+    background-color: rgb(100 116 139 / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .input-group {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-background) / var(--tw-border-opacity));
 }
 .input-group input, .input-group select {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--crud-button-edge) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .input-group button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-edge) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
     outline: 2px solid transparent;
@@ -742,7 +742,7 @@
 }
 #crud-table .ns-table-row .ns-menu-wrapper > div {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-elevation-background) / var(--tw-bg-opacity));
 }
 #crud-table .ns-table-row .ns-action-button {
     --tw-text-opacity: 1;
@@ -1620,7 +1620,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tbody tr.danger, .ns-table tfoot tr.danger {
+.ns-table tbody tr.error, .ns-table tfoot tr.error {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1632,7 +1632,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tbody tr.green, .ns-table tfoot tr.green {
+.ns-table tbody tr.warning, .ns-table tfoot tr.warning {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1648,7 +1648,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tr.danger {
+.ns-table tr.error {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1660,7 +1660,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tr.green {
+.ns-table tr.warning {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;

@@ -32,7 +32,7 @@
             @apply bg-info-secondary text-white;
         }
     
-        tr.danger {
+        tr.error {
             @apply bg-error-secondary text-white;
         }
     
@@ -40,7 +40,7 @@
             @apply bg-success-secondary text-white;
         }
     
-        tr.green {
+        tr.warning {
             @apply bg-warning-secondary text-white;
         }
     }
@@ -53,7 +53,7 @@
         @apply bg-info-secondary text-white;
     }
 
-    tr.danger {
+    tr.error {
         @apply bg-error-secondary text-white;
     }
 
@@ -61,7 +61,7 @@
         @apply bg-success-secondary text-white;
     }
 
-    tr.green {
+    tr.warning {
         @apply bg-warning-secondary text-white;
     }
 }

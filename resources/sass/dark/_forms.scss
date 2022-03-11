@@ -6,17 +6,17 @@
         @apply bg-input-button-active text-typography;
     }
     button.unselected {
-        @apply bg-slate-600 text-primary;
+        @apply bg-slate-500 text-white;
     }
 } 
 
 .input-group {
-    @apply border-input-edge;
+    @apply border-input-background;
     input, select {
-        @apply bg-input-background text-primary;
+        @apply bg-crud-button-edge text-primary;
     }
     button {
-        @apply bg-input-edge text-white outline-none;
+        @apply bg-input-background text-white outline-none;
         i, span {
             @apply text-white;
         }

@@ -13,10 +13,7 @@ $isDue  =   in_array( $order->payment_status, [ Order::PAYMENT_PARTIALLY, Order:
 <div>
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
-        <div class="page-inner-header mb-4">
-            <h3 class="text-3xl text-gray-800 font-bold">{!! sprintf( __( 'Invoice &mdash; %s' ), $order->code ) !!}</h3>
-            <p class="text-gray-600">{{ __( 'Order invoice' ) }}</p>
-        </div>
+        @include( 'common.dashboard.title' )
         <div class="my-2">
             <ns-order-invoice 
                 :shipping='@json( $shipping )'

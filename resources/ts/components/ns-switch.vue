@@ -56,7 +56,7 @@ export default {
                     v-for="(option, key) of _options" 
                     @click="setSelected( option )" 
                     :class="option.selected ? 'selected ' + sizeClass : 'unselected' + ' ' + inputClass + ' ' + sizeClass" 
-                    class="px-3 py-2 flex-no-wrap outline-none">{{ option.label }}</button>
+                    class="px-3 py-2 flex-no-wrap outline-none rounded-none">{{ option.label }}</button>
             </div>
             <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description"><slot name="description"></slot></p>
             <p v-for="(error, index) of field.errors" :key="index" class="text-xs ns-error">

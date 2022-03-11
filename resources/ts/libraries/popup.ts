@@ -42,7 +42,14 @@ export class Popup {
 
     async open( component, params = {} ) {
         if ( typeof component === 'function' ) {
-            component = (await component()).default;
+            try {
+                component = (await component()).default;
+            } catch( exception ) {
+                /**
+                 * it has failed, maybe it's an inline-component.
+                 * In that situation, we don't need to resolve the default.
+                 */
+            }
         }
 
         const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
