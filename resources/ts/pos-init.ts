@@ -453,7 +453,7 @@ export class POS {
     removePayment(payment: Payment) {
 
         if (payment.id !== undefined) {
-            return nsSnackBar.error('Unable to delete a payment attached to the order').subscribe();
+            return nsSnackBar.error( __( 'Unable to delete a payment attached to the order.' ) ).subscribe();
         }
 
         const order = this._order.getValue();
@@ -1175,7 +1175,7 @@ export class POS {
          */
         if (order.discount > order.subtotal && order.total_coupons === 0) {
             order.discount = order.subtotal;
-            nsSnackBar.info('The discount has been set to the cart subtotal')
+            nsSnackBar.info( __( 'The discount has been set to the cart subtotal.' ))
                 .subscribe();
         }
 
@@ -1578,8 +1578,8 @@ export class POS {
         if (order.id !== undefined) {
             if (['hold'].includes(order.payment_status)) {
                 Popup.show(NsConfirmPopup, {
-                    title: 'Order Deletion',
-                    message: 'The current order will be deleted as no payment has been made so far.',
+                    title: __( 'Order Deletion' ),
+                    message: __( 'The current order will be deleted as no payment has been made so far.' ),
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
@@ -1594,8 +1594,8 @@ export class POS {
                 });
             } else {
                 Popup.show(NsPromptPopup, {
-                    title: 'Void The Order',
-                    message: 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
+                    title: __( 'Void The Order' ),
+                    message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
@@ -1613,7 +1613,7 @@ export class POS {
                 });
             }
         } else {
-            nsSnackBar.error('Unable to void an unpaid order.').subscribe();
+            nsSnackBar.error( __( 'Unable to void an unpaid order.' )).subscribe();
         }
     }
 
