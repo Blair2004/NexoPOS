@@ -6,6 +6,14 @@
     @apply text-typography;
 }
 
+#dashboard-aside {
+    @apply bg-surface;
+}
+
+#dashboard-body {
+    @apply bg-surface;
+}
+
 .ns-toggle-button {
     @apply border-box-edge text-primary;
     &:hover {

@@ -6,17 +6,17 @@
         @apply bg-input-button-active text-typography;
     }
     button.unselected {
-        @apply bg-slate-600 text-primary;
+        @apply bg-slate-200 text-primary;
     }
 } 
 
 .input-group {
     @apply border-input-edge;
-    input {
-        @apply bg-input-background text-primary;
+    input, select {
+        @apply bg-crud-button-edge text-primary;
     }
     button {
-        @apply bg-input-edge text-white outline-none;
+        @apply bg-input-background text-white outline-none;
         i, span {
             @apply text-white;
         }
@@ -124,7 +124,7 @@
     }
 
     button {
-        @apply border-input-edge;
+        @apply border-input-edge text-white;
         &:hover {
             @apply bg-input-button-hover;
         }
@@ -183,7 +183,7 @@
  * Buttons
 **/
 .ns-button {
-    @apply shadow text-white border-input-edge;
+    @apply text-primary border-input-edge;
 
     button {
         @apply bg-input-button;
@@ -195,7 +195,7 @@
     
     &.hover-success:hover, &.success {
         button, a {
-            @apply bg-success-secondary text-typography;
+            @apply bg-success-tertiary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-success-primary;
@@ -205,7 +205,7 @@
     
     &.hover-error:hover, &.error {
         button, a {
-            @apply bg-error-secondary text-typography;
+            @apply bg-error-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-error-secondary;
@@ -215,7 +215,7 @@
     
     &.hover-warning:hover, &.warning {
         button, a {
-            @apply bg-warning-primary text-typography;
+            @apply bg-warning-primary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-warning-secondary;
@@ -235,7 +235,7 @@
     
     &.hover-info:hover, &.info {
         button, a {
-            @apply bg-info-secondary text-typography;
+            @apply bg-info-secondary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-info-secondary;
@@ -313,7 +313,7 @@
 .ns-inset-button {
     @apply border-input-button text-primary;
     &:hover, &.active {
-        @apply bg-input-button text-white border-transparent;
+        @apply bg-info-secondary text-white border-transparent;
     }
     &.info:hover, &.info.active {
         @apply bg-info-primary text-white border-transparent;

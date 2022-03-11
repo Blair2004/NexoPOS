@@ -1358,10 +1358,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity)) !important;
 }
-.bg-gray-50 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity)) !important;
-}
 .bg-gray-300 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity)) !important;
@@ -1405,6 +1401,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-box-background {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--box-background) / var(--tw-bg-opacity)) !important;
+}
+.bg-gray-50 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity)) !important;
 }
 .bg-input-button {
   --tw-bg-opacity: 1 !important;

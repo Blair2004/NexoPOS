@@ -17,12 +17,13 @@
 .ns-table {
     @apply w-full;
     thead {
+        @apply border-table-th-edge;
         th {
             @apply bg-table-th text-primary border-table-th-edge;
         }
     }
     tbody, tfoot {
-        @apply text-primary;
+        @apply text-primary border-table-th-edge;
         td {
             @apply border-table-th-edge;
         }
@@ -31,7 +32,7 @@
             @apply bg-info-secondary text-white;
         }
     
-        tr.danger {
+        tr.error {
             @apply bg-error-secondary text-white;
         }
     
@@ -39,20 +40,20 @@
             @apply bg-success-secondary text-white;
         }
     
-        tr.green {
+        tr.warning {
             @apply bg-warning-secondary text-white;
         }
     }
 
     td {
-        @apply border-table-th-edge;
+        @apply border-table-th-edge text-white;
     }
 
     tr.info {
         @apply bg-info-secondary text-white;
     }
 
-    tr.danger {
+    tr.error {
         @apply bg-error-secondary text-white;
     }
 
@@ -60,7 +61,7 @@
         @apply bg-success-secondary text-white;
     }
 
-    tr.green {
+    tr.warning {
         @apply bg-warning-secondary text-white;
     }
 }

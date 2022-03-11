@@ -183,7 +183,7 @@
  * Buttons
 **/
 .ns-button {
-    @apply shadow text-white border-input-edge;
+    @apply text-white border-input-edge;
 
     button {
         @apply bg-input-button;
@@ -195,7 +195,7 @@
     
     &.hover-success:hover, &.success {
         button, a {
-            @apply bg-success-secondary text-typography;
+            @apply bg-success-tertiary text-typography;
 
             span.ns-label {
                 @apply bg-input-background text-success-primary;

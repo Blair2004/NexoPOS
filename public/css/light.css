@@ -1,58 +1,58 @@
 :root {
-    --typography: 255 255 255;
-    --surface: 15 23 42;
-    --popup-surface: 51 65 85;
-    --input-edge: 30 41 59;
-    --input-background: 51 65 85;
-    --input-disabled: 30 41 59;
-    --input-button: 71 85 105;
-    --input-button-hover: 59 130 246; /** blue-400 **/
-    --input-button-active: 59 130 246; /** blue-500 **/
-    --input-option-hover: 100 116 139;
+    --typography: 55 65 81;
+    --surface: 209 213 219;
+    --popup-surface: 209 213 219;
+    --input-edge: 156 163 175;
+    --input-background: 229 231 235;
+    --input-disabled: 156 163 175;
+    --input-button: 249 250 251;
+    --input-button-hover: 243 244 246; 
+    --input-button-active: 243 244 246;
+    --input-option-hover: 156 163 175;
 
-    --box-background: 51 65 85;
-    --box-edge: 71 85 105;
-    --box-elevation-background: 71 85 105;
-    --box-elevation-edge: 100 116 139;
-    --box-elevation-hover: 100 116 139;
+    --box-background: 250 250 250;
+    --box-edge: 209 213 219;
+    --box-elevation-background: 250 250 250;
+    --box-elevation-edge: 156 163 175;
+    --box-elevation-hover: 156 163 175;
     
-    --crud-button-edge: 30 41 59;
-    --pos-button-edge: 30 41 59;
+    --crud-button-edge: 156 163 175;
+    --pos-button-edge: 156 163 175;
 
-    --numpad-background: 71 85 105;
-    --numpad-typography: 250 250 250;
-    --numpad-edge: 71 85 105;
+    --numpad-background: 156 163 175;
+    --numpad-typography: 55 65 81;
+    --numpad-edge: 229 231 235;
     --numpad-hover: 71 85 105;
-    --numpad-hover-edge: 71 85 105;
+    --numpad-hover-edge: 229 231 235;
 
-    --option-hover: 100 116 139;
+    --option-hover: 156 163 175;
 
     --scroll-thumb: 51 65 85;
     --scroll-track: 0 0 0;
     --scroll-popup-thumb: 71 85 105;
 
-    --pre: 100 116 139;
+    --pre: 156 163 175;
 
-    --tab-active: 51 65 85;
-    --tab-active-border: 30 41 59;
-    --tab-inactive: 30 41 59;
+    --tab-active: 250 250 250;
+    --tab-active-border: 209 213 219;
+    --tab-inactive: 156 163 175;
 
-    --tab-table-th: 100 116 139;
-    --tab-table-th-edge: 100 116 139;
-    --table-th: 51 65 85;
-    --table-th-edge: 71 85 105;
+    --tab-table-th: 156 163 175;
+    --tab-table-th-edge: 156 163 175;
+    --table-th: 229 231 235;
+    --table-th-edge: 209 213 219;
 
     --floating-menu: 71 85 105;
-    --floating-menu-hover: 100 116 139;
+    --floating-menu-hover: 156 163 175;
     --floating-menu-edge: 51 65 85;
 
-    --primary: 226 232 240;
-    --secondary: 203 213 225;
-    --tertiary: 148 163 184;
+    --primary: 55 65 81;
+    --secondary: 31 41 55;
+    --tertiary: 17 24 39;
 
-    --info-primary: 96 165 250;
-    --info-secondary: 59 130 246;
-    --info-tertiary: 37 99 235;
+    --info-primary: 191 219 254;
+    --info-secondary: 147 197 253;
+    --info-tertiary: 96 165 250;
 
     --info-light-primary: 191 219 254;
     --info-light-secondary: 147 197 253;
@@ -66,9 +66,9 @@
     --error-light-secondary: 252 165 165;
     --error-light-tertiary: 248 113 113;
 
-    --success-primary: 34 197 94;
-    --success-secondary: 22 163 74;
-    --success-tertiary: 21 128 61;
+    --success-primary: 187 247 208;
+    --success-secondary: 134 239 172;
+    --success-tertiary: 22 163 74;
 
     --success-light-primary: 187 247 208;
     --success-light-secondary: 134 239 172;
@@ -92,7 +92,7 @@
 
     --default-primary: 203 213 225;
     --default-secondary: 148 163 184;
-    --default-tertiary: 100 116 139;
+    --default-tertiary: 156 163 175;
 
     --default-light-primary: 226 232 240;
     --default-light-secondary: 203 213 225;
@@ -242,7 +242,7 @@
 }
 .ns-switch button.unselected {
     --tw-bg-opacity: 1;
-    background-color: rgb(71 85 105 / var(--tw-bg-opacity));
+    background-color: rgb(226 232 240 / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -250,15 +250,15 @@
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
 }
-.input-group input {
+.input-group input, .input-group select {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--crud-button-edge) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .input-group button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-edge) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
     outline: 2px solid transparent;
@@ -408,6 +408,8 @@
 .ns-input button, .ns-switch button, .ns-select button, .ns-textarea button, .ns-media button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-input button:hover, .ns-switch button:hover, .ns-select button:hover, .ns-textarea button:hover, .ns-media button:hover {
     --tw-bg-opacity: 1;
@@ -482,10 +484,7 @@
     --tw-border-opacity: 1;
     border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
-    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-button button {
     --tw-bg-opacity: 1;
@@ -498,9 +497,9 @@
 }
 .ns-button.hover-success:hover button, .ns-button.hover-success:hover a, .ns-button.success button, .ns-button.success a {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--success-tertiary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-button.hover-success:hover button span.ns-label, .ns-button.hover-success:hover a span.ns-label, .ns-button.success button span.ns-label, .ns-button.success a span.ns-label {
     --tw-bg-opacity: 1;
@@ -512,7 +511,7 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-button.hover-error:hover button span.ns-label, .ns-button.hover-error:hover a span.ns-label, .ns-button.error button span.ns-label, .ns-button.error a span.ns-label {
     --tw-bg-opacity: 1;
@@ -524,7 +523,7 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-button.hover-warning:hover button span.ns-label, .ns-button.hover-warning:hover a span.ns-label, .ns-button.warning button span.ns-label, .ns-button.warning a span.ns-label {
     --tw-bg-opacity: 1;
@@ -548,7 +547,7 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-button.hover-info:hover button span.ns-label, .ns-button.hover-info:hover a span.ns-label, .ns-button.info button span.ns-label, .ns-button.info a span.ns-label {
     --tw-bg-opacity: 1;
@@ -677,7 +676,7 @@
 .ns-inset-button:hover, .ns-inset-button.active {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -716,13 +715,9 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
 }
-#crud-table * {
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
-}
 #crud-table .ns-crud-input {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--crud-button-edge) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
 }
 #crud-table .ns-crud-input input {
     --tw-text-opacity: 1;
@@ -740,7 +735,7 @@
 }
 #crud-table .ns-table-row .ns-menu-wrapper > div {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-elevation-background) / var(--tw-bg-opacity));
 }
 #crud-table .ns-table-row .ns-action-button {
     --tw-text-opacity: 1;
@@ -759,9 +754,10 @@
 #crud-table .ns-crud-button, #crud-table .ns-crud-input-button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--crud-button-edge) / var(--tw-border-opacity));
-    background-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--typography) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 #crud-table .ns-crud-button.table-filters-enabled, #crud-table .ns-crud-input-button.table-filters-enabled {
     --tw-bg-opacity: 1;
@@ -780,7 +776,49 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+#crud-table .ns-crud-button:hover i, #crud-table .ns-crud-input-button:hover i {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button, #crud-form .ns-crud-input-button {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--crud-button-edge) / var(--tw-border-opacity));
+    background-color: transparent;
+    --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button.table-filters-enabled, #crud-form .ns-crud-input-button.table-filters-enabled {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button.table-filters-disabled, #crud-form .ns-crud-input-button.table-filters-disabled {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--crud-button-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--secondary) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-button:hover, #crud-form .ns-crud-input-button:hover {
+    border-color: transparent;
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#crud-form .ns-crud-input {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-background) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+}
+#crud-form .ns-crud-input input {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--crud-button-edge) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 #main-container, #page-container {
     --tw-bg-opacity: 1;
@@ -789,6 +827,14 @@
 #dashboard-cards * {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#dashboard-aside {
+    --tw-bg-opacity: 1;
+    background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+#dashboard-body {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--surface) / var(--tw-bg-opacity));
 }
 .ns-toggle-button {
     --tw-border-opacity: 1;
@@ -801,7 +847,7 @@
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
+    color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 .ns-avatar {
     --tw-border-opacity: 1;
@@ -812,14 +858,14 @@
 .ns-avatar:hover {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-avatar.toggled {
     border-color: transparent;
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+    background-color: rgb(var(--box-background) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -978,29 +1024,29 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup, #confirm-popup {
+#alert-popup, #confirm-popup, #prompt-popup {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--popup-surface) / var(--tw-bg-opacity));
 }
-#alert-popup h2, #confirm-popup h2 {
+#alert-popup h2, #confirm-popup h2, #prompt-popup h2 {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#alert-popup p, #confirm-popup p {
+#alert-popup p, #confirm-popup p, #prompt-popup p {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup .action-buttons, #confirm-popup .action-buttons {
+#alert-popup .action-buttons, #confirm-popup .action-buttons, #prompt-popup .action-buttons {
     --tw-border-opacity: 1;
     border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup .action-buttons button:hover, #confirm-popup .action-buttons button:hover {
+#alert-popup .action-buttons button:hover, #confirm-popup .action-buttons button:hover, #prompt-popup .action-buttons button:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
 }
-#alert-popup .action-buttons hr, #confirm-popup .action-buttons hr {
+#alert-popup .action-buttons hr, #confirm-popup .action-buttons hr, #prompt-popup .action-buttons hr {
     --tw-border-opacity: 1;
     border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
 }
@@ -1088,6 +1134,8 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
 #pos-container {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #pos-container #pos-cart #tools .switch-cart {
     --tw-bg-opacity: 1;
@@ -1109,143 +1157,133 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container {
+#pos-container #pos-cart .cart-table {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox {
+#pos-container #pos-cart .cart-table #cart-toolbox {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div {
+#pos-container #pos-cart .cart-table #cart-toolbox > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div button {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
+#pos-container #pos-cart .cart-table #cart-toolbox > div .ns-button button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+#pos-container #pos-cart .cart-table #cart-table-header {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div button:hover {
-    --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
-    --tw-text-opacity: 1;
-    color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-#pos-container #pos-cart #cart-container #cart-table-header {
-    --tw-text-opacity: 1;
-    color: rgb(var(--primary) / var(--tw-text-opacity));
-}
-#pos-container #pos-cart #cart-container #cart-table-header > div {
+#pos-container #pos-cart .cart-table #cart-table-header > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div {
+#pos-container #pos-cart .cart-table #cart-products-table > div {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .remove-product {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .remove-product {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .remove-product:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .remove-product:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--error-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .price:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .price:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .wholesale-mode {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .wholesale-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-primary) / var(--tw-border-opacity));
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .wholesale-mode:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .wholesale-mode:hover {
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .normal-mode {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .normal-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .normal-mode:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .normal-mode:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .product-controls {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item .product-controls {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer > span {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer > span {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-price {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-price {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table .empty-cart {
+#pos-container #pos-cart .cart-table #cart-products-table .empty-cart {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table .empty-cart h3 {
+#pos-container #pos-cart .cart-table #cart-products-table .empty-cart h3 {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table {
+#pos-container #pos-cart .cart-table #cart-products-summary table {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td {
+#pos-container #pos-cart .cart-table #cart-products-summary table td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td a {
+#pos-container #pos-cart .cart-table #cart-products-summary table td a {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td a:hover {
+#pos-container #pos-cart .cart-table #cart-products-summary table td a:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line a {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line a {
     --tw-border-opacity: 1;
     border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line a:hover {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line a:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-primary) / var(--tw-border-opacity));
@@ -1254,11 +1292,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
@@ -1267,11 +1305,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-tertiary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
@@ -1280,11 +1318,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-active) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1292,11 +1330,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:hover {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
 }
@@ -1552,6 +1590,10 @@ p {
 .ns-table {
     width: 100%;
 }
+.ns-table thead {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+}
 .ns-table thead th {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
@@ -1561,6 +1603,8 @@ p {
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-table tbody, .ns-table tfoot {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1574,7 +1618,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tbody tr.danger, .ns-table tfoot tr.danger {
+.ns-table tbody tr.error, .ns-table tfoot tr.error {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1586,7 +1630,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tbody tr.green, .ns-table tfoot tr.green {
+.ns-table tbody tr.warning, .ns-table tfoot tr.warning {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1595,6 +1639,8 @@ p {
 .ns-table td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tr.info {
     --tw-bg-opacity: 1;
@@ -1602,7 +1648,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tr.danger {
+.ns-table tr.error {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
@@ -1614,7 +1660,7 @@ p {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-table tr.green {
+.ns-table tr.warning {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--warning-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;

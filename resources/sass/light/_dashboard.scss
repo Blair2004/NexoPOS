@@ -6,10 +6,18 @@
     @apply text-typography;
 }
 
+#dashboard-aside {
+    @apply bg-gray-900;
+}
+
+#dashboard-body {
+    @apply bg-surface;
+}
+
 .ns-toggle-button {
     @apply border-box-edge text-primary;
     &:hover {
-        @apply bg-tab-active border-transparent text-white;
+        @apply bg-tab-active border-transparent text-gray-700;
     }
 }
 
@@ -17,11 +25,11 @@
     @apply text-primary border-box-edge;
 
     &:hover {
-        @apply bg-tab-active text-primary border-transparent;
+        @apply bg-box-background text-primary border-transparent;
     }
 
     &.toggled {
-        @apply bg-tab-active text-primary border-transparent;
+        @apply bg-box-background text-primary border-transparent;
     }
 }
 

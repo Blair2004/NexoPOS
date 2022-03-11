@@ -5,7 +5,7 @@
     }
 }
 #pos-container {
-    @apply bg-surface;
+    @apply bg-surface text-white;
 
     #pos-cart {
         #tools {
@@ -21,17 +21,16 @@
             }
         }
 
-        #cart-container {
+        .cart-table {
             @apply bg-tab-active;
             #cart-toolbox {
                 @apply border-pos-button-edge;
                 > div {
                     @apply border-pos-button-edge;
 
-                    button {
-                        @apply bg-input-button border-pos-button-edge text-primary;
-                        &:hover {
-                            @apply bg-input-button-hover text-white;
+                    .ns-button {
+                        button {
+                            @apply bg-gray-200;
                         }
                     }
                 }

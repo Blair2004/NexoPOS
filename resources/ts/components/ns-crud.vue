@@ -82,7 +82,7 @@
                 </table>
             </div>
         </div>
-        <div class="p-2 flex flex-col md:flex-row justify-between">
+        <div class="p-2 flex border-t flex-col md:flex-row justify-between">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
                 <select class="outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
