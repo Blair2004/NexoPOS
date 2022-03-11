@@ -14,14 +14,14 @@
                 </div>
             </div>
             <div class="p-2 border-b ns-box-body flex justify-between text-primary">
-                <div class="input-group flex-auto border-2 rounded p-2">
+                <div class="input-group flex-auto border-2 rounded">
                     <input
                         ref="searchField" 
                         @keydown.enter="attemptToChoose()"
                         v-model="searchCustomerValue"
                         placeholder="Search Customer" 
                         type="text" 
-                        class="outline-none w-full">
+                        class="outline-none w-full p-2">
                 </div>
             </div>
             <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">

@@ -11,7 +11,7 @@
 } 
 
 .input-group {
-    @apply border-input-background;
+    @apply border-input-edge;
     input, select {
         @apply bg-crud-button-edge text-primary;
     }

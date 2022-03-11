@@ -248,7 +248,7 @@
 }
 .input-group {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--input-background) / var(--tw-border-opacity));
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
 }
 .input-group input, .input-group select {
     --tw-bg-opacity: 1;
@@ -1018,29 +1018,29 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup, #confirm-popup {
+#alert-popup, #confirm-popup, #prompt-popup {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--popup-surface) / var(--tw-bg-opacity));
 }
-#alert-popup h2, #confirm-popup h2 {
+#alert-popup h2, #confirm-popup h2, #prompt-popup h2 {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#alert-popup p, #confirm-popup p {
+#alert-popup p, #confirm-popup p, #prompt-popup p {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup .action-buttons, #confirm-popup .action-buttons {
+#alert-popup .action-buttons, #confirm-popup .action-buttons, #prompt-popup .action-buttons {
     --tw-border-opacity: 1;
     border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#alert-popup .action-buttons button:hover, #confirm-popup .action-buttons button:hover {
+#alert-popup .action-buttons button:hover, #confirm-popup .action-buttons button:hover, #prompt-popup .action-buttons button:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
 }
-#alert-popup .action-buttons hr, #confirm-popup .action-buttons hr {
+#alert-popup .action-buttons hr, #confirm-popup .action-buttons hr, #prompt-popup .action-buttons hr {
     --tw-border-opacity: 1;
     border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
 }
@@ -1128,6 +1128,8 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
 #pos-container {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #pos-container #pos-cart #tools .switch-cart {
     --tw-bg-opacity: 1;
@@ -1641,6 +1643,8 @@ p {
 .ns-table td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tr.info {
     --tw-bg-opacity: 1;

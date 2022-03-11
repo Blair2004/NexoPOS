@@ -1,15 +1,15 @@
 <template>
-    <div id="pos-cart" class="flex-auto flex flex-col ns-box">
-        <div id="tools" class="flex pl-2" v-if="visibleSection === 'cart'">
-            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold ns-box-header">
+    <div id="pos-cart" class="flex-auto flex flex-col">
+        <div id="tools" class="flex pl-2 ns-tab" v-if="visibleSection === 'cart'">
+            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold active tab">
                 <span>{{ __( 'Cart' ) }}</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
-            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
+            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l inactive tab">
                 {{ __( 'Products' ) }}
             </div>
         </div>
-        <div class="rounded shadow ns-box-body flex-auto flex overflow-hidden">
+        <div class="rounded shadow ns-tab-item flex-auto flex overflow-hidden">
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
                 <div id="cart-toolbox" class="w-full p-2 border-b border-box-edge">
                     <div class="border border-input-edge rounded overflow-hidden">
@@ -149,18 +149,18 @@
                         </tr>
                         <tr class="bg-success-primary">
                             <td width="200" class="border p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-info-primary cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-white cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
                             </td>
                             <td width="200" class="border p-2">{{ __( 'Total' ) }}</td>
                             <td width="200" class="border p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
                     </table>
-                    <table class="table w-full text-sm " v-if="visibleSection === 'cart'">
+                    <table class="table ns-table w-full text-sm" v-if="visibleSection === 'cart'">
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <a @click="selectCustomer()" class="hover:text-info-primary cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between">
                                     <span>{{ __( 'Sub Total' ) }}</span>
                                     <span>{{ order.subtotal | currency }}</span>
@@ -168,10 +168,10 @@
                             </td>
                         </tr>
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <a @click="openOrderType()" class="hover:text-info-primary cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between items-center">
                                     <p>
                                         <span>{{ __( 'Discount' ) }}</span>
@@ -183,17 +183,17 @@
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="200" class="border border-gray-300 p-2"></td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
                                 <a @click="openShippingPopup()" class="hover:text-info-primary cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Shipping' ) }}</a>
                                 <span></span>                          
                             </td>
                         </tr>
-                        <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-info-primary cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
+                        <tr class="bg-success-primary text-white">
+                            <td width="200" class="border p-2">
+                                <a v-if="order" @click="openTaxSummary()" class="hover:text-white cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between w-full">
                                     <span>{{ __( 'Total' ) }}</span>
                                     <span>{{ order.total | currency }}</span>    
