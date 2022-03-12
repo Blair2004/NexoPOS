@@ -26,7 +26,7 @@
     }
     
     &.success {
-        @apply border-success-secondary bg-success-primary;
+        @apply border-success-tertiary bg-success-tertiary;
     
         pre {
             @apply bg-pre text-primary;

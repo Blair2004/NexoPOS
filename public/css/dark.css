@@ -1130,6 +1130,10 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
+#ns-pos-customer-select-popup .purchase-amount {
+    --tw-text-opacity: 1;
+    color: rgb(var(--success-primary) / var(--tw-text-opacity));
+}
 #pos-container {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--surface) / var(--tw-bg-opacity));
@@ -1168,6 +1172,10 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
+#pos-container #pos-cart #cart-container #cart-toolbox > div hr {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
+}
 #pos-container #pos-cart #cart-container #cart-toolbox > div button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
@@ -1194,43 +1202,43 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .remove-product {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .remove-product {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .remove-product:hover {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .remove-product:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--error-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .price:hover {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .price:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .wholesale-mode {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .wholesale-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-primary) / var(--tw-border-opacity));
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .wholesale-mode:hover {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .wholesale-mode:hover {
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .normal-mode {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .normal-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .normal-mode:hover {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .normal-mode:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item .product-controls {
+#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .product-controls {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }

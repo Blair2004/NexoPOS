@@ -12,7 +12,7 @@
                         <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-primary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-primary' : ''" class="input-group flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-primary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 

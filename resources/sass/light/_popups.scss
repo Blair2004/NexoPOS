@@ -13,7 +13,7 @@
         @apply border-box-edge text-primary;
 
         button:hover {
-            @apply bg-info-secondary;
+            @apply bg-info-secondary text-white;
         }
 
         hr {
@@ -26,9 +26,9 @@
     background: rgb(0 0 0 / 40%);
 
     .elevation-surface {
-        @apply bg-box-elevation-background border-box-elevation-edge text-white;
+        @apply bg-box-elevation-background border-box-elevation-edge text-primary;
         &.hoverable:hover {
-            @apply bg-box-elevation-hover text-white;
+            @apply bg-box-elevation-hover text-primary;
         }
 
         &.success {

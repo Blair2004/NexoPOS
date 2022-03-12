@@ -11,8 +11,8 @@
         </div>
         <div class="rounded shadow ns-tab-item flex-auto flex overflow-hidden">
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
-                <div id="cart-toolbox" class="w-full p-2 border-b border-box-edge">
-                    <div class="border border-input-edge rounded overflow-hidden">
+                <div id="cart-toolbox" class="w-full p-2 border-b">
+                    <div class="border rounded overflow-hidden">
                         <div class="flex flex-wrap">
                             <div class="ns-button">
                                 <button @click="openNotePopup()" class="w-full h-10 px-3 outline-none">
@@ -20,7 +20,7 @@
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="border-input-edge h-10" style="width: 1px">
+                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-balance-scale-left"></i>
@@ -28,7 +28,7 @@
                                     <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.taxes.length }}</span>
                                 </button>
                             </div>
-                            <hr class="border-input-edge h-10" style="width: 1px">
+                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="selectCoupon()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-tags"></i>
@@ -36,41 +36,41 @@
                                     <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
-                            <hr class="border-input-edge h-10" style="width: 1px">
+                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button">
                                 <button @click="defineOrderSettings()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-tools"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="border-input-edge h-10" style="width: 1px">
+                            <hr class="h-10" style="width: 1px">
                             <div class="ns-button" v-if="options.ns_pos_quick_product === 'yes'">
                                 <button @click="openAddQuickProduct()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-plus"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
                                 </button>
                             </div>
-                            <hr class="border-input-edge h-10" style="width: 1px">
+                            <hr class="h-10" style="width: 1px">
                         </div>
                     </div>
                 </div>
                 <div id="cart-table-header" class="w-full text-primary font-semibold flex">
-                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-box-edge">{{ __( 'Product' ) }}</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-box-edge">{{ __( 'Quantity' ) }}</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-box-edge">{{ __( 'Total' ) }}</div>
+                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">{{ __( 'Product' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0">{{ __( 'Quantity' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0">{{ __( 'Total' ) }}</div>
                 </div>
                 <div id="cart-products-table" class="flex flex-auto flex-col overflow-auto">
                     
                     <!-- Loop Procuts On Cart -->
 
                     <div class="text-primary flex" v-if="products.length === 0">
-                        <div class="w-full text-center py-4 border-b border-box-edge">
+                        <div class="w-full text-center py-4 border-b">
                             <h3>{{ __( 'No products added...' ) }}</h3>
                         </div>
                     </div>
 
                     <div :product-index="index" :key="product.barcode" class="product-item flex" v-for="(product, index) of products">
-                        <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-box-edge">
+                        <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">
                             <div class="flex justify-between product-details mb-1">
                                 <h3 class="font-semibold">
                                     {{ product.name }} &mdash; {{ product.unit_name }}
@@ -109,10 +109,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-box-edge items-center justify-center cursor-pointer ns-numpad-key">
+                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center cursor-pointer ns-numpad-key">
                             <span class="border-b border-dashed border-info-primary p-2">{{ product.quantity }}</span>
                         </div>
-                        <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-box-edge items-center justify-center">{{ product.total_price | currency }}</div>
+                        <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
                     
                     <!-- End Loop -->
@@ -147,9 +147,9 @@
                             </td>
                             <td width="200" class="border p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
-                        <tr class="bg-success-primary">
+                        <tr class="success">
                             <td width="200" class="border p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-white cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
+                                <a v-if="order" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
                             </td>
                             <td width="200" class="border p-2">{{ __( 'Total' ) }}</td>
                             <td width="200" class="border p-2 text-right">{{ order.total | currency }}</td>
@@ -189,9 +189,9 @@
                                 <span></span>                          
                             </td>
                         </tr>
-                        <tr class="bg-success-primary text-white">
+                        <tr class="success">
                             <td width="200" class="border p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-white cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
+                                <a v-if="order" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
                             </td>
                             <td width="200" class="border p-2">
                                 <div class="flex justify-between w-full">

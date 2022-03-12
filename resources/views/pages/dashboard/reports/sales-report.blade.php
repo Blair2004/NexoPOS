@@ -56,25 +56,25 @@
                                 <div class="shadow rounded my-4">
                                     <div class="border-b">
                                         <table class="table ns-tablea w-full">
-                                            <tbody class="text-white">
+                                            <tbody class="text-primary">
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary">{{ __( 'Sub Total' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Sub Total' ) }}</td>
                                                     <td class="p-2 border text-right border-info-primary">@{{ summary.subtotal | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary">{{ __( 'Sales Discounts' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Discounts' ) }}</td>
                                                     <td class="p-2 border text-right border-error-primary">@{{ summary.sales_discounts | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary">{{ __( 'Sales Taxes' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Sales Taxes' ) }}</td>
                                                     <td class="p-2 border text-right border-error-primary">@{{ summary.sales_taxes | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary">{{ __( 'Products Taxes' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-error-secondary border-error-primary text-white">{{ __( 'Products Taxes' ) }}</td>
                                                     <td class="p-2 border text-right border-error-primary">@{{ summary.producs_taxes | currency }}</td>
                                                 </tr>
                                                 <tr class="">
-                                                    <td width="200" class="font-semibold p-2 border text-left bg-success-primary border-success-secondary">{{ __( 'Total' ) }}</td>
+                                                    <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-success-secondary text-white">{{ __( 'Total' ) }}</td>
                                                     <td class="p-2 border text-right border-success-primary">@{{ summary.total | currency }}</td>
                                                 </tr>
                                             </tbody>

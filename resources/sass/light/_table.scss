@@ -29,7 +29,7 @@
         }
 
         tr.info {
-            @apply bg-info-secondary text-white;
+            @apply bg-info-primary text-white;
         }
     
         tr.error {
@@ -46,7 +46,7 @@
     }
 
     td {
-        @apply border-table-th-edge text-white;
+        @apply border-table-th-edge text-primary;
     }
 
     tr.info {

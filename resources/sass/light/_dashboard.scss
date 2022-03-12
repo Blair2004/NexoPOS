@@ -3,7 +3,7 @@
 }
 
 #dashboard-cards * {
-    @apply text-typography;
+    @apply text-white;
 }
 
 #dashboard-aside {
@@ -15,14 +15,14 @@
 }
 
 .ns-toggle-button {
-    @apply border-box-edge text-primary;
+    @apply border-input-edge text-primary;
     &:hover {
         @apply bg-tab-active border-transparent text-gray-700;
     }
 }
 
 .ns-avatar { 
-    @apply text-primary border-box-edge;
+    @apply text-primary border-input-edge;
 
     &:hover {
         @apply bg-box-background text-primary border-transparent;
@@ -43,7 +43,7 @@
             @apply bg-box-background;
         }
         &.panel-hidden {
-            @apply border-box-edge;
+            @apply border-input-edge;
         }
 
         &:hover {

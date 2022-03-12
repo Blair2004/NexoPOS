@@ -17,13 +17,13 @@
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between border-box-background shadow py-1 items-center text-primary px-2">
+                        <button @click="loadReport()" class="rounded flex justify-between bg-box-background shadow py-1 items-center text-primary px-2">
                             <i class="las la-sync-alt text-xl"></i>
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between border-box-background shadow py-1 items-center text-primary px-2">
+                        <button @click="printSaleReport()" class="rounded flex justify-between bg-box-background shadow py-1 items-center text-primary px-2">
                             <i class="las la-print text-xl"></i>
                             <span class="pl-2">{{ __( 'Print' ) }}</span>
                         </button>

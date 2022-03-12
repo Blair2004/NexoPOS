@@ -4,6 +4,13 @@
         @apply text-primary;
     }
 }
+
+#ns-pos-customer-select-popup {
+    .purchase-amount {
+        @apply text-primary;
+    }
+}
+
 #pos-container {
     @apply bg-surface text-white;
 
@@ -28,6 +35,10 @@
                 > div {
                     @apply border-pos-button-edge;
 
+                    hr {
+                        @apply bg-pos-button-edge;
+                    }
+
                     .ns-button {
                         button {
                             @apply bg-gray-200;
@@ -45,40 +56,46 @@
                 > div {
                     @apply text-primary;
 
-                    .product-item {
+                    > div {
                         @apply border-pos-button-edge;
+                    }
 
-                        .remove-product {
-                            @apply border-error-primary;   
+                    .product-item {
+                        > div {
+                            @apply border-pos-button-edge;
 
-                            &:hover {
-                                @apply text-error-primary;
+                            .remove-product {
+                                @apply border-error-primary;   
+
+                                &:hover {
+                                    @apply text-error-primary;
+                                }
                             }
-                        }
 
-                        .price {
-                            &:hover {
-                                @apply text-info-secondary;
+                            .price {
+                                &:hover {
+                                    @apply text-info-secondary;
+                                }
                             }
-                        }
 
-                        .wholesale-mode {
-                            @apply text-success-primary bg-transparent border-success-primary;
-                            &:hover {
-                                @apply text-success-primary bg-transparent;
+                            .wholesale-mode {
+                                @apply text-success-primary bg-transparent border-success-primary;
+                                &:hover {
+                                    @apply text-success-primary bg-transparent;
+                                }
                             }
-                        }
 
-                        .normal-mode {
-                            @apply border-info-primary;
+                            .normal-mode {
+                                @apply border-info-primary;
 
-                            &:hover {
-                                @apply text-info-primary;
+                                &:hover {
+                                    @apply text-info-primary;
+                                }
                             }
-                        }
 
-                        .product-controls {
-                            @apply text-primary;
+                            .product-controls {
+                                @apply text-primary;
+                            }
                         }
                     }
 
@@ -195,7 +212,7 @@
                     button {
                         @apply border-pos-button-edge;
                         &.pos-button-clicked {
-                            @apply bg-box-background;
+                            @apply bg-input-disabled;
                             box-shadow: inset 0px 0px 5px 0px #303131;
                         }
                     }
@@ -220,7 +237,7 @@
                     @apply border-pos-button-edge;
 
                     .cell-item-label {
-                        background:rgb(0 0 0 / 73%);
+                        background:rgb(250 250 250 / 73%);
                     }
 
                     &:hover {
@@ -232,7 +249,7 @@
                     }
 
                     i, span {
-                        @apply text-slate-400;
+                        @apply text-secondary;
                     }
                 }
             }
@@ -270,8 +287,15 @@
             @apply text-primary;
         }
     }
-    div h4 {
-        @apply text-primary;
+    .ns-box-body > div {
+        &:hover h4 {
+            @apply text-white;
+        }
+        h4 {
+            @apply text-primary;   
+        }
+    }
+    div {
     }
 }
 

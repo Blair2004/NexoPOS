@@ -4,6 +4,13 @@
         @apply text-primary;
     }
 }
+
+#ns-pos-customer-select-popup {
+    .purchase-amount {
+        @apply text-success-primary;
+    }
+}
+
 #pos-container {
     @apply bg-surface text-white;
 
@@ -28,6 +35,10 @@
                 > div {
                     @apply border-pos-button-edge;
 
+                    hr {
+                        @apply border-pos-button-edge;
+                    }
+
                     button {
                         @apply bg-input-button border-pos-button-edge text-primary;
                         &:hover {
@@ -47,39 +58,41 @@
                     @apply text-primary;
 
                     .product-item {
-                        @apply border-pos-button-edge;
+                        > div {
+                            @apply border-pos-button-edge;
 
-                        .remove-product {
-                            @apply border-error-primary;   
+                            .remove-product {
+                                @apply border-error-primary;   
 
-                            &:hover {
-                                @apply text-error-primary;
+                                &:hover {
+                                    @apply text-error-primary;
+                                }
                             }
-                        }
 
-                        .price {
-                            &:hover {
-                                @apply text-info-secondary;
+                            .price {
+                                &:hover {
+                                    @apply text-info-secondary;
+                                }
                             }
-                        }
 
-                        .wholesale-mode {
-                            @apply text-success-primary bg-transparent border-success-primary;
-                            &:hover {
-                                @apply text-success-primary bg-transparent;
+                            .wholesale-mode {
+                                @apply text-success-primary bg-transparent border-success-primary;
+                                &:hover {
+                                    @apply text-success-primary bg-transparent;
+                                }
                             }
-                        }
 
-                        .normal-mode {
-                            @apply border-info-primary;
+                            .normal-mode {
+                                @apply border-info-primary;
 
-                            &:hover {
-                                @apply text-info-primary;
+                                &:hover {
+                                    @apply text-info-primary;
+                                }
                             }
-                        }
 
-                        .product-controls {
-                            @apply text-primary;
+                            .product-controls {
+                                @apply text-primary;
+                            }
                         }
                     }
 

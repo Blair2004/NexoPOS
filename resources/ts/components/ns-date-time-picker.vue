@@ -1,16 +1,18 @@
 <template>
     <div class="picker mb-2">
         <label v-if="field" class="block leading-5 font-medium text-primary">{{ field.label }}</label>
-        <div @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded ns-button cursor-pointer px-1 py-1 flex items-center text-primary">
-            <i class="las la-clock text-2xl"></i>
-            <span class="mx-1 text-sm" v-if="currentDay && field">
-                <span v-if="field.value !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
-                <span v-if="field.value === null">N/A</span>
-            </span>
-            <span class="mx-1 text-sm" v-if="currentDay && date">
-                <span v-if="date !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
-                <span v-if="date === null">N/A</span>
-            </span>
+        <div class="ns-button">
+            <button @click="visible = !visible" :class="field ? 'mt-1 border-2' : 'shadow'" class="rounded cursor-pointer px-1 py-1 flex items-center text-primary">
+                <i class="las la-clock text-2xl"></i>
+                <span class="mx-1 text-sm" v-if="currentDay && field">
+                    <span v-if="field.value !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
+                    <span v-if="field.value === null">N/A</span>
+                </span>
+                <span class="mx-1 text-sm" v-if="currentDay && date">
+                    <span v-if="date !== null">{{ currentDay.format( 'YYYY/MM/DD HH:mm' ) }}</span>
+                    <span v-if="date === null">N/A</span>
+                </span>
+            </button>
         </div>
         <p class="text-sm text-secondary py-1" v-if="field">{{ field.description }}</p>
         <div class="relative z-10 h-0 w-0" v-if="visible">
@@ -29,12 +31,12 @@
                         </div>
                     </div>
                     <div class="h-32 flex items-center justify-center text-primary">
-                        <div class="rounded border-numpad-edge border-2 flex w-2/3 overflow-hidden">
-                            <button @click="subYear()" class="text-white px-4 py-2">
+                        <div class="rounded input-group info border-2 flex w-2/3 overflow-hidden">
+                            <button @click="subYear()" class="px-4 py-2">
                                 <i class="las la-minus"></i>
                             </button>
-                            <input type="text" ref="year" class="p-2 w-24 text-center bg-input-disabled outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
-                            <button @click="addYear()" class="text-white px-4 py-2">
+                            <input type="text" ref="year" class="p-2 w-24 text-center outline-none" @change="setYear( $event )" :value="currentDay.format( 'YYYY' )">
+                            <button @click="addYear()" class="px-4 py-2">
                                 <i class="las la-plus"></i>
                             </button>
                         </div>

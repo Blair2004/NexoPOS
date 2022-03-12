@@ -450,19 +450,19 @@ export default {
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-primary">{{ form.main.label || __( 'No title is provided' ) }}</label>
                     <div for="title" class="text-sm my-2 text-primary">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-crud-button px-2 py-1">{{ __( 'Go Back' ) }}</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full ns-inset-button border px-2 py-1">{{ __( 'Go Back' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'border-red-600' : '' )" class="flex border-2 rounded ns-crud-input overflow-hidden">
+                <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : '' )" class="flex border-2 rounded input-group info overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
                         :disabled="form.main.disabled"
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
-                        class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l ns-crud-input-button"><slot name="save">{{ __( 'Save' ) }}</slot></button>
-                    <button @click="reloadEntities()" class="text-primary outline-none px-4 h-10 ns-crud-input-button"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
+                        class="flex-auto outline-none h-10 px-2">
+                    <button :disabled="form.main.disabled"  @click="submit()" class="outline-none px-4 h-10 border-l"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button @click="reloadEntities()" class="outline-none px-4 h-10"><i :class="reloading ? 'animate animate-spin' : ''" class="las la-sync"></i></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
                 <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">

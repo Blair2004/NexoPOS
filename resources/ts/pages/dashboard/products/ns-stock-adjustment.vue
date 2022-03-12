@@ -224,7 +224,7 @@ export default {
     <div>
         <div class="input-field flex border-2 input-group rounded">
             <input @keyup.esc="closeSearch()" v-model="search" type="text" class="p-2 flex-auto outline-none">
-            <button class="px-3 py-2">{{ __( 'Search' ) }}</button>
+            <button class="px-3 py-2 rounded-none">{{ __( 'Search' ) }}</button>
         </div>
         <div class="h-0" v-if="suggestions.length > 0">
             <div class="">

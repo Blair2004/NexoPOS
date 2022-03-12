@@ -48,45 +48,8 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/**
- * Forms
-**/
-.form-input {
-    @apply outline-0;
-    label {
-        @apply text-gray-800 py-2 font-semibold;
-    }
-    input {
-        @apply border-2 border-blue-200 bg-blue-100 rounded p-2 w-full;
-        &[disabled] {
-            @apply bg-gray-300;
-        }
-    }
-    p {
-        @apply text-xs text-gray-600 py-1;
-    }
-}
-
-.form-input-invalid {
-    label {
-        @apply text-red-500 py-2 font-semibold;
-    }
-    input {
-        @apply border-2 border-red-400 bg-red-100 rounded p-2 w-full;
-    }
-    p {
-        @apply text-xs text-red-500 py-1;
-    }
-}
-/** @deprecated **/
-.btn {
-    @apply text-center rounded shadow border py-2 px-3;
-}
-.btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white;
-}
-.btn-red {
-    @apply border-red-600 bg-red-600 text-white;
+button {
+    @apply rounded-none;
 }
 
 #editor {
@@ -131,26 +94,4 @@ body {
     h3 {
         @apply font-semibold;
     }
-}
-
-.dark .notification-card {
-    h1 {
-        @apply text-slate-300
-    }
-    p {
-        @apply text-slate-400
-    }
-
-    @apply border-slate-500
-}
-
-.notification-card {
-    h1 {
-        @apply text-gray-700
-    }
-    p {
-        @apply text-gray-600
-    }
-
-    @apply border-gray-200
 }

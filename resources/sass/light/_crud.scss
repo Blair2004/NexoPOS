@@ -5,7 +5,7 @@
     @apply bg-box-background;
 
     .ns-crud-input {
-        @apply bg-input-background;
+        @apply bg-input-disabled border-input-edge;
 
         input {
             @apply text-primary;
@@ -40,7 +40,7 @@
         @apply border-crud-button-edge bg-white text-primary;
 
         &.table-filters-enabled {
-            @apply bg-info-primary text-primary;
+            @apply bg-info-tertiary text-primary;
         }
     
         &.table-filters-disabled {
@@ -48,7 +48,7 @@
         }
 
         &:hover {
-            @apply border-transparent bg-input-button-hover text-white;
+            @apply border-transparent bg-info-tertiary text-white;
             i {
                 @apply text-white;
             }
@@ -61,7 +61,7 @@
         @apply border-crud-button-edge bg-transparent text-typography;
 
         &.table-filters-enabled {
-            @apply bg-info-primary text-primary;
+            @apply bg-info-tertiary text-primary;
         }
     
         &.table-filters-disabled {

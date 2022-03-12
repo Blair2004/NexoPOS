@@ -3,10 +3,13 @@
 **/
 .ns-switch {
     button.selected {
-        @apply bg-input-button-active text-typography;
+        @apply bg-info-primary text-white;
+        &:hover {
+            @apply bg-info-primary;
+        }
     }
     button.unselected {
-        @apply bg-slate-200 text-primary;
+        @apply bg-white text-primary;
     }
 } 
 
@@ -16,7 +19,7 @@
         @apply bg-crud-button-edge text-primary;
     }
     button {
-        @apply bg-input-background text-white outline-none;
+        @apply bg-input-button text-white outline-none;
         i, span {
             @apply text-white;
         }
@@ -30,7 +33,7 @@
         button {
             @apply bg-info-primary text-white;
             i, span {
-                @apply text-typography;
+                @apply text-white;
             }
         }
     }
@@ -43,7 +46,7 @@
         button {
             @apply bg-error-primary text-white;
             i, span {
-                @apply text-typography;
+                @apply text-white;
             }
         }
     }
@@ -56,7 +59,7 @@
         button {
             @apply bg-error-primary text-white;
             i, span {
-                @apply text-typography;
+                @apply text-white;
             }
         }
     }
@@ -69,7 +72,7 @@
         button {
             @apply bg-success-primary text-white;
             i, span {
-                @apply text-typography;
+                @apply text-white;
             }
         }
     }
@@ -89,7 +92,7 @@
 
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
-        @apply bg-input-background border-input-edge text-tertiary;
+        @apply bg-input-disabled border-input-edge text-tertiary;
     }
     
     .ns-enabled {
@@ -124,7 +127,7 @@
     }
 
     button {
-        @apply border-input-edge text-white;
+        @apply border-input-edge text-primary;
         &:hover {
             @apply bg-input-button-hover;
         }
@@ -144,6 +147,11 @@
 **/
 .form-input {
     @apply outline-0;
+    
+    *[disabled] {
+        @apply bg-input-disabled;
+    }
+
     label {
         @apply text-primary;
     }
@@ -225,7 +233,7 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-input-background text-input-disabled;
+            @apply bg-input-button text-primary;
 
             span.ns-label {
                 @apply bg-surface text-typography;
@@ -305,15 +313,15 @@
     &:hover {
         @apply bg-error-secondary border-transparent;
         > i {
-            @apply text-typography;
+            @apply text-white;
         }
     }
 }
 
 .ns-inset-button {
-    @apply border-input-button text-primary;
+    @apply border-input-edge text-primary;
     &:hover, &.active {
-        @apply bg-info-secondary text-white border-transparent;
+        @apply bg-info-tertiary text-white border-transparent;
     }
     &.info:hover, &.info.active {
         @apply bg-info-primary text-white border-transparent;

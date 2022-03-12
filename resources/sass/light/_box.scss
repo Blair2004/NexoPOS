@@ -14,7 +14,7 @@
             @apply border-box-edge bg-box-background;
         }
 
-        h3 {
+        div > h3 {
             @apply text-primary;
         }
     }
@@ -34,7 +34,7 @@
         @apply border-box-edge bg-box-background;
     }
 
-    h3 {
+    div > h3 {
         @apply text-primary;
     }
 }

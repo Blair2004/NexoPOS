@@ -587,6 +587,22 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: -0.75rem !important;
   margin-right: -0.75rem !important;
 }
+.-mx-2 {
+  margin-left: -0.5rem !important;
+  margin-right: -0.5rem !important;
+}
+.-mx-1 {
+  margin-left: -0.25rem !important;
+  margin-right: -0.25rem !important;
+}
+.mx-4 {
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
+}
+.mx-1 {
+  margin-left: 0.25rem !important;
+  margin-right: 0.25rem !important;
+}
 .mr-2 {
   margin-right: 0.5rem !important;
 }
@@ -640,6 +656,15 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .mb-6 {
   margin-bottom: 1.5rem !important;
+}
+.mb-8 {
+  margin-bottom: 2rem !important;
+}
+.mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+.ml-1 {
+  margin-left: 0.25rem !important;
 }
 .block {
   display: block !important;
@@ -727,6 +752,15 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .h-28 {
   height: 7rem !important;
+}
+.h-10 {
+  height: 2.5rem !important;
+}
+.h-8 {
+  height: 2rem !important;
+}
+.h-6 {
+  height: 1.5rem !important;
 }
 .min-h-2\/5-screen {
   min-height: 40vh !important;
@@ -824,6 +858,21 @@ Ensure the default browser behavior of the `hidden` attribute.
 .w-3\/4 {
   width: 75% !important;
 }
+.w-full {
+  width: 100% !important;
+}
+.w-36 {
+  width: 9rem !important;
+}
+.w-8 {
+  width: 2rem !important;
+}
+.w-16 {
+  width: 4rem !important;
+}
+.w-6 {
+  width: 1.5rem !important;
+}
 .flex-auto {
   flex: 1 1 auto !important;
 }
@@ -849,11 +898,24 @@ Ensure the default browser behavior of the `hidden` attribute.
   -webkit-animation: spin 1s linear infinite !important;
           animation: spin 1s linear infinite !important;
 }
+@keyframes spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin {
+  -webkit-animation: spin 1s linear infinite !important;
+          animation: spin 1s linear infinite !important;
+}
 .cursor-pointer {
   cursor: pointer !important;
 }
 .cursor-not-allowed {
   cursor: not-allowed !important;
+}
+.cursor-pointer {
+  cursor: pointer !important;
 }
 .select-none {
   -webkit-user-select: none !important;
@@ -981,6 +1043,12 @@ Ensure the default browser behavior of the `hidden` attribute.
 .rounded-none {
   border-radius: 0px !important;
 }
+.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+.rounded-full {
+  border-radius: 9999px !important;
+}
 .rounded-t-lg {
   border-top-left-radius: 0.5rem !important;
   border-top-right-radius: 0.5rem !important;
@@ -1014,6 +1082,12 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .border-0 {
   border-width: 0px !important;
+}
+.border {
+  border-width: 1px !important;
+}
+.border-2 {
+  border-width: 2px !important;
 }
 .border-b {
   border-bottom-width: 1px !important;
@@ -1056,6 +1130,12 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .border-r-0 {
   border-right-width: 0px !important;
+}
+.border-b {
+  border-bottom-width: 1px !important;
+}
+.border-t {
+  border-top-width: 1px !important;
 }
 .border-dashed {
   border-style: dashed !important;
@@ -1116,6 +1196,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--popup-surface) / var(--tw-border-opacity)) !important;
 }
+.border-transparent {
+  border-color: transparent !important;
+}
 .border-numpad-edge {
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--numpad-edge) / var(--tw-border-opacity)) !important;
@@ -1131,9 +1214,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-blue-800 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(30 64 175 / var(--tw-border-opacity)) !important;
-}
-.border-transparent {
-  border-color: transparent !important;
 }
 .border-input-option-hover {
   --tw-border-opacity: 1 !important;
@@ -1226,6 +1306,13 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-gray-800 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(31 41 55 / var(--tw-border-opacity)) !important;
+}
+.border-popup-surface {
+  --tw-border-opacity: 1 !important;
+  border-color: rgb(var(--popup-surface) / var(--tw-border-opacity)) !important;
+}
+.border-transparent {
+  border-color: transparent !important;
 }
 .bg-green-100 {
   --tw-bg-opacity: 1 !important;
@@ -1410,6 +1497,21 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--input-button) / var(--tw-bg-opacity)) !important;
 }
+.bg-transparent {
+  background-color: transparent !important;
+}
+.bg-error-primary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--error-primary) / var(--tw-bg-opacity)) !important;
+}
+.bg-input-disabled {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--input-disabled) / var(--tw-bg-opacity)) !important;
+}
+.bg-info-tertiary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--info-tertiary) / var(--tw-bg-opacity)) !important;
+}
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
 }
@@ -1559,6 +1661,12 @@ Ensure the default browser behavior of the `hidden` attribute.
 .p-10 {
   padding: 2.5rem !important;
 }
+.p-2 {
+  padding: 0.5rem !important;
+}
+.p-1 {
+  padding: 0.25rem !important;
+}
 .px-2 {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
@@ -1602,6 +1710,26 @@ Ensure the default browser behavior of the `hidden` attribute.
 .py-5 {
   padding-top: 1.25rem !important;
   padding-bottom: 1.25rem !important;
+}
+.px-2 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+.px-3 {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+.px-1 {
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+}
+.py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+.py-3 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
 }
 .pl-3 {
   padding-left: 0.75rem !important;
@@ -1696,6 +1824,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-size: 4.5rem !important;
   line-height: 1 !important;
 }
+.text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
 .font-semibold {
   font-weight: 600 !important;
 }
@@ -1766,10 +1898,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-text-opacity: 1 !important;
   color: rgb(243 244 246 / var(--tw-text-opacity)) !important;
 }
-.text-success-primary {
-  --tw-text-opacity: 1 !important;
-  color: rgb(var(--success-primary) / var(--tw-text-opacity)) !important;
-}
 .text-tertiary {
   --tw-text-opacity: 1 !important;
   color: rgb(var(--tertiary) / var(--tw-text-opacity)) !important;
@@ -1801,6 +1929,18 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-text-opacity: 1 !important;
   color: rgb(var(--success-light-secondary) / var(--tw-text-opacity)) !important;
 }
+.text-white {
+  --tw-text-opacity: 1 !important;
+  color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+.text-gray-600 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(75 85 99 / var(--tw-text-opacity)) !important;
+}
+.text-primary {
+  --tw-text-opacity: 1 !important;
+  color: rgb(var(--primary) / var(--tw-text-opacity)) !important;
+}
 .underline {
   -webkit-text-decoration-line: underline !important;
           text-decoration-line: underline !important;
@@ -1828,6 +1968,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .shadow-inner {
   --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05) !important;
   --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+.shadow {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 .outline-none {
@@ -2610,94 +2755,8 @@ body {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-/**
- * Forms
-**/
-.form-input {
-  outline-width: 0px;
-}
-.form-input label {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-weight: 600;
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity));
-}
-.form-input input {
-  width: 100%;
-  border-radius: 0.25rem;
-  border-width: 2px;
-  --tw-border-opacity: 1;
-  border-color: rgb(191 219 254 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(219 234 254 / var(--tw-bg-opacity));
-  padding: 0.5rem;
-}
-.form-input input[disabled] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
-}
-.form-input p {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity));
-}
-.form-input-invalid label {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-weight: 600;
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-.form-input-invalid input {
-  width: 100%;
-  border-radius: 0.25rem;
-  border-width: 2px;
-  --tw-border-opacity: 1;
-  border-color: rgb(248 113 113 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 226 226 / var(--tw-bg-opacity));
-  padding: 0.5rem;
-}
-.form-input-invalid p {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  font-size: 0.75rem;
-  line-height: 1rem;
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-/** @deprecated **/
-.btn {
-  border-radius: 0.25rem;
-  border-width: 1px;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-  text-align: center;
-  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-.btn-blue {
-  --tw-border-opacity: 1;
-  border-color: rgb(37 99 235 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-.btn-red {
-  --tw-border-opacity: 1;
-  border-color: rgb(220 38 38 / var(--tw-border-opacity));
-  --tw-bg-opacity: 1;
-  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
+button {
+  border-radius: 0px;
 }
 #editor h1 {
   font-size: 3rem;
@@ -2781,30 +2840,6 @@ body {
 }
 .popup-heading h3 {
   font-weight: 600;
-}
-.dark .notification-card h1 {
-  --tw-text-opacity: 1;
-  color: rgb(203 213 225 / var(--tw-text-opacity));
-}
-.dark .notification-card p {
-  --tw-text-opacity: 1;
-  color: rgb(148 163 184 / var(--tw-text-opacity));
-}
-.dark .notification-card {
-  --tw-border-opacity: 1;
-  border-color: rgb(100 116 139 / var(--tw-border-opacity));
-}
-.notification-card h1 {
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-.notification-card p {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity));
-}
-.notification-card {
-  --tw-border-opacity: 1;
-  border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 .hover\:border:hover {
   border-width: 1px !important;
@@ -2906,6 +2941,10 @@ body {
 .hover\:bg-success-tertiary:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--success-tertiary) / var(--tw-bg-opacity)) !important;
+}
+.hover\:bg-error-secondary:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity)) !important;
 }
 .hover\:text-white:hover {
   --tw-text-opacity: 1 !important;
@@ -3028,6 +3067,10 @@ body {
   --tw-text-opacity: 1 !important;
   color: rgb(226 232 240 / var(--tw-text-opacity)) !important;
 }
+.dark .dark\:text-slate-300 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(203 213 225 / var(--tw-text-opacity)) !important;
+}
 .dark .dark\:hover\:bg-slate-600:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(71 85 105 / var(--tw-bg-opacity)) !important;
@@ -3111,6 +3154,10 @@ body {
 
   .md\:mt-0 {
     margin-top: 0px !important;
+  }
+
+  .md\:mb-0 {
+    margin-bottom: 0px !important;
   }
 
   .md\:inline-block {
@@ -3241,12 +3288,20 @@ body {
     width: 18rem !important;
   }
 
+  .md\:w-auto {
+    width: auto !important;
+  }
+
   .md\:flex-auto {
     flex: 1 1 auto !important;
   }
 
   .md\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .md\:flex-row {
+    flex-direction: row !important;
   }
 
   .md\:flex-row {

@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-xl w-4/5-screen md:w-2/5-screen xl:w-108">
+    <div id="ns-pos-customer-select-popup" class="ns-box shadow-xl w-4/5-screen md:w-2/5-screen xl:w-108">
         <div id="header" class="border-b ns-box-header text-center font-semibold text-2xl py-2">
             <h2>{{ __( 'Select Customer' ) }}</h2>
         </div>
@@ -37,7 +37,7 @@
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
-                            <span class="text-success-primary">{{ customer.purchases_amount | currency }}</span>
+                            <span class="purchase-amount">{{ customer.purchases_amount | currency }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
                             </button>
