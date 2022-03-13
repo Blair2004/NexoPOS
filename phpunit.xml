@@ -10,6 +10,7 @@
       <directory suffix="ResetTest.php">./tests/Feature</directory>
       <directory suffix="ResetUserStatsTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
+      <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
       <directory suffix="CreateCouponTest.php">./tests/Feature</directory>

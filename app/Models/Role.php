@@ -36,6 +36,22 @@ class Role extends NsRootModel
      */
     const USER          =   'user';
 
+    /**
+     * Default dashboard identifier.
+     * Store dashboard
+     */
+    const DASHID_STORE      =   'store';
+
+    /**
+     * Store cashier dashboard.
+     */
+    const DASHID_CASHIER    =   'cashier';
+
+    /**
+     * Default dashboard for other users.
+     */
+    const DASHID_DEFAULT    =   'default';
+
     protected $cats     =   [
         'locked'        =>  'boolean'
     ];
