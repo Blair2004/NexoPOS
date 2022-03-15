@@ -19,7 +19,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "gumlet/php-image-resize": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "jackiedo/dotenv-editor": "^1.1",
+        "jackiedo/dotenv-editor": "^2.0",
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.6",
         "laravel/telescope": "^4.0",
