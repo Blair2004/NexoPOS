@@ -249,10 +249,10 @@ class CashRegistersService
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
-     * @param OrderAfterCreatedEvent $event
+     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
      * @return void
      */
-    public function increaseFromOrderCreatedEvent( OrderAfterCreatedEvent $event )
+    public function increaseFromOrderCreatedEvent( $event )
     {
         /**
          * If the payment status changed from
