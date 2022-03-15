@@ -29,7 +29,7 @@ class CashRegistersService
             );
         }
 
-        $registerHistory            =   new RegisterHistory;
+        $registerHistory                =   new RegisterHistory;
         $registerHistory->register_id   =   $register->id;
         $registerHistory->action        =   RegisterHistory::ACTION_OPENING;
         $registerHistory->author        =   Auth::id();
@@ -73,7 +73,7 @@ class CashRegistersService
             );
         }
 
-        $registerHistory    =   new RegisterHistory;
+        $registerHistory                =   new RegisterHistory;
         $registerHistory->register_id   =   $register->id;
         $registerHistory->action        =   RegisterHistory::ACTION_CLOSING;
         $registerHistory->author        =   Auth::id();
