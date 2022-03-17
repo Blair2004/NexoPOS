@@ -481,16 +481,16 @@
  * Buttons
 **/
 .ns-button {
-    --tw-border-opacity: 1;
-    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-.ns-button button {
+.ns-button button, .ns-button a {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--input-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
 }
-.ns-button:hover button {
+.ns-button:hover a, .ns-button:hover button {
     border-color: transparent;
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));

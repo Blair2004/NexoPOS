@@ -183,14 +183,16 @@
  * Buttons
 **/
 .ns-button {
-    @apply text-white border-input-edge;
+    @apply text-white;
 
-    button {
-        @apply bg-input-button;
+    button, a {
+        @apply bg-input-button border-input-edge;
     }
 
-    &:hover button {
-        @apply bg-input-button-hover border-transparent;
+    &:hover {
+        a, button {
+            @apply bg-input-button-hover border-transparent;
+        }
     }
     
     &.hover-success:hover, &.success {

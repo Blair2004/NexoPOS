@@ -1,6 +1,6 @@
 <template>
     <div id="permission-wrapper">
-        <div class="rounded shadow bg-white flex">
+        <div class="rounded shadow ns-box flex">
             <div id="permissions" class="w- bg-gray-800 flex-shrink-0">
                 <div class="h-24 py-4 px-2 border-b border-gray-700 text-gray-100 flex justify-between items-center">
                     <span v-if="! toggled">{{ __( 'Permissions' ) }}</span>
@@ -23,13 +23,13 @@
             <div class="flex flex-auto overflow-hidden">
                 <div class="overflow-y-auto">
                     <div class="text-gray-700 flex">
-                        <div v-for="role of roles" :key="role.id" class="h-24 py-4 px-2 w-56 items-center border-b justify-center flex role flex-shrink-0 border-r border-gray-200">
+                        <div v-for="role of roles" :key="role.id" class="h-24 py-4 px-2 w-56 items-center border-b justify-center flex role flex-shrink-0 border-r border-table-th-edge">
                             <p class="mx-1"><span>{{ role.name }}</span></p>
                             <span class="mx-1"><ns-checkbox @change="selectAllPermissions( role )" :field="role.field"></ns-checkbox></span>
                         </div>
                     </div>
                     <div :key="permission.id" v-for="permission of permissions" class="permission flex">
-                        <div v-for="role of roles" :key="role.id" class="border-b border-gray-200 w-56 flex-shrink-0 p-2 flex items-center justify-center border-r">
+                        <div v-for="role of roles" :key="role.id" class="border-b border-table-th-edge w-56 flex-shrink-0 p-2 flex items-center justify-center border-r">
                             <ns-checkbox @change="submitPermissions( role, role.fields[ permission.namespace ] )" :field="role.fields[ permission.namespace ]"></ns-checkbox>
                         </div>
                     </div>
