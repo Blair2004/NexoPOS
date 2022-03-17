@@ -21,7 +21,7 @@
     button {
         @apply bg-input-button text-white outline-none;
         i, span {
-            @apply text-white;
+            @apply text-primary;
         }
     }
 
@@ -243,10 +243,10 @@
     
     &.hover-info:hover, &.info {
         button, a {
-            @apply bg-info-secondary text-white;
+            @apply bg-info-tertiary text-white;
 
             span.ns-label {
-                @apply bg-input-background text-info-secondary;
+                @apply bg-input-background text-info-tertiary;
             }
         }
     }
@@ -264,21 +264,21 @@
     @apply shadow;
     
     button.success, a.success {
-        @apply bg-success-secondary text-typography;
+        @apply bg-success-tertiary text-white;
 
         span.ns-label {
-            @apply bg-input-background text-success-primary;
+            @apply bg-input-background text-success-tertiary;
         }
     }
     button.error, a.error {
-        @apply bg-error-secondary text-typography;
+        @apply bg-error-secondary text-white;
 
         span.ns-label {
             @apply bg-input-background text-error-secondary;
         }
     }
     button.warning, a.warning {
-        @apply bg-warning-primary text-typography;
+        @apply bg-warning-tertiary text-white;
 
         span.ns-label {
             @apply bg-input-background text-warning-secondary;
@@ -288,14 +288,14 @@
         @apply bg-input-background text-input-disabled;
 
         span.ns-label {
-            @apply bg-surface text-typography;
+            @apply bg-surface text-white;
         }
     }
     button.info, a.info {
-        @apply bg-info-secondary text-typography;
+        @apply bg-info-tertiary text-white;
 
         span.ns-label {
-            @apply bg-input-background text-info-secondary;
+            @apply bg-input-background text-info-tertiary;
         }
     }
     .ns-disabled {
@@ -324,15 +324,15 @@
         @apply bg-info-tertiary text-white border-transparent;
     }
     &.info:hover, &.info.active {
-        @apply bg-info-primary text-white border-transparent;
+        @apply bg-info-tertiary text-white border-transparent;
     }
     &.success:hover, &.success.active {
-        @apply bg-success-primary text-white border-transparent;
+        @apply bg-success-tertiary text-white border-transparent;
     }
     &.warning:hover, &.warning.active {
-        @apply bg-warning-primary text-white border-transparent;
+        @apply bg-warning-tertiary text-white border-transparent;
     }
     &.error:hover, &.error.active  {
-        @apply bg-error-primary text-white border-transparent;
+        @apply bg-error-tertiary text-white border-transparent;
     }
 }

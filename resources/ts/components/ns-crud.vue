@@ -6,7 +6,7 @@
                     <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
-                    <div class="rounded-full p-1 ns-crud-input border-2 flex">
+                    <div class="rounded-full p-1 ns-crud-input flex">
                         <input v-model="searchInput" type="text" class="w-36 md:w-auto bg-transparent outline-none px-2">
                         <button @click="search()" class="rounded-full w-8 h-8 outline-none ns-crud-input-button"><i class="las la-search"></i></button>
                         <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-primary text-white outline-none hover:bg-error-secondary"><i class="las la-times"></i></button>
@@ -82,8 +82,8 @@
                 </table>
             </div>
         </div>
-        <div class="p-2 flex border-t flex-col md:flex-row justify-between">
-            <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full border-2 ns-crud-input p-1">
+        <div class="p-2 flex border-t flex-col md:flex-row justify-between footer">
+            <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
                 <select class="outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
                     <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
                     <option class="bg-input-disabled" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>

@@ -18,7 +18,7 @@
                                     <ns-checkbox v-if="order.shipping > 0" @change="toggleRefundShipping( $event )" :checked="refundShipping"></ns-checkbox>
                                 </div>
                                 <div>
-                                    <button @click="addProduct()" class="border-2 rounded-full px-2 py-1 ns-inset-button info">{{ __( 'Add Product' ) }}</button>
+                                    <button @click="addProduct()" class="border rounded-full px-2 py-1 ns-inset-button info">{{ __( 'Add Product' ) }}</button>
                                 </div>
                             </div>
                         </div>

@@ -32,30 +32,30 @@
         }
 
         &.success {
-            @apply bg-success-primary border-success-secondary text-white;
+            @apply bg-success-primary border-success-secondary text-primary;
             &.hoverable:hover {
-                @apply bg-success-secondary text-white;
+                @apply bg-success-secondary text-primary;
             }
         }
         
         &.error {
-            @apply bg-error-primary border-error-secondary text-white;
+            @apply bg-error-primary border-error-secondary text-primary;
             &.hoverable:hover {
-                @apply bg-error-secondary text-white;
+                @apply bg-error-secondary text-primary;
             }
         }
     
         &.info {
-            @apply bg-info-primary border-info-secondary text-white;
+            @apply bg-info-primary border-info-secondary text-primary;
             &.hoverable:hover {
-                @apply bg-info-secondary text-white;
+                @apply bg-info-secondary text-primary;
             }
         }
     
         &.warning {
-            @apply bg-warning-primary border-warning-secondary text-white;
+            @apply bg-warning-primary border-warning-secondary text-primary;
             &.hoverable:hover {
-                @apply bg-warning-secondary text-white;
+                @apply bg-warning-secondary text-primary;
             }
         }
     }

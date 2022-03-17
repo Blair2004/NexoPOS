@@ -533,9 +533,9 @@
 }
 .ns-button.hover-default:hover button, .ns-button.hover-default:hover a, .ns-button.default button, .ns-button.default a {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--input-background) / var(--tw-bg-opacity));
+    background-color: rgb(var(--input-button) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
-    color: rgb(var(--input-disabled) / var(--tw-text-opacity));
+    color: rgb(var(--primary) / var(--tw-text-opacity));
 }
 .ns-button.hover-default:hover button span.ns-label, .ns-button.hover-default:hover a span.ns-label, .ns-button.default button span.ns-label, .ns-button.default a span.ns-label {
     --tw-bg-opacity: 1;
@@ -780,6 +780,10 @@
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
+}
+#crud-table .footer {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--box-edge) / var(--tw-border-opacity));
 }
 #crud-form .ns-crud-button, #crud-form .ns-crud-input-button {
     --tw-border-opacity: 1;
@@ -1160,23 +1164,23 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container {
+#pos-container #pos-cart .cart-table {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox {
+#pos-container #pos-cart .cart-table #cart-toolbox {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div {
+#pos-container #pos-cart .cart-table #cart-toolbox > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div hr {
+#pos-container #pos-cart .cart-table #cart-toolbox > div hr {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div button {
+#pos-container #pos-cart .cart-table #cart-toolbox > div button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1184,123 +1188,135 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-toolbox > div button:hover {
+#pos-container #pos-cart .cart-table #cart-toolbox > div button:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-table-header {
+#pos-container #pos-cart .cart-table #cart-table-header {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-table-header > div {
+#pos-container #pos-cart .cart-table #cart-table-header > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div {
+#pos-container #pos-cart .cart-table #cart-products-table a {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
+}
+#pos-container #pos-cart .cart-table #cart-products-table a:hover {
+    --tw-text-opacity: 1;
+    color: rgb(var(--info-primary) / var(--tw-text-opacity));
+}
+#pos-container #pos-cart .cart-table #cart-products-table > div {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div {
+#pos-container #pos-cart .cart-table #cart-products-table > div > div {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .remove-product {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
+}
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .remove-product {
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .remove-product:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .remove-product:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--error-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .price:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .price:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .wholesale-mode {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .wholesale-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-primary) / var(--tw-border-opacity));
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .wholesale-mode:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .wholesale-mode:hover {
     background-color: transparent;
     --tw-text-opacity: 1;
     color: rgb(var(--success-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .normal-mode {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .normal-mode {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .normal-mode:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .normal-mode:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-item > div .product-controls {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-item > div .product-controls {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer > span {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer > span {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .quantity-changer:hover {
+#pos-container #pos-cart .cart-table #cart-products-table > div .quantity-changer:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-hover) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table > div .product-price {
+#pos-container #pos-cart .cart-table #cart-products-table > div .product-price {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table .empty-cart {
+#pos-container #pos-cart .cart-table #cart-products-table .empty-cart {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-table .empty-cart h3 {
+#pos-container #pos-cart .cart-table #cart-products-table .empty-cart h3 {
     --tw-text-opacity: 1;
     color: rgb(var(--secondary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table {
+#pos-container #pos-cart .cart-table #cart-products-summary table {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td {
+#pos-container #pos-cart .cart-table #cart-products-summary table td {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td a {
+#pos-container #pos-cart .cart-table #cart-products-summary table td a {
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table td a:hover {
+#pos-container #pos-cart .cart-table #cart-products-summary table td a:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--info-primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-primary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line a {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line a {
     --tw-border-opacity: 1;
     border-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-products-summary table .summary-line a:hover {
+#pos-container #pos-cart .cart-table #cart-products-summary table .summary-line a:hover {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--success-primary) / var(--tw-border-opacity));
@@ -1309,11 +1325,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #pay-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #pay-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--success-secondary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--info-secondary) / var(--tw-border-opacity));
@@ -1322,11 +1338,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #hold-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #hold-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--info-tertiary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button {
     border-right-width: 1px;
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
@@ -1335,11 +1351,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #discount-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #discount-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--input-button-active) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button {
     --tw-border-opacity: 1;
     border-color: rgb(var(--pos-button-edge) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
@@ -1347,11 +1363,11 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-text-opacity: 1;
     color: rgb(var(--typography) / var(--tw-text-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:hover {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:hover {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
 }
-#pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:hover, #pos-container #pos-cart #cart-container #cart-bottom-buttons #void-button:active {
+#pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:hover, #pos-container #pos-cart .cart-table #cart-bottom-buttons #void-button:active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
 }
@@ -1578,7 +1594,7 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, i {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }
@@ -1618,6 +1634,38 @@ p {
     background-color: rgb(var(--table-th) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+.ns-table thead tr.error > th, .ns-table thead tr.error td {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-tertiary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table thead tr.success > th, .ns-table thead tr.success td {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--success-tertiary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table thead tr.info > th, .ns-table thead tr.info td {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--info-tertiary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+.ns-table thead tr.warning > th, .ns-table thead tr.warning td {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--table-th-edge) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--warning-tertiary) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-table tbody, .ns-table tfoot {
     --tw-border-opacity: 1;

@@ -225,7 +225,7 @@
     
     &.hover-default:hover, &.default {
         button, a {
-            @apply bg-input-background text-input-disabled;
+            @apply bg-input-button text-primary;
 
             span.ns-label {
                 @apply bg-surface text-typography;

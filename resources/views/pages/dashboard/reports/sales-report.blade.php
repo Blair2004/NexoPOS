@@ -53,9 +53,9 @@
                     <div>
                         <div class="-mx-4 flex md:flex-row flex-col">
                             <div class="w-full md:w-1/2 px-4">
-                                <div class="shadow rounded my-4">
-                                    <div class="border-b">
-                                        <table class="table ns-tablea w-full">
+                                <div class="shadow rounded my-4 ns-box">
+                                    <div class="border-b ns-box-body">
+                                        <table class="table ns-table w-full">
                                             <tbody class="text-primary">
                                                 <tr class="">
                                                     <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white">{{ __( 'Sub Total' ) }}</td>

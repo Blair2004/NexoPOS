@@ -28,7 +28,7 @@
             }
         }
 
-        #cart-container {
+        .cart-table {
             @apply bg-tab-active;
             #cart-toolbox {
                 @apply border-pos-button-edge;
@@ -54,8 +54,20 @@
                 }
             }
             #cart-products-table {
+                a {
+                    @apply border-info-primary;
+
+                    &:hover {
+                        @apply text-info-primary;
+                    }
+                }
+
                 > div {
                     @apply text-primary;
+
+                    > div {
+                        @apply border-pos-button-edge;
+                    }
 
                     .product-item {
                         > div {

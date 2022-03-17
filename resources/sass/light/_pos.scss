@@ -53,6 +53,14 @@
                 }
             }
             #cart-products-table {
+                a {
+                    @apply border-info-tertiary;
+
+                    &:hover {
+                        @apply text-info-tertiary;
+                    }
+                }
+
                 > div {
                     @apply text-primary;
 
@@ -130,10 +138,10 @@
                         @apply border-pos-button-edge;
                         
                         a {
-                            @apply border-info-primary;
+                            @apply border-info-tertiary;
 
                             &:hover {
-                                @apply text-info-primary;
+                                @apply text-info-tertiary;
                             }
                         }
                     }
@@ -145,7 +153,7 @@
                             @apply border-white;
 
                             &:hover {
-                                @apply text-typography;
+                                @apply text-white;
                             }
                         }
                     }

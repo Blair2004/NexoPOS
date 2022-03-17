@@ -45,41 +45,43 @@
                         </div>
                     </div>
                     <div class="shadow rounded my-4">
-                        <div class="border-b border-box-edge">
-                            <table class="table ns-table w-full">
-                                <thead>
-                                    <tr>
-                                        <th class="border p-2 text-left">{{ __( 'Product' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Unit' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Quantity' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Purchase Price' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Sale Price' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Taxes' ) }}</th>
-                                        <th width="150" class="text-right border p-2">{{ __( 'Profit' ) }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="product of products" :key="product.id" :class="product.total_price - product.total_purchase_price < 0 ? 'bg-red-100' : 'bg-white'">
-                                        <td class="p-2 border border-info-primary">@{{ product.name }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ product.unit_name }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ product.quantity }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ product.total_purchase_price | currency }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ product.total_price | currency }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ product.tax_value | currency }}</td>
-                                        <td class="p-2 border text-right border-info-primary">@{{ ( product.total_price - product.total_purchase_price ) | currency }}</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot class="font-semibold">
-                                    <tr>
-                                        <td colspan="2" class="p-2 border"></td>
-                                        <td class="p-2 border text-right">@{{ totalQuantities }}</td>
-                                        <td class="p-2 border text-right">@{{ totalPurchasePrice | currency }}</td>
-                                        <td class="p-2 border text-right">@{{ totalSalePrice | currency }}</td>
-                                        <td class="p-2 border text-right">@{{ totalTax | currency }}</td>
-                                        <td class="p-2 border text-right">@{{ totalProfit | currency }}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                        <div class="ns-box">
+                            <div class="border-b ns-box-body p-2">
+                                <table class="table ns-table w-full">
+                                    <thead>
+                                        <tr>
+                                            <th class="border p-2 text-left">{{ __( 'Product' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Unit' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Quantity' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Purchase Price' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Sale Price' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Taxes' ) }}</th>
+                                            <th width="150" class="text-right border p-2">{{ __( 'Profit' ) }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="product of products" :key="product.id" :class="product.total_price - product.total_purchase_price < 0 ? 'bg-red-100' : 'bg-white'">
+                                            <td class="p-2 border border-info-primary">@{{ product.name }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ product.unit_name }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ product.quantity }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ product.total_purchase_price | currency }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ product.total_price | currency }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ product.tax_value | currency }}</td>
+                                            <td class="p-2 border text-right border-info-primary">@{{ ( product.total_price - product.total_purchase_price ) | currency }}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="font-semibold">
+                                        <tr>
+                                            <td colspan="2" class="p-2 border"></td>
+                                            <td class="p-2 border text-right">@{{ totalQuantities }}</td>
+                                            <td class="p-2 border text-right">@{{ totalPurchasePrice | currency }}</td>
+                                            <td class="p-2 border text-right">@{{ totalSalePrice | currency }}</td>
+                                            <td class="p-2 border text-right">@{{ totalTax | currency }}</td>
+                                            <td class="p-2 border text-right">@{{ totalProfit | currency }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

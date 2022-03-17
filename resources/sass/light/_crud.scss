@@ -5,7 +5,7 @@
     @apply bg-box-background;
 
     .ns-crud-input {
-        @apply bg-input-disabled border-input-edge;
+        @apply bg-input-background border-input-edge;
 
         input {
             @apply text-primary;

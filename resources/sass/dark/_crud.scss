@@ -54,6 +54,10 @@
             @apply border-transparent bg-input-button-hover text-typography;
         }
     }
+
+    .footer {
+        @apply border-box-edge;
+    }
 }
 
 #crud-form {

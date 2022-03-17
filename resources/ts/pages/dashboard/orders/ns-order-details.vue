@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-error-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice error">
                         <div>
                             <h4 class="text-semibold">
                                 <span class="text-white">{{ __( 'Discount' ) }}</span>
@@ -34,9 +34,9 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-error-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice error">
                         <div>
-                            <h4 class="text-semibold text-white">
+                            <h4 class="text-semibold">
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-info-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice info">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
@@ -52,9 +52,9 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-warning-primary text-primary">
+                    <div class="p-2 flex justify-between items-start ns-notice warning">
                         <div>
-                            <h4 class="text-semibold text-white">{{ __( 'Taxes' ) }}</h4>
+                            <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.tax_value | currency }}</div>
                     </div>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start elevation-surface border text-white">
+                    <div class="p-2 flex justify-between items-start elevation-surface border">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
                         </div>

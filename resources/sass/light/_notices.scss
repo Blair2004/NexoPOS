@@ -18,7 +18,7 @@
     }
     
     &.warning {
-        @apply border-warning-secondary bg-warning-primary;
+        @apply border-warning-tertiary bg-warning-tertiary;
     
         pre {
             @apply bg-pre text-primary;
@@ -42,7 +42,7 @@
     }
     
     &.info {
-        @apply border-info-secondary bg-info-primary;
+        @apply border-info-tertiary bg-info-tertiary;
     
         pre {
             @apply bg-pre text-primary;
