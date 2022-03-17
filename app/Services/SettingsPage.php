@@ -20,19 +20,23 @@ class SettingsPage
     public function getForm()
     {
         return collect( $this->form )->mapWithKeys( function( $tab, $key ) {
-            return [
-                $key => collect( $tab )->mapWithKeys( function( $tab, $key ) {
-                    /**
-                     * in case not fields is provided
-                     * let's save the tab with no fields.
-                     */
-                    if ( ! isset( $tab[ 'fields' ] ) ) {
-                        $tab[ 'fields' ]    =   [];
-                    }
+            if ( $tab === 'tabs' ) {
+                return [
+                    $key => collect( $tab )->mapWithKeys( function( $tab, $key ) {
+                        /**
+                         * in case not fields is provided
+                         * let's save the tab with no fields.
+                         */
+                        if ( ! isset( $tab[ 'fields' ] ) ) {
+                            $tab[ 'fields' ]    =   [];
+                        }
+    
+                        return [ $key => $tab ];
+                    })
+                ];
+            }
 
-                    return [ $key => $tab ];
-                })
-            ];
+            return [ $key => $tab ];
         });
     }
 

@@ -1,8 +1,8 @@
 h1, h2, h3, h4, h5, h6 {
-    @apply text-gray-700;
+    @apply text-primary;
 }
 
-p, i, span {
-    @apply text-slate-600;
+p {
+    @apply text-secondary;
 }
 

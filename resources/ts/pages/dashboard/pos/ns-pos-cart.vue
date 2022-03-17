@@ -1,84 +1,88 @@
 <template>
     <div id="pos-cart" class="flex-auto flex flex-col">
-        <div id="tools" class="flex pl-2" v-if="visibleSection === 'cart'">
-            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-white font-semibold text-gray-700">
+        <div id="tools" class="flex pl-2 ns-tab" v-if="visibleSection === 'cart'">
+            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold active tab">
                 <span>{{ __( 'Cart' ) }}</span>
                 <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
             </div>
-            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
+            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l inactive tab">
                 {{ __( 'Products' ) }}
             </div>
         </div>
-        <div class="rounded shadow bg-white flex-auto flex overflow-hidden">
+        <div class="rounded shadow ns-tab-item flex-auto flex overflow-hidden">
             <div class="cart-table flex flex-auto flex-col overflow-hidden">
-                <div id="cart-toolbox" class="w-full p-2 border-b border-gray-300">
-                    <div class="border border-gray-300 rounded overflow-hidden">
+                <div id="cart-toolbox" class="w-full p-2 border-b">
+                    <div class="border rounded overflow-hidden">
                         <div class="flex flex-wrap">
-                            <div>
-                                <button @click="openNotePopup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none">
+                            <div class="ns-button">
+                                <button @click="openNotePopup()" class="w-full h-10 px-3 outline-none">
                                     <i class="las la-comment"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Comments' ) }}</span>
                                 </button>
                             </div>
-                            <div>
-                                <button @click="selectTaxGroup()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                            <hr class="h-10" style="width: 1px">
+                            <div class="ns-button">
+                                <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-balance-scale-left"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
-                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.taxes.length }}</span>
+                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.taxes.length }}</span>
                                 </button>
                             </div>
-                            <div>
-                                <button @click="selectCoupon()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                            <hr class="h-10" style="width: 1px">
+                            <div class="ns-button">
+                                <button @click="selectCoupon()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-tags"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Coupons' ) }}</span>
-                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-blue-400 text-white">{{ order.coupons.length }}</span>
+                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
-                            <div>
-                                <button @click="defineOrderSettings()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                            <hr class="h-10" style="width: 1px">
+                            <div class="ns-button">
+                                <button @click="defineOrderSettings()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-tools"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Settings' ) }}</span>
                                 </button>
                             </div>
-                            <div v-if="options.ns_pos_quick_product === 'yes'">
-                                <button @click="openAddQuickProduct()" class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center">
+                            <hr class="h-10" style="width: 1px">
+                            <div class="ns-button" v-if="options.ns_pos_quick_product === 'yes'">
+                                <button @click="openAddQuickProduct()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-plus"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Product' ) }}</span>
                                 </button>
                             </div>
-                            <!-- <div class="flex-auto"><button class="w-full h-10 px-3 bg-gray-200 border-r border-gray-300 outline-none flex items-center" disabled></button></div> -->
+                            <hr class="h-10" style="width: 1px">
                         </div>
                     </div>
                 </div>
-                <div id="cart-table-header" class="w-full text-gray-700 font-semibold flex">
-                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200 bg-gray-100">{{ __( 'Product' ) }}</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0 border-gray-200 bg-gray-100">{{ __( 'Quantity' ) }}</div>
-                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 bg-gray-100">{{ __( 'Total' ) }}</div>
+                <div id="cart-table-header" class="w-full text-primary font-semibold flex">
+                    <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">{{ __( 'Product' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border-b border-t-0">{{ __( 'Quantity' ) }}</div>
+                    <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0">{{ __( 'Total' ) }}</div>
                 </div>
                 <div id="cart-products-table" class="flex flex-auto flex-col overflow-auto">
                     
                     <!-- Loop Procuts On Cart -->
 
-                    <div class="text-gray-700 flex" v-if="products.length === 0">
-                        <div class="w-full text-center py-4 border-b border-gray-200">
-                            <h3 class="text-gray-600">{{ __( 'No products added...' ) }}</h3>
+                    <div class="text-primary flex" v-if="products.length === 0">
+                        <div class="w-full text-center py-4 border-b">
+                            <h3>{{ __( 'No products added...' ) }}</h3>
                         </div>
                     </div>
 
-                    <div :product-index="index" :key="product.barcode" class="text-gray-700 flex" v-for="(product, index) of products">
-                        <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0 border-gray-200">
+                    <div :product-index="index" :key="product.barcode" class="product-item flex" v-for="(product, index) of products">
+                        <div class="w-full lg:w-4/6 p-2 border border-l-0 border-t-0">
                             <div class="flex justify-between product-details mb-1">
                                 <h3 class="font-semibold">
                                     {{ product.name }} &mdash; {{ product.unit_name }}
                                 </h3>
                                 <div class="-mx-1 flex product-options">
                                     <div class="px-1"> 
-                                        <a @click="remove( product )" class="hover:text-red-400 cursor-pointer outline-none border-dashed py-1 border-b border-red-400 text-sm">
+                                        <a @click="remove( product )" class="hover:text-error-secondary cursor-pointer outline-none border-dashed py-1 border-b border-error-secondary text-sm">
                                             <i class="las la-trash text-xl"></i>
                                         </a>
                                     </div>
                                     <div class="px-1"> 
-                                        <a :class="product.mode === 'wholesale' ? 'text-green-600 border-green-600' : 'border-blue-400'" @click="toggleMode( product )" class="hover:text-blue-600 cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
+                                        <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
                                     </div>
@@ -89,74 +93,74 @@
                                     <div class="px-1 w-1/2 md:w-auto mb-1">
                                         <a
                                             @click="changeProductPrice( product )"
-                                            :class="product.mode === 'wholesale' ? 'text-green-600 hover:text-green-700 border-green-600' : 'hover:text-blue-400 border-blue-400'"
+                                            :class="product.mode === 'wholesale' ? 'text-success-secondary hover:text-success-secondary border-success-secondary' : 'border-info-primary'"
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
                                         >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1"> 
-                                        <a @click="openDiscountPopup( product, 'product' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        <a @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a @click="changeQuantity( product )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        <a @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <span class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
+                                        <span class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b border-gray-200 items-center justify-center cursor-pointer hover:bg-blue-100">
-                            <span class="border-b border-dashed border-blue-400 p-2">{{ product.quantity }}</span>
+                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center cursor-pointer ns-numpad-key">
+                            <span class="border-b border-dashed border-info-primary p-2">{{ product.quantity }}</span>
                         </div>
-                        <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 border-gray-200 items-center justify-center">{{ product.total_price | currency }}</div>
+                        <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
                     
                     <!-- End Loop -->
 
                 </div>
                 <div id="cart-products-summary" class="flex">
-                    <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'both'">
+                    <table class="table ns-table w-full text-sm " v-if="visibleSection === 'both'">
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">Customer : {{ customerName }}</a>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">{{ __( 'Sub Total' ) }}</td>
-                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.subtotal | currency }}</td>
+                            <td width="200" class="border p-2">{{ __( 'Sub Total' ) }}</td>
+                            <td width="200" class="border p-2 text-right">{{ order.subtotal | currency }}</td>
                         </tr>
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
+                            <td width="200" class="border p-2">
+                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <span>{{ __( 'Discount' ) }}</span>
                                 <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
                                 <span v-if="order.discount_type === 'flat'">({{ __( 'Flat' ) }})</span>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2 text-right">
-                                <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
+                            <td width="200" class="border p-2 text-right">
+                                <a @click="openDiscountPopup( order, 'cart' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ order.discount | currency }}</a>
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="200" class="border border-gray-300 p-2"></td>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Shipping' ) }}</a>
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="openShippingPopup()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Shipping' ) }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.shipping | currency }}</td>
+                            <td width="200" class="border p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
-                        <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
+                        <tr class="success">
+                            <td width="200" class="border p-2">
+                                <a v-if="order" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }} : {{ order.tax_value | currency }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">{{ __( 'Total' ) }}</td>
-                            <td width="200" class="border border-gray-300 p-2 text-right">{{ order.total | currency }}</td>
+                            <td width="200" class="border p-2">{{ __( 'Total' ) }}</td>
+                            <td width="200" class="border p-2 text-right">{{ order.total | currency }}</td>
                         </tr>
                     </table>
-                    <table class="table w-full text-sm text-gray-700" v-if="visibleSection === 'cart'">
+                    <table class="table ns-table w-full text-sm" v-if="visibleSection === 'cart'">
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="selectCustomer()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
+                            <td width="200" class="border p-2">
+                                <a @click="selectCustomer()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Customer :' ) }} {{ customerName }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between">
                                     <span>{{ __( 'Sub Total' ) }}</span>
                                     <span>{{ order.subtotal | currency }}</span>
@@ -164,32 +168,32 @@
                             </td>
                         </tr>
                         <tr>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openOrderType()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
+                            <td width="200" class="border p-2">
+                                <a @click="openOrderType()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Type :' ) }} {{ selectedType }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between items-center">
                                     <p>
                                         <span>{{ __( 'Discount' ) }}</span>
                                         <span v-if="order.discount_type === 'percentage'">({{ order.discount_percentage }}%)</span>
                                         <span v-if="order.discount_type === 'flat'">({{ __( 'Flat' ) }})</span>
                                     </p>
-                                    <a @click="openDiscountPopup( order, 'cart' )" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ order.discount | currency }}</a>
+                                    <a @click="openDiscountPopup( order, 'cart' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ order.discount | currency }}</a>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="order.type && order.type.identifier === 'delivery'">
-                            <td width="200" class="border border-gray-300 p-2"></td>
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a @click="openShippingPopup()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Shipping' ) }}</a>
+                            <td width="200" class="border p-2"></td>
+                            <td width="200" class="border p-2">
+                                <a @click="openShippingPopup()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Shipping' ) }}</a>
                                 <span></span>                          
                             </td>
                         </tr>
-                        <tr class="bg-green-200">
-                            <td width="200" class="border border-gray-300 p-2">
-                                <a v-if="order" @click="openTaxSummary()" class="hover:text-blue-400 cursor-pointer outline-none border-dashed py-1 border-b border-blue-400 text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
+                        <tr class="success">
+                            <td width="200" class="border p-2">
+                                <a v-if="order" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax :' ) }} {{ order.tax_value | currency }}</a>
                             </td>
-                            <td width="200" class="border border-gray-300 p-2">
+                            <td width="200" class="border p-2">
                                 <div class="flex justify-between w-full">
                                     <span>{{ __( 'Total' ) }}</span>
                                     <span>{{ order.total | currency }}</span>    
@@ -198,7 +202,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="h-16 flex flex-shrink-0 border-t border-gray-200" id="cart-bottom-buttons">
+                <div class="h-16 flex flex-shrink-0 border-t border-box-edge" id="cart-bottom-buttons">
                     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
@@ -207,11 +211,11 @@
                         <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
                     </div>
-                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-gray-200 hover:bg-indigo-100 flex-auto text-gray-700">
+                    <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-box-edge hover:bg-indigo-100 flex-auto text-gray-700">
                         <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
                     </div>
-                    <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-gray-200 hover:bg-red-600 flex-auto">
+                    <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-box-edge hover:bg-red-600 flex-auto">
                         <i class="mr-2 text-2xl lg:text-xl las la-trash"></i> 
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Void' ) }}</span>
                     </div>
@@ -240,7 +244,6 @@ import nsPosHoldOrdersPopupVue from '@/popups/ns-pos-hold-orders-popup.vue';
 import nsPosLoadingPopupVue from '@/popups/ns-pos-loading-popup.vue';
 import nsPosNotePopupVue from '@/popups/ns-pos-note-popup.vue';
 import nsPosTaxPopupVue from '@/popups/ns-pos-tax-popup.vue';
-import nsPosCouponsPopupVue from '@/popups/ns-pos-coupons-popup.vue';
 import nsPosCouponsLoadPopupVue from '@/popups/ns-pos-coupons-load-popup.vue';
 import { __ } from '@/libraries/lang';
 import nsPosOrderSettingsVue from '@/popups/ns-pos-order-settings.vue';

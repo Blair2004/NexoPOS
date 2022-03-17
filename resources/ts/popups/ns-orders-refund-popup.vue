@@ -1,13 +1,13 @@
 <template>
-    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen bg-surface-tertiary flex flex-col overflow-hidden">
-        <div class="border-b p-2 flex items-center justify-between">
+    <div class="shadow-lg w-95vw h-95vh md:w-3/5-screen md:h-3/5-screen ns-box flex flex-col overflow-hidden">
+        <div class="border-b p-2 flex items-center justify-between ns-box-header">
             <h3>{{ __( 'Order Refunds' ) }}</h3>
             <div class="flex">
                 <div v-if="view === 'details'" @click="view = 'summary'" class="flex items-center justify-center cursor-pointer rounded-full px-3 border hover:bg-info-primary hover:text-white mr-1">{{ __( 'Go Back' ) }}</div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>            
-        <div class="overflow-auto flex-auto">
+        <div class="overflow-auto flex-auto ns-box-body">
             <template v-if="view === 'summary'">
                 <div class="flex h-full w-full items-center justify-center" v-if="! loaded">
                     <ns-spinner size="24"></ns-spinner>

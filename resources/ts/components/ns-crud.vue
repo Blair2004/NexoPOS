@@ -1,6 +1,6 @@
 <template>
-    <div id="crud-table" class="w-full rounded-lg bg-surface-secondary" :class="mode !== 'light' ? 'shadow mb-8': ''">
-        <div id="crud-table-header" class="p-2 border-b border-surface-tertiary flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
+    <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
+        <div id="crud-table-header" class="p-2 border-b border-popup-surface flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
                 <div class="px-2 flex items-center justify-center">
                     <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
@@ -12,7 +12,7 @@
                         <button v-if="searchQuery" @click="cancelSearch()" class="ml-1 rounded-full w-8 h-8 bg-error-primary text-white outline-none hover:bg-error-secondary"><i class="las la-times"></i></button>
                     </div>
                 </div>
-                <div class="px-2 flex">
+                <div class="px-2 flex items-center justify-center">
                     <button @click="refresh()" class="rounded-full
                     text-sm
                     h-10
@@ -22,7 +22,7 @@
                     ns-crud-button
                     "><i :class="isRefreshing ? 'animate-spin' : ''" class="las la-sync"></i> </button>
                 </div>
-                <div class="px-2 flex" v-if="showQueryFilters">
+                <div class="px-2 flex items-center" v-if="showQueryFilters">
                     <button @click="openQueryFilter()" :class="withFilters ? 'table-filters-enabled' : 'table-filters-disabled'" class="ns-crud-button border rounded-full text-sm h-10 px-3 outline-none ">
                         <i v-if="! withFilters" class="las la-filter"></i>
                         <i v-if="withFilters" class="las la-check"></i>
@@ -32,25 +32,26 @@
                 </div>
             </div>
             <div id="crud-buttons" class="-mx-1 flex flex-wrap w-full md:w-auto">
-                <div class="px-1 flex" v-if="selectedEntries.length > 0">
+                <div class="px-1 flex items-center" v-if="selectedEntries.length > 0">
                     <button @click="clearSelectedEntries()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 outline-none ns-crud-button border">
                         <i class="lar la-check-square"></i> {{ __( '{entries} entries selected' ).replace( '{entries}', selectedEntries.length ) }}
                     </button>
                 </div>
-                <div class="px-1 flex">
-                    <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 outline-none bg-info-secondary text-white font-semibold"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
+                <div class="px-1 flex items-center">
+                    <button @click="downloadContent()" class="flex justify-center items-center rounded-full text-sm h-10 px-3 ns-crud-button border outline-none"><i class="las la-download"></i> {{ __( 'Download' ) }}</button>
                 </div>
             </div>
         </div>
         <div class="flex">
             <div class="overflow-x-auto flex-auto">
-                <table class="table w-full" v-if="Object.values( columns ).length > 0">
+                <table class="table ns-table w-full" v-if="Object.values( columns ).length > 0">
                     <thead>
-                        <tr class="dark:text-gray-300 dark:border-slate-200 text-gray-700 border-b border-gray-200">
-                            <th class="text-center px-2 dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100 border w-16 py-2">
+                        <tr>
+                            <th class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border dark:bg-slate-600 bg-gray-100 text-left px-2 dark:border-slate-700 border-gray-200 py-2">
+                            <th v-if="prependOptions" class="text-left px-2 py-2 w-16 border"></th>
+                            <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border text-left px-2 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
                                     <span class="h-6 w-6 flex justify-center items-center">
@@ -59,7 +60,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th class="text-left px-2 py-2 w-16 border dark:border-slate-700 dark:bg-slate-600 border-gray-200 bg-gray-100"></th>
+                            <th v-if="!prependOptions" class="text-left px-2 py-2 w-16 border"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +70,7 @@
                                 @updated="refreshRow( $event )" 
                                 v-for="(row,index) of result.data" 
                                 :columns="columns" 
+                                :prependOptions="prependOptions"
                                 :row="row" 
                                 @reload="refresh()"
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
@@ -80,23 +82,23 @@
                 </table>
             </div>
         </div>
-        <div class="p-2 flex flex-col md:flex-row justify-between">
+        <div class="p-2 flex border-t flex-col md:flex-row justify-between footer">
             <div v-if="bulkActions.length > 0" id="grouped-actions" class="mb-2 md:mb-0 flex justify-between rounded-full ns-crud-input p-1">
                 <select class="outline-none bg-transparent" v-model="bulkAction" id="grouped-actions">
-                    <option class="bg-surface-quaternary" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
-                    <option class="bg-surface-quaternary" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
+                    <option class="bg-input-disabled" selected value=""><slot name="bulk-label">{{ __( 'Bulk Actions' ) }}</slot></option>
+                    <option class="bg-input-disabled" :key="index" v-for="(action, index) of bulkActions" :value="action.identifier">{{ action.label }}</option>
                 </select>
-                <button @click="bulkDo()" class="ns-crud-input-button h-8 w-8 outline-none rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Go' ) }}</slot></button>
+                <button @click="bulkDo()" class="ns-crud-input-button h-8 px-3 outline-none rounded-full flex items-center justify-center"><slot name="bulk-go">{{ __( 'Apply' ) }}</slot></button>
             </div>
             <div class="flex">
-                <div class="items-center flex text-gray-600 mx-4">{{ resultInfo }}</div>
-                <div id="pagination" class="flex -mx-1">
+                <div class="items-center flex text-primary mx-4">{{ resultInfo }}</div>
+                <div id="pagination" class="flex items-center -mx-1">
                     <template v-if="result.current_page">
                         <a href="javascript:void(0)" @click="page=result.first_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">
                             <i class="las la-angle-double-left"></i>
                         </a>
                         <template v-for="(_paginationPage, index) of pagination">
-                            <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'bg-info-primary' : ''" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">{{ _paginationPage }}</a>
+                            <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'bg-info-tertiary border-transparent text-white' : ''" @click="page=_paginationPage;refresh()" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">{{ _paginationPage }}</a>
                             <a :key="index" v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border">...</a>
                         </template>
                         <a href="javascript:void(0)" @click="page=result.last_page;refresh()" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-crud-button border shadow">
@@ -122,6 +124,7 @@ declare const nsCrudHandler;
 export default {
     data: () => {
         return {
+            prependOptions: false,
             isRefreshing: false,
             sortColumn: '',
             searchInput: '',
@@ -299,7 +302,8 @@ export default {
             request.subscribe( (f:any) => {
                 this.columns        =   f.columns;
                 this.bulkActions    =   f.bulkActions;
-                this.queryFilters   =   f.queryFilters
+                this.queryFilters   =   f.queryFilters;
+                this.prependOptions =   f.prependOptions;
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();

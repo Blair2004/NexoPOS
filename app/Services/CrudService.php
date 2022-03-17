@@ -95,6 +95,12 @@ class CrudService
     public $skippable          =   [];
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   false;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -369,6 +375,16 @@ class CrudService
     public function getRelations()
     {
         return Hook::filter( self::method( 'getRelations' ), $this->relations );
+    }
+
+    /**
+     * Returns a boolean that determine if the options should be displayed 
+     * before the crud columns or after the crud columns. This method is defined
+     * for allowing other module to override this behavior.
+     */
+    public function getPrependOptions()
+    {
+        return $this->prependOptions;
     }
 
     /**

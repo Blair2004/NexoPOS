@@ -239,6 +239,7 @@ class CrudController extends DashboardController
                 'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
                 'links'                 =>  Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ?? [] ),
                 'bulkActions'           =>  Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
+                'prependOptions'        =>  Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
                 'namespace'             =>  $namespace,
             ];
         } 

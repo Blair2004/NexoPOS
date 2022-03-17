@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="shadow-lg w-95vw md:w-2/5-screen bg-surface-tertiary" v-if="loaded">
-            <div class="border-b border-surface-secondary p-2 text-primary flex justify-between items-center">
+        <div class="shadow-lg w-95vw md:w-2/5-screen ns-box" v-if="loaded">
+            <div class="border-b ns-box-header p-2 text-primary flex justify-between items-center">
                 <h3 class="font-semibold">{{ title }}</h3>
                 <div><ns-close-button @click="close()"></ns-close-button></div>
             </div>
             <div class="p-2">
-                <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
+                <div v-if="settings !== null && settings.register" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
                     <span>{{ __( 'Balance' ) }} </span>
                     <span>{{ settings.register.balance | currency }}</span>
                 </div>

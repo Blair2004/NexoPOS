@@ -68,7 +68,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     <div class="flex flex-col">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
-            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-surface-primary p-2 items-center">
+            <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
                 <div class="flex -mx-1 -my-1 flex-wrap">
                     <div class="px-1 my-1" v-for="(option,index) of _options.filter( o => o.selected )">
                         <div class="rounded bg-info-secondary text-white flex justify-between p-1 items-center">
@@ -85,8 +85,8 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                 </div>
             </div>
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
-                <div class="bg-surface-secondary shadow">
-                    <div class="search border-b border-surface-primary">
+                <div class="bg-input-edge shadow">
+                    <div class="search border-b border-input-option-hover">
                         <input v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>
                     <div class="h-40 overflow-y-auto">
@@ -102,7 +102,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
             </div>
         </div>
         <div class="my-2">
-            <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-secondary dark:text-slate-600"><slot name="description"></slot></p>
+            <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-secondary"><slot name="description"></slot></p>
             <p v-for="error of field.errors" class="text-xs text-error-primary">
                 <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
                 <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>

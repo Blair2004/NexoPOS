@@ -1,27 +1,98 @@
 /**
  * Fields
 **/
-
-// .ns-switch
-.ns-switch button.selected {
-    @apply bg-blue-500 text-white;
+.ns-switch {
+    button.selected {
+        @apply bg-info-primary text-white;
+        &:hover {
+            @apply bg-info-primary;
+        }
+    }
+    button.unselected {
+        @apply bg-white text-primary;
+    }
 } 
-.ns-switch button.unselected {
-    @apply bg-slate-600 text-slate-400;
-}
 
-// .ns-select
-.ns-select select {
-    @apply text-slate-300;
-    option {
-        @apply bg-slate-600;
+.input-group {
+    @apply border-input-edge;
+    input, select {
+        @apply bg-crud-button-edge text-primary;
+    }
+    button {
+        @apply bg-input-button text-white outline-none;
+        i, span {
+            @apply text-primary;
+        }
+    }
+
+    &.info {
+        @apply border-info-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-info-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    &.error {
+        @apply border-error-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-error-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+
+    &.warning {
+        @apply border-error-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-error-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
+    }
+    
+    &.success {
+        @apply border-success-primary;
+        input {
+            @apply bg-input-background text-primary;
+        }
+        button {
+            @apply bg-success-primary text-white;
+            i, span {
+                @apply text-white;
+            }
+        }
     }
 }
 
-// ns-input, ns-switch, .ns-select
+.ns-select {
+    select {
+        @apply bg-input-background text-primary;
+        option {
+            @apply bg-input-background;
+            &:hover {
+                @apply bg-input-option-hover text-white;
+            }
+        }
+    }
+}
+
 .ns-input, .ns-switch, .ns-select, .ns-textarea, .ns-media {
     [disabled] {
-        @apply bg-slate-800;
+        @apply bg-input-disabled border-input-edge text-tertiary;
     }
     
     .ns-enabled {
@@ -29,38 +100,45 @@
     }
 
     label {
-        .has-error {
-            @apply text-red-600;
+        &.has-error {
+            @apply text-error-secondary;
         }
     
-        .is-pristine {
-            @apply text-slate-300;
+        &.is-pristine {
+            @apply text-primary;
         }
     }
 
     div {
         &.has-error {
-            @apply border-red-600;
+            @apply border-error-secondary;
         }
         &.is-pristine {
-            @apply border-slate-600;
+            @apply border-input-edge;
         }
     }
 
     .leading {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
-    input {
-        @apply text-slate-300 outline-none;
+    input, textarea {
+        @apply text-primary outline-none bg-input-background border-input-edge;
+    }
+
+    button {
+        @apply border-input-edge text-primary;
+        &:hover {
+            @apply bg-input-button-hover;
+        }
     }
 
     p.ns-description {
-        @apply text-slate-300;
+        @apply text-primary;
     }
 
     p.ns-error {
-       @apply text-red-600; 
+       @apply text-error-secondary; 
     }
 }
 
@@ -69,64 +147,192 @@
 **/
 .form-input {
     @apply outline-0;
+    
+    *[disabled] {
+        @apply bg-input-disabled;
+    }
+
     label {
-        @apply text-gray-800;
+        @apply text-primary;
+    }
+    select {
+        @apply bg-input-background text-primary;
+        option {
+            @apply bg-input-background;
+            &:hover {
+                @apply bg-input-option-hover;
+            }
+        } 
     }
     input {
-        @apply border-blue-200 bg-blue-100 rounded;
+        @apply border-input-edge bg-input-background rounded;
         &[disabled] {
-            @apply bg-gray-800;
+            @apply bg-input-disabled;
         }
     }
     p {
-        @apply text-gray-600;
+        @apply text-secondary;
     }
 }
 
 .form-input-invalid {
     label {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
     input {
-        @apply border-red-400 bg-red-100 rounded;
+        @apply border-error-primary bg-error-secondary rounded;
     }
     p {
-        @apply text-red-500;
+        @apply text-error-secondary;
     }
-}
-.btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white;
-}
-.btn-red {
-    @apply border-red-600 bg-red-600 text-white;
 }
 
 /**
  * Buttons
 **/
 .ns-button {
-    &.ns-button-success {
-        @apply bg-green-600 text-white;
+    @apply text-primary border-input-edge;
+
+    button {
+        @apply bg-input-button;
     }
-    &.ns-button-danger {
-        @apply bg-red-600 text-white;
+
+    &:hover button {
+        @apply bg-input-button-hover border-transparent;
     }
-    &.ns-button-warning {
-        @apply bg-orange-400 text-white;
+    
+    &.hover-success:hover, &.success {
+        button, a {
+            @apply bg-success-tertiary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-success-primary;
+            }
+        }
     }
-    &.ns-button-default {
-        @apply bg-white text-gray-800;
+    
+    &.hover-error:hover, &.error {
+        button, a {
+            @apply bg-error-secondary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-error-secondary;
+            }
+        }
     }
-    &.ns-button-info {
-        @apply bg-blue-600 text-white;
+    
+    &.hover-warning:hover, &.warning {
+        button, a {
+            @apply bg-warning-primary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-warning-secondary;
+            }
+        }
+    }
+    
+    &.hover-default:hover, &.default {
+        button, a {
+            @apply bg-input-button text-primary;
+
+            span.ns-label {
+                @apply bg-surface text-typography;
+            }
+        }
+    }
+    
+    &.hover-info:hover, &.info {
+        button, a {
+            @apply bg-info-tertiary text-white;
+
+            span.ns-label {
+                @apply bg-input-background text-info-tertiary;
+            }
+        }
+    }
+    
+    .ns-disabled {
+        @apply bg-input-background border border-input-edge cursor-not-allowed text-primary;
+
+        span.ns-label {
+            @apply bg-input-background text-primary;
+        }
+    }
+}
+
+.ns-buttons {
+    @apply shadow;
+    
+    button.success, a.success {
+        @apply bg-success-tertiary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-success-tertiary;
+        }
+    }
+    button.error, a.error {
+        @apply bg-error-secondary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-error-secondary;
+        }
+    }
+    button.warning, a.warning {
+        @apply bg-warning-tertiary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-warning-secondary;
+        }
+    }
+    button.default, a.default {
+        @apply bg-input-background text-input-disabled;
+
+        span.ns-label {
+            @apply bg-surface text-white;
+        }
+    }
+    button.info, a.info {
+        @apply bg-info-tertiary text-white;
+
+        span.ns-label {
+            @apply bg-input-background text-info-tertiary;
+        }
     }
     .ns-disabled {
-        @apply bg-gray-400 border border-gray-500 cursor-not-allowed text-gray-600;
+        @apply bg-input-background border border-input-edge cursor-not-allowed text-primary;
+
+        span.ns-label {
+            @apply bg-input-background text-primary;
+        }
     }
 }
 
 .ns-close-button {
+    @apply border-input-edge text-primary;
+
     &:hover {
-        @apply bg-red-400 text-white border-red-400;
+        @apply bg-error-secondary border-transparent;
+        > i {
+            @apply text-white;
+        }
+    }
+}
+
+.ns-inset-button {
+    @apply border-input-edge text-primary;
+    &:hover, &.active {
+        @apply bg-info-tertiary text-white border-transparent;
+    }
+    &.info:hover, &.info.active {
+        @apply bg-info-tertiary text-white border-transparent;
+    }
+    &.success:hover, &.success.active {
+        @apply bg-success-tertiary text-white border-transparent;
+    }
+    &.warning:hover, &.warning.active {
+        @apply bg-warning-tertiary text-white border-transparent;
+    }
+    &.error:hover, &.error.active  {
+        @apply bg-error-tertiary text-white border-transparent;
     }
 }

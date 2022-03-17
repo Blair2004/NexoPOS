@@ -16,7 +16,10 @@ module.exports = (ctx) => {
       ( wildcard( 'typography.*.css', file ) || wildcard( 'typography.css', file ) ) ||
       ( wildcard( 'animations.*.css', file ) || wildcard( 'animations.css', file ) )
     ) {
-      fs.unlinkSync( `${__dirname}/public/css/${file}` );
+      const path  = `${__dirname}/public/css/${file}`;
+      if( fs.existsSync( path ) ) {
+        fs.unlinkSync( path );
+      }
     }
   });
 

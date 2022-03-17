@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg h-95vh md:h-5/6-screen lg:h-5/6-screen w-95vw md:w-4/6-screen lg:w-3/6-screen bg-surface-tertiary flex flex-col">
-        <div class="p-2 border-b border-surface-secondary flex justify-between items-center">
+    <div class="shadow-lg h-95vh md:h-5/6-screen lg:h-5/6-screen w-95vw md:w-4/6-screen lg:w-3/6-screen ns-box flex flex-col">
+        <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="font-semibold">{{ __( 'Layaway Parameters' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
@@ -10,7 +10,7 @@
             <div v-if="fields.length === 0" class="absolute h-full w-full flex items-center justify-center">
                 <ns-spinner></ns-spinner>
             </div>
-            <div class="p-2 text-white bg-info-primary mb-2 text-center text-2xl font-bold flex justify-between">
+            <div class="p-2 elevation-surface info mb-2 text-center text-2xl font-bold flex justify-between">
                 <span>{{ __( 'Minimum Payment' ) }}</span>
                 <span>{{ expectedPayment | currency }}</span>
             </div>
@@ -18,7 +18,7 @@
                 <ns-field v-for="( field, index ) of fields" :field="field" :key="index"></ns-field>
             </div>
             <div class="flex flex-col flex-auto overflow-hidden">
-                <div class="border-b border-surface-secondary">
+                <div class="border-b ns-box-body">
                     <h3 class="text-2xl flex justify-between py-2 text-primary">
                         <span>{{ __( 'Instalments & Payments' ) }}</span>
                         <p>
@@ -43,22 +43,22 @@
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <button class="items-center flex justify-center h-8 w-8 rounded border border-surface-secondary hover:bg-error-primary text-primary hover:border-error-primary hover:text-white">
+                            <button class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
                     </div>
                     <div class="my-2" v-if="order.instalments.length === 0">
-                        <p class="p-2 bg-surface-secondary text-primary text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
+                        <p class="p-2 elevation-surface border text-primary text-center">{{ __( 'There is no instalment defined. Please set how many instalments are allowed for this order' ) }}</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="p-2 flex border-t border-surface-secondary justify-between flex-shrink-0">
+        <div class="p-2 flex border-t ns-box-footer justify-between flex-shrink-0">
             <div></div>
             <div class="-mx-1 flex">
                 <div class="px-1">
-                    <ns-button @click="close()" type="danger">{{ __( 'Cancel' ) }}</ns-button>
+                    <ns-button @click="close()" type="error">{{ __( 'Cancel' ) }}</ns-button>
                 </div>
                 <div class="px-1">
                     <ns-button @click="updateOrder()" type="info">{{ __( 'Proceed' ) }}</ns-button>

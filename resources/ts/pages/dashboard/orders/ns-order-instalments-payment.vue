@@ -1,16 +1,16 @@
 <template>
-    <div class="shadow-lg bg-surface-tertiary w-95vw md:w-1/3-screen">
+    <div class="shadow-lg ns-box w-95vw md:w-1/3-screen">
         <div class="p-2 flex justify-between border-b">
             <h3>{{ __( 'Payment Method' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2">
-            <div class="py-2 p-4 text-center border border-surface-secondary bg-surface-primary text-primary rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</div>
+        <div class="p-2 ns-box-body">
+            <ns-notice color="info" class="py-2 p-4 text-center border text-primary rounded-lg">{{ __( 'Before submitting the payment, choose the payment type used for that order.' ) }}</ns-notice>
             <ns-field :key="index" v-for="(field,index) of fields" :field="field"></ns-field>
         </div>
-        <div class="border-t p-2 flex justify-end">
+        <div class="border-t ns-box-footer p-2 flex justify-end">
             <ns-button @click="submitPayment()" type="info">{{ __( 'Submit Payment' ) }}</ns-button>
         </div>
     </div>

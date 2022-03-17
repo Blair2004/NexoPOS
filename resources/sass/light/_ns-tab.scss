@@ -1,15 +1,15 @@
 .ns-tab {
     .tab {
-        @apply border-gray-400 text-gray-700;
+        @apply border-tab-active-border text-primary;
         
-        &.ns-active {
-            @apply bg-white;
+        &.active {
+            @apply bg-tab-active;
         }
-        &.ns-inactive {
-            @apply bg-gray-200;
+        &.inactive {
+            @apply bg-tab-inactive;
         }
     }
 }
 .ns-tab-item {
-    @apply border-gray-400 bg-white;
+    @apply border-tab-active-border bg-tab-active;
 }

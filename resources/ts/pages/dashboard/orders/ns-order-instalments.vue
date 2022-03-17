@@ -6,9 +6,9 @@
                     <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Instalments' ) }}</h3>
                 </div>
                 <div class="px-4">
-                    <ul class="border-surface-secondary border-t text-primary">
-                        <li :class="instalment.paid ? 'bg-success-secondary border-success-primary' : 'bg-surface-primary border-info-primary'"
-                            class="border-b border-l flex justify-between" 
+                    <ul class="border-table-th-edge border-t text-primary">
+                        <li :class="instalment.paid ? 'success' : 'info'"
+                            class="border-b border-l flex justify-between elevation-surface" 
                             :key="instalment.id" 
                             v-for="instalment of instalments">
                             <span class="p-2">
@@ -19,7 +19,7 @@
                                     type="date" ref="date" class="border border-info-primary rounded"></span>
                             </span>
                             <div class="flex items-center">
-                                <span :class="instalment.paid ? 'border-success-primary' : 'border-info-primary'" class="flex items-center px-2 h-full border-r">
+                                <div class="flex items-center px-2 h-full border-r">
                                     <span 
                                         v-if="! instalment.price_clicked" 
                                         @click="togglePriceEdition( instalment )">{{ instalment.amount | currency }}</span>
@@ -28,35 +28,39 @@
                                             v-model="instalment.amount"
                                             @blur="togglePriceEdition( instalment )" type="text" class="border border-info-primary p-1">
                                     </span>
-                                </span>
-                                <div v-if="!instalment.paid && instalment.id" :class="instalment.paid ? 'border-success-primary' : 'border-info-primary'" class="w-36 justify-center flex items-center px-2 h-full border-r">
+                                </div>
+                                <div v-if="!instalment.paid && instalment.id" class="w-36 justify-center flex items-center px-2 h-full border-r">
                                     <div class="px-2">
-                                        <ns-icon-button buttonClass="bg-success-primary hover:bg-green-500 text-white hover:text-white hover:border-green-600" @click="markAsPaid( instalment )" className="la-money-bill-wave-alt"></ns-icon-button>
+                                        <ns-icon-button type="success" @click="markAsPaid( instalment )" className="la-money-bill-wave-alt"></ns-icon-button>
                                     </div>
                                     <div class="px-2">
-                                        <ns-icon-button buttonClass="bg-info-primary hover:bg-blue-500 text-white hover:text-white hover:border-blue-600" @click="updateInstalment( instalment )" className="la-save"></ns-icon-button>
+                                        <ns-icon-button type="info" @click="updateInstalment( instalment )" className="la-save"></ns-icon-button>
                                     </div>
                                     <div class="px-2">
-                                        <ns-icon-button buttonClass="bg-red-400 text-white hover:border hover:border-info-primary hover:bg-red-500" @click="deleteInstalment( instalment )" className="la-trash-alt"></ns-icon-button>
+                                        <ns-icon-button type="error" @click="deleteInstalment( instalment )" className="la-trash-alt"></ns-icon-button>
                                     </div>
                                 </div>
-                                <div v-if="!instalment.paid && !instalment.id" :class="instalment.paid ? 'border-success-primary' : 'border-info-primary'" class="w-36 justify-center flex items-center px-2 h-full border-r">
+                                <div v-if="!instalment.paid && !instalment.id" class="w-36 justify-center flex items-center px-2 h-full border-r">
                                     <div class="px-2">
-                                        <button @click="createInstalment( instalment )" class="px-3 py-1 rounded-full bg-info-primary text-white">
-                                            <i class="las la-plus"></i>
-                                            {{ __( 'Create' ) }}
+                                        <div class="ns-button info">
+                                            <button @click="createInstalment( instalment )" class="px-3 py-1 rounded-full">
+                                                <i class="las la-plus"></i>
+                                                {{ __( 'Create' ) }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="instalment.paid" class="w-36 justify-center flex items-center px-2 h-full">
+                                    <div class="ns-button info">
+                                        <button @click="showReceipt( instalment )" class="px-3 text-xs py-1 rounded-full">
+                                            <i class="las la-print"></i>
+                                            {{ __( 'Receipt' ) }}
                                         </button>
                                     </div>
                                 </div>
-                                <span v-if="instalment.paid" class="w-36 border-success-primary justify-center flex items-center px-2 h-full border-r">
-                                    <button @click="showReceipt( instalment )" class="px-3 text-xs py-1 rounded-full bg-info-primary text-white">
-                                        <i class="las la-print"></i>
-                                        {{ __( 'Receipt' ) }}
-                                    </button>
-                                </span>
                             </div>
                         </li>
-                        <li class="flex justify-between p-2 bg-surface-secondary border-r border-b border-l border-surface-tertiary">
+                        <li class="flex justify-between p-2 border-r border-b border-l elevation-surface">
                             <div class="flex items-center justify-center">
                                 <span>
                                     {{ __( 'Total :' ) }} {{ order.total | currency }}
@@ -70,7 +74,9 @@
                                     {{ __( 'Instalments:' ) }} {{ totalInstalments | currency }}
                                 </span>
                                 <span class="px-2">
-                                    <button @click="addInstalment()" class="rounded-full px-3 py-1 bg-info-primary text-white">{{ __( 'Add Instalment' ) }}</button>
+                                    <div class="ns-button info">
+                                        <button @click="addInstalment()" class="rounded-full px-3 py-1">{{ __( 'Add Instalment' ) }}</button>
+                                    </div>
                                 </span>
                             </div>
                         </li>

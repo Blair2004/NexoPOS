@@ -7,9 +7,9 @@
 const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings', {
     template: `
     <div>
-        <div class="shadow-lg bg-white w-95vw md:w-2/5-screen">
-            <div class="border-b border-gray-200 p-2 flex justify-between items-center">
-                <h3>Settings</h3>
+        <div class="shadow-lg ns-box w-95vw md:w-2/5-screen">
+            <div class="border-b ns-box-body p-2 flex justify-between items-center">
+                <h3>{{ __( 'Settings' ) }}</h3>
                 <div>
                     <ns-close-button  @click="closePopup()"></ns-close-button>
                 </div>
@@ -17,10 +17,10 @@ const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings',
             <div class="p-2">
                 <ns-field :field="field" :key="index" :ref="field.name" v-for="(field, index) of fields"></ns-field>
             </div>
-            <div class="border-t border-gray-200 p-2 flex justify-between">
+            <div class="border-t ns-box-footer p-2 flex justify-between">
                 <div></div>
                 <div>
-                    <ns-button type="info" @click="saveSettings()">Save</ns-button>
+                    <ns-button type="info" @click="saveSettings()">{{ __( 'Save' ) }}</ns-button>
                 </div>
             </div>
         </div>
@@ -33,6 +33,7 @@ const nsLabelsProductSettings   =   Vue.component( 'ns-labels-product-settings',
         }
     },
     methods: {
+        __,
         saveSettings() {
             this.$popup.close();
             const form  =   this.validation.extractFields( this.fields );
@@ -286,11 +287,11 @@ Vue.component( 'label-printing', {
     <div class="flex-auto flex flex-col overflow-hidden" id="dashboard-content">
         <label-printing inline-template>
             <div class="flex flex-auto overflow-hidden" v-cloak>
-                <div class="flex-auto overflow-y-scroll bg-gray-900 p-10">
+                <div class="flex-auto overflow-y-scroll ns-scrollbar bg-gray-900 p-10">
                     <div class="shadow-lg bg-white" id="label-printing-paper">
                         <div class="grid" :class="'grid-cols-' + ( form.max_columns || 1 )">
                             <div class="item border border-black" :style="itemsStyle" v-for="item of itemsToPrint">
-                                <h3 class="font-bold text-xl text-center" v-if="visibility.show_store_name">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
+                                <h3 class="font-bold text-black text-xl text-center" v-if="visibility.show_store_name">{{ ns()->option->get( 'ns_store_name' ) }}</h3>
                                 <div class="flex justify-between py-1" v-if="visibility.show_product_name">
                                     <span>{{ __( 'Product' ) }}</span>
                                     <span>@{{ item.name }}</span>
@@ -317,38 +318,40 @@ Vue.component( 'label-printing', {
                         </div>
                     </div>
                 </div>
-                <div class="w-1/4 p-4 flex-shrink-0 overflow-y-scroll">
+                <div class="w-1/4 p-4 flex-shrink-0 overflow-y-scroll ns-scrollbar">
                     <div>
-                        <div class="shadow bg-white mb-4">
-                            <div class="header border-b border-gray-200 p-2">
+                        <div class="shadow ns-box mb-4">
+                            <div class="header border-b ns-box-header p-2">
                                 <h3 class="font-semibold">{{ __( 'Products' ) }}</h3>
                             </div>
                             <div class="body p-2">
-                                <input v-model="search_product" class="rounded border-2 border-blue-400 w-full p-2"/>
+                                <div class="input-group info rounded border-2">
+                                    <input v-model="search_product" class=" w-full p-2" placeholder="{{ __( 'Search Products...' ) }}"/>
+                                </div>
                                 <div class="h-0 relative anim-duration-300 fade-in-entrance" v-if="resultSuggestions.length > 0">
-                                    <ul class="shadow-lg bg-white absolute w-full z-10">
-                                        <li @click="addProduct( product )" v-for="product of resultSuggestions" class="border border-gray-2 p-2 flex flex-col cursor-pointer hover:bg-blue-100" style="margin-bottom:-1px;">
+                                    <ul class="shadow-lg ns-vertical-menu absolute w-full z-10">
+                                        <li @click="addProduct( product )" v-for="product of resultSuggestions" class="border p-2 flex flex-col cursor-pointer" style="margin-bottom:-1px;">
                                             <span class="font-semibold">@{{ product.name }}</span>
-                                            <span class="text-xs text-gray-500">@{{ product.barcode }}</span>
+                                            <span class="text-xs">@{{ product.barcode }}</span>
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="flex flex-col">
+                                <div class="flex flex-col" v-if="products.length > 0">
                                     <h3 class="font-semibold">{{ __( 'Included Products' ) }}</h3>
                                     <ul>
-                                        <li v-for="product of products" :key="product.id" class="border border-gray-2 p-2 flex justify-between items-center" style="margin-bottom:-1px;">
+                                        <li v-for="product of products" :key="product.id" class="border border-box-elevation-edge bg-box-elevation-background p-2 flex justify-between items-center" style="margin-bottom:-1px;">
                                             <p class="flex flex-col">
                                                 <span class="font-semibold">@{{ product.name }} (@{{ product.selectedUnitQuantity.unit.name }}) x@{{ product.times }}</span>
-                                                <span class="text-xs text-gray-500">@{{ product.selectedUnitQuantity.barcode }}</span>
+                                                <span class="text-xs">@{{ product.selectedUnitQuantity.barcode }}</span>
                                             </p>
                                             <div class="flex items-center">
                                                 <p class="flex flex-col">
-                                                    <button @click="editProduct( product )" class="rounded-full flex h-6 w-6 items-center bg-green-400 text-white justify-center">
+                                                    <button @click="editProduct( product )" class="rounded-full flex h-6 w-6 items-center bg-success-primary text-white justify-center">
                                                         <i class="las la-cog"></i>
                                                     </button>
                                                 </p>
                                                 <div>
-                                                    <span @click="removeProduct( product )" class="ml-1 cursor-pointer text-white bg-red-400 rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                                                    <span @click="removeProduct( product )" class="ml-1 cursor-pointer bg-error-primary text-white rounded-full h-6 w-6 flex items-center justify-center font-bold">
                                                         <i class="las la-times"></i>
                                                     </span>
                                                 </div>
@@ -357,24 +360,24 @@ Vue.component( 'label-printing', {
                                     </ul>
                                 </div>
                             </div>
-                            <div class="border-t border-gray-200 p-2 flex justify-between">
+                            <div class="border-t ns-box-footer p-2 flex justify-between">
                                 <ns-button @click="print()" type="success"><i class="las la-print"></i></ns-button>
                                 <ns-button @click="applySettings()" type="info">{{ __( 'Apply Settings' ) }}</ns-button>
                             </div>
                         </div>
-                        <div class="shadow bg-white mb-4">
-                            <div class="header border-b border-gray-200 p-2">
+                        <div class="shadow ns-box mb-4">
+                            <div class="header border-b ns-box-header p-2">
                                 <h3 class="font-semibold">{{ __( 'Basic Settings' ) }}</h3>
                             </div>
-                            <div class="body p-2">
+                            <div class="body p-2 ns-box-body">
                                 <ns-field :field="field" v-for="(field, index) of fields" :key="index"></ns-field>
                             </div>
                         </div>
-                        <div class="shadow bg-white mb-4">
-                            <div class="header border-b border-gray-200 p-2">
+                        <div class="shadow ns-box mb-4">
+                            <div class="header border-b ns-box-header p-2">
                                 <h3 class="font-semibold">{{ __( 'Visibility Settings' ) }}</h3>
                             </div>
-                            <div class="body p-2">
+                            <div class="body p-2 ns-box-body">
                                 <ns-field :field="field" v-for="(field, index) of visibilityFields" class="mb-2" :key="index"></ns-field>
                             </div>
                         </div>

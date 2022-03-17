@@ -1,42 +1,44 @@
 <template>
-    <div class="ns-box shadow-xl w-4/5-screen md:w-2/5-screen xl:w-108">
+    <div id="ns-pos-customer-select-popup" class="ns-box shadow-xl w-4/5-screen md:w-2/5-screen xl:w-108">
         <div id="header" class="border-b ns-box-header text-center font-semibold text-2xl py-2">
             <h2>{{ __( 'Select Customer' ) }}</h2>
         </div>
         <div class="relative">
-            <div class="p-2 border-b border-surface-tertiary flex justify-between">
+            <div class="p-2 border-b ns-box-body items-center flex justify-between">
                 <span>{{ __( 'Selected' ) }} : </span>
                 <div class="flex items-center justify-between">
                     <span>{{ order.customer ? order.customer.name : 'N/A' }}</span>
-                    <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-surface-secondary hover:bg-info-primary hover:text-white hover:border-transparent">
+                    <button v-if="order.customer" @click="openCustomerHistory( order.customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button hover:border-transparent">
                         <i class="las la-eye"></i>
                     </button>
                 </div>
             </div>
-            <div class="p-2 border-b border-surface-tertiary flex justify-between text-primary">
-                <input
-                    ref="searchField" 
-                    @keydown.enter="attemptToChoose()"
-                    v-model="searchCustomerValue"
-                    placeholder="Search Customer" 
-                    type="text" 
-                    class="rounded border-2 outline-none border-surface-primary bg-surface-quaternary w-full p-2">
+            <div class="p-2 border-b ns-box-body flex justify-between text-primary">
+                <div class="input-group flex-auto border-2 rounded">
+                    <input
+                        ref="searchField" 
+                        @keydown.enter="attemptToChoose()"
+                        v-model="searchCustomerValue"
+                        placeholder="Search Customer" 
+                        type="text" 
+                        class="outline-none w-full p-2">
+                </div>
             </div>
-            <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto">
-                <ul>
+            <div class="h-3/5-screen xl:h-2/5-screen overflow-y-auto ns-scrollbar">
+                <ul class="ns-vertical-menu">
                     <li class="p-2 text-center text-primary" v-if="customers && customers.length === 0">
                         {{ __( 'No customer match your query...' ) }}
                     </li>
                     <li @click="createCustomerWithMatch( searchCustomerValue )" class="p-2 cursor-pointer text-center text-primary" v-if="customers && customers.length === 0">
                         <span class="border-b border-dashed border-info-primary">{{ __( 'Create a customer' ) }}</span>
                     </li>
-                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer hover:bg-surface-secondary p-2 border-b border-surface-quaternary text-primary flex justify-between items-center">
+                    <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
                             <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
-                            <span class="text-success-primary">{{ customer.purchases_amount | currency }}</span>
-                            <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border border-surface-quaternary hover:bg-info-secondary hover:text-white hover:border-transparent">
+                            <span class="purchase-amount">{{ customer.purchases_amount | currency }}</span>
+                            <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
                             </button>
                         </p>

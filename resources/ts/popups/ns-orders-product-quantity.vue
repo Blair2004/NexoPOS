@@ -1,14 +1,14 @@
 <template>
-    <div class="shadow-xl bg-surface-tertiary overflow-hidden w-95vw md:w-4/6-screen lg:w-3/7-screen">
-        <div class="p-2 flex justify-between">
+    <div class="shadow-xl ns-box overflow-hidden w-95vw md:w-4/6-screen lg:w-3/7-screen">
+        <div class="p-2 flex justify-between ns-box-header">
             <h3 class="font-semibold">{{ __( 'Quantity' ) }}</h3>
             <div>
                 <ns-close-button @click="close()"></ns-close-button>
             </div>
         </div>
-        <div v-if="product" class="border-t border-b border-surface-secondary py-2 flex items-center justify-center text-2xl font-semibold">
+        <div v-if="product" class="border-t border-b ns-box-body py-2 flex items-center justify-center text-2xl font-semibold">
             <span>{{ seeValue }}</span> 
-            <span class="text-gray-600 text-sm">({{ availableQuantity }} available)</span>
+            <span class="text-primary text-sm">({{ availableQuantity }} {{ __( 'available' ) }})</span>
         </div>
         <div class="flex-auto overflow-y-auto p-2" v-if="product">
             <ns-numpad :value="product.quantity" @next="updateQuantity( $event )" @changed="setChangedValue( $event )"></ns-numpad>

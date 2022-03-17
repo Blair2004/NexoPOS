@@ -18,7 +18,7 @@
                     <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-surface-tertiary text-primary text-xl md:text-3xl p-2">
+                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ backValue / number | currency }}</span>
                 </div>
@@ -33,7 +33,7 @@
                             :key="index" 
                             v-for="(key,index) of keys" 
                             style="margin:-1px;"
-                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span v-if="key.value !== undefined">{{ key.value }}</span>
                             <i v-if="key.icon" class="las" :class="key.icon"></i>
                         </div>
@@ -47,17 +47,17 @@
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
                             @click="increaseBy({ value : 100 })"
-                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span>{{ 100 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 500 })"
-                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 500 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 1000 })"
-                            class="hover:bg-surface-secondary hover:text-secondary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 1000 | currency }}</span>
                         </div>
                     </div>

@@ -14,7 +14,7 @@ const nsDate        =   Vue.component( 'ns-date', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'bg-surface-secondary cursor-not-allowed' : 'bg-transparent';
+            return this.field.disabled ? 'bg-input-edge cursor-not-allowed' : 'bg-transparent';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass
@@ -27,7 +27,7 @@ const nsDate        =   Vue.component( 'ns-date', {
     template: `
     <div class="flex flex-auto flex-col mb-2">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-error-primary' : 'border-surface-primary'" class="bg-surface-quaternary text-secondary mt-1 relative border-2 rounded-md focus:shadow-sm">
+        <div :class="hasError ? 'border-error-primary' : 'border-input-edge'" class="bg-input-background text-secondary mt-1 relative border-2 rounded-md focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="sm:text-sm sm:leading-5">
                 {{ leading }}

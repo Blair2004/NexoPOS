@@ -1,8 +1,10 @@
 <template>
-    <button @click="openRegisterOptions()" class="flex-shrink-0 h-12 flex items-center shadow rounded px-2 py-1 text-sm">
-        <i class="mr-1 text-xl las la-cash-register"></i>
-        <span>{{ name }}</span>
-    </button>
+    <div class="ns-button default">
+        <button @click="openRegisterOptions()" class="rounded shadow flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
+            <i class="mr-1 text-xl las la-cash-register"></i>
+            <span>{{ name }}</span>
+        </button>
+    </div>
 </template>
 <script>
 import { default as nsPosCashRegistersPopupVue } from '@/popups/ns-pos-cash-registers-popup.vue';

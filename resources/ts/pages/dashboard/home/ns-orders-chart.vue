@@ -40,6 +40,9 @@ export default {
             totalWeekExpenses: 0,
             totalWeekIncome: 0,
             chartOptions: {
+                theme: {
+                    mode: window.ns.theme
+                },
                 chart: {
                     id: 'vuechart-example',
                     width: '100%',

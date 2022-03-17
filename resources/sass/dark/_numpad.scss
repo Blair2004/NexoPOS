@@ -1,0 +1,21 @@
+.ns-numpad-key {
+    @apply text-primary border-numpad-edge;
+    &:hover {
+        @apply bg-numpad-hover border-numpad-hover-edge;
+    }
+    &.error:hover, &.error.active {
+        @apply bg-error-primary border-error-secondary;
+    }
+    &.success:hover, &.success.active {
+        @apply bg-success-primary border-success-secondary;
+    }
+    &.info:hover, &.info.active {
+        @apply bg-info-secondary border-info-secondary;
+    }
+    &.warning:hover, &.warning.active {
+        @apply bg-warning-primary border-warning-secondary;
+    }
+    &.default:hover, &.default.active {
+        @apply bg-default-primary border-default-secondary;
+    }
+}

@@ -22,7 +22,7 @@
                     <span>{{ __( 'Current Balance' ) }} : </span>
                     <span>{{ order.customer.account_amount | currency }}</span>
                 </div>
-                <div id="change" class="col-span-2 h-16 flex justify-between items-center bg-surface-secondary text-primary text-xl md:text-3xl p-2">
+                <div id="change" class="col-span-2 h-16 flex justify-between items-center elevation-surface border text-primary text-xl md:text-3xl p-2">
                     <span>{{ __( 'Screen' ) }} : </span>
                     <span>{{ screenValue | currency }}</span>
                 </div>
@@ -44,17 +44,17 @@
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
                             @click="increaseBy({ value : 100 })"
-                            class="hover:bg-surface-secondary hover:text-primary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span>{{ 100 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 500 })"
-                            class="hover:bg-surface-secondary hover:text-primary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 500 | currency }}</span>
                         </div>
                         <div 
                             @click="increaseBy({ value : 1000 })"
-                            class="hover:bg-surface-secondary hover:text-primary bg-surface-tertiary border-surface-secondary text-2xl text-primary border h-16 flex items-center justify-center cursor-pointer">
+                            class="elevation-surface border hoverable text-2xl text-primary h-16 flex items-center justify-center cursor-pointer">
                             <span >{{ 1000 | currency }}</span>
                         </div>
                     </div>

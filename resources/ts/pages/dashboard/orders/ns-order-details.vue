@@ -6,7 +6,7 @@
                     <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Payment Summary' ) }}</h3>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="bg-surface-tertiary p-2 flex justify-between items-start">
+                    <div class="elevation-surface border p-2 flex justify-between items-start">
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Sub Total' ) }}</h4>
                         </div>
@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-error-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice error">
                         <div>
                             <h4 class="text-semibold">
                                 <span class="text-white">{{ __( 'Discount' ) }}</span>
@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-surface-primary">
+                    <div class="p-2 flex justify-between items-start elevation-surface border">
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Shipping' ) }}</h4>
                         </div>
@@ -34,9 +34,9 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-error-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice error">
                         <div>
-                            <h4 class="text-semibold text-white">
+                            <h4 class="text-semibold">
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-info-primary text-white">
+                    <div class="p-2 flex justify-between items-start ns-notice info">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
@@ -52,15 +52,15 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-warning-primary text-primary">
+                    <div class="p-2 flex justify-between items-start ns-notice warning">
                         <div>
-                            <h4 class="text-semibold text-white">{{ __( 'Taxes' ) }}</h4>
+                            <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
                         <div class="font-semibold">{{ order.tax_value | currency }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start text-primary bg-surface-primary">
+                    <div class="p-2 flex justify-between items-start text-primary elevation-surface error border">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Change' ) }}</h4>
                         </div>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
-                    <div class="p-2 flex justify-between items-start bg-surface-tertiary text-white">
+                    <div class="p-2 flex justify-between items-start elevation-surface border">
                         <div>
                             <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
                         </div>
@@ -82,7 +82,7 @@
             <div class="mb-2">
                 <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Order Status' ) }}</h3>
             </div>
-            <div class="mb-2 p-2 flex justify-between items-start bg-surface-tertiary">
+            <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
                     <h4 class="text-semibold text-primary">
                         <span>{{ __( 'Customer' ) }}</span>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="font-semibold text-secondary">{{ order.nexopos_customers_name }}</div>
             </div>
-            <div class="mb-2 p-2 flex justify-between items-start bg-surface-tertiary">
+            <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
                     <h4 class="text-semibold text-primary">
                         <span>{{ __( 'Type' ) }}</span>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="font-semibold text-secondary">{{ labels.getTypeLabel( order.type ) }}</div>
             </div>
-            <div class="mb-2 p-2 flex justify-between items-start bg-surface-tertiary">
+            <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
                     <h4 class="text-semibold text-primary">
                         <span>{{ __( 'Delivery Status' ) }}</span>
@@ -122,7 +122,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-2 p-2 flex flex-col md:flex-row justify-between items-center bg-surface-tertiary">
+            <div class="mb-2 p-2 flex flex-col md:flex-row justify-between items-center elevation-surface border">
                 <div>
                     <h4 class="text-semibold text-primary">
                         <span>{{ __( 'Processing Status' ) }}</span>
@@ -146,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mb-2 p-2 flex justify-between items-start bg-surface-tertiary">
+            <div class="mb-2 p-2 flex justify-between items-start elevation-surface border">
                 <div>
                     <h4 class="text-semibold text-primary">
                         <span>{{ __( 'Payment Status' ) }}</span>
@@ -160,7 +160,7 @@
             <div class="mb-2">
                 <h3 class="font-semibold text-secondary pb-2 border-b border-info-primary">{{ __( 'Products' ) }}</h3>
             </div>
-            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start bg-surface-tertiary mb-6">
+            <div :key="product.id" v-for="product of order.products" class="p-2 flex justify-between items-start elevation-surface border mb-6">
                 <div>
                     <h4 class="text-semibold text-primary">{{ product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }}</p>
@@ -174,7 +174,7 @@
                     <a href="javascript:void(0)" @click="openRefunds()" class="border-b border-info-primary border-dashed">{{ __( 'All Refunds' ) }}</a>
                 </h3>
             </div>
-            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start bg-surface-tertiary  mb-6">
+            <div :key="product.id" v-for="product of order.refunded_products" class="p-2 flex justify-between items-start elevation-surface border  mb-6">
                 <div>
                     <h4 class="text-semibold text-primary">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-primary text-white' : 'bg-info-primary text-white'">{{ product.condition }}</span></p>

@@ -7,32 +7,32 @@
         <template v-if="Object.values( form ).length > 0">
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
-                    <label for="title" class="font-bold my-2 text-gray-700">{{ form.main.label }}</label>
-                    <div for="title" class="text-sm my-2 text-gray-700">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-gray-400 hover:bg-red-600 hover:text-white bg-white px-2 py-1">Return</a>
+                    <label for="title" class="font-bold my-2 text-primary">{{ form.main.label }}</label>
+                    <div for="title" class="text-sm my-2 text-primary">
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-primary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? 'border-gray-500' : form.main.errors.length > 0 ? 'border-red-600' : 'border-blue-500'" class="flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-primary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
                         :disabled="form.main.disabled"
                         type="text" 
-                        :class="form.main.disabled ? 'bg-gray-400' : ''"
-                        class="flex-auto text-gray-700 outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-gray-500' : form.main.errors.length > 0 ? 'bg-red-500' : 'bg-blue-500'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-gray-400"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                        :class="form.main.disabled ? '' : ''"
+                        class="flex-auto text-primary outline-none h-10 px-2">
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-primary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
-                <p class="text-xs text-gray-600 py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-red-500" v-bind:key="index" v-for="(error, index) of form.main.errors">
+                <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
+                <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full">
                     <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
-                        <div id="card-header" class="flex flex-wrap justify-between">
+                        <div id="card-header" class="flex flex-wrap justify-between ns-tab">
                             <div class="flex flex-wrap">
-                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'bg-white' : 'bg-gray-100'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="cursor-pointer text-gray-700 px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
                                     <span class="block mr-2">{{ tab.label }}</span>
                                     <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                 </div>
@@ -55,7 +55,7 @@
                                 </div> -->
                             </div>
                         </div>
-                        <div class="card-body bg-white rounded-br-lg rounded-bl-lg shadow p-2">
+                        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units' ].includes( getActiveTabKey( variation.tabs ) )">
                                 <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
@@ -63,11 +63,11 @@
                                     </div>
                                 </template>
                             </div>
-                            <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'images'">
+                            <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'images'">
                                 <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
-                                    <div class="rounded border flex bg-white justify-between p-2 items-center">
+                                    <div class="rounded border border-box-elevation-edge bg-box-elevation-background flex justify-between p-2 items-center">
                                         <span>{{ __( 'Add Images' ) }}</span>
-                                        <button @click="addImage( variation )" class="rounded-full border flex items-center justify-center w-8 h-8 bg-white hover:bg-blue-400 hover:text-white">
+                                        <button @click="addImage( variation )" class="outline-none rounded-full border flex items-center justify-center w-8 h-8 ns-inset-button info">
                                             <i class="las la-plus-circle"></i>
                                         </button>
                                     </div>
@@ -76,11 +76,11 @@
                                     :key="index" 
                                     v-for="( group, index ) of getActiveTab( variation.tabs ).groups" 
                                     class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3 mb-4">
-                                    <div class="rounded border flex flex-col bg-white overflow-hidden">
+                                    <div class="rounded border border-box-elevation-edge flex flex-col overflow-hidden">
                                         <div class="p-2">
                                             <ns-field :key="index" v-for="(field, index) of group" :field="field"></ns-field>
                                         </div>
-                                        <div @click="removeImage( variation, group )" class="text-center py-2 border-t text-sm cursor-pointer">
+                                        <div @click="removeImage( variation, group )" class="text-center py-2 border-t border-box-elevation-edge text-sm cursor-pointer">
                                             {{ __( 'Remove Image' ) }}
                                         </div>
                                     </div>
@@ -94,12 +94,12 @@
                                 <template v-for="(field,index) of getActiveTab( variation.tabs ).fields">
                                     <div v-if="field.type === 'group'" class="px-4 w-full lg:w-2/3" :key="index">
                                         <div class="mb-2">
-                                            <label class="font-medium text-gray-700">{{ field.label }}</label>
-                                            <p class="py-1 text-sm text-gray-600">{{ field.description }}</p>
+                                            <label class="font-medium text-primary">{{ field.label }}</label>
+                                            <p class="py-1 text-sm text-primary">{{ field.description }}</p>
                                         </div>
                                         <div class="mb-2">
-                                            <div @click="addUnitGroup( field )" class="border-dashed border-2 border-gray-200 p-1 bg-gray-100 flex justify-between items-center text-gray-700 cursor-pointer rounded-lg">
-                                                <span class="rounded-full border-2 border-gray-300 bg-white h-8 w-8 flex items-center justify-center">
+                                            <div @click="addUnitGroup( field )" class="border-dashed border-2 p-1 bg-box-elevation-background border-box-elevation-edge flex justify-between items-center text-primary cursor-pointer rounded-lg">
+                                                <span class="rounded-full border-2 ns-inset-button info h-8 w-8 flex items-center justify-center">
                                                     <i class="las la-plus-circle"></i>
                                                 </span>
                                                 <span>{{ __( 'New Group' ) }}</span>
@@ -107,15 +107,15 @@
                                         </div>
                                         <div class="-mx-4 flex flex-wrap">
                                             <div class="px-4 w-full md:w-1/2 mb-4" :key="index" v-for="(group_fields,index) of field.groups">
-                                                <div class="shadow rounded overflow-hidden">
-                                                    <div class="border-b text-sm bg-blue-400 text-white  border-blue-300 p-2 flex justify-between">
+                                                <div class="shadow rounded overflow-hidden bg-box-elevation-background text-primary">
+                                                    <div class="border-b text-sm p-2 flex justify-between text-primary border-box-elevation-edge">
                                                         <span>{{ __( 'Available Quantity' ) }}</span>
                                                         <span>{{ getUnitQuantity( group_fields ) }}</span>
                                                     </div>
                                                     <div class="p-2 mb-2">
                                                         <ns-field :field="field" v-for="(field,index) of group_fields" :key="index"></ns-field>
                                                     </div>
-                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 text-red-800 hover:bg-red-200 border-t border-red-200 flex items-center justify-center cursor-pointer font-medium">
+                                                    <div @click="removeUnitPriceGroup( group_fields, field.groups )" class="p-1 hover:bg-error-primary border-t border-box-elevation-edge flex items-center justify-center cursor-pointer font-medium">
                                                         {{ __( 'Delete' ) }}
                                                     </div>
                                                 </div>

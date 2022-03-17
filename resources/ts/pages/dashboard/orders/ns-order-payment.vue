@@ -2,26 +2,26 @@
     <div class="">
         <div class="flex -mx-4 flex-wrap">
             <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center bg-info-primary text-white text-xl font-bold">
+                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center elevation-surface info border text-xl font-bold">
                     <span>{{ __( 'Total' ) }}</span>
                     <span>{{ order.total | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-success-primary text-white text-xl font-bold">
+                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface success border text-xl font-bold">
                     <span>{{ __( 'Paid' ) }}</span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-error-primary text-white text-xl font-bold">
+                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface error border text-xl font-bold">
                     <span>{{ __( 'Unpaid' ) }}</span>
                     <span v-if="order.total - order.tendered > 0">{{ order.total - order.tendered | currency }}</span>
                     <span v-if="order.total - order.tendered <= 0">{{ 0 | currency }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
-                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  bg-warning-primary text-white text-xl font-bold">
+                <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface warning border text-xl font-bold">
                     <span>{{ __( 'Customer Account' ) }}</span>
                     <span>{{ order.customer.account_amount | currency }}</span>
                 </div>
@@ -35,7 +35,7 @@
                     </h3>
                     <div class="py-2">
                         <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
-                        <div class="my-2 px-2 h-12 flex justify-end items-center bg-surface-primary">
+                        <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
                             {{ inputValue | currency }}
                         </div>
                         <ns-numpad :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad>
@@ -50,7 +50,7 @@
                     {{ __( 'Payment History' ) }}
                 </h3>
                 <ul>
-                    <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite bg-surface-primary mb-2">
+                    <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
                         <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
                         <span>{{ payment.value | currency }}</span>
                     </li>

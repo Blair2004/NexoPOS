@@ -66,6 +66,12 @@ class OrderCrud extends CrudService
     protected $whereIn      =   [];
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   true;
+
+    /**
      * Fields which will be filled during post/put
      */
     public $fillable    =   [];
@@ -448,12 +454,14 @@ class OrderCrud extends CrudService
             'code'  =>  [
                 'label'  =>  __( 'Code' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
+                'width'        =>  '120px',
             ],
             'nexopos_customers_name'  =>  [
                 'label'         =>  __( 'Customer' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
+                'width'        =>  '120px',
             ],
             'nexopos_customers_phone'   =>  [
                 'label'         =>  __( 'Phone' ),
@@ -534,31 +542,31 @@ class OrderCrud extends CrudService
 
         switch( $entry->payment_status ) {
             case Order::PAYMENT_PAID : 
-                $entry->{ '$cssClass' }             =   'ns-row-success border text-sm';
+                $entry->{ '$cssClass' }             =   'success border text-sm';
             break;
             case Order::PAYMENT_UNPAID : 
-                $entry->{ '$cssClass' }             =   'ns-row-danger border text-sm';
+                $entry->{ '$cssClass' }             =   'danger border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY : 
-                $entry->{ '$cssClass' }             =   'ns-row-info border text-sm';
+                $entry->{ '$cssClass' }             =   'info border text-sm';
             break;
             case Order::PAYMENT_HOLD : 
-                $entry->{ '$cssClass' }             =   'ns-row-danger border text-sm';
+                $entry->{ '$cssClass' }             =   'danger border text-sm';
             break;
             case Order::PAYMENT_VOID : 
-                $entry->{ '$cssClass' }             =   'ns-row-error border text-sm';
+                $entry->{ '$cssClass' }             =   'error border text-sm';
             break;
             case Order::PAYMENT_REFUNDED : 
-                $entry->{ '$cssClass' }             =   'ns-row-default border text-sm';
+                $entry->{ '$cssClass' }             =   'default border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY_REFUNDED : 
-                $entry->{ '$cssClass' }             =   'ns-row-default border text-sm';
+                $entry->{ '$cssClass' }             =   'default border text-sm';
             break;
             case Order::PAYMENT_DUE : 
-                $entry->{ '$cssClass' }             =   'ns-row-danger border text-sm';
+                $entry->{ '$cssClass' }             =   'danger border text-sm';
             break;
             case Order::PAYMENT_PARTIALLY_DUE : 
-                $entry->{ '$cssClass' }             =   'ns-row-danger border text-sm';
+                $entry->{ '$cssClass' }             =   'danger border text-sm';
             break;
         }
 

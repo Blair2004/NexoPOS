@@ -1,0 +1,30 @@
+@keyframes loader-animation {
+    0% {
+        left: -100%;
+    }
+    49% {
+        left: 100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: -100%;
+    }
+}
+.ns-loader {
+    height: 2px;
+    width: 100%;
+    overflow: hidden;
+    margin-top:-1px;
+}
+.ns-loader .bar {
+    position: relative;
+    height: 2px;
+    width: 100%;
+    @apply bg-info-primary;
+    animation-name: loader-animation;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}

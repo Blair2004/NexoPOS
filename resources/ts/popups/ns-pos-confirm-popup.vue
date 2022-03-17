@@ -5,9 +5,9 @@
             <p class="py-4 text-sm md:text-base text-center">{{ message }}</p>
         </div>
         <div class="action-buttons flex border-t">
-            <button class="flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
+            <button class="flex-auto rounded-none w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( true )">{{ __( 'Yes' ) }}</button>
             <hr class="border-r h-16">
-            <button class="flex-auto w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( false )">{{ __( 'No' ) }}</button>
+            <button class="flex-auto rounded-none w-1/2 h-16 flex items-center justify-center uppercase" @click="emitAction( false )">{{ __( 'No' ) }}</button>
         </div>
     </div>
 </template>

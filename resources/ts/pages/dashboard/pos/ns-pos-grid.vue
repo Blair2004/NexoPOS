@@ -21,6 +21,11 @@
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
                 </div>
             </div>
+            <div style="height: 0px">
+                <div v-if="isLoading" class="fade-in-entrance ns-loader">
+                    <div class="bar"></div>
+                </div>
+            </div>
             <div id="grid-breadscrumb" class="p-2">
                 <ul class="flex">
                     <li><a @click="loadCategories()" href="javascript:void(0)" class="px-3 ">{{ __( 'Home' ) }} </a> <i class="las la-angle-right"></i> </li>
@@ -112,6 +117,7 @@ export default {
             screenSubscriber: null,
             rebuildGridTimeout: null,
             rebuildGridComplete: false,
+            isLoading: false,
         }
     },
     computed: {
@@ -240,21 +246,29 @@ export default {
         },
         
         loadCategories( parent ) {
+            this.isLoading  =   true;
             nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
-                .subscribe( (result ) => {
-                    this.categories         =   result.categories.map( category => {
-                        return {
-                            data    :   category
-                        }
-                    });
-                    this.products           =   result.products.map( product => {
-                        return {
-                            data: product
-                        }
-                    });
-                    this.previousCategory   =   result.previousCategory;
-                    this.currentCategory    =   result.currentCategory;
-                    this.updateBreadCrumb( this.currentCategory );
+                .subscribe({
+                    next: (result ) => {
+                        this.categories         =   result.categories.map( category => {
+                            return {
+                                data    :   category
+                            }
+                        });
+                        this.products           =   result.products.map( product => {
+                            return {
+                                data: product
+                            }
+                        });
+                        this.previousCategory   =   result.previousCategory;
+                        this.currentCategory    =   result.currentCategory;
+                        this.updateBreadCrumb( this.currentCategory );
+                        this.isLoading  =   false;
+                    },
+                    error: ( error ) => {
+                        this.isLoading  =   false;
+                        return nsSnackBar.error( __( 'An unexpected error occured.' ) ).subscribe();
+                    }
                 });
         },
 

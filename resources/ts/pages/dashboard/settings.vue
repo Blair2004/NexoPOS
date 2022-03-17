@@ -1,16 +1,16 @@
 <template>
-    <div id="tabbed-card" v-if="formDefined">
+    <div id="tabbed-card" class="ns-tab" v-if="formDefined">
         <div id="card-header" class="flex flex-wrap">
             <div 
-                :class="tab.active ? 'bg-white dark:bg-slate-700 dark:text-white' : 'bg-gray-300 dark:bg-slate-800 dark:text-slate-200'" 
+                :class="tab.active ? 'active' : 'inactive'" 
                 @click="setActive( tab )" v-bind:key="key" 
                 v-for="( tab, key ) of form.tabs" 
-                class="text-gray-700 dark:text-white cursor-pointer flex items-center px-4 py-2 rounded-tl-lg rounded-tr-lg">
+                class="tab cursor-pointer flex items-center px-4 py-2 rounded-tl-lg rounded-tr-lg">
                 <span>{{ tab.label }}</span>
-                <span v-if="tab.errors && tab.errors.length > 0" class="ml-2 rounded-full bg-red-400 text-white text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
+                <span v-if="tab.errors && tab.errors.length > 0" class="ml-2 rounded-full ns-inset-button error active text-sm h-6 w-6 flex items-center justify-center">{{ tab.errors.length }}</span>
             </div>
         </div>
-        <div class="card-body bg-white dark:bg-slate-700 dark:text-white rounded-br-lg rounded-bl-lg shadow">
+        <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow">
             <div class="-mx-4 flex flex-wrap p-2">
                 <template v-if="activeTab.fields">
                     <div class="w-full px-4 md:w-1/2 lg:w-1/3" v-bind:key="index" v-for="( field, index ) of activeTab.fields">
