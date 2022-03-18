@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Events\AfterMigrationStatusCheckedEvent;
 use App\Models\Migration;
-use App\Services\Helpers\App;
+use App\Services\Helper;
 use App\Services\ModulesService;
 use Closure;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class CheckMigrationStatus
             return redirect( ns()->route( 'ns.database-update' ) );
         }
 
-        if ( App::installed() ) {
+        if ( Helper::installed() ) {
             $module     =   app()->make( ModulesService::class );
             $modules    =   collect( $module->getEnabled() );
             $total      =   $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );

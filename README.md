@@ -46,6 +46,9 @@ We're frequently discussing about the future of the app (while waiting discussio
 ## Troubleshooting
 Here we list the knowns issues and the way around. Not everyone is likely to face these issues as it depends on the used enviroment.
 
+- CSRF error After Installation
+Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS 4.x](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
+
 - Error After Database Details (using `php artisan serve`)
 If you're serving the project using `php artisan serve`, after setting up the database credentails and having them validated, you migth stop on an infinite
 loading page. 
@@ -56,4 +59,3 @@ This is caused because during the database setup, the ".env" is updated which ca
 
 ## Contribution Guidelines
 Do you plan to contribute? That's awesome. We don't have that much developer on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
-
