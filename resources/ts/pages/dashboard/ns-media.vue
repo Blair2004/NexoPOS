@@ -333,7 +333,7 @@ export default {
                     <ul>
                         <li v-for="(fileData, index) of files" :key="index" class="p-2 mb-2 shadow ns-media-upload-item flex items-center justify-between rounded">
                             <span>{{ fileData.file.name }}</span>
-                            <span class="rounded bg-blue-400 flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
+                            <span class="rounded bg-info-primary flex items-center justify-center text-xs p-2">{{ fileData.progress }}%</span>
                         </li>
                     </ul>
                 </div>
