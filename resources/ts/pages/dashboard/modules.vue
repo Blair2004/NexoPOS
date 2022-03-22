@@ -12,7 +12,7 @@
                 </span>
                 <span class="px-2">
                     <div class="ns-button">
-                        <a :href="upload" class="flex items-center justify-center rounded cursor-pointer px-3 py-1">
+                        <a :href="upload" class="flex items-center justify-center rounded cursor-pointer shadow px-3 py-1">
                             <span>{{ __( 'Upload' ) }}</span>                        
                             <i class="las la-angle-right"></i>
                         </a>

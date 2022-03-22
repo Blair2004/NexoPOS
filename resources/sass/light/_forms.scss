@@ -1,5 +1,5 @@
 /**
- * Fields
+ * Fields Light
 **/
 .ns-switch {
     button.selected {
@@ -193,12 +193,14 @@
 .ns-button {
     @apply text-primary border-input-edge;
 
-    button {
+    button, a {
         @apply bg-input-button;
     }
 
-    &:hover button {
-        @apply bg-input-button-hover border-transparent;
+    &:hover {
+        a, button {
+            @apply bg-input-button-hover border-transparent;
+        }
     }
     
     &.hover-success:hover, &.success {

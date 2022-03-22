@@ -22,7 +22,7 @@
                                 <p>{{ $errors->any() ? __( $errors->first( 'module' ) ) : __( 'Choose the zip file you would like to upload' ) }}</p>
                             </div>
                             <div class="ns-box-footer border-t p-2 justify-end">
-                                <div class="ns-button">
+                                <div class="ns-button info">
                                     <button class="rounded-lg px-3 py-2 shadow" type="submit">{{ __( 'Upload' ) }}</button>
                                 </div>
                             </div>

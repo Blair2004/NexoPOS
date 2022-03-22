@@ -191,9 +191,9 @@ class ModulesService
                  * Entry class must be namespaced like so : 'Modules\[namespace]\[namespace] . 'Module';
                  */
                 $config[ 'entry-class' ]    =  'Modules\\' . $config[ 'namespace' ] . '\\' . $config[ 'namespace' ] . 'Module'; 
-                $config[ 'providers' ]      =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' );
-                $config[ 'actions' ]        =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Actions' );
-                $config[ 'filters' ]        =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Filters' );
+                $config[ 'providers' ]      =   $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' ) );
+                $config[ 'actions' ]        =   $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Actions' ) );
+                $config[ 'filters' ]        =   $this->getAllValidFiles( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Filters' ) );
                 $config[ 'commands' ]       =   collect( Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands' ) )
                     ->mapWithKeys( function( $file ) {
                         $className      =   str_replace(
@@ -237,6 +237,7 @@ class ModulesService
                     if ( $config[ 'has-languages' ] ) {
                         $rawFiles               =   Storage::disk( 'ns-modules' )
                             ->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Lang' );
+                        $rawFiles               =   $this->getAllValidFiles( $rawFiles, [ 'json' ] );
                             
                         $config[ 'langFiles' ]  =   collect( $rawFiles )->mapWithKeys( function( $file ) {
                             $pathInfo           =   pathinfo( $file );
@@ -304,7 +305,7 @@ class ModulesService
          */
         foreach([ 'Models', 'Services', 'Events', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms', 'Settings' ] as $folder ) {
             /**
-             * Load Module models
+             * Load all valid files for autoloading.
              */
             $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
 
@@ -1035,6 +1036,8 @@ class ModulesService
             $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR
         );
 
+        $migrationFiles     =   $this->getAllValidFiles( $migrationFiles );
+
         /**
          * If we would like to revert specific
          * migration, we'll use the $only argument
@@ -1257,8 +1260,10 @@ class ModulesService
 
     public function getAllMigrations( $module )
     {
-        return Storage::disk( 'ns-modules' )
+        $migrations     =   Storage::disk( 'ns-modules' )
             ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+
+        return $this->getAllValidFiles( $migrations );
     }
 
     /**
@@ -1330,8 +1335,29 @@ class ModulesService
      */
     public function getAllModuleMigrationFiles( $module )
     {
-        return Storage::disk( 'ns-modules' )
+        $files  =   Storage::disk( 'ns-modules' )
             ->allFiles( ucwords( $module[ 'namespace' ] ) . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR );
+
+        return $this->getAllValidFiles( $files );
+    }
+
+    /**
+     * Will only return files which extension matches
+     * the extensions provided.
+     * @param array $files
+     * @param array $extensions
+     * @return array
+     */
+    private function getAllValidFiles( $files, $extensions = [ 'php' ] )
+    {
+        /**
+         * We only want to restrict file
+         * that has the ".php" extension.
+         */
+        return collect( $files )->filter( function( $file ) use ( $extensions ) {
+            $details    =   pathinfo( $file );
+            return isset( $details[ 'extension' ] ) && in_array( $details[ 'extension' ], $extensions );
+        })->toArray();
     }
 
     /**
