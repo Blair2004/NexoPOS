@@ -1,13 +1,13 @@
 spec:
   name: nexopos-setup
   databases:
-  - name: nexopos
+  - name: nexoposdb
     engine: MYSQL
     production: true
     cluster_name: ns
   services:
   - environment_slug: php
-    name: pos
+    name: nexopos
     git:
       repo_clone_url: https://github.com/blair2004/NexoPOS-4x
       branch: v4.7.x
