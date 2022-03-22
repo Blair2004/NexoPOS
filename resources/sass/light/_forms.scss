@@ -3,9 +3,9 @@
 **/
 .ns-switch {
     button.selected {
-        @apply bg-info-primary text-white;
+        @apply bg-info-secondary text-white;
         &:hover {
-            @apply bg-info-primary;
+            @apply bg-info-secondary;
         }
     }
     button.unselected {

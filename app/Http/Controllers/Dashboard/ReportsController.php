@@ -97,7 +97,8 @@ class ReportsController extends DashboardController
             ->getSaleReport( 
                 $request->input( 'startDate' ), 
                 $request->input( 'endDate' ),
-                $request->input( 'type' )
+                $request->input( 'type' ),
+                $request->input( 'user_id' )
             );
     }
 

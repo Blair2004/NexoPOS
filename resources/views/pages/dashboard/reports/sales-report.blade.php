@@ -22,6 +22,8 @@
                             <span class="pl-2">{{ __( 'Load' ) }}</span>
                         </button>
                     </div>
+                </div>
+                <div class="flex -mx-2">
                     <div class="px-2">
                         <button @click="printSaleReport()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
                             <i class="las la-print text-xl"></i>
@@ -32,6 +34,12 @@
                         <button @click="openSettings()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
                             <i class="las la-cogs text-xl"></i>
                             <span class="pl-2">{{ __( 'Type' ) }} : @{{ getType( reportType.value ) }}</span>
+                        </button>
+                    </div>
+                    <div class="px-2">
+                        <button @click="openUserFiltering()" class="rounded flex justify-between bg-input-button shadow py-1 items-center text-primary px-2">
+                            <i class="las la-user text-xl"></i>
+                            <span class="pl-2">{{ __( 'Filter By User' ) }} : @{{ selectedUser || __( 'All Users' ) }}</span>
                         </button>
                     </div>
                 </div>

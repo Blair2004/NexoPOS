@@ -236,13 +236,13 @@
 **/
 .ns-switch button.selected {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 .ns-switch button.selected:hover {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-secondary) / var(--tw-bg-opacity));
 }
 .ns-switch button.unselected {
     --tw-bg-opacity: 1;
@@ -1856,4 +1856,43 @@ p {
 .ns-numpad-key.default:hover h1, .ns-numpad-key.default:hover h2, .ns-numpad-key.default:hover h3, .ns-numpad-key.default:hover h4, .ns-numpad-key.default:hover h5, .ns-numpad-key.default:hover h6, .ns-numpad-key.default:hover span, .ns-numpad-key.default.active h1, .ns-numpad-key.default.active h2, .ns-numpad-key.default.active h3, .ns-numpad-key.default.active h4, .ns-numpad-key.default.active h5, .ns-numpad-key.default.active h6, .ns-numpad-key.default.active span {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+#ns-media .sidebar {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+}
+#ns-media .sidebar h3 {
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#ns-media .sidebar .sidebar-menus li {
+    border-color: transparent;
+}
+#ns-media .sidebar .sidebar-menus li.active, #ns-media .sidebar .sidebar-menus li:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--tab-active) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--surface) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#ns-media .content {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--surface) / var(--tw-bg-opacity));
+}
+#ns-media .content #ns-grid .ns-media-image-selected {
+    --tw-ring-color: rgb(var(--info-primary) / var(--tw-ring-opacity));
+    --tw-ring-opacity: 0.5;
+}
+#ns-media .content .ns-media-footer {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+}
+#ns-media .content .ns-media-upload-item {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-hover) / var(--tw-bg-opacity));
+}
+#ns-media .content .ns-media-preview-panel {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
 }

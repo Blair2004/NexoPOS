@@ -62,6 +62,13 @@ class UsersController extends DashboardController
         return UserCrud::form( $user );
     }
 
+    public function getUsers( User $user )
+    {
+        ns()->restrict([ 'read.users' ]);
+        
+        return User::get([ 'username', 'id', 'email' ]);
+    }
+
     /**
      * displays the permission manager UI
      * @return View
