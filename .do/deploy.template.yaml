@@ -1,5 +1,5 @@
 spec:
-  name: nexopos
+  name: nexopos-setup
   databases:
   - name: nexopos
     engine: MYSQL
