@@ -7,7 +7,7 @@ spec:
     cluster_name: ns
   services:
   - environment_slug: php
-    name: nexopos_env
+    name: pos
     git:
       repo_clone_url: https://github.com/blair2004/NexoPOS-4x
       branch: v4.7.x
