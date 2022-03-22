@@ -207,7 +207,7 @@ class MediaService
      */
     public function loadAjax()
     {
-        $per_page   =   request()->query( 'per_page' ) ?? 50;
+        $per_page   =   request()->query( 'per_page' ) ?? 20;
         $user_id     =   request()->query( 'user_id' );
 
         $mediaQuery     =   Media::with( 'user' )

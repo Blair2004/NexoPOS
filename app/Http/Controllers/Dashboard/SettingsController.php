@@ -68,8 +68,8 @@ class SettingsController extends DashboardController
             'title' =>  __( 'About' ),
             'description'   =>  __( 'Details about the environment.' ),
             'details'  =>  [
-                __( 'Core Version'  )   =>  config( 'nexopos.version' ),
-                __( 'PHP Version' )     =>  phpversion(),
+                __( 'Core Version'  )           =>  config( 'nexopos.version' ),
+                __( 'PHP Version' )             =>  phpversion(),
             ],
             'extensions'      =>  [
                 __( 'Mb String Enabled' )   =>  extension_loaded( 'mbstring' ),
@@ -83,6 +83,8 @@ class SettingsController extends DashboardController
                 __( 'File Upload Enabled' )     =>  (( bool ) ini_get( 'file_uploads' )) ? __( 'Yes' ) : __( 'No' ),
                 __( 'File Upload Size' )        =>  ini_get( 'upload_max_filesize' ),
                 __( 'Post Max Size' )           =>  ini_get( 'post_max_size' ),
+                __( 'Max Execution Time' )      =>  sprintf( __( '%s Second(s)' ), ini_get( 'max_execution_time' ) ),
+                __( 'Memory Limit' )            =>  ini_get( 'memory_limit' ),
             ]        
         ]);
     }

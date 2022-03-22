@@ -1822,3 +1822,42 @@ p {
     --tw-bg-opacity: 1;
     background-color: rgb(var(--default-primary) / var(--tw-bg-opacity));
 }
+#ns-media .sidebar {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+}
+#ns-media .sidebar h3 {
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#ns-media .sidebar .sidebar-menus li {
+    border-color: transparent;
+}
+#ns-media .sidebar .sidebar-menus li.active, #ns-media .sidebar .sidebar-menus li:hover {
+    --tw-border-opacity: 1;
+    border-color: rgb(var(--tab-active) / var(--tw-border-opacity));
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-background) / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#ns-media .content {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-background) / var(--tw-bg-opacity));
+}
+#ns-media .content #ns-grid .ns-media-image-selected {
+    --tw-ring-color: rgb(var(--info-primary) / var(--tw-ring-opacity));
+    --tw-ring-opacity: 0.5;
+}
+#ns-media .content .ns-media-footer {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+}
+#ns-media .content .ns-media-upload-item {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--box-elevation-hover) / var(--tw-bg-opacity));
+}
+#ns-media .content .ns-media-preview-panel {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--tab-active) / var(--tw-bg-opacity));
+}
