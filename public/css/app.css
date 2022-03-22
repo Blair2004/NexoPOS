@@ -598,46 +598,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-left: -0.5rem !important;
   margin-right: -0.5rem !important;
 }
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.-mx-2 {
-  margin-left: -0.5rem !important;
-  margin-right: -0.5rem !important;
-}
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.-mx-2 {
-  margin-left: -0.5rem !important;
-  margin-right: -0.5rem !important;
-}
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.-mx-2 {
-  margin-left: -0.5rem !important;
-  margin-right: -0.5rem !important;
-}
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.-mx-2 {
-  margin-left: -0.5rem !important;
-  margin-right: -0.5rem !important;
-}
-.my-4 {
-  margin-top: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.-mx-2 {
-  margin-left: -0.5rem !important;
-  margin-right: -0.5rem !important;
-}
 .mr-2 {
   margin-right: 0.5rem !important;
 }
@@ -691,36 +651,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .mb-6 {
   margin-bottom: 1.5rem !important;
-}
-.mb-4 {
-  margin-bottom: 1rem !important;
-}
-.mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-.mb-4 {
-  margin-bottom: 1rem !important;
-}
-.mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-.mb-4 {
-  margin-bottom: 1rem !important;
-}
-.mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-.mb-4 {
-  margin-bottom: 1rem !important;
-}
-.mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-.mb-4 {
-  margin-bottom: 1rem !important;
-}
-.mb-2 {
-  margin-bottom: 0.5rem !important;
 }
 .mb-4 {
   margin-bottom: 1rem !important;
@@ -833,66 +763,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .h-64 {
   height: 16rem !important;
 }
-.h-6\/7-screen {
-  height: 85.71vh !important;
-}
-.h-full {
-  height: 100% !important;
-}
-.h-56 {
-  height: 14rem !important;
-}
-.h-64 {
-  height: 16rem !important;
-}
-.h-6\/7-screen {
-  height: 85.71vh !important;
-}
-.h-full {
-  height: 100% !important;
-}
-.h-56 {
-  height: 14rem !important;
-}
-.h-64 {
-  height: 16rem !important;
-}
-.h-6\/7-screen {
-  height: 85.71vh !important;
-}
-.h-full {
-  height: 100% !important;
-}
-.h-56 {
-  height: 14rem !important;
-}
-.h-64 {
-  height: 16rem !important;
-}
-.h-6\/7-screen {
-  height: 85.71vh !important;
-}
-.h-full {
-  height: 100% !important;
-}
-.h-56 {
-  height: 14rem !important;
-}
-.h-64 {
-  height: 16rem !important;
-}
-.h-6\/7-screen {
-  height: 85.71vh !important;
-}
-.h-full {
-  height: 100% !important;
-}
-.h-56 {
-  height: 14rem !important;
-}
-.h-64 {
-  height: 16rem !important;
-}
 .min-h-2\/5-screen {
   min-height: 40vh !important;
 }
@@ -1000,66 +870,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .w-32 {
   width: 8rem !important;
-}
-.w-64 {
-  width: 16rem !important;
-}
-.w-6\/7-screen {
-  width: 85.71vw !important;
-}
-.w-full {
-  width: 100% !important;
-}
-.w-48 {
-  width: 12rem !important;
-}
-.w-64 {
-  width: 16rem !important;
-}
-.w-6\/7-screen {
-  width: 85.71vw !important;
-}
-.w-full {
-  width: 100% !important;
-}
-.w-48 {
-  width: 12rem !important;
-}
-.w-64 {
-  width: 16rem !important;
-}
-.w-6\/7-screen {
-  width: 85.71vw !important;
-}
-.w-full {
-  width: 100% !important;
-}
-.w-48 {
-  width: 12rem !important;
-}
-.w-64 {
-  width: 16rem !important;
-}
-.w-6\/7-screen {
-  width: 85.71vw !important;
-}
-.w-full {
-  width: 100% !important;
-}
-.w-48 {
-  width: 12rem !important;
-}
-.w-64 {
-  width: 16rem !important;
-}
-.w-6\/7-screen {
-  width: 85.71vw !important;
-}
-.w-full {
-  width: 100% !important;
-}
-.w-48 {
-  width: 12rem !important;
 }
 .w-64 {
   width: 16rem !important;
@@ -1266,36 +1076,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .rounded-lg {
   border-radius: 0.5rem !important;
 }
-.rounded {
-  border-radius: 0.25rem !important;
-}
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
-.rounded {
-  border-radius: 0.25rem !important;
-}
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
-.rounded {
-  border-radius: 0.25rem !important;
-}
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
-.rounded {
-  border-radius: 0.25rem !important;
-}
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
-.rounded {
-  border-radius: 0.25rem !important;
-}
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
 .rounded-t-lg {
   border-top-left-radius: 0.5rem !important;
   border-top-right-radius: 0.5rem !important;
@@ -1374,36 +1154,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .border-r-0 {
   border-right-width: 0px !important;
-}
-.border-l-8 {
-  border-left-width: 8px !important;
-}
-.border-r {
-  border-right-width: 1px !important;
-}
-.border-l-8 {
-  border-left-width: 8px !important;
-}
-.border-r {
-  border-right-width: 1px !important;
-}
-.border-l-8 {
-  border-left-width: 8px !important;
-}
-.border-r {
-  border-right-width: 1px !important;
-}
-.border-l-8 {
-  border-left-width: 8px !important;
-}
-.border-r {
-  border-right-width: 1px !important;
-}
-.border-l-8 {
-  border-left-width: 8px !important;
-}
-.border-r {
-  border-right-width: 1px !important;
 }
 .border-l-8 {
   border-left-width: 8px !important;
@@ -1517,10 +1267,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-border-opacity: 1 !important;
   border-color: rgb(var(--error-secondary) / var(--tw-border-opacity)) !important;
 }
-.border-blue-400 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity)) !important;
-}
 .border-gray-700 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
@@ -1580,66 +1326,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .border-gray-800 {
   --tw-border-opacity: 1 !important;
   border-color: rgb(31 41 55 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
-}
-.border-blue-400 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity)) !important;
-}
-.border-gray-700 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
-}
-.border-blue-400 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity)) !important;
-}
-.border-gray-700 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
-}
-.border-blue-400 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity)) !important;
-}
-.border-gray-700 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
-}
-.border-blue-400 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(96 165 250 / var(--tw-border-opacity)) !important;
-}
-.border-gray-700 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
-}
-.border-gray-700 {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity)) !important;
-}
-.border-info-primary {
-  --tw-border-opacity: 1 !important;
-  border-color: rgb(var(--info-primary) / var(--tw-border-opacity)) !important;
 }
 .border-gray-700 {
   --tw-border-opacity: 1 !important;
@@ -1820,77 +1506,37 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--warning-primary) / var(--tw-bg-opacity)) !important;
 }
-.bg-blue-400 {
+.bg-white {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
+}
+.bg-gray-200 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-500 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
+}
+.bg-gray-800 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
+}
+.bg-blue-400 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-600 {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(75 85 99 / var(--tw-bg-opacity)) !important;
 }
-.bg-blue-400 {
+.bg-red-400 {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
+  background-color: rgb(248 113 113 / var(--tw-bg-opacity)) !important;
 }
-.bg-gray-500 {
+.bg-gray-100 {
   --tw-bg-opacity: 1 !important;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
-}
-.bg-blue-400 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-500 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
-}
-.bg-blue-400 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-500 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
-}
-.bg-blue-400 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-500 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
-}
-.bg-blue-400 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-500 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity)) !important;
-}
-.bg-gray-800 {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity)) !important;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity)) !important;
 }
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
@@ -2047,36 +1693,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .p-4 {
   padding: 1rem !important;
 }
-.p-2 {
-  padding: 0.5rem !important;
-}
-.p-4 {
-  padding: 1rem !important;
-}
-.p-2 {
-  padding: 0.5rem !important;
-}
-.p-4 {
-  padding: 1rem !important;
-}
-.p-2 {
-  padding: 0.5rem !important;
-}
-.p-4 {
-  padding: 1rem !important;
-}
-.p-2 {
-  padding: 0.5rem !important;
-}
-.p-4 {
-  padding: 1rem !important;
-}
-.p-2 {
-  padding: 0.5rem !important;
-}
-.p-4 {
-  padding: 1rem !important;
-}
 .px-2 {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
@@ -2120,66 +1736,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .py-5 {
   padding-top: 1.25rem !important;
   padding-bottom: 1.25rem !important;
-}
-.py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-.px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-.px-2 {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-.py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-.px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-.px-2 {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-.py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-.px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-.px-2 {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-.py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-.px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-.px-2 {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
-}
-.py-2 {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-}
-.px-3 {
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-.px-2 {
-  padding-left: 0.5rem !important;
-  padding-right: 0.5rem !important;
 }
 .py-2 {
   padding-top: 0.5rem !important;
@@ -2288,90 +1844,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .text-xl {
   font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-.text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-}
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-.text-xl {
-  font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-.text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-}
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-.text-xl {
-  font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-.text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-}
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-.text-xl {
-  font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-.text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-}
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-.text-xl {
-  font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-xs {
-  font-size: 0.75rem !important;
-  line-height: 1rem !important;
-}
-.text-2xl {
-  font-size: 1.5rem !important;
-  line-height: 2rem !important;
-}
-.text-sm {
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
-}
-.text-xl {
-  font-size: 1.25rem !important;
-  line-height: 1.75rem !important;
-}
-.text-lg {
-  font-size: 1.125rem !important;
   line-height: 1.75rem !important;
 }
 .text-xs {
@@ -2590,6 +2062,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
+}
+.shadow {
+  --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 .shadow {
@@ -3784,27 +3261,6 @@ button {
   .md\:block {
     display: block !important;
   }
-
-  .md\:block {
-    display: block !important;
-  }
-
-  .md\:block {
-    display: block !important;
-  }
-
-  .md\:block {
-    display: block !important;
-  }
-
-  .md\:block {
-    display: block !important;
-  }
-
-  .md\:block {
-    display: block !important;
-  }
-
   .md\:inline-block {
     display: inline-block !important;
   }
@@ -3840,15 +3296,6 @@ button {
   .md\:h-full {
     height: 100% !important;
   }
-
-  .md\:h-full {
-    height: 100% !important;
-  }
-
-  .md\:h-full {
-    height: 100% !important;
-  }
-
   .md\:w-1\/2 {
     width: 50% !important;
   }
@@ -3948,29 +3395,17 @@ button {
   .md\:w-2\/3 {
     width: 66.666667% !important;
   }
-
-  .md\:w-2\/3 {
-    width: 66.666667% !important;
-  }
-
-  .md\:w-2\/3 {
-    width: 66.666667% !important;
-  }
-
-  .md\:w-2\/3 {
-    width: 66.666667% !important;
-  }
-
-  .md\:w-2\/3 {
-    width: 66.666667% !important;
-  }
-
-  .md\:w-2\/3 {
-    width: 66.666667% !important;
-  }
-
+  
   .md\:flex-auto {
     flex: 1 1 auto !important;
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .md\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 
   .md\:grid-cols-4 {
@@ -4200,6 +3635,14 @@ button {
     width: 16.666667% !important;
   }
 
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
   .lg\:grid-cols-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
@@ -4322,6 +3765,14 @@ button {
 
   .xl\:w-2\/4 {
     width: 50% !important;
+  }
+
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .xl\:grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
   }
 
   .xl\:grid-cols-6 {

@@ -12,10 +12,13 @@
         <div id="grid-container" class="rounded shadow  overflow-hidden flex-auto flex flex-col">
             <div id="grid-header" class="p-2 border-b ">
                 <div class="border rounded flex  overflow-hidden">
-                    <button @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
+                    <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                        <i class="las la-compress-arrows-alt"></i>
+                    </button>
+                    <button :title="__( 'Toggle auto focus.' )" @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-barcode"></i>
                     </button>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
@@ -35,7 +38,7 @@
             <div id="grid-items" class="overflow-hidden h-full flex-col flex">
                 <div v-if="! rebuildGridComplete" class="h-full w-full flex-col flex items-center justify-center">
                     <ns-spinner></ns-spinner>
-                    <span class="my-2">Rebuilding...</span>
+                    <span class="my-2">{{ __( 'Rebuilding...' ) }}</span>
                 </div>
                 <template v-if="rebuildGridComplete">
 
@@ -110,6 +113,8 @@ export default {
             orderSubscription: null,
             visibleSectionSubscriber: null,
             currentCategory: null,
+            settings: false,
+            settingsSubscriber: null,
             interval: null,
             searchTimeout: null,
             gridItemsWidth: 0,
@@ -128,6 +133,7 @@ export default {
     watch: {
         barcode() {
             clearTimeout( this.searchTimeout );
+            
             this.searchTimeout  =   setTimeout( () => {
                 this.submitSearch( this.barcode );
             }, 200 );
@@ -135,9 +141,16 @@ export default {
     },
     mounted() {
         this.loadCategories();
+
+        this.settingsSubscriber         =   POS.settings.subscribe( settings => {
+            this.settings               =   settings;
+            console.log( settings );
+        });
+
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
         });
+        
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
         });
@@ -164,12 +177,17 @@ export default {
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
         this.screenSubscriber.unsubscribe();
+        this.settingsSubscriber.unsubscribe();
         clearInterval( this.interval );
     },
     methods: {
         __, 
 
         switchTo,
+
+        posToggleMerge() {
+            POS.set( 'pos_items_merge', ! this.settings.pos_items_merge );
+        },
 
         computeGridWidth() {
             if ( document.getElementById( 'grid-items' ) !== null ) {
