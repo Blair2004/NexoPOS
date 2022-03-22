@@ -176,7 +176,6 @@ export default {
 
         computeTotal( collection, attribute ) {
             if ( collection.length > 0 ) {
-                console.log( 'computes' );
                 return collection.map( entry => parseFloat( entry[ attribute ] ) )
                     .reduce( ( b, a ) => b + a );
             }

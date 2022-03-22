@@ -109,12 +109,14 @@
                         <span @click="showDeliverySelect = true" v-if="! showDeliverySelect" class="font-semibold text-secondary border-b border-info-primary cursor-pointer border-dashed">{{ labels.getDeliveryStatus( order.delivery_status ) }}</span>
                     </div>
                     <div v-if="showDeliverySelect" class="flex-auto flex">
-                        <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.delivery_status">
-                            <option 
-                                v-for="( option, index ) of deliveryStatuses" 
-                                :key="index" 
-                                :value="option.value">{{ option.label }}</option>
-                        </select>
+                        <div class="ns-select flex items-center justify-center">
+                            <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.delivery_status">
+                                <option 
+                                    v-for="( option, index ) of deliveryStatuses" 
+                                    :key="index" 
+                                    :value="option.value">{{ option.label }}</option>
+                            </select>
+                        </div>
                         <div class="pl-2 flex">
                             <ns-close-button @click="showDeliverySelect = false"></ns-close-button>
                             <button @click="submitDeliveryStatus( order )" class="bg-success-primary text-white rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>
@@ -133,12 +135,14 @@
                         <span @click="showProcessingSelect = true" v-if="! showProcessingSelect" class="border-b border-info-primary cursor-pointer border-dashed">{{ labels.getProcessingStatus( order.process_status ) }}</span>
                     </div>
                     <div class="flex-auto flex" v-if="showProcessingSelect">
-                        <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.process_status">
-                            <option 
-                                v-for="( option, index ) of processingStatuses" 
-                                :key="index" 
-                                :value="option.value">{{ option.label }}</option>
-                        </select>
+                        <div class="ns-select flex items-center justify-center">
+                            <select ref="process_status" class="flex-auto border-info-primary rounded-lg" v-model="order.process_status">
+                                <option 
+                                    v-for="( option, index ) of processingStatuses" 
+                                    :key="index" 
+                                    :value="option.value">{{ option.label }}</option>
+                            </select>
+                        </div>
                         <div class="pl-2 flex">
                             <ns-close-button @click="showProcessingSelect = false"></ns-close-button>
                             <button @click="submitProcessingChange( order )" class="bg-success-primary text-white rounded-full px-2 py-1">{{ __( 'Save' ) }}</button>

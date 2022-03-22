@@ -2321,15 +2321,21 @@ class OrdersService
      * Returns the order statuses
      * @return array $statuses
      */
-    public function getDeliveryStatuses()
+    public function getDeliveryStatuses( $identifier = null )
     {
-        return [
+        $identifiers    =   [
             'pending'       =>  __( 'Pending' ),
             'ongoing'       =>  __( 'Ongoing' ),
             'delivered'     =>  __( 'Delivered' ),
             'failed'        =>  __( 'Failed' ),
             'not-available' =>  __( 'Not Available' ),
         ];
+
+        if ( ! empty( $identifier ) ) {
+            return $identifiers[ $identifier ] ?? __( 'N/A' );
+        }
+
+        return $identifiers;
     }
 
     /**

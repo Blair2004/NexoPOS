@@ -83,9 +83,7 @@
                                                 <table class="table ns-table w-full">
                                                     <thead>
                                                         <tr class="text-primary">
-                                                            <th width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
-                                                            <th class="p-2 border font-semibold">{{ __( 'Total' ) }}</th>
-                                                            <th class="p-2 border font-semibold">{{ __( 'Status' ) }}</th>
+                                                            <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
                                                             <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
                                                         </tr>
                                                     </thead>
@@ -94,13 +92,26 @@
                                                             <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
                                                         </tr>
                                                         <tr v-for="order of orders" :key="order.id">
-                                                            <td class="border p-2 text-center">{{ order.code }}</td>
-                                                            <td class="border p-2 text-center">{{ order.total | currency }}</td>
-                                                            <td class="border p-2 text-right">{{ order.human_status }}</td>
+                                                            <td colspan="3" class="border p-2 text-center">
+                                                                <div class="flex flex-col items-start">
+                                                                    <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
+                                                                    <div class="md:-mx-2 w-full flex flex-col md:flex-row">
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
+                                                                        </div>
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
+                                                                        </div>
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Delivery' ) }}: {{ order.human_delivery_status }}</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
                                                             <td class="border p-2 text-center">
-                                                                <button v-if="allowedForPayment( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button">
+                                                                <button @click="openOrderOptions( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button">
                                                                     <i class="las la-wallet"></i>
-                                                                    <span class="ml-1">{{ __( 'Payment' ) }}</span>
+                                                                    <span class="ml-1">{{ __( 'Options' ) }}</span>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -229,6 +240,7 @@ import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
 import nsPaginate from '@/components/ns-paginate.vue';
+import nsOrderPreviewPopup from './ns-orders-preview-popup.vue';
 
 export default {
     name: 'ns-pos-customers',
@@ -282,6 +294,10 @@ export default {
     methods: {
         __,
 
+        reload() {
+            this.loadCustomerOrders( this.customer.id );
+        },
+
         popupResolver,
         popupCloser,
 
@@ -295,6 +311,23 @@ export default {
         },
         
         closeWithOverlayClicked,
+
+        async openOrderOptions( order ) {
+            try {
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsOrderPreviewPopup, {
+                        order,
+                        resolve,
+                        reject
+                    });
+                });
+
+                this.reload();
+
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error occured while opening the order options' ) ).subscribe();
+            }
+        },
 
         doChangeTab( tab ) {
             this.selectedTab = tab;
@@ -334,10 +367,6 @@ export default {
                         this.isLoadingRewards   =   false;
                     }
                 });
-        },
-        
-        allowedForPayment( order ) {
-            return [ 'unpaid', 'partially_paid', 'hold' ].includes( order.payment_status );
         },
 
         prefillForm( event ) {
