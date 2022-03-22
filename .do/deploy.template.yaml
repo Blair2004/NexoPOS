@@ -12,7 +12,6 @@ spec:
       repo_clone_url: https://github.com/blair2004/NexoPOS-4x
       branch: v4.7.x
     build_command: 
-      npm install
       composer install
       cp .env.example .env
       php artisan key:generate
