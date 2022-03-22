@@ -1359,10 +1359,41 @@ export class POS {
         const products = this._products.getValue();
 
         /**
-         * push the new product
-         * at the front of the cart
+         * we'll check here if the merge feature is enabled
+         * If it's the case, we'll have to compare the added product
+         * with what already exists and decide to increase the quantity or not.
          */
-        products.unshift(cartProduct);
+        if ( this.settings.getValue().pos_items_merge ) {
+            const existing      =   products.filter( product => {
+                /**
+                 * we might check other arguments
+                 * in case the products doesn't have the same meta.
+                 */
+                return (
+                    product.product_id === cartProduct.product_id &&
+                    product.tax_group_id === cartProduct.tax_group_id &&
+                    product.unit_id === cartProduct.unit_id &&
+                    product.unit_quantity_id === cartProduct.unit_quantity_id
+                );
+            });
+
+            if ( existing.length > 0 ) {
+                existing[0].quantity       +=  cartProduct.quantity;
+            } else {
+                /**
+                 * push the new product
+                 * at the front of the cart
+                 */
+                products.unshift(cartProduct);
+            }
+
+        } else {
+            /**
+             * push the new product
+             * at the front of the cart
+             */
+            products.unshift(cartProduct);
+        }
 
         /**
          * Once the product has been added to the cart
