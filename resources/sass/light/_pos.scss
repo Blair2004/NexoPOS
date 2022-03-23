@@ -318,7 +318,7 @@
         @apply text-primary;
     }
     > div {
-        @apply bg-tab-inactive;
+        @apply bg-tab-active-border;
         h3 {
             @apply text-primary;
         }
@@ -331,7 +331,7 @@
                 @apply bg-tab-active;
             }
             span.ns-label {
-                @apply bg-success-primary text-white;
+                @apply bg-success-tertiary text-white;
             }
         }
         .ns-payment-wrapper {

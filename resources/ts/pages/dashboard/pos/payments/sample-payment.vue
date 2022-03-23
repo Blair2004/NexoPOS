@@ -2,19 +2,19 @@
     <div class="h-full w-full py-2">
         <div class="px-2 pb-2" v-if="order">
             <div class="grid grid-cols-2 gap-2">
-                <div id="details" class="h-16 flex justify-between items-center bg-info-primary text-white text-xl md:text-3xl p-2">
+                <div id="details" class="h-16 flex justify-between items-center border elevation-surface info text-xl md:text-3xl p-2">
                     <span>{{ __( 'Total' ) }} : </span>
                     <span>{{ order.total | currency }}</span>
                 </div>
-                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center bg-error-primary text-white text-xl md:text-3xl p-2">
+                <div id="discount" @click="toggleDiscount()" class="cursor-pointer h-16 flex justify-between items-center border elevation-surface error text-xl md:text-3xl p-2">
                     <span>{{ __( 'Discount' ) }} : </span>
                     <span>{{ order.discount | currency }}</span>
                 </div>
-                <div id="paid" class="h-16 flex justify-between items-center bg-success-primary text-white text-xl md:text-3xl p-2">
+                <div id="paid" class="h-16 flex justify-between items-center border elevation-surface success text-xl md:text-3xl p-2">
                     <span>{{ __( 'Paid' ) }} : </span>
                     <span>{{ order.tendered | currency }}</span>
                 </div>
-                <div id="change" class="h-16 flex justify-between items-center bg-warning-primary text-white text-xl md:text-3xl p-2">
+                <div id="change" class="h-16 flex justify-between items-center border elevation-surface warning text-xl md:text-3xl p-2">
                     <span>{{ __( 'Change' ) }} : </span>
                     <span>{{ order.change | currency }}</span>
                 </div>
