@@ -39,7 +39,6 @@ use App\Services\WebSocketService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -246,6 +245,14 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+
+        /**
+         * let's create a default sqlite
+         * database. This file is not tracked by Git.
+         */
+        if( ! is_file( database_path( 'database.sqlite' ) ) ) {
+            file_put_contents( database_path( 'database.sqlite' ), '' );
+        }
     }
 
     /**

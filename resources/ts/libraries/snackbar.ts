@@ -80,15 +80,15 @@ export class SnackBar {
 
         switch( type ) {
             case 'info': 
-                buttonThemeClass    =   'text-white';
+                buttonThemeClass    =   '';
                 snackThemeClass     =   'info';
             break;
             case 'error': 
-                buttonThemeClass    =   'text-white';
+                buttonThemeClass    =   '';
                 snackThemeClass     =   'error';
             break;
             case 'success': 
-                buttonThemeClass    =   'text-white';
+                buttonThemeClass    =   '';
                 snackThemeClass     =   'success';
             break;
         }
@@ -100,7 +100,7 @@ export class SnackBar {
          * on the button, it's useless to add it
          */
         if ( label ) {
-            buttonsWrapper.setAttribute( 'class', `ns-button default hover-${type}` )
+            buttonsWrapper.setAttribute( 'class', `ns-button default` )
             buttonNode.textContent      =   label;
             buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded uppercase ${buttonThemeClass}` );
             buttonsWrapper.appendChild( buttonNode );

@@ -4,22 +4,12 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
-use App\Mails\SetupComplete;
 use App\Models\User;
-use App\Models\Role;
 use App\Models\Migration;
 use App\Models\PaymentType;
-use App\Models\Permission;
 use App\Services\Options;
-use App\Services\UserOptions;
-use Exception;
-use Illuminate\Support\Facades\Cookie;
 
 class Setup
 {
@@ -30,10 +20,10 @@ class Setup
     public function saveDatabaseSettings( Request $request )
     {
         config([ 'database.connections.test' => [
-            'driver'         =>      'mysql',
+            'driver'         =>      $request->input( 'database_driver' ) ?: 'mysql',
             'host'           =>      $request->input( 'hostname' ),
-            'port'           =>      env('DB_PORT', '3306'),
-            'database'       =>      $request->input( 'database_name' ),
+            'port'           =>      $request->input( 'database_port' ) ?: env('DB_PORT', '3306'),
+            'database'       =>      $request->input( 'database_name' ) ?: database_path( 'database.sqlite' ),
             'username'       =>      $request->input( 'username' ),
             'password'       =>      $request->input( 'password' ),
             'unix_socket'    =>      env('DB_SOCKET', ''),
@@ -77,6 +67,13 @@ class Setup
                         'status'    =>  'failed'
                     ];
                 break;
+                case 1698   :   
+                    $message =  [
+                        'name'        => 'username',
+                        'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
+                        'status'       =>  'failed'
+                    ];
+                break;
                 default     :   
                     $message =  [
                         'name'      => 'hostname',
@@ -92,12 +89,12 @@ class Setup
         DotEnvEditor::load();
         DotEnvEditor::setKey( 'MAIL_MAILER', 'log' );
         DotEnvEditor::setKey( 'DB_HOST', $request->input( 'hostname' ) );
-        DotEnvEditor::setKey( 'DB_DATABASE', $request->input( 'database_name' ) );
+        DotEnvEditor::setKey( 'DB_DATABASE', $request->input( 'database_name' ) ?: database_path( 'database.sqlite' ) );
         DotEnvEditor::setKey( 'DB_USERNAME', $request->input( 'username' ) );
         DotEnvEditor::setKey( 'DB_PASSWORD', $request->input( 'password' ) );
         DotEnvEditor::setKey( 'DB_PREFIX', $request->input( 'database_prefix' ) );
-        DotEnvEditor::setKey( 'DB_PORT', 3306 );
-        DotEnvEditor::setKey( 'DB_CONNECTION', 'mysql' );
+        DotEnvEditor::setKey( 'DB_PORT', $request->input( 'database_port' ) ?: 3306 );
+        DotEnvEditor::setKey( 'DB_CONNECTION', $request->input( 'database_driver' ) ?: 'mysql' );
         DotEnvEditor::setKey( 'APP_URL', url()->to( '/' ) );
         DotenvEditor::save();
 
@@ -223,7 +220,7 @@ class Setup
     public function testDBConnexion()
     {
         try {
-            $DB     =   DB::connection( 'mysql' )->getPdo();
+            $DB     =   DB::connection( env( 'DB_CONNECTION', 'mysql' ) )->getPdo();
 
             return [
                 'status'    =>  'success',
@@ -261,10 +258,17 @@ class Setup
                         'status'       =>  'failed'
                     ];
                 break;
+                case 1698   :   
+                    $message =  [
+                        'name'        => 'username',
+                        'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
+                        'status'       =>  'failed'
+                    ];
+                break;
                 default     :   
                     $message =  [
                          'name'        => 'hostname',
-                         'message'      =>  sprintf( __( 'Unexpected error occured. :%s' ), $e->getCode() ),
+                         'message'      =>  sprintf( __( 'Unexpected error occured. Provided Code :%s' ), $e->getCode() ),
                          'status'       =>  'failed'
                     ]; 
                 break;
