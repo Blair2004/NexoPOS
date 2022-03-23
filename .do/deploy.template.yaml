@@ -5,6 +5,8 @@ spec:
     engine: MYSQL
     production: true
     cluster_name: ns
+    db_name: nexopos
+    db_user: nexoposuser
   services:
   - environment_slug: php
     name: nexopos
