@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1.0",
+        "ext-sqlite": "*",
         "beyondcode/laravel-websockets": "^1.11",
         "dekor/php-array-table": "^1.0",
         "doctrine/dbal": "^3.0",
