@@ -2,14 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
-use Carbon\Factory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
-use App\Models\Product;
-use App\Models\ProductCategory;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCouponTest;
 

@@ -6,9 +6,9 @@
                 <div><ns-close-button @click="close()"></ns-close-button></div>
             </div>
             <div class="p-2">
-                <div v-if="settings !== null && settings.register" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
+                <div v-if="register !== null" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
                     <span>{{ __( 'Balance' ) }} </span>
-                    <span>{{ settings.register.balance | currency }}</span>
+                    <span>{{ register.balance | currency }}</span>
                 </div>
                 <div class="mb-2 p-3 bg-success-primary font-bold text-white text-right flex justify-between">
                     <span>{{ __( 'Input' ) }}</span>
@@ -44,6 +44,7 @@ export default {
             settingsSubscription: null,
             settings: null,
             action: null,
+            register: null,
             loaded: false,
             register_id: null, // conditionnally provider
             validation: new FormValidation,
@@ -53,6 +54,7 @@ export default {
     mounted() {
         this.title                  =   this.$popupParams.title;
         this.identifier             =   this.$popupParams.identifier;
+        this.register               =   this.$popupParams.register;
         this.action                 =   this.$popupParams.action;
         this.register_id            =   this.$popupParams.register_id;
         this.settingsSubscription   =   POS.settings.subscribe( settings => {

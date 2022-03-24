@@ -45,13 +45,14 @@ export default {
             });
         },
 
-        async closeCashRegister() {
+        async closeCashRegister( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Close Register' ),
                         action: 'close',
                         identifier: 'ns.cash-registers-closing',
+                        register,
                         resolve, 
                         reject
                     })
@@ -158,7 +159,7 @@ export default {
             </div>
         </div>
         <div class="grid grid-cols-2 text-primary">
-            <div @click="closeCashRegister()" class="border-r border-b py-4 ns-numpad-key info cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="closeCashRegister( register )" class="border-r border-b py-4 ns-numpad-key info cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-sign-out-alt text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Close' ) }}</h3>
             </div>
