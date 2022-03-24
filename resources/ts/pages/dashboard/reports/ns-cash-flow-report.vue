@@ -17,10 +17,13 @@ export default {
         return {
             startDate: moment(),
             endDate: moment(),
-            report: []
+            report: new Object
         }
     },
     computed: {
+        balance() {
+            return Object.values( this.report ).length === 0 ? 0 : this.report.total_credit - this.report.total_debit;
+        },
         totalDebit() {
             return 0;
         },

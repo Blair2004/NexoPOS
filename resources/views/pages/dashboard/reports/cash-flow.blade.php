@@ -50,7 +50,7 @@
                     </div>
                     <div class="shadow rounded my-4">
                         <div class="ns-box">
-                            <div class="border-b ns-box-body p-2">
+                            <div class="border-b ns-box-body">
                                 <table class="ns-table table w-full">
                                     <thead class="">
                                         <tr>
@@ -73,9 +73,15 @@
                                     </tbody>
                                     <tfoot class=" font-semibold">
                                         <tr>
-                                            <td class="p-2 border"></td>
+                                            <td class="p-2 border">{{ __( 'Sub Total' ) }}</td>
                                             <td class="p-2 border border-error-secondary bg-error-primary text-right ">@{{ report.total_debit ? report.total_debit : 0 | currency }}</td>
                                             <td class="p-2 border text-right border-success-secondary bg-success-primary">@{{ report.total_credit ? report.total_credit : 0 | currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border">{{ __( 'Balance' ) }}</td>
+                                            <td colspan="2" class="p-2 border text-right border-info-secondary bg-info-primary">
+                                                @{{ balance | currency }}
+                                            </td>
                                         </tr>
                                     </tfoot>
                                 </table>
