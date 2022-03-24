@@ -31,4 +31,10 @@ class CreateOrderOnRegister extends TestCase
         $this->attemptAuthenticate();
         $this->attemptCreateOrderOnRegister();
     }
+
+    public function test_update_order_on_register()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptUpdateOrderOnRegister();
+    }
 }

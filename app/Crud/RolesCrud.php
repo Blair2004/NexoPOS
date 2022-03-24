@@ -150,7 +150,6 @@ class RolesCrud extends CrudService
                             'label' =>  __( 'Dashboard Identifier' ),
                             'validation'    =>  'required',
                             'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-dashboard-identifiers', [
-                                'none'      =>  __( 'No Dashboard' ),
                                 'store'     =>  __( 'Store Dashboard' ),
                                 'cashier'   =>  __( 'Cashier Dashboard' ),
                                 'default'   =>  __( 'Default Dashboard' ),
@@ -177,7 +176,18 @@ class RolesCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
-        $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'namespace' ] );
+        /**
+         * the default role namespace can't be changed.
+         */
+        if ( ! in_array( $inputs[ 'namespace' ], [
+            Role::ADMIN,
+            Role::STOREADMIN,
+            Role::STORECASHIER,
+            Role::USER
+        ] )) {
+            $inputs[ 'namespace' ]  =   Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+        }
+
         $inputs[ 'locked' ]     =   false;
         return $inputs;
     }
@@ -189,7 +199,18 @@ class RolesCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Role $entry )
     {
-        $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'namespace' ] );
+        /**
+         * the default role namespace can't be changed.
+         */
+        if ( ! in_array( $inputs[ 'namespace' ], [
+            Role::ADMIN,
+            Role::STOREADMIN,
+            Role::STORECASHIER,
+            Role::USER
+        ] )) {
+            $inputs[ 'namespace' ]  =   Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+        }
+        
         return $inputs;
     }
 

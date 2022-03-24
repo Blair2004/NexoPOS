@@ -29,7 +29,7 @@ class CashRegistersService
             );
         }
 
-        $registerHistory            =   new RegisterHistory;
+        $registerHistory                =   new RegisterHistory;
         $registerHistory->register_id   =   $register->id;
         $registerHistory->action        =   RegisterHistory::ACTION_OPENING;
         $registerHistory->author        =   Auth::id();
@@ -73,7 +73,7 @@ class CashRegistersService
             );
         }
 
-        $registerHistory    =   new RegisterHistory;
+        $registerHistory                =   new RegisterHistory;
         $registerHistory->register_id   =   $register->id;
         $registerHistory->action        =   RegisterHistory::ACTION_CLOSING;
         $registerHistory->author        =   Auth::id();
@@ -249,10 +249,10 @@ class CashRegistersService
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
-     * @param OrderAfterCreatedEvent $event
+     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
      * @return void
      */
-    public function increaseFromOrderCreatedEvent( OrderAfterCreatedEvent $event )
+    public function increaseFromOrderCreatedEvent( $event )
     {
         /**
          * If the payment status changed from

@@ -27,4 +27,15 @@ class CreateCouponTest extends TestCase
         $this->attemptAuthenticate();
         $this->attemptCreatecoupon();
     }
+
+    /**
+     * Let's now try to update the coupon.
+     * 
+     * @return void
+     */
+    public function testUpdateCoupon()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptUpdateCoupon();
+    }
 }
