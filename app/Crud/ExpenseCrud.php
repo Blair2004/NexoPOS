@@ -6,6 +6,7 @@ use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\ExpenseBeforeCreateEvent;
 use App\Events\ExpenseBeforeDeleteEvent;
 use App\Events\ExpenseBeforeUpdateEvent;
+use App\Models\AccountType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -145,6 +146,12 @@ class ExpenseCrud extends CrudService
                             'validation'    =>  'required',
                             'value'         =>  $entry->active ?? '',
                         ], [
+                            'type'  =>  'datetimepicker',
+                            'name'  =>  'created_at',
+                            'label' =>  __( 'Created At' ),
+                            'value' =>  $entry->created_at ?? '',
+                            'description'   =>  __( 'Will set when the expense should be active.' ),
+                        ], [
                             'type'          =>  'select',
                             'name'          =>  'group_id',
                             'label'         =>  __( 'Users Group' ),
@@ -159,7 +166,7 @@ class ExpenseCrud extends CrudService
                             ],
                         ], [
                             'type'          =>  'select',
-                            'options'       =>  Helper::toJsOptions( ExpenseCategory::get(), [ 'id', 'name' ]),
+                            'options'       =>  Helper::toJsOptions( AccountType::get(), [ 'id', 'name' ]),
                             'name'          =>  'category_id',
                             'label'         =>  __( 'Expense Category' ),
                             'description'   =>  __( 'Assign the expense to a category' ),

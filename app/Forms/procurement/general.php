@@ -19,6 +19,12 @@ return [
             'label' =>  __( 'Delivery Time' ),
             'description'   =>  __( 'If the procurement has to be delivered at a specific time, define the moment here.' )
         ], [
+            'type'  =>  'date',
+            'name'  =>  'invoice_date',
+            'value' =>  $procurement->invoice_date ?? '',
+            'label' =>  __( 'Invoice Date' ),
+            'description'   =>  __( 'If you would like to define a custom invoice date.' )
+        ], [
             'type'          =>  'switch',
             'name'          =>  'automatic_approval',
             'value' =>  $procurement->automatic_approval ?? '',

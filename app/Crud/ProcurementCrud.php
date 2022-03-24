@@ -212,6 +212,10 @@ class ProcurementCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        if ( empty( $inputs[ 'invoice_date' ] ) ) {
+            $inputs[ 'invoice_date' ]   =   ns()->date->getNowFormatted();
+        }
+
         return $inputs;
     }
 
@@ -222,6 +226,10 @@ class ProcurementCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Procurement $entry )
     {
+        if ( empty( $inputs[ 'invoice_date' ] ) ) {
+            $inputs[ 'invoice_date' ]   =   ns()->date->getNowFormatted();
+        }
+
         return $inputs;
     }
 
@@ -340,6 +348,11 @@ class ProcurementCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'invoice_date'  =>  [
+                'label'  =>  __( 'Invoice Date' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'value'  =>  [
                 'label'         =>  __( 'Sale Value' ),
                 '$direction'    =>  '',
@@ -359,11 +372,6 @@ class ProcurementCrud extends CrudService
             ],
             'users_username'    =>  [
                 'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Date' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],

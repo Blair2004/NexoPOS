@@ -229,6 +229,16 @@ class CrudService
                 $entry->author      =   Auth::id();
             }
 
+            /**
+             * if timestamp are provided we'll disable the timestamp feature.
+             * In case a field is not provided, the default value is used.
+             */
+            if ( ! empty( $entry->created_at ) || ! empty( $entry->updated_at ) ) {
+                $entry->timestamps      =   false;
+                $entry->created_at      =   $entry->created_at ?: ns()->date->getNowFormatted();
+                $entry->updated_at      =   $entry->updated_at ?: ns()->date->getNowFormatted();
+            }
+
             $entry->save();
 
             /**
