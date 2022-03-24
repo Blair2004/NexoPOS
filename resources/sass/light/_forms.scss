@@ -26,12 +26,12 @@
     }
 
     &.info {
-        @apply border-info-primary;
+        @apply border-info-tertiary;
         input {
             @apply bg-input-background text-primary;
         }
         button {
-            @apply bg-info-primary text-white;
+            @apply bg-info-tertiary text-white;
             i, span {
                 @apply text-white;
             }

@@ -1,7 +1,7 @@
 <template>
     <div :class="'ns-notice ' + actualColor" class="p-4 border-l-4 text-primary ns-notice" role="alert">
         <h2 class="font-bold"><slot name="title"></slot></h2>
-        <p><slot name="description"></slot></p>
+        <p><slot name="description"></slot><slot></slot></p>
     </div>
 </template>
 <script>

@@ -274,7 +274,7 @@
 }
 .input-group.info {
     --tw-border-opacity: 1;
-    border-color: rgb(var(--info-primary) / var(--tw-border-opacity));
+    border-color: rgb(var(--info-tertiary) / var(--tw-border-opacity));
 }
 .input-group.info input {
     --tw-bg-opacity: 1;
@@ -284,7 +284,7 @@
 }
 .input-group.info button {
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--info-primary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--info-tertiary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
 }
@@ -1461,6 +1461,10 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
 #ns-pos-customers .ns-header h3 {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
+}
+#ns-pos-customers .ns-tab-cards h3, #ns-pos-customers .ns-tab-cards h2 {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 #ns-pos-customers .ns-body {
     --tw-bg-opacity: 1;

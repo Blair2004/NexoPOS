@@ -277,6 +277,11 @@
             @apply text-primary;
         }
     }
+    .ns-tab-cards {
+        h3, h2 {
+            @apply text-white;
+        }
+    }
     .ns-body {
         @apply bg-box-background;
     }

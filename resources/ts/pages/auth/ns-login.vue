@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box rounded shadow-lg overflow-hidden transition-all duration-100">
+    <div class="ns-box rounded shadow overflow-hidden transition-all duration-100">
         <div class="ns-box-body">
             <div class="p-3 -my-2">
                 <div class="py-2 fade-in-entrance anim-duration-300" v-if="fields.length > 0">

@@ -350,7 +350,7 @@ export default {
                 <div class="shadow ns-grid flex flex-auto flex-col overflow-y-auto ns-scrollbar">
                     <div class="flex flex-auto">
                         <div class="p-2 overflow-x-auto">
-                            <div :class="panelOpened ? 'grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6'" class="grid">
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4">
                                 <div v-for="(resource, index) of response.data" :key="index" class="">
                                     <div class="p-2">
                                         <div @click="selectResource( resource )" :class="resource.selected ? 'ns-media-image-selected ring-4' : ''" class="rounded-lg aspect-square bg-gray-500 m-2 overflow-hidden flex items-center justify-center">
@@ -365,11 +365,11 @@ export default {
                         </div>
                     </div>
                 </div>
-                <div id="preview" class="ns-media-preview-panel hidden md:block w-64 flex-shrink-0 " v-if="panelOpened">
+                <div id="preview" class="ns-media-preview-panel hidden lg:block w-64 flex-shrink-0 ">
                     <div class="h-64 bg-gray-800 flex items-center justify-center">
-                        <img :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
+                        <img v-if="panelOpened" :src="selectedResource.sizes.thumb" :alt="selectedResource.name">
                     </div>
-                    <div id="details" class="p-4 text-gray-700 text-sm">
+                    <div id="details" class="p-4 text-gray-700 text-sm" v-if="panelOpened">
                         <p class="flex flex-col mb-2">
                             <strong class="font-bold block">{{ __( 'File Name' ) }}: </strong><span>{{ selectedResource.name }}</span>
                         </p>

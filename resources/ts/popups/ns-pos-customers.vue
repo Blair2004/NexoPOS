@@ -35,12 +35,12 @@
                     </div>
                     <div v-if="customer" class="flex flex-col flex-auto">
                         <div class="flex-auto p-2 flex flex-col">
-                            <div class="-mx-4 flex flex-wrap">
+                            <div class="-mx-4 flex flex-wrap ns-tab-cards">
                                 <div class="px-4 mb-4 w-full">
                                     <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-primary to-green-700 p-2 flex flex-col text-white">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
@@ -109,7 +109,7 @@
                                                                 </div>
                                                             </td>
                                                             <td class="border p-2 text-center">
-                                                                <button @click="openOrderOptions( order )" class="hover:bg-info-primary hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button">
+                                                                <button @click="openOrderOptions( order )" class="rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button success">
                                                                     <i class="las la-wallet"></i>
                                                                     <span class="ml-1">{{ __( 'Options' ) }}</span>
                                                                 </button>
