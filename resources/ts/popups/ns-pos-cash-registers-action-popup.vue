@@ -10,7 +10,7 @@
                     <span>{{ __( 'Balance' ) }} </span>
                     <span>{{ register.balance | currency }}</span>
                 </div>
-                <div class="mb-2 p-3 bg-success-primary font-bold text-white text-right flex justify-between">
+                <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
                     <span>{{ __( 'Input' ) }}</span>
                     <span>{{ amount | currency }}</span>
                 </div>

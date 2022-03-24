@@ -2,8 +2,8 @@
     <div id="crud-table" class="w-full rounded-lg" :class="mode !== 'light' ? 'shadow mb-8': ''">
         <div id="crud-table-header" class="p-2 border-b border-popup-surface flex flex-col md:flex-row justify-between flex-wrap" v-if="mode !== 'light'">
             <div id="crud-search-box" class="w-full md:w-auto -mx-2 mb-2 md:mb-0 flex">
-                <div class="px-2 flex items-center justify-center">
-                    <a :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
+                <div v-if="createUrl" class="px-2 flex items-center justify-center">
+                    <a  :href="createUrl || '#'" class="rounded-full ns-crud-button text-sm h-10 flex items-center justify-center cursor-pointer px-3 outline-none border"><i class="las la-plus"></i></a>
                 </div>
                 <div class="px-2">
                     <div class="rounded-full p-1 ns-crud-input flex">
@@ -50,7 +50,7 @@
                             <th class="text-center px-2 border w-16 py-2">
                                 <ns-checkbox :checked="globallyChecked" @change="handleGlobalChange( $event )"></ns-checkbox>
                             </th>
-                            <th v-if="prependOptions" class="text-left px-2 py-2 w-16 border"></th>
+                            <th v-if="prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
                             <th :key="identifier" @click="sort( identifier )" v-for="(column, identifier) of columns" :style="{ 'min-width' : column.width || 'auto' }" class="cursor-pointer justify-betweenw-40 border text-left px-2 py-2">
                                 <div class="w-full flex justify-between items-center">
                                     <span class="flex">{{ column.label }}</span>
@@ -60,7 +60,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th v-if="!prependOptions" class="text-left px-2 py-2 w-16 border"></th>
+                            <th v-if="!prependOptions && showOptions" class="text-left px-2 py-2 w-16 border"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,6 +71,7 @@
                                 v-for="(row,index) of result.data" 
                                 :columns="columns" 
                                 :prependOptions="prependOptions"
+                                :showOptions="showOptions"
                                 :row="row" 
                                 @reload="refresh()"
                                 @toggled="handleShowOptions( $event )"></ns-table-row>
@@ -125,6 +126,7 @@ export default {
     data: () => {
         return {
             prependOptions: false,
+            showOptions: true,
             isRefreshing: false,
             sortColumn: '',
             searchInput: '',
@@ -304,6 +306,7 @@ export default {
                 this.bulkActions    =   f.bulkActions;
                 this.queryFilters   =   f.queryFilters;
                 this.prependOptions =   f.prependOptions;
+                this.showOptions    =   f.showOptions;
                 this.refresh();
             }, ( error ) => {
                 nsSnackBar.error( error.message, 'OK', { duration: false }).subscribe();

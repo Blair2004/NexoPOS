@@ -307,6 +307,12 @@
     }
 }
 
+#ns-pos-cash-registers-popup {
+    div.alert {
+        @apply bg-error-primary;
+    }
+}
+
 #ns-payment-popup {
     .ns-pos-screen {
         @apply text-primary;

@@ -50,7 +50,7 @@ export default {
                     const action        =   'open';
                     const register_id   =   register.id;
                     const identifier    =   'ns.cash-registers-opening'; // fields identifier
-                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action, register_id })
+                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, register, action, register_id })
                 });
 
                 this.popupResolver( response );                
@@ -103,7 +103,9 @@ export default {
         <div v-if="priorVerification === false" class="h-full w-full py-10 flex justify-center items-center">
             <ns-spinner size="24" border="8"></ns-spinner>
         </div>
-        <div v-if="priorVerification" class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg ns-box' : ''">
+        <div v-if="priorVerification" 
+            id="ns-pos-cash-registers-popup"
+            class="w-95vw md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen flex flex-col overflow-hidden" :class="priorVerification ? 'shadow-lg ns-box' : ''">
             <template>
                 <div class="title p-2 border-b ns-box-header flex justify-between items-center">
                     <h3 class="font-semibold">{{ __( 'Open The Register' ) }}</h3>
@@ -124,7 +126,7 @@ export default {
                             <span class="text-sm">({{ register.status_label }})</span>
                         </div>
                     </div>
-                    <div v-if="registers.length === 0" class="p-2 bg-error-primary text-white">
+                    <div v-if="registers.length === 0" class="p-2 alert text-white">
                         {{ __( 'Looks like there is no registers. At least one register is required to proceed.' ) }} &mdash; <a class="font-bold hover:underline" :href="settings.urls.registers_url">{{ __( 'Create Cash Register' ) }}</a>
                     </div>
                 </div>

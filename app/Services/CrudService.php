@@ -101,6 +101,11 @@ class CrudService
     protected $prependOptions     =   false;
 
     /**
+     * Determine if actions should be displayed
+     */
+    protected $showOptions      =   true;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -1165,5 +1170,14 @@ class CrudService
     public static function filterMethod( $methodName, $callback )
     {
         return Hook::filter( self::method( $methodName ), $callback );
+    }
+
+    /**
+     * Return if the table show display raw actions.
+     * @return boolean
+     */
+    public function getShowOptions()
+    {
+        return $this->showOptions;
     }
 }

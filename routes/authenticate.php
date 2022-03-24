@@ -11,6 +11,6 @@ Route::get( '/new-password/{user}/{token}', [ AuthController::class, 'newPasswor
 
 Route::post( '/auth/sign-in', [ AuthController::class, 'postSignIn' ])->name( ns()->routeName( 'ns.login.post' ) );
 Route::post( '/auth/sign-up', [ AuthController::class, 'postSignUp' ])->name( ns()->routeName( 'ns.register.post' ) );
-Route::post( '/auth/password-lost', [ AuthController::class, 'postPasswordLost' ])->name( ns()->routeName( 'ns.password-lost' ) );
+Route::post( '/auth/password-lost', [ AuthController::class, 'postPasswordLost' ])->name( ns()->routeName( 'ns.password-lost.post' ) );
 Route::post( '/auth/new-password/{user}/{token}', [ AuthController::class, 'postNewPassword' ])->name( ns()->routeName( 'ns.post.new-password' ) );
 Route::get( '/sign-out', [ AuthController::class, 'signOut' ])->name( ns()->routeName( 'ns.logout' ) );

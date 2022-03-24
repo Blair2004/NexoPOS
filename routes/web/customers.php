@@ -21,7 +21,7 @@ Route::get( '/customers/groups/edit/{group}', [ CustomersGroupsController::class
 Route::get( '/customers/rewards-system', [ RewardsSystemController::class, 'list' ])->name( ns()->routeName( 'ns.dashboard.rewards-list' ) );
 Route::get( '/customers/rewards-system/create', [ RewardsSystemController::class, 'create' ])->name( ns()->routeName( 'ns.dashboard.rewards-create' ) );
 Route::get( '/customers/rewards-system/edit/{reward}', [ RewardsSystemController::class, 'edit' ])->name( ns()->routeName( 'ns.dashboard.rewards-edit' ) );
-Route::get( '/customers/coupons', [ CustomersController::class, 'listCoupons' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-list' ) );
+Route::get( '/customers/coupons', [ CustomersController::class, 'listCoupons' ])->name( ns()->routeName( 'ns.dashboard.all-customers-coupons-list' ) );
 Route::get( '/customers/coupons/create', [ CustomersController::class, 'createCoupon' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-create' ) );
 Route::get( '/customers/coupons/edit/{coupon}', [ CustomersController::class, 'editCoupon' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-edit' ) );
 Route::get( '/customers/coupons-generated', [ CustomersController::class, 'listGeneratedCoupons' ])->name( ns()->routeName( 'ns.dashboard.customers-coupons-generated-list' ) );

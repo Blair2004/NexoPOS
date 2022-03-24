@@ -5,7 +5,7 @@ import { __ } from '@/libraries/lang';
 
 const nsTableRow    =   Vue.component( 'ns-table-row', {
     props: [
-        'options', 'row', 'columns', 'prependOptions'
+        'options', 'row', 'columns', 'prependOptions', 'showOptions'
     ],
     data: () => {
         return {
@@ -87,7 +87,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
         <td class="font-sans p-2">
             <ns-checkbox @change="handleChanged( $event )" :checked="row.$checked"> </ns-checkbox>
         </td>
-        <td v-if="prependOptions" class="font-sans p-2">
+        <td v-if="prependOptions && showOptions" class="font-sans p-2">
             <div class=""> <!-- flex items-center justify-center -->
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>
@@ -106,7 +106,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
             </div>
         </td>
         <td v-for="(column, identifier) of columns" class="font-sans p-2" v-html="sanitizeHTML( row[ identifier ] )"></td>
-        <td v-if="!prependOptions" class="font-sans p-2 flex flex-col items-center justify-center">
+        <td v-if="!prependOptions && showOptions" class="font-sans p-2 flex flex-col items-center justify-center">
             <div class=""> <!-- flex items-center justify-center -->
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>
                 <div @click="toggleMenu( $event )" v-if="row.$toggled" class="absolute w-full h-full z-10 top-0 left-0"></div>

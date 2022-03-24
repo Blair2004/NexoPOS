@@ -15,12 +15,12 @@ class UpdateCashRegisterHistoryMarch12022 extends Migration
     {
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
             Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
-                if ( ! Schema::hasColumn( 'nexopos_registers_history', 'diff_type' ) ) {
-                    $table->string( 'diff_type' )->nullable(); // can be "negative", "positive".
+                if ( ! Schema::hasColumn( 'nexopos_registers_history', 'transaction_type' ) ) {
+                    $table->string( 'transaction_type' )->nullable(); // can be "negative", "positive".
                 }
 
-                if ( ! Schema::hasColumn( 'nexopos_registers_history', 'diff_type' ) ) {
-                    $table->float( 'diff_amount' )->default(0);
+                if ( ! Schema::hasColumn( 'nexopos_registers_history', 'balance_after' ) ) {
+                    $table->float( 'balance_after' )->default(0);
                 }
             });
         }
@@ -35,12 +35,12 @@ class UpdateCashRegisterHistoryMarch12022 extends Migration
     {
         if ( Schema::hasTable( 'nexopos_registers_history' ) ) {
             Schema::table( 'nexopos_registers_history', function( Blueprint $table ) {
-                if ( Schema::hasColumn( 'nexopos_registers_history', 'diff_type' ) ) {
-                    $table->dropColumn( 'diff_type' );
+                if ( Schema::hasColumn( 'nexopos_registers_history', 'transaction_type' ) ) {
+                    $table->dropColumn( 'transaction_type' );
                 }
 
-                if ( Schema::hasColumn( 'nexopos_registers_history', 'diff_type' ) ) {
-                    $table->dropColumn( 'diff_amount' );
+                if ( Schema::hasColumn( 'nexopos_registers_history', 'balance_after' ) ) {
+                    $table->dropColumn( 'balance_after' );
                 }
             });
         }

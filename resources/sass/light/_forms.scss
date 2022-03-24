@@ -313,7 +313,7 @@
     @apply border-input-edge text-primary;
 
     &:hover {
-        @apply bg-error-secondary border-transparent;
+        @apply bg-error-secondary border-transparent text-white;
         > i {
             @apply text-white;
         }

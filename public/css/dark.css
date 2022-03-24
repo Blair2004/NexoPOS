@@ -1490,6 +1490,10 @@ ul.ns-vertical-menu li:hover, ul.ns-vertical-menu li .active {
 #ns-units-selector .overlay {
         background:rgb(0 0 0 / 73%);
     }
+#ns-pos-cash-registers-popup div.alert {
+    --tw-bg-opacity: 1;
+    background-color: rgb(var(--error-primary) / var(--tw-bg-opacity));
+}
 #ns-payment-popup .ns-pos-screen {
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));

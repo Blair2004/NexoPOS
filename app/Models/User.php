@@ -8,6 +8,7 @@ use App\Services\UserOptions;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -74,7 +75,7 @@ class User extends Authenticatable
 
     /**
      * Relation with roles
-     * @return void
+     * @return HasManyThrough
     **/
     public function roles()
     {

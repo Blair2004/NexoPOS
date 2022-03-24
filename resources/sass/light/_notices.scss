@@ -13,7 +13,7 @@
         @apply border-danger-secondary bg-danger-primary;
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-white;
         }
     }
     
@@ -21,7 +21,7 @@
         @apply border-warning-tertiary bg-warning-tertiary;
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-white;
         }
     }
     
@@ -29,7 +29,7 @@
         @apply border-success-tertiary bg-success-tertiary;
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-white;
         }
     }
     
@@ -37,7 +37,7 @@
         @apply border-error-tertiary bg-error-secondary text-primary;
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-white;
         }
     }
     
@@ -45,7 +45,7 @@
         @apply border-info-tertiary bg-info-tertiary;
     
         pre {
-            @apply bg-pre text-primary;
+            @apply bg-pre text-white;
         }
     }
 }

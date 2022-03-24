@@ -102,6 +102,8 @@ class RegisterHistoryCrud extends CrudService
      */
     private $registerService;
 
+    protected $showOptions      =   false;
+
     /**
      * Define Constructor
      * @param  
@@ -354,8 +356,23 @@ class RegisterHistoryCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
+            'balance_before'  =>  [
+                'label'  =>  __( 'Initial Balance' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'value'  =>  [
                 'label'  =>  __( 'Value' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'balance_after'  =>  [
+                'label'  =>  __( 'New Balance' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'transaction_type'  =>  [
+                'label'  =>  __( 'Transaction Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -379,48 +396,52 @@ class RegisterHistoryCrud extends CrudService
         
         switch( $entry->action ) {
             case RegisterHistory::ACTION_SALE: 
-                $entry->{ '$cssClass' }    =   'bg-green-100 border-b border-green-200';
+                $entry->{ '$cssClass' }    =   'success border';
             break;
             case RegisterHistory::ACTION_CASHING: 
-                $entry->{ '$cssClass' }    =   'bg-green-100 border-b border-green-200';
+                $entry->{ '$cssClass' }    =   'success border';
             break;
             case RegisterHistory::ACTION_OPENING: 
-                $entry->{ '$cssClass' }    =   'bg-blue-100 border-b border-blue-200';
+                $entry->{ '$cssClass' }    =   'info border';
             break;
             case RegisterHistory::ACTION_CASHOUT: 
-                $entry->{ '$cssClass' }    =   'bg-red-100 border-b border-red-200';
+                $entry->{ '$cssClass' }    =   'warning border';
             break;
             case RegisterHistory::ACTION_CASHOUT: 
-                $entry->{ '$cssClass' }    =   'bg-red-100 border-b border-red-200';
+                $entry->{ '$cssClass' }    =   'warning border';
             break;
             case RegisterHistory::ACTION_CLOSING: 
-                $entry->{ '$cssClass' }    =   'bg-orange-100 border-b border-orange-200';
+                $entry->{ '$cssClass' }    =   'warning border';
             break;
         }
 
-        $entry->action      =   $this->registerService->getActionLabel( $entry->action );
-        $entry->created_at  =   ns()->date->getFormatted( $entry->created_at );
-        $entry->value       =   ( string ) ns()->currency->define( $entry->value );
+        if ( $entry->action === RegisterHistory::ACTION_CLOSING && ( float ) $entry->balance_after != 0 )  {
+            $entry->{ '$cssClass' }     =   'error border';
+        }
+
+        $entry->action              =   $this->registerService->getActionLabel( $entry->action );
+        $entry->created_at          =   ns()->date->getFormatted( $entry->created_at );
+        $entry->value               =   ( string ) ns()->currency->define( $entry->value );
+        $entry->balance_before      =   ( string ) ns()->currency->define( $entry->balance_before );
+        $entry->balance_after       =   ( string ) ns()->currency->define( $entry->balance_after );
+        $entry->transaction_type    =   $this->getHumanTransactionType( $entry->transaction_type );
 
         // you can make changes here
         $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . '' . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers-hitory/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
-            ]
+            // ...
         ];
 
         return $entry;
+    }
+
+    public function getHumanTransactionType( $type )
+    {
+        switch( $type ) {
+            case 'unchanged': return __( 'Unchanged' ); break;
+            case 'negative': return __( 'Missing Observed' ); break;
+            case 'positive': return __( 'Surplus Observed' ); break;
+            default: return __( 'N/A' ); break;
+        }
     }
 
     
@@ -475,10 +496,10 @@ class RegisterHistoryCrud extends CrudService
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . 'registers-history' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'registers-history/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'registers-history/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers-hitory' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.registers-hitory/{id}' . '' ),
+            'create'    =>  false,
+            'edit'      =>  false,
+            'post'      =>  false, 
+            'put'       =>  false, 
         ];
     }
 
