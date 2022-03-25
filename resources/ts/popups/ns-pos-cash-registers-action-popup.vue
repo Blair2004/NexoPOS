@@ -102,12 +102,15 @@ export default {
             fields.amount   =   this.amount === '' ? 0 : this.amount;
 
             nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
-                .subscribe( result => {
-                    this.$popupParams.resolve( result );
-                    this.$popup.close();
-                    nsSnackBar.success( result.message ).subscribe();
-                }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                .subscribe({
+                    next: result => {
+                        this.$popupParams.resolve( result );
+                        this.$popup.close();
+                        nsSnackBar.success( result.message ).subscribe();
+                    }, 
+                    error: ( error ) => {
+                        nsSnackBar.error( error.message ).subscribe();
+                    }
                 });
         },
     }

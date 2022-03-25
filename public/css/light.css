@@ -205,7 +205,7 @@
     --tw-border-opacity: 1;
     border-color: rgb(var(--error-tertiary) / var(--tw-border-opacity));
     --tw-bg-opacity: 1;
-    background-color: rgb(var(--error-secondary) / var(--tw-bg-opacity));
+    background-color: rgb(var(--error-tertiary) / var(--tw-bg-opacity));
     --tw-text-opacity: 1;
     color: rgb(var(--primary) / var(--tw-text-opacity));
 }

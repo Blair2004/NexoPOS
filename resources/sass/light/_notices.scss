@@ -34,7 +34,7 @@
     }
     
     &.error {
-        @apply border-error-tertiary bg-error-secondary text-primary;
+        @apply border-error-tertiary bg-error-tertiary text-primary;
     
         pre {
             @apply bg-pre text-white;

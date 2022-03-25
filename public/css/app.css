@@ -1329,10 +1329,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--success-primary) / var(--tw-bg-opacity)) !important;
 }
-.bg-info-primary {
-  --tw-bg-opacity: 1 !important;
-  background-color: rgb(var(--info-primary) / var(--tw-bg-opacity)) !important;
-}
 .bg-tab-active {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--tab-active) / var(--tw-bg-opacity)) !important;
@@ -1360,6 +1356,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-surface {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(var(--surface) / var(--tw-bg-opacity)) !important;
+}
+.bg-info-primary {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(var(--info-primary) / var(--tw-bg-opacity)) !important;
 }
 .bg-gray-100 {
   --tw-bg-opacity: 1 !important;
