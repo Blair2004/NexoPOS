@@ -29,6 +29,8 @@
 <script>
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import popupCloser from '@/libraries/popup-closer';
+
 export default {
     data() {
         return {
@@ -71,23 +73,45 @@ export default {
             this.finalValue     =   this.$popupParams.product.quantity;
         }
 
-        document.addEventListener( 'keyup', this.handleKeyPress );
+        this.popupCloser();
+
+        /**
+         * will bind keyboard event listening
+         */
+        const inputs    =   ( new Array(10) )
+            .fill( '' )
+            .map( ( v, i ) => i );
+            
+        nsHotPress
+            .create( 'pos-quantity-numpad')
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( inputs, ( event, value ) => {
+                this.inputValue({ value });
+            })
+
+        nsHotPress
+            .create( 'pos-quantity-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'pos-quantity-enter')
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     destroyed() {
-        document.removeEventListener( 'keypress', this.handleKeyPress );
+        nsHotPress.destroy( 'pos-quantity-numpad');
+        nsHotPress.destroy( 'pos-quantity-backspace' );
+        nsHotPress.destroy( 'pos-quantity-enter');
     },
     methods: {
         __,
 
+        popupCloser,
+
         closePopup() {
             this.$popupParams.reject( false );
             this.$popup.close();
-        },
-
-        handleKeyPress( event ) {
-            if ( event.keyCode === 13 ) {
-                this.inputValue({ identifier : 'next' });
-            }
         },
         
         inputValue( key ) {

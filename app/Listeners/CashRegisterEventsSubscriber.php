@@ -44,11 +44,6 @@ class CashRegisterEventsSubscriber
         );
 
         $event->listen( 
-            CashRegisterHistoryAfterCreatedEvent::class, 
-            [ $this->registerService, 'issueExpenses' ]
-        );
-
-        $event->listen( 
             OrderAfterPaymentStatusChangedEvent::class,
             [ $this->registerService, 'increaseFromPaidOrder' ]
         );

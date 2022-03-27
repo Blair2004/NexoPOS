@@ -48,12 +48,16 @@ import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import nsPosOrderProductsPopupVue from './ns-pos-order-products-popup.vue';
 import nsPosPendingOrders from './ns-pos-pending-orders';
 import { __ } from '@/libraries/lang';
+import popupResolver from '@/libraries/popup-resolver';
+import popupCloser from '@/libraries/popup-closer';
 export default {
     components: {
         nsPosPendingOrders
     },
     methods: {
         __,
+        popupResolver,
+        popupCloser,
         
         searchOrder( search ) {
             nsHttpClient.get( `/api/nexopos/v4/crud/${this.active}?search=${search}` )
@@ -122,6 +126,8 @@ export default {
             }
         });
         this.loadOrderFromType( this.active );
+        
+        this.popupCloser();
     }
 }
 </script>

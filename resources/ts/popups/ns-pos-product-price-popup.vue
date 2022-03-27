@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="flex flex-col ns-box-body">
-            <div class="h-16 flex items-center justify-center elevation-surface font-bold">
+            <div class="h-16 flex items-center justify-center elevation-surface info font-bold">
                 <h2 class="text-2xl">{{ product.unit_price | currency }}</h2>
             </div>
             <div class="p-2">

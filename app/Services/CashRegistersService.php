@@ -401,38 +401,4 @@ class CashRegistersService
             }
         }
     }
-
-    /**
-     * Will issue an expense history for every
-     * cashing out operation if an expense category is assigned
-     * @param CashRegisterHistoryAfterCreatedEvent $event
-     * @return void
-     */
-    public function issueExpenses( CashRegisterHistoryAfterCreatedEvent $event )
-    {
-        /**
-         * @var ExpenseService
-         */
-        $expenseService     =   app()->make( ExpenseService::class );
-        $cat_id             =   ns()->option->get( 'ns_pos_cashout_expense_category' );
-        $expenseCategory    =   AccountType::find( $cat_id );
-
-        if ( $expenseCategory instanceof AccountType && $event->registerHistory->action === RegisterHistory::ACTION_CASHOUT ) {
-            /**
-             * We simulate a created expense
-             * that will be added to the expenses history
-             * but it won't be persistent.
-             */
-            $expense                =   new Expense();
-            $expense->name          =   $event->registerHistory->description ?: __( 'Cash out' );
-            $expense->category_id   =   $expenseCategory->id;
-            $expense->description   =   __( 'An automatically generated expense for cash-out operation.' );
-            $expense->value         =   $event->registerHistory->value;
-            $expense->author        =   Auth::id();
-            $expense->id            =   0; // untracked expenses shouldn't be assigned
-            $expense->active        =   true;
-
-            $expenseService->triggerExpense( $expense );
-        }
-    }
 }

@@ -43,6 +43,38 @@ export default {
         } else {
             this.screenValue    =   0;
         }
+        
+        /**
+         * will bind keyboard event listening
+         */
+        const numbers   =   ( new Array(10) ).fill('').map( ( v,i ) => i );
+
+        nsHotPress
+            .create( 'numpad-keys' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( numbers, ( event, value ) => {
+                this.inputValue({ value });
+            })
+
+        nsHotPress
+            .create( 'numpad-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'numpad-increase' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( '+', () => this.increaseBy({ value: 1 }))
+
+        nsHotPress
+            .create( 'numpad-reduce' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( '-', () => this.increaseBy({ value: -1 }))
+
+        nsHotPress
+            .create( 'numpad-save' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     watch: {
         value() {        
@@ -54,6 +86,12 @@ export default {
                 }
             }
         }
+    },
+    beforeDestroy() {
+        nsHotPress.destroy( 'numpad-backspace' );
+        nsHotPress.destroy( 'numpad-increase' );
+        nsHotPress.destroy( 'numpad-reduce' );
+        nsHotPress.destroy( 'numpad-save' );
     },
     methods: {
         increaseBy( key ) {

@@ -303,6 +303,64 @@ export default {
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection     =   section;
         });
+
+        /**
+         * let's register hotkeys
+         */
+        for( let shortcut in nsShortcuts ) {
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_hold_order', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'ns_pos_keyboard_hold_order' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.holdOrder();
+                });
+            }
+
+            if ([ 
+                    'ns_pos_keyboard_payment', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'ns_pos_keyboard_payment' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.payOrder();
+                });
+            }
+
+            if ([ 
+                    'ns_pos_keyboard_shipping', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'ns_pos_keyboard_shipping' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.openShippingPopup();
+                });
+            }
+
+            if ([ 
+                    'ns_pos_keyboard_note', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'ns_pos_keyboard_note' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.openNotePopup();
+                });
+            }
+        }
     },
     destroyed() {
         this.visibleSectionSubscriber.unsubscribe();
@@ -311,6 +369,11 @@ export default {
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
         this.optionsSubscriber.unsubscribe();
+        
+        nsHotPress.destroy( 'ns_pos_keyboard_hold_order' );
+        nsHotPress.destroy( 'ns_pos_keyboard_payment' );
+        nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
+        nsHotPress.destroy( 'ns_pos_keyboard_note' );
     },
     methods: {
         __,

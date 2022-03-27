@@ -171,6 +171,46 @@ export default {
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
 
         this.interval   =   setInterval( () => this.checkFocus(), 500 );
+
+        /**
+         * let's register hotkeys
+         */
+        for( let shortcut in nsShortcuts ) {
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_quick_search', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'search-popup' )
+                    .whenNotVisible([ '.is-popup', '#product-search' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.openSearchPopup();
+                });
+            }
+
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_toggle_merge', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'toggle-merge' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.posToggleMerge();
+                });
+            }
+        }
+
     },
     destroyed() {
         this.orderSubscription.unsubscribe();
@@ -178,7 +218,11 @@ export default {
         this.visibleSectionSubscriber.unsubscribe();
         this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
+        
         clearInterval( this.interval );
+
+        nsHotPress.destroy( 'search-popup' );
+        nsHotPress.destroy( 'toggle-merge' );
     },
     methods: {
         __, 

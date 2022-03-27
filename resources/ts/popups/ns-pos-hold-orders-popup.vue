@@ -59,6 +59,7 @@ export default {
 
         this.$refs[ 'reference' ].focus();
         this.$refs[ 'reference' ].select();
+        
         this.order  =   this.$popupParams.order;
         this.title  =   this.$popupParams.order.title || '';
     },

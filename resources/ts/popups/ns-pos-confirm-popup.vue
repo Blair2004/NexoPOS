@@ -12,7 +12,9 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang'
+import { __ } from '@/libraries/lang';
+import popupResolver from '@/libraries/popup-resolver';
+import popupCloser from '@/libraries/popup-closer';
 
 export default {
     data() {
@@ -29,15 +31,13 @@ export default {
     mounted() {
         this.title          =   this.$popupParams.title;
         this.message        =   this.$popupParams.message;
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popupParams.onAction( false );
-                this.$popup.close();
-            }
-        })
+        
+        this.popupCloser();
     },
     methods: {
         __,
+        popupResolver,
+        popupCloser,
         
         emitAction( action ) {
             this.$popupParams.onAction( action );

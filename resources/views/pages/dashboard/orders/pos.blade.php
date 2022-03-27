@@ -26,6 +26,20 @@ use App\Models\User;
     @parent
     <script src="{{ asset( ns()->isProduction() ? 'js/pos-init.min.js' : 'js/pos-init.js' ) }}"></script>
     <script>
+        const nsShortcuts   =   <?php echo json_encode([
+            'ns_pos_keyboard_cancel_order'      =>  ns()->option->get( 'ns_pos_keyboard_cancel_order' ),
+            'ns_pos_keyboard_hold_order'        =>  ns()->option->get( 'ns_pos_keyboard_hold_order' ),
+            'ns_pos_keyboard_create_customer'   =>  ns()->option->get( 'ns_pos_keyboard_create_customer' ),
+            'ns_pos_keyboard_payment'           =>  ns()->option->get( 'ns_pos_keyboard_payment' ),
+            'ns_pos_keyboard_shipping'          =>  ns()->option->get( 'ns_pos_keyboard_shipping' ),
+            'ns_pos_keyboard_note'              =>  ns()->option->get( 'ns_pos_keyboard_note' ),
+            'ns_pos_keyboard_order_type'        =>  ns()->option->get( 'ns_pos_keyboard_order_type' ),
+            'ns_pos_keyboard_quick_search'      =>  ns()->option->get( 'ns_pos_keyboard_quick_search' ),
+            'ns_pos_keyboard_toggle_merge'      =>  ns()->option->get( 'ns_pos_keyboard_toggle_merge' ),
+            'ns_pos_amount_shortcut'            =>  ns()->option->get( 'ns_pos_amount_shortcut' ),
+        ]);?>
+    </script>
+    <script>
     POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
     POS.defineOptions( <?php echo json_encode( $options );?>);
     POS.defineSettings({

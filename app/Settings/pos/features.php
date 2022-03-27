@@ -6,16 +6,6 @@ return [
     'label' =>  __( 'Features' ),
     'fields'    =>  [
         [
-            'name'              =>  'ns_pos_sound_enabled',
-            'value'             =>  $options->get( 'ns_pos_sound_enabled' ),
-            'label'             =>  __( 'Sound Effect' ), 
-            'type'              =>  'switch',
-            'options'           =>  Helper::kvToJsOptions([
-                'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
-            ]),
-            'description'       =>  __( 'Enable sound effect on the POS.' ),
-        ], [
             'name'              =>  'ns_pos_show_quantity',
             'value'             =>  $options->get( 'ns_pos_show_quantity' ),
             'label'             =>  __( 'Show Quantity' ), 

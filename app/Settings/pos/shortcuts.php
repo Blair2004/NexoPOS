@@ -42,18 +42,6 @@ return [
             'type'              =>  'text',
             'description'       =>  __( 'Keyboard shortcut to open the notes.' ),
         ], [
-            'name'              =>  'ns_pos_keyboard_calculator',
-            'value'             =>  $options->get( 'ns_pos_keyboard_calculator' ),
-            'label'             =>  __( 'Open Calculator' ), 
-            'type'              =>  'text',
-            'description'       =>  __( 'Keyboard shortcut to open the calculator.' ),
-        ], [
-            'name'              =>  'ns_pos_keyboard_category_explorer',
-            'value'             =>  $options->get( 'ns_pos_keyboard_category_explorer' ),
-            'label'             =>  __( 'Open Category Explorer' ), 
-            'type'              =>  'text',
-            'description'       =>  __( 'Keyboard shortcut to open the category explorer.' ),
-        ], [
             'name'              =>  'ns_pos_keyboard_order_type',
             'value'             =>  $options->get( 'ns_pos_keyboard_order_type' ),
             'label'             =>  __( 'Order Type Selector' ), 
@@ -71,6 +59,12 @@ return [
             'label'             =>  __( 'Quick Search' ), 
             'type'              =>  'text',
             'description'       =>  __( 'Keyboard shortcut open the quick search popup.' ),
+        ], [
+            'name'              =>  'ns_pos_keyboard_toggle_merge',
+            'value'             =>  $options->get( 'ns_pos_keyboard_toggle_merge' ),
+            'label'             =>  __( 'Toggle Product Merge' ), 
+            'type'              =>  'text',
+            'description'       =>  __( 'Will enable or disable the product merging.' ),
         ], [
             'name'              =>  'ns_pos_amount_shortcut',
             'value'             =>  $options->get( 'ns_pos_amount_shortcut' ),

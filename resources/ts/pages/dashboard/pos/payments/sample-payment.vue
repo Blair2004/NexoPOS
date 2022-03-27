@@ -46,19 +46,10 @@
                 <div class="w-1/2 md:w-72 pr-2 pl-1">
                     <div class="grid grid-flow-row grid-rows-1 gap-2">
                         <div 
-                            @click="increaseBy({ value : 100 })"
+                            v-for="(amount, index) of amountShortcuts" :key="index"
+                            @click="increaseBy({ value : amount })"
                             class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
-                            <span>{{ 100 | currency }}</span>
-                        </div>
-                        <div 
-                            @click="increaseBy({ value : 500 })"
-                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
-                            <span >{{ 500 | currency }}</span>
-                        </div>
-                        <div 
-                            @click="increaseBy({ value : 1000 })"
-                            class="ns-numpad-key text-2xl border h-16 flex items-center justify-center cursor-pointer">
-                            <span >{{ 1000 | currency }}</span>
+                            <span>{{ amount | currency }}</span>
                         </div>
                     </div>
                 </div>
@@ -93,6 +84,14 @@ export default {
                 ...([1,2,3].map( key => ({ identifier: key, value: key }))),
                 ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
             ]
+        }
+    },
+    computed: {
+        amountShortcuts() {
+            if ( nsShortcuts.ns_pos_amount_shortcut !== null ) {
+                return nsShortcuts.ns_pos_amount_shortcut.split( '|' );
+            }
+            return [];
         }
     },
     mounted() {

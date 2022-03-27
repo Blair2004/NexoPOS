@@ -25,6 +25,9 @@
 <script>
 import resolveIfQueued from '@/libraries/popup-resolver';
 import { __ } from '@/libraries/lang';
+import popupCloser from '@/libraries/popup-closer';
+import popupResolver from '@/libraries/popup-resolver';
+
 export default {
     data() {
         return {
@@ -51,12 +54,16 @@ export default {
                 this.select( Object.keys( this.types )[0] );
             }
         });
+
+        this.popupCloser();
     },
     destroyed() {
         this.typeSubscription.unsubscribe();
     },
     methods: {
         __,
+        popupCloser,
+        popupResolver,
         
         resolveIfQueued,
 

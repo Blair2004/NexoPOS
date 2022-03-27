@@ -1,5 +1,5 @@
 <template>
-    <div class="ns-box shadow-lg w-95vw h-95vh md:h-3/5-screen md:w-2/4-screen flex flex-col overflow-hidden">
+    <div id="product-search" class="ns-box shadow-lg w-95vw h-95vh md:h-3/5-screen md:w-2/4-screen flex flex-col overflow-hidden">
         <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3 class="text-primary">{{ __( 'Search Product' ) }}</h3>
             <div>
@@ -34,6 +34,7 @@
 </template>
 <script>
 import popupCloser from "@/libraries/popup-closer";
+import popupResolver from '@/libraries/popup-resolver';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 export default {
@@ -56,12 +57,24 @@ export default {
     },
     mounted() {
         this.$refs.searchField.focus();
+
+        /**
+         * hotkey can't catch esc if
+         * the focus is on the field.
+         */
+        this.$refs.searchField.addEventListener( 'keydown', ( e ) => {
+            if ( e.keyCode === 27 ) {
+                this.popupResolver( false );
+            }
+        });
+
         this.popupCloser();
     },
     methods: {
         __,
         
         popupCloser,
+        popupResolver,
 
         addToCart( product ) {
             POS.addToCart( product );
@@ -71,17 +84,20 @@ export default {
         search() {
             this.isLoading  =   true;
             nsHttpClient.post( '/api/nexopos/v4/products/search', { search: this.searchValue })
-                .subscribe( result => {
-                    this.isLoading  =   false;
-                    this.products   =   result;
+                .subscribe({
+                    next: result => {
+                        this.isLoading  =   false;
+                        this.products   =   result;
 
-                    if ( this.products.length === 1 ) {
-                        this.addToCart( this.products[0] );
-                    }
+                        if ( this.products.length === 1 ) {
+                            this.addToCart( this.products[0] );
+                        }
 
-                }, ( error ) => {
-                    this.isLoading  =   false;
-                    nsSnackBar.error( error.message ).subscribe();
+                    },
+                    error: ( error ) => {
+                        this.isLoading  =   false;
+                        nsSnackBar.error( error.message ).subscribe();
+                    } 
                 })
         }
     }
