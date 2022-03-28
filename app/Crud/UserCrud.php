@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
 use App\Models\User;
+use App\Models\UserRoleRelation;
 use App\Services\Helper;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
@@ -44,7 +45,6 @@ class UserCrud extends CrudService
         'leftJoin' =>  [
             [ 'nexopos_users as author', 'nexopos_users.author', '=', 'author.id' ],
         ],
-        [ 'nexopos_roles as role', 'nexopos_users.role_id', '=', 'role.id' ],
     ];
 
     public $pick        =   [
@@ -175,12 +175,12 @@ class UserCrud extends CrudService
                             'description'   =>  __( 'Define wether the user can use the application.' ),
                             'value'         =>  ( $entry !== null && $entry->active ? 1 : 0 ) ?? 0,
                         ], [
-                            'type'          =>  'select',
+                            'type'          =>  'multiselect',
                             'options'       =>  Helper::toJsOptions( Role::get(), [ 'id', 'name' ] ),
-                            'description'   =>  __( 'Define the role of the user' ),
-                            'name'          =>  'role_id',
-                            'label'         =>  __( 'Role' ),
-                            'value'         =>  $entry->role_id ?? '',
+                            'description'   =>  __( 'Define what roles applies to the user' ),
+                            'name'          =>  'roles',
+                            'label'         =>  __( 'Roles' ),
+                            'value'         =>  $entry !== null ? ( $entry->roles()->get()->map( fn( $role ) => $role->id )->toArray() ?? '' ) : [],
                         ],
                     ]
                 ]
@@ -195,6 +195,8 @@ class UserCrud extends CrudService
      */
     public function filterPostInputs( $inputs )
     {
+        unset( $inputs[ 'roles' ] );
+
         if ( ! empty( $inputs[ 'password' ] ) ) {
             $inputs[ 'password' ]   =   Hash::make( $inputs[ 'password' ] );
         }
@@ -209,6 +211,8 @@ class UserCrud extends CrudService
      */
     public function filterPutInputs( $inputs, User $entry )
     {
+        unset( $inputs[ 'roles' ] );
+        
         /**
          * if the password is not changed, no
          * need to hash it
@@ -242,6 +246,24 @@ class UserCrud extends CrudService
      */
     public function afterPost( $request, User $entry )
     {
+        if ( isset( $request[ 'roles'] ) ) {
+            
+            UserRoleRelation::where( 'user_id', $entry->id )->delete();
+            
+            foreach( $request[ 'roles' ] as $role ) {
+                $role   =   Role::find( $role );
+
+                if ( $role instanceof Role ) {
+                    $relation           =   new UserRoleRelation;
+                    $relation->user_id  =   $entry->id;
+                    $relation->role_id  =   $role->id;
+                    $relation->save();
+                }
+            }
+        }
+
+        
+
         return $request;
     }
 
@@ -279,6 +301,22 @@ class UserCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
+        if ( isset( $request[ 'roles'] ) ) {
+            
+            UserRoleRelation::where( 'user_id', $entry->id )->delete();
+            
+            foreach( $request[ 'roles' ] as $role ) {
+                $role   =   Role::find( $role );
+
+                if ( $role instanceof Role ) {
+                    $relation           =   new UserRoleRelation;
+                    $relation->user_id  =   $entry->id;
+                    $relation->role_id  =   $role->id;
+                    $relation->save();
+                }
+            }
+        }
+
         return $request;
     }
     
@@ -336,8 +374,8 @@ class UserCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'role_name'  =>  [
-                'label'         =>  __( 'Role' ),
+            'rolesNames'  =>  [
+                'label'         =>  __( 'Roles' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -360,6 +398,8 @@ class UserCrud extends CrudService
         $entry->{ '$id' }       =   $entry->id;
 
         $entry->active          =   ( bool ) $entry->active ? __( 'Yes' ) : __( 'No' );
+        $roles                  =   User::find( $entry->id )->roles()->get();
+        $entry->rolesNames      =   $roles->map( fn( $role ) => $role->name )->join( ', ' ) ?: __( 'Not Assigned' );
 
         // you can make changes here
         $entry->{'$actions'}    =   Hook::filter( 'ns-users-actions', [

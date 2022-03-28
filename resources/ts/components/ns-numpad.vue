@@ -5,7 +5,7 @@
             :key="index" 
             v-for="(key,index) of keys" 
             style="margin:-1px;"
-            class="select-none hover:bg-gray-400 hover:text-gray-800 bg-gray-300 text-2xl text-gray-700 border h-16 flex items-center justify-center cursor-pointer">
+            class="select-none ns-numpad-key border h-16 flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
@@ -43,6 +43,38 @@ export default {
         } else {
             this.screenValue    =   0;
         }
+        
+        /**
+         * will bind keyboard event listening
+         */
+        const numbers   =   ( new Array(10) ).fill('').map( ( v,i ) => i );
+
+        nsHotPress
+            .create( 'numpad-keys' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( numbers, ( event, value ) => {
+                this.inputValue({ value });
+            })
+
+        nsHotPress
+            .create( 'numpad-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'numpad-increase' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( '+', () => this.increaseBy({ value: 1 }))
+
+        nsHotPress
+            .create( 'numpad-reduce' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( '-', () => this.increaseBy({ value: -1 }))
+
+        nsHotPress
+            .create( 'numpad-save' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     watch: {
         value() {        
@@ -54,6 +86,12 @@ export default {
                 }
             }
         }
+    },
+    beforeDestroy() {
+        nsHotPress.destroy( 'numpad-backspace' );
+        nsHotPress.destroy( 'numpad-increase' );
+        nsHotPress.destroy( 'numpad-reduce' );
+        nsHotPress.destroy( 'numpad-save' );
     },
     methods: {
         increaseBy( key ) {

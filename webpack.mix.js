@@ -15,7 +15,7 @@ const mix           = require( 'laravel-mix' );
 mix
     .webpackConfig({
         resolve: {
-            extensions: [ "*", ".js", ".jsx", ".vue", ".ts", ".tsx"],
+            extensions: [ ".vue", ".ts" ],
             alias: {
                 '@': path.resolve( __dirname, 'resources/ts/')
             }
@@ -24,12 +24,13 @@ mix
 
 
 mix.disableNotifications();
-mix.sourceMaps();
 mix.extract();
 mix.vue({ version: 2 })
 
 if ( mix.inProduction() ) {
     mix.version();
+} else {
+    mix.sourceMaps();
 }
 
 mix
@@ -44,8 +45,3 @@ mix
     .ts( 'resources/ts/auth.ts', mix.inProduction() ? 'public/js/auth.min' : 'public/js')
     .ts( 'resources/ts/setup.ts', mix.inProduction() ? 'public/js/setup.min' : 'public/js')
     .ts( 'resources/ts/popups.ts', mix.inProduction() ? 'public/js/popups.min' : 'public/js/' )
-    .sass('resources/sass/app.scss', 'public/css')
-    .options({
-        processCssUrls: false,
-        postCss: [ tailwindcss('./tailwind.config.js') ],
-    })

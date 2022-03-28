@@ -411,10 +411,6 @@ class MenuService
                         'label' =>  __( 'Customers'),
                         'href'  =>  ns()->url( '/dashboard/settings/customers' )
                     ], 
-                    'supplies-delivery'     =>  [
-                        'label'             =>  __( 'Supplies & Deliveries'),
-                        'href'              =>  ns()->url( '/dashboard/settings/supplies-deliveries' )
-                    ],
                     'orders'        =>  [
                         'label'     =>  __( 'Orders'),
                         'href'      =>  ns()->url( '/dashboard/settings/orders' )
@@ -446,7 +442,11 @@ class MenuService
                     'reset'         =>  [
                         'label'     =>  __( 'Reset'),
                         'href'      =>  ns()->url( '/dashboard/settings/reset' )
-                    ]
+                    ],
+                    'about'             =>  [
+                        'label'         =>  __( 'About' ),
+                        'href'          =>  ns()->url( '/dashboard/settings/about' ),
+                    ],
                 ]
             ],
         ];

@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div class="shadow-lg w-95vw md:w-2/5-screen bg-white" v-if="loaded">
-            <div class="border-b border-gray-200 p-2 text-gray-700 flex justify-between items-center">
+        <div class="shadow-lg w-95vw md:w-2/5-screen ns-box" v-if="loaded">
+            <div class="border-b ns-box-header p-2 text-primary flex justify-between items-center">
                 <h3 class="font-semibold">{{ title }}</h3>
                 <div><ns-close-button @click="close()"></ns-close-button></div>
             </div>
             <div class="p-2">
-                <div v-if="settings !== null && settings.register" class="mb-2 p-3 bg-gray-400 font-bold text-white text-right flex justify-between">
+                <div v-if="register !== null" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
                     <span>{{ __( 'Balance' ) }} </span>
-                    <span>{{ settings.register.balance | currency }}</span>
+                    <span>{{ register.balance | currency }}</span>
                 </div>
-                <div class="mb-2 p-3 bg-green-400 font-bold text-white text-right flex justify-between">
+                <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
                     <span>{{ __( 'Input' ) }}</span>
                     <span>{{ amount | currency }}</span>
                 </div>
@@ -44,6 +44,7 @@ export default {
             settingsSubscription: null,
             settings: null,
             action: null,
+            register: null,
             loaded: false,
             register_id: null, // conditionnally provider
             validation: new FormValidation,
@@ -53,6 +54,7 @@ export default {
     mounted() {
         this.title                  =   this.$popupParams.title;
         this.identifier             =   this.$popupParams.identifier;
+        this.register               =   this.$popupParams.register;
         this.action                 =   this.$popupParams.action;
         this.register_id            =   this.$popupParams.register_id;
         this.settingsSubscription   =   POS.settings.subscribe( settings => {
@@ -100,12 +102,15 @@ export default {
             fields.amount   =   this.amount === '' ? 0 : this.amount;
 
             nsHttpClient.post( `/api/nexopos/v4/cash-registers/${this.action}/${this.register_id || this.settings.register.id}`, fields )
-                .subscribe( result => {
-                    this.$popupParams.resolve( result );
-                    this.$popup.close();
-                    nsSnackBar.success( result.message ).subscribe();
-                }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                .subscribe({
+                    next: result => {
+                        this.$popupParams.resolve( result );
+                        this.$popup.close();
+                        nsSnackBar.success( result.message ).subscribe();
+                    }, 
+                    error: ( error ) => {
+                        nsSnackBar.error( error.message ).subscribe();
+                    }
                 });
         },
     }

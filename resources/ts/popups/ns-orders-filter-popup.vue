@@ -1,17 +1,17 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw h-95vh md:w-2/5-screen overflow-hidden md:h-5/6-screen flex flex-col">
-        <div class="p-2 border-b flex justify-between items-center">
+    <div class="ns-box shadow-lg w-95vw h-95vh md:w-2/5-screen overflow-hidden md:h-5/6-screen flex flex-col">
+        <div class="p-2 border-b ns-box-header flex justify-between items-center">
             <h3>{{ __( 'Search Filters' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 border-b flex-auto overflow-y-auto">
+        <div class="p-2 ns-box-body flex-auto overflow-y-auto">
             <ns-field :field="field" :key="index" v-for="( field, index ) of fields"></ns-field>
         </div>
-        <div class="p-2 flex justify-between">
+        <div class="p-2 flex justify-between ns-box-footer border-t">
             <div>
-                <ns-button @click="clearFilters()" type="danger">{{ __( 'Clear Filters' ) }}</ns-button>
+                <ns-button @click="clearFilters()" type="error">{{ __( 'Clear Filters' ) }}</ns-button>
             </div>
             <div>
                 <ns-button @click="useFilters()" type="info">{{ __( 'Use Filters' ) }}</ns-button>
@@ -26,7 +26,7 @@ import popupCloser from '@/libraries/popup-closer';
 import popupResolver from '@/libraries/popup-resolver';
 import Vue from 'vue';
 
-export default Vue.extend({
+export default {
     data() {
         return {
             fields: [],
@@ -52,5 +52,5 @@ export default Vue.extend({
         this.fields     =   this.validation.createFields( this.$popupParams.queryFilters );
         this.popupCloser();
     }
-})
+}
 </script>

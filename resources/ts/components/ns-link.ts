@@ -23,7 +23,7 @@ const nsLink      =   Vue.component( 'ns-link', {
                 case 'success':
                     return 'shadow bg-green-400 text-white'
                 break;
-                case 'danger':
+                case 'error':
                     return 'shadow bg-red-400 text-white'
                 break;
                 case 'warning':

@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg bg-white w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="border-b border-gray-200 p-2 flex justify-between items-center">
+    <div class="shadow-lg ns-box w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="border-b ns-box-header p-2 flex justify-between items-center">
             <h3 class="font-bold">{{ __( 'Coupons' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
@@ -11,7 +11,7 @@
                 <ns-spinner></ns-spinner>
             </div>
             <ul v-if="hasLoaded">
-                <li v-for="coupon of coupons" :key="coupon.id" class="p-2 cursor-pointer flex justify-between bg-gray-100 hover:bg-blue-200">
+                <li v-for="coupon of coupons" :key="coupon.id" class="p-2 cursor-pointer flex justify-between surface-elevation border">
                     <span>{{ coupon.name }}</span>
                     <span>
                         <button class="rounded-full px-3 py-1">{{ __( 'Use' )}}</button>
@@ -23,6 +23,9 @@
     </div>
 </template>
 <script>
+/**
+ * @deprecated
+ */
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
 import { nsSnackBar } from '@/bootstrap';

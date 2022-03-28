@@ -8,10 +8,7 @@ use App\Classes\Output;
 <div class="h-full flex flex-col flex-auto">
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
-        <div class="page-inner-header mb-4">
-            <h3 class="text-3xl text-gray-700 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
-            <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
-        </div>
+        @include( 'common.dashboard.title' )
         <ns-crud-form 
             return-url="{{ $returnUrl }}"
             submit-method="{{ $submitMethod ?? 'POST' }}"

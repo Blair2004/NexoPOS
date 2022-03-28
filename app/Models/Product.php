@@ -46,6 +46,19 @@ class Product extends NsModel
         'accurate_tracking'     =>  'boolean'
     ];
 
+    /**
+     * Lock the resource from deletion if
+     * it's a dependency for specified models.
+     */
+    protected $isDependencyFor     =   [
+        OrderProduct::class     =>  [
+            'local_index'       =>  'id',
+            'local_name'        =>  'name',
+            'foreign_index'     =>  'product_id',
+            'foreign_name'      =>  'name'
+        ],
+    ];
+
     public function category()
     {
         return $this->belongsTo( ProductCategory::class, 'category_id', 'id' );

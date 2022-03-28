@@ -27,6 +27,9 @@ class CreateRegistersHistoryTable extends Migration
                 $table->float( 'value', 18, 5 )->default(0);
                 $table->text( 'description' )->nullable();
                 $table->string( 'uuid' )->nullable();
+                $table->float( 'balance_before' )->default(0);
+                $table->string( 'transaction_type' )->nullable(); // can be "unchanged", "negative", "positive".
+                $table->float( 'balance_after' )->default(0);
                 $table->timestamps();
             });
         }

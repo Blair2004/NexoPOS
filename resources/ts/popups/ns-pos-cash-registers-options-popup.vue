@@ -45,13 +45,14 @@ export default {
             });
         },
 
-        async closeCashRegister() {
+        async closeCashRegister( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Close Register' ),
                         action: 'close',
                         identifier: 'ns.cash-registers-closing',
+                        register,
                         resolve, 
                         reject
                     })
@@ -72,12 +73,13 @@ export default {
             }
         },
 
-        async cashIn() {
+        async cashIn( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Cash In' ),
                         action: 'register-cash-in',
+                        register,
                         identifier: 'ns.cash-registers-cashing',
                         resolve, 
                         reject
@@ -97,12 +99,13 @@ export default {
             }
         },
 
-        async cashOut() {
+        async cashOut( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Cash Out' ),
                         action: 'register-cash-out',
+                        register,
                         identifier: 'ns.cash-registers-cashout',
                         resolve, 
                         reject
@@ -122,10 +125,10 @@ export default {
             }
         },
 
-        async historyPopup() {
+        async historyPopup( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
-                    Popup.show( nsPosCashRegistersHistoryVue, { resolve, reject });
+                    Popup.show( nsPosCashRegistersHistoryVue, { resolve, reject, register });
                 });
             } catch( exception ) {
                 throw exception;
@@ -135,42 +138,42 @@ export default {
 }
 </script>
 <template>
-    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-2/4-screen bg-white">
-        <div class="p-2 border-b border-gray-200 flex items-center justify-between">
+    <div class="shadow-lg w-95vw md:w-3/5-screen lg:w-2/4-screen ns-box">
+        <div class="p-2 border-b ns-box-header flex items-center justify-between">
             <h3>{{ __( 'Register Options' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
         <div v-if="register.total_sale_amount !== undefined && register.balance !== undefined">
-            <div class="h-16 text-3xl bg-blue-400 text-white flex items-center justify-between px-3">
+            <div class="h-16 text-3xl elevation-surface info flex items-center justify-between px-3">
                 <span class="">{{ __( 'Sales' ) }}</span>
                 <span class="font-bold">{{ register.total_sale_amount | currency }}</span>
             </div>
-            <div class="h-16 text-3xl bg-green-400 text-white flex items-center justify-between px-3">
+            <div class="h-16 text-3xl elevation-surface success flex items-center justify-between px-3">
                 <span class="">{{ __( 'Balance' ) }}</span>
                 <span class="font-bold">{{ register.balance | currency }}</span>
             </div>
         </div>
-        <div class="h-32 border-gray-200 border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">
+        <div class="h-32 ns-box-body border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">
             <div>
                 <ns-spinner border="4" size="16"></ns-spinner>
             </div>
         </div>
-        <div class="grid grid-cols-2 text-gray-700">
-            <div @click="closeCashRegister()" class="hover:bg-teal-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+        <div class="grid grid-cols-2 text-primary">
+            <div @click="closeCashRegister( register )" class="border-r border-b py-4 ns-numpad-key info cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-sign-out-alt text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Close' ) }}</h3>
             </div>
-            <div @click="cashIn()" class="hover:bg-green-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashIn( register )" class="ns-numpad-key success border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-plus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash In' ) }}</h3>
             </div>
-            <div @click="cashOut()" class="hover:bg-red-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashOut( register )" class="ns-numpad-key error border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-minus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash Out' ) }}</h3>
             </div>
-            <div @click="historyPopup()" class="hover:bg-blue-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="historyPopup( register )" class="ns-numpad-key info border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-history text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'History' ) }}</h3>
             </div>

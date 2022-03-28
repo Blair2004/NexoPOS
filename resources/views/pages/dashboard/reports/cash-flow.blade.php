@@ -5,10 +5,7 @@
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div class="flex-auto flex flex-col" id="dashboard-content">
         <div class="px-4">
-            <div class="page-inner-header mb-4">
-                <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
-                <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
-            </div>
+            @include( '../common/dashboard/title' )
         </div>
         <ns-cash-flow-report inline-template v-cloak>
             <div id="report-section" class="px-4">
@@ -20,26 +17,30 @@
                         <ns-date-time-picker :date="endDate" @change="setEndDate( $event )"></ns-date-time-picker>
                     </div>
                     <div class="px-2">
-                        <button @click="loadReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
-                            <i class="las la-sync-alt text-xl"></i>
-                            <span class="pl-2">Load</span>
-                        </button>
+                        <div class="ns-button">
+                            <button @click="loadReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                                <i class="las la-sync-alt text-xl"></i>
+                                <span class="pl-2">{{ __( 'Load' ) }}</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="px-2">
-                        <button @click="printSaleReport()" class="rounded flex justify-between bg-white shadow py-1 items-center text-gray-700 px-2">
-                            <i class="las la-print text-xl"></i>
-                            <span class="pl-2">Print</span>
-                        </button>
+                        <div class="ns-button">
+                            <button @click="printSaleReport()" class="rounded flex justify-between text-primary shadow py-1 items-center  px-2">
+                                <i class="las la-print text-xl"></i>
+                                <span class="pl-2">{{ __( 'Print' ) }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="sale-report" class="anim-duration-500 fade-in-entrance">
                     <div class="flex w-full">
                         <div class="my-4 flex justify-between w-full">
-                            <div class="text-gray-600">
+                            <div class="text-primary">
                                 <ul>
-                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ __( 'Document : Sale Report' ) }}</li>
-                                    <li class="pb-1 border-b border-dashed border-gray-200">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ sprintf( __( 'Date : %s' ), ns()->date->getNowFormatted() ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ __( 'Document : Sale By Payment' ) }}</li>
+                                    <li class="pb-1 border-b border-dashed border-box-edge">{{ sprintf( __( 'By : %s' ), Auth::user()->username ) }}</li>
                                 </ul>
                             </div>
                             <div>
@@ -47,36 +48,44 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white shadow rounded my-4">
-                        <div class="border-b border-gray-200">
-                            <table class="table w-full">
-                                <thead class="text-gray-700">
-                                    <tr>
-                                        <th class="bg-gray-100 text-gray-700 border border-gray-300 p-2 text-left">Account</th>
-                                        <th width="150" class="text-gray-700 border border-red-200 bg-red-100 p-2 text-right">Debit</th>
-                                        <th width="150" class="bg-gray-100 text-right text-gray-700 border border-gray-300 p-2">Credit</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-gray-700">
-                                    <tr v-for="expenseGroup of report.creditCashFlow">
-                                        <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> <strong>@{{ expenseGroup.account }}</strong> : @{{ expenseGroup.name }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ 0 | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ expenseGroup.total | currency }}</td>
-                                    </tr>
-                                    <tr v-for="expenseGroup of report.debitCashFlow">
-                                        <td class="p-2 border border-blue-200 bg-white"><i class="las la-arrow-right"></i> <strong>@{{ expenseGroup.account }}</strong> : @{{ expenseGroup.name }}</td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right">@{{ expenseGroup.total | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100">@{{ 0 | currency }}</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot class="text-gray-700 font-semibold">
-                                    <tr>
-                                        <td class="p-2 border border-gray-200 bg-gray-100 text-gray-700"></td>
-                                        <td class="p-2 border border-red-200 bg-red-100 text-right text-gray-700">@{{ report.total_debit ? report.total_debit : 0 | currency }}</td>
-                                        <td class="p-2 border text-right border-green-200 bg-green-100 text-gray-700">@{{ report.total_credit ? report.total_credit : 0 | currency }}</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                    <div class="shadow rounded my-4">
+                        <div class="ns-box">
+                            <div class="border-b ns-box-body">
+                                <table class="ns-table table w-full">
+                                    <thead class="">
+                                        <tr>
+                                            <th class="border p-2 text-left">{{ __( 'Account' ) }}</th>
+                                            <th width="150" class="border border-error-secondary bg-error-primary p-2 text-right">{{ __( 'Debit' ) }}</th>
+                                            <th width="150" class="text-right border-success-secondary bg-success-primary border p-2">{{ __( 'Credit' ) }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="">
+                                        <tr v-for="expenseGroup of report.creditCashFlow">
+                                            <td class="p-2 border"><i class="las la-arrow-right"></i> <strong>@{{ expenseGroup.account }}</strong> : @{{ expenseGroup.name }}</td>
+                                            <td class="p-2 border border-error-secondary bg-error-primary text-right">@{{ 0 | currency }}</td>
+                                            <td class="p-2 border text-right border-success-secondary bg-success-primary">@{{ expenseGroup.total | currency }}</td>
+                                        </tr>
+                                        <tr v-for="expenseGroup of report.debitCashFlow">
+                                            <td class="p-2 border"><i class="las la-arrow-right"></i> <strong>@{{ expenseGroup.account }}</strong> : @{{ expenseGroup.name }}</td>
+                                            <td class="p-2 border border-error-secondary bg-error-primary text-right">@{{ expenseGroup.total | currency }}</td>
+                                            <td class="p-2 border text-right border-success-secondary bg-success-primary">@{{ 0 | currency }}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class=" font-semibold">
+                                        <tr>
+                                            <td class="p-2 border">{{ __( 'Sub Total' ) }}</td>
+                                            <td class="p-2 border border-error-secondary bg-error-primary text-right ">@{{ report.total_debit ? report.total_debit : 0 | currency }}</td>
+                                            <td class="p-2 border text-right border-success-secondary bg-success-primary">@{{ report.total_credit ? report.total_credit : 0 | currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 border">{{ __( 'Balance' ) }}</td>
+                                            <td colspan="2" class="p-2 border text-right border-info-secondary bg-info-primary">
+                                                @{{ balance | currency }}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

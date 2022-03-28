@@ -1,0 +1,78 @@
+#main-container, #page-container {
+    @apply bg-surface;
+}
+
+#dashboard-cards * {
+    @apply text-white;
+}
+
+#dashboard-aside {
+    @apply bg-gray-900;
+}
+
+#dashboard-body {
+    @apply bg-surface;
+}
+
+.ns-toggle-button {
+    @apply border-input-edge text-primary;
+    &:hover {
+        @apply bg-tab-active border-transparent text-gray-700;
+    }
+}
+
+.ns-avatar { 
+    @apply text-primary border-input-edge;
+
+    &:hover {
+        @apply bg-box-background text-primary border-transparent;
+    }
+
+    &.toggled {
+        @apply bg-box-background text-primary border-transparent;
+    }
+}
+
+/**
+ * Notifications Wrapper
+**/
+
+#notificaton-wrapper {
+    #notification-button {
+        &.panel-visible {
+            @apply bg-box-background;
+        }
+        &.panel-hidden {
+            @apply border-input-edge;
+        }
+
+        &:hover {
+            @apply bg-box-background text-primary;
+        }
+
+        @apply text-primary;
+    }
+
+    #notification-center > div > div {
+        @apply bg-box-background;
+    }
+
+    .clear-all {
+        @apply text-primary;
+
+        &:hover {
+            @apply bg-input-button-hover text-typography;
+        }
+    }
+
+    .notification-card {
+        h1 {
+            @apply text-secondary;
+        }
+        p {
+            @apply text-primary;
+        }
+    
+        @apply border-box-edge;
+    }
+}

@@ -18,8 +18,7 @@ use App\Services\OrdersService;
         <ns-crud 
             src="{{ ns()->url( 'api/nexopos/v4/crud/ns.orders' ) }}"
             identifier="ns.orders"
-            create-url="{{ ns()->url( 'dashboard/pos' ) }}"
-            id="crud-table-body">
+            create-url="{{ ns()->url( 'dashboard/pos' ) }}">
         </ns-crud>
     </div>
 </div>

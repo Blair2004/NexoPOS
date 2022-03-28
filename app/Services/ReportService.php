@@ -818,15 +818,15 @@ class ReportService
      * @param string $type
      * @return array
      */
-    public function getSaleReport( $start, $end, $type )
+    public function getSaleReport( $start, $end, $type, $user_id = null )
     {
         switch( $type ) {
             case 'products_report':
-                return $this->getProductsReports( $start, $end );
+                return $this->getProductsReports( $start, $end, $user_id );
             break;
             case 'categories_report':
             case 'categories_summary':
-                return $this->getCategoryReports( $start, $end );
+                return $this->getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id );
             break;
         }
     }
@@ -854,12 +854,17 @@ class ReportService
         ];
     }
 
-    public function getProductsReports( $start, $end )
+    public function getProductsReports( $start, $end, $user_id = null )
     {
-        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )
+        $request     =   Order::paymentStatus( Order::PAYMENT_PAID )
             ->from( $start )
-            ->to( $end )
-            ->with( 'products' )
+            ->to( $end );
+
+        if ( ! empty( $user_id ) ) {
+            $request    =   $request->where( 'author', $user_id );
+        }
+            
+        $orders         =   $request->with( 'products' )
             ->get();
 
         $summary        =   $this->getSalesSummary( $orders );
@@ -884,13 +889,17 @@ class ReportService
         ];
     }
 
-    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc' )
+    public function getCategoryReports( $start, $end, $orderAttribute = 'name', $orderDirection = 'desc', $user_id = null )
     {
-        $orders     =   Order::paymentStatus( Order::PAYMENT_PAID )
+        $request     =   Order::paymentStatus( Order::PAYMENT_PAID )
             ->from( $start )
-            ->to( $end )
-            ->with( 'products' )
-            ->get();
+            ->to( $end );
+
+        if ( ! empty( $user_id ) ) {
+            $request    =   $request->where( 'author', $user_id );
+        }
+
+        $orders     =   $request->with( 'products' )->get();
 
         /**
          * We'll pull the sales

@@ -3,7 +3,8 @@
 @import "tailwindcss/utilities";
 @import "./animations.scss";
 @import "./fonts.scss";
-@import "./line-awesome/1.3.0/scss/line-awesome.scss";
+@import "./typography.scss";
+@import "./grid.scss";
 
 html,
 body {
@@ -11,7 +12,6 @@ body {
     font-family: 'Jost';
     width: 100%;
 }
-
 
 html,
 body {
@@ -48,76 +48,8 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/**
- * Forms
-**/
-.form-input {
-    label {
-        @apply text-gray-800 py-2 font-semibold;
-    }
-    input {
-        @apply border-2 border-blue-200 bg-blue-100 rounded p-2 w-full;
-        &[disabled] {
-            @apply bg-gray-300;
-        }
-    }
-    p {
-        @apply text-xs text-gray-600 py-1;
-    }
-}
-
-.form-input-invalid {
-    label {
-        @apply text-red-500 py-2 font-semibold;
-    }
-    input {
-        @apply border-2 border-red-400 bg-red-100 rounded p-2 w-full;
-    }
-    p {
-        @apply text-xs text-red-500 py-1;
-    }
-}
-.btn {
-    @apply text-center rounded shadow border py-2 px-3;
-}
-.btn-blue {
-    @apply border-blue-600 bg-blue-600 text-white;
-}
-.btn-red {
-    @apply border-red-600 bg-red-600 text-white;
-}
-
-.pos-button-clicked {
-    box-shadow: inset 0px 0px 5px 0px #a4a5a7;
-}
-
-.ns-table {
-    @apply w-full;
-    thead th {
-        @apply border border-gray-300 bg-gray-200 p-2 text-gray-700;
-    }
-    tbody td {
-        @apply border border-gray-200 p-2 text-gray-700;
-    }
-    tfoot td {
-        @apply border border-gray-200 p-2 text-gray-700;
-    }
-
-    tbody > tr.info {
-        @apply bg-blue-200;
-    }
-
-    tbody > tr.danger {
-        @apply bg-red-200;
-    }
-
-    tbody > tr.success {
-        @apply bg-green-200;
-    }
-
-    tbody > tr.green {
-        @apply bg-yellow-200;
-    }
+button {
+    @apply rounded-none;
 }
 
 #editor {
@@ -157,8 +89,6 @@ body {
 /**
  * Components
 **/
-
-// Popup
 .popup-heading {
     @apply p-2 flex justify-between items-center;
     h3 {

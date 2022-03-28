@@ -13,6 +13,21 @@ class ProductCategory extends NsModel
     protected $guarded  =   [];
     protected $table    =   'nexopos_' . 'products_categories';
 
+    protected $isDependencyFor  =   [
+        Product::class  =>  [
+            'local_index'   =>  'id',
+            'local_name'    =>  'name',
+            'foreign_index' =>  'category_id',
+            'foreign_name'  =>  'name'
+        ],
+        self::class     =>  [
+            'local_index'   =>  'id',
+            'local_name'    =>  'name',
+            'foreign_index' =>  'parent_id',
+            'foreign_name'  =>  'name'
+        ]
+    ];
+
     public function scopeDisplayOnPOS( $query, $attribute = true )
     {
         return $query->where( 'displays_on_pos', $attribute );

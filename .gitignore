@@ -5,8 +5,6 @@ mns-download
 error.log
 node_modules
 composer-lock.json
-package-lock.json
-composer.lock
 .env.testing
 .phpunit.result.cache
 worker.log
@@ -28,6 +26,8 @@ public/js/*.js
 !public/js/manifest.js
 public/css/*.css
 !public/css/app.css
+!public/css/light.css
+!public/css/dark.css
 public/js/*.map
 public/js/*.txt
 public/css/*.map

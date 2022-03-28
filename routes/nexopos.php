@@ -5,7 +5,7 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( '', [ DashboardController::class, 'home' ])->name( ns()->routeName( 'ns.dashboard.home' ) );
-    
+
 include( dirname( __FILE__ ) . '/web/orders.php' );
 include( dirname( __FILE__ ) . '/web/medias.php' );
 include( dirname( __FILE__ ) . '/web/customers.php' );

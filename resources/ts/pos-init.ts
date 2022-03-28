@@ -453,7 +453,7 @@ export class POS {
     removePayment(payment: Payment) {
 
         if (payment.id !== undefined) {
-            return nsSnackBar.error('Unable to delete a payment attached to the order').subscribe();
+            return nsSnackBar.error( __( 'Unable to delete a payment attached to the order.' ) ).subscribe();
         }
 
         const order = this._order.getValue();
@@ -527,15 +527,17 @@ export class POS {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
-                            order.tax_groups = order.tax_groups || [];
-                            order.taxes = tax.taxes.map(tax => {
+                            tax.taxes   =   tax.taxes.map(_tax => {
                                 return {
-                                    tax_id: tax.id,
-                                    tax_name: tax.name,
-                                    rate: parseFloat(tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal, tax.rate, order.tax_type)
+                                    tax_id: _tax.id,
+                                    tax_name: _tax.name,
+                                    rate: parseFloat(_tax.rate),
+                                    tax_value: this.getVatValue(order.subtotal, _tax.rate, order.tax_type)
                                 };
                             });
+
+                            order.tax_groups = order.tax_groups || [];
+                            order.taxes = tax.taxes;
     
                             /**
                              * this is set to cache the 
@@ -1173,7 +1175,7 @@ export class POS {
          */
         if (order.discount > order.subtotal && order.total_coupons === 0) {
             order.discount = order.subtotal;
-            nsSnackBar.info('The discount has been set to the cart subtotal')
+            nsSnackBar.info( __( 'The discount has been set to the cart subtotal.' ))
                 .subscribe();
         }
 
@@ -1357,10 +1359,41 @@ export class POS {
         const products = this._products.getValue();
 
         /**
-         * push the new product
-         * at the front of the cart
+         * we'll check here if the merge feature is enabled
+         * If it's the case, we'll have to compare the added product
+         * with what already exists and decide to increase the quantity or not.
          */
-        products.unshift(cartProduct);
+        if ( this.settings.getValue().pos_items_merge ) {
+            const existing      =   products.filter( product => {
+                /**
+                 * we might check other arguments
+                 * in case the products doesn't have the same meta.
+                 */
+                return (
+                    product.product_id === cartProduct.product_id &&
+                    product.tax_group_id === cartProduct.tax_group_id &&
+                    product.unit_id === cartProduct.unit_id &&
+                    product.unit_quantity_id === cartProduct.unit_quantity_id
+                );
+            });
+
+            if ( existing.length > 0 ) {
+                existing[0].quantity       +=  cartProduct.quantity;
+            } else {
+                /**
+                 * push the new product
+                 * at the front of the cart
+                 */
+                products.unshift(cartProduct);
+            }
+
+        } else {
+            /**
+             * push the new product
+             * at the front of the cart
+             */
+            products.unshift(cartProduct);
+        }
 
         /**
          * Once the product has been added to the cart
@@ -1578,8 +1611,8 @@ export class POS {
         if (order.id !== undefined) {
             if (['hold'].includes(order.payment_status)) {
                 Popup.show(NsConfirmPopup, {
-                    title: 'Order Deletion',
-                    message: 'The current order will be deleted as no payment has been made so far.',
+                    title: __( 'Order Deletion' ),
+                    message: __( 'The current order will be deleted as no payment has been made so far.' ),
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
@@ -1594,8 +1627,8 @@ export class POS {
                 });
             } else {
                 Popup.show(NsPromptPopup, {
-                    title: 'Void The Order',
-                    message: 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.',
+                    title: __( 'Void The Order' ),
+                    message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {
                         if (reason !== false) {
                             nsHttpClient.post(`/api/nexopos/v4/orders/${order.id}/void`, { reason })
@@ -1613,7 +1646,7 @@ export class POS {
                 });
             }
         } else {
-            nsSnackBar.error('Unable to void an unpaid order.').subscribe();
+            nsSnackBar.error( __( 'Unable to void an unpaid order.' )).subscribe();
         }
     }
 

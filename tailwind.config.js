@@ -1,5 +1,14 @@
 const colors  = require( 'tailwindcss/colors' );
 
+function withOpacityValue(variable) {
+  return ({ opacityValue }) => {
+    if (opacityValue === undefined) {
+      return `rgb(var(${variable}))`
+    }
+    return `rgb(var(${variable}) / ${opacityValue})`
+  }
+}
+
 const heightDims = {
   '6/7-screen': '85.71vh',
   '5/7-screen': '71.42vh',
@@ -51,15 +60,11 @@ const widthDims = {
 }
 
 module.exports = {
-  purge: [
-    './resources/**/*.html',
-    './resources/**/*.vue',
-    './resources/**/*.ts',
-    './resources/**/*.php',
-    './modules/**/*.php',
-    './modules/**/*.vue',
-    './modules/**/*.ts',
+  content: [
+    './app/Crud/**/*.php',
+    './resources/**/*.{vue,ts,php}',
   ],
+  darkMode: 'class',
   corePlugins: {
     float: false
   },
@@ -73,7 +78,106 @@ module.exports = {
       colors: {
         teal: colors.teal,
         orange: colors.orange,
-        cyan: colors.cyan
+        cyan: colors.cyan,
+        
+        typography: withOpacityValue('--typography'),
+        surface: withOpacityValue('--surface'),
+
+        'popup-surface': withOpacityValue('--popup-surface'),
+
+        'input-edge': withOpacityValue('--input-edge'),
+        'input-background': withOpacityValue('--input-background'),
+        'input-disabled': withOpacityValue('--input-disabled'),
+        'input-button': withOpacityValue('--input-button'),
+        'input-button-hover': withOpacityValue('--input-button-hover'),
+        'input-button-active': withOpacityValue('--input-button-active'),
+        'input-option-hover': withOpacityValue('--input-option-hover'),
+
+        'box-background': withOpacityValue('--box-background'),
+        'box-edge': withOpacityValue('--box-edge'),
+        'box-elevation-background': withOpacityValue('--box-elevation-background'),
+        'box-elevation-edge': withOpacityValue('--box-elevation-edge'),
+        'box-elevation-hover': withOpacityValue('--box-elevation-hover'),
+
+        'option-hover': withOpacityValue('--option-hover'),
+        'crud-button-edge': withOpacityValue('--crud-button-edge'),
+        'pos-button-edge': withOpacityValue('--pos-button-edge'),
+
+        'numpad-typography': withOpacityValue('--numpad-typography'),
+        'numpad-edge': withOpacityValue('--numpad-edge'),
+        'numpad-hover': withOpacityValue('--numpad-hover'),
+        'numpad-hover-edge': withOpacityValue('--numpad-hover-edge'),
+
+        'tab-table-th': withOpacityValue('--tab-table-th'),
+        'tab-table-th-edge': withOpacityValue('--tab-table-th-edge'),
+        'table-th': withOpacityValue('--table-th'),
+        'table-th-edge': withOpacityValue('--table-th-edge'),
+
+        'scroll-thumb': withOpacityValue('--scroll-thumb'),
+        'scroll-track': withOpacityValue('--scroll-track'),
+        'scroll-popup-thumb': withOpacityValue('--scroll-popup-thumb'),
+        
+        'pre': withOpacityValue('--pre'),
+
+        'tab-active': withOpacityValue('--tab-active'),
+        'tab-active-border': withOpacityValue('--tab-active-border'),
+        'tab-inactive': withOpacityValue('--tab-inactive'),
+
+        'floating-menu-hover': withOpacityValue('--floating-menu-hover'),
+        'floating-menu': withOpacityValue('--floating-menu'),
+        'floating-menu-edge': withOpacityValue('--floating-menu-edge'),
+
+        primary: withOpacityValue('--primary'),
+        secondary: withOpacityValue('--secondary'),  
+        tertiary: withOpacityValue('--tertiary'),  
+
+        'info-primary': withOpacityValue('--info-primary'),
+        'info-secondary': withOpacityValue('--info-secondary'),  
+        'info-tertiary': withOpacityValue('--info-tertiary'),  
+        
+        'info-light-primary': withOpacityValue('--info-light-primary'),  
+        'info-light-secondary': withOpacityValue('--info-light-secondary'),  
+        'info-light-tertiary': withOpacityValue('--info-light-tertiary'),  
+        
+        'success-primary': withOpacityValue('--success-primary'),
+        'success-secondary': withOpacityValue('--success-secondary'),  
+        'success-tertiary': withOpacityValue('--success-tertiary'),  
+        
+        'success-light-primary': withOpacityValue('--success-light-primary'),  
+        'success-light-secondary': withOpacityValue('--success-light-secondary'),  
+        'success-light-tertiary': withOpacityValue('--success-light-tertiary'),  
+        
+        'error-primary': withOpacityValue('--error-primary'),
+        'error-secondary': withOpacityValue('--error-secondary'),  
+        'error-tertiary': withOpacityValue('--error-tertiary'),  
+        
+        'error-light-primary': withOpacityValue('--error-light-primary'),  
+        'error-light-success': withOpacityValue('--error-light-success'),  
+        'error-light-tertiary': withOpacityValue('--error-light-tertiary'),  
+        
+        'warning-primary': withOpacityValue('--warning-primary'),
+        'warning-secondary': withOpacityValue('--warning-secondary'),  
+        'warning-tertiary': withOpacityValue('--warning-tertiary'),  
+        
+        'warning-light-primary': withOpacityValue('--warning-light-primary'),  
+        'warning-light-success': withOpacityValue('--warning-light-success'),  
+        'warning-light-tertiary': withOpacityValue('--warning-light-tertiary'),  
+
+        'default-primary': withOpacityValue('--default-primary'),
+        'default-secondary': withOpacityValue('--default-secondary'),  
+        'default-tertiary': withOpacityValue('--default-tertiary'),  
+        
+        'default-light-primary': withOpacityValue('--default-light-primary'),  
+        'default-light-success': withOpacityValue('--default-light-success'),  
+        'default-light-tertiary': withOpacityValue('--default-light-tertiary'),  
+
+        'danger-primary': withOpacityValue('--danger-primary'),
+        'danger-secondary': withOpacityValue('--danger-secondary'),  
+        'danger-tertiary': withOpacityValue('--danger-tertiary'),  
+        
+        'danger-light-primary': withOpacityValue('--danger-light-primary'),  
+        'danger-light-success': withOpacityValue('--danger-light-success'),  
+        'danger-light-tertiary': withOpacityValue('--danger-light-tertiary'),  
       },
       fontWeight: [ 'hover', 'focus' ],
       height: heightDims,
@@ -121,7 +225,4 @@ module.exports = {
       },
     }
   },
-  variants: {
-    opacity: [ 'responsive', 'hover', 'active' ]
-  }
 }

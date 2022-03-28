@@ -1,9 +1,12 @@
 <template>
-    <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
-        <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center">{{ __( 'Define Quantity' ) }}</h1>
+    <div class="ns-box shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
+        <div class="flex-shrink-0 flex p-2 border-b ns-box-header justify-between items-center">
+            <h1 class="text-xl font-bold text-primary text-center">{{ __( 'Define Quantity' ) }}</h1>
+            <div>
+                <ns-close-button @click="closePopup()"></ns-close-button>
+            </div>
         </div>
-        <div id="screen" class="h-16 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
+        <div id="screen" class="h-16 border-b ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
@@ -11,7 +14,7 @@
                 @click="inputValue( key )"
                 :key="index" 
                 v-for="(key,index) of keys" 
-                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-24 flex items-center justify-center cursor-pointer">
+                class="text-xl font-bold border ns-numpad-key h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
             </div>
@@ -39,19 +42,7 @@ export default {
     mounted() {
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
-                /**
-                 * as this runs under a Promise
-                 * we need to make sure that
-                 * it resolve false using the "resolve" function
-                 * provided as $popupParams.
-                 * Here we resolve "false" as the user has broken the Promise
-                 */
-                this.$popupParams.reject( false );
-
-                /**
-                 * we can safely close the popup.
-                 */
-                this.$popup.close();
+                this.closePopup();
             }
         });
 
@@ -74,6 +65,22 @@ export default {
             if ( event.keyCode === 13 ) {
                 this.inputValue({ identifier : 'next' });
             }
+        },
+
+        closePopup() {
+            /**
+             * as this runs under a Promise
+             * we need to make sure that
+             * it resolve false using the "resolve" function
+             * provided as $popupParams.
+             * Here we resolve "false" as the user has broken the Promise
+             */
+            this.$popupParams.reject( false );
+
+            /**
+             * we can safely close the popup.
+             */
+            this.$popup.close();
         },
         
         inputValue( key ) {

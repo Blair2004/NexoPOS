@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\SettingsRequest;
 use App\Services\CrudService;
@@ -42,7 +43,6 @@ class SettingsController extends DashboardController
             case 'invoices'; return $this->invoiceSettings(); break;
             case 'orders'; return $this->ordersSettings(); break;
             case 'pos'; return $this->posSettings(); break;
-            case 'supplies-deliveries'; return $this->suppliesDeliveries(); break;
             case 'reports'; return $this->reportsSettings(); break;
             case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
@@ -51,8 +51,42 @@ class SettingsController extends DashboardController
             case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
             case 'accounting'; return $this->accountingSettings(); break;
+            case 'about': return $this->aboutSettings(); break;
             default : return $this->handleDefaultSettings( $identifier );break;
         }
+    }
+
+    /**
+     * Show the about page about the system.
+     * Where you'll get details about your setup
+     * including PHP version, mysql, etc.
+     */
+    public function aboutSettings()
+    {
+        return view( 'pages.dashboard.about', [
+            'menus' =>  $this->menuService,
+            'title' =>  __( 'About' ),
+            'description'   =>  __( 'Details about the environment.' ),
+            'details'  =>  [
+                __( 'Core Version'  )           =>  config( 'nexopos.version' ),
+                __( 'PHP Version' )             =>  phpversion(),
+            ],
+            'extensions'      =>  [
+                __( 'Mb String Enabled' )   =>  extension_loaded( 'mbstring' ),
+                __( 'Zip Enabled' )         =>  extension_loaded( 'zip' ),
+                __( 'Curl Enabled' )        =>  extension_loaded( 'curl' ),
+                __( 'Math Enabled' )        =>  extension_loaded( 'bcmath' ),
+                __( 'XML Enabled' )         =>  extension_loaded( 'xml' ),
+                __( 'XDebug Enabled' )         =>  extension_loaded( 'xdebug' ),
+            ],
+            'configurations'     =>      [
+                __( 'File Upload Enabled' )     =>  (( bool ) ini_get( 'file_uploads' )) ? __( 'Yes' ) : __( 'No' ),
+                __( 'File Upload Size' )        =>  ini_get( 'upload_max_filesize' ),
+                __( 'Post Max Size' )           =>  ini_get( 'post_max_size' ),
+                __( 'Max Execution Time' )      =>  sprintf( __( '%s Second(s)' ), ini_get( 'max_execution_time' ) ),
+                __( 'Memory Limit' )            =>  ini_get( 'memory_limit' ),
+            ]        
+        ]);
     }
 
     public function handleDefaultSettings( $identifier )
@@ -146,14 +180,6 @@ class SettingsController extends DashboardController
         ]);
     }
 
-    public function suppliesDeliveries()
-    {
-        return $this->view( 'pages.dashboard.settings.supplies-deliveries', [
-            'title'     =>      __( 'Supplies & Deliveries Settings' ),
-            'description'   =>  __( 'Configure the supplies and deliveries settings.' )
-        ]);
-    }
-
     public function reportsSettings()
     {
         return $this->view( 'pages.dashboard.settings.reports', [
@@ -165,10 +191,11 @@ class SettingsController extends DashboardController
     public function resetSettings()
     {
         /**
-         * @temp
+         * Users who can manage options can 
+         * reset the system.
          */
-        if ( Auth::user()->role->namespace !== 'admin' ) {
-            throw new Exception( __( 'Access Denied' ) );
+        if ( ! Auth::user()->allowedTo([ 'manage.options' ]) ) {
+            throw new NotAllowedException( __( 'Access Denied' ) );
         }
 
         return $this->view( 'pages.dashboard.settings.reset', [

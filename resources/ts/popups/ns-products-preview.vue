@@ -1,6 +1,6 @@
 <template>
-    <div class="shadow-lg w-6/7-screen lg:w-3/5-screen h-6/7-screen lg:h-4/5-screen bg-white overflow-hidden flex flex-col">
-        <div class="p-2 border-b border-gray-200 text-gray-700 text-center font-medium flex justify-between items-center">
+    <div class="shadow-lg w-6/7-screen lg:w-3/5-screen h-6/7-screen lg:h-4/5-screen ns-box overflow-hidden flex flex-col">
+        <div class="p-2 border-b ns-box-header text-primary text-center font-medium flex justify-between items-center">
             <div>
                 {{ __( 'Previewing :' ) }} {{ product.name }}
             </div>
@@ -8,25 +8,25 @@
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto overflow-y-auto bg-gray-100">
+        <div class="flex-auto overflow-y-auto ns-box-body">
             <div class="p-2">
                 <ns-tabs :active="active" @active="changeActiveTab( $event )">
                     <ns-tabs-item :label="__( 'Units & Quantities' )" identifier="units-quantities">
-                        <table class="table w-full" v-if="hasLoadedUnitQuantities">
+                        <table class="table ns-table w-full" v-if="hasLoadedUnitQuantities">
                             <thead>
                                 <tr>
-                                    <th class="p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Unit' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Sale Price' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Wholesale Price' ) }}</th>
-                                    <th width="150" class="text-right p-1 bg-blue-100 border-blue-400 text-blue-700 border">{{ __( 'Quantity' ) }}</th>
+                                    <th class="p-1 border">{{ __( 'Unit' ) }}</th>
+                                    <th width="150" class="text-right p-1 border">{{ __( 'Sale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 border">{{ __( 'Wholesale Price' ) }}</th>
+                                    <th width="150" class="text-right p-1 border">{{ __( 'Quantity' ) }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="unitQuantity of unitQuantities" :key="unitQuantity.id">
-                                    <td class="p-1 border border-gray-400 text-gray-600 text-left">{{ unitQuantity.unit.name }}</td>
-                                    <td class="p-1 border border-gray-400 text-gray-600 text-right">{{ unitQuantity.sale_price | currency }}</td>
-                                    <td class="p-1 border border-gray-400 text-gray-600 text-right">{{ unitQuantity.wholesale_price | currency }}</td>
-                                    <td class="p-1 border border-gray-400 text-gray-600 text-right">{{ unitQuantity.quantity }}</td>
+                                    <td class="p-1 border text-left">{{ unitQuantity.unit.name }}</td>
+                                    <td class="p-1 border text-right">{{ unitQuantity.sale_price | currency }}</td>
+                                    <td class="p-1 border text-right">{{ unitQuantity.wholesale_price | currency }}</td>
+                                    <td class="p-1 border text-right">{{ unitQuantity.quantity }}</td>
                                 </tr>
                             </tbody>
                         </table>

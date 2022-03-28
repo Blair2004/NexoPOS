@@ -8,7 +8,7 @@ $la-inverse: #fff !default;
 $la-version: 1.3.0 !default;
 $la-li-width: math.div(20em, 14) !default;
 
-@function la-content($la-var) {
+@function la-content( $la-var ) {
   @return unquote("\"#{ $la-var }\"");
 }
 
@@ -639,7 +639,7 @@ $la-hands: \f4c2;
 $la-hands-helping: \f4c4;
 $la-handshake: \f2b5;
 $la-hanukiah: \f6e6;
-$la-hard-hat: \f807;
+$la-surface-quaternary-hat: \f807;
 $la-hashtag: \f292;
 $la-hat-wizard: \f6e8;
 $la-haykal: \f666;

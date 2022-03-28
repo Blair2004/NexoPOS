@@ -9,8 +9,9 @@ export class Popup {
         popupClass  :   'shadow-lg h-half w-1/2 bg-white',
     }; 
 
-    private container   =   document.createElement( 'div' );
-    private popupBody   =   document.createElement( 'div' );
+    private container       =   document.createElement( 'div' );
+    private popupBody       =   document.createElement( 'div' );
+    private popupSelector   =   '';
     private event: Subject<{ event: string, value: any }>;
     private instance: any;
     private parentWrapper: HTMLDivElement | HTMLBodyElement;
@@ -40,7 +41,18 @@ export class Popup {
         return popup;
     }
 
-    open( component, params = {} ) {
+    async open( component, params = {} ) {
+        if ( typeof component === 'function' ) {
+            try {
+                component = (await component()).default;
+            } catch( exception ) {
+                /**
+                 * it has failed, maybe it's an inline-component.
+                 * In that situation, we don't need to resolve the default.
+                 */
+            }
+        }
+
         const body  =   document.querySelector( 'body' ).querySelectorAll( 'div' )[0];
         this.parentWrapper.style.filter     =   'blur(4px)';
         body.style.filter                   =   'blur(6px)';
@@ -72,10 +84,14 @@ export class Popup {
             event.stopImmediatePropagation();
         });
 
-        this.container.style.background     =   'rgb(51 51 51 / 20%)';
-        this.container.id                   =   'popup-container-' + document.querySelectorAll( '.is-popup' ).length;
-        this.popupBody.setAttribute( 'class', ' zoom-out-entrance' );
-        this.popupBody.innerHTML            =   '<div class="popup-body"></div>';
+        const actualLength      =   document.querySelectorAll( '.is-popup' ).length;
+
+        this.container.id                   =   'popup-container-' + actualLength;
+        this.popupSelector                  =   `#${this.container.id}`;
+
+        this.popupBody.setAttribute( 'class', 'zoom-out-entrance popup-body' );
+        this.popupBody.setAttribute( 'data-index', actualLength );
+        this.popupBody.innerHTML            =   '<div class="vue-component"></div>';
         this.container.appendChild( this.popupBody );  
 
         document.body.appendChild( this.container );
@@ -102,7 +118,7 @@ export class Popup {
         this.instance.data              =   component?.options?.data || component?.data;
         this.instance.$popup            =   this;
         this.instance.$popupParams      =   params;
-        this.instance.$mount( `#${this.container.id} .popup-body` );
+        this.instance.$mount( `#${this.container.id} .vue-component` );
     }
 
     close() {
@@ -128,9 +144,14 @@ export class Popup {
         if ( document.querySelectorAll( '.is-popup' ).length <= 1 ) {
             body.style.filter   =   'blur(0px)';
         }
-        
+
+        const selector          =   `${this.popupSelector} .popup-body`;
+
+        this.popupBody          =   document.querySelector( selector );
         this.popupBody.classList.remove( 'zoom-out-entrance' );
         this.popupBody.classList.add( 'zoom-in-exit' );
+
+        this.container          =   document.querySelector( `${this.popupSelector}` );
         this.container.classList.remove( 'is-popup' );
 
         setTimeout( () => {

@@ -347,10 +347,10 @@ class CashFlowHistoryCrud extends CrudService
 
         switch( $entry->operation ) {
             case CashFlow::OPERATION_CREDIT : 
-                $entry->{ '$cssClass' }             =   'bg-green-100 border-green-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'success border text-sm';
             break;
             case CashFlow::OPERATION_DEBIT : 
-                $entry->{ '$cssClass' }             =   'bg-red-100 border-red-200 border text-sm';
+                $entry->{ '$cssClass' }             =   'error border text-sm';
             break;
         }
 

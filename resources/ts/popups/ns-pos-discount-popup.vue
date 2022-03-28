@@ -1,26 +1,31 @@
 <template>
-    <div id="discount-popup" class="bg-white shadow min-h-2/5-screen w-6/7-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
-        <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'product'">{{ __( 'Product Discount' ) }}</h1>
-            <h1 class="text-xl font-bold text-gray-700 text-center" v-if="type === 'cart'">{{ __( 'Cart Discount' ) }}</h1>
+    <div id="discount-popup" class="ns-box shadow min-h-2/5-screen w-6/7-screen md:w-3/5-screen lg:w-3/5-screen xl:w-2/5-screen relative">
+        <div class="flex-shrink-0 flex justify-between items-center p-2 border-b ns-box-header">
+            <div>
+                <h1 class="text-xl font-bold text-primary text-center" v-if="type === 'product'">{{ __( 'Product Discount' ) }}</h1>
+                <h1 class="text-xl font-bold text-primary text-center" v-if="type === 'cart'">{{ __( 'Cart Discount' ) }}</h1>
+            </div>
+            <div>
+                <ns-close-button @click="closePopup()"></ns-close-button>
+            </div>
         </div>
-        <div id="screen" class="h-16 bg-gray-800 text-white border-gray-200 flex items-center justify-center">
+        <div id="screen" class="h-16 ns-box-body text-white flex items-center justify-center">
             <h1 class="font-bold text-3xl">
                 <span v-if="mode === 'flat'">{{ finalValue  | currency }}</span>
                 <span v-if="mode === 'percentage'">{{ finalValue }}%</span>
             </h1>
         </div>
         <div id="switch-mode" class="flex">
-            <button @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-gray-800 text-white' : ''" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
-            <hr class="border-r border-gray-200">
-            <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-gray-800 text-white' : ''" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
+            <button @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active text-white' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
+            <hr class="border-r border-box-edge">
+            <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-tab-active text-white' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
             <div 
                 @click="inputValue( key )"
                 :key="index" 
                 v-for="(key,index) of keys" 
-                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-24 flex items-center justify-center cursor-pointer">
+                class="text-primary ns-numpad-key info text-xl font-bold border h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
             </div>
@@ -70,6 +75,10 @@ export default {
         setPercentageType( mode ) {
             this.mode       =   mode;
         },
+        closePopup() {
+            this.$popup.close();
+        },
+
         inputValue( key ) {
             if ( key.identifier === 'next' ) {
                 this.$popupParams.onSubmit({

@@ -80,16 +80,16 @@ export class SnackBar {
 
         switch( type ) {
             case 'info': 
-                buttonThemeClass    =   'text-white hover:bg-blue-400 bg-blue-500';
-                snackThemeClass     =   'bg-gray-900 text-white';
+                buttonThemeClass    =   '';
+                snackThemeClass     =   'info';
             break;
             case 'error': 
-                buttonThemeClass    =   'text-red-700 hover:bg-white bg-white';
-                snackThemeClass     =   'bg-red-500 text-white';
+                buttonThemeClass    =   '';
+                snackThemeClass     =   'error';
             break;
             case 'success': 
-                buttonThemeClass    =   'text-green-700 hover:bg-white bg-white';
-                snackThemeClass     =   'bg-green-500 text-white';
+                buttonThemeClass    =   '';
+                snackThemeClass     =   'success';
             break;
         }
         
@@ -100,6 +100,7 @@ export class SnackBar {
          * on the button, it's useless to add it
          */
         if ( label ) {
+            buttonsWrapper.setAttribute( 'class', `ns-button default` )
             buttonNode.textContent      =   label;
             buttonNode.setAttribute( 'class', `px-3 py-2 shadow rounded uppercase ${buttonThemeClass}` );
             buttonsWrapper.appendChild( buttonNode );
@@ -107,7 +108,7 @@ export class SnackBar {
 
         sampleSnack.appendChild( textNode );
         sampleSnack.appendChild( buttonsWrapper );
-        sampleSnack.setAttribute( 'class', `md:rounded py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center zoom-in-entrance anim-duration-300 ${snackThemeClass}` );
+        sampleSnack.setAttribute( 'class', `md:rounded py-2 px-3 md:w-2/5 w-full z-10 md:my-2 shadow-lg flex justify-between items-center zoom-in-entrance anim-duration-300 ns-notice ${snackThemeClass}` );
         
         snackWrapper.appendChild( sampleSnack );
 

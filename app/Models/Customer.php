@@ -10,6 +10,15 @@ class Customer extends NsModel
     use HasFactory;
     
     protected $table    =   'nexopos_' . 'customers';
+
+    protected $isDependencyFor  =   [
+        Order::class    =>  [
+            'local_name'    =>  'name',
+            'local_index'   =>  'id',
+            'foreign_name'  =>  'code',
+            'foreign_index' =>  'customer_id'
+        ]
+    ];
     
     /**
      * define the relationship

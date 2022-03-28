@@ -31,7 +31,7 @@ ns.base_url         =   '{{ url( "/" ) }}';
 @if ( ns()->isProduction() )
 <script src="{{ mix( 'js/manifest.js' ) }}"></script>
 <script src="{{ mix( 'js/vendor.js' ) }}"></script>
-<script src="{{ mix( 'js/bootstrap.min.js' ) }}"></script>
+<script src="{{ mix( 'js/bootstrap.min/bootstrap.js' ) }}"></script>
 <script src="{{ mix( 'js/popups.min.js' ) }}"></script>
 @else
 <script src="{{ asset( 'js/manifest.js' ) }}"></script>

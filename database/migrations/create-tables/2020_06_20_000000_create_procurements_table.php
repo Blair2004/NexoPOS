@@ -29,6 +29,7 @@ class CreateProcurementsTable extends Migration
                 $table->string( 'invoice_reference' )->nullable();
                 $table->boolean( 'automatic_approval' )->default(false)->nullable();
                 $table->datetime( 'delivery_time' )->nullable();
+                $table->datetime( 'invoice_date' )->nullable();
                 $table->string( 'payment_status' )->default( 'unpaid' ); // paid | unpaid
                 $table->string( 'delivery_status' )->default( 'unpaid' ); // paid | unpaid
                 $table->integer( 'total_items' )->default(0);

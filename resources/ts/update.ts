@@ -7,7 +7,7 @@ const nsDatabaseUpdate     =   require( './pages/update/ns-database-update' ).de
 console.log( nsDatabaseUpdate );
 
 (<any>window)[ 'nsUpdate' ]      =   new Vue({
-    el: '#update-app',
+    el: '#main-container',
     components: {
         nsDatabaseUpdate
     }

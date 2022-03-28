@@ -6,16 +6,6 @@ return [
     'label' =>  __( 'Features' ),
     'fields'    =>  [
         [
-            'name'              =>  'ns_pos_sound_enabled',
-            'value'             =>  $options->get( 'ns_pos_sound_enabled' ),
-            'label'             =>  __( 'Sound Effect' ), 
-            'type'              =>  'switch',
-            'options'           =>  Helper::kvToJsOptions([
-                'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
-            ]),
-            'description'       =>  __( 'Enable sound effect on the POS.' ),
-        ], [
             'name'              =>  'ns_pos_show_quantity',
             'value'             =>  $options->get( 'ns_pos_show_quantity' ),
             'label'             =>  __( 'Show Quantity' ), 
@@ -25,6 +15,16 @@ return [
                 'no'            =>  __( 'No' )
             ]),
             'description'       =>  __( 'Will show the quantity selector while choosing a product. Otherwise the default quantity is set to 1.' ),
+        ], [
+            'name'              =>  'pos_items_merge',
+            'value'             =>  $options->get( 'pos_items_merge' ),
+            'label'             =>  __( 'Merge Similar Items' ), 
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' )
+            ]),
+            'description'       =>  __( 'Will enforce similar products to be merged from the POS.' ),
         ], [
             'name'              =>  'ns_pos_customers_creation_enabled',
             'value'             =>  $options->get( 'ns_pos_customers_creation_enabled' ),

@@ -16,7 +16,9 @@ export default {
             startDate: moment(),
             endDate: moment(),
             result: [],
+            users: [],
             summary: {},
+            selectedUser: '',
             reportType: {
                 label: __( 'Report Type' ),
                 name: 'reportType',
@@ -33,6 +35,16 @@ export default {
                         label: __( 'Products' ),
                         name: 'products_report',
                     }
+                ],
+                description: __( 'Allow you to choose the report type.' ),
+            },
+            filterUser: {
+                label: __( 'Filter User' ),
+                name: 'filterUser',
+                type: 'select',
+                value: '',
+                options: [
+                    // ...
                 ],
                 description: __( 'Allow you to choose the report type.' ),
             },
@@ -76,6 +88,52 @@ export default {
             }
         },
 
+        async openUserFiltering() {
+            try {
+                /**
+                 * let's try to pull the users first.
+                 */
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    nsHttpClient.get( `/api/nexopos/v4/users` )
+                        .subscribe({
+                            next: (users) => {
+                                this.users      =   users;
+
+                                this.filterUser.options     =   [
+                                    {
+                                        label: __( 'All Users' ),
+                                        value: ''
+                                    },
+                                    ...this.users.map( user => {
+                                        return {
+                                            label: user.username,
+                                            value: user.id
+                                        }
+                                    })
+                                ];
+                                
+                                Popup.show( nsSelectPopupVue, {
+                                    ...this.filterUser,
+                                    resolve, 
+                                    reject
+                                });
+                            },
+                            error: error => {
+                                nsSnackBar.error( __( 'No user was found for proceeding the filtering.' ) );
+                                reject( error );
+                            }
+                        });
+                });
+
+                this.selectedUser       =   result[0].label;
+                this.filterUser.value   =   result[0].value;
+                this.result             =   [];
+                this.loadReport();
+            } catch( exception ) {
+                // ...
+            }
+        },
+
         getType( type ) {
             const option    =   this.reportType.options.filter( option => {
                 return option.name === type;
@@ -103,7 +161,8 @@ export default {
             nsHttpClient.post( '/api/nexopos/v4/reports/sale-report', { 
                 startDate: this.startDate,
                 endDate: this.endDate,
-                type: this.reportType.value
+                type: this.reportType.value,
+                user_id: this.filterUser.value
             }).subscribe({
                 next: response => {
                     this.result     =   response.result;
@@ -117,7 +176,6 @@ export default {
 
         computeTotal( collection, attribute ) {
             if ( collection.length > 0 ) {
-                console.log( 'computes' );
                 return collection.map( entry => parseFloat( entry[ attribute ] ) )
                     .reduce( ( b, a ) => b + a );
             }

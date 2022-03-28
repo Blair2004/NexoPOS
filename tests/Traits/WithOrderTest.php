@@ -63,7 +63,7 @@ trait WithOrderTest
         return $responses;
     }
     
-    protected function attemptCreateOrderOnRegister()
+    protected function attemptCreateOrderOnRegister( $data = [] )
     {
         RegisterHistory::truncate();
 
@@ -96,7 +96,7 @@ trait WithOrderTest
          * Step 1 : let's prepare the order
          * before submitting that.
          */
-        $response   =   $this->registerOrderForCashRegister( $cashRegister ); 
+        $response   =   $this->registerOrderForCashRegister( $cashRegister, $data[ 'orderData' ] ?? [] ); 
 
         /**
          * between each operation
@@ -104,8 +104,13 @@ trait WithOrderTest
          */
         $cashRegister->refresh();
 
-        $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue + $response[ 'data' ][ 'order' ][ 'total' ] ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+        /**
+         * only if the order total is greater than 0
+         */
+        if( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
+            $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
+            $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue + $response[ 'data' ][ 'order' ][ 'total' ] ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+        }
         
         /**
          * Step 2 : disburse (cash-out) some cash
@@ -171,19 +176,60 @@ trait WithOrderTest
 
         $totalTransactions      =   ( $openingBalance + $totalCashing + $totalSales ) - ( $totalClosing + $totalRefunds + $totalCashOut );
 
-        $this->assertEquals( $cashRegister->balance, $totalTransactions, __( 'The transaction aren\'t reflected on the register balance' ) );
+        $this->assertEquals( 
+            ns()->currency->getRaw( $cashRegister->balance ), 
+            ns()->currency->getRaw( $totalTransactions ), 
+            __( 'The transaction aren\'t reflected on the register balance' ) 
+        );
+
+        return compact( 'response', 'cashRegister' );
     }
 
-    private function registerOrderForCashRegister( Register $cashRegister )
+    public function attemptUpdateOrderOnRegister()
+    {
+        /**
+         * @var OrdersService $orderService
+         */
+        $orderService   =   app()->make( OrdersService::class );
+
+        $result         =   $this->attemptCreateOrderOnRegister([
+            'orderData' =>  [
+                'payments'  =>  [], // we'll disable payments.
+            ]
+        ]);
+
+        extract( $result );
+        /**
+         * @var array $response
+         * @var Register $cashRegister
+         */
+        $order              =   Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
+        $orderService->makeOrderSinglePayment([
+            'identifier'    =>  OrderPayment::PAYMENT_CASH,
+            'value'         =>  $response[ 'data' ][ 'order' ][ 'total' ],
+        ], $order );
+
+        /**
+         * Making assertions
+         */
+        $cashRegisterHistory    =   RegisterHistory::where( 'register_id', $cashRegister->id )->orderBy( 'id', 'desc' )->first();
+        
+        $this->assertTrue( 
+            ns()->currency->getRaw( $cashRegisterHistory->value ) === $order->total,
+            __( 'The payment wasn\'t added to the cash register history' )
+        );
+    }
+
+    private function registerOrderForCashRegister( Register $cashRegister, $data )
     {
         /**
          * @var TestService
          */
         $testService    =   app()->make( TestService::class );
 
-        $orderDetails   =   $testService->prepareOrder( ns()->date->now(), [
+        $orderDetails   =   $testService->prepareOrder( ns()->date->now(), array_merge([
             'register_id'   =>  $cashRegister->id
-        ]);
+        ], $data ) );
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );

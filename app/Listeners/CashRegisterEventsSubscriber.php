@@ -6,6 +6,7 @@ use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
+use App\Events\OrderAfterUpdatedEvent;
 use App\Services\CashRegistersService;
 
 class CashRegisterEventsSubscriber
@@ -43,17 +44,17 @@ class CashRegisterEventsSubscriber
         );
 
         $event->listen( 
-            CashRegisterHistoryAfterCreatedEvent::class, 
-            [ $this->registerService, 'issueExpenses' ]
-        );
-
-        $event->listen( 
             OrderAfterPaymentStatusChangedEvent::class,
             [ $this->registerService, 'increaseFromPaidOrder' ]
         );
 
         $event->listen( 
             OrderAfterCreatedEvent::class,
+            [ $this->registerService, 'increaseFromOrderCreatedEvent' ]
+        );
+
+        $event->listen( 
+            OrderAfterUpdatedEvent::class,
             [ $this->registerService, 'increaseFromOrderCreatedEvent' ]
         );
 

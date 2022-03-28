@@ -1,12 +1,12 @@
 <template>
-    <div class="bg-white shadow-lg rounded w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
-        <div class="p-2 flex justify-between items-center border-b border-gray-400">
-            <h3 class="font-semibold text-gray-700">{{ __( 'Customers' ) }}</h3>
+    <div id="ns-pos-customers" class="shadow-lg rounded w-95vw h-95vh lg:w-3/5-screen flex flex-col overflow-hidden">
+        <div class="ns-header p-2 flex justify-between items-center border-b">
+            <h3 class="font-semibold">{{ __( 'Customers' ) }}</h3>
             <div>
                 <ns-close-button @click="$popup.close()"></ns-close-button>
             </div>
         </div>
-        <div class="flex-auto flex p-2 bg-gray-200 overflow-y-auto">
+        <div class="ns-body flex-auto flex p-2 overflow-y-auto">
             <ns-tabs :active="activeTab" @active="activeTab = $event">
                 <ns-tabs-item identifier="create-customers" label="New Customer">
                     <ns-crud-form 
@@ -18,37 +18,37 @@
                         <template v-slot:title>{{ __( 'Customer Name' ) }}</template>
                         <template v-slot:save>{{ __( 'Save Customer' ) }}</template>
                     </ns-crud-form>
-                    <div class="h-full flex-col w-full flex items-center justify-center">
-                        <i class="lar la-hand-paper text-6xl text-gray-700"></i>
-                        <h3 class="font-medium text-2xl text-gray-700">{{ __( 'Not Authorized' ) }}</h3>
-                        <p class="text-gray-600">{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
+                    <div v-if="options.ns_pos_customers_creation_enabled !== 'yes'" class="h-full flex-col w-full flex items-center justify-center text-primary">
+                        <i class="lar la-hand-paper ns-icon text-6xl"></i>
+                        <h3 class="font-medium text-2xl">{{ __( 'Not Authorized' ) }}</h3>
+                        <p>{{ __( 'Creating customers has been explicitly disabled from the settings.' ) }}</p>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item identifier="account-payment" :label="__( 'Customer Account' )" class="flex" style="padding:0!important">
                     <div class="flex-auto w-full flex items-center justify-center flex-col p-4" v-if="customer === null">
-                        <i class="lar la-frown text-6xl text-gray-700"></i>
-                        <h3 class="font-medium text-2xl text-gray-700">{{ __( 'No Customer Selected' ) }}</h3>
-                        <p class="text-gray-600">{{ __( 'In order to see a customer account, you need to select one customer.' ) }}</p>
+                        <i class="lar la-frown text-6xl"></i>
+                        <h3 class="font-medium text-2xl">{{ __( 'No Customer Selected' ) }}</h3>
+                        <p>{{ __( 'In order to see a customer account, you need to select one customer.' ) }}</p>
                         <div class="my-2">
                             <ns-button @click="openCustomerSelection()" type="info">{{ __( 'Select Customer' ) }}</ns-button>
                         </div>
                     </div>
                     <div v-if="customer" class="flex flex-col flex-auto">
                         <div class="flex-auto p-2 flex flex-col">
-                            <div class="-mx-4 flex flex-wrap">
+                            <div class="-mx-4 flex flex-wrap ns-tab-cards">
                                 <div class="px-4 mb-4 w-full">
-                                    <h2 class="font-semibold text-gray-700">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
+                                    <h2 class="font-semibold">{{ __( 'Summary For' ) }} : {{ customer.name }}</h2>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-green-400 to-green-700 p-2 flex flex-col text-white">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                            <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
-                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-red-500 to-red-700 p-2 text-white">
+                                    <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="text-2xl font-bold">{{ customer.owed_amount | currency }}</h2>
@@ -76,31 +76,42 @@
                                 <ns-tabs :active="selectedTab" @changeTab="doChangeTab( $event )">
                                     <ns-tabs-item identifier="orders" :label="__( 'Orders' )">
                                         <div class="py-2 w-full">
-                                            <h2 class="font-semibold text-gray-700">{{ __( 'Last Purchases' ) }}</h2>
+                                            <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
                                         </div>
                                         <div class="flex-auto flex-col flex overflow-hidden">
                                             <div class="flex-auto overflow-y-auto">
-                                                <table class="table w-full">
+                                                <table class="table ns-table w-full">
                                                     <thead>
-                                                        <tr class="text-gray-700">
-                                                            <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Order' ) }}</th>
-                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Total' ) }}</th>
-                                                            <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Status' ) }}</th>
-                                                            <th width="50" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Options' ) }}</th>
+                                                        <tr class="text-primary">
+                                                            <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
+                                                            <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="text-gray-700">
+                                                    <tbody class="text-primary">
                                                         <tr v-if="orders.length === 0">
-                                                            <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
+                                                            <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
                                                         </tr>
                                                         <tr v-for="order of orders" :key="order.id">
-                                                            <td class="border border-gray-200 p-2 text-center">{{ order.code }}</td>
-                                                            <td class="border border-gray-200 p-2 text-center">{{ order.total | currency }}</td>
-                                                            <td class="border border-gray-200 p-2 text-right">{{ order.human_status }}</td>
-                                                            <td class="border border-gray-200 p-2 text-center">
-                                                                <button v-if="allowedForPayment( order )" class="hover:bg-blue-400 hover:border-transparent hover:text-white rounded-full h-8 px-2 flex items-center justify-center border border-gray bg-white">
+                                                            <td colspan="3" class="border p-2 text-center">
+                                                                <div class="flex flex-col items-start">
+                                                                    <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
+                                                                    <div class="md:-mx-2 w-full flex flex-col md:flex-row">
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
+                                                                        </div>
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
+                                                                        </div>
+                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                            <small>{{ __( 'Delivery' ) }}: {{ order.human_delivery_status }}</small>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="border p-2 text-center">
+                                                                <button @click="openOrderOptions( order )" class="rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button success">
                                                                     <i class="las la-wallet"></i>
-                                                                    <span class="ml-1">{{ __( 'Payment' ) }}</span>
+                                                                    <span class="ml-1">{{ __( 'Options' ) }}</span>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -115,33 +126,33 @@
                                         </div>
                                         <template v-if="! isLoadingCoupons">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-gray-700">{{ __( 'Coupons' ) }}</h2>
+                                                <h2 class="font-semibold text-primary">{{ __( 'Coupons' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
-                                                    <table class="table w-full">
+                                                    <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-gray-700">
-                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Type' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold"></th>
+                                                            <tr class="text-primary">
+                                                                <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Type' ) }}</th>
+                                                                <th class="p-2 border font-semibold"></th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-gray-700 text-sm">
+                                                        <tbody class="text-primary text-sm">
                                                             <tr v-if="coupons.length === 0">
-                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
+                                                                <td class="border p-2 text-center" colspan="4">{{ __( 'No coupons for the selected customer...' ) }}</td>
                                                             </tr>
                                                             <tr v-for="coupon of coupons" :key="coupon.id">
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3>{{ coupon.name }}</h3>
                                                                     <div class="">
                                                                         <ul class="-mx-2 flex">
-                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
-                                                                            <li class="text-xs text-gray-600 px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
+                                                                            <li class="text-xs text-primary px-2">{{ __( 'Usage :' ) }} {{ coupon.usage }}/{{ coupon.limit_usage }}</li>
+                                                                            <li class="text-xs text-primary px-2">{{ __( 'Code :' ) }} {{ coupon.code }}</li>
                                                                         </ul>
                                                                     </div>
                                                                 </td>
-                                                                <td class="border border-gray-200 p-2 text-center">{{ getType( coupon.coupon.type ) }} 
+                                                                <td class="border p-2 text-center">{{ getType( coupon.coupon.type ) }} 
                                                                     <span v-if="coupon.coupon.type === 'percentage_discount'">
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
@@ -149,7 +160,7 @@
                                                                         ({{ coupon.coupon.discount_value | currency }})
                                                                     </span>
                                                                 </td>
-                                                                <td class="border border-gray-200 p-2 text-right">
+                                                                <td class="border p-2 text-right">
                                                                     <ns-button @click="applyCoupon( coupon )" type="info">{{ __( 'Use Coupon' ) }}</ns-button>
                                                                 </td>
                                                             </tr>
@@ -165,30 +176,30 @@
                                         </div>
                                         <template v-if="! isLoadingRewards">
                                             <div class="py-2 w-full">
-                                                <h2 class="font-semibold text-gray-700">{{ __( 'Rewards' ) }}</h2>
+                                                <h2 class="font-semibold text-primary">{{ __( 'Rewards' ) }}</h2>
                                             </div>
                                             <div class="flex-auto flex-col flex overflow-hidden">
                                                 <div class="flex-auto overflow-y-auto">
-                                                    <table class="table w-full">
+                                                    <table class="table ns-table w-full">
                                                         <thead>
-                                                            <tr class="text-gray-700">
-                                                                <th width="150" class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Name' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Points' ) }}</th>
-                                                                <th class="p-2 border border-gray-200 bg-gray-100 font-semibold">{{ __( 'Target' ) }}</th>
+                                                            <tr class="text-primary">
+                                                                <th width="150" class="p-2 border font-semibold">{{ __( 'Name' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Points' ) }}</th>
+                                                                <th class="p-2 border font-semibold">{{ __( 'Target' ) }}</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody class="text-gray-700 text-sm" v-if="rewardsResponse.data">
+                                                        <tbody class="text-primary text-sm" v-if="rewardsResponse.data">
                                                             <tr v-if="rewardsResponse.data.length === 0">
-                                                                <td class="border border-gray-200 p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
+                                                                <td class="border p-2 text-center" colspan="4">{{ __( 'No rewards available the selected customer...' ) }}</td>
                                                             </tr>
                                                             <tr v-for="reward of rewardsResponse.data" :key="reward.id">
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.reward_name }}</h3>
                                                                 </td>
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.points }}</h3>
                                                                 </td>
-                                                                <td width="300" class="border border-gray-200 p-2">
+                                                                <td width="300" class="border p-2">
                                                                     <h3 class="text-center">{{ reward.target }}</h3>
                                                                 </td>
                                                             </tr>
@@ -204,7 +215,7 @@
                                 </ns-tabs>
                             </div>
                         </div>
-                        <div class="p-2 border-t border-gray-400 flex justify-between">
+                        <div class="p-2 border-t border-box-edge flex justify-between">
                             <div></div>
                             <div>
                                 <ns-button @click="newTransaction( customer )" type="info">{{ __( 'Account Transaction' ) }}</ns-button>
@@ -229,6 +240,7 @@ import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
 import popupResolver from '@/libraries/popup-resolver';
 import popupCloser from '@/libraries/popup-closer';
 import nsPaginate from '@/components/ns-paginate.vue';
+import nsOrderPreviewPopup from './ns-orders-preview-popup.vue';
 
 export default {
     name: 'ns-pos-customers',
@@ -282,6 +294,10 @@ export default {
     methods: {
         __,
 
+        reload() {
+            this.loadCustomerOrders( this.customer.id );
+        },
+
         popupResolver,
         popupCloser,
 
@@ -295,6 +311,23 @@ export default {
         },
         
         closeWithOverlayClicked,
+
+        async openOrderOptions( order ) {
+            try {
+                const result    =   await new Promise( ( resolve, reject ) => {
+                    Popup.show( nsOrderPreviewPopup, {
+                        order,
+                        resolve,
+                        reject
+                    });
+                });
+
+                this.reload();
+
+            } catch( exception ) {
+                nsSnackBar.error( __( 'An error occured while opening the order options' ) ).subscribe();
+            }
+        },
 
         doChangeTab( tab ) {
             this.selectedTab = tab;
@@ -334,10 +367,6 @@ export default {
                         this.isLoadingRewards   =   false;
                     }
                 });
-        },
-        
-        allowedForPayment( order ) {
-            return [ 'unpaid', 'partially_paid', 'hold' ].includes( order.payment_status );
         },
 
         prefillForm( event ) {

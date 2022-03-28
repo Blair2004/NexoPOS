@@ -340,7 +340,7 @@ class OrderInstalmentCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
         $entry->amount          =   ( string ) ns()->currency->define( $entry->amount );
-        $entry->{ '$cssClass' } =   $entry->paid == 0 ? 'bg-red-200 border-b border-red-400' : 'bg-green-200 border-b border-green-400';
+        $entry->{ '$cssClass' } =   $entry->paid == 0 ? 'error' : 'success';
         $entry->paid            =   ( bool ) $entry->paid ? __( 'Yes' ) : __( 'No' );
         $entry->date            =   ns()->date->getFormatted( $entry->date );
         // you can make changes here

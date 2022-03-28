@@ -7,16 +7,44 @@ export default {
     name: 'ns-pos-customers-button',
     methods: {
         __,
-        openPendingOrdersPopup() {
+        openCustomerPopup() {
             const popup     =   new Popup;
             popup.open( nsPosCustomers );
+        }
+    },
+    beforeDestroy() {
+        nsHotPress.destroy( 'ns_pos_keyboard_create_customer' );
+    },
+    mounted() {
+        /**
+         * let's register hotkeys
+         */
+        for( let shortcut in nsShortcuts ) {
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_create_customer', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'ns_pos_keyboard_create_customer' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.openCustomerPopup();
+                });
+            }
         }
     }
 }
 </script>
 <template>
-    <button @click="openPendingOrdersPopup()" class="flex-shrink-0 h-12 flex items-center shadow rounded px-2 py-1 text-sm bg-white text-gray-700">
-        <i class="mr-1 text-xl lar la-user-circle"></i>
-        <span>{{ __( 'Customers' ) }}</span>
-    </button>
+    <div class="ns-button default">
+        <button @click="openCustomerPopup()" class="rounded shadow flex-shrink-0 h-12 flex items-center px-2 py-1 text-sm">
+            <i class="mr-1 text-xl lar la-user-circle"></i>
+            <span>{{ __( 'Customers' ) }}</span>
+        </button>
+    </div>
 </template>

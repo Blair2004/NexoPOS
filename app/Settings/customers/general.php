@@ -29,6 +29,16 @@ return [
             ])
         ], [
             'type'  =>  'select',
+            'label' =>  __( 'Require Unique Phone' ),
+            'description'   =>  __( 'Every customer should have a unique phone number.' ),
+            'name'          =>  'ns_customers_force_unique_phone',
+            'value'         =>  $options->get( 'ns_customers_force_unique_phone', 'no' ),
+            'options'       =>  Helper::kvToJsOptions([
+                'yes'       =>  __( 'Yes' ),
+                'no'        =>  __( 'No' )
+            ])
+        ], [
+            'type'  =>  'select',
             'label' =>  __( 'Default Customer Account' ),
             'description'   =>  __( 'You must create a customer to which each sales are attributed when the walking customer doesn\'t register.' ),
             'name'          =>  'ns_customers_default',

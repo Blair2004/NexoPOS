@@ -1,21 +1,21 @@
 <template>
-    <div class="h-full w-full flex items-center justify-center">
-        <div class="bg-white w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col" v-if="unitsQuantities.length > 0">
+    <div class="h-full w-full flex items-center justify-center" id="ns-units-selector">
+        <div class="ns-box w-2/3-screen lg:w-1/3-screen overflow-hidden flex flex-col" v-if="unitsQuantities.length > 0">
             <div id="header" class="h-16 flex justify-center items-center flex-shrink-0">
-                <h3 class="font-bold text-gray-700">{{ __( 'Choose Selling Unit' ) }}</h3>
+                <h3 class="font-bold text-primary">{{ __( 'Choose Selling Unit' ) }}</h3>
             </div>
             <div v-if="unitsQuantities.length > 0" class="grid grid-flow-row grid-cols-2 overflow-y-auto">
-                <div @click="selectUnit( unitQuantity )" :key="unitQuantity.id" v-for="unitQuantity of unitsQuantities" class="hover:bg-gray-200 cursor-pointer border flex-shrink-0 border-gray-200 flex flex-col items-center justify-center">
+                <div @click="selectUnit( unitQuantity )" :key="unitQuantity.id" v-for="unitQuantity of unitsQuantities" class="ns-numpad-key info cursor-pointer border flex-shrink-0 flex flex-col items-center justify-center">
                     <div class="h-40 w-full flex items-center justify-center overflow-hidden">
                         <img v-if="unitQuantity.preview_url" :src="unitQuantity.preview_url" class="object-cover h-full" :alt="unitQuantity.unit.name">
                         <div class="h-40 flex items-center justify-center" v-if="! unitQuantity.preview_url">
-                            <i class="las la-image text-gray-600 text-6xl"></i>
+                            <i class="las la-image text-primary text-6xl"></i>
                         </div>
                     </div>
                     <div class="h-0 w-full">
-                        <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2 flex-col" style="background:rgb(255 255 255 / 73%)">
-                            <h3 class="font-bold text-gray-700 py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
-                            <p class="text-sm font-medium text-gray-600">{{ displayRightPrice( unitQuantity ) | currency }}</p>
+                        <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2 flex-col overlay">
+                            <h3 class="font-bold text-primary py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
+                            <p class="text-sm font-medium text-primary">{{ displayRightPrice( unitQuantity ) | currency }}</p>
                         </div>
                     </div>
                 </div>

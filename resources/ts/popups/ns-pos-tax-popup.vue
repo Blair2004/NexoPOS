@@ -1,28 +1,28 @@
 <template>
-    <div class="bg-white shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
-        <div class="p-2 flex justify-between items-center border-b border-gray-200">
+    <div class="ns-box shadow-lg w-95vw md:w-3/5-screen lg:w-2/5-screen">
+        <div class="p-2 flex justify-between items-center border-b ns-box-header">
             <h3 class="text-blog">{{ __( 'Tax & Summary' ) }}</h3>
             <div>
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 bg-gray-50">
+        <div class="p-2 ns-box-body">
             <ns-tabs :active="activeTab" @changeTab="changeActive( $event )">
                 <ns-tabs-item padding="0" :label="__( 'Settings' )" identifier="settings" :active="true">
-                    <div class="p-2 border-b border-gray-200">
+                    <div class="p-2 border-b ns-box-body">
                         <ns-field v-for="(field,index) of group_fields" :field="field" :key="index"></ns-field>
                     </div>
                     <div class="flex justify-end p-2">
-                        <ns-button @click="saveTax()" type="info">Save</ns-button>
+                        <ns-button @click="saveTax()" type="info">{{ __( 'Save' ) }}</ns-button>
                     </div>
                 </ns-tabs-item>
                 <ns-tabs-item padding="0" :label="__( 'Summary' )" identifier="summary" :active="false">
                     <div class="p-2" v-if="order">
-                        <div v-for="tax of order.taxes" :key="tax.id" class="border-blue-200 mb-2 border bg-blue-100 shadow p-2 w-full flex justify-between items-center text-gray-700">
+                        <div v-for="tax of order.taxes" :key="tax.id" class="mb-2 border shadow p-2 w-full flex justify-between items-center elevation-surface">
                             <span>{{ tax.tax_name }}</span>
                             <span>{{ tax.tax_value | currency  }}</span>
                         </div>
-                        <div class="p-2 text-center text-gray-600" v-if="order.taxes.length === 0">No tax is active</div>
+                        <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
                 </ns-tabs-item>
             </ns-tabs>

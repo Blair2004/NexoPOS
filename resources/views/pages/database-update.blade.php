@@ -1,7 +1,7 @@
 @extends( 'layout.base' )
 
 @section( 'layout.base.body' )
-    <div id="update-app" class="h-full w-full bg-gray-300 flex">
+    <div id="main-container" class="h-full w-full flex">
         <ns-database-update></ns-database-update>
     </div>
 @endsection

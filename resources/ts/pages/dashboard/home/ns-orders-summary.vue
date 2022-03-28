@@ -1,36 +1,36 @@
 <template>
-    <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="p-2 flex justify-between bg-white border-b">
-            <h3 class="font-semibold text-gray-700">{{ __( 'Recents Orders' ) }}</h3>
+    <div id="ns-orders-summary" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+        <div class="p-2 flex title justify-between border-b">
+            <h3 class="font-semibold">{{ __( 'Recents Orders' ) }}</h3>
             <div class="">
                 
             </div>
         </div>
-        <div class="head bg-gray-100 flex-auto flex-col flex h-56 overflow-y-auto">
+        <div class="head flex-auto flex-col flex h-56 overflow-y-auto ns-scrollbar">
             <div class="h-full flex items-center justify-center" v-if="! hasLoaded">
                 <ns-spinner size="8" border="4"></ns-spinner>
             </div>
             <div class="h-full flex items-center justify-center flex-col" v-if="hasLoaded && orders.length === 0">
-                <i class="las la-grin-beam-sweat text-6xl text-gray-700"></i>
-                <p class="text-gray-600 text-sm">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
+                <i class="las la-grin-beam-sweat text-6xl"></i>
+                <p class="text-sm">{{ __( 'Well.. nothing to show for the meantime.' ) }}</p>
             </div>
             <div 
                 v-for="order of orders" 
                 :key="order.id" 
-                :class="order.payment_status === 'paid' ? 'bg-green-50' : 'bg-white'" 
-                class="border-b border-gray-200 p-2 flex justify-between">
+                :class="order.payment_status === 'paid' ? 'paid-order' : 'other-order'" 
+                class="border-b single-order p-2 flex justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-600">{{ __( 'Order' ) }} : {{ order.code }}</h3>
+                    <h3 class="text-lg font-semibold">{{ __( 'Order' ) }} : {{ order.code }}</h3>
                     <div class="flex -mx-2">
                         <div class="px-1">
-                            <h4 class="text-semibold text-xs text-gray-500">
+                            <h4 class="text-semibold text-xs">
                                 <i class="lar la-user-circle"></i>
                                 <span>{{ order.user.username }}</span>
                             </h4>
                         </div>
                         <div class="divide-y-4"></div>
                         <div class="px-1">
-                            <h4 class="text-semibold text-xs text-gray-600">
+                            <h4 class="text-semibold text-xs">
                                 <i class="las la-clock"></i> 
                                 <span>{{ order.created_at }}</span>
                             </h4>
@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <h2 
-                        :class="order.payment_status === 'paid' ? 'text-green-600' : 'text-gray-700'" 
+                        :class="order.payment_status === 'paid' ? 'paid-currency' : 'unpaid-currency'" 
                         class="text-xl font-bold">{{ order.total | currency }}</h2>
                 </div>
             </div>

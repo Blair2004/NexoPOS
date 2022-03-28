@@ -1,7 +1,7 @@
 <template>
-    <div :class="'bg-' + actualColor + '-100 border-l-4 border-' + actualColor + '-500 text-' + actualColor + '-700'" class="p-4" role="alert">
-        <p class="font-bold"><slot name="title"></slot></p>
-        <p><slot name="description"></slot></p>
+    <div :class="'ns-notice ' + actualColor" class="p-4 border-l-4 text-primary ns-notice" role="alert">
+        <h2 class="font-bold"><slot name="title"></slot></h2>
+        <p><slot name="description"></slot><slot></slot></p>
     </div>
 </template>
 <script>

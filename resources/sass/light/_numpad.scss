@@ -1,0 +1,36 @@
+.ns-numpad-key {
+    @apply text-primary border-numpad-edge;
+    &:hover {
+        @apply bg-numpad-hover border-numpad-hover-edge;
+    }
+    &.error:hover, &.error.active {
+        @apply text-white bg-error-secondary border-error-secondary;
+        h1, h2, h3, h4, h5, h6, span {
+            @apply text-white;
+        }
+    }
+    &.success:hover, &.success.active {
+        @apply text-white bg-success-secondary border-success-secondary;
+        h1, h2, h3, h4, h5, h6, span {
+            @apply text-white;
+        }
+    }
+    &.info:hover, &.info.active {
+        @apply text-white bg-info-secondary border-info-secondary;
+        h1, h2, h3, h4, h5, h6, span {
+            @apply text-white;
+        }
+    }
+    &.warning:hover, &.warning.active {
+        @apply text-white bg-warning-secondary border-warning-secondary;
+        h1, h2, h3, h4, h5, h6, span {
+            @apply text-white;
+        }
+    }
+    &.default:hover, &.default.active {
+        @apply text-white bg-default-secondary border-default-secondary;
+        h1, h2, h3, h4, h5, h6, span {
+            @apply text-white;
+        }
+    }
+}

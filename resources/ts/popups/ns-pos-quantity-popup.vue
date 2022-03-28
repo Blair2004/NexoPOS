@@ -1,20 +1,25 @@
 <template>
-    <div class="bg-white shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-2/5-screen relative">
+    <div class="ns-box shadow min-h-2/5-screen w-3/4-screen md:w-3/5-screen lg:w-2/5-screen xl:w-2/5-screen relative">
         <div id="loading-overlay" v-if="isLoading" style="background:rgb(202 202 202 / 49%)" class="flex w-full h-full absolute top-O left-0 items-center justify-center">
             <ns-spinner></ns-spinner>
         </div>
-        <div class="flex-shrink-0 py-2 border-b border-gray-200">
-            <h1 class="text-xl font-bold text-gray-700 text-center">{{ __( 'Define Quantity' ) }}</h1>
+        <div class="flex-shrink-0 flex justify-between items-center p-2 border-b ns-box-header">
+            <div>
+                <h1 class="text-xl font-bold text-primary text-center">{{ __( 'Define Quantity' ) }}</h1>
+            </div>
+            <div>
+                <ns-close-button @click="closePopup()"></ns-close-button>
+            </div>
         </div>
-        <div id="screen" class="h-16 border-b bg-gray-800 text-white border-gray-200 flex items-center justify-center">
+        <div id="screen" class="h-16 border-b primary ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
-        <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
+        <div id="numpad" class="ns-box-body grid grid-flow-row grid-cols-3 grid-rows-3">
             <div 
                 @click="inputValue( key )"
                 :key="index" 
                 v-for="(key,index) of keys" 
-                class="hover:bg-blue-400 hover:text-white hover:border-blue-600 text-xl font-bold border border-gray-200 h-24 flex items-center justify-center cursor-pointer">
+                class="ns-numpad-key info text-xl font-bold border h-24 flex items-center justify-center cursor-pointer">
                 <span v-if="key.value !== undefined">{{ key.value }}</span>
                 <i v-if="key.icon" class="las" :class="key.icon"></i>
             </div>
@@ -24,6 +29,8 @@
 <script>
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
+import popupCloser from '@/libraries/popup-closer';
+
 export default {
     data() {
         return {
@@ -66,18 +73,45 @@ export default {
             this.finalValue     =   this.$popupParams.product.quantity;
         }
 
-        document.addEventListener( 'keyup', this.handleKeyPress );
+        this.popupCloser();
+
+        /**
+         * will bind keyboard event listening
+         */
+        const inputs    =   ( new Array(10) )
+            .fill( '' )
+            .map( ( v, i ) => i );
+            
+        nsHotPress
+            .create( 'pos-quantity-numpad')
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( inputs, ( event, value ) => {
+                this.inputValue({ value });
+            })
+
+        nsHotPress
+            .create( 'pos-quantity-backspace' )
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
+
+        nsHotPress
+            .create( 'pos-quantity-enter')
+            .whenVisible([ '.is-popup' ])
+            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     destroyed() {
-        document.removeEventListener( 'keypress', this.handleKeyPress );
+        nsHotPress.destroy( 'pos-quantity-numpad');
+        nsHotPress.destroy( 'pos-quantity-backspace' );
+        nsHotPress.destroy( 'pos-quantity-enter');
     },
     methods: {
         __,
 
-        handleKeyPress( event ) {
-            if ( event.keyCode === 13 ) {
-                this.inputValue({ identifier : 'next' });
-            }
+        popupCloser,
+
+        closePopup() {
+            this.$popupParams.reject( false );
+            this.$popup.close();
         },
         
         inputValue( key ) {

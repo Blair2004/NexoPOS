@@ -10,21 +10,35 @@ use App\Models\User;
 
 @section( 'layout.base.body' )
 <div id="pos-app" class="h-full w-full relative">
-    <ns-pos></ns-pos>
-    <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full h-full flex flex-col items-center justify-center bg-gray-200">
+    <div id="loader" class="top-0 anim-duration-500 fade-in-entrance left-0 absolute w-full h-full flex flex-col items-center justify-center">
         @if ( ns()->option->get( 'ns_store_square_logo', false ) )
         <img src="{{ ns()->option->get( 'ns_store_square_logo' ) }}" alt="POS">
         @else
         <img src="{{ asset( 'svg/nexopos-variant-1.svg' ) }}" class="w-32" alt="POS">
         @endif
-        <p class="font-semibold py-2 text-gray-700">{{ __( 'Loading...' ) }}</p>
+        <p class="font-semibold py-2">{{ __( 'Loading...' ) }}</p>
     </div>
+    <ns-pos></ns-pos>
 </div>
 @endsection
 
 @section( 'layout.base.footer' )
     @parent
     <script src="{{ asset( ns()->isProduction() ? 'js/pos-init.min.js' : 'js/pos-init.js' ) }}"></script>
+    <script>
+        const nsShortcuts   =   <?php echo json_encode([
+            'ns_pos_keyboard_cancel_order'      =>  ns()->option->get( 'ns_pos_keyboard_cancel_order' ),
+            'ns_pos_keyboard_hold_order'        =>  ns()->option->get( 'ns_pos_keyboard_hold_order' ),
+            'ns_pos_keyboard_create_customer'   =>  ns()->option->get( 'ns_pos_keyboard_create_customer' ),
+            'ns_pos_keyboard_payment'           =>  ns()->option->get( 'ns_pos_keyboard_payment' ),
+            'ns_pos_keyboard_shipping'          =>  ns()->option->get( 'ns_pos_keyboard_shipping' ),
+            'ns_pos_keyboard_note'              =>  ns()->option->get( 'ns_pos_keyboard_note' ),
+            'ns_pos_keyboard_order_type'        =>  ns()->option->get( 'ns_pos_keyboard_order_type' ),
+            'ns_pos_keyboard_quick_search'      =>  ns()->option->get( 'ns_pos_keyboard_quick_search' ),
+            'ns_pos_keyboard_toggle_merge'      =>  ns()->option->get( 'ns_pos_keyboard_toggle_merge' ),
+            'ns_pos_amount_shortcut'            =>  ns()->option->get( 'ns_pos_amount_shortcut' ),
+        ]);?>
+    </script>
     <script>
     POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
     POS.defineOptions( <?php echo json_encode( $options );?>);
@@ -37,6 +51,7 @@ use App\Models\User;
         cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
         breadcrumb              :   [],
         products_queue          :   [],
+        pos_items_merge         :   <?php echo ns()->option->get( 'pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
         unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
         urls                    :   <?php echo json_encode( $urls );?>
     });
@@ -51,6 +66,7 @@ use App\Models\User;
         setTimeout( () => {
             loader.remove();
         }, 500 ); 
+        
         POS.reset();
     });    
     </script>

@@ -21,8 +21,33 @@ class ValidationException extends MainValidationException
             'status'  =>    'failed',
             'message' =>    $this->getMessage() ?: $message,
             'data'    =>    [
-                'errors'    =>  $this->errors()
+                'errors'    =>  $this->toHumanError()
             ]
         ], 401);
+    }
+
+    /**
+     * We'll return human understandable errors
+     * @return array $errors
+     */
+    private function toHumanError()
+    {
+        $errors     =   $this->errors();
+
+        $errors     =   collect( $errors )->map( function( $messages ) {
+            return collect( $messages )->map( function( $message ) {
+                switch( $message ) {
+                    case 'validation.unique' :  return __( 'This value is already in use on the database.' );
+                    case 'validation.required' :  return __( 'This field is required.' );
+                    case 'validation.array' :  return __( 'This field does\'nt have a valid value.' );
+                    case 'validation.accepted' :  return __( 'This field should be checked.' );
+                    case 'validation.active_url' :  return __( 'This field must be a valid URL.' );
+                    case 'validation.email' :  return __( 'This field is not a valid email.' );
+                    default: return $message;
+                }
+            });
+        });
+
+        return $errors;
     }
 }

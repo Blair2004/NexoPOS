@@ -95,6 +95,17 @@ class CrudService
     public $skippable          =   [];
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   false;
+
+    /**
+     * Determine if actions should be displayed
+     */
+    protected $showOptions      =   true;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -222,6 +233,16 @@ class CrudService
              */
             if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
                 $entry->author      =   Auth::id();
+            }
+
+            /**
+             * if timestamp are provided we'll disable the timestamp feature.
+             * In case a field is not provided, the default value is used.
+             */
+            if ( ! empty( $entry->created_at ) || ! empty( $entry->updated_at ) ) {
+                $entry->timestamps      =   false;
+                $entry->created_at      =   $entry->created_at ?: ns()->date->getNowFormatted();
+                $entry->updated_at      =   $entry->updated_at ?: ns()->date->getNowFormatted();
             }
 
             $entry->save();
@@ -370,6 +391,16 @@ class CrudService
     public function getRelations()
     {
         return Hook::filter( self::method( 'getRelations' ), $this->relations );
+    }
+
+    /**
+     * Returns a boolean that determine if the options should be displayed 
+     * before the crud columns or after the crud columns. This method is defined
+     * for allowing other module to override this behavior.
+     */
+    public function getPrependOptions()
+    {
+        return $this->prependOptions;
     }
 
     /**
@@ -846,9 +877,11 @@ class CrudService
         }
 
         foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
-            foreach( $tab[ 'fields' ] as $field ) {
-                if ( isset( $field[ 'validation' ] ) ) {
-                    $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+            if ( ! empty( $tab[ 'fields' ] ) ) {
+                foreach( $tab[ 'fields' ] as $field ) {
+                    if ( isset( $field[ 'validation' ] ) ) {
+                        $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+                    }
                 }
             }
         }
@@ -891,7 +924,7 @@ class CrudService
              * We're ignoring the tabs
              * that are linked to a model.
              */
-            if ( ! in_array( $tabKey, $keys ) ) {
+            if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
                 foreach( $tab[ 'fields' ] as $field ) {
                     $value      =       data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 
@@ -910,7 +943,7 @@ class CrudService
          * We'll add custom fields
          * that might be added by modules
          */
-        $fieldsToIgnore     =   array_keys( $form[ 'tabs' ] );
+        $fieldsToIgnore     =   array_keys( collect( $form[ 'tabs' ] )->toArray() );
 
         foreach( $fields as $field => $value ) {
             if ( ! in_array( $field, $fieldsToIgnore ) ) {
@@ -1138,5 +1171,14 @@ class CrudService
     public static function filterMethod( $methodName, $callback )
     {
         return Hook::filter( self::method( $methodName ), $callback );
+    }
+
+    /**
+     * Return if the table show display raw actions.
+     * @return boolean
+     */
+    public function getShowOptions()
+    {
+        return $this->showOptions;
     }
 }

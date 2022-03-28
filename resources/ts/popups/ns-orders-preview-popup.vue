@@ -9,6 +9,8 @@ import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
 import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
 import nsOrderInstalments from "@/pages/dashboard/orders/ns-order-instalments.vue";
 import { __ } from "@/libraries/lang";
+import popupResolver from "@/libraries/popup-resolver";
+import popupCloser from "@/libraries/popup-closer";
 
 /**
  * @var {ExtendedVue}
@@ -42,8 +44,11 @@ const nsOrderPreviewPopup   =   {
     },
     methods: {
         __,
-        closePopup() {
-            this.$popup.close();
+        popupResolver,
+        popupCloser,
+
+        closePopup( action = false ) {
+            this.popupResolver( action );
         },
         setActive( active ) {
             this.active     =   active;
@@ -88,12 +93,15 @@ const nsOrderPreviewPopup   =   {
                 onAction: ( action ) => {
                     if ( action ) {
                         nsHttpClient.delete( `/api/nexopos/v4/orders/${this.$popupParams.order.id}` )
-                            .subscribe( result => {
-                                nsSnackBar.success( result.message ).subscribe();
-                                this.refreshCrudTable();
-                                this.closePopup();
-                            }, error => {
-                                nsSnackBar.error( error.message ).subscribe();
+                            .subscribe({
+                                next: result => {
+                                    nsSnackBar.success( result.message ).subscribe();
+                                    this.refreshCrudTable();
+                                    this.closePopup(true);
+                                },
+                                error:  error => {
+                                    nsSnackBar.error( error.message ).subscribe();
+                                }
                             })
                     }
                 }
@@ -114,7 +122,7 @@ const nsOrderPreviewPopup   =   {
                                         next: result => {
                                             nsSnackBar.success( result.message ).subscribe();
                                             this.refreshCrudTable();
-                                            this.closePopup();
+                                            this.closePopup(true);
                                         },
                                         error:  error => {
                                             nsSnackBar.error( error.message ).subscribe();
@@ -143,11 +151,7 @@ const nsOrderPreviewPopup   =   {
     mounted() {
         this.loadOrderDetails( this.$popupParams.order.id );
         
-        this.$popup.event.subscribe( action => {
-            if ( action.event === 'click-overlay' ) {
-                this.$popup.close();
-            }
-        })
+        this.popupCloser();
     }
 }
 
@@ -160,16 +164,16 @@ window.nsOrderPreviewPopup      =   nsOrderPreviewPopup;
 export default nsOrderPreviewPopup;
 </script>
 <template>
-    <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl bg-white flex flex-col">
-        <div class="border-b border-gray-300 p-3 flex items-center justify-between">
+    <div class="h-95vh w-95vw md:h-6/7-screen md:w-6/7-screen overflow-hidden shadow-xl ns-box flex flex-col">
+        <div class="border-b ns-box-header p-3 flex items-center justify-between">
             <div>
                 <h3>{{ __( 'Order Options' ) }}</h3>
             </div>
             <div>
-                <ns-close-button @click="closePopup()"></ns-close-button>
+                <ns-close-button @click="closePopup(true)"></ns-close-button>
             </div>
         </div>
-        <div class="p-2 overflow-scroll bg-gray-100 flex flex-auto">
+        <div class="p-2 overflow-scroll ns-box-body flex flex-auto">
             <ns-tabs v-if="order.id" :active="active" @active="setActive( $event )">
                 <!-- Summary -->
                 <ns-tabs-item :label="__( 'Details' )" identifier="details" class="overflow-y-auto">
@@ -200,13 +204,13 @@ export default nsOrderPreviewPopup;
                 <ns-spinner></ns-spinner>
             </div>
         </div> 
-        <div class="p-2 flex justify-between border-t border-gray-200">
+        <div class="p-2 flex justify-between border-t ns-box-footer">
             <div>
-                <ns-button v-if="isVoidable" @click="voidOrder()" type="danger">
+                <ns-button v-if="isVoidable" @click="voidOrder()" type="error">
                     <i class="las la-ban"></i>
                     {{ __( 'Void' ) }}
                 </ns-button>
-                <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="danger">
+                <ns-button v-if="isDeleteAble" @click="deleteOrder()" type="error">
                     <i class="las la-trash"></i>
                     {{ __( 'Delete' ) }}
                 </ns-button>

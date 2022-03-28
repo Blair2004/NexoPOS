@@ -86,6 +86,16 @@ class GeneralSettings extends SettingsPage
                             'label'         =>  __( 'Language' ), 
                             'type'          =>  'select',
                             'description'   =>  __( 'Define the default fallback language.' ),
+                        ], [
+                            'name'          =>  'ns_default_theme',
+                            'value'         =>  $options->get( 'ns_default_theme' ),
+                            'options'         =>  Helper::kvToJsOptions([
+                                'dark'      =>  __( 'Dark' ),
+                                'light'     =>  __( 'Light' )
+                            ]),
+                            'label'         =>  __( 'Theme' ), 
+                            'type'          =>  'select',
+                            'description'   =>  __( 'Define the default theme.' ),
                         ], 
                     ]
                 ],

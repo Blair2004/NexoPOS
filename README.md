@@ -1,6 +1,6 @@
 [![Latest Stable Version](https://poser.pugx.org/blair2004/nexopos/v)](//packagist.org/packages/blair2004/nexopos) [![Total Downloads](https://poser.pugx.org/blair2004/nexopos/downloads)](//packagist.org/packages/blair2004/nexopos) [![Latest Unstable Version](https://poser.pugx.org/blair2004/nexopos/v/unstable)](//packagist.org/packages/blair2004/nexopos) [![License](https://poser.pugx.org/blair2004/nexopos/license)](//packagist.org/packages/blair2004/nexopos)
 
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.5.x&refcode=ebdb80cb0ec7)
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
 
 # About NexoPOS 4.x
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
@@ -46,6 +46,9 @@ We're frequently discussing about the future of the app (while waiting discussio
 ## Troubleshooting
 Here we list the knowns issues and the way around. Not everyone is likely to face these issues as it depends on the used enviroment.
 
+- CSRF error After Installation
+Chances are when you make your installation, you'll have your website URL changed. Unfortunately, if the domain has to change, it must be clearly described on the .env file. We've written a guide that explains how to solve the [CSRF issue on NexoPOS 4.x](https://my.nexopos.com/en/documentation/troubleshooting/how-to-fix-csrf-token-mismatch-on-nexopos-4-x).
+
 - Error After Database Details (using `php artisan serve`)
 If you're serving the project using `php artisan serve`, after setting up the database credentails and having them validated, you migth stop on an infinite
 loading page. 
@@ -57,3 +60,25 @@ This is caused because during the database setup, the ".env" is updated which ca
 ## Contribution Guidelines
 Do you plan to contribute? That's awesome. We don't have that much developer on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
 
+## Screenshots
+The branch 4.7.x introduce the "Dark Mode" which will make working continuously with NexoPOS easier without hurting sight.
+
+### Media Component
+The media components help uploading images and managing them. This comes with a field that will ease assigning image to products.
+![image](https://user-images.githubusercontent.com/5265663/159091815-5b022ec6-9df4-419b-86f0-85db73ce35c5.png)
+
+### POS Component
+The POS is the place where sales are made and handled. The POS is made to provide everything the cashier need to process orders quickly and easilly.
+![image](https://user-images.githubusercontent.com/5265663/159092595-3b2e4371-fef4-471c-84cd-b04cb2b7c611.png)
+
+### Orders Components
+Every saved sales are listed on the orders list. From there various operation such as opening the receipt, proceeding a refund, making payment can be performed.
+![image](https://user-images.githubusercontent.com/5265663/159092684-53a0c41a-d76d-4b69-b737-4420a20b33a1.png)
+
+### Products Components
+The resources that are sold are the products. The product UI has been simplified to make sure all necessary details can be added.
+![image](https://user-images.githubusercontent.com/5265663/159092753-845b930c-0b4f-4b3d-a42e-8658f74e7499.png)
+
+### Settings Components
+Configure how NexoPOS works. From the settings you can configure various section of your application including the currency, the POS features, the orders and much more.
+![image](https://user-images.githubusercontent.com/5265663/159092979-267841bc-531d-4a27-b35f-902866fa742a.png)

@@ -3,14 +3,19 @@
 use App\Classes\Hook;
 use App\Services\Helper;
 use App\Services\DateService;
+use Illuminate\Support\Facades\Auth;
+
+$theme  =   Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_theme', 'light' );
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! Helper::pageTitle( $title ?? __( 'Unamed Page' ) ) !!}</title>
-    <link rel="stylesheet" href="{{ mix( 'css/app.css' ) }}">
+    <link rel="stylesheet" href="{{ loadcss( 'app.css' ) }}">
+    <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
+    <link rel="stylesheet" href="{{ loadcss( $theme . '.css' ) }}">
     @yield( 'layout.dashboard.header' )
     <script>
         /**
@@ -38,6 +43,11 @@ use App\Services\DateService;
         }
 
         /**
+         * Let's define the actul theme used
+         */
+        window.ns.theme     =   `{{ $theme }}`;
+
+        /**
          * define the current language selected by the user or
          * the language that applies to the system by default.
          */
@@ -52,8 +62,8 @@ use App\Services\DateService;
 <body <?php echo in_array( app()->getLocale(), config( 'nexopos.rtl-languages' ) ) ? 'dir="rtl"' : "";?>>
     <div class="h-full w-full flex flex-col">
         <div id="dashboard-body" class="overflow-hidden flex flex-auto">
-            <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-50 absolute md:static flex-shrink-0 bg-gray-900 h-full flex-col overflow-hidden">
-                <div class="overflow-y-auto h-full text-sm">
+            <div id="dashboard-aside" v-cloak v-if="sidebar === 'visible'" class="w-64 z-50 absolute md:static flex-shrink-0 h-full flex-col overflow-hidden">
+                <div class="ns-scrollbar overflow-y-auto h-full text-sm">
                     <div class="logo py-4 flex justify-center items-center">
                         @if ( ns()->option->get( 'ns_store_rectangle_logo' ) )
                         <img src="{{ ns()->option->get( 'ns_store_rectangle_logo' ) }}" class="w-11/12" alt="logo"/>
@@ -79,7 +89,7 @@ use App\Services\DateService;
                 </div>
             </div>
             <div id="dashboard-overlay" v-if="sidebar === 'visible'" @click="closeMenu()" class="z-40 w-full h-full md:hidden absolute" style="background: rgb(51 51 51 / 25%)"></div>
-            <div class="flex flex-auto flex-col overflow-hidden bg-gray-200">
+            <div class="flex flex-auto flex-col overflow-hidden" id="dashboard-body">
                 <div class="overflow-y-auto flex-auto">
                     @hasSection( 'layout.dashboard.body' )
                         @yield( 'layout.dashboard.body' )

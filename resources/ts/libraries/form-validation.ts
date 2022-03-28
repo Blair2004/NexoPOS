@@ -23,17 +23,22 @@ export default class FormValidation {
         const globalErrors          =   [];
         
         for( let key in form.tabs ) {
-            const tabsInvalidity    =   [];
-            const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
-            
-            if ( validErrors.length > 0 ) {
-                tabsInvalidity.push(
-                    validErrors
-                );
+            /**
+             * Only tabs having fields can be verified.
+             */
+            if ( form.tabs[ key ].fields ) {
+                const tabsInvalidity    =   [];
+                const validErrors       =   this.validateFieldsErrors( form.tabs[ key ].fields );
+                
+                if ( validErrors.length > 0 ) {
+                    tabsInvalidity.push(
+                        validErrors
+                    );
+                }
+    
+                form.tabs[ key ].errors     =   tabsInvalidity.flat();
+                globalErrors.push( tabsInvalidity.flat() );
             }
-
-            form.tabs[ key ].errors     =   tabsInvalidity.flat();
-            globalErrors.push( tabsInvalidity.flat() );
         }
 
         return globalErrors.flat().filter( error => error !== undefined );
@@ -71,8 +76,24 @@ export default class FormValidation {
             field.errors    =   field.errors    || [];
             field.disabled  =   field.disabled  || false;
 
-            if ( field.type === 'custom' ) {
-                field.component     =   nsExtraComponents[ field.name ];
+            /**
+             * extra component should use the "component" attribute provided
+             * as a string in order to render a new vue component.
+             */
+            if ( field.type === 'custom' && typeof field.component === 'string' ) {
+                const componentName     =   field.component;
+                field.component         =   nsExtraComponents[ field.component ];
+
+                if ( field.component ) {
+                    /**
+                     * we make sure to make the current field(s)
+                     * available for the custom component.
+                     */
+                    field.component.$field      =   field;
+                    field.component.$fields     =   fields;
+                } else {
+                    throw `Failed to load a custom component. "${componentName}" is not provided as an extra component. More details here: https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-a-custom-vue-component`;
+                }
             }
             
             return field;
@@ -86,8 +107,17 @@ export default class FormValidation {
 
         if ( form.tabs ) {
             for( let tab in form.tabs ) {
-                form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
                 form.tabs[ tab ].errors     =   [];
+                
+                /**
+                 * a tab might not have fields. In such case we should 
+                 * skip creating fields and try building component.
+                 */
+                if ( form.tabs[ tab ].fields !== undefined ) {
+                    form.tabs[ tab ].fields     =   this.createFields( form.tabs[ tab ].fields );
+                } else {
+                    console.info( `Warning: The tab "${form.tabs[ tab ].label}" is missing fields. Fallback on checking dynamic component instead.` )
+                }
             }
         }
 
@@ -212,6 +242,7 @@ export default class FormValidation {
      * @param {Object} data 
      */
     triggerError( form, data ) {
+        console.log( data );
         if ( data.errors ) {
             for( let index in data.errors ) {
                 let path    =   index.split( '.' ).filter( exp => {

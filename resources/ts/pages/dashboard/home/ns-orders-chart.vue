@@ -1,29 +1,29 @@
 <template>
-    <div class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
-        <div class="head bg-white flex-auto flex h-56">
+    <div id="ns-orders-chart" class="flex flex-auto flex-col shadow rounded-lg overflow-hidden">
+        <div class="head flex-auto flex h-56">
             <div class="w-full h-full pt-2">
                 <vue-apex-charts v-if="report" height="100%" type="area" :options="chartOptions" :series="series"></vue-apex-charts>
             </div>
         </div>
-        <div class="p-2 bg-white -mx-4 flex flex-wrap">
-            <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2 lg:border-b lg:border-t xl:border-none border-gray-200 lg:py-1 lg:my-1">
+        <div class="foot p-2 -mx-4 flex flex-wrap">
+            <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2 lg:border-b lg:border-t xl:border-none lg:py-1 lg:my-1">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
-                    <span class="text-xs text-gray-600">{{ __( 'Weekly Sales' ) }}</span>
-                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeeklySales | currency( 'abbreviate' ) }}</h2>
+                    <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeeklySales | currency( 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
-                    <span class="text-xs text-gray-600">{{ __( 'Week Taxes' ) }}</span>
-                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekTaxes | currency( 'abbreviate' ) }}</h2>
+                    <span class="text-xs">{{ __( 'Week Taxes' ) }}</span>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekTaxes | currency( 'abbreviate' ) }}</h2>
                 </div>
             </div>
             <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
-                    <span class="text-xs text-gray-600">{{ __( 'Net Income' ) }}</span>
-                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekIncome | currency( 'abbreviate' ) }}</h2>
+                    <span class="text-xs">{{ __( 'Net Income' ) }}</span>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekIncome | currency( 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
-                    <span class="text-xs text-gray-600">{{ __( 'Week Expenses' ) }}</span>
-                    <h2 class="text-lg xl:text-xl text-gray-700 font-bold">{{ totalWeekExpenses | currency( 'abbreviate' ) }}</h2>
+                    <span class="text-xs">{{ __( 'Week Expenses' ) }}</span>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekExpenses | currency( 'abbreviate' ) }}</h2>
                 </div>
             </div>
         </div>
@@ -40,6 +40,9 @@ export default {
             totalWeekExpenses: 0,
             totalWeekIncome: 0,
             chartOptions: {
+                theme: {
+                    mode: window.ns.theme
+                },
                 chart: {
                     id: 'vuechart-example',
                     width: '100%',

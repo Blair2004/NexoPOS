@@ -8,6 +8,7 @@ use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderRefundPaymentAfterCreatedEvent;
 use App\Exceptions\NotAllowedException;
+use App\Models\AccountType;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Order;
@@ -29,12 +30,14 @@ class CashRegistersService
             );
         }
 
-        $registerHistory            =   new RegisterHistory;
-        $registerHistory->register_id   =   $register->id;
-        $registerHistory->action        =   RegisterHistory::ACTION_OPENING;
-        $registerHistory->author        =   Auth::id();
-        $registerHistory->description   =   $description;
-        $registerHistory->value         =   $amount;
+        $registerHistory                    =   new RegisterHistory;
+        $registerHistory->register_id       =   $register->id;
+        $registerHistory->action            =   RegisterHistory::ACTION_OPENING;
+        $registerHistory->author            =   Auth::id();
+        $registerHistory->description       =   $description;
+        $registerHistory->balance_before    =   $register->balance;
+        $registerHistory->value             =   $amount;
+        $registerHistory->balance_after     =   $register->balance + $amount;
         $registerHistory->save();
 
         $register->status   =  Register::STATUS_OPENED;
@@ -63,22 +66,21 @@ class CashRegistersService
             );
         }
 
-        if ( ( float ) $register->balance !== ( float ) $amount ) {            
-            throw new NotAllowedException( 
-                sprintf( 
-                    __( 'The specified amount %s doesn\'t match the cash register balance %s.' ),
-                    ( string ) ns()->currency->fresh( $amount ),
-                    ( string ) ns()->currency->fresh( $register->balance )
-                )
-            );
+        if ( ( float ) $register->balance === ( float ) $amount ) {
+            $diffType   =   'unchanged';
+        } else {
+            $diffType   =   $register->balance < ( float ) $amount ? 'positive' : 'negative';
         }
 
-        $registerHistory    =   new RegisterHistory;
-        $registerHistory->register_id   =   $register->id;
-        $registerHistory->action        =   RegisterHistory::ACTION_CLOSING;
-        $registerHistory->author        =   Auth::id();
-        $registerHistory->description   =   $description;
-        $registerHistory->value         =   $amount;
+        $registerHistory                    =   new RegisterHistory;
+        $registerHistory->register_id       =   $register->id;
+        $registerHistory->action            =   RegisterHistory::ACTION_CLOSING;
+        $registerHistory->transaction_type  =   $diffType;
+        $registerHistory->balance_after     =   abs( $register->balance - ( float ) $amount );
+        $registerHistory->value             =   $amount;
+        $registerHistory->balance_before    =   $register->balance;
+        $registerHistory->author            =   Auth::id();
+        $registerHistory->description       =   $description;
         $registerHistory->save();
 
         $register->status   =  Register::STATUS_CLOSED;
@@ -111,12 +113,14 @@ class CashRegistersService
             throw new NotAllowedException( __( 'The provided amount is not allowed. The amount should be greater than "0". ' ) );
         }
 
-        $registerHistory                =   new RegisterHistory;
-        $registerHistory->register_id   =   $register->id;
-        $registerHistory->action        =   RegisterHistory::ACTION_CASHING;
-        $registerHistory->author        =   Auth::id();
-        $registerHistory->description   =   $description;
-        $registerHistory->value         =   $amount;
+        $registerHistory                    =   new RegisterHistory;
+        $registerHistory->register_id       =   $register->id;
+        $registerHistory->action            =   RegisterHistory::ACTION_CASHING;
+        $registerHistory->author            =   Auth::id();
+        $registerHistory->description       =   $description;
+        $registerHistory->balance_before    =   $register->balance;
+        $registerHistory->value             =   $amount;
+        $registerHistory->balance_after     =   $register->balance + $amount;
         $registerHistory->save();
 
         return [
@@ -153,12 +157,14 @@ class CashRegistersService
             throw new NotAllowedException( __( 'The provided amount is not allowed. The amount should be greater than "0". ' ) );
         }
 
-        $registerHistory                =   new RegisterHistory;
-        $registerHistory->register_id   =   $register->id;
-        $registerHistory->action        =   RegisterHistory::ACTION_CASHOUT;
-        $registerHistory->author        =   Auth::id();
-        $registerHistory->description   =   $description;
-        $registerHistory->value         =   $amount;
+        $registerHistory                    =   new RegisterHistory;
+        $registerHistory->register_id       =   $register->id;
+        $registerHistory->action            =   RegisterHistory::ACTION_CASHOUT;
+        $registerHistory->author            =   Auth::id();
+        $registerHistory->description       =   $description;
+        $registerHistory->balance_before    =   $register->balance;
+        $registerHistory->value             =   $amount;
+        $registerHistory->balance_after     =   $register->balance - $amount;
         $registerHistory->save();
 
         return [
@@ -197,11 +203,15 @@ class CashRegistersService
     public function increaseFromOrderPayment( OrderAfterPaymentCreatedEvent $event )
     {
         if ( $event->order->register_id !== null ) {
-            $registerHistory                =   new RegisterHistory;
-            $registerHistory->value         =   $event->orderPayment->value;
-            $registerHistory->register_id   =   $event->order->register_id;
-            $registerHistory->action        =   RegisterHistory::ACTION_SALE;
-            $registerHistory->author        =   Auth::id();
+            $register                           =   Register::find( $event->order->register_id );
+
+            $registerHistory                    =   new RegisterHistory;
+            $registerHistory->balance_before    =   $register->balance;
+            $registerHistory->value             =   $event->orderPayment->value;
+            $registerHistory->balance_after     =   $register->balance + $event->orderPayment->value;
+            $registerHistory->register_id       =   $register->id;
+            $registerHistory->action            =   RegisterHistory::ACTION_SALE;
+            $registerHistory->author            =   Auth::id();
             $registerHistory->saveQuietly();
 
             /**
@@ -232,11 +242,15 @@ class CashRegistersService
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_UNPAID,
         ] ) && $event->new === Order::PAYMENT_PAID ) {
-            $registerHistory                =   new RegisterHistory;
-            $registerHistory->value         =   $event->order->total;
-            $registerHistory->register_id   =   $event->order->register_id;
-            $registerHistory->action        =   RegisterHistory::ACTION_SALE;
-            $registerHistory->author        =   Auth::id();
+            $register                           =   Register::find( $event->order->register_id );
+
+            $registerHistory                    =   new RegisterHistory;
+            $registerHistory->balance_before    =   $register->balance;
+            $registerHistory->value             =   $event->order->total;
+            $registerHistory->balance_after     =   $register->balance + $event->order->total;
+            $registerHistory->register_id       =   $event->order->register_id;
+            $registerHistory->action            =   RegisterHistory::ACTION_SALE;
+            $registerHistory->author            =   Auth::id();
             $registerHistory->saveQuietly();
 
             $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
@@ -249,21 +263,25 @@ class CashRegistersService
      * Listen to order created and
      * will update the cash register if any order
      * is marked as paid.
-     * @param OrderAfterCreatedEvent $event
+     * @param OrderAfterCreatedEvent|OrderAfterUpdatedEvent $event
      * @return void
      */
-    public function increaseFromOrderCreatedEvent( OrderAfterCreatedEvent $event )
+    public function increaseFromOrderCreatedEvent( $event )
     {
         /**
          * If the payment status changed from
          * supported payment status to a "Paid" status.
          */
         if ( $event->order->register_id !== null && $event->order->payment_status === Order::PAYMENT_PAID ) {
-            $registerHistory                =   new RegisterHistory;
-            $registerHistory->value         =   $event->order->total;
-            $registerHistory->register_id   =   $event->order->register_id;
-            $registerHistory->action        =   RegisterHistory::ACTION_SALE;
-            $registerHistory->author        =   Auth::id();
+            $register                           =   Register::find( $event->order->register_id );
+
+            $registerHistory                    =   new RegisterHistory;
+            $registerHistory->balance_before    =   $register->balance;
+            $registerHistory->value             =   $event->order->total;
+            $registerHistory->balance_after     =   $register->balance + $event->order->total;
+            $registerHistory->register_id       =   $event->order->register_id;
+            $registerHistory->action            =   RegisterHistory::ACTION_SALE;
+            $registerHistory->author            =   Auth::id();
             $registerHistory->saveQuietly();
 
             $event  =   new CashRegisterHistoryAfterCreatedEvent( $registerHistory );
@@ -355,7 +373,9 @@ class CashRegistersService
             $history                        =   $register->history()
                 ->where( 'action', RegisterHistory::ACTION_OPENING )
                 ->orderBy( 'id', 'desc' )->first();
+
             $register->opening_balance      =   $history->value;
+
             $register->total_sale_amount    =   Order::paid()
                 ->where( 'register_id', $register->id )
                 ->where( 'created_at', '>=', $history->created_at )
@@ -379,40 +399,6 @@ class CashRegistersService
             if ( $register instanceof Register ) {
                 $this->cashIn( $register, $event->order->total, __( 'Automatically recorded sale payment.' ) );
             }
-        }
-    }
-
-    /**
-     * Will issue an expense history for every
-     * cashing out operation if an expense category is assigned
-     * @param CashRegisterHistoryAfterCreatedEvent $event
-     * @return void
-     */
-    public function issueExpenses( CashRegisterHistoryAfterCreatedEvent $event )
-    {
-        /**
-         * @var ExpenseService
-         */
-        $expenseService     =   app()->make( ExpenseService::class );
-        $cat_id             =   ns()->option->get( 'ns_pos_cashout_expense_category' );
-        $expenseCategory    =   ExpenseCategory::find( $cat_id );
-
-        if ( $expenseCategory instanceof ExpenseCategory && $event->registerHistory->action === RegisterHistory::ACTION_CASHOUT ) {
-            /**
-             * We simulate a created expense
-             * that will be added to the expenses history
-             * but it won't be persistent.
-             */
-            $expense                =   new Expense();
-            $expense->name          =   $event->registerHistory->description ?: __( 'Cash out' );
-            $expense->category_id   =   $expenseCategory->id;
-            $expense->description   =   __( 'An automatically generated expense for cash-out operation.' );
-            $expense->value         =   $event->registerHistory->value;
-            $expense->author        =   Auth::id();
-            $expense->id            =   0; // untracked expenses shouldn't be assigned
-            $expense->active        =   true;
-
-            $expenseService->triggerExpense( $expense );
         }
     }
 }

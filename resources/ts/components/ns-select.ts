@@ -14,7 +14,7 @@ const nsSelect      =   Vue.component( 'ns-select', {
             return false;
         },
         disabledClass() {
-            return this.field.disabled ? 'bg-gray-200 cursor-not-allowed' : 'bg-transparent';
+            return this.field.disabled ? 'ns-disabled cursor-not-allowed' : '';
         },
         inputClass() {
             return this.disabledClass + ' ' + this.leadClass
@@ -23,17 +23,22 @@ const nsSelect      =   Vue.component( 'ns-select', {
             return this.leading ? 'pl-8' : 'px-4';
         }
     },
+    mounted() {
+        console.log( this.field.value );
+    },
     methods: { __ },
     template: `
-    <div class="flex flex-col flex-auto">
-        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400' : 'border-gray-200'" class="border-2 mt-1 relative rounded-md shadow-sm mb-2">
-            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="text-gray-700 form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10">
+    <div class="flex flex-col flex-auto ns-select">
+        <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'has-error' : 'is-pristine'" class="border-2 mt-1 relative rounded-md shadow-sm mb-2 overflow-hidden">
+            <select :disabled="field.disabled ? field.disabled : false" @change="$emit( 'change', $event )" :name="field.name" v-model="field.value" :class="inputClass" class="form-input block w-full pl-7 pr-12 sm:text-sm sm:leading-5 h-10 appearance-none">
+                <option v-if="field.value === undefined" :value="undefined">{{ __( 'Choose an option' ) }}</option>
+                <option v-if="field.value === null" :value="null">{{ __( 'Choose an option' ) }}</option>
                 <option :value="option.value" v-for="option of field.options" class="py-2">{{ option.label }}</option>
             </select>
         </div>
-        <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-gray-500"><slot name="description"></slot></p>
-        <p v-for="error of field.errors" class="text-xs text-red-400">
+        <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description"><slot name="description"></slot></p>
+        <p v-for="error of field.errors" class="text-xs ns-error">
             <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
             <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
             <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>

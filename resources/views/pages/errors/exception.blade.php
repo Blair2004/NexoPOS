@@ -7,9 +7,21 @@
             <h1 class="text-white text-3xl lg:text-5xl font-bold text-center">{!! $title !!}</h1>
             <p class="md:w-auto w-95vw bg-gray-700 text-gray-100 lg:text-lg text-center p-4 my-2">{{ $message }}</p>
             <div class="flex md:flex-row flex-col -mx-4 my-4 flex-wrap w-56 lg:w-auto">
-                <div class="px-4 mb-4"><a class="block w-full lg:w-auto btn bg-white text-gray-700" href="{{ ! empty( request()->query( 'back' ) ) ? urldecode( request()->query( 'back' ) ) : url()->previous() }}"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a></div>
-                <div class="px-4 mb-4"><a class="block w-full lg:w-auto btn bg-white text-gray-700" href="{{ url()->current() . '?back=' . urlencode( request()->query( 'back' ) ?? url()->previous() )  }}"><i class="las la-sync"></i> {{ __( 'Try Again' ) }}</a></div>
-                <div class="px-4 mb-4"><a class="block w-full lg:w-auto btn bg-white text-gray-700" href="{{ url( '/' ) }}"><i class="las la-home"></i> {{ __( 'Home' ) }}</a></div>
+                <div class="px-4 mb-4">
+                    <div class="ns-button hover-info">
+                        <a class="shadow px-2 py-1 rounded block w-full lg:w-auto" href="{{ ! empty( request()->query( 'back' ) ) ? urldecode( request()->query( 'back' ) ) : url()->previous() }}"><i class="las la-angle-left"></i> {{ __( 'Go Back' ) }}</a>
+                    </div>
+                </div>
+                <div class="px-4 mb-4">
+                    <div class="ns-button hover-info">
+                        <a class="shadow px-2 py-1 rounded block w-full lg:w-auto" href="{{ url()->current() . '?back=' . urlencode( request()->query( 'back' ) ?? url()->previous() )  }}"><i class="las la-sync"></i> {{ __( 'Try Again' ) }}</a>
+                    </div>
+                </div>
+                <div class="px-4 mb-4">
+                    <div class="ns-button hover-info">
+                        <a class="shadow px-2 py-1 rounded block w-full lg:w-auto" href="{{ url( '/' ) }}"><i class="las la-home"></i> {{ __( 'Home' ) }}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

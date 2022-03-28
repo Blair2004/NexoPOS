@@ -15,12 +15,15 @@ export default {
     },
     data() {
         return {
-            startDate: moment().format( 'YYYY/MM/DD HH:mm' ),
-            endDate: moment().format( 'YYYY/MM/DD HH:mm' ),
-            report: []
+            startDate: moment(),
+            endDate: moment(),
+            report: new Object
         }
     },
     computed: {
+        balance() {
+            return Object.values( this.report ).length === 0 ? 0 : this.report.total_credit - this.report.total_debit;
+        },
         totalDebit() {
             return 0;
         },

@@ -25,6 +25,7 @@ use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
+use App\Services\OrdersService;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -36,12 +37,19 @@ class CustomersController extends DashboardController
      */
     protected $customerService;
 
+    /**
+     * @var OrdersService
+     */
+    protected $ordersService;
+
     public function __construct(
-        CustomerService $customerService
+        CustomerService $customerService,
+        OrdersService $ordersService
     )
     {
         parent::__construct();
         $this->customerService      =   $customerService;
+        $this->ordersService        =   $ordersService;
     }
 
     public function createCustomer()
@@ -128,19 +136,25 @@ class CustomersController extends DashboardController
      */
     public function getOrders( $id )
     {
-        return $this->customerService->get( $id )->orders->map( function( $order ) {
-            switch( $order->payment_status ) {
-                case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' ); break;
-                case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' ); break;
-                case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' ); break;
-                case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' ); break;
-                case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' ); break;
-                case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' ); break;
-                case Order::PAYMENT_VOID : $order->human_status = __( 'Void' ); break;
-                default: $order->human_status = $order->payment_status; break;
-            }
+        return $this->customerService->get( $id )
+            ->orders()
+            ->orderBy( 'created_at', 'desc' )
+            ->get()
+            ->map( function( Order $order ) {
+                switch( $order->payment_status ) {
+                    case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' ); break;
+                    case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' ); break;
+                    case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' ); break;
+                    case Order::PAYMENT_REFUNDED : $order->human_status = __( 'Refunded' ); break;
+                    case Order::PAYMENT_UNPAID : $order->human_status = __( 'Unpaid' ); break;
+                    case Order::PAYMENT_PARTIALLY_REFUNDED : $order->human_status = __( 'Partially Refunded' ); break;
+                    case Order::PAYMENT_VOID : $order->human_status = __( 'Void' ); break;
+                    default: $order->human_status = $order->payment_status; break;
+                }
 
-            return $order;
+                $order->human_delivery_status   =   $this->ordersService->getDeliveryStatuses( $order->delivery_status );
+
+                return $order;
         });
     }
 
@@ -176,7 +190,7 @@ class CustomersController extends DashboardController
     }
 
     public function listCoupons()
-    {
+    {         
         return CouponCrud::table();
     }
 

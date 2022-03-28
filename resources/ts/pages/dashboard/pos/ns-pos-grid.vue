@@ -1,36 +1,44 @@
 <template>
     <div id="pos-grid" class="flex-auto flex flex-col">
         <div id="tools" class="flex pl-2" v-if="visibleSection === 'grid'">
-            <div @click="switchTo( 'cart' )" class="flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-gray-300 border-t border-r border-l border-gray-300 text-gray-600">
-                <span>Cart</span>
-                <span v-if="order" class="flex items-center justify-center text-sm rounded-full h-6 w-6 bg-green-500 text-white ml-1">{{ order.products.length }}</span>
+            <div @click="switchTo( 'cart' )" class="switch-cart flex cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 border-t border-r border-l">
+                <span>{{ __( 'Cart' ) }}</span>
+                <span v-if="order" class="products-count flex items-center justify-center text-sm rounded-full h-6 w-6 ml-1">{{ order.products.length }}</span>
             </div>
-            <div @click="switchTo( 'grid' )" class="cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 bg-white font-semibold text-gray-700">
-                Products
+            <div @click="switchTo( 'grid' )" class="switch-grid cursor-pointer rounded-tl-lg rounded-tr-lg px-3 py-2 font-semibold">
+                {{ __( 'Products' ) }}
             </div>
         </div>
-        <div class="rounded shadow bg-white overflow-hidden flex-auto flex flex-col">
-            <div id="grid-header" class="p-2 border-b border-gray-200">
-                <div class="border rounded flex border-gray-300 overflow-hidden">
-                    <button @click="openSearchPopup()" class="w-10 h-10 bg-gray-200 border-r border-gray-300 outline-none">
+        <div id="grid-container" class="rounded shadow  overflow-hidden flex-auto flex flex-col">
+            <div id="grid-header" class="p-2 border-b ">
+                <div class="border rounded flex  overflow-hidden">
+                    <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked bg-gray-300' : 'bg-gray-200'" class="outline-none w-10 h-10 border-r border-gray-300">
+                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                        <i class="las la-compress-arrows-alt"></i>
+                    </button>
+                    <button :title="__( 'Toggle auto focus.' )" @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-barcode"></i>
                     </button>
-                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 bg-gray-100">
+                    <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
                 </div>
             </div>
-            <div id="grid-breadscrumb" class="p-2 border-gray-200">
+            <div style="height: 0px">
+                <div v-if="isLoading" class="fade-in-entrance ns-loader">
+                    <div class="bar"></div>
+                </div>
+            </div>
+            <div id="grid-breadscrumb" class="p-2">
                 <ul class="flex">
-                    <li><a @click="loadCategories()" href="javascript:void(0)" class="px-3 text-gray-700">Home </a> <i class="las la-angle-right"></i> </li>
-                    <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3 text-gray-700">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
+                    <li><a @click="loadCategories()" href="javascript:void(0)" class="px-3 ">{{ __( 'Home' ) }} </a> <i class="las la-angle-right"></i> </li>
+                    <li><a @click="loadCategories( bread )" v-for="bread of breadcrumbs" :key="bread.id" href="javascript:void(0)" class="px-3">{{ bread.name }} <i class="las la-angle-right"></i></a></li>
                 </ul>
             </div>
             <div id="grid-items" class="overflow-hidden h-full flex-col flex">
                 <div v-if="! rebuildGridComplete" class="h-full w-full flex-col flex items-center justify-center">
                     <ns-spinner></ns-spinner>
-                    <span class="text-gray-600 my-2">Rebuilding...</span>
+                    <span class="my-2">{{ __( 'Rebuilding...' ) }}</span>
                 </div>
                 <template v-if="rebuildGridComplete">
 
@@ -42,14 +50,14 @@
                         v-if="hasCategories"
                     >
                         <div slot="cell" class="w-full h-full" slot-scope="{ data }">
-                            <div @click="loadCategories( data )" :key="data.id" class="hover:bg-gray-200 w-full h-full cursor-pointer border border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+                            <div @click="loadCategories( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
                                 <div class="h-full w-full flex items-center justify-center">
                                     <img v-if="data.preview_url" :src="data.preview_url" class="object-cover h-full" :alt="data.name">
-                                    <i class="las la-image text-gray-600 text-6xl" v-if="! data.preview_url"></i>
+                                    <i class="las la-image text-6xl" v-if="! data.preview_url"></i>
                                 </div>
                                 <div class="h-0 w-full">
-                                    <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2" style="background:rgb(255 255 255 / 73%)">
-                                        <h3 class="text-sm font-bold text-gray-700 py-2 text-center">{{ data.name }}</h3>
+                                    <div class="cell-item-label relative w-full flex items-center justify-center -top-10 h-20 py-2">
+                                        <h3 class="text-sm font-bold py-2 text-center">{{ data.name }}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -63,15 +71,15 @@
                         v-if="! hasCategories"
                     >
                         <div slot="cell" class="w-full h-full" slot-scope="{ data }">
-                            <div @click="addToTheCart( data )" :key="data.id" class="hover:bg-gray-200 w-full h-full cursor-pointer border border-gray-200 flex flex-col items-center justify-center overflow-hidden">
+                            <div @click="addToTheCart( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
                                 <div class="h-full w-full flex items-center justify-center overflow-hidden">
                                     <img v-if="data.galleries && data.galleries.filter( i => i.featured === 1 ).length > 0" :src="data.galleries.filter( i => i.featured === 1 )[0].url" class="object-cover h-full" :alt="data.name">
-                                    <i v-if="! data.galleries || data.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-gray-600 text-6xl"></i>
+                                    <i v-if="! data.galleries || data.galleries.filter( i => i.featured === 1 ).length === 0" class="las la-image text-6xl"></i>
                                 </div>
                                 <div class="h-0 w-full">
-                                    <div class="relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2" style="background:rgb(255 255 255 / 73%)">
-                                        <h3 class="text-sm text-gray-700 text-center w-full">{{ data.name }}</h3>
-                                        <span class="text-sm text-gray-600" v-if="data.unit_quantities && data.unit_quantities.length === 1">{{ data.unit_quantities[0].sale_price | currency }}</span>
+                                    <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
+                                        <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
+                                        <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">{{ data.unit_quantities[0].sale_price | currency }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -83,10 +91,10 @@
     </div>
 </template>
 <script >
-import Vue from 'vue';
 import { nsHttpClient, nsSnackBar } from '../../../bootstrap'
 import switchTo from "@/libraries/pos-section-switch";
 import nsPosSearchProductVue from '@/popups/ns-pos-search-product.vue';
+import { __ } from '@/libraries/lang';
 
 export default {
     name: 'ns-pos-grid',
@@ -105,6 +113,8 @@ export default {
             orderSubscription: null,
             visibleSectionSubscriber: null,
             currentCategory: null,
+            settings: false,
+            settingsSubscriber: null,
             interval: null,
             searchTimeout: null,
             gridItemsWidth: 0,
@@ -112,6 +122,7 @@ export default {
             screenSubscriber: null,
             rebuildGridTimeout: null,
             rebuildGridComplete: false,
+            isLoading: false,
         }
     },
     computed: {
@@ -122,6 +133,7 @@ export default {
     watch: {
         barcode() {
             clearTimeout( this.searchTimeout );
+            
             this.searchTimeout  =   setTimeout( () => {
                 this.submitSearch( this.barcode );
             }, 200 );
@@ -129,9 +141,16 @@ export default {
     },
     mounted() {
         this.loadCategories();
+
+        this.settingsSubscriber         =   POS.settings.subscribe( settings => {
+            this.settings               =   settings;
+            console.log( settings );
+        });
+
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
         });
+        
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
         });
@@ -152,16 +171,67 @@ export default {
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
 
         this.interval   =   setInterval( () => this.checkFocus(), 500 );
+
+        /**
+         * let's register hotkeys
+         */
+        for( let shortcut in nsShortcuts ) {
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_quick_search', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'search-popup' )
+                    .whenNotVisible([ '.is-popup', '#product-search' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.openSearchPopup();
+                });
+            }
+
+            /**
+             * let's declare only shortcuts that
+             * works on the pos grid and that doesn't 
+             * expect any popup to be visible
+             */
+            if ([ 
+                    'ns_pos_keyboard_toggle_merge', 
+                ].includes( shortcut ) ) {
+                nsHotPress
+                    .create( 'toggle-merge' )
+                    .whenNotVisible([ '.is-popup' ])
+                    .whenPressed( nsShortcuts[ shortcut ], ( event ) => {
+                        event.preventDefault();
+                        this.posToggleMerge();
+                });
+            }
+        }
+
     },
     destroyed() {
         this.orderSubscription.unsubscribe();
         this.breadcrumbsSubsribe.unsubscribe();
         this.visibleSectionSubscriber.unsubscribe();
         this.screenSubscriber.unsubscribe();
+        this.settingsSubscriber.unsubscribe();
+        
         clearInterval( this.interval );
+
+        nsHotPress.destroy( 'search-popup' );
+        nsHotPress.destroy( 'toggle-merge' );
     },
     methods: {
+        __, 
+
         switchTo,
+
+        posToggleMerge() {
+            POS.set( 'pos_items_merge', ! this.settings.pos_items_merge );
+        },
 
         computeGridWidth() {
             if ( document.getElementById( 'grid-items' ) !== null ) {
@@ -238,21 +308,29 @@ export default {
         },
         
         loadCategories( parent ) {
+            this.isLoading  =   true;
             nsHttpClient.get( `/api/nexopos/v4/categories/pos/${ parent ? parent.id : ''}` )
-                .subscribe( (result ) => {
-                    this.categories         =   result.categories.map( category => {
-                        return {
-                            data    :   category
-                        }
-                    });
-                    this.products           =   result.products.map( product => {
-                        return {
-                            data: product
-                        }
-                    });
-                    this.previousCategory   =   result.previousCategory;
-                    this.currentCategory    =   result.currentCategory;
-                    this.updateBreadCrumb( this.currentCategory );
+                .subscribe({
+                    next: (result ) => {
+                        this.categories         =   result.categories.map( category => {
+                            return {
+                                data    :   category
+                            }
+                        });
+                        this.products           =   result.products.map( product => {
+                            return {
+                                data: product
+                            }
+                        });
+                        this.previousCategory   =   result.previousCategory;
+                        this.currentCategory    =   result.currentCategory;
+                        this.updateBreadCrumb( this.currentCategory );
+                        this.isLoading  =   false;
+                    },
+                    error: ( error ) => {
+                        this.isLoading  =   false;
+                        return nsSnackBar.error( __( 'An unexpected error occured.' ) ).subscribe();
+                    }
                 });
         },
 

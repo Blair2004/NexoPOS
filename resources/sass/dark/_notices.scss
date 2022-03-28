@@ -1,0 +1,55 @@
+.ns-notice {
+    @apply text-white;
+    &
+    h1, h2, h3, h4, h5 {
+        @apply text-white;
+    }
+
+    p {
+        @apply text-white;
+    }
+
+    .danger {
+        @apply border-danger-secondary bg-danger-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.warning {
+        @apply border-warning-secondary bg-warning-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.success {
+        @apply border-success-secondary bg-success-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.error {
+        @apply border-error-tertiary bg-error-secondary text-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+    
+    &.info {
+        @apply border-info-secondary bg-info-primary;
+    
+        pre {
+            @apply bg-pre text-primary;
+        }
+    }
+}
+
+.ns-normal-text {
+    @apply text-primary;
+}

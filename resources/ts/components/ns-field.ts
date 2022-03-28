@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import { default as nsDateRangePicker } from './ns-date-range-picker.vue';
 import { default as nsDateTimePicker } from './ns-date-time-picker.vue';
+import { default as nsSwitch } from './ns-switch.vue';
+
+declare const nsExtraComponents;
 
 const nsField       =   Vue.component( 'ns-field', {
     data: () => {
@@ -8,10 +11,12 @@ const nsField       =   Vue.component( 'ns-field', {
         }
     },
     mounted() {
+        // ...
     },
     components: {
         nsDateRangePicker,
         nsDateTimePicker,
+        nsSwitch,
     },
     computed: {
         isInputField() {

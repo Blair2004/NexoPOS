@@ -4,8 +4,8 @@
 .lal,
 .lad,
 .lab {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-surface-tertiarying: grayscale;
+  -webkit-font-surface-tertiarying: antialiased;
   display: inline-block;
   font-style: normal;
   font-variant: normal;
@@ -2039,7 +2039,7 @@ readers do not read off random characters that represent icons */
 .la-hanukiah:before {
   content: "\f6e6"; }
 
-.la-hard-hat:before {
+.la-surface-quaternary-hat:before {
   content: "\f807"; }
 
 .la-hashtag:before {
@@ -6322,7 +6322,7 @@ readers do not read off random characters that represent icons */
 .la.la-deafness:before {
   content: "\f2a4"; }
 
-.la.la-hard-of-hearing:before {
+.la.la-surface-quaternary-of-hearing:before {
   content: "\f2a4"; }
 
 .la.la-glide {

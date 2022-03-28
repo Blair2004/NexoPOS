@@ -123,6 +123,12 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     public $skippable   =   [];
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    private $prependOptions     =   false;
+
+    /**
      * Define Constructor
      * @param 
      */

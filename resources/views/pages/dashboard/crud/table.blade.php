@@ -8,16 +8,11 @@ use App\Classes\Output;
 <div>
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div id="dashboard-content" class="px-4">
-        <div class="page-inner-header mb-4">
-            <h3 class="text-3xl text-gray-700 font-bold">{{ $title ?? __( 'Unamed Table' ) }}</h3>
-            <p class="text-gray-600">{{ $description ?? __( 'No description' ) }}</p>
-        </div>
-        @include( 'components.session-message' )
+        @include( 'common.dashboard.title' )
         <ns-crud 
             src="{{ $src }}" 
             :query-params='@json( $queryParams ?? [] )'
-            create-url="{{ $createUrl ?? '#' }}"
-            id="crud-table-body">
+            create-url="{{ $createUrl ?? '#' }}">
             <template v-slot:bulk-label>{{ $bulkLabel ?? __( 'Bulk Actions' ) }}</template>
         </ns-crud>
     </div>

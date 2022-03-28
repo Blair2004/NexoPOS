@@ -174,6 +174,16 @@ class OrdersController extends DashboardController
             Hook::action( 'ns-dashboard-pos-footer', $output );
         }, 15 );
 
+        /**
+         * let's inject the necessary dependency
+         * for being able to manage orders.
+         */
+        Hook::addAction( 
+            'ns-dashboard-footer', 
+            fn( Output $output ) => $output
+                ->addView( 'pages.dashboard.orders.footer' ) 
+        );
+
         return $this->view( 'pages.dashboard.orders.pos', [
             'title'             =>  __( 'POS &mdash; NexoPOS' ),
             'orderTypes'        =>  collect( config( 'nexopos.orders.types' ) )->filter( function( $type, $label ) {
