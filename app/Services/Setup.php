@@ -197,8 +197,7 @@ class Setup
         DotEnvEditor::setKey( 'SESSION_DOMAIN', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'basename' ] );
-        DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
-        DotenvEditor::setKey( 'NS_ENV', 'production' );
+        DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );        
         DotenvEditor::save();
         
 
