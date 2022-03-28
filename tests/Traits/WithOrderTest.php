@@ -1122,8 +1122,6 @@ trait WithOrderTest
                     ]
                 ]
             ]);
-
-        $response->dump();
         
         $response->assertJson([
             'status'    =>  'success'

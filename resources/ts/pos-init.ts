@@ -1582,8 +1582,6 @@ export class POS {
             product.tax_value = product.$quantities().custom_price_tax * product.quantity;
         }
 
-        console.log( product );
-
         /**
          * computing the discount when it's 
          * based on a percentage
