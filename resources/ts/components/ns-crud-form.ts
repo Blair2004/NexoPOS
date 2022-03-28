@@ -72,7 +72,10 @@ const nsCrudForm    =   Vue.component( 'ns-crud-form', {
                         duration: 5000
                     }).subscribe();
                     
-                    this.formValidation.triggerError( this.form, error );
+                    if ( error.data !== undefined ) {
+                        this.formValidation.triggerError( this.form, error.data );
+                    }
+
                     this.formValidation.enableForm( this.form );
                 })
         },
