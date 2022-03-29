@@ -59,7 +59,7 @@
     "@ckeditor/ckeditor5-vue2": "^2.0.0",
     "@dicebear/avatars": "^4.9.0",
     "@dicebear/avatars-avataaars-sprites": "^4.9.0",
-    "@wordpress/hooks": "^3.0.0",
+    "@wordpress/hooks": "^3.5.0",
     "acorn": "^8.6.0",
     "apexcharts": "^3.33.0",
     "chart.js": "^3.3.0",
