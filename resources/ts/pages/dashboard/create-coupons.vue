@@ -51,6 +51,7 @@ export default {
     },
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {
+        __,
         setTabActive( tab ) {
             this.validTabs.forEach( tab => tab.active = false );
             tab.active  =   true;
@@ -149,39 +150,38 @@ export default {
             <div class="flex flex-col">
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-primary"><slot name="title">No title Provided</slot></label>
-                    <div for="title" class="text-sm my-2 text-primary">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border border-tertiary hover:bg-error-primary hover:border-transparent hover:text-white bg-input-background px-2 py-1">Return</a>
+                    <div for="title" class="text-sm my-2">
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? 'border-input-disabled' : form.main.errors.length > 0 ? 'border-error-primary' : 'border-input-button'" class="flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? 'disabled' : ( form.main.errors.length > 0 ? 'error' : 'info' )" class="input-group flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
                         :disabled="form.main.disabled"
                         type="text" 
-                        :class="form.main.disabled ? 'bg-input-disabled' : 'bg-input-disabled'"
                         class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? 'bg-input-disabled border-input-disabled' : form.main.errors.length > 0 ? 'bg-error-primary border-error-secondary' : 'bg-input-edge border-input-edge'" @click="submit()" class="outline-none px-4 h-10 text-white border-l border-tertia"><slot name="save">Save</slot></button>
+                    <button :disabled="form.main.disabled" @click="submit()" class="outline-none px-4 h-10 border-l border-tertia"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
+                <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
             <div id="form-container" class="-mx-4 flex flex-wrap mt-4">
                 <div class="px-4 w-full md:w-1/2">
-                    <div class="rounded bg-input-background shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
+                    <div class="rounded ns-box shadow p-2" v-bind:key="index" v-for="( tab, index) of generalTab">
                         <ns-field v-bind:key="index" v-for="( field, index ) of tab.fields" :field="field"></ns-field>
                     </div>
                 </div>
                 <div class="px-4 w-full md:w-1/2">
                     <div id="tabbed-card">
-                        <div id="card-header" class="flex flex-wrap">
-                            <div @click="setTabActive( tab )" :class="tab.active ? 'bg-tab-active' : 'bg-tab-inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg text-white">
+                        <div id="card-header" class="flex flex-wrap ns-tab">
+                            <div @click="setTabActive( tab )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) of validTabs" v-bind:key="index" class="tab cursor-pointer px-4 py-2 rounded-tl-lg rounded-tr-lg">
                                 {{ tab.label }}
                             </div>
                         </div>
-                        <div class="card-body bg-input-background rounded-br-lg rounded-bl-lg shadow p-2">
+                        <div class="ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="flex flex-col" v-bind:key="index" v-for="( field, index ) of activeValidTab.fields">
                                 <ns-field :field="field"></ns-field>
                             </div>

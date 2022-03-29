@@ -39,12 +39,12 @@
     }
 
     &.error {
-        @apply border-error-primary;
+        @apply border-error-tertiary;
         input {
             @apply bg-input-background text-primary;
         }
         button {
-            @apply bg-error-primary text-white;
+            @apply bg-error-tertiary text-white;
             i, span {
                 @apply text-white;
             }
@@ -336,5 +336,11 @@
     }
     &.error:hover, &.error.active  {
         @apply bg-error-tertiary text-white border-transparent;
+    }
+}
+
+.ns-multiselect {
+    .ns-dropdown {
+        @apply bg-white;
     }
 }

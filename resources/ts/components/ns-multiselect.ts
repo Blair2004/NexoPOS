@@ -65,7 +65,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
         }
     },
     template: `
-    <div class="flex flex-col">
+    <div class="flex flex-col ns-multiselect">
         <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
             <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
@@ -85,7 +85,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
                 </div>
             </div>
             <div class="h-0 z-10" v-if="showPanel" :class="showPanel ? 'shadow' : ''">
-                <div class="bg-input-edge shadow">
+                <div class="ns-dropdown shadow">
                     <div class="search border-b border-input-option-hover">
                         <input v-model="search" class="p-2 w-full bg-transparent text-primary outline-none" placeholder="Search">
                     </div>

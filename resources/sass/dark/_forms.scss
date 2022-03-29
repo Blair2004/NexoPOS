@@ -330,3 +330,9 @@
         @apply bg-error-primary text-white border-transparent;
     }
 }
+
+.ns-multiselect {
+    .ns-dropdown {
+        @apply bg-box-elevation-background;
+    }
+}
