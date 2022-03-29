@@ -111,7 +111,7 @@ export default {
                                         }
                                     })
                                 ];
-                                
+
                                 Popup.show( nsSelectPopupVue, {
                                     ...this.filterUser,
                                     resolve, 

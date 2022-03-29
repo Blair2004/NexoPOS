@@ -46,6 +46,7 @@ const NsPOSLoadingPopup    =  () => import( './popups/ns-pos-loading-popup.vue' 
 
 import RawVueApexCharts     from 'vue-apexcharts';
 import VueHtmlToPaper       from 'vue-html-to-paper';
+import { NsHotPress } from './libraries/ns-hotpress';
 
 const nsState               =   window[ 'nsState' ];
 const nsScreen              =   window[ 'nsScreen' ]; 
@@ -61,7 +62,9 @@ const VueHtmlToPaperOptions     =   {
     styles: [
       '/css/app.css',
     ]
-}
+};
+
+( window as any ).nsHotPress            =   new NsHotPress;
 
 Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
 const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
