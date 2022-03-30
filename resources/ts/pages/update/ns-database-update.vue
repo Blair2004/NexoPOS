@@ -20,20 +20,20 @@
                 </div>
                 <div class="border-t ns-box-footer p-2 flex justify-between">
                     <div>
-                        <ns-button v-if="error" @click="proceedUpdate()" type="error" class="rounded shadow-inner p-2">
+                        <ns-button v-if="error" @click="proceedUpdate()" type="error" class="rounded shadow-inner">
                             <i class="las la-sync"></i>
                             <span>{{ __( 'Try Again' ) }}</span>
                         </ns-button>
                     </div>
                     <div class="flex">
-                        <ns-button type="info" v-if="updating" class="rounded shadow-inner p-2">
+                        <ns-button type="info" v-if="updating" class="rounded shadow-inner">
                             <i class="las la-sync animate-spin"></i>
                             <span v-if="! updatingModule">{{ __( 'Updating' ) }}...</span>
                             <span class="mr-1" v-if="! updatingModule">{{ index }}/{{ files.length }}</span>
                             <span v-if="updatingModule">{{ __( 'Updating Modules' ) }}...</span>
                             <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
                         </ns-button>
-                        <ns-button :href="returnLink" v-if="! updating" class="rounded shadow-inner p-2">
+                        <ns-button :href="returnLink" v-if="! updating" class="rounded shadow-inner">
                             <i class="las la-undo"></i>
                             <span>{{ __( 'Return' ) }}</span>
                         </ns-button>
