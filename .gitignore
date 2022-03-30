@@ -25,9 +25,13 @@ public/js/*.js
 !public/js/vendor.js
 !public/js/manifest.js
 public/css/*.css
-!public/css/app.css
-!public/css/light.css
-!public/css/dark.css
+!public/css/app.*.css
+!public/css/light.*.css
+!public/css/dark.*.css
+!public/css/typography.*.css
+!public/css/grid.*.css
+!public/css/animations.*.css
+!public/css/line-awesome.css
 public/js/*.map
 public/js/*.txt
 public/css/*.map
