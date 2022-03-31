@@ -5,7 +5,7 @@ use App\Services\Helper;
 use App\Services\DateService;
 use Illuminate\Support\Facades\Auth;
 
-$theme  =   Auth::user()->attribute->theme ?? ns()->option->get( 'ns_default_theme', 'light' );
+$theme  =   ( Auth::user()->attribute->theme ?: 'light' ) ?? ns()->option->get( 'ns_default_theme', 'light' );
 ?>
 <!DOCTYPE html>
 <html lang="en" class="{{ $theme }}">
