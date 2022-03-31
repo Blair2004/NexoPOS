@@ -2163,9 +2163,11 @@ class OrdersService
          */
         $this->reportService->deleteOrderCashFlow( $order );
 
+        $orderArray         =   $order->toArray();
+
         $order->delete();
 
-        event( new OrderAfterDeletedEvent( $order ) );
+        event( new OrderAfterDeletedEvent( ( object ) $orderArray ) );
 
         return [
             'status'    =>  'success',
