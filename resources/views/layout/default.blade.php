@@ -1,12 +1,16 @@
 <?php
 
-use App\Classes\Hook;
-use App\Services\DateService;
-use App\Services\Helper;
+use Illuminate\Support\Facades\Auth;
+
+if ( Auth::check() ) {
+    $theme  =   Auth::user()->attribute->theme ?: ns()->option->get( 'ns_default_theme', 'light' );
+} else {
+    $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
+}
 
 ?>
 <!DOCTYPE html>
-<html lang="en" class="{{ $theme = ( ( Auth::user()->attribute->theme ?: 'light' ) ?? 'light' ) }}">
+<html lang="en" class="{{ $theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
