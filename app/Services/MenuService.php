@@ -431,10 +431,6 @@ class MenuService
                         'label'             =>  __( 'Service Providers'),
                         'href'              =>  ns()->url( '/dashboard/settings/service-providers' )
                     ],
-                    'notifications'     =>  [
-                        'label'         =>  __( 'Notifications'),
-                        'href'          =>  ns()->url( '/dashboard/settings/notifications' )
-                    ],
                     'workers'           =>  [
                         'label'         =>  __( 'Workers' ),
                         'href'          =>  ns()->url( '/dashboard/settings/workers' ),

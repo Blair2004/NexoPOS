@@ -6,7 +6,6 @@ use App\Settings\AccountingSettings;
 use App\Settings\CustomersSettings;
 use App\Settings\GeneralSettings;
 use App\Settings\InvoiceSettings;
-use App\Settings\NotificationsSettings;
 use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\ReportsSettings;
@@ -46,7 +45,6 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.stores': return new StoresSettings; break;
                 case 'ns.service-providers': return new ServiceProvidersSettings; break;
                 case 'ns.invoice-settings': return new InvoiceSettings; break;
-                case 'ns.notifications': return new NotificationsSettings; break;
                 case 'ns.workers': return new WorkersSettings; break;
                 case 'ns.reports': return new ReportsSettings; break;
                 case 'ns.accounting': return new AccountingSettings; break;
