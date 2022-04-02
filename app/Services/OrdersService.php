@@ -2335,6 +2335,17 @@ class OrdersService
     }
 
     /**
+     * Return a specific delivery status
+     * @return array $statuses
+     */
+    public function getDeliveryStatus( $status = null )
+    {
+        $data   =   $this->getDeliveryStatuses();
+
+        return $data[ $status ] ?? __( 'Unknown' );
+    }
+
+    /**
      * parse and render options template
      * based on the provided values
      * @param array options

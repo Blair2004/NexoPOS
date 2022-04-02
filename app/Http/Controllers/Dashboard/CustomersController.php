@@ -152,7 +152,7 @@ class CustomersController extends DashboardController
                     default: $order->human_status = $order->payment_status; break;
                 }
 
-                $order->human_delivery_status   =   $this->ordersService->getDeliveryStatuses( $order->delivery_status );
+                $order->human_delivery_status   =   $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
                 return $order;
         });
