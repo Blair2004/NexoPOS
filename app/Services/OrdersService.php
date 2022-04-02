@@ -2163,9 +2163,11 @@ class OrdersService
          */
         $this->reportService->deleteOrderCashFlow( $order );
 
+        $orderArray         =   $order->toArray();
+
         $order->delete();
 
-        event( new OrderAfterDeletedEvent( $order ) );
+        event( new OrderAfterDeletedEvent( ( object ) $orderArray ) );
 
         return [
             'status'    =>  'success',
@@ -2321,21 +2323,15 @@ class OrdersService
      * Returns the order statuses
      * @return array $statuses
      */
-    public function getDeliveryStatuses( $identifier = null )
+    public function getDeliveryStatuses()
     {
-        $identifiers    =   [
+        return [
             'pending'       =>  __( 'Pending' ),
             'ongoing'       =>  __( 'Ongoing' ),
             'delivered'     =>  __( 'Delivered' ),
             'failed'        =>  __( 'Failed' ),
             'not-available' =>  __( 'Not Available' ),
         ];
-
-        if ( ! empty( $identifier ) ) {
-            return $identifiers[ $identifier ] ?? __( 'N/A' );
-        }
-
-        return $identifiers;
     }
 
     /**

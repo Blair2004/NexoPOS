@@ -48,16 +48,6 @@ return [
                     $days  =>  sprintf( __( '%s Days' ), $days )
                 ];
             }))
-        ], [
-            'type'      =>  'select',
-            'label'     =>  __( 'Orders Follow Up' ),
-            'name'      =>  'ns_orders_follow_up',
-            'value'     =>  $options->get( 'ns_orders_follow_up' ),
-            'description'   =>  __( 'Quotations will get deleted after they defined they has reached.' ),
-            'options'   =>  Helper::kvToJsOptions([
-                'yes'   =>  __( 'Yes' ),
-                'no'    =>  __( 'No' )
-            ])
-        ]
+        ], 
     ]
 ];

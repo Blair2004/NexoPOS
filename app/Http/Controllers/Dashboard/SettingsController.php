@@ -48,7 +48,6 @@ class SettingsController extends DashboardController
             case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'expenses-settings'; return $this->expenseSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
-            case 'notifications'; return $this->notificationsSettings(); break;
             case 'workers'; return $this->workersSettings(); break;
             case 'accounting'; return $this->accountingSettings(); break;
             case 'about': return $this->aboutSettings(); break;
@@ -137,14 +136,6 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.expenses', [
             'title'     =>      __( 'Expenses Settings' ),
             'description'   =>  __( 'Configure the expenses settings of the application.' )
-        ]);
-    }
-
-    public function notificationsSettings()
-    {
-        return $this->view( 'pages.dashboard.settings.notifications', [
-            'title'     =>      __( 'Notifications Settings' ),
-            'description'   =>  __( 'Configure the notifications settings of the application.' )
         ]);
     }
 
