@@ -7,6 +7,7 @@ use App\Models\RewardSystem;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
+use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
 use App\Models\Order;
 use App\Models\OrderInstalment;
@@ -22,6 +23,7 @@ use App\Models\TaxGroup;
 use App\Models\User;
 use App\Services\CashRegistersService;
 use App\Services\CurrencyService;
+use App\Services\CustomerService;
 use App\Services\OrdersService;
 use App\Services\ProductService;
 use App\Services\TaxService;
@@ -316,6 +318,106 @@ trait WithOrderTest
         $this->assertTrue( $response[ 'data' ][ 'order' ][ 'payments' ][0][ 'identifier' ] === 'paypal-payment', 'Invalid payment identifier detected.' );
     }
     
+    protected function attemptCreateOrderPaidWithCustomerBalance()
+    {
+        /**
+         * Next we'll create the order assigning
+         * the order type we have just created
+         */
+        $currency           =   app()->make( CurrencyService::class );
+
+        $product            =   Product::withStockEnabled()->get()->random();
+        $unit               =   $product->unit_quantities()->where( 'quantity', '>', 0 )->first();
+        $subtotal           =   $unit->sale_price * 5;
+        $shippingFees       =   150;
+
+        /**
+         * @var CustomerService
+         */
+        $customerService    =   app()->make( CustomerService::class );
+        $customer           =   Customer::first();
+
+        /**
+         * we'll try crediting customer account
+         */
+        $oldBalance         =   $customer->account_amount;
+        $customerService->saveTransaction( $customer, CustomerAccountHistory::OPERATION_ADD, $subtotal + $shippingFees, 'For testing purpose...' );
+        $customer->refresh();
+
+        /**
+         * #Test: We'll check if the old balance is different
+         * from the new one. Meaning the change was effective.
+         */
+        $this->assertTrue( ( float ) $oldBalance < ( float ) $customer->account_amount, 'The customer account hasn\'t been updated.' );
+        $oldBalance     =   ( float ) $customer->account_amount;
+
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', [
+                'customer_id'           =>  $customer->id,
+                'type'                  =>  [ 'identifier' => 'takeaway' ],
+                'discount_type'         =>  'percentage',
+                'discount_percentage'   =>  2.5,
+                'addresses'             =>  [
+                    'shipping'          =>  [
+                        'name'          =>  'First Name Delivery',
+                        'surname'       =>  'Surname',
+                        'country'       =>  'Cameroon',
+                    ],
+                    'billing'          =>  [
+                        'name'          =>  'EBENE Voundi',
+                        'surname'       =>  'Antony Hervé',
+                        'country'       =>  'United State Seattle',
+                    ]
+                ],
+                'subtotal'              =>  $subtotal,
+                'shipping'              =>  $shippingFees,
+                'products'              =>  [
+                    [
+                        'product_id'            =>  $product->id,
+                        'quantity'              =>  1,
+                        'unit_price'            =>  12,
+                        'unit_quantity_id'      =>  $unit->id,
+                    ]
+                ],
+                'payments'              =>  [
+                    [
+                        'identifier'    =>  OrderPayment::PAYMENT_ACCOUNT,
+                        'value'         =>  $currency->define( $subtotal )
+                            ->additionateBy( $shippingFees )
+                            ->getRaw()
+                    ]
+                ]
+            ]);
+        
+        $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PAID );
+        $response   =   json_decode( $response->getContent(), true );
+
+        $this->assertTrue( $response[ 'data' ][ 'order' ][ 'payments' ][0][ 'identifier' ] === OrderPayment::PAYMENT_ACCOUNT, 'Invalid payment identifier detected.' );
+
+        /**
+         * Let's check if after the sale the customer balance has been updated.
+         */
+        $customer->refresh();
+        $this->assertTrue( $oldBalance > ( float ) $customer->account_amount, 'The account has been updated' );
+
+        /**
+         * let's check if there is a stock flow transaction
+         * that record the customer payment.
+         */
+        $history    =   CustomerAccountHistory::where( 'customer_id', $customer->id )
+            ->where( 'operation', CustomerAccountHistory::OPERATION_PAYMENT )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $this->assertTrue( ( float ) $history->amount === ( float ) $subtotal + $shippingFees, 'The customer account history transaction is not valid.' );
+
+        $cashFlow   =   CashFlow::where( 'customer_account_history_id', $history->id )
+            ->operation( CashFlow::OPERATION_DEBIT )
+            ->first();
+
+        $this->assertTrue( $cashFlow instanceof CashFlow, 'No cash flow were found after the customer account payment.' );
+    }
+    
     protected function attemptCreateCustomPaymentType()
     {
         /**
@@ -555,8 +657,8 @@ trait WithOrderTest
     
                 $couponValue    =   ( ! empty( $orderData[ 'coupons' ] ) ? ( float ) $orderData[ 'coupons' ][0][ 'value' ] : 0 );
                 $totalPayments  =   collect( $orderData[ 'payments' ] )->map( fn( $payment ) => ( float ) $payment[ 'value' ] )->sum() ?: 0;
-                $change         =   $totalPayments - (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] - $couponValue );
-                $change         =   Currency::raw( $change );
+                $sum            =   (  ( float ) $orderData[ 'subtotal' ] + ( float ) $orderData[ 'shipping' ] - ( float ) $orderData[ 'discount' ] - $couponValue );
+                $change         =   ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
 
                 $response->assertJsonPath( 'data.order.change', $change );
 
