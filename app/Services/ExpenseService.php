@@ -787,6 +787,7 @@ class ExpenseService
         $histories  =   CustomerAccountHistory::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
+
         $histories->each( function( $history ) {
             $this->handleCustomerCredit( $history );
         });
@@ -848,7 +849,6 @@ class ExpenseService
         if ( in_array( $customerHistory->operation, [
             CustomerAccountHistory::OPERATION_ADD,
             CustomerAccountHistory::OPERATION_REFUND,
-            CustomerAccountHistory::OPERATION_PAYMENT,
         ]) ) {
             $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_CREDIT );   
 
@@ -865,6 +865,27 @@ class ExpenseService
             $expense->updated_at                    =   $customerHistory->updated_at;
 
             $this->recordCashFlowHistory( $expense );
+        } else if ( in_array(
+            $customerHistory->operation, [
+                CustomerAccountHistory::OPERATION_PAYMENT,
+            ]
+        ) ) {
+            $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );   
+    
+            $expense                                =   new Expense;
+            $expense->value                         =   $customerHistory->amount;
+            $expense->active                        =   true;
+            $expense->operation                     =   CashFlow::OPERATION_DEBIT;
+            $expense->author                        =   Auth::id();
+            $expense->customer_account_history_id   =   $customerHistory->id;
+            $expense->name                          =   sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
+            $expense->id                            =   0; // this is not assigned to an existing expense
+            $expense->category                      =   $expenseCategory;
+            $expense->created_at                    =   $customerHistory->created_at;
+            $expense->updated_at                    =   $customerHistory->updated_at;
+
+            $this->recordCashFlowHistory( $expense );
+
         } else if ( in_array(
             $customerHistory->operation, [
                 CustomerAccountHistory::OPERATION_DEDUCT,

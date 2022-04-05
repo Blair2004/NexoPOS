@@ -1,10 +1,8 @@
 import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
-import { Subject, BehaviorSubject, forkJoin } from "rxjs";
-import { Product } from "./interfaces/product";
+import {  BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
-import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
 import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
@@ -17,6 +15,8 @@ import { StatusResponse } from "./status-response";
 import { __ } from "./libraries/lang";
 import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
 import moment from "moment";
+
+declare const nsRawCurrency;
 
 /**
  * these are dynamic component
@@ -479,19 +479,26 @@ export class POS {
     }
 
     getNetPrice(value, rate, type) {
+        let finalValue;
         if (type === 'inclusive') {
-            return (value / (rate + 100)) * 100;
+            finalValue  =   (value / (rate + 100)) * 100;
         } else if (type === 'exclusive') {
-            return ((value / 100) * (rate + 100));
+            finalValue  =   ((value / 100) * (rate + 100));
         }
+        
+        return finalValue;
     }
 
     getVatValue(value, rate, type) {
+        let finalValue;
+
         if (type === 'inclusive') {
-            return value - this.getNetPrice(value, rate, type);
+            finalValue  =   value - this.getNetPrice(value, rate, type);
         } else if (type === 'exclusive') {
-            return this.getNetPrice(value, rate, type) - value;
+            finalValue  =   this.getNetPrice(value, rate, type) - value;
         }
+        
+        return finalValue;
     }
 
     computeTaxes() {
@@ -617,7 +624,7 @@ export class POS {
     canProceedAsLaidAway(_order: Order): { status: string, message: string, data: { order: Order } } | any {
         return new Promise(async (resolve, reject) => {
             const minimalPaymentPercent = _order.customer.group.minimal_credit_payment;
-            let expected: any = ((_order.total * minimalPaymentPercent) / 100).toFixed(ns.currency.ns_currency_precision);
+            let expected: any = ((_order.total * minimalPaymentPercent) / 100);
             expected = parseFloat(expected);
 
             /**
@@ -1228,11 +1235,11 @@ export class POS {
         if ( taxType === 'exclusive' ) {
             order.total     =   +(
                 ( order.subtotal + ( order.shipping ||0) + tax_value ) - order.discount - order.total_coupons
-            ).toFixed( ns.currency.ns_currency_precision );
+            );
         } else {
             order.total     =   +(
                 ( order.subtotal + ( order.shipping ||0) ) - order.discount - order.total_coupons
-            ).toFixed( ns.currency.ns_currency_precision );
+            );
         }
 
         this.order.next(order);

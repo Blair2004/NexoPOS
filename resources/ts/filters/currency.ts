@@ -39,8 +39,7 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
 });
 
 const nsRawCurrency     =   ( value ) => {
-    const numeralFormat = `0.${precision}`;
-    return parseFloat( NumeralJS( value ).format( numeralFormat ) );
+    return currency( value, { precision: parseInt( ns.currency.ns_currency_precision ) }).value
 }
 
 export { nsCurrency, nsRawCurrency };

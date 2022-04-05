@@ -606,15 +606,24 @@ class ProductService
         }
     }
 
+    public function refreshProduct( Product $product )
+    {
+        $product->unit_quantities->each( function( $unitQuantity ) {
+            $this->refreshPrices( $unitQuantity );
+        });
+    }
+
     /**
      * refresh the price for a specific product
      * @param ProductUnitQuantity instance of the product
      * @return array response of the operation
-     * @deprecated
      */
-    public function refreshPrices( ProductUnitQuantity $product )
+    public function refreshPrices( ProductUnitQuantity $productUnitQuantity )
     {
-        return $this->taxService->computeTax( $product, $product->tax_group_id ?? null );
+        $taxGroupId     =   $productUnitQuantity->product->tax_group_id;
+        $taxType        =   $productUnitQuantity->product->tax_type;
+        
+        return $this->taxService->computeTax( $productUnitQuantity, $taxGroupId ?? null, $taxType );
     }
 
     /**

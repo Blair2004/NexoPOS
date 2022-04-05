@@ -13,6 +13,7 @@ use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Services\Helper;
+use App\Services\ProductService;
 use App\Services\TaxService;
 
 class ProductCrud extends CrudService
@@ -715,6 +716,7 @@ class ProductCrud extends CrudService
          * and supervisor.
          */
         $user   =   app()->make( Users::class );
+
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
@@ -738,6 +740,31 @@ class ProductCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+            return $status;
+        }
+
+        if ( $request->input( 'action' ) === 'bulk_recompute' ) {
+            $status     =   [
+                'success'   =>  0,
+                'failed'    =>  0
+            ];
+
+            /**
+             * @var ProductService $productService
+             */
+            $productService     =   app()->make( ProductService::class );
+            
+            foreach( $request->input( 'entries' ) as $id ) {
+                $entity     =   $this->model::find( $id );
+
+                if ( $entity instanceof Product ) {
+                    $productService->refreshProduct( $entity );
+                    $status[ 'success' ]++;
+                } else {
+                    $status[ 'failed' ]++;
+                }
+            }
+
             return $status;
         }
 
@@ -768,6 +795,13 @@ class ProductCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'confirm'       =>  __( 'Would you like to delete selected entries ?' ),
+                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' =>  $this->namespace
+                ])
+            ], [
+                'label'         =>  __( 'Recompute' ),
+                'identifier'    =>  'bulk_recompute',
+                'confirm'       =>  __( 'Would you like to recompute the products ?' ),
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
                     'namespace' =>  $this->namespace
                 ])

@@ -191,9 +191,22 @@ class CurrencyService
         return $this->getRaw( $this->value );
     }
 
-    public function getRaw( $value = null )
+    public function getRaw( $value = null, $precision = true )
     {
-        return $this->bcround( ( $value === null ? $this->value : $value ), $this->decimal_precision );
+        return $this->newRound( $value === null ? $this->value : $value );
+    }
+
+    public function newRound( $value, $precision = 5 )
+    {
+        $fix = "5";
+
+        for ( $i=0; $i < $precision ; $i++ ) {
+            $fix = "0$fix";
+        }
+
+        $value = bcadd( $value, "0.$fix", $precision + 1 );
+        
+        return  bcdiv( $value, "1.0", $precision );
     }
 
     /**

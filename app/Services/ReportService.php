@@ -842,6 +842,7 @@ class ReportService
                 'producs_taxes'     =>  $order->products->sum( 'tax_value' ),
                 'total'             =>  $order->total - $order->products->sum( 'tax_value' ),
                 'subtotal'          =>  $order->subtotal,
+                'quantity'          =>  $order->products->sum( 'quantity' )
             ];
         });
 
@@ -910,6 +911,17 @@ class ReportService
         $categories     =   ProductCategory::whereIn( 'id', $unitIds )
             ->orderBy( $orderAttribute, $orderDirection )
             ->get();
+
+        /**
+         * We'll add uncategorized products.
+         * This groups products that aren't assigned to a category
+         * Like quick products
+         */
+        $uncategorized          =   new stdClass;
+        $uncategorized->name    =   __( 'Uncategorized' );
+        $uncategorized->id      =   0;
+
+        $categories->push( $uncategorized );
 
         /**
          * That will sum all the total prices
@@ -1025,8 +1037,8 @@ class ReportService
     {
         $date           =   ns()->date->copy();
         $date->year     =   $year;
-        $startOfYear    =   $date->startOfYear();
-        $endOfYear      =   $date->endOfYear();
+        $startOfYear    =   $date->copy()->startOfYear();
+        $endOfYear      =   $date->copy()->endOfYear();
 
         while( ! $startOfYear->isSameMonth( $endOfYear ) ) {
             $this->computeDashboardMonth( $startOfYear->copy() );
