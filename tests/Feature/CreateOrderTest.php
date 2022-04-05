@@ -27,6 +27,16 @@ class CreateOrderTest extends TestCase
         }
     }
 
+    /**
+     * Will only make order using
+     * the customer balance
+     */
+    public function testOrderCreatedForCustomer()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateOrderPaidWithCustomerBalance();
+    }
+
     public function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {

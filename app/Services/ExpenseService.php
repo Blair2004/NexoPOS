@@ -365,16 +365,17 @@ class ExpenseService
                 event( new CashFlowHistoryAfterCreatedEvent( $history ) );
             });
         } else {
-            $history                            =   new CashFlow;
-            $history->value                     =   $expense->value;
-            $history->expense_id                =   $expense->id;
-            $history->operation                 =   $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
-            $history->author                    =   $expense->author;
-            $history->name                      =   $expense->name;
-            $history->procurement_id            =   $expense->procurement_id ?? 0; // if the cash flow is created from a procurement
-            $history->order_id                  =   $expense->order_id ?? 0; // if the cash flow is created from a refund
-            $history->register_history_id       =   $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
-            $history->expense_category_id       =   $expense->category->id;
+            $history                                =   new CashFlow;
+            $history->value                         =   $expense->value;
+            $history->expense_id                    =   $expense->id;
+            $history->operation                     =   $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
+            $history->author                        =   $expense->author;
+            $history->name                          =   $expense->name;
+            $history->procurement_id                =   $expense->procurement_id ?? 0; // if the cash flow is created from a procurement
+            $history->order_id                      =   $expense->order_id ?? 0; // if the cash flow is created from a refund
+            $history->register_history_id           =   $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
+            $history->customer_account_history_id   =   $expense->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
+            $history->expense_category_id           =   $expense->category->id;
 
             /**
              * Just in case we want to set the CashFlow as having been
@@ -787,6 +788,7 @@ class ExpenseService
         $histories  =   CustomerAccountHistory::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
+
         $histories->each( function( $history ) {
             $this->handleCustomerCredit( $history );
         });
@@ -848,7 +850,6 @@ class ExpenseService
         if ( in_array( $customerHistory->operation, [
             CustomerAccountHistory::OPERATION_ADD,
             CustomerAccountHistory::OPERATION_REFUND,
-            CustomerAccountHistory::OPERATION_PAYMENT,
         ]) ) {
             $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_CREDIT );   
 
@@ -865,6 +866,28 @@ class ExpenseService
             $expense->updated_at                    =   $customerHistory->updated_at;
 
             $this->recordCashFlowHistory( $expense );
+        } else if ( in_array(
+            $customerHistory->operation, [
+                CustomerAccountHistory::OPERATION_PAYMENT,
+            ]
+        ) ) {
+            $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );   
+    
+            $expense                                =   new Expense;
+            $expense->value                         =   $customerHistory->amount;
+            $expense->active                        =   true;
+            $expense->operation                     =   CashFlow::OPERATION_DEBIT;
+            $expense->author                        =   Auth::id();
+            $expense->customer_account_history_id   =   $customerHistory->id;
+            $expense->order_id                      =   $customerHistory->order_id;
+            $expense->name                          =   sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
+            $expense->id                            =   0; // this is not assigned to an existing expense
+            $expense->category                      =   $expenseCategory;
+            $expense->created_at                    =   $customerHistory->created_at;
+            $expense->updated_at                    =   $customerHistory->updated_at;
+
+            $this->recordCashFlowHistory( $expense );
+
         } else if ( in_array(
             $customerHistory->operation, [
                 CustomerAccountHistory::OPERATION_DEDUCT,

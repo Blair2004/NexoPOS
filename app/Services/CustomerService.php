@@ -263,7 +263,7 @@ class CustomerService
      * @param int amount
      * @return array
      */
-    public function saveTransaction( Customer $customer, $operation, $amount, $description = '' )
+    public function saveTransaction( Customer $customer, $operation, $amount, $description = '', $details = [] )
     {
         if ( in_array( $operation, [ 
             CustomerAccountHistory::OPERATION_DEDUCT,
@@ -282,6 +282,17 @@ class CustomerService
         $customerAccount->amount        =   $amount;
         $customerAccount->description   =   $description;
         $customerAccount->author        =   Auth::id();
+
+        /**
+         * We can now optionally provide
+         * additional details while storing the customer history
+         */
+        if ( ! empty( $details ) ) {
+            foreach( $details as $key => $value ) {
+                $customerAccount->$key  =   $value;
+            }
+        }
+
         $customerAccount->save();
 
         event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccount ) );

@@ -835,7 +835,10 @@ class OrdersService
             $this->customerService->saveTransaction( 
                 $order->customer, 
                 CustomerAccountHistory::OPERATION_PAYMENT, 
-                $payment[ 'value' ] 
+                $payment[ 'value' ],
+                __( 'Order Payment' ), [
+                    'order_id'  =>  $order->id
+                ]
             );
         }
 
@@ -1698,7 +1701,9 @@ class OrdersService
                 $order->customer,
                 CustomerAccountHistory::OPERATION_REFUND,
                 $fields[ 'total' ],
-                __( 'The current credit has been issued from a refund.' )
+                __( 'The current credit has been issued from a refund.' ), [
+                    'order_id'  =>  $order->id
+                ]
             );
         }
 
@@ -2332,17 +2337,6 @@ class OrdersService
             'failed'        =>  __( 'Failed' ),
             'not-available' =>  __( 'Not Available' ),
         ];
-    }
-
-    /**
-     * Return a specific delivery status
-     * @return array $statuses
-     */
-    public function getDeliveryStatus( $status = null )
-    {
-        $data   =   $this->getDeliveryStatuses();
-
-        return $data[ $status ] ?? __( 'Unknown' );
     }
 
     /**
