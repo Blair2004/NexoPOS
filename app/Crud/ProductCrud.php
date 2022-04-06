@@ -44,8 +44,8 @@ class ProductCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
-        [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
         'leftJoin'  =>  [
+            [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
             [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
             [ 'nexopos_taxes_groups as taxes_groups', 'nexopos_products.tax_group_id', '=', 'taxes_groups.id' ],
         ],
@@ -658,6 +658,7 @@ class ProductCrud extends CrudService
         $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
+        $entry->category_name       =   $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
