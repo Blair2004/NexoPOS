@@ -112,7 +112,7 @@ class HoldOrderCrud extends CrudService
         $this->bulkActions  =   [];
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         $query->orderBy( 'created_at', 'desc' );
         $query->where( 'payment_status', 'hold' );
@@ -142,7 +142,7 @@ class HoldOrderCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -512,7 +512,7 @@ class HoldOrderCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      => ns()->url( 'dashboard/' . 'ns.hold-orders' ),
@@ -527,7 +527,7 @@ class HoldOrderCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return [];
     }

@@ -137,7 +137,7 @@ class RegisterHistoryCrud extends CrudService
         ];
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         if ( ! empty( request()->query( 'register_id' ) ) ) {
             $query->where( 'register_id', request()->query( 'register_id' ) );
@@ -150,7 +150,7 @@ class RegisterHistoryCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -492,7 +492,7 @@ class RegisterHistoryCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . 'registers-history' ),
@@ -507,7 +507,7 @@ class RegisterHistoryCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

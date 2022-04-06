@@ -112,7 +112,7 @@ class ProductUnitQuantitiesCrud extends CrudService
         ];
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         if ( request()->query( 'product_id' ) ) {
             $query->where( 'product_id', request()->query( 'product_id' ) );
@@ -123,7 +123,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -398,7 +398,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
@@ -413,7 +413,7 @@ class ProductUnitQuantitiesCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

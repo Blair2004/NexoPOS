@@ -126,7 +126,7 @@ class CashFlowHistoryCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -207,7 +207,7 @@ class CashFlowHistoryCrud extends CrudService
         return $request;
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         $query->orderBy( 'id', 'desc' );
     }
@@ -427,7 +427,7 @@ class CashFlowHistoryCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      => ns()->url( 'dashboard/' . 'cash-flow/history' ),
@@ -442,7 +442,7 @@ class CashFlowHistoryCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

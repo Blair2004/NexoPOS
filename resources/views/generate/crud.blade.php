@@ -126,7 +126,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Determine if the options column should display
      * before the crud columns
      */
-    private $prependOptions     =   false;
+    protected $prependOptions     =   false;
 
     /**
      * Define Constructor
@@ -163,7 +163,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Check whether a feature is enabled
      * @return boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -404,7 +404,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * get Links
      * @return array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . '{{ strtolower( trim( $route_name ) ) }}' ),
@@ -419,7 +419,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
      * Get Bulk actions
      * @return array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

@@ -9,33 +9,33 @@ use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
-use App\Models\OrderInstalment;
+use App\Models\ProductHistory;
 
-class OrderInstalmentCrud extends CrudService
+class GlobalProductHistoryCrud extends CrudService
 {
     /**
      * define the base table
      * @param  string
      */
-    protected $table      =   'nexopos_orders_instalments';
+    protected $table      =   'nexopos_products_histories';
 
     /**
      * default slug
      * @param  string
      */
-    protected $slug   =   'orders/instalments';
+    protected $slug   =   '/products/history';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.orders-instalments';
+    protected $namespace  =   'ns.global-products-history';
 
     /**
      * Model Used
      * @param  string
      */
-    protected $model      =   OrderInstalment::class;
+    protected $model      =   ProductHistory::class;
 
     /**
      * Define permissions
@@ -44,7 +44,7 @@ class OrderInstalmentCrud extends CrudService
     protected $permissions  =   [
         'create'    =>  false,
         'read'      =>  true,
-        'update'    =>  true,
+        'update'    =>  false,
         'delete'    =>  false,
     ];
 
@@ -54,8 +54,13 @@ class OrderInstalmentCrud extends CrudService
      * @param  array
      */
     public $relations   =  [
-        [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_products_histories.author' ],
+        [ 'nexopos_products as product', 'product.id', '=', 'nexopos_products_histories.product_id' ],
+        [ 'nexopos_units as unit', 'unit.id', '=', 'nexopos_products_histories.unit_id' ],
+        'leftJoin'  =>  [
+            [ 'nexopos_procurements as procurement', 'procurement.id', '=', 'nexopos_products_histories.procurement_id' ],
+            [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_products_histories.order_id' ],
+        ]
     ];
 
     /**
@@ -75,9 +80,7 @@ class OrderInstalmentCrud extends CrudService
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
-        'customer'      =>  [ 'name' ]
-    ];
+    public $pick        =   [];
 
     /**
      * Define where statement
@@ -94,7 +97,24 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    
+    /**
+     * If few fields should only be filled
+     * those should be listed here.
+     */
+    public $fillable    =   [];
+
+    /**
+     * If fields should be ignored during saving
+     * those fields should be listed here
+     */
+    public $skippable   =   [];
+
+    /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   false;
 
     /**
      * Define Constructor
@@ -115,15 +135,15 @@ class OrderInstalmentCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Order Instalments List' ),
-            'list_description'      =>  __( 'Display all Order Instalments.' ),
-            'no_entry'              =>  __( 'No Order Instalment has been registered' ),
-            'create_new'            =>  __( 'Add a new Order Instalment' ),
-            'create_title'          =>  __( 'Create a new Order Instalment' ),
-            'create_description'    =>  __( 'Register a new Order Instalment and save it.' ),
-            'edit_title'            =>  __( 'Edit Order Instalment' ),
-            'edit_description'      =>  __( 'Modify  Order Instalment.' ),
-            'back_to_list'          =>  __( 'Return to Order Instalment' ),
+            'list_title'            =>  __( 'Product Histories' ),
+            'list_description'      =>  __( 'Display all product stock flow.' ),
+            'no_entry'              =>  __( 'No products stock flow has been registered' ),
+            'create_new'            =>  __( 'Add a new products stock flow' ),
+            'create_title'          =>  __( 'Create a new products stock flow' ),
+            'create_description'    =>  __( 'Register a new products stock flow and save it.' ),
+            'edit_title'            =>  __( 'Edit products stock flow' ),
+            'edit_description'      =>  __( 'Modify  Globalproducthistorycrud.' ),
+            'back_to_list'          =>  __( 'Return to Product Histories' ),
         ];
     }
 
@@ -144,44 +164,7 @@ class OrderInstalmentCrud extends CrudService
     public function getForm( $entry = null ) 
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                // 'name'          =>  'name',
-                // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
-            ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
-                        [
-                            'type'  =>  'text',
-                            'name'  =>  'amount',
-                            'label' =>  __( 'Amount' ),
-                            'value' =>  $entry->amount ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'date',
-                            'label' =>  __( 'Date' ),
-                            'value' =>  $entry->date ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'order_id',
-                            'label' =>  __( 'Order Id' ),
-                            'value' =>  $entry->order_id ?? '',
-                        ], [
-                            'type'  =>  'text',
-                            'name'  =>  'paid',
-                            'label' =>  __( 'Paid' ),
-                            'value' =>  $entry->paid ?? '',
-                        ],                     ]
-                ]
-            ]
+           // ...
         ];
     }
 
@@ -200,7 +183,7 @@ class OrderInstalmentCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, OrderInstalment $entry )
+    public function filterPutInputs( $inputs, ProductHistory $entry )
     {
         return $inputs;
     }
@@ -224,10 +207,10 @@ class OrderInstalmentCrud extends CrudService
     /**
      * After saving a record
      * @param  Request $request
-     * @param  OrderInstalment $entry
+     * @param  ProductHistory $entry
      * @return  void
      */
-    public function afterPost( $request, OrderInstalment $entry )
+    public function afterPost( $request, ProductHistory $entry )
     {
         return $request;
     }
@@ -278,7 +261,7 @@ class OrderInstalmentCrud extends CrudService
      * @return  void
      */
     public function beforeDelete( $namespace, $id, $model ) {
-        if ( $namespace == 'ns.orders-instalments' ) {
+        if ( $namespace == 'ns.global-products-history' ) {
             /**
              *  Perform an action before deleting an entry
              *  In case something wrong, this response can be returned
@@ -302,9 +285,16 @@ class OrderInstalmentCrud extends CrudService
      */
     public function getColumns() {
         return [
-            'customer_name'  =>  [
-                'label'  =>  __( 'Customer' ),
+            'product_name'  =>  [
+                'label'  =>  __( 'Product' ),
                 '$direction'    =>  '',
+                'width'         =>  '300px',
+                '$sort'         =>  false
+            ],
+            'procurement_name'  =>  [
+                'label'  =>  __( 'Procurement' ),
+                '$direction'    =>  '',
+                'width'         =>  '200px',
                 '$sort'         =>  false
             ],
             'order_code'  =>  [
@@ -312,18 +302,43 @@ class OrderInstalmentCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'amount'  =>  [
-                'label'  =>  __( 'Amount' ),
+            'operation_type'  =>  [
+                'label'  =>  __( 'Operation Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'date'  =>  [
-                'label'  =>  __( 'Date' ),
+            'unit_name'  =>  [
+                'label'  =>  __( 'Unit' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
-            'paid'  =>  [
-                'label'  =>  __( 'Paid' ),
+            'before_quantity'  =>  [
+                'label'  =>  __( 'Initial Quantity' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'quantity'  =>  [
+                'label'  =>  __( 'Quantity' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'after_quantity'  =>  [
+                'label'  =>  __( 'New Quantity' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'total_price'  =>  [
+                'label'  =>  __( 'Total Price' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'user_username'  =>  [
+                'label'  =>  __( 'Author' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'created_at'  =>  [
+                'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -339,22 +354,50 @@ class OrderInstalmentCrud extends CrudService
         $entry->{ '$checked' }  =   false;
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
-        $entry->amount          =   ( string ) ns()->currency->define( $entry->amount );
-        $entry->{ '$cssClass' } =   $entry->paid == 0 ? 'error' : 'success';
-        $entry->paid            =   ( bool ) $entry->paid ? __( 'Yes' ) : __( 'No' );
-        $entry->date            =   ns()->date->getFormatted( $entry->date );
+
+        $entry->procurement_name    =   $entry->procurement_name ?: __( 'N/A' );
+        $entry->order_code          =   $entry->order_code ?: __( 'N/A' );
+        $entry->total_price         =   ns()->currency->fresh( $entry->total_price )->format();
+
+        switch( $entry->operation_type ) {
+            case ProductHistory::ACTION_ADDED : 
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN : 
+            case ProductHistory::ACTION_RETURNED : 
+            case ProductHistory::ACTION_STOCKED : 
+            case ProductHistory::ACTION_TRANSFER_CANCELED : 
+            case ProductHistory::ACTION_TRANSFER_IN : 
+            case ProductHistory::ACTION_VOID_RETURN : 
+                $entry->{ '$cssClass' }             =   'info border text-sm';
+            break;
+            default: 
+                $entry->{ '$cssClass' }             =   'success border text-sm';
+            break;
+        }
+
+        switch( $entry->operation_type ) {
+            case ProductHistory::ACTION_ADDED: $entry->operation_type = __( 'Added' ); break;
+            case ProductHistory::ACTION_ADJUSTMENT_RETURN: $entry->operation_type = __( 'Stock Return' ); break;
+            case ProductHistory::ACTION_ADJUSTMENT_SALE: $entry->operation_type = __( 'Sale Adjustment' ); break;
+            case ProductHistory::ACTION_DEFECTIVE: $entry->operation_type = __( 'Defective' ); break;
+            case ProductHistory::ACTION_DELETED: $entry->operation_type = __( 'Deleted' ); break;
+            case ProductHistory::ACTION_LOST: $entry->operation_type = __( 'Lost' ); break;
+            case ProductHistory::ACTION_REMOVED: $entry->operation_type = __( 'Removed' ); break;
+            case ProductHistory::ACTION_RETURNED: $entry->operation_type = __( 'Stock Return' ); break;
+            case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' ); break;
+            case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' ); break;
+            case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' ); break;
+            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Trasnfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Trasnfer' ); break;
+            case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' ); break;
+        }
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-            ], [
                 'label'     =>  __( 'Delete' ),
                 'namespace' =>  'delete',
                 'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
+                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
                 'confirm'   =>  [
                     'message'  =>  __( 'Would you like to delete this ?' ),
                 ]
@@ -362,6 +405,11 @@ class OrderInstalmentCrud extends CrudService
         ];
 
         return $entry;
+    }
+
+    public function hook( $query ): void
+    {
+        $query->orderBy( 'id', 'desc' );
     }
 
     
@@ -395,7 +443,7 @@ class OrderInstalmentCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof OrderInstalment ) {
+                if ( $entity instanceof ProductHistory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -415,11 +463,11 @@ class OrderInstalmentCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'orders/instalments' ),
-            'create'    =>  'javascript:void(0)',
-            'edit'      =>  ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
+            'list'      =>  ns()->url( 'dashboard/' . '/products/history' ),
+            'create'    =>  ns()->url( 'dashboard/' . '/products/history/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . '/products/history/edit/' ),
+            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
+            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
         ];
     }
 

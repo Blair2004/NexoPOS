@@ -1,5 +1,7 @@
 <?php
 namespace App\Crud;
+
+use App\Models\AccountType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
@@ -31,7 +33,7 @@ class ExpenseCategoryCrud extends CrudService
     /**
      * Model Used
      */
-    protected $model      =   ExpenseCategory::class;
+    protected $model      =   AccountType::class;
 
     /**
      * Adding relation
@@ -99,7 +101,7 @@ class ExpenseCategoryCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -165,7 +167,7 @@ class ExpenseCategoryCrud extends CrudService
      * @param  array of fields
      * @return  array of fields
      */
-    public function filterPutInputs( $inputs, ExpenseCategory $entry )
+    public function filterPutInputs( $inputs, AccountType $entry )
     {
         return $inputs;
     }
@@ -184,10 +186,10 @@ class ExpenseCategoryCrud extends CrudService
     /**
      * After saving a record
      * @param  Request $request
-     * @param  ExpenseCategory $entry
+     * @param  AccountType $entry
      * @return  void
      */
-    public function afterPost( $request, ExpenseCategory $entry )
+    public function afterPost( $request, AccountType $entry )
     {
         return $request;
     }
@@ -351,7 +353,7 @@ class ExpenseCategoryCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof ExpenseCategory ) {
+                if ( $entity instanceof AccountType ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
@@ -368,7 +370,7 @@ class ExpenseCategoryCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      => ns()->url( 'dashboard/' . 'accounting/accounts' ),
@@ -383,7 +385,7 @@ class ExpenseCategoryCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

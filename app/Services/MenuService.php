@@ -230,6 +230,11 @@ class MenuService
                         'permissions'       =>  [ 'nexopos.make.products-adjustments' ],
                         'href'              =>  ns()->url( '/dashboard/products/stock-adjustment' )
                     ],
+                    'product-history'       =>  [
+                        'label'             =>  __( 'Stock Flow Records' ),
+                        'permissions'       =>  [ 'nexopos.read.products' ],
+                        'href'              =>  ns()->url( '/dashboard/products/stock-flow-records' )
+                    ]
                 ]
             ], 
             'taxes'     =>  [

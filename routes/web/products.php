@@ -15,3 +15,4 @@ Route::get( '/products/categories', [ CategoryController::class, 'listCategories
 Route::get( '/products/categories/create', [ CategoryController::class, 'createCategory' ]);
 Route::get( '/products/categories/edit/{category}', [ CategoryController::class, 'editCategory' ]);
 Route::get( '/products/categories/compute-products/{category}', [ CategoryController::class, 'computeCategoryProducts' ]);
+Route::get( '/products/stock-flow-records', [ CategoryController::class, 'showStockFlowCrud' ]);

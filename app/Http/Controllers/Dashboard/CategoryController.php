@@ -7,6 +7,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Crud\GlobalProductHistoryCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
@@ -272,6 +273,15 @@ class CategoryController extends DashboardController
                 ->displayOnPOS()
                 ->get(),
         ];
+    }
+
+    /**
+     * Will display the actual stock flow history
+     * @return array crud table.
+     */
+    public function showStockFlowCrud()
+    {
+        return GlobalProductHistoryCrud::table();
     }
 }
 

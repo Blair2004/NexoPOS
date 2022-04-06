@@ -130,7 +130,7 @@ class CustomerRewardCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -315,9 +315,9 @@ class CustomerRewardCrud extends CrudService
         ];
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
-        return $query->where( 'customer_id', request()->query( 'customer_id' ) );
+        $query->where( 'customer_id', request()->query( 'customer_id' ) );
     }
 
     /**
@@ -404,7 +404,7 @@ class CustomerRewardCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      =>  'javascript:void(0)',
@@ -419,7 +419,7 @@ class CustomerRewardCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

@@ -48,8 +48,8 @@ class ProductCrud extends CrudService
      */
     public $relations   =  [
         [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
-        [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
         'leftJoin'  =>  [
+            [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
             [ 'nexopos_products as parent', 'nexopos_products.parent_id', '=', 'parent.id' ],
             [ 'nexopos_taxes_groups as taxes_groups', 'nexopos_products.tax_group_id', '=', 'taxes_groups.id' ],
         ],
@@ -132,7 +132,7 @@ class ProductCrud extends CrudService
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
@@ -662,6 +662,7 @@ class ProductCrud extends CrudService
         $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
+        $entry->category_name       =   $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
         $entry->{'$actions'}    =   [
             [
@@ -702,9 +703,9 @@ class ProductCrud extends CrudService
         return $entry;
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
-        return $query->orderBy( 'updated_at', 'desc' );
+        $query->orderBy( 'updated_at', 'desc' );
     }
 
     
@@ -753,7 +754,7 @@ class ProductCrud extends CrudService
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      =>  'ns.products',
@@ -766,7 +767,7 @@ class ProductCrud extends CrudService
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\View\View as ContractView;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -131,7 +133,7 @@ class CrudService
      * @param mixed $id
      * @return array as a crud response
      */
-    public function submitPreparedRequest( $namespace, $inputs, $id = null )
+    public function submitPreparedRequest( $namespace, $inputs, $id = null ): array
     {
         $crudInstance   =   $this->getCrudInstance( $namespace );
         $model          =   $id !== null ? $crudInstance->getModel()::find( $id ) : null;
@@ -140,7 +142,14 @@ class CrudService
         return $this->submitRequest( $namespace, $data, $id );
     }
 
-    public function submitRequest( $namespace, $inputs, $id = null )
+    /**
+     * Submit a prepared request to a crud instance
+     * @param string $namespace
+     * @param array $inputs
+     * @param int|null $id
+     * @return array $response
+     */
+    public function submitRequest( $namespace, $inputs, $id = null ): array
     {
         $resource   =   $this->getCrudInstance( $namespace );
         $model      =   $resource->getModel();
@@ -313,7 +322,7 @@ class CrudService
      * @param string feature name
      * @return boolean/null
      */
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool| null
     {
         return @$this->features[ $feature ];
     }
@@ -322,7 +331,7 @@ class CrudService
      * Get namespace
      * @return string current namespace
      */
-    public function getNamespace()
+    public function getNamespace(): string
     {
         return $this->namespace;
     }
@@ -332,7 +341,7 @@ class CrudService
      * Get Bulk Actions
      * @return array of bulk actions
      */
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return $this->bulkActions;
     }
@@ -341,15 +350,19 @@ class CrudService
      * Will return picked array
      * @return array
      */
-    public function getPicked()
+    public function getPicked(): array
     {
         return $this->pick ?? [];
     }
 
     /**
      * Will handle the definition operator
+     * @param Builder $query
+     * @param array $definition
+     * @param array $searchKeyValue
+     * @return void
      */
-    public function handleDefinitionOperator( $query, $definition, $searchKeyValue )
+    public function handleDefinitionOperator( $query, $definition, $searchKeyValue ): void
     {
         extract( $searchKeyValue );
         /**
@@ -368,12 +381,12 @@ class CrudService
      * Returns the available query filters
      * @return array
      */
-    public function getQueryFilters()
+    public function getQueryFilters(): array
     {
         return $this->queryFilters;
     }
 
-    public function __extractTable( $relation )
+    public function __extractTable( $relation ): string
     {
         $parts  =   explode( ' as ', $relation[0] );
         if ( count( $parts ) === 2 ) {
@@ -386,9 +399,9 @@ class CrudService
     /**
      * Will return mutated relation
      * for the Crud instance
-     * @return arrray $relations
+     * @return array $relations
      */
-    public function getRelations()
+    public function getRelations(): array
     {
         return Hook::filter( self::method( 'getRelations' ), $this->relations );
     }
@@ -398,22 +411,23 @@ class CrudService
      * before the crud columns or after the crud columns. This method is defined
      * for allowing other module to override this behavior.
      */
-    public function getPrependOptions()
+    public function getPrependOptions(): bool
     {
         return $this->prependOptions;
     }
 
     /**
-     * get Entries
-     * @param crud config
-     * @return entries
+     * Get crud instance entries.
+     * @param array config
+     * @return array entries
      */
-    public function getEntries( $config = [] )
+    public function getEntries( $config = [] ): array
     {
         $table              =   $this->hookTableName( $this->table );
         $request            =   app()->make( Request::class );
         $query              =   DB::table( $table );
         $columnsLongName    =   [];
+        
         /**
          * Let's loop relation if they exists
          */
@@ -541,6 +555,9 @@ class CrudService
                 }
             }
 
+            /**
+             * @var Builder
+             */
             $query          =   call_user_func_array([ $query, 'select' ], $select );
 
             foreach( $this->getRelations() as $junction => $relation ) {
@@ -783,12 +800,12 @@ class CrudService
         return $entries;
     }
 
-    protected function hookTableName( $tableName )
+    protected function hookTableName( $tableName ): string
     {
         return Hook::filter( 'ns-model-table', $tableName );
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         //
     }
@@ -797,7 +814,7 @@ class CrudService
      * Get action
      * @return array of actions
      */
-    public function getActions()
+    public function getActions(): array
     {
         return $this->actions;
     }
@@ -806,7 +823,7 @@ class CrudService
      * Get link
      * @return array of link
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return $this->links;
     }
@@ -815,7 +832,7 @@ class CrudService
      * Get route
      * @return string 
      */
-    public function getMainRoute()
+    public function getMainRoute(): string
     {
         return $this->mainRoute;
     }
@@ -824,7 +841,7 @@ class CrudService
      * Get Model
      * @return current model
      */
-    public function getModel()
+    public function getModel(): string
     {
         return $this->model;
     }
@@ -833,7 +850,7 @@ class CrudService
      * Get Fillable fields
      * @return array of string as field name
      */
-    public function getFillable()
+    public function getFillable(): array
     {
         return $this->fillable;
     }
@@ -860,9 +877,9 @@ class CrudService
     /**
      * Extracts Crud validation from a crud resource
      * @param Crud $resource
-     * @return Array
+     * @return arra
      */
-    public function extractCrudValidation( $crud, $model = null )
+    public function extractCrudValidation( $crud, $model = null ): array
     {
         $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
 
@@ -894,8 +911,9 @@ class CrudService
      * @param CrudService
      * @param array $fields
      * @param Model|null $model
+     * @return array
      */
-    public function getFlatForm( $crud, $fields, $model = null )
+    public function getFlatForm( $crud, $fields, $model = null ): array
     {
         $form       =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
 
@@ -983,7 +1001,7 @@ class CrudService
      * @param array
      * @return array
      */
-    public function isolateArrayRules( $arrayRules, $parentKey = '' )
+    public function isolateArrayRules( $arrayRules, $parentKey = '' ): array
     {
         $rules      =   [];
 
@@ -1000,7 +1018,7 @@ class CrudService
         return $rules;
     }
 
-    public static function table( $config = [] )
+    public static function table( $config = [] ): ContractView
     {
         $className  =   get_called_class();
         $instance   =   new $className();
