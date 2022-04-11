@@ -64,12 +64,12 @@ class CustomerOrderCrud extends OrderCrud
      * Check whether a feature is enabled
      * @return  boolean
     **/
-    public function isEnabled( $feature )
+    public function isEnabled( $feature ): bool
     {
         return false; // by default
     }
 
-    public function hook( $query )
+    public function hook( $query ): void
     {
         if ( empty( request()->query( 'direction' ) ) ) {
             $query->orderBy( 'id', 'desc' );
@@ -407,7 +407,7 @@ class CustomerOrderCrud extends OrderCrud
      * get Links
      * @return  array of links
      */
-    public function getLinks()
+    public function getLinks(): array
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . 'dashboard/customers/orders' ),
@@ -422,7 +422,7 @@ class CustomerOrderCrud extends OrderCrud
      * Get Bulk actions
      * @return  array of actions
     **/
-    public function getBulkActions()
+    public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [

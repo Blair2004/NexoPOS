@@ -1,15 +1,11 @@
 <?php
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
 use App\Models\ProcurementProduct;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\ProviderProduct;
 
 class ProviderProductsCrud extends CrudService
@@ -406,7 +402,7 @@ class ProviderProductsCrud extends CrudService
 
             foreach ( $request->input( 'entries' ) as $id ) {
                 $entity     =   $this->model::find( $id );
-                if ( $entity instanceof ProviderProduct ) {
+                if ( $entity instanceof ProcurementProduct ) {
                     $entity->delete();
                     $status[ 'success' ]++;
                 } else {
