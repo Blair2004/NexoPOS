@@ -53,7 +53,7 @@ export default {
             });
         });
 
-        nsHooks.doAction( 'ns-pos-payment-loaded', this );
+        nsHooks.doAction( 'ns-pos-payment-mounted', this );
     },
     watch: {
         activePayment( value ) {
