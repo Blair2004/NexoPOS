@@ -63,7 +63,7 @@ class CashRegistersService
             );
         }
 
-        if ( ( float ) $register->balance !== ( float ) $amount ) {            
+        if ( ns()->currency->getRounded( $register->balance ) !== ns()->currency->getRounded( $amount ) ) {            
             throw new NotAllowedException( 
                 sprintf( 
                     __( 'The specified amount %s doesn\'t match the cash register balance %s.' ),

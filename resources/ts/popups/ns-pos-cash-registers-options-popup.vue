@@ -73,13 +73,14 @@ export default {
             }
         },
 
-        async cashIn() {
+        async cashIn( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Cash In' ),
                         action: 'register-cash-in',
                         identifier: 'ns.cash-registers-cashing',
+                        register,
                         resolve, 
                         reject
                     })
@@ -98,13 +99,14 @@ export default {
             }
         },
 
-        async cashOut() {
+        async cashOut( register ) {
             try {
                 const response  =   await new Promise( ( resolve, reject ) => {
                     Popup.show( nsPosCashRegistersActionPopupVue, {
                         title: __( 'Cash Out' ),
                         action: 'register-cash-out',
                         identifier: 'ns.cash-registers-cashout',
+                        register,
                         resolve, 
                         reject
                     })
@@ -163,11 +165,11 @@ export default {
                 <i class="las la-sign-out-alt text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Close' ) }}</h3>
             </div>
-            <div @click="cashIn()" class="hover:bg-green-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashIn( register )" class="hover:bg-green-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-plus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash In' ) }}</h3>
             </div>
-            <div @click="cashOut()" class="hover:bg-red-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
+            <div @click="cashOut( register )" class="hover:bg-red-100 border-gray-200 border-r border-b py-4 cursor-pointer px-2 flex items-center justify-center flex-col">
                 <i class="las la-minus-circle text-6xl"></i>
                 <h3 class="text-xl font-bold">{{ __( 'Cash Out' ) }}</h3>
             </div>

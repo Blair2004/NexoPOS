@@ -50,7 +50,7 @@ export default {
                     const action        =   'open';
                     const register_id   =   register.id;
                     const identifier    =   'ns.cash-registers-opening'; // fields identifier
-                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action, register_id })
+                    Popup.show( nsPosCashRegistersActionPopupVue, { resolve, reject, title, identifier, action, register_id, register })
                 });
 
                 this.popupResolver( response );                

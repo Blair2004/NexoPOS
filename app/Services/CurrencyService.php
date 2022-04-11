@@ -191,9 +191,26 @@ class CurrencyService
         return $this->getRaw( $this->value );
     }
 
+    /**
+     * Will return the full Raw value
+     * @param int|float $value
+     * @param bool $precision
+     * @return float
+     */
     public function getRaw( $value = null, $precision = true )
     {
         return $this->newRound( $value === null ? $this->value : $value );
+    }
+
+    /**
+     * Will return the rounded
+     * value for a specific amount
+     * @param int|float $value
+     * @return float
+     */
+    public function getRounded( $value )
+    {
+        return $this->newRound( $value, ns()->option->get( 'ns_currency_precision' ) );
     }
 
     public function newRound( $value, $precision = 5 )
