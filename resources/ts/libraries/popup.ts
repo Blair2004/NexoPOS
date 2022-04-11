@@ -41,6 +41,16 @@ export class Popup {
         return popup;
     }
 
+    private hash() {
+        let text    = "";
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (let i = 0; i < 10; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
+
     async open( component, params = {} ) {
         if ( typeof component === 'function' ) {
             try {
@@ -86,7 +96,7 @@ export class Popup {
 
         const actualLength      =   document.querySelectorAll( '.is-popup' ).length;
 
-        this.container.id                   =   'popup-container-' + actualLength;
+        this.container.id                   =   'popup-container-' + this.hash();
         this.popupSelector                  =   `#${this.container.id}`;
 
         this.popupBody.setAttribute( 'class', 'zoom-out-entrance popup-body' );

@@ -94,7 +94,7 @@ class Handler extends ExceptionHandler
                 ->render( $request );
         }
 
-        if ( env( 'NS_CUSTOM_ERROR_HANDLER', true ) ) {
+        if ( env( 'NS_CUSTOM_ERROR_HANDLER', env( 'APP_DEBUG' ) ) ) {
 
             /**
              * Let's make a better verfication
@@ -110,6 +110,12 @@ class Handler extends ExceptionHandler
                 QueryException::class   =>  [
                     'use'           =>  ExceptionsQueryException::class,
                     'safeMessage'   =>  __( 'A database error has occured' ),
+                    'code'          =>  503
+                ],
+
+                NotFoundAssetsException::class   =>  [
+                    'use'           =>  NotFoundAssetsException::class,
+                    'safeMessage'   =>  __( 'An error occured while loading the assets.' ),
                     'code'          =>  503
                 ],
     
@@ -176,9 +182,8 @@ class Handler extends ExceptionHandler
             if ( ! $exceptionResponse->isEmpty() ) {
                 return $exceptionResponse->first();
             }
-        }        
-
-
+        }       
+        
         return parent::render($request, $exception);
     }
 }

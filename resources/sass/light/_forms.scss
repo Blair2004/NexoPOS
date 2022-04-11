@@ -225,7 +225,7 @@
     
     &.hover-warning:hover, &.warning {
         button, a {
-            @apply bg-warning-primary text-white;
+            @apply bg-warning-tertiary text-white;
 
             span.ns-label {
                 @apply bg-input-background text-warning-secondary;

@@ -2,6 +2,8 @@
 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
 
+
+
 # About NexoPOS 4.x
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
 
@@ -58,7 +60,29 @@ loading page.
 This is caused because during the database setup, the ".env" is updated which cause Laravel to restart the development server and therefore invalidate your session. The way around, is just to refresh the page and you'll end up on the application details section.
 
 ## Contribution Guidelines
-Do you plan to contribute? That's awesome. We don't have that much developer on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. If you just have some ideas, consider posting that as an issue. We'll review the ideas and decide to implement it.
+Do you plan to contribute? That's awesome. We don't have that much developer on it, so we're open to any type of contributions. If you're a developper, you'll start by forking the project and deploying that locally for further tests. Typically, you'll need to build the project (Vue.js) in watch mode. You'll then start by making sure the .env value "NS_ENV" is set to "dev". From there, you can run the following command :
+
+**To install Node.js dependencies**
+```
+npm run install
+```
+
+**To watch the Vue compoment changes (Vue.js)**
+```
+npm run watch
+```
+
+**To watch the project changes (TailwindCSS)**
+```
+npm run css-watch
+```
+
+**To build the project for production, you'll need to only run that command:**
+This will build the JavaScript file and CSS files.
+
+```
+npm run prod
+```
 
 ## Screenshots
 The branch 4.7.x introduce the "Dark Mode" which will make working continuously with NexoPOS easier without hurting sight.

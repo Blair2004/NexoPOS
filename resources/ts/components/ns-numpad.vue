@@ -41,7 +41,7 @@ export default {
         if( this.floating && this.value > 0 ) {
             this.screenValue    =   parseFloat( this.value / this.number );
         } else {
-            this.screenValue    =   0;
+            this.screenValue    =   this.value || 0;
         }
         
         /**

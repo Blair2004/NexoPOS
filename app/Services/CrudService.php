@@ -676,7 +676,7 @@ class CrudService
                 $request->query( 'active' ),
                 $request->query( 'direction' )
             );
-        }
+        } 
 
         /**
          * @since 4.5.5
