@@ -2,9 +2,10 @@
 
 [![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/blair2004/NexoPOS-4x/tree/v4.7.x&refcode=ebdb80cb0ec7)
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/5265663/162700085-40ed00ca-9154-42cb-850a-ccf1c2db2d5d.png" alt="NexoPOS"/>
+</p>
 
-
-# About NexoPOS 4.x
 NexoPOS 4 is a free point of sale system build using Laravel, TailwindCSS, Vue and other open-source resources. This POS System focuses on utilities and functionalities to offer for most businesses all the tools they need to manage better their store. NexoPOS 4.x include a responsive and beautiful dashboard that ease the interaction either on a smartphone, tables or desktops.
 
 ## Demo
@@ -28,8 +29,6 @@ The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecany
 - Access to NexoPOS 4.x marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
-
-Therefore, __No refunds are allowed__ if the customer discovered later on the limited free version.
 
 [
 ![screenshot-www youtube com-2020 10 08-11_24_13](https://user-images.githubusercontent.com/5265663/95446877-d62d5800-0958-11eb-822d-9f5997c0805b.jpg)
