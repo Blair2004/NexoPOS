@@ -68,7 +68,7 @@
     "dayjs": "^1.8.36",
     "jspdf": "^2.1.1",
     "mini-css-extract-plugin": "^2.5.2",
-    "moment": "^2.28.0",
+    "moment": "^2.29.2",
     "normalize.css": "^8.0.1",
     "numeral": "^2.0.6",
     "rx": "^4.1.0",
