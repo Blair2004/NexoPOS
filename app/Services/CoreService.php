@@ -120,7 +120,7 @@ class CoreService
      * @param string $url
      * @return string $url
      */
-    public function url( $url )
+    public function url( $url = null )
     {
         return url( Hook::filter( 'ns-url', $url ) );
     }

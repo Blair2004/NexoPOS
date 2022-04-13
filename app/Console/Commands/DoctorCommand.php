@@ -12,7 +12,7 @@ class DoctorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:doctor {--fix-roles}';
+    protected $signature = 'ns:doctor {--fix-roles} {--fix-users-attributes}';
 
     /**
      * The console command description.
@@ -38,14 +38,19 @@ class DoctorCommand extends Command
      */
     public function handle()
     {
-        if( $this->option( 'fix-roles' ) ) {
-            /**
-             * @var DoctorService
-             */
-            $usersService   =   app()->make( DoctorService::class );
-            $usersService->restoreRoles();
+        /**
+         * @var DoctorService
+         */
+        $doctorService   =   app()->make( DoctorService::class );
 
+        if( $this->option( 'fix-roles' ) ) {
+            $doctorService->restoreRoles();
             return $this->info( 'The roles where correctly restored.' );
+        }
+
+        if ( $this->option( 'fix-users-attributes' ) ) {
+            $doctorService->createUserAttribute();
+            return $this->info( 'The users attributes were fixed.' );
         }
     }
 }

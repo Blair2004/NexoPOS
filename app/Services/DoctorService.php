@@ -2,9 +2,29 @@
 namespace App\Services;
 
 use App\Models\Role;
+use App\Models\User;
+use App\Models\UserAttribute;
 
 class DoctorService
 {
+    public function createUserAttribute(): array
+    {
+        User::get()->each( function( User $user ) {
+            if ( ! $user->attribute instanceof UserAttribute ) {
+                $attribute  =   new UserAttribute;
+                $attribute->user_id     =   $user->id;
+                $attribute->language    =   ns()->option->get( 'ns_store_language', 'en' );
+                $attribute->theme       =   ns()->option->get( 'ns_default_theme', 'dark' );
+                $attribute->save();
+            }
+        });
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The user attributes has been updated.' )
+        ];
+    }
+
     /**
      * Will restore created roles
      */

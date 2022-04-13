@@ -100,7 +100,7 @@ class Handler extends ExceptionHandler
              * Let's make a better verfication
              * to avoid repeating outself.
              */
-            $exceptionResponse  =   collect([
+            $exceptions         =   collect([
                 ModuleVersionMismatchException::class   =>  [
                     'use'           =>  ModuleVersionMismatchException::class,
                     'safeMessage'   =>  null,
@@ -138,17 +138,20 @@ class Handler extends ExceptionHandler
                 ],
     
                 InvalidArgumentException::class         =>  [
-                    'use'           =>  Exception::class,
+                    'use'           =>  CoreException::class,
                     'safeMessage'   =>  null,
                     'code'          =>  503
                 ],
     
                 ErrorException::class         =>  [
-                    'use'           =>  Exception::class,
+                    'use'           =>  CoreException::class,
                     'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details or enable the debugging.' ),
                     'code'          =>  503
                 ]
-            ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+            ]);
+
+            $exceptionResponse  =   $exceptions->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+
                 if ( $exception instanceof $class ) {
                     if ( $request->expectsJson() ) {
                         Log::error( $exception->getMessage() );
@@ -170,13 +173,13 @@ class Handler extends ExceptionHandler
                         }
                     } 
         
-                    return ( new $exceptionConfig[ 'use' ]( 
-                        ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
-                    ) )
-                        ->render( $request );
+                    $message    =   ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage();
+                    $exception  =   new $exceptionConfig[ 'use' ]( $message );
+                    return $exception->render();
                 }
     
                 return false;
+
             })->filter( fn( $exception ) => $exception !== false );
             
             if ( ! $exceptionResponse->isEmpty() ) {

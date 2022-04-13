@@ -195,7 +195,6 @@ class CustomerCrud extends CrudService
                             'name'          =>  'phone',
                             'value'         =>  $entry->phone ?? '',
                             'validation'    =>  collect([
-                                'array',
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
                                     $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_customers', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'phone' )
                                 ) : ''
