@@ -28,7 +28,7 @@
         "phpoffice/phpspreadsheet": "^1.17",
         "picqer/php-barcode-generator": "^2.1",
         "pusher/pusher-php-server": "^7.0",
-        "spatie/laravel-db-snapshots": "^1.7",
+        "spatie/laravel-db-snapshots": "^2.2",
         "tormjens/eventy": "^0.8"
     },
     "require-dev": {
@@ -70,7 +70,7 @@
         "post-install-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate --ansi",
-            "@php artisan storage:link --ansi"
+            "@php -r \"file_exists('public/storage');\" || artisan storage:link --ansi"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
