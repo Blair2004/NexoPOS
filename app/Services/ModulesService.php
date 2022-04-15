@@ -660,18 +660,15 @@ class ModulesService
     {
         $this->checkManagementStatus();
 
-        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' ) ) {
-            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '.temp' );
+        if ( ! is_dir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '_temp' ) ) {
+            mkdir( base_path( 'modules' ) . DIRECTORY_SEPARATOR . '_temp' );
         }
 
-        $path   =   Storage::disk( 'ns-modules' )->putFile( 
-            '.temp', 
-            $file 
-        );
+        $path   =   $file->store( '_temp', 'ns-modules' );
 
         $fileInfo   =   pathinfo( $file->getClientOriginalName() );
         $fullPath   =   base_path( 'modules' ) . DIRECTORY_SEPARATOR . $path;        
-        $dir        =   dirname( $fullPath . DIRECTORY_SEPARATOR );
+        $dir        =   dirname( $fullPath );
 
         $archive    =   new \ZipArchive;
         $archive->open( $fullPath );
@@ -683,14 +680,14 @@ class ModulesService
          */
         unlink( $fullPath );
 
-        $directory  =   Storage::disk( 'ns-modules' )->directories( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $directory  =   Storage::disk( 'ns-modules' )->directories( '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
 
         if ( count( $directory ) > 1 ) {
             throw new Exception( __( 'Unable to detect the folder from where to perform the installation.' ) );
         }
 
         $directoryName  =   pathinfo( $directory[0] )[ 'basename' ];
-        $rawFiles       =   Storage::disk( 'ns-modules' )->allFiles( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
+        $rawFiles       =   Storage::disk( 'ns-modules' )->allFiles( '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] );
         $module         =   [];
 
         /**
@@ -704,7 +701,7 @@ class ModulesService
         if ( in_array( 'config.xml', $files ) ) {
 
             
-            $file   =   '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
+            $file   =   '_temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR . 'config.xml';
             $xml    =   new \SimpleXMLElement( 
                 Storage::disk( 'ns-modules' )->get( $file )
             );
@@ -765,10 +762,12 @@ class ModulesService
 
             foreach( $rawFiles as $file ) {
 
-                $replacement    =   str_replace( '.temp' . DIRECTORY_SEPARATOR . $fileInfo[ 'filename' ] . DIRECTORY_SEPARATOR . $directoryName . DIRECTORY_SEPARATOR, $moduleNamespace . DIRECTORY_SEPARATOR, $file );
+                $search         =   '_temp' . '/' . $fileInfo[ 'filename' ] . '/' . $directoryName . '/';
+                $replacement    =   $moduleNamespace . DIRECTORY_SEPARATOR;
+                $final          =   str_replace( $search, $replacement, $file );
 
                 Storage::disk( 'ns-modules' )->put( 
-                    $replacement,
+                    $final,
                     Storage::disk( 'ns-modules' )->get( $file )
                 );
             }
@@ -952,7 +951,7 @@ class ModulesService
          * We should then delete everything and return an error.
          */
 
-        $directories  =   Storage::disk( 'ns-modules' )->allDirectories( '.temp' );
+        $directories  =   Storage::disk( 'ns-modules' )->allDirectories( '_temp' );
 
         foreach( $directories as $directory ) {
             Storage::disk( 'ns-modules' )->deleteDirectory( $directory );
@@ -961,7 +960,7 @@ class ModulesService
         /**
          * Delete unused files as well
          */
-        $files  =   Storage::disk( 'ns-modules' )->allFiles( '.temp' );
+        $files  =   Storage::disk( 'ns-modules' )->allFiles( '_temp' );
 
         foreach( $files as $file ) {
             Storage::disk( 'ns-modules' )->delete( $file );
