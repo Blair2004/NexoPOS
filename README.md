@@ -23,8 +23,8 @@ All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.ne
 - [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
 
 And for developpers, there are more technical tutorials that convers:
-- [Creating a module)(https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-module-for-nexopos-4-x)
-- [Create a menu for a module)(https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-menu-on-nexopos-4-x)
+- [Creating a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-module-for-nexopos-4-x)
+- [Create a menu for a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-menu-on-nexopos-4-x)
 - [Create a route](https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-routes-for-modules)
 
 We've also create video tutorial that will help you performing those easilly.
