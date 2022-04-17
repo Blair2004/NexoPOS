@@ -12,14 +12,13 @@ use App\Classes\Hook;
 
 use App\Mail\ActivateAccountMail;
 
-use App\Exceptions\NotFoundException;
-use App\Exceptions\AccessDeniedException;
 use App\Models\UserAttribute;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class Users
 {
@@ -27,17 +26,14 @@ class Users
     private $users  =   [];
 
     public function __construct(
-        Role $role,
+        Collection $roles,
         User $user,
         Permission $permission
     )
     {
-        $this->role         =   $role;
+        $this->roles        =   $roles;
         $this->user         =   $user;
         $this->permission   =   $permission;
-
-        // $this->buildRoles();
-        // $this->buildUsers();
     }
 
     /**
@@ -51,43 +47,6 @@ class Users
             return @$this->roles[ $namespace ][ 'users' ];
         } else {
             return $this->users;
-        }
-    }
-
-    /**
-     * BuildRoles
-     * @deprecated
-     * @return void
-     */
-    public function buildRoles()
-    {
-        $roles  =   $this->role->all();
-
-        foreach( $roles as $role ) {
-            $this->roles[ $role->namespace ][ 'details' ]    =   $role->toArray();
-        }
-    }
-
-    /**
-     * Build Users
-     * @deprecated
-     * @return void
-     */
-    public function buildUsers()
-    {
-        $users  =   $this->user->all();
-        
-        foreach( $users as $user ) {
-
-            /***
-             * if the role is not cached
-             */
-            if ( @$this->roles[ $user->role->namespace ][ 'users' ] == null ) {
-                $this->roles[ $user->role->namespace ][ 'users' ]     =   [];
-            }
-
-            $this->roles[ $user->role->namespace ][ 'users' ][]   =   $user;
-            $this->users[]      =   $user;
         }
     }
 
@@ -174,10 +133,17 @@ class Users
      */
     public function is( $group_name ) 
     {
+        $roles      =   Auth::user()
+            ->roles
+            ->map( fn( $role ) => $role->namespace )
+            ->toArray();
+
         if ( is_array( $group_name ) ) {
-            return in_array( Auth::user()->role->namespace, $group_name );
+            return $roles
+                ->filter( fn( $roleNamespace ) => in_array( $roleNamespace, $group_name ) )
+                ->count() > 0;
         } else {
-            return Auth::user()->role->namespace === $group_name;
+            return in_array( $group_name, $roles );
         }
     }
 
@@ -221,6 +187,13 @@ class Users
         ];
     }
 
+    /**
+     * Will create the user attribute
+     * for the provided user if that doesn't
+     * exist yet.
+     * @param User $user
+     * @return void
+     */
     public function createAttribute( User $user ): void
     {
         if ( ! $user->attribute instanceof UserAttribute ) {
