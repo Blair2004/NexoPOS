@@ -22,6 +22,16 @@ All the documentation for NexoPOS 4.x can be found on [My NexoPOS](https://my.ne
 - [Downloading NexoPOS](https://my.nexopos.com/en/documentation/getting-started/download-and-install)
 - [Installing NexoPOS](https://my.nexopos.com/en/documentation/getting-started/installation-wizard)
 
+And for developpers, there are more technical tutorials that convers:
+- [Creating a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-module-for-nexopos-4-x)
+- [Create a menu for a module](https://my.nexopos.com/en/documentation/developpers-guides/how-to-create-a-menu-on-nexopos-4-x)
+- [Create a route](https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-routes-for-modules)
+
+We've also create video tutorial that will help you performing those easilly.
+[
+![image](https://user-images.githubusercontent.com/5265663/163531524-408757a8-d5a8-40b1-8e8f-c4e59e778e05.png)
+](https://www.youtube.com/watch?v=V80-hOJCywY)
+
 # How To Unlock Premium Features
 The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecanyon.net/item/nexopos-4x-pos-crm-inventory-manager/31188619). While purchasing on CodeCanyon, you also get : 
 
@@ -29,10 +39,6 @@ The premium version of NexoPOS 4.x is available on [CodeCanyon](https://codecany
 - Access to NexoPOS 4.x marketplace
 - Premium Support & Installation Service
 - You're eligible for customization
-
-[
-![screenshot-www youtube com-2020 10 08-11_24_13](https://user-images.githubusercontent.com/5265663/95446877-d62d5800-0958-11eb-822d-9f5997c0805b.jpg)
-](https://youtu.be/-eXapKZrcBc)
 
 ## Changelog & Feature Announcement
 We're frequently discussing about the future of the app (while waiting discussion are allowed). You can join the WhatsApp [group where tips](https://chat.whatsapp.com/KHWgNmfcfJy7SwJiRQTmG8) are shared on NexoPOS 4.x.

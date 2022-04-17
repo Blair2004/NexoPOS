@@ -149,10 +149,6 @@ class ModulesController extends DashboardController
     {
         $result     =   $this->modules->upload( $request->file( 'module' ) );
 
-        if ( isset( $result[ 'action' ] ) ) {
-
-        }
-
         /**
          * if the module upload was successful
          */
