@@ -14,7 +14,7 @@ use App\Mail\ActivateAccountMail;
 
 use App\Exceptions\NotFoundException;
 use App\Exceptions\AccessDeniedException;
-
+use App\Models\UserAttribute;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -219,5 +219,15 @@ class Users
             'status'    =>  'success',
             'message'   =>  __( 'The role has been cloned.' )
         ];
+    }
+
+    public function createAttribute( User $user ): void
+    {
+        if ( ! $user->attribute instanceof UserAttribute ) {
+            $userAttribute  =   new UserAttribute;
+            $userAttribute->user_id     =   $user->id;
+            $userAttribute->language    =   ns()->option->get( 'ns_store_language' );
+            $userAttribute->save();
+        }
     }
 }

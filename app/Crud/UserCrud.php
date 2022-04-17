@@ -260,6 +260,14 @@ class UserCrud extends CrudService
                     $relation->save();
                 }
             }
+
+            /**
+             * We'll create user attribute
+             * if that's necessary for that user
+             * @var Users
+             */
+            $usersService       =   app()->make( Users::class );
+            $usersService->createAttribute( $entry );
         }
 
         
