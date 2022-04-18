@@ -78,7 +78,7 @@
     "vue-apexcharts": "^1.6.0",
     "vue-html-to-paper": "1.4.4",
     "rxjs": "^7.5.5",
-    "vue-custom-scrollbar": "^1.4.3",
+    "vue-custom-scrollbar": "^1.4.4",
     "vue-router": "^3.4.3",
     "vue-upload-component": "^2.8.20",
     "vue-virtual-collection": "^1.5.0",
