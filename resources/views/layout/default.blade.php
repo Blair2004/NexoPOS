@@ -14,47 +14,8 @@ $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
     <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
     <link rel="stylesheet" href="{{ loadcss( $theme . '.css' ) }}">
     @yield( 'layout.base.header' )
-    <script>
-        /**
-         * constant where is registered
-         * global custom components
-         * @param {Object}
-         */
-        window.nsExtraComponents     =   new Object;
-
-        /**
-         * describe a global NexoPOS object
-         * @param {object} ns
-         */
-        window.ns =   { nsExtraComponents };
-
-        /**
-         * store the server date
-         * @param {string}
-         */
-        window.ns.date                     =   {
-            current : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            serverDate : '{{ app()->make( DateService::class )->toDateTimeString() }}',
-            timeZone: '{{ ns()->option->get( "ns_datetime_timezone" ) }}',
-            format: `{{ ns()->option->get( 'ns_datetime_format' ) }}`
-        }
-
-        /**
-         * define the current language selected by the user or
-         * the language that applies to the system by default.
-         */
-        window.ns.language     =   '{{ app()->getLocale() }}';
-        window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
-            'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
-        ]));?>
-    </script>
-    <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
-    @include( 'common.header-socket' )
 </head>
 <body>
     @yield( 'layout.default.body' )
-    @section( 'layout.default.footer' )
-        @include( '../common/footer' )
-    @show
 </body>
 </html>

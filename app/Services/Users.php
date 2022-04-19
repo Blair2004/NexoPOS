@@ -26,8 +26,8 @@ class Users
     private $users  =   [];
 
     public function __construct(
-        Collection $roles,
-        User $user,
+        $roles,
+        $user,
         Permission $permission
     )
     {
@@ -197,7 +197,7 @@ class Users
     public function createAttribute( User $user ): void
     {
         if ( ! $user->attribute instanceof UserAttribute ) {
-            $userAttribute  =   new UserAttribute;
+            $userAttribute              =   new UserAttribute;
             $userAttribute->user_id     =   $user->id;
             $userAttribute->language    =   ns()->option->get( 'ns_store_language' );
             $userAttribute->save();

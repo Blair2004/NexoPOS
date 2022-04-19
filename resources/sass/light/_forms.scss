@@ -194,7 +194,7 @@
     @apply text-primary border-input-edge;
 
     button, a {
-        @apply bg-input-button;
+        @apply bg-input-button shadow;
     }
 
     &:hover {

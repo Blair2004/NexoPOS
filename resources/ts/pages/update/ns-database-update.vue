@@ -22,7 +22,7 @@
                     <div>
                         <ns-button v-if="error" @click="proceedUpdate()" type="error" class="rounded shadow-inner">
                             <i class="las la-sync"></i>
-                            <span>{{ __( 'Try Again' ) }}</span>
+                            <span class="ml-1">{{ __( 'Try Again' ) }}</span>
                         </ns-button>
                     </div>
                     <div class="flex">
@@ -33,9 +33,9 @@
                             <span v-if="updatingModule">{{ __( 'Updating Modules' ) }}...</span>
                             <span class="mr-1" v-if="updatingModule">{{ index }}/{{ totalModules }}</span>
                         </ns-button>
-                        <ns-button :href="returnLink" v-if="! updating" class="rounded shadow-inner">
+                        <ns-button type="info" :href="returnLink" v-if="! updating" class="rounded shadow-inner">
                             <i class="las la-undo"></i>
-                            <span>{{ __( 'Return' ) }}</span>
+                            <span class="ml-1">{{ __( 'Return' ) }}</span>
                         </ns-button>
                     </div>
                 </div>

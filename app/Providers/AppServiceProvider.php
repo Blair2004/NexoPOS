@@ -97,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( Users::class, function(){
             return new Users( 
-                Auth::user()->roles,
+                Auth::check() ? Auth::user()->roles : collect([]),
                 Auth::user(),
                 new Permission()
             );

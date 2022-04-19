@@ -6,7 +6,7 @@ use Exception;
 
 class QueryException extends Exception
 {
-    public function render( $message )
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   __( 'Query Exception' );
