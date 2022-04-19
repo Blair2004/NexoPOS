@@ -68,6 +68,7 @@ class SettingsController extends DashboardController
             'description'   =>  __( 'Details about the environment.' ),
             'details'  =>  [
                 __( 'Core Version'  )           =>  config( 'nexopos.version' ),
+                __( 'Laravel Version' )         =>  app()->version(),
                 __( 'PHP Version' )             =>  phpversion(),
             ],
             'extensions'      =>  [

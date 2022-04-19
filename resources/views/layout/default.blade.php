@@ -1,7 +1,4 @@
 <?php
-
-use App\Classes\Hook;
-
 $theme  =   ns()->option->get( 'ns_default_theme', 'light' );
 ?>
 <!DOCTYPE html>

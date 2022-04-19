@@ -55,8 +55,10 @@ class UserProfileForm extends SettingsPage
             ->toArray();
 
         if ( ! empty( $allowedInputs ) ) {
-            $user           =   UserAttribute::where( 'user_id', Auth::user()->id )->firstOrNew();
-            $user->user_id  =   Auth::id();
+            $user           =   UserAttribute::where( 'user_id', Auth::user()->id )
+                ->firstOrNew([
+                    'user_id'   =>  Auth::id()
+                ]);
     
             foreach( $request->input( 'attribute' ) as $key => $value ) {
                 if ( in_array( $key, $allowedInputs ) ) {
