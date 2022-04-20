@@ -5587,16 +5587,16 @@
         },
         {
             "name": "spatie/laravel-db-snapshots",
-            "version": "2.2.1",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-db-snapshots.git",
-                "reference": "145602005f0705a4d2a1c5d368fbf95ccbd35576"
+                "reference": "69fa5c77bc06301484a24d09778768a7ba689316"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-db-snapshots/zipball/145602005f0705a4d2a1c5d368fbf95ccbd35576",
-                "reference": "145602005f0705a4d2a1c5d368fbf95ccbd35576",
+                "url": "https://api.github.com/repos/spatie/laravel-db-snapshots/zipball/69fa5c77bc06301484a24d09778768a7ba689316",
+                "reference": "69fa5c77bc06301484a24d09778768a7ba689316",
                 "shasum": ""
             },
             "require": {
@@ -5645,7 +5645,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-db-snapshots/issues",
-                "source": "https://github.com/spatie/laravel-db-snapshots/tree/2.2.1"
+                "source": "https://github.com/spatie/laravel-db-snapshots/tree/2.3.0"
             },
             "funding": [
                 {
@@ -5657,7 +5657,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-01-14T08:27:40+00:00"
+            "time": "2022-04-20T14:11:55+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -11053,5 +11053,5 @@
         "php": "^8.1.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -2,24 +2,24 @@
 
 namespace App\Exceptions;
 
-use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
-use App\Exceptions\QueryException as ExceptionsQueryException;
-use ErrorException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException as MainValidationException;
-use InvalidArgumentException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
     /**
+     * A list of exception types with their corresponding custom log levels.
+     *
+     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
+     */
+    protected $levels = [
+        //
+    ];
+    
+    /**
      * A list of the exception types that are not reported.
      *
-     * @var array
+     * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
         //
@@ -28,26 +28,13 @@ class Handler extends ExceptionHandler
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $dontFlash = [
         'password',
         'password_confirmation',
         'password_confirm'
     ];
-
-    /**
-     * Report or log an exception.
-     *
-     * @param  \Throwable  $exception
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function report(Throwable $exception)
-    {
-        parent::report($exception);
-    }
 
     /**
      * Register custom handler
@@ -57,13 +44,12 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if ($this->shouldReport($e) && app()->bound('sentry')) {
-                app('sentry')->captureException($e);
-            }
+            // ...
         });
     }
+}
 
-    /**
+/**
      * We want to use our defined route
      * instead of what is provided by laravel.
      * @return \Illuminate\Routing\Redirector
@@ -189,4 +175,3 @@ class Handler extends ExceptionHandler
         
         return parent::render($request, $exception);
     }
-}

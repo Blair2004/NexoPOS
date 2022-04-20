@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Classes\Hook;
+use App\Models\Product;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use Picqer\Barcode\BarcodeGeneratorPNG;
@@ -18,6 +19,44 @@ class BarcodeService
     const TYPE_CODE11       =   'code11';
     const TYPE_UPCA         =   'upca';
     const TYPE_UPCE         =   'upce';
+
+    /**
+     * Will generate code
+     * for provided barcode type
+     * @param string $type
+     * @return string
+     */
+    public function generate( string $type ): string
+    {
+        return $this->generateRandomBarcode( $type );
+    }
+
+    /**
+     * Will generate a EAN8 code
+     * @return string generated code.
+     */
+    public function generateRandomBarcode( $code ): string
+    {
+        $factory    =   Factory::create();
+
+        do {
+            switch ( $code ) {
+                case self::TYPE_EAN8:
+                    $barcode       =   $factory->ean8();
+                break;
+                case self::TYPE_EAN13:
+                    $barcode       =   $factory->ean13();
+                break;
+                default:
+                    $barcode       =   $factory->isbn10();
+                break;
+            }
+
+            $product    = Product::where( 'barcode', '<>', $barcode )->first();
+        } while( ! $product instanceof Product );
+
+        return $barcode;
+    }
 
     /**
      * generate barcode using a code and a code type

@@ -15,13 +15,7 @@ trait App {
      */
     static function installed()
     {
-        try {
-            if( DB::connection()->getPdo() ){
-                return Schema::hasTable( 'nexopos_options' );
-            }
-        } catch (\Exception $e) {
-            return false;
-        }
+        return env( 'NS_VERSION', false ) !== false;
     }
 
     /**
