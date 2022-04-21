@@ -107,7 +107,7 @@ class Handler extends ExceptionHandler
                 ],
     
                 MethodNotAllowedHttpException::class    =>  [
-                    'use'           =>  ExceptionsMethodNotAllowedHttpException::class,
+                    'use'           =>  MethodNotAllowedHttpException::class,
                     'safeMessage'   =>  __( 'Invalid method used for the current request.' ),
                     'code'          =>  405
                 ],
