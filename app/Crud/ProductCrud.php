@@ -144,15 +144,20 @@ class ProductCrud extends CrudService
      */
     public function getForm( $entry = null ) 
     {
+        $groups             =   UnitGroup::get();
+
         if ( $entry instanceof Product ) {
             $unitGroup      =   UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
             $units          =   UnitGroup::find( $entry->unit_group )->units;
         } else {
-            $unitGroup      =   null;
+            $unitGroup      =   $groups->first();
             $units          =   [];
+            
+            if ( $unitGroup instanceof UnitGroup ) {
+                $units          =   UnitGroup::find( $unitGroup->id )->units;
+            }
         }
 
-        $groups             =   UnitGroup::get();
         $fields             =   [
             [
                 'type'          =>  'select',
@@ -162,6 +167,7 @@ class ProductCrud extends CrudService
                 'label'         =>  __( 'Assigned Unit' ),
                 'description'   =>  __( 'The assigned unit for sale' ),
                 'validation'    =>  'required',
+                'value'         =>  ! $units->isEmpty() ? $units->first()->id : ''
             ], [
                 'type'  =>  'number',
                 'errors'        =>  [],
@@ -170,11 +176,12 @@ class ProductCrud extends CrudService
                 'description'   =>  __( 'Define the regular selling price.' ),
                 'validation'    =>  'required',
             ], [
-                'type'  =>  'number',
+                'type'          =>  'number',
                 'errors'        =>  [],
-                'name'  =>  'low_quantity',
-                'label' =>  __( 'Low Quantity' ),
-                'description'   =>  __( 'Which quantity should be assumed low.' ),
+                'name'          =>  'wholesale_price_edit',
+                'label'         =>  __( 'Wholesale Price' ),
+                'description'   =>  __( 'Define the wholesale price.' ),
+                'validation'    =>  'required',
             ], [
                 'type'  =>  'switch',
                 'errors'        =>  [],
@@ -183,12 +190,11 @@ class ProductCrud extends CrudService
                 'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                 'description'   =>  __( 'Define whether the stock alert should be enabled for this unit.' ),
             ], [
-                'type'          =>  'number',
+                'type'  =>  'number',
                 'errors'        =>  [],
-                'name'          =>  'wholesale_price_edit',
-                'label'         =>  __( 'Wholesale Price' ),
-                'description'   =>  __( 'Define the wholesale price.' ),
-                'validation'    =>  'required',
+                'name'  =>  'low_quantity',
+                'label' =>  __( 'Low Quantity' ),
+                'description'   =>  __( 'Which quantity should be assumed low.' ),
             ], [
                 'type'          =>  'media',
                 'errors'        =>  [],
@@ -229,12 +235,27 @@ class ProductCrud extends CrudService
                                     'validation'    =>  'required',
                                     'value' =>  $entry->name ?? '',
                                 ], [
+                                    'type'          =>  'select',
+                                    'description'   =>  __( 'Select to which category the item is assigned.' ),
+                                    'options'       =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
+                                    'name'          =>  'category_id',
+                                    'label'         =>  __( 'Category' ),
+                                    'validation'    =>  'required',
+                                    'value'         =>  $entry->category_id ?? '',
+                                ], [
                                     'type'  =>  'text',
                                     'name'  =>  'barcode',
                                     'description'   =>  __( 'Define the barcode value. Focus the cursor here before scanning the product.' ),
                                     'label' =>  __( 'Barcode' ),
-                                    'validation'    =>  'required',
+                                    'validation'    =>  '',
                                     'value' =>  $entry->barcode ?? '',
+                                ], [
+                                    'type'  =>  'text',
+                                    'name'  =>  'sku',
+                                    'description'   =>  __( 'Define a unique SKU value for the product.' ),
+                                    'label' =>  __( 'SKU' ),
+                                    'validation'    =>  '',
+                                    'value' =>  $entry->sku ?? '',
                                 ], [
                                     'type'  =>  'select',
                                     'description'   =>  __( 'Define the barcode type scanned.' ),
@@ -251,7 +272,7 @@ class ProductCrud extends CrudService
                                     'name'  =>  'barcode_type',
                                     'label' =>  __( 'Barcode Type' ),
                                     'validation'    =>  'required',
-                                    'value' =>  $entry->barcode_type ?? 'ean8',
+                                    'value' =>  $entry->barcode_type ?? 'code128',
                                 ], [
                                     'type'  =>  'switch',
                                     'description'   =>  __( 'Determine if the product can be searched on the POS.' ),
@@ -261,15 +282,7 @@ class ProductCrud extends CrudService
                                     ]),
                                     'name'  =>  'searchable',
                                     'label' =>  __( 'Searchable' ),
-                                    'value' =>  $entry->searchable ?? true,
-                                ], [
-                                    'type'          =>  'select',
-                                    'description'   =>  __( 'Select to which category the item is assigned.' ),
-                                    'options'       =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
-                                    'name'          =>  'category_id',
-                                    'label'         =>  __( 'Category' ),
-                                    'validation'    =>  'required',
-                                    'value'         =>  $entry->category_id ?? '',
+                                    'value' =>  $entry->searchable ?? 1,
                                 ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
@@ -281,13 +294,6 @@ class ProductCrud extends CrudService
                                     'validation'    =>  'required',
                                     'label'         =>  __( 'Product Type' ),
                                     'value'         =>  $entry->type ?? 'materialized',
-                                ], [
-                                    'type'  =>  'text',
-                                    'name'  =>  'sku',
-                                    'description'   =>  __( 'Define a unique SKU value for the product.' ),
-                                    'label' =>  __( 'SKU' ),
-                                    'validation'    =>  'required',
-                                    'value' =>  $entry->sku ?? '',
                                 ], [
                                     'type'  =>  'select',
                                     'options'   =>  Helper::kvToJsOptions([
@@ -325,12 +331,12 @@ class ProductCrud extends CrudService
                                     'type'  =>  'switch',
                                     'description'   =>  __( 'The product won\'t be visible on the grid and fetched only using the barcode reader or associated barcode.' ),
                                     'options'   =>  Helper::kvToJsOptions([
-                                        true      =>  __( 'Yes' ),
-                                        false     =>  __( 'No' ),
+                                        1       =>  __( 'Yes' ),
+                                        0       =>  __( 'No' ),
                                     ]),
                                     'name'  =>  'accurate_tracking',
                                     'label' =>  __( 'Accurate Tracking' ),
-                                    'value' =>  $entry->accurate_tracking ?? false,
+                                    'value' =>  $entry->accurate_tracking ?? 0,
                                 ], [
                                     'type'          =>  'select',
                                     'options'       =>  Helper::toJsOptions( $groups, [ 'id', 'name' ] ),
@@ -338,7 +344,7 @@ class ProductCrud extends CrudService
                                     'description'   =>  __( 'What unit group applies to the actual item. This group will apply during the procurement.' ),
                                     'label'         =>  __( 'Unit Group' ),
                                     'validation'    =>  'required',
-                                    'value'         =>  $entry->unit_group ?? '',
+                                    'value'         =>  $entry->unit_group ?? ( ! $groups->isEmpty() ? $groups->first()->id : '' ),
                                 ], [
                                     'type'          =>  'group',
                                     'name'          =>  'selling_group',

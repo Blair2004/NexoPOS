@@ -6,6 +6,7 @@ use App\Events\ProductAfterStockAdjustmentEvent;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Events\ProductResetEvent;
 use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterUpdatedEvent;
@@ -20,6 +21,7 @@ use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
 use App\Exceptions\NotAllowedException;
 use App\Models\Procurement;
+use App\Models\ProductCategory;
 use App\Models\ProductGallery;
 use App\Models\Unit;
 
@@ -238,7 +240,7 @@ class ProductService
     public function createSimpleProduct( $data )
     {
         if ( empty( $data[ 'barcode' ] ) ) {
-            $data[ 'barcode' ]  =   $this->barcodeService->generateBarcodeValue( $data[ 'barcode_type' ] );
+            $data[ 'barcode' ]  =   $this->barcodeService->generateRandomBarcode( $data[ 'barcode_type' ] );
         }
 
         if ( $this->getProductUsingBarcode( $data[ 'barcode' ] ) ) {
@@ -249,7 +251,8 @@ class ProductService
         }
 
         if ( empty( $data[ 'sku' ] ) ) {
-            $data[ 'sku' ]  =   $data[ 'barcode' ];
+            $category       =   ProductCategory::find( $data[ 'category_id' ] );
+            $data[ 'sku' ]  =   Str::slug( $category->name ) . '--' . Str::slug( $data[ 'name' ] ) . '--' . Str::random(5);
         }
 
         /**
@@ -363,13 +366,18 @@ class ProductService
         $this->releaseProductTaxes( $product );
 
         if ( empty( $fields[ 'barcode' ] ) ) {
-            $fields[ 'barcode' ]  =   $this->barcodeService->generateBarcodeValue( $fields[ 'barcode_type' ] );
+            $fields[ 'barcode' ]  =   $this->barcodeService->generateRandomBarcode( $fields[ 'barcode_type' ] );
         }
 
         if ( $existingProduct = $this->getProductUsingBarcode( $fields[ 'barcode' ] ) ) {
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided barcode is already in use.' ) );
             }
+        }
+
+        if ( empty( $fields[ 'sku' ] ) ) {
+            $category           =   ProductCategory::find( $fields[ 'category_id' ] );
+            $fields[ 'sku' ]    =   Str::slug( $category->name ) . '--' . Str::slug( $fields[ 'name' ] ) . '--' . Str::random(5);
         }
 
         /**
@@ -380,10 +388,6 @@ class ProductService
             if ( $existingProduct->id !== $product->id ) {
                 throw new Exception( __( 'The provided SKU is already in use.' ) );
             }
-        }
-
-        if ( empty( $fields[ 'sku' ] ) ) {
-            $fields[ 'sku' ]  =   $fields[ 'barcode' ];
         }
 
         foreach( $fields as $field => $value ) {

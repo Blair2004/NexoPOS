@@ -47,6 +47,20 @@ class BarcodeService
                 case self::TYPE_EAN13:
                     $barcode       =   $factory->ean13();
                 break;
+                case self::TYPE_CODABAR:
+                case self::TYPE_CODE128:
+                case self::TYPE_CODE39:
+                    $barcode       =   Str::random(10);
+                break;
+                case self::TYPE_CODE11:
+                    $barcode       =   rand(1000000000,999999999);
+                break;
+                case self::TYPE_UPCA:
+                    $barcode       =   rand(10000000000,99999999999);
+                break;
+                case self::TYPE_UPCA:
+                    $barcode       =   rand(1000000,9999999);
+                break;
                 default:
                     $barcode       =   $factory->isbn10();
                 break;
@@ -96,6 +110,9 @@ class BarcodeService
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function generateBarcodeValue( $type )
     {
         $faker  =   (new Factory)->create();
