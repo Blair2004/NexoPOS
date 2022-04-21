@@ -9,7 +9,7 @@ use App\Events\ModulesBootedEvent;
 class ModulesServiceProvider extends ServiceProvider
 {
     protected $modulesCommands  =   [];
-    protected $modules;
+    protected ModulesService $modules;
 
     /**
      * Bootstrap the application services.

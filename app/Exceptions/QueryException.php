@@ -6,7 +6,12 @@ use Exception;
 
 class QueryException extends Exception
 {
-    public function render( $message )
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('A Database Exception Occured.' );
+    }
+
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   __( 'Query Exception' );

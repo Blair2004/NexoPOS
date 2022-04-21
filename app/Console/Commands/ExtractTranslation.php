@@ -62,11 +62,11 @@ class ExtractTranslation extends Command
     private function createSymLink()
     {
         if ( ! \windows_os() ) {
-            $link       =   @\symlink( base_path( 'resources/lang' ), public_path( '/lang' ) );
+            $link       =   @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
         } else {
             $mode       =   'J';
             $link       =   public_path( 'lang' );
-            $target     =   base_path( 'resources/lang' );
+            $target     =   base_path( 'lang' );
             $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
         }
 
@@ -154,11 +154,11 @@ class ExtractTranslation extends Command
      */
     private function extractLanguageForSystem( $lang, $files )
     {
-        $filePath               =   'resources/lang/' . $lang . '.json';
+        $filePath               =   'lang/' . $lang . '.json';
         $finalArray             =   $this->extractLocalization( $files );
         $finalArray             =   $this->flushTranslation( $finalArray, $filePath );
 
-        Storage::disk( 'ns' )->put( 'resources/lang/' . $lang . '.json', json_encode( $finalArray ) );
+        Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray ) );
 
         $this->newLine();
         $this->info( 'Extraction complete for language : ' . config( 'nexopos.languages' )[ $lang ] );

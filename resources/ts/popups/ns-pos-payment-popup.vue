@@ -52,6 +52,8 @@ export default {
                 }
             });
         });
+
+        nsHooks.doAction( 'ns-pos-payment-mounted', this );
     },
     watch: {
         activePayment( value ) {
@@ -60,6 +62,8 @@ export default {
     },
     destroyed() {
         this.paymentTypesSubscription.unsubscribe();
+
+        nsHooks.doAction( 'ns-pos-payment-destroyed', this );
     },    
     methods: {
         __, 

@@ -2,11 +2,16 @@
 
 namespace App\Exceptions;
 
-use Exception as CoreException;
+use Exception;
 
-class Exception extends CoreException
+class CoreException extends Exception
 {
-    public function render( $message )
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('An exception has occured.' );
+    }
+
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   __( 'An Error Occured' );

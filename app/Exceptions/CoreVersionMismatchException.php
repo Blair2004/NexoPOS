@@ -6,7 +6,14 @@ use Exception;
 
 class CoreVersionMismatchException extends Exception
 {
-    public function render( $message )
+    public $title   =   '';
+    
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('There\'s is mismatch with the core version.' );
+    }
+
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   $this->title ?: __( 'Incompatibility Exception' );

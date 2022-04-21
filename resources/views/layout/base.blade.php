@@ -1,11 +1,12 @@
 <?php
 
 use App\Classes\Hook;
+use App\Models\UserAttribute;
 use App\Services\DateService;
 use App\Services\Helper;
 use Illuminate\Support\Facades\Auth;
 
-if ( Auth::check() ) {
+if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     $theme  =   Auth::user()->attribute->theme ?: ns()->option->get( 'ns_default_theme', 'light' );
 } else {
     $theme  =   ns()->option->get( 'ns_default_theme', 'light' );

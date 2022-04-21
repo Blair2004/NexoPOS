@@ -45,36 +45,39 @@ class CrudController extends DashboardController
         $modelClass =   $resource->getModel();
         $model      =   $modelClass::find( $id );
 
-        /**
-         * Let's verify if the current model
-         * is a dependency for other models.
-         */
-        $declaredDependencies   =   $model->getDeclaredDependencies();
+        if ( method_exists( $model, 'getDeclaredDependencies' ) ) {
+            
+            /**
+             * Let's verify if the current model
+             * is a dependency for other models.
+             */
+            $declaredDependencies   =   $model->getDeclaredDependencies();
 
-        foreach( $declaredDependencies as $class => $indexes ) {
-            $localIndex         =   $indexes[ 'local_index' ] ?? 'id';
-            $request            =   $class::where( $indexes[ 'foreign_index' ], $model->$localIndex );
-            $dependencyFound    =   $request->first();
-            $countDependency    =   $request->count() - 1;
-
-            if ( $dependencyFound instanceof $class ) {
-                if ( isset( $model->{ $indexes[ 'local_name' ] } ) && isset( $dependencyFound->{ $indexes[ 'foreign_name' ] } ) ) {
-                    $localName      =   $model->{ $indexes[ 'local_name' ] };
-                    $foreignName    =   $dependencyFound->{ $indexes[ 'foreign_name' ] };
-
-                    throw new NotAllowedException( sprintf(
-                        __( 'Unable to delete "%s" as it\'s a dependency for "%s"%s' ),
-                        $localName,
-                        $foreignName,
-                        $countDependency > 1 ? ', ' . trans_choice( '{1} and :count more item dependents on that.|[2,*] and :count more items depends on that', $countDependency, [ 'count' => $countDependency ] ) : '.'
-                    ) );
-                } else {
-                    throw new NotAllowedException( sprintf(
-                        $countDependency === 1 ? 
-                            __( 'Unable to delete this resource as it has %s dependency with %s item.' ) : 
-                            __( 'Unable to delete this resource as it has %s dependency with %s items.' ), 
-                        $class
-                    ) );
+            foreach( $declaredDependencies as $class => $indexes ) {
+                $localIndex         =   $indexes[ 'local_index' ] ?? 'id';
+                $request            =   $class::where( $indexes[ 'foreign_index' ], $model->$localIndex );
+                $dependencyFound    =   $request->first();
+                $countDependency    =   $request->count() - 1;
+    
+                if ( $dependencyFound instanceof $class ) {
+                    if ( isset( $model->{ $indexes[ 'local_name' ] } ) && isset( $dependencyFound->{ $indexes[ 'foreign_name' ] } ) ) {
+                        $localName      =   $model->{ $indexes[ 'local_name' ] };
+                        $foreignName    =   $dependencyFound->{ $indexes[ 'foreign_name' ] };
+    
+                        throw new NotAllowedException( sprintf(
+                            __( 'Unable to delete "%s" as it\'s a dependency for "%s"%s' ),
+                            $localName,
+                            $foreignName,
+                            $countDependency > 1 ? ', ' . trans_choice( '{1} and :count more item dependents on that.|[2,*] and :count more items depends on that', $countDependency, [ 'count' => $countDependency ] ) : '.'
+                        ) );
+                    } else {
+                        throw new NotAllowedException( sprintf(
+                            $countDependency === 1 ? 
+                                __( 'Unable to delete this resource as it has %s dependency with %s item.' ) : 
+                                __( 'Unable to delete this resource as it has %s dependency with %s items.' ), 
+                            $class
+                        ) );
+                    }
                 }
             }
         }
@@ -97,7 +100,7 @@ class CrudController extends DashboardController
         /**
          * That will trigger everytime an instance is deleted.
          */
-        CrudAfterDeleteEvent::dispatch( $resource );
+        CrudAfterDeleteEvent::dispatch( $resource, ( object ) $model->toArray() );
 
         return [
             'status'    =>  'success',

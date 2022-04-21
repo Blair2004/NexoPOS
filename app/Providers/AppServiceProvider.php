@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
-use App\Events\ModulesLoadedEvent;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
@@ -31,7 +30,6 @@ use App\Services\UnitService;
 use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
-use App\Services\ModulesService;
 use App\Services\NotificationService;
 use App\Services\ReportService;
 use App\Services\ResetService;
@@ -99,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
         // save Singleton for options
         $this->app->singleton( Users::class, function(){
             return new Users( 
-                Auth::user()->role,
+                Auth::check() ? Auth::user()->roles : collect([]),
                 Auth::user(),
                 new Permission()
             );

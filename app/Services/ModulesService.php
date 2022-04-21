@@ -288,7 +288,7 @@ class ModulesService
                      * instance of ModulesServiceProvider
                      */
                     if ( $config[ 'providers-booted' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers-booted' ][ $className ], $method ) ) {
-                        call_user_func([ $config[ 'providers-booted' ][ $className ], $method ], $this );
+                        call_user_func([ $config[ 'providers-booted' ][ $className ], $method ] );
                     }
                 }
             }

@@ -85,6 +85,13 @@ class RolesCrud extends CrudService
         parent::__construct();
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+
+        $this->dashboardOptions     =   Hook::filter( 'ns-dashboard-identifiers', [
+            'none'      =>  __( 'No Dashboard' ),
+            'store'     =>  __( 'Store Dashboard' ),
+            'cashier'   =>  __( 'Cashier Dashboard' ),
+            'default'   =>  __( 'Default Dashboard' ),
+        ]);
     }
 
     /**
@@ -149,11 +156,7 @@ class RolesCrud extends CrudService
                             'name'  =>  'dashid',
                             'label' =>  __( 'Dashboard Identifier' ),
                             'validation'    =>  'required',
-                            'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-dashboard-identifiers', [
-                                'store'     =>  __( 'Store Dashboard' ),
-                                'cashier'   =>  __( 'Cashier Dashboard' ),
-                                'default'   =>  __( 'Default Dashboard' ),
-                            ])),
+                            'options'       =>  Helper::kvToJsOptions( $this->dashboardOptions ),
                             'description'   =>  __( 'Define what should be the home page of the dashboard.' ),
                             'value' =>  $entry->dashid ?? '',
                         ], [
@@ -323,6 +326,11 @@ class RolesCrud extends CrudService
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],            
+            'dashid'  =>  [
+                'label'  =>  __( 'Namespace' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],            
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
@@ -341,6 +349,9 @@ class RolesCrud extends CrudService
         $entry->{ '$toggled' }  =   false;
         $entry->{ '$id' }       =   $entry->id;
         $entry->locked          =   ( bool ) $entry->locked;
+
+        $entry->dashid          =   $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
+
         // you can make changes here
         $entry->{'$actions'}    =   [
             [

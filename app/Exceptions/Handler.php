@@ -4,22 +4,31 @@ namespace App\Exceptions;
 
 use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
-use ErrorException;
+use App\Exceptions\ValidationException as ExceptionsValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException as MainValidationException;
-use InvalidArgumentException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
     /**
+     * A list of exception types with their corresponding custom log levels.
+     *
+     * @var array<class-string<\Throwable>, \Psr\Log\LogLevel::*>
+     */
+    protected $levels = [
+        //
+    ];
+    
+    /**
      * A list of the exception types that are not reported.
      *
-     * @var array
+     * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
         //
@@ -28,26 +37,13 @@ class Handler extends ExceptionHandler
     /**
      * A list of the inputs that are never flashed for validation exceptions.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $dontFlash = [
         'password',
         'password_confirmation',
         'password_confirm'
     ];
-
-    /**
-     * Report or log an exception.
-     *
-     * @param  \Throwable  $exception
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function report(Throwable $exception)
-    {
-        parent::report($exception);
-    }
 
     /**
      * Register custom handler
@@ -57,17 +53,14 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            if ($this->shouldReport($e) && app()->bound('sentry')) {
-                app('sentry')->captureException($e);
-            }
+            // ...
         });
     }
 
     /**
      * We want to use our defined route
      * instead of what is provided by laravel.
-     * @return \Illuminate\Routing\Redirector
-     * 
+     * @return Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
@@ -89,8 +82,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if ( $exception instanceof MainValidationException ) {
-            return ( new ValidationException( $exception->validator, $exception->response, $exception->errorBag ) )
+        if ( $exception instanceof ValidationException ) {
+            return ( new ExceptionsValidationException( $exception->validator, $exception->response, $exception->errorBag ) )
                 ->render( $request );
         }
 
@@ -100,7 +93,7 @@ class Handler extends ExceptionHandler
              * Let's make a better verfication
              * to avoid repeating outself.
              */
-            $exceptionResponse  =   collect([
+            $exceptions         =   collect([
                 ModuleVersionMismatchException::class   =>  [
                     'use'           =>  ModuleVersionMismatchException::class,
                     'safeMessage'   =>  null,
@@ -138,17 +131,20 @@ class Handler extends ExceptionHandler
                 ],
     
                 InvalidArgumentException::class         =>  [
-                    'use'           =>  Exception::class,
+                    'use'           =>  CoreException::class,
                     'safeMessage'   =>  null,
                     'code'          =>  503
                 ],
     
                 ErrorException::class         =>  [
-                    'use'           =>  Exception::class,
+                    'use'           =>  CoreException::class,
                     'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details or enable the debugging.' ),
                     'code'          =>  503
                 ]
-            ])->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+            ]);
+
+            $exceptionResponse  =   $exceptions->map( function( $exceptionConfig, $class ) use ( $exception, $request ) {
+
                 if ( $exception instanceof $class ) {
                     if ( $request->expectsJson() ) {
                         Log::error( $exception->getMessage() );
@@ -170,13 +166,13 @@ class Handler extends ExceptionHandler
                         }
                     } 
         
-                    return ( new $exceptionConfig[ 'use' ]( 
-                        ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage()
-                    ) )
-                        ->render( $request );
+                    $message    =   ! empty( $exceptionConfig[ 'safeMessage' ] ) && ! env( 'APP_DEBUG' ) ? $exceptionConfig[ 'safeMessage' ] : $exception->getMessage();
+                    $exception  =   new $exceptionConfig[ 'use' ]( $message );
+                    return $exception->render();
                 }
     
                 return false;
+
             })->filter( fn( $exception ) => $exception !== false );
             
             if ( ! $exceptionResponse->isEmpty() ) {
