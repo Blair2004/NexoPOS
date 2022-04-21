@@ -25,6 +25,8 @@ trait WithRoleTest
             ]
         ]);
 
+        $response->dump();
+
         /**
          * The attempt should fail.
          */
