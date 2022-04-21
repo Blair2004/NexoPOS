@@ -7,6 +7,7 @@
   </coverage>
   <testsuites>
     <testsuite name="Feature">
+      <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>

@@ -6,6 +6,11 @@ use Exception;
 
 class CoreException extends Exception
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('An exception has occured.' );
+    }
+
     public function render()
     {
         $message    =   $this->getMessage();

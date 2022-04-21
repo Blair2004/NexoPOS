@@ -7,6 +7,11 @@ use Throwable;
 
 class NotEnoughPermissionException extends Exception
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('A Database Exception Occured.' );
+    }
+    
     public function render( $request )
     {
         if ( ! $request->expectsJson() ) {

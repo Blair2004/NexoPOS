@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class NotFoundAssetsException extends Exception
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('Unable to locate the assets.' );
+    }
+
     public function render( Request $message )
     {
         $message    =   $this->getMessage();

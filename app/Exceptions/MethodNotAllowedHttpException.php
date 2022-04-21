@@ -6,6 +6,11 @@ use Exception;
 
 class MethodNotAllowedHttpException extends Exception
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('The request method is no allowed.' );
+    }
+
     public function render( $message )
     {
         $message    =   $this->getMessage();

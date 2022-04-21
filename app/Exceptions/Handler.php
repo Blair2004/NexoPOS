@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -47,13 +50,11 @@ class Handler extends ExceptionHandler
             // ...
         });
     }
-}
 
-/**
+    /**
      * We want to use our defined route
      * instead of what is provided by laravel.
-     * @return \Illuminate\Routing\Redirector
-     * 
+     * @return Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
@@ -175,3 +176,4 @@ class Handler extends ExceptionHandler
         
         return parent::render($request, $exception);
     }
+}

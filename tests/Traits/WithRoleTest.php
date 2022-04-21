@@ -28,7 +28,7 @@ trait WithRoleTest
         /**
          * The attempt should fail.
          */
-        $response->assertStatus(401);
+        $response->assertStatus(422);
     }
 
     public function attemptEditReservedRole()

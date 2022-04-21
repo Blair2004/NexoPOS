@@ -82,4 +82,24 @@ if ( env( 'APP_DEBUG' ) ) {
     
         return ( new ArrayToTextTable( $values->toArray() ) )->render();
     });
+
+    Route::get( '/exceptions/{class}', function( $class ) {
+        $exceptions     =   [
+            \App\Exceptions\CoreException::class,
+            \App\Exceptions\CoreVersionMismatchException::class,
+            \App\Exceptions\MethodNotAllowedHttpException::class,
+            \App\Exceptions\MissingDependencyException::class,
+            \App\Exceptions\ModuleVersionMismatchException::class,
+            \App\Exceptions\NotAllowedException::class,
+            \App\Exceptions\NotFoundException::class,
+            \App\Exceptions\QueryException::class,
+            \App\Exceptions\ValidationException::class,
+        ];
+
+        if ( in_array( $class, $exceptions ) ) {
+            throw new $class();
+        }
+
+        return abort(404, 'Exception not found.' );
+    });
 }

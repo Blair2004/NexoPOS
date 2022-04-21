@@ -6,20 +6,23 @@ use Illuminate\Validation\ValidationException as MainValidationException;
 
 class ValidationException extends MainValidationException
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('An error occured while validating the form.' );
+    }
+
     public function render( $request )
     {
-        $message    =   __('The resource of the page you tried to access is not available or might have been deleted.' );
-        
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
                 'title'         =>  __( 'Unable to proceed the form is not valid' ),
-                'message'       =>  $this->getMessage() ?: $message
+                'message'       =>  $this->getMessage()
             ]);
         }
 
         return response()->json([ 
             'status'  =>    'failed',
-            'message' =>    $this->getMessage() ?: $message,
+            'message' =>    $this->getMessage(),
             'data'    =>    [
                 'errors'    =>  $this->toHumanError()
             ]

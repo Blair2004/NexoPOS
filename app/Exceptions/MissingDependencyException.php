@@ -7,6 +7,11 @@ use Throwable;
 
 class MissingDependencyException extends Exception
 {
+    public function __construct( $message = null ) 
+    {
+        $this->message  =   $message ?: __('There is a missing dependency issue.' );
+    }
+
     public function render( $request )
     {
         if ( ! $request->expectsJson() ) {
