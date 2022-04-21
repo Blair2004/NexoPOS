@@ -8,7 +8,7 @@ class QueryException extends Exception
 {
     public function __construct( $message = null ) 
     {
-        $this->message  =   $message ?: __('A Database Exception Occured.' );
+        $this->message  =   $message ?: __('A Database Exception Occurred.' );
     }
 
     public function render()

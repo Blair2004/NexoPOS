@@ -102,7 +102,7 @@ class BarcodeService
         } catch( Exception $exception ) {
             throw new Exception( 
                 sprintf(
-                    __( 'An error has occured while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
+                    __( 'An error has occurred while creating a barcode "%s" using the type "%s" for the product. Make sure the barcode value is correct for the barcode type selected. Additional insight : ' . ( $exception->getMessage() ?: __( 'N/A' ) ) ),
                     $barcode,
                     $realType
                 )

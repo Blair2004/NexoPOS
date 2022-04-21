@@ -77,7 +77,7 @@ class Setup
                 default     :   
                     $message =  [
                         'name'      => 'hostname',
-                        'message'   =>  sprintf( __( 'Unexpected error occured. :%s' ), $e->getCode() ),
+                        'message'   =>  sprintf( __( 'Unexpected error occurred. :%s' ), $e->getCode() ),
                         'status'    =>  'failed'
                     ]; 
                 break;
@@ -268,7 +268,7 @@ class Setup
                 default     :   
                     $message =  [
                          'name'        => 'hostname',
-                         'message'      =>  sprintf( __( 'Unexpected error occured. Provided Code :%s' ), $e->getCode() ),
+                         'message'      =>  sprintf( __( 'Unexpected error occurred. Provided Code :%s' ), $e->getCode() ),
                          'status'       =>  'failed'
                     ]; 
                 break;

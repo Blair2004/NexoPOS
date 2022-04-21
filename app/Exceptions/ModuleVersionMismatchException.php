@@ -8,7 +8,7 @@ class ModuleVersionMismatchException extends Exception
 {
     public function __construct( $message = null ) 
     {
-        $this->message  =   $message ?: __('A database issue has occured.' );
+        $this->message  =   $message ?: __('A database issue has occurred.' );
     }
 
     public function render()
