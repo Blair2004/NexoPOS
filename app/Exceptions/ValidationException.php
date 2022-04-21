@@ -10,7 +10,7 @@ class ValidationException extends MainValidationException
 
     public function __construct( $message = null ) 
     {
-        $this->message  =   $message ?: __('An error occured while validating the form.' );
+        $this->message  =   $message ?: __('An error occurred while validating the form.' );
     }
 
     public function render( $request )

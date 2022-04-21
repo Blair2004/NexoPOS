@@ -8,7 +8,7 @@ class MethodNotAllowedHttpException extends Exception
 {
     public function __construct( $message = null ) 
     {
-        $this->message  =   $message ?: __('The request method is no allowed.' );
+        $this->message  =   $message ?: __('The request method is not allowed.' );
     }
 
     public function render()

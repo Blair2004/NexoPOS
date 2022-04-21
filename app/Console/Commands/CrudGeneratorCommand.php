@@ -256,6 +256,6 @@ class CrudGeneratorCommand extends Command
             ) );
         }
 
-        return $this->error( __( 'An unexpected error has occured.' ) );
+        return $this->error( __( 'An unexpected error has occurred.' ) );
     }
 }

@@ -386,8 +386,8 @@ class GlobalProductHistoryCrud extends CrudService
             case ProductHistory::ACTION_SOLD: $entry->operation_type = __( 'Sold' ); break;
             case ProductHistory::ACTION_STOCKED: $entry->operation_type = __( 'Stocked' ); break;
             case ProductHistory::ACTION_TRANSFER_CANCELED: $entry->operation_type = __( 'Transfer Canceled' ); break;
-            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Trasnfer' ); break;
-            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Trasnfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_IN: $entry->operation_type = __( 'Incoming Transfer' ); break;
+            case ProductHistory::ACTION_TRANSFER_OUT: $entry->operation_type = __( 'Outgoing Transfer' ); break;
             case ProductHistory::ACTION_VOID_RETURN: $entry->operation_type = __( 'Void Return' ); break;
         }
 

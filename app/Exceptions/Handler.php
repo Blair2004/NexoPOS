@@ -102,13 +102,13 @@ class Handler extends ExceptionHandler
     
                 QueryException::class   =>  [
                     'use'           =>  ExceptionsQueryException::class,
-                    'safeMessage'   =>  __( 'A database error has occured' ),
+                    'safeMessage'   =>  __( 'A database error has occurred' ),
                     'code'          =>  503
                 ],
 
                 NotFoundAssetsException::class   =>  [
                     'use'           =>  NotFoundAssetsException::class,
-                    'safeMessage'   =>  __( 'An error occured while loading the assets.' ),
+                    'safeMessage'   =>  __( 'An error occurred while loading the assets.' ),
                     'code'          =>  503
                 ],
     
@@ -138,7 +138,7 @@ class Handler extends ExceptionHandler
     
                 ErrorException::class         =>  [
                     'use'           =>  CoreException::class,
-                    'safeMessage'   =>  __( 'An unexpected error occured while opening the app. See the log details or enable the debugging.' ),
+                    'safeMessage'   =>  __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
                     'code'          =>  503
                 ]
             ]);

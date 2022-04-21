@@ -124,7 +124,7 @@ class ProviderService
             ];
 
         } catch( Exception $exception ) {
-            throw new Exception( sprintf( __( 'An error occured: %s.' ), $exception->getMessage() ) );
+            throw new Exception( sprintf( __( 'An error occurred: %s.' ), $exception->getMessage() ) );
         }
     }
 
