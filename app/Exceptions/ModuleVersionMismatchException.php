@@ -11,7 +11,7 @@ class ModuleVersionMismatchException extends Exception
         $this->message  =   $message ?: __('A database issue has occured.' );
     }
 
-    public function render( $message )
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   $this->title ?? __( 'Module Version Mismatch' );

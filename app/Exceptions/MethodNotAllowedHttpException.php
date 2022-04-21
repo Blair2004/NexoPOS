@@ -11,7 +11,7 @@ class MethodNotAllowedHttpException extends Exception
         $this->message  =   $message ?: __('The request method is no allowed.' );
     }
 
-    public function render( $message )
+    public function render()
     {
         $message    =   $this->getMessage();
         $title      =   __( 'Method Not Allowed' );
