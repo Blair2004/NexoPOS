@@ -1323,6 +1323,12 @@ class ModulesService
             }
         }
 
+        /**
+         * sort migration so files starting with "Create..." are executed
+         * first to avoid updating missing tables.
+         */
+        sort( $unmigratedFiles );
+
         return $unmigratedFiles;
     }
 
