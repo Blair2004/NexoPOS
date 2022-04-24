@@ -24,7 +24,7 @@
     "babel-loader": "^8.2.4",
     "cross-env": "^7.0.2",
     "cssnano": "^5.1.7",
-    "laravel-echo": "^1.11.4",
+    "laravel-echo": "^1.11.7",
     "laravel-mix": "^6.0.41",
     "lodash": "^4.17.20",
     "postcss": "^8.4.6",
