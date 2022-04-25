@@ -6,11 +6,11 @@ use Illuminate\Validation\ValidationException as MainValidationException;
 
 class ValidationException extends MainValidationException
 {
-    protected $message;
+    public $validator;
 
-    public function __construct( $message = null ) 
+    public function __construct( $validator = null ) 
     {
-        $this->message  =   $message ?: __('An error occurred while validating the form.' );
+        $this->validator  =   $validator ?: __('An error occurred while validating the form.' );
     }
 
     public function render( $request )
@@ -18,13 +18,12 @@ class ValidationException extends MainValidationException
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
                 'title'         =>  __( 'Unable to proceed the form is not valid' ),
-                'message'       =>  $this->message
             ]);
         }
 
         return response()->json([ 
             'status'  =>    'failed',
-            'message' =>    $this->message,
+            'message' =>    __( 'Unable to proceed the form is not valid' ),
             'data'    =>    [
                 'errors'    =>  $this->toHumanError()
             ]

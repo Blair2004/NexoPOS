@@ -819,7 +819,9 @@ class ModulesService
     {
         $this->checkManagementStatus();
 
-        Storage::disk( 'public' )->makeDirectory( 'modules' );
+        if ( ! is_dir( base_path( 'public/modules' ) ) ) {
+            Storage::disk( 'public' )->makeDirectory( 'modules' );
+        }
 
         /**
          * checks if a public directory exists and create a 
