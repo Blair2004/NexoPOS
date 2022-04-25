@@ -60,15 +60,19 @@ class SaveSettingsTest extends TestCase
     
                     foreach( $form as $tab => $fields ) {
                         foreach( $fields as $name => $value ) {
-                            $this->assertTrue( 
-                                ns()->option->get( $name ) == $value,
-                                sprintf(
-                                    'Failed to assert that "%s" option has as value %s. Current value: %s',
-                                    $name,
-                                    $value,
-                                    ns()->option->get( $name )
-                                )
-                            );
+                            $value  =   ns()->option->get( $name );
+
+                            if ( ! is_array( $value ) ) {
+                                $this->assertTrue( 
+                                    ns()->option->get( $name ) == $value,
+                                    sprintf(
+                                        'Failed to assert that "%s" option has as value %s. Current value: %s',
+                                        $name,
+                                        $value,
+                                        ns()->option->get( $name )
+                                    )
+                                );
+                            }
                         }
                     }
                 }
