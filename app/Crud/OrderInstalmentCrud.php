@@ -49,6 +49,12 @@ class OrderInstalmentCrud extends CrudService
     ];
 
     /**
+     * Installment can't be managed from 
+     * the crud component (for now).
+     */
+    protected $showOptions  =   false;
+
+    /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
      * @param  array
@@ -416,7 +422,7 @@ class OrderInstalmentCrud extends CrudService
     {
         return  [
             'list'      =>  ns()->url( 'dashboard/' . 'orders/instalments' ),
-            'create'    =>  'javascript:void(0)',
+            'create'    =>  false,
             'edit'      =>  ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
             'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
             'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),

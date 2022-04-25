@@ -876,10 +876,19 @@ export class POS {
                             }
 
                             orderProduct.$original = () => orderProduct.product;
-                            orderProduct.$quantities = () => orderProduct
-                                .product
-                                .unit_quantities
-                                .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
+                            orderProduct.$quantities = () => {
+                                let unitQuantity     =   orderProduct
+                                    .product
+                                    .unit_quantities
+                                    .filter(unitQuantity => +unitQuantity.id === +orderProduct.unit_quantity_id || unitQuantity.id === undefined )[0];
+
+                                if ( orderProduct.mode === 'custom' ) {
+                                    unitQuantity.incl_tax_custom_price  =   orderProduct.unit_price;
+                                    unitQuantity.excl_tax_custom_price  =   orderProduct.unit_price;
+                                }
+
+                                return unitQuantity;
+                            }
 
                             products.push( orderProduct );
                         }

@@ -25,7 +25,7 @@
                                 <button @click="selectTaxGroup()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-balance-scale-left"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Taxes' ) }}</span>
-                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.taxes.length }}</span>
+                                    <span v-if="order.taxes && order.taxes.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.taxes.length }}</span>
                                 </button>
                             </div>
                             <hr class="h-10" style="width: 1px">
@@ -33,7 +33,7 @@
                                 <button @click="selectCoupon()" class="w-full h-10 px-3 outline-none flex items-center">
                                     <i class="las la-tags"></i>
                                     <span class="ml-1 hidden md:inline-block">{{ __( 'Coupons' ) }}</span>
-                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-primary text-white">{{ order.coupons.length }}</span>
+                                    <span v-if="order.coupons && order.coupons.length > 0" class="ml-1 rounded-full flex items-center justify-center h-6 w-6 bg-info-secondary text-white">{{ order.coupons.length }}</span>
                                 </button>
                             </div>
                             <hr class="h-10" style="width: 1px">

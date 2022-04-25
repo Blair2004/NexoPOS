@@ -2,6 +2,7 @@
 namespace App\Crud;
 
 use App\Events\ProductBeforeDeleteEvent;
+use App\Exceptions\NotAllowedException;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Services\Users;
@@ -722,19 +723,16 @@ class ProductCrud extends CrudService
      */
     public function bulkAction( Request $request ) 
     {
-        /**
-         * Deleting licence is only allowed for admin
-         * and supervisor.
-         */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
-        }
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
+            /**
+             * Will control if the user has the permissoin to do that.
+             */
+            if ( $this->permissions[ 'delete' ] !== false ) {
+                ns()->restrict( $this->permissions[ 'delete' ] );
+            } else {
+                throw new NotAllowedException();
+            }
+            
             $status     =   [
                 'success'   =>  0,
                 'failed'    =>  0
