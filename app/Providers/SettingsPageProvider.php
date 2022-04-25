@@ -42,8 +42,6 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.customers': return new CustomersSettings; break;
                 case 'ns.supplies-deliveries': return new SuppliesDeliveriesSettings; break;
                 case 'ns.orders': return new OrdersSettings; break;
-                case 'ns.stores': return new StoresSettings; break;
-                case 'ns.service-providers': return new ServiceProvidersSettings; break;
                 case 'ns.invoice-settings': return new InvoiceSettings; break;
                 case 'ns.workers': return new WorkersSettings; break;
                 case 'ns.reports': return new ReportsSettings; break;

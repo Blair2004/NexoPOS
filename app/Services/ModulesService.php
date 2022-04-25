@@ -19,13 +19,12 @@ use App\Models\ModuleMigration;
 use Exception;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 
 class ModulesService
 {
     private $modules    =   [];
     private $xmlParser;
-    private $options;
+    private Options $options;
     private $modulesPath;
     
     const CACHE_MIGRATION_LABEL         =   'module-migration-';
@@ -1139,7 +1138,7 @@ class ModulesService
              * get all the modules that are 
              * enabled.
              */
-            $enabledModules     =   ( array ) $this->options->get( 'enabled_modules' );
+            $enabledModules     =   $this->options->get( 'enabled_modules', [] );
 
             /**
              * @todo we might need to check if this module
@@ -1186,7 +1185,7 @@ class ModulesService
              */
             if ( ! in_array( $namespace, $enabledModules ) ) {
                 $enabledModules[]   =   $namespace;
-                $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
+                $this->options->set( 'enabled_modules', $enabledModules );
             }
 
             return [

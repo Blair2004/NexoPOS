@@ -46,7 +46,13 @@ class Options
         $this->options          =   [];
 
         if ( Helper::installed() ) {
-            $this->rawOptions       =   $this->option()->get();
+            $this->rawOptions       =   $this->option()
+                ->get()
+                ->mapWithKeys( function( $option ) {
+                    return [
+                        $option->key    =>  $option
+                    ];
+                });
         }
     }
 
@@ -162,41 +168,41 @@ class Options
             return $this->rawOptions;
         }
 
-        /**
-         * In case an array of keys are provided
-         * those will be pulled and turned into an 
-         * associative array with key value pair.
-         */
-        if ( is_array( $key ) ) {
-            $array  =   [];
-            foreach( $key as $_key ) {
-                $array[ $_key ]     =   $this->rawOptions[ $key ] ?? $default;
-            }
-
-            return $array;
-        }
-
-        $this->value    =   $default !== null ? $default : null;
-
-        collect( $this->rawOptions )->each( function( $option ) use ( $key, $default ) {
-            if ( $option->key === $key ) {
-                if ( 
-                    ! empty( $option->value ) &&
-                    ( bool ) preg_match( '/[0-9]{1,}/', $option->value ) &&
-                    is_string( $option->value ) && 
-                    is_array( $json = json_decode( $option->value, true ) ) && 
-                    ( json_last_error() == JSON_ERROR_NONE ) 
-                ) {
-                    $this->value  =  $json;
-                } else {
-                    $this->value  =  (
-                        empty( $option->value ) && $option->value === null && ( bool ) preg_match( '/[0-9]{1,}/', $option->value )
-                    ) ? $default : $option->value;
-                }
-            }
+        $filtredOptions        =   collect( $this->rawOptions )->filter( function( $option ) use ( $key, $default ) {
+            return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
         });
-        
-        return $this->value;
+
+        $options                =   $filtredOptions->map( function( $option ) {
+            /**
+             * We should'nt run this everytime we
+             * try to pull an option from the database or from the array
+             */
+            if ( ! empty( $option->value ) && ! $option->parsed ) {
+                if ( is_string( $option->value ) ) {
+                    $json = json_decode( $option->value, true );
+
+                    if ( json_last_error() == JSON_ERROR_NONE ) {
+                        $option->value      =   $json;
+                        $option->parsed     =   true;
+                    } 
+                } else if ( ! is_array( $option->value ) ) {
+                    $option->parsed     =   true;
+                    $option->value  =   match( $option->value ) {
+                        preg_match( '/[0-9]{1,}/', $option->value ) =>  ( int ) $option->value, 
+                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) =>  ( float ) $option->value, 
+                        default =>  $option->value, 
+                    };
+                }
+            }            
+            
+            return $option;
+        });
+
+        return match( $options->count() ) {
+            0           => $default,
+            1           => $options->first()->value,
+            default     => $options->map( fn( $option ) => $option->value )->toArray()
+        };
     }
 
     /**
@@ -206,16 +212,13 @@ class Options
     **/
     public function delete( $key ) 
     {
-        $this->removableIndex           =   null;
-        collect( $this->rawOptions )->map( function( $option, $index ) use ( $key ) {
+        $this->rawOptions       =   collect( $this->rawOptions )->filter( function( $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
-                $this->removableIndex     =   $index;
+                return false;
             }
-        });  
 
-        if ( ! empty( $this->removableIndex ) ) {
-            collect( $this->rawOptions )->offsetUnset( $this->removableIndex );
-        }
+            return true;
+        });
     }
 }

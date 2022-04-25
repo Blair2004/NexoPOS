@@ -11,6 +11,7 @@
       <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
+      <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
       <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
