@@ -189,8 +189,9 @@ class CrudController extends DashboardController
         }
 
         /**
-         * assuming we're bulk deleting
-         * but the action might be different later
+         * assuming we're bulk performing an action
+         * we're expecting an array response with successful
+         * operations and failed operations.
          */
         $response           =   Hook::filter( get_class( $resource ) . '@bulkAction', $resource->bulkAction( $request ), $request );
 

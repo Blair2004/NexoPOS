@@ -66,7 +66,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
     },
     template: `
     <div class="flex flex-col ns-multiselect">
-        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
+        <label :for="field.name" :class="hasError ? 'text-error-secondary' : 'text-primary'" class="block mb-1 leading-5 font-medium"><slot></slot></label>
         <div class="flex flex-col">
             <div @click="showPanel = !showPanel" :class="showPanel ? '' : ''" class="select-preview flex justify-between rounded border-2 border-input-option-hover p-2 items-center">
                 <div class="flex -mx-1 -my-1 flex-wrap">
@@ -103,7 +103,7 @@ const nsMultiselect         =   Vue.component( 'ns-multiselect', {
         </div>
         <div class="my-2">
             <p v-if="! field.errors || field.errors.length === 0" class="text-xs text-secondary"><slot name="description"></slot></p>
-            <p v-for="error of field.errors" class="text-xs text-error-primary">
+            <p v-for="error of field.errors" class="text-xs text-error-secondary">
                 <slot v-if="error.identifier === 'required'" :name="error.identifier">{{ __( 'This field is required.' ) }}</slot>
                 <slot v-if="error.identifier === 'email'" :name="error.identifier">{{ __( 'This field must contain a valid email address.' ) }}</slot>
                 <slot v-if="error.identifier === 'invalid'" :name="error.identifier">{{ error.message }}</slot>

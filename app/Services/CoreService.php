@@ -12,21 +12,6 @@ use Illuminate\Support\Facades\Storage;
 class CoreService
 {
     /**
-     * @param CurrenService;
-     */
-    public $currency;
-
-    /**
-     * @var DateService
-     */
-    public $date;
-
-    /**
-     * @var OrdersService
-     */
-    public $order;
-
-    /**
      * @var boolean
      */
     public $isMultistore    =   false;
@@ -36,44 +21,18 @@ class CoreService
      * @var \Modules\NsMultiStore\Services\StoresService $store
      */
     public $store;
-
-    /**
-     * @var UpdateService $update
-     */
-    public $update;
-
-    /**
-     * @var NotificationService
-     */
-    public $notification;
-
-    /**
-     * @var ProcurementService
-     */
-    public $procurement;
-
-    /**
-     * @var Options
-     */
-    public $option;
     
     public function __construct(
-        CurrencyService $CurrencyService,
-        UpdateService $UpdateService,
-        DateService $DateService,
-        OrdersService $OrdersService,
-        NotificationService $notificationService,
-        ProcurementService $procurementService,
-        Options $option
+        public CurrencyService $currency,
+        public UpdateService $update,
+        public DateService $date,
+        public OrdersService $order,
+        public NotificationService $notification,
+        public ProcurementService $procurement,
+        public Options $option
     )
     {
-        $this->notification =   $notificationService;
-        $this->currency     =   $CurrencyService;
-        $this->update       =   $UpdateService;
-        $this->date         =   $DateService;
-        $this->order        =   $OrdersService;
-        $this->procurement  =   $procurementService;
-        $this->option       =   $option;
+        // ...
     }
 
     /**

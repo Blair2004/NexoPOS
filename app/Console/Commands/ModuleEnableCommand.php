@@ -23,23 +23,15 @@ class ModuleEnableCommand extends Command
     protected $description = 'Will enable a module if it\'s available on the system.';
 
     /**
-     * Modules Service
-     * @var ModulesService $modulesService
-     */
-    private $modulesService;
-
-    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        ModulesService $modulesService
+        private ModulesService $modulesService
     )
     {
         parent::__construct();
-
-        $this->modulesService   =   $modulesService;
     }
 
     /**

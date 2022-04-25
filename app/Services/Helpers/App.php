@@ -13,22 +13,33 @@ trait App {
      * Is installed
      * @return boolean
      */
-    static function installed()
+    static function installed( $force = false )
     {
+        if ( $force ) {            
+            $state  =   self::checkDatabaseExistence();
+            Cache::set( 'ns-core-installed', $state );
+            return $state;
+        } 
+        
         /**
          * This cache is requested once per request
          * and cleared by the end of the request
          * @see App\Http\Middleware\ClearRequestCacheMiddleware
          */
         return Cache::remember( 'ns-core-installed', 3600, function() {
-            try {
-                if( DB::connection()->getPdo() ){
-                    return Schema::hasTable( 'nexopos_options' );
-                }
-            } catch (\Exception $e) {
-                return false;
-            }
+            return self::checkDatabaseExistence();
         });
+    }
+
+    static private function checkDatabaseExistence()
+    {
+        try {
+            if( DB::connection()->getPdo() ){
+                return Schema::hasTable( 'nexopos_options' );
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**

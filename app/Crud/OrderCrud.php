@@ -38,6 +38,7 @@ class OrderCrud extends CrudService
      */
     protected $model      =   Order::class;
 
+
     /**
      * Adding relation
      */

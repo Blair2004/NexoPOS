@@ -145,8 +145,7 @@ class RolesCrud extends CrudService
                             'type'  =>  'text',
                             'name'  =>  'namespace',
                             'label' =>  __( 'Namespace' ),
-                            'validation'    =>  $entry === null ? 'required|unique:nexopos_roles,namespace' : [
-                                'required',
+                            'validation'    =>  $entry === null ? 'unique:nexopos_roles,namespace' : [
                                 Rule::unique( 'nexopos_roles', 'namespace' )->ignore( $entry->id )
                             ],
                             'description'   =>  __( 'Should be a unique value with no spaces or special character' ),
@@ -158,7 +157,7 @@ class RolesCrud extends CrudService
                             'validation'    =>  'required',
                             'options'       =>  Helper::kvToJsOptions( $this->dashboardOptions ),
                             'description'   =>  __( 'Define what should be the home page of the dashboard.' ),
-                            'value' =>  $entry->dashid ?? '',
+                            'value' =>  $entry->dashid ?? 'none',
                         ], [
                             'type'          =>  'textarea',
                             'name'          =>  'description',
@@ -180,6 +179,13 @@ class RolesCrud extends CrudService
     public function filterPostInputs( $inputs )
     {
         /**
+         * the namespace can be automatted
+         */
+        if ( empty( $inputs[ 'namespace' ] ) ) {
+            $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'name' ] );
+        }
+
+        /**
          * the default role namespace can't be changed.
          */
         if ( ! in_array( $inputs[ 'namespace' ], [
@@ -192,6 +198,7 @@ class RolesCrud extends CrudService
         }
 
         $inputs[ 'locked' ]     =   false;
+
         return $inputs;
     }
 
@@ -202,6 +209,13 @@ class RolesCrud extends CrudService
      */
     public function filterPutInputs( $inputs, Role $entry )
     {
+        /**
+         * the namespace can be automatted
+         */
+        if ( empty( $inputs[ 'namespace' ] ) ) {
+            $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'name' ] );
+        }
+
         /**
          * the default role namespace can't be changed.
          */

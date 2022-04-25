@@ -10,6 +10,7 @@
       <directory suffix="ResetTest.php">./tests/Feature</directory>
       <directory suffix="ResetUserStatsTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
+      <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
       <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
@@ -46,6 +47,7 @@
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
+      <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

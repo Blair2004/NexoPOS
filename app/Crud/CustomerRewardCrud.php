@@ -351,7 +351,7 @@ class CustomerRewardCrud extends CrudService
         return $entry;
     }
 
-    public function getSlug()
+    public function getSlug(): string
     {
         return str_replace( '{customer_id}', request()->query( 'customer_id' ), $this->slug );
     }

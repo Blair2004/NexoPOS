@@ -46,7 +46,13 @@ class Options
         $this->options          =   [];
 
         if ( Helper::installed() ) {
-            $this->rawOptions       =   $this->option()->get();
+            $this->rawOptions       =   $this->option()
+                ->get()
+                ->mapWithKeys( function( $option ) {
+                    return [
+                        $option->key    =>  $option
+                    ];
+                });
         }
     }
 
@@ -59,15 +65,12 @@ class Options
     **/
     public function set( $key, $value, $expiration = null )
     {
-        $this->hasFound     =   false;
-        $storedOption       =   null;
-
         /**
          * if an option has been found,
          * it will save the new value and update
          * the option object.
          */
-        collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration, &$storedOption ) {
+        $foundOption    =   collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration ) {
             if ( $key === $option->key ) {
                 $this->hasFound         =   true;
 
@@ -75,7 +78,7 @@ class Options
                     case is_array( $value ) :
                         $option->value = json_encode( $value );
                     break;
-                    case empty( $value ) :
+                    case empty( $value ) && ! ( bool ) preg_match( '/[0-9]{1,}/', $value ) :
                         $option->value =    '';
                     break;
                     default:
@@ -93,59 +96,54 @@ class Options
                 $option                 =   $this->beforeSave( $option );
                 $option->save();
 
-                /**
-                 * populate the variable
-                 * that we'll return
-                 */
-                $storedOption           =   $option;
+                return $option;
             }
-        });
+
+            return false;
+        })
+        ->filter();
 
         /**
          * if the option hasn't been found
          * it will create a new Option model
          * and store with, then save it on the option model
          */
-        if( ! $this->hasFound ) {
-            $this->option               =   new Option;
-            $this->option->key          =   trim( strtolower( $key ) );
-            $this->option->array        =   false;
+        if( $foundOption->empty() ) {
+            $option               =   new Option;
+            $option->key          =   trim( strtolower( $key ) );
+            $option->array        =   false;
 
             switch( $value ) {
                 case is_array( $value ) :
-                    $this->option->value = json_encode( $value );
+                    $option->value = json_encode( $value );
                 break;
-                case empty( $value ) :
-                    $this->option->value =    '';
+                case empty( $value ) && ! ( bool ) preg_match( '/[0-9]{1,}/', $value ) :
+                    $option->value =    '';
                 break;
                 default:
-                    $this->option->value  =   $value;
+                    $option->value  =   $value;
                 break;
             }
 
-            $this->option->expire_on    =   $expiration;
+            $option->expire_on    =   $expiration;
 
             /**
              * this should be overridable
              * from a user option or any
              * extending this class
              */
-            $this->option                 =   $this->beforeSave( $this->option );            
-            $this->option->save();
-
-            /**
-             * populate the variable
-             * that we'll return
-             */
-            $storedOption               =   $this->option;
+            $option                 =   $this->beforeSave( $option );            
+            $option->save();
+        } else {
+            $option             =   $foundOption->first();
         }
 
         /**
          * Let's save the new option
          */
-        $this->rawOptions[ $key ]     =   $storedOption;
+        $this->rawOptions[ $key ]     =   $option;
         
-        return $storedOption;
+        return $option;
     }
 
     public function beforeSave( $option )
@@ -170,38 +168,41 @@ class Options
             return $this->rawOptions;
         }
 
-        /**
-         * In case an array of keys are provided
-         * those will be pulled and turned into an 
-         * associative array with key value pair.
-         */
-        if ( is_array( $key ) ) {
-            $array  =   [];
-            foreach( $key as $_key ) {
-                $array[ $_key ]     =   $this->rawOptions[ $key ] ?? $default;
-            }
-
-            return $array;
-        }
-
-        $this->value    =   $default !== null ? $default : null;
-
-        collect( $this->rawOptions )->map( function( $option ) use ( $key, $default ) {
-            if ( $option->key === $key ) {
-                if ( 
-                    ! empty( $option->value ) &&
-                    is_string( $option->value ) && 
-                    is_array( $json = json_decode( $option->value, true ) ) && 
-                    ( json_last_error() == JSON_ERROR_NONE ) 
-                ) {
-                    $this->value  =  $json;
-                } else {
-                    $this->value  =  empty( $option->value ) && $option->value === null ? $default : $option->value;
-                }
-            }
+        $filtredOptions        =   collect( $this->rawOptions )->filter( function( $option ) use ( $key, $default ) {
+            return is_array( $key ) ? in_array( $option->key, $key ) : $option->key === $key;
         });
-        
-        return $this->value;
+
+        $options                =   $filtredOptions->map( function( $option ) {
+            /**
+             * We should'nt run this everytime we
+             * try to pull an option from the database or from the array
+             */
+            if ( ! empty( $option->value ) && ! $option->parsed ) {
+                if ( is_string( $option->value ) ) {
+                    $json = json_decode( $option->value, true );
+
+                    if ( json_last_error() == JSON_ERROR_NONE ) {
+                        $option->value      =   $json;
+                        $option->parsed     =   true;
+                    } 
+                } else if ( ! is_array( $option->value ) ) {
+                    $option->parsed     =   true;
+                    $option->value  =   match( $option->value ) {
+                        preg_match( '/[0-9]{1,}/', $option->value ) =>  ( int ) $option->value, 
+                        preg_match( '/[0-9]{1,}\.[0-9]{1,}/', $option->value ) =>  ( float ) $option->value, 
+                        default =>  $option->value, 
+                    };
+                }
+            }            
+            
+            return $option;
+        });
+
+        return match( $options->count() ) {
+            0           => $default,
+            1           => $options->first()->value,
+            default     => $options->map( fn( $option ) => $option->value )->toArray()
+        };
     }
 
     /**
@@ -211,16 +212,13 @@ class Options
     **/
     public function delete( $key ) 
     {
-        $this->removableIndex           =   null;
-        collect( $this->rawOptions )->map( function( $option, $index ) use ( $key ) {
+        $this->rawOptions       =   collect( $this->rawOptions )->filter( function( $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
-                $this->removableIndex     =   $index;
+                return false;
             }
-        });  
 
-        if ( ! empty( $this->removableIndex ) ) {
-            collect( $this->rawOptions )->offsetUnset( $this->removableIndex );
-        }
+            return true;
+        });
     }
 }

@@ -1,6 +1,9 @@
 <?php
 namespace App\Services;
 
+/**
+ * @deprecated
+ */
 class MapperService {
     protected $collection;
     protected $label;

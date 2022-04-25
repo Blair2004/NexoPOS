@@ -1,15 +1,20 @@
 <?php
 
-use App\Events\MigrationAfterExecutedEvent;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class Nov25FixReportPermissionsAttribution extends Migration
 {
-    protected $multistore       =   false;
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
 
     /**
      * Run the migrations.

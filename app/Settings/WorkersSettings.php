@@ -8,6 +8,8 @@ use App\Services\SettingsPage;
 
 class WorkersSettings extends SettingsPage
 {
+    protected $identifier   =   'ns.workers';
+    
     public function __construct()
     {
         $options    =   app()->make( Options::class );

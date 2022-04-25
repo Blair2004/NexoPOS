@@ -8,7 +8,7 @@ $fields     =   [
         'label'         =>  __( 'VAT Type' ),
         'name'          =>  'ns_pos_vat',
         'type'          =>  'select',
-        'value'         =>  $options->get( 'ns_pos_vat' ),
+        'value'         =>  ns()->option->get( 'ns_pos_vat' ),
         'description'   =>  __( 'Determine the VAT type that should be used.' ),
         'options'       =>  Helper::kvToJsOptions([
             'disabled'                  =>  __( 'Disabled' ),
@@ -21,11 +21,11 @@ $fields     =   [
     ]
 ];
 
-if ( in_array( $options->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_vat' ] ) ) {
+if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_vat' ] ) ) {
     $fields[]       =   [
         'type'      =>  'select',
         'name'      =>  'ns_pos_tax_group',
-        'value'     =>  $options->get( 'ns_pos_tax_group' ),
+        'value'     =>  ns()->option->get( 'ns_pos_tax_group' ),
         'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ] ),
         'label'     =>  __( 'Tax Group' ),
         'description'   =>  __( 'Define the tax group that applies to the sales.' )
@@ -34,7 +34,7 @@ if ( in_array( $options->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_vat' 
     $fields[]       =   [
         'type'      =>  'select',
         'name'      =>  'ns_pos_tax_type',
-        'value'     =>  $options->get( 'ns_pos_tax_type' ),
+        'value'     =>  ns()->option->get( 'ns_pos_tax_type' ),
         'options'   =>  Helper::kvToJsOptions([
             'inclusive'     =>      __( 'Inclusive' ),
             'exclusive'     =>      __( 'Exclusive' )

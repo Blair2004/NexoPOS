@@ -19,20 +19,19 @@ use App\Models\ModuleMigration;
 use Exception;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 
 class ModulesService
 {
     private $modules    =   [];
     private $xmlParser;
-    private $options;
+    private Options $options;
     private $modulesPath;
     
     const CACHE_MIGRATION_LABEL         =   'module-migration-';
 
     public function __construct()
     {
-        if ( Helper::installed() ) {
+        if ( Helper::installed(true) ) {
             /**
              * We can only enable a module if the database is installed.
              */
@@ -42,12 +41,18 @@ class ModulesService
         $this->modulesPath      =   base_path( 'modules' ) . DIRECTORY_SEPARATOR;
         $this->xmlParser        =   new Reader( new Document() );
 
-        Storage::disk( 'ns' )->makeDirectory( 'modules' );
+        /**
+         * creates the directory modules
+         * if that doesn't exists
+         */
+        if ( ! is_dir( base_path( 'modules' ) ) ) {
+            Storage::disk( 'ns' )->makeDirectory( 'modules' );
+        }
     }
 
 
     /**
-     * Will lot a set of files within a specifc module
+     * Will load a set of files within a specifc module
      * @param string $module namespace
      * @param string $path to fload
      * @return mixed
@@ -61,7 +66,7 @@ class ModulesService
     }
 
     /**
-     * Load Modules
+     * Load modules for a defined path.
      * @param string path to load
      * @return void
      */
@@ -88,11 +93,11 @@ class ModulesService
     }
 
     /**
-     * Init Module directory
+     * Init a module from a provided path.
      * @param string
      * @return void
      */
-    public function __init( $dir ) 
+    public function __init( string $dir ) 
     {
         /**
          * Loading files from module directory
@@ -288,7 +293,7 @@ class ModulesService
                      * instance of ModulesServiceProvider
                      */
                     if ( $config[ 'providers-booted' ][ $className ] instanceof $parentClass && method_exists( $config[ 'providers-booted' ][ $className ], $method ) ) {
-                        call_user_func([ $config[ 'providers-booted' ][ $className ], $method ] );
+                        $config[ 'providers-booted' ][ $className ]->$method( $this );
                     }
                 }
             }
@@ -1133,7 +1138,7 @@ class ModulesService
              * get all the modules that are 
              * enabled.
              */
-            $enabledModules     =   ( array ) $this->options->get( 'enabled_modules' );
+            $enabledModules     =   $this->options->get( 'enabled_modules', [] );
 
             /**
              * @todo we might need to check if this module
@@ -1180,7 +1185,7 @@ class ModulesService
              */
             if ( ! in_array( $namespace, $enabledModules ) ) {
                 $enabledModules[]   =   $namespace;
-                $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
+                $this->options->set( 'enabled_modules', $enabledModules );
             }
 
             return [
@@ -1322,6 +1327,12 @@ class ModulesService
                 $unmigratedFiles[]      =       $file;
             }
         }
+
+        /**
+         * sort migration so files starting with "Create..." are executed
+         * first to avoid updating missing tables.
+         */
+        sort( $unmigratedFiles );
 
         return $unmigratedFiles;
     }

@@ -8,9 +8,17 @@ use App\Classes\Schema;
 
 class Nov12CreateOrderPermission extends Migration
 {
-    const permissionName    =   'nexopos.make-payment.orders';
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
 
-    public $multistore      =   false;
+    const permissionName    =   'nexopos.make-payment.orders';
     
     /**
      * Run the migrations.

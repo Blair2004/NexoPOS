@@ -16,9 +16,9 @@
             </h1>
         </div>
         <div id="switch-mode" class="flex">
-            <button @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active text-white' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
+            <button @click="setPercentageType('flat')" :class="mode === 'flat' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Flat' ) }}</button>
             <hr class="border-r border-box-edge">
-            <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-tab-active text-white' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
+            <button @click="setPercentageType('percentage')" :class="mode === 'percentage' ? 'bg-tab-active' : 'bg-tab-inactive text-tertiary'" class="outline-none w-1/2 py-2 flex items-center justify-center">{{ __( 'Percentage' ) }}</button>
         </div>
         <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
             <div 
