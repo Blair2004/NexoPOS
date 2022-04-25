@@ -8,6 +8,8 @@ use App\Services\SettingsPage;
 
 class StoresSettings extends SettingsPage
 {
+    protected $identifier   =   'ns.stores';
+    
     public function __construct()
     {
         $options    =   app()->make( Options::class );

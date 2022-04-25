@@ -8,11 +8,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationConfigRequest;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
-use App\Models\ProductCategory;
 use App\Services\Setup;
 
 class SetupController extends Controller

@@ -1,13 +1,21 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use App\Models\Role;
 use App\Models\Permission;
 
 class CreateNewPermissionsMarch9 extends Migration
 {
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
     /**
      * Run the migrations.
      *

@@ -59,15 +59,12 @@ class Options
     **/
     public function set( $key, $value, $expiration = null )
     {
-        $this->hasFound     =   false;
-        $storedOption       =   null;
-
         /**
          * if an option has been found,
          * it will save the new value and update
          * the option object.
          */
-        collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration, &$storedOption ) {
+        $foundOption    =   collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration ) {
             if ( $key === $option->key ) {
                 $this->hasFound         =   true;
 
@@ -75,7 +72,7 @@ class Options
                     case is_array( $value ) :
                         $option->value = json_encode( $value );
                     break;
-                    case empty( $value ) :
+                    case empty( $value ) && ! ( bool ) preg_match( '/[0-9]{1,}/', $value ) :
                         $option->value =    '';
                     break;
                     default:
@@ -93,59 +90,54 @@ class Options
                 $option                 =   $this->beforeSave( $option );
                 $option->save();
 
-                /**
-                 * populate the variable
-                 * that we'll return
-                 */
-                $storedOption           =   $option;
+                return $option;
             }
-        });
+
+            return false;
+        })
+        ->filter();
 
         /**
          * if the option hasn't been found
          * it will create a new Option model
          * and store with, then save it on the option model
          */
-        if( ! $this->hasFound ) {
-            $this->option               =   new Option;
-            $this->option->key          =   trim( strtolower( $key ) );
-            $this->option->array        =   false;
+        if( $foundOption->empty() ) {
+            $option               =   new Option;
+            $option->key          =   trim( strtolower( $key ) );
+            $option->array        =   false;
 
             switch( $value ) {
                 case is_array( $value ) :
-                    $this->option->value = json_encode( $value );
+                    $option->value = json_encode( $value );
                 break;
-                case empty( $value ) :
-                    $this->option->value =    '';
+                case empty( $value ) && ! ( bool ) preg_match( '/[0-9]{1,}/', $value ) :
+                    $option->value =    '';
                 break;
                 default:
-                    $this->option->value  =   $value;
+                    $option->value  =   $value;
                 break;
             }
 
-            $this->option->expire_on    =   $expiration;
+            $option->expire_on    =   $expiration;
 
             /**
              * this should be overridable
              * from a user option or any
              * extending this class
              */
-            $this->option                 =   $this->beforeSave( $this->option );            
-            $this->option->save();
-
-            /**
-             * populate the variable
-             * that we'll return
-             */
-            $storedOption               =   $this->option;
+            $option                 =   $this->beforeSave( $option );            
+            $option->save();
+        } else {
+            $option             =   $foundOption->first();
         }
 
         /**
          * Let's save the new option
          */
-        $this->rawOptions[ $key ]     =   $storedOption;
+        $this->rawOptions[ $key ]     =   $option;
         
-        return $storedOption;
+        return $option;
     }
 
     public function beforeSave( $option )
@@ -186,17 +178,20 @@ class Options
 
         $this->value    =   $default !== null ? $default : null;
 
-        collect( $this->rawOptions )->map( function( $option ) use ( $key, $default ) {
+        collect( $this->rawOptions )->each( function( $option ) use ( $key, $default ) {
             if ( $option->key === $key ) {
                 if ( 
                     ! empty( $option->value ) &&
+                    ( bool ) preg_match( '/[0-9]{1,}/', $option->value ) &&
                     is_string( $option->value ) && 
                     is_array( $json = json_decode( $option->value, true ) ) && 
                     ( json_last_error() == JSON_ERROR_NONE ) 
                 ) {
                     $this->value  =  $json;
                 } else {
-                    $this->value  =  empty( $option->value ) && $option->value === null ? $default : $option->value;
+                    $this->value  =  (
+                        empty( $option->value ) && $option->value === null && ( bool ) preg_match( '/[0-9]{1,}/', $option->value )
+                    ) ? $default : $option->value;
                 }
             }
         });

@@ -10,7 +10,7 @@ return [
             'label'         =>  __( 'Enable Workers' ),
             'description'   =>  __( 'Enable background services for NexoPOS 4.x. Refresh to check wether the option has turned to "Yes".' ),
             'name'          =>  'ns_workers_enabled',
-            'value'         =>  $options->get( 'ns_workers_enabled', 'no' ),
+            'value'         =>  ns()->option->get( 'ns_workers_enabled', 'no' ),
             'options'       =>  collect( Helper::kvToJsOptions([ 
                 'no'            =>  __( 'No' ), 
                 'await_confirm' =>  __( 'Test' ),

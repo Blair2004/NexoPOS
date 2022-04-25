@@ -13,13 +13,13 @@ return [
                 'default'   =>  __( 'Default' )
             ]),
             'name'      =>  'ns_invoice_receipt_template',
-            'value'     =>  $options->get( 'ns_invoice_receipt_template' ),
+            'value'     =>  ns()->option->get( 'ns_invoice_receipt_template' ),
             'description'   =>  __( 'Choose the template that applies to receipts' )
         ], [
             'label'     =>  __( 'Receipt Logo' ),
             'type'      =>  'media',
             'name'      =>  'ns_invoice_receipt_logo',
-            'value'     =>  $options->get( 'ns_invoice_receipt_logo' ),
+            'value'     =>  ns()->option->get( 'ns_invoice_receipt_logo' ),
             'description'   =>  __( 'Provide a URL to the logo.' )
         ], [
             'label'     =>  __( 'Merge Products On Receipt/Invoice' ),
@@ -29,19 +29,19 @@ return [
                 'yes'   =>  __( 'Yes' ) 
             ]),
             'name'      =>  'ns_invoice_merge_similar_products',
-            'value'     =>  $options->get( 'ns_invoice_merge_similar_products' ),
+            'value'     =>  ns()->option->get( 'ns_invoice_merge_similar_products' ),
             'description'   =>  __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' )
         ], [
             'label'     =>  __( 'Receipt Footer' ),
             'type'      =>  'textarea',
             'name'      =>  'ns_invoice_receipt_footer',
-            'value'     =>  $options->get( 'ns_invoice_receipt_footer' ),
+            'value'     =>  ns()->option->get( 'ns_invoice_receipt_footer' ),
             'description'   =>  __( 'If you would like to add some disclosure at the bottom of the receipt.' )
         ], [
             'label'         =>  __( 'Column A' ),
             'type'          =>  'textarea',
             'name'          =>  'ns_invoice_receipt_column_a',
-            'value'         =>  $options->get( 'ns_invoice_receipt_column_a' ),
+            'value'         =>  ns()->option->get( 'ns_invoice_receipt_column_a' ),
             'description'   =>  
             Hook::filter( 'ns-receipts-settings-tags', [
                 __( 'Available tags : ' ) . '<br>' .
@@ -79,7 +79,7 @@ return [
             'label'         =>  __( 'Column B' ),
             'type'          =>  'textarea',
             'name'          =>  'ns_invoice_receipt_column_b',
-            'value'         =>  $options->get( 'ns_invoice_receipt_column_b' ),
+            'value'         =>  ns()->option->get( 'ns_invoice_receipt_column_b' ),
             'description'   =>  
             Hook::filter( 'ns-receipts-settings-tags', [
                 __( 'Available tags :' ) . '<br>',

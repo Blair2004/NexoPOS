@@ -1,13 +1,9 @@
 <?php
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Coupon;

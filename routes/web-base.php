@@ -8,6 +8,7 @@ use App\Http\Controllers\UpdateController;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckApplicationHealthMiddleware;
 use App\Http\Middleware\CheckMigrationStatus;
+use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\HandleCommonRoutesMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
 use App\Http\Middleware\NotInstalledStateMiddleware;
@@ -40,6 +41,7 @@ Route::middleware([
     Route::middleware([ 
         Authenticate::class,
         CheckApplicationHealthMiddleware::class,
+        ClearRequestCacheMiddleware::class,
     ])->group( function() {
 
         Route::prefix( 'dashboard' )->group( function() {
@@ -62,7 +64,8 @@ Route::middleware([
 });
 
 Route::middleware([ 
-    NotInstalledStateMiddleware::class 
+    NotInstalledStateMiddleware::class,
+    ClearRequestCacheMiddleware::class,
 ])->group( function() {
     Route::prefix( '/do-setup/' )->group( function() {
         Route::get( '', [ SetupController::class, 'welcome' ])->name( 'ns.do-setup' );

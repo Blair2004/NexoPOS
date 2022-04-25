@@ -23,6 +23,9 @@
         i, span {
             @apply text-primary;
         }
+        .disabled {
+            @apply bg-input-edge;
+        }
     }
 
     &.info {

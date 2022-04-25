@@ -7,7 +7,7 @@ use App\Services\Helper;
 $cashRegisters  =   [
     [
         'name'          =>  'ns_pos_registers_enabled',
-        'value'         =>  $options->get( 'ns_pos_registers_enabled' ),
+        'value'         =>  ns()->option->get( 'ns_pos_registers_enabled' ),
         'options'         =>  Helper::kvToJsOptions([
             'yes'       =>  __( 'Yes' ),
             'no'        =>  __( 'No' )
@@ -18,12 +18,12 @@ $cashRegisters  =   [
     ], 
 ];
 
-if ( $options->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
+if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
     $cashRegisters[]    =   [
         'label'     =>  __( 'Cashier Idle Counter' ),
         'name'     =>  'ns_pos_idle_counter',
         'type'          =>  'select',
-        'value'     =>  $options->get( 'ns_pos_idle_counter' ),
+        'value'     =>  ns()->option->get( 'ns_pos_idle_counter' ),
         'options'   =>  Helper::kvToJsOptions([
             'disabled'  =>  __( 'Disabled' ),
             '5min'      =>  __( '5 Minutes' ),
@@ -39,7 +39,7 @@ if ( $options->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
         'label'         =>  __( 'Cash Disbursement' ),
         'name'          =>  'ns_pos_disbursement',
         'type'          =>  'select',
-        'value'         =>  $options->get( 'ns_pos_disbursement_enabled' ),
+        'value'         =>  ns()->option->get( 'ns_pos_disbursement_enabled' ),
         'description'   =>  __( 'Allow cash disbursement by the cashier.' ),
         'options'   =>  Helper::kvToJsOptions([
             'yes'       =>  __( 'Yes' ),

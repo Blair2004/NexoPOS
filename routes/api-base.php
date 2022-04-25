@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ClearRequestCacheMiddleware;
 use App\Http\Middleware\InstalledStateMiddleware;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,7 @@ Route::prefix( 'nexopos/v4' )->group( function() {
     Route::middleware([ 
         InstalledStateMiddleware::class, 
         SubstituteBindings::class,
+        ClearRequestCacheMiddleware::class,
     ])->group( function() {
 
         include( dirname( __FILE__ ) . '/api/fields.php' );

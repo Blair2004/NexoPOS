@@ -2,17 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Exceptions\NotAllowedException;
-use App\Models\Order;
-use App\Models\Register;
-use App\Models\RegisterHistory;
-use App\Models\Role;
-use App\Services\CashRegistersService;
-use App\Services\TestService;
-use Exception;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;

@@ -9,8 +9,17 @@ use App\Classes\Schema;
 
 class AddNewCustomersPermissionNov4 extends Migration
 {
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
     private $permission     =   'nexopos.customers.manage-account-history';
-    public $multistore      =   false;
 
     /**
      * Run the migrations.

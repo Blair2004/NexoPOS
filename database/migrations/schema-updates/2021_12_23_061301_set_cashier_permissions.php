@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Schema;
 class SetCashierPermissions extends Migration
 {
     /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void

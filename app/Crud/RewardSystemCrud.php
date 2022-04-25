@@ -23,13 +23,15 @@ class RewardSystemCrud extends CrudService
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.rewards_system';
+    protected $mainRoute      =   'ns.rewards-system';
 
     /**
      * Define namespace
      * @param  string
      */
-    protected $namespace  =   'ns.rewards_system';
+    protected $namespace  =   'ns.rewards-system';
+
+    protected $slug     =   'customers/{customer_id}/rewards';
 
     /**
      * Model Used

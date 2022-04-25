@@ -3,17 +3,24 @@
  * Table Migration
  * @package  5.0
 **/
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 use App\Models\Role;
 use App\Models\Permission;
-use App\Models\User;
 use App\Services\Options;
 
 class CreateRoles extends Migration
 {
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
     /**
      * Run the migrations.
      *

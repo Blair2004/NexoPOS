@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\ExpenseCategory;
 use App\Services\Helper;
 
 return [
@@ -11,7 +10,7 @@ return [
             'label'     =>  __( 'Order Code Type' ),
             'description'   =>  __( 'Determine how the system will generate code for each orders.' ),
             'name'  =>  'ns_orders_code_type',
-            'value'     =>  $options->get( 'ns_orders_code_type' ),
+            'value'     =>  ns()->option->get( 'ns_orders_code_type' ),
             'options'   =>  Helper::kvToJsOptions([
                 'date_sequential'   =>  __( 'Sequential' ),
                 'random_code'       =>  __( 'Random Code' ),
@@ -21,7 +20,7 @@ return [
             'type'  =>  'switch',
             'label'     =>  __( 'Allow Unpaid Orders' ),
             'name'  =>  'ns_orders_allow_unpaid',
-            'value'     =>  $options->get( 'ns_orders_allow_unpaid' ),
+            'value'     =>  ns()->option->get( 'ns_orders_allow_unpaid' ),
             'description'   =>  __( 'Will prevent incomplete orders to be placed. If credit is allowed, this option should be set to "yes".' ),
             'options'   =>  Helper::kvToJsOptions([
                 'yes'   =>  __( 'Yes' ),
@@ -31,7 +30,7 @@ return [
             'type'  =>  'switch',
             'label'     =>  __( 'Allow Partial Orders' ),
             'name'  =>  'ns_orders_allow_partial',
-            'value'     =>  $options->get( 'ns_orders_allow_partial' ),
+            'value'     =>  ns()->option->get( 'ns_orders_allow_partial' ),
             'description'   =>  __( 'Will prevent partially paid orders to be placed.' ),
             'options'   =>  Helper::kvToJsOptions([
                 'yes'   =>  __( 'Yes' ),
@@ -41,7 +40,7 @@ return [
             'type'  =>  'select',
             'label'     =>  __( 'Quotation Expiration' ),
             'name'  =>  'ns_orders_quotation_expiration',
-            'value'     =>  $options->get( 'ns_orders_quotation_expiration' ),
+            'value'     =>  ns()->option->get( 'ns_orders_quotation_expiration' ),
             'description'   =>  __( 'Quotations will get deleted after they defined they has reached.' ),
             'options'   =>  Helper::kvToJsOptions( collect([3,5,10,15,30])->mapWithKeys( function( $days ) {
                 return [

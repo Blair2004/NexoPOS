@@ -108,6 +108,13 @@ class CrudService
     protected $showOptions      =   true;
 
     /**
+     * Will enforce slug to be defined as
+     * a protected property.
+     * @param string
+     */
+    protected $slug;
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -404,6 +411,15 @@ class CrudService
     public function getRelations(): array
     {
         return Hook::filter( self::method( 'getRelations' ), $this->relations );
+    }
+
+    /**
+     * Will returns the CRUD component slug
+     * @return string
+     */
+    public function getSlug(): string 
+    {
+        return $this->slug;
     }
 
     /**

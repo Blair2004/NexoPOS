@@ -7,6 +7,16 @@ use Illuminate\Database\Migrations\Migration;
 class CreateTendooUsersTable extends Migration
 {
     /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+    
+    /**
      * Run the migrations.
      *
      * @return void

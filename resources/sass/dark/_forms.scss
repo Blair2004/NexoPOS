@@ -20,6 +20,9 @@
         i, span {
             @apply text-white;
         }
+        .disabled {
+            @apply bg-input-edge;
+        }
     }
 
     &.info {

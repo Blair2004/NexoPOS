@@ -8,6 +8,8 @@ use App\Services\SettingsPage;
 
 class SuppliesDeliveriesSettings extends SettingsPage
 {
+    protected $identifier   =   'ns.supplies-deliveries';
+    
     public function __construct()
     {
         $this->form    =   [

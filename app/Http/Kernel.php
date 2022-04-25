@@ -29,7 +29,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\ClearRequestCacheMiddleware::class,
     ];
 
     /**
@@ -65,6 +64,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'ns.not-installed' =>  \App\Http\Middleware\NotInstalledStateMiddleware::class,
         'ns.installed' =>  \App\Http\Middleware\InstalledStateMiddleware::class,
+        'ns.clear-cache'    =>  \App\Http\Middleware\ClearRequestCacheMiddleware::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,

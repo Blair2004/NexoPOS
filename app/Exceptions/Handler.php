@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use App\Exceptions\MethodNotAllowedHttpException as ExceptionsMethodNotAllowedHttpException;
 use App\Exceptions\QueryException as ExceptionsQueryException;
 use App\Exceptions\ValidationException as ExceptionsValidationException;
+use ArgumentCountError;
+use ErrorException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -87,7 +89,7 @@ class Handler extends ExceptionHandler
                 ->render( $request );
         }
 
-        if ( env( 'NS_CUSTOM_ERROR_HANDLER', env( 'APP_DEBUG' ) ) ) {
+        if ( env( 'NS_CUSTOM_ERROR_HANDLER', ! env( 'APP_DEBUG' ) ) ) {
 
             /**
              * Let's make a better verfication
@@ -140,6 +142,12 @@ class Handler extends ExceptionHandler
                     'use'           =>  CoreException::class,
                     'safeMessage'   =>  __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
                     'code'          =>  503
+                ],
+
+                ArgumentCountError::class         =>  [
+                    'use'           =>  CoreException::class,
+                    'safeMessage'   =>  __( 'An unexpected error occurred while opening the app. See the log details or enable the debugging.' ),
+                    'code'          =>  503
                 ]
             ]);
 
@@ -174,7 +182,7 @@ class Handler extends ExceptionHandler
                 return false;
 
             })->filter( fn( $exception ) => $exception !== false );
-            
+                        
             if ( ! $exceptionResponse->isEmpty() ) {
                 return $exceptionResponse->first();
             }

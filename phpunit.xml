@@ -46,6 +46,7 @@
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
+      <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>
