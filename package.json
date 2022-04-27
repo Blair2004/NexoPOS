@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/node": "^17.0.25",
     "autoprefixer": "^10.4.5",
-    "axios": "^0.26.1",
+    "axios": "^0.27.1",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.2",
     "cssnano": "^5.1.7",
