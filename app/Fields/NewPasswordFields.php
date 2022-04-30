@@ -6,6 +6,8 @@ use App\Services\FieldsService;
 
 class NewPasswordFields extends FieldsService
 {
+    protected $identifier   =   'ns.new-password';
+
     public function get()
     {
         $fields     =   Hook::filter( 'ns-new-password-fields', [

@@ -6,6 +6,8 @@ use App\Services\FieldsService;
 
 class CashRegisterCashoutFields extends FieldsService
 {
+    protected $identifier   =   'ns.cash-registers-cashout';
+
     public function get()
     {
         $fields     =   Hook::filter( 'ns-cash-register-cashout-fields', [

@@ -135,15 +135,14 @@ class Users
     {
         $roles      =   Auth::user()
             ->roles
-            ->map( fn( $role ) => $role->namespace )
-            ->toArray();
+            ->map( fn( $role ) => $role->namespace );
 
         if ( is_array( $group_name ) ) {
             return $roles
                 ->filter( fn( $roleNamespace ) => in_array( $roleNamespace, $group_name ) )
                 ->count() > 0;
         } else {
-            return in_array( $group_name, $roles );
+            return in_array( $group_name, $roles->toArray() );
         }
     }
 

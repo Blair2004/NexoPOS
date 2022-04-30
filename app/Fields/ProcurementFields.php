@@ -2,9 +2,12 @@
 namespace App\Fields;
 
 use App\Models\Procurement;
+use App\Services\FieldsService;
 
-class ProcurementFields
+class ProcurementFields extends FieldsService
 {
+    protected $identifier   =   'ns.procurement-fields';
+
     public function get( Procurement $model = null )
     {
         $name                       =   new \stdClass;

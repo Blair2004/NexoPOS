@@ -12,9 +12,12 @@ use App\Fields\PasswordLostFields;
 use App\Fields\NewPasswordFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
+use App\Fields\OrderPaymentFields;
 use App\Fields\PosOrderSettingsFields;
+use App\Fields\ProcurementFields;
 use App\Fields\RefundProductFields;
 use App\Fields\ResetFields;
+use App\Fields\UnitsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
@@ -30,7 +33,7 @@ class FormsProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // ...
     }
 
     /**
@@ -93,8 +96,20 @@ class FormsProvider extends ServiceProvider
                 case 'ns.pos-order-settings':
                     return new PosOrderSettingsFields;
                 break;     
+                case 'ns.order-payments':
+                    return new OrderPaymentFields;
+                break;     
+                case 'ns.procurement-fields':
+                    return new ProcurementFields;
+                break;     
                 case 'ns.reset':
                     return new ResetFields;
+                break;
+                case 'ns.unit-fields':
+                    return new UnitsFields;
+                break;
+                case 'ns.unit-group-fields':
+                    return new UnitsFields;
                 break;
                 default:
                     return $class;

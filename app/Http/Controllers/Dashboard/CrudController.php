@@ -45,6 +45,10 @@ class CrudController extends DashboardController
         $modelClass =   $resource->getModel();
         $model      =   $modelClass::find( $id );
 
+        if ( ! $model instanceof $modelClass ) {
+            throw new NotFoundException( __( 'Unable to delete an entry that no longer exists.' ) );
+        }
+
         if ( method_exists( $model, 'getDeclaredDependencies' ) ) {
             
             /**
@@ -199,8 +203,8 @@ class CrudController extends DashboardController
             'status'    =>  'success',
             'message'   =>  sprintf( 
                 $response[ 'message' ] ?? __( '%s has been processed, %s has not been processed.' ), 
-                $response[ 'success' ], 
-                $response[ 'failed' ]
+                $response[ 'success' ] ?? 0, 
+                $response[ 'failed' ] ?? 0
             ),
             'data'      =>  $response
         ];

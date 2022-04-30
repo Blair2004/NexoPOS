@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Validator;
 
 class UserProfileForm extends SettingsPage
 {
+    protected $identifier       =   'ns.user-profile';
+    
     public function __construct()
     {
         $options    =   app()->make( UserOptions::class );

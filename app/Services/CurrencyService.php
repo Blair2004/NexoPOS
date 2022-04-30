@@ -169,7 +169,7 @@ class CurrencyService
     {
         $currency   =   $this->prefered_currency === 'iso' ? $this->currency_iso : $this->currency_symbol;
         $final      =   sprintf( '%s ' . number_format( 
-            $this->value, 
+            ( float ) $this->value, 
             $this->decimal_precision, 
             $this->decimal_separator, 
             $this->thousand_separator 

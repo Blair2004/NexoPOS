@@ -101,7 +101,7 @@ class AuthController extends Controller
             'password'  =>  $request->input( 'password' )
         ]);
 
-        if ( request()->expectsJson() ) {
+        if ( $this->request->expectsJson() ) {
             return $this->handleJsonRequests( $request, $attempt );
         } else {
             return $this->handleNormalRequests( $request, $attempt );

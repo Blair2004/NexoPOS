@@ -7,6 +7,8 @@ use App\Services\Helper;
 
 class LayawayFields extends FieldsService
 {
+    protected $identifier   =   'ns.layaway';
+
     public function get()
     {
         $fields     =   [

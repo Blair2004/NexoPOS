@@ -17,7 +17,6 @@ class CreateUserCommand extends Command
      * @var string
      */
     protected $signature = 'make:user';
-
     protected $username;
     protected $email;
     protected $role;

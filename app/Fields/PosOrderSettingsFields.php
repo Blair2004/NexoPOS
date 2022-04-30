@@ -6,6 +6,8 @@ use App\Services\Helper;
 
 class PosOrderSettingsFields extends FieldsService
 {
+    protected $identifier   =   'ns.pos-order-settings';
+
     public function get()
     {
         $fields     =   [

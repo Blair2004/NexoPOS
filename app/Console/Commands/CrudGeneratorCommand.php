@@ -30,11 +30,6 @@ class CrudGeneratorCommand extends Command
     private $crudDetails    =   [];
 
     /**
-     * Current Module
-     */
-    private $module;
-
-    /**
      * Create a new command instance.
      *
      * @return void

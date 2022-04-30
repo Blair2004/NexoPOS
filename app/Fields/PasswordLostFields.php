@@ -6,6 +6,8 @@ use App\Services\FieldsService;
 
 class PasswordLostFields extends FieldsService
 {
+    protected $identifier   =   'ns.password-lost';
+
     public function get()
     {
         $fields     =   Hook::filter( 'ns-password-lost-fields', [

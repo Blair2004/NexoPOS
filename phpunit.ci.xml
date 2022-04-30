@@ -10,6 +10,10 @@
       <directory suffix="CreateTestDatabaseSQLite.php">./tests/Feature</directory>
       <directory suffix="ExceptionsTest.php">./tests/Feature</directory>
       <directory suffix="HardResetTest.php">./tests/Feature</directory>
+      <directory suffix="CrudTest.php">./tests/Feature</directory>
+      <directory suffix="FieldsTest.php">./tests/Feature</directory>
+      <directory suffix="UploadModuleTest.php">./tests/Feature</directory>
+      <directory suffix="FieldsTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
       <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
       <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
@@ -47,13 +51,14 @@
       <directory suffix="PartiallyPaidOrderWithAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="ProductAdjustmentTest.php">./tests/Feature</directory>
       <directory suffix="DeletingOrderTest.php">./tests/Feature</directory>
-      <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseCategoryTest.php">./tests/Feature</directory>
       <directory suffix="CreateExpenseTest.php">./tests/Feature</directory>
       <directory suffix="RenderCrudFormTest.php">./tests/Feature</directory>
       <directory suffix="SaveSettingsTest.php">./tests/Feature</directory>
       <directory suffix="TestRewardSystem.php">./tests/Feature</directory>
+      <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
+      <directory suffix="CreateUserTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

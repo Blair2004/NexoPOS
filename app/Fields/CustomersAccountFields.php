@@ -6,6 +6,8 @@ use App\Services\Helper;
 
 class CustomersAccountFields extends FieldsService
 {
+    protected $identifier   =   'ns.customers-account';
+
     public function get()
     {
         $fields     =   [

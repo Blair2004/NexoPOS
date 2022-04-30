@@ -480,9 +480,9 @@ class ModulesService
 
     /**
      * Return the list of module as an array
-     * @return array of modules
+     * @return array|null
      */
-    public function get($namespace = null)
+    public function get($namespace = null): array|null
     {
         if ( $namespace !== null ) {
             return $this->modules[ $namespace ] ?? null;
@@ -1010,6 +1010,12 @@ class ModulesService
              */
             $this->removeSymLink( $namespace );
 
+            /**
+             * unset the module from the 
+             * array "modules"
+             */
+            unset( $this->modules[ $namespace ] );
+
             return [
                 'status'    =>  'success',
                 'code'      =>  'module_deleted',
@@ -1474,6 +1480,95 @@ class ModulesService
     {
         if ( env( 'NS_MODULES_MANAGEMENT_DISABLED', false ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );
+        }
+    }
+
+    /**
+     * Generate a modules using the 
+     * configuration provided
+     * @param array $config
+     */
+    public function generateModule( $config )
+    {
+        if ( ! $this->get( $config[ 'namespace' ] ) ) {
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] );
+            
+            /**
+             * Geneate Internal Directories
+             */
+            foreach([ 'Config', 'Crud', 'Events', 'Mails', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
+                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
+            }
+
+            /**
+             * Generate Sub Folders
+             */
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views' );
+
+            /**
+             * Generate Files
+             */
+            Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'config.xml', $this->streamContent( 'config', $config ) );
+            Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . 'Module.php', $this->streamContent( 'main', $config ) );
+            Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . 'Event.php', $this->streamContent( 'event', $config ) );
+            Storage::disk( 'ns-modules' )->put( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'index.html', '<h1>Silence is golden !</h1>' );
+
+            /**
+             * Generate Module Public Folder
+             * create a symbolink link to that directory
+             */
+            $target     =   base_path( 'modules/' . $config[ 'namespace' ] . '/Public' );
+
+            if ( ! \windows_os() ) {
+                Storage::disk( 'public' )->makeDirectory( 'modules/' . $config[ 'namespace' ] );
+
+                $linkPath   =   public_path( '/modules/' . strtolower( $config[ 'namespace' ] ) );
+
+                if ( ! is_link( $linkPath ) ) {
+                    $link           =   \symlink( $target, $linkPath );
+                }
+
+            } else {
+                $mode       =   'J';
+                $link       =   public_path( 'modules' . DIRECTORY_SEPARATOR . strtolower( $config[ 'namespace' ] ) );
+                $target     =   base_path( 'modules' . DIRECTORY_SEPARATOR . $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Public' );
+                $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+            }
+
+            return [
+                'status'    =>  'success',
+                'message'   =>  sprintf( 'Your new module "%s" has been created.', $config[ 'name' ] )
+            ];
+        } else {
+            throw new NotAllowedException( __( 'A similar module has been found' ) );
+        }  
+    }    
+
+    /**
+     * Scream Content
+     * @return string content
+     */
+    public function streamContent( $content, $config ) 
+    {
+        switch ( $content ) {
+            case 'main'     :   
+            return view( 'generate.modules.main', [
+                'module'    =>  $config
+            ]); 
+            break;
+            case 'config'     :   
+            return view( 'generate.modules.config', [
+                'module'    =>  $config
+            ]); 
+            break;
+            case 'event'     :   
+            return view( 'generate.modules.event', [
+                'module'    =>  $config,
+                'name'      =>  $config[ 'namespace' ] . 'Event'
+            ]); 
+            break;
         }
     }
 }

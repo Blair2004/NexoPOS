@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-use App\Casts\CurrencyCast;
 use App\Casts\DateCast;
 use App\Classes\Hook;
 use App\Services\DateService;
