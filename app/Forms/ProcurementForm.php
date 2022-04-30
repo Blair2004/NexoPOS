@@ -12,6 +12,7 @@ use App\Services\UserOptions;
 
 class ProcurementForm extends SettingsPage
 {
+    protected $identifier       =   'ns.procurement';
     public $form;
     
     public function __construct()

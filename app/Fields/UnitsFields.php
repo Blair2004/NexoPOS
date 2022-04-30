@@ -3,9 +3,13 @@ namespace App\Fields;
 
 use App\Models\UnitsGroup;
 use App\Models\Unit;
+use App\Models\UnitGroup;
+use App\Services\FieldsService;
 
-class UnitsFields
+class UnitsFields extends FieldsService
 {
+    protected $identifier   =   'ns.unit-fields';
+
     public function get( Unit $model = null )
     {
         $name                       =   new \stdClass;

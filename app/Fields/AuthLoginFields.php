@@ -6,6 +6,8 @@ use App\Services\FieldsService;
 
 class AuthLoginFields extends FieldsService
 {
+    protected $identifier   =   'ns.login';
+    
     public function get()
     {
         $fields     =   Hook::filter( 'ns-login-fields', [

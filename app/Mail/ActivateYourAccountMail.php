@@ -32,8 +32,8 @@ class ActivateYourAccountMail extends Mailable
     public function build()
     {
         return $this
-            ->subject( $this->options->get( 'ns_notifications_registrations_user_activate_title', __( '[NexoPOS] Activate Your Account' ) ) )
-            ->from( $this->options->get( 'ns_store_email', 'notifications@nexopos.com' ) )
+            ->subject( ns()->option->get( 'ns_notifications_registrations_user_activate_title', __( '[NexoPOS] Activate Your Account' ) ) )
+            ->from( ns()->option->get( 'ns_store_email', 'notifications@nexopos.com' ) )
             ->markdown( 'mails/activate-your-account-mail' );
     }
 }

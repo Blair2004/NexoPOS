@@ -6,9 +6,9 @@ use Laravel\Sanctum\Sanctum;
 
 trait WithAuthentication
 {
-    protected function attemptAuthenticate()
+    protected function attemptAuthenticate( $user = null )
     {
-        $user   =   Role::namespace( 'admin' )->users->first();
+        $user   =   $user === null ? Role::namespace( 'admin' )->users->first() : $user;
 
         Sanctum::actingAs(
             $user,

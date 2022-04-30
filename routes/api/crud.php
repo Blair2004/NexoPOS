@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get( 'crud/{namespace}', [ CrudController::class, 'crudList' ]);
 Route::get( 'crud/{namespace}/columns', [ CrudController::class, 'getColumns' ]);
-Route::get( 'crud/{namespace}/fields', [ CrudController::class, 'fields' ]);
 Route::get( 'crud/{namespace}/config/{id?}', [ CrudController::class, 'getConfig' ]);
 Route::get( 'crud/{namespace}/form-config/{id?}', [ CrudController::class, 'getFormConfig' ]);
 Route::put( 'crud/{namespace}/{id}', [ CrudController::class, 'crudPut' ])->where(['id' => '[0-9]+']);

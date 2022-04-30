@@ -5,6 +5,8 @@ use App\Services\SettingsPage;
 
 class POSAddressesForm extends SettingsPage
 {
+    protected $identifier       =   'ns.pos-addresses';
+    
     protected $form;
 
     public function __construct()

@@ -1,9 +1,7 @@
 <?php
 
 use App\Events\BeforeStartApiRouteEvent;
-use App\Http\Middleware\InstalledStateMiddleware;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Support\Facades\Route;
 
 /*

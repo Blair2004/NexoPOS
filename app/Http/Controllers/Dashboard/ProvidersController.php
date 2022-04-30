@@ -6,11 +6,7 @@
 **/
 
 namespace App\Http\Controllers\Dashboard;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 use App\Services\Validation;
-use Illuminate\Support\Facades\Validator;
-use App\Fields\ProviderFields;
 use App\Crud\ProviderCrud;
 use App\Crud\ProviderProcurementsCrud;
 use App\Crud\ProviderProductsCrud;
@@ -18,8 +14,6 @@ use App\Http\Controllers\DashboardController;
 use App\Models\Provider;
 use App\Services\Options;
 use App\Services\ProviderService;
-use Illuminate\Validation\ValidationException;
-
 
 class ProvidersController extends DashboardController
 {
@@ -57,65 +51,6 @@ class ProvidersController extends DashboardController
     public function editProvider( Provider $provider )
     {
         return ProviderCrud::form( $provider );
-    }
-
-    /**
-     * controller to create
-     * a single provider
-     * @param Request request
-     * @return array
-     */
-    public function create( Request $request )
-    {
-        $validationResponse     =   Validator::make( 
-            $request->all(), 
-            $this->validation->from( ProviderFields::class )
-                ->extract( 'get' )
-        );
-
-        if ( $validationResponse->fails() ) {
-            throw new ValidationException( $validationResponse, __( 'The form contains one or more errors.' ) );
-        }
-
-        return $this->providerService->create( $request->only([
-            'name',
-            'surname',
-            'email', 
-            'address_1',
-            'address_2',
-            'description'
-        ]));
-    }
-
-    /**
-     * Edit an existing provider
-     * @param int provider id
-     * @param Request
-     * @return array response
-     */
-    public function edit( $id, Request $request )
-    {
-        $validationResponse     =   Validator::make( 
-            $request->all(), 
-            $this->validation->from( ProviderFields::class )
-                ->extract( 
-                    'get',
-                    $this->providerService->get( $id )
-                )
-        );
-
-        if ( $validationResponse->fails() ) {
-            throw new ValidationException( $validationResponse, __( 'The form contains one or more errors.' ) );
-        }
-
-        return $this->providerService->edit( $id, $request->only([
-            'name',
-            'surname',
-            'email', 
-            'address_1',
-            'address_2',
-            'description'
-        ]));
     }
 
     public function providerProcurements( $provider_id )

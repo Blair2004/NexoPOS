@@ -34,8 +34,6 @@ class UsersController extends DashboardController
 
     public function listUsers()
     {
-        ns()->restrict([ 'read.users' ]);
-
         return $this->view( 'pages.dashboard.crud.table', [
             'title'         =>      __( 'Users List' ),
             'createUrl'     =>  url( '/dashboard/users/create' ),

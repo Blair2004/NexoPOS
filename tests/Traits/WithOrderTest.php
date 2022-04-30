@@ -91,7 +91,7 @@ trait WithOrderTest
             // it's probably not opened, let's proceed...
         }
 
-        $result     =   $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
+        $result         =   $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
         $previousValue  =   $result[ 'data' ][ 'history' ]->value;
         
         /**
@@ -139,7 +139,7 @@ trait WithOrderTest
          */
         $cashRegister->refresh();
 
-        $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
+        $this->assertNotEquals( $cashRegister->balance, ( float ) $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
 
         /**
          * Let's initialize the total transactions 

@@ -53,9 +53,10 @@ class MigrateForgetCommand extends Command
     {
         $module     =   $this->moduleService->get( $this->argument( 'module' ) );
 
-        if ( $module === null ) {
+        if ( $module !== null ) {
             if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
-                return $this->error( sprintf( __( 'Unable to find the requested file "%s" from the module migration.'), $this->option( 'file' ) ) );
+                ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
+                    ->delete();
             }
     
             ModuleMigration::where( 'namespace', $this->argument( 'module' ) )

@@ -1,10 +1,13 @@
 <?php
 namespace App\Fields;
 
-use App\Models\UnitsGroup;
+use App\Models\UnitGroup;
+use App\Services\FieldsService;
 
-class UnitsGroupsFields
+class UnitsGroupsFields extends FieldsService
 {
+    protected $identifier   =   'ns.unit-group-fields';
+
     public function get( UnitGroup $model = null )
     {
         $name                       =   new \stdClass;

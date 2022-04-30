@@ -84,6 +84,8 @@ export default {
                 } else {
                     this.screenValue    =   this.value;
                 }
+            } else {
+                this.screenValue    =   '';
             }
         }
     },

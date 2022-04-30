@@ -33,7 +33,6 @@ Route::prefix( 'nexopos/v4' )->group( function() {
             include( dirname( __FILE__ ) . '/api/reports.php' );
             include( dirname( __FILE__ ) . '/api/settings.php' );
             include( dirname( __FILE__ ) . '/api/rewards.php' );
-            include( dirname( __FILE__ ) . '/api/transfer.php' );
             include( dirname( __FILE__ ) . '/api/taxes.php' );
             include( dirname( __FILE__ ) . '/api/crud.php' );
             include( dirname( __FILE__ ) . '/api/forms.php' );

@@ -6,6 +6,8 @@ use App\Services\FieldsService;
 
 class AuthRegisterFields extends FieldsService
 {
+    protected $identifier   =   'ns.register';
+
     public function get()
     {
         $fields     =   Hook::filter( 'ns-register-fields', [

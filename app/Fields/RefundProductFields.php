@@ -7,6 +7,8 @@ use App\Services\Helper;
 
 class RefundProductFields extends FieldsService
 {
+    protected $identifier   =   'ns.refund-product';
+    
     public function get()
     {
         $fields     =   [

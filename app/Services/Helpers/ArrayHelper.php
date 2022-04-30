@@ -1,6 +1,9 @@
 <?php
 namespace App\Services\Helpers;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
+
 trait ArrayHelper {
     /**
      * Return Odds
@@ -58,7 +61,7 @@ trait ArrayHelper {
      * @param Array [ value, label ]
      * @return array of options
      */
-    static function toJsOptions( $collections, $config ): Array 
+    static function toJsOptions( Collection|EloquentCollection $collections, $config ): Array 
     {
         $result         =   [];
         if ( $collections ) {

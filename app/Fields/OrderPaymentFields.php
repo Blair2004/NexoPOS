@@ -7,6 +7,8 @@ use App\Services\Helper;
 
 class OrderPaymentFields extends FieldsService
 {
+    protected $identifier   =   'ns.order-payments';
+
     public function get()
     {
         $fields     =   [

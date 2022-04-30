@@ -14,8 +14,6 @@ class WelcomeMail extends Mailable
 
     public $user;
 
-    public $options;
-
     /**
      * Create a new message instance.
      *
@@ -24,8 +22,6 @@ class WelcomeMail extends Mailable
     public function __construct( User $user )
     {
         $this->user     =   $user;
-
-        $this->options  =   app()->make( Options::class );
     }
 
     /**
@@ -36,8 +32,8 @@ class WelcomeMail extends Mailable
     public function build()
     {
         return $this
-            ->subject( $this->options->get( 'ns_notifications_registrations_user_email_title', __( '[NexoPOS] Your Account Has Been Created' ) ) )
-            ->from( $this->options->get( 'ns_store_email', 'notifications@nexopos.com' ) )
+            ->subject( ns()->option->get( 'ns_notifications_registrations_user_email_title', __( '[NexoPOS] Your Account Has Been Created' ) ) )
+            ->from( ns()->option->get( 'ns_store_email', 'notifications@nexopos.com' ) )
             ->markdown('mails/welcome-mail');
     }
 }
