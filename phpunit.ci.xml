@@ -59,6 +59,7 @@
       <directory suffix="CrudTest.php">./tests/Feature</directory>
       <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
       <directory suffix="CreateUserTest.php">./tests/Feature</directory>
+      <directory suffix="AuthenticationTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

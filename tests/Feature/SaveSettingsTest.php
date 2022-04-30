@@ -40,13 +40,19 @@ class SaveSettingsTest extends TestCase
                     return [
                         $key    =>  collect( $value[ 'fields' ] )
                             ->mapWithKeys( function( $field ) {
-                            return [
-                                $field[ 'name' ]    =>  match( $field[ 'type' ] ) {
-                                    'text', 'textarea'      =>  $this->faker->text(20),
-                                    'select'                =>  ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
-                                    default                 =>  $field[ 'value' ]
-                                }
-                            ];
+                            if ( $field[ 'name' ] === 'ns_store_language' ) {
+                                return [ 
+                                    $field[ 'name' ]    =   'en'
+                                ]; // the site should always be in english for the tests.
+                            } else {
+                                return [
+                                    $field[ 'name' ]    =>  match( $field[ 'type' ] ) {
+                                        'text', 'textarea'      =>  strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
+                                        'select'                =>  ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
+                                        default                 =>  $field[ 'value' ]
+                                    }
+                                ];
+                            }
                         })
                     ];
                 })->toArray();

@@ -10,6 +10,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property int $id
+ * @property string $username
+ * @property bool $active
+ * @property int $author
+ * @property string $email
+ * @property string $password
+ * @property string $activation_token
+ * @property string $activation_expiration
+ * @property int $total_sales_count
+ * @property float $total_sales
+ * @property string $remember_token
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class User extends Authenticatable
 {
     use Notifiable, 

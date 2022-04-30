@@ -23,8 +23,10 @@ use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Events\PasswordAfterRecoveredEvent;
+use App\Events\UserAfterActivationSuccessfulEvent;
 use App\Services\Options;
 use App\Models\User;
+use App\Models\UserRoleRelation;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -37,21 +39,61 @@ class AuthController extends Controller
 {
     public function signIn()
     {
-        return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.sign-in' ), [
+        return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.auth.sign-in' ), [
             'title'     =>  __( 'Sign In &mdash; NexoPOS' )
         ]);
     }
 
     public function signUp()
     {
-        return view( Hook::filter( 'ns-views:pages.sign-up', 'pages.sign-up' ), [
+        return view( Hook::filter( 'ns-views:pages.sign-up', 'pages.auth.sign-up' ), [
             'title'     =>      __( 'Sign Up &mdash; NexoPOS' )
         ]);
     }
 
+    public function activateAccount( User $user, $token )
+    {
+        /**
+         * trying to active an already activated
+         * account ? Not possible.
+         */
+        if ( $user->active ) {
+            return redirect( ns()->route( 'ns.login' ) )->with( 'errorMessage', __( 'No activation is needed for this account.' ) );
+        }
+
+        /**
+         * The activation is not valid.
+         * let's throw an exception.
+         */
+        if ( $user->activation_token !== $token || $user->activation_token === null ) {
+            return redirect( ns()->route( 'ns.login' ) )->with( 'errorMessage', __( 'Invalid activation token.' ) );
+        }
+
+        /**
+         * The activationt token has expired. Let's redirect
+         * the user to the login page with a message.
+         */
+        if ( ! ns()->date->lessThan( Carbon::parse( $user->activation_expiration ) ) ) {
+            return redirect( ns()->route( 'ns.login' ) )->with( 'errorMessage', __( 'The expiration token has expired.') );
+        }
+
+        $user->activation_expiration    =   null;
+        $user->activation_token         =   null;
+        $user->active                   =   true;
+        $user->save();
+
+        /**
+         * We'll dispatch an event to warn every
+         * component that needs to be aware of that.
+         */
+        UserAfterActivationSuccessfulEvent::dispatch( $user );
+
+        return redirect( ns()->route( 'ns.login' ) )->with( 'message', __( 'Your account is not activated.' ) );
+    }
+
     public function passwordLost()
     {
-        return view( 'pages.password-lost', [
+        return view( 'pages.auth.password-lost', [
             'title'     =>      __( 'Password Lost' )
         ]);
     }
@@ -59,6 +101,10 @@ class AuthController extends Controller
     public function newPassword( $userId, $token )
     {
         $user       =   User::find( $userId );
+
+        if ( ! $user->active ) {
+            throw new NotAllowedException( __( 'Unable to change a password for a non active user.' ) );
+        }
 
         if ( $user->activation_token !== $token ) {
             throw new NotAllowedException( __( 'Unable to proceed as the token provided is invalid.' ) );
@@ -68,7 +114,7 @@ class AuthController extends Controller
             throw new NotAllowedException( __( 'The token has expired. Please request a new activation token.' ) );
         }
 
-        return view( 'pages.new-password', [
+        return view( 'pages.auth.new-password', [
             'title'     =>      __( 'Set New Password' ),
             'user'      =>      $userId,
             'token'     =>      $token
@@ -101,7 +147,7 @@ class AuthController extends Controller
             'password'  =>  $request->input( 'password' )
         ]);
 
-        if ( $this->request->expectsJson() ) {
+        if ( $request->expectsJson() ) {
             return $this->handleJsonRequests( $request, $attempt );
         } else {
             return $this->handleNormalRequests( $request, $attempt );
@@ -214,8 +260,10 @@ class AuthController extends Controller
             throw new NotAllowedException( __( 'Unable to register using this username.' ) );
         }
 
+        $defaultRole                =   Role::namespace( Role::USER )->firstOrFail();
+
         $options                    =   app()->make( Options::class );
-        $role                       =   $options->get( 'ns_registration_role' );
+        $role                       =   $options->get( 'ns_registration_role', $defaultRole->id );
         $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );
 
         if ( empty( $role ) ) {
@@ -228,13 +276,20 @@ class AuthController extends Controller
         $user->password                 =   Hash::make( $request->input( 'password' ) );
         $user->activation_token         =   Str::random(20);
         $user->activation_expiration    =   now()->addMinutes(30);
-        $user->role_id                  =   $role;
 
         if ( $registration_validated === 'no' ) {
             $user->active   =   true;
         }
 
         $user->save();
+
+        /**
+         * We'll assign this user to the first relation
+         */
+        $relation           =   new UserRoleRelation;
+        $relation->user_id  =   $user->id;
+        $relation->role_id  =   $role;
+        $relation->save();
 
         /**
          * let's try to email the new user with 
@@ -294,11 +349,15 @@ class AuthController extends Controller
             throw new NotFoundException( __( 'Unable to find the requested user.' ) );
         }
 
+        if ( ! $user->active ) {
+            throw new NotAllowedException( __( 'Unable to submit a new password for a non active user.' ) );
+        }
+
         if ( $user->activation_token !== $token ) {
             throw new NotAllowedException( __( 'Unable to proceed, the provided token is not valid.' ) );
         }
 
-        if ( Carbon::parse( $user->activation_expiration )->lessThan( now() ) ) {
+        if ( Carbon::parse( $user->activation_expiration )->lessThan( ns()->date->now() ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the token has expired.' ) );
         }
 
