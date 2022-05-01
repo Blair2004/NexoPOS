@@ -44,7 +44,6 @@ class SettingsController extends DashboardController
             case 'orders'; return $this->ordersSettings(); break;
             case 'pos'; return $this->posSettings(); break;
             case 'reports'; return $this->reportsSettings(); break;
-            case 'service-providers'; return $this->serviceProviders(); break;
             case 'invoice-settings'; return $this->invoiceSettings(); break;
             case 'expenses-settings'; return $this->expenseSettings(); break;
             case 'reset'; return $this->resetSettings(); break;
@@ -193,14 +192,6 @@ class SettingsController extends DashboardController
         return $this->view( 'pages.dashboard.settings.reset', [
             'title'     =>      __( 'Reset Settings' ),
             'description'   =>  __( 'Reset the data and enable demo.' )
-        ]);
-    }
-
-    public function serviceProviders()
-    {
-        return $this->view( 'pages.dashboard.settings.service-providers', [
-            'title'     =>      __( 'Services Providers Settings' ),
-            'description'   =>  __( 'Configure the services providers settings.' )
         ]);
     }
 

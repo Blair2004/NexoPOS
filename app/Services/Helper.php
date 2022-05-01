@@ -10,8 +10,5 @@ use App\Services\Helpers\Modules;
 class Helper
 {
     use ArrayHelper, 
-        App,
-        Routes,
-        Modules,
-        Validation;
+        App;
 }

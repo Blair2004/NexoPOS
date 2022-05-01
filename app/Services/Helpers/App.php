@@ -42,16 +42,6 @@ trait App {
         }
     }
 
-    /**
-     * Load application interfaces
-     * @param string interface path
-     * @return View interface
-     */
-    static function LoadInterface( $path, $data = [] )
-    {
-        return View::make( 'tendoo::interfaces.' . $path, $data );
-    }
-
     static function pageTitle( $string )
     {
         return sprintf( 

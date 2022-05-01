@@ -432,10 +432,6 @@ class MenuService
                         'label'         =>  __( 'Invoice Settings'),
                         'href'          =>  ns()->url( '/dashboard/settings/invoice-settings' )
                     ],
-                    'service-providers'     =>  [
-                        'label'             =>  __( 'Service Providers'),
-                        'href'              =>  ns()->url( '/dashboard/settings/service-providers' )
-                    ],
                     'workers'           =>  [
                         'label'         =>  __( 'Workers' ),
                         'href'          =>  ns()->url( '/dashboard/settings/workers' ),
