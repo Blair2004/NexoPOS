@@ -27,7 +27,7 @@
     "laravel-echo": "^1.11.7",
     "laravel-mix": "^6.0.41",
     "lodash": "^4.17.20",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.13",
     "postcss-advanced-variables": "^3.0.1",
     "postcss-cli": "^9.1.0",
     "postcss-css-variables": "^0.18.0",
