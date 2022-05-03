@@ -15,7 +15,7 @@ class CreateCustomerTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function testCreateCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateCustomer();

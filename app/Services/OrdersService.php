@@ -2325,6 +2325,19 @@ class OrdersService
     }
 
     /**
+     * Will return the delivery status for a defined
+     * status provided as a string
+     * 
+     * @param string $status
+     * @return string $response
+     */
+    public function getDeliveryStatus( $status )
+    {
+        $process    =   $this->getDeliveryStatuses();
+        return $process[ $status ] ?? sprintf( _( 'Unknown Delivery (%s)' ), $status );
+    }
+
+    /**
      * Returns the order statuses
      * @return array $statuses
      */

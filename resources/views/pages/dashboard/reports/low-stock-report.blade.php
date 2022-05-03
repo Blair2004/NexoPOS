@@ -26,6 +26,9 @@
                             </button>
                         </div>
                     </div>
+                    <div class="px-2">
+                        <ns-field :field="reportType"></ns-field>
+                    </div>
                 </div>
                 <div id="low-stock-report" class="anim-duration-500 fade-in-entrance">
                     <div class="flex w-full">
@@ -43,8 +46,8 @@
                         </div>
                     </div>
                     <div class="text-primary shadow rounded my-4">
-                        <div class="border-b ns-box">
-                            <div class="ns-box-body p-2">
+                        <div class="ns-box">
+                            <div class="ns-box-body">
                                 <table class="table ns-table w-full">
                                     <thead>
                                         <tr>

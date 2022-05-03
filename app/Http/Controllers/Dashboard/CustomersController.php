@@ -419,5 +419,15 @@ class CustomersController extends DashboardController
     {
         return $customer->rewards()->paginate(20);
     }
+
+    /**
+     * Will return the customer account history
+     * @param Customer $customer
+     * @return array
+     */
+    public function getAccountHistory( Customer $customer )
+    {
+        return $customer->account_history()->paginate(20);
+    }
 }
 

@@ -5,6 +5,7 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerGroup;
+use App\Models\CustomerReward;
 use App\Models\RewardSystem;
 use App\Services\CustomerService;
 use Exception;
@@ -152,5 +153,62 @@ trait WithCustomerTest
             ]);
 
         $response->assertStatus(200);
+    }
+
+    protected function attemptGetCustomerHistory()
+    {
+        $accountHistory     =   CustomerAccountHistory::first();
+
+        if ( $accountHistory instanceof CustomerAccountHistory ) {
+            $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'GET', 'api/nexopos/v4/customers/' . $accountHistory->customer_id . '/account-history' );
+
+            $response->assertOk();
+            $response       =   json_decode( $response->getContent(), true );
+            $result         =   collect( $response[ 'data' ] )->filter( fn( $entry ) => ( int ) $accountHistory->id === ( int ) $entry[ 'id' ] );
+
+            return $this->assertTrue( 
+                $result->isNotEmpty(),
+                'The customer history doesn\'t have recognized information'
+            );
+        }
+
+        throw new Exception( 'Unable to perform the test without a valid history.' );
+    }
+
+    protected function attemptGetCustomerReward()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/rewards' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetCustomerOrders()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/orders' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetOrdersAddresses()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/addresses' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetCustomerGroup()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/group' );
+
+        $response->assertOk();
     }
 }

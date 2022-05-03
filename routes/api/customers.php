@@ -12,6 +12,7 @@ Route::get( 'customers/{customer}/addresses', [ CustomersController::class, 'get
 Route::get( 'customers/{customer}/group', [ CustomersController::class, 'getGroup' ]);
 Route::get( 'customers/{customer}/coupons', [ CustomersController::class, 'getCustomerCoupons' ]);
 Route::get( 'customers/{customer}/rewards', [ CustomersController::class, 'getCustomerRewards' ]);
+Route::get( 'customers/{customer}/account-history', [ CustomersController::class, 'getAccountHistory' ]);
 Route::get( 'customers/schema', [ CustomersController::class, 'schema' ]);
 Route::post( 'customers', [ CustomersController::class, 'post' ]);
 Route::post( 'customers/search', [ CustomersController::class, 'searchCustomer' ]);

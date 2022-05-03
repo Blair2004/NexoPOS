@@ -370,7 +370,7 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/reports/sales-progress' )
                     ], 
                     'low-stock'  =>  [
-                        'label' =>  __( 'Low Stock Report' ),
+                        'label' =>  __( 'Stock Report' ),
                         'permissions'   =>  [ 'nexopos.reports.low-stock' ],
                         'href'  =>  ns()->url( '/dashboard/reports/low-stock' )
                     ], 
