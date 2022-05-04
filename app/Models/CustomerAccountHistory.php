@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use App\Casts\DateCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,6 +22,10 @@ class CustomerAccountHistory extends NsModel
     const OPERATION_REFUND      =   'refund';
     const OPERATION_ADD         =   'add';
     const OPERATION_PAYMENT     =   'payment';
+
+    protected $casts    =   [
+        'created_at'    =>  DateCast::class
+    ];
 
     protected $table    =   'nexopos_' . 'customers_account_history';
 

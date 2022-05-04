@@ -27,7 +27,12 @@
                         </div>
                     </div>
                     <div class="px-2">
-                        <ns-field :field="reportType"></ns-field>
+                        <div class="ns-button">
+                            <button @click="selectReport()" class="rounded flex justify-between shadow py-1 items-center px-2">
+                                <i class="las la-print text-xl"></i>
+                                <span class="pl-2">{{ __( 'Report Type' ) }} : @{{ reportTypeName }}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="low-stock-report" class="anim-duration-500 fade-in-entrance">

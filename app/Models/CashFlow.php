@@ -10,10 +10,6 @@ class CashFlow extends NsModel
     
     protected $table    =   'nexopos_' . 'cash_flow';
 
-    public $casts    =   [
-        'created_at'    =>  DateCast::class
-    ];
-
     const STATUS_ACTIVE     =   'active';
     const STATUS_DELETING   =   'deleting';
 

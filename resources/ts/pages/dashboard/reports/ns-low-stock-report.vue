@@ -5,10 +5,12 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
 import { __ } from '@/libraries/lang';
 import FormValidation from '@/libraries/form-validation';
+import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
 
 export default {
     name : 'ns-low-stock-report',
     mounted() {
+        this.reportType     =   this.options[0].value;
     },
     components: {
         nsDatepicker,
@@ -17,27 +19,45 @@ export default {
     data() {
         return {
             products: [],
-            validation: new FormValidation,
-            fields: [{
-                type: 'select',
-                options: [{
-                    label: __( 'Low stock' ),
-                    value: 'low_stock',
-                }, {
-                    label: __( 'Stock Report' ),
-                    value: 'all_stock',
-                }],
-                name: 'report_type',
-                label: __( 'Choose The Report Type' ),
+            options: [{
+                label: __( 'Low Stock Report' ),
                 value: 'low_stock',
-            }]
+            }, {
+                label: __( 'Stock Report' ),
+                value: 'stock_report',
+            }],
+            reportType: '',
+            reportTypeName: '',
+            validation: new FormValidation,
         }
     },
-    computed: {
-        // ...
+    watch: {
+        reportType() {
+            const result    =   this.options.filter( option => option.value === this.reportType );
+
+            if ( result.length > 0 ) {
+                this.reportTypeName     =   result[0].label;
+            } else {
+                this.reportTypeName     =   __( 'N/A' );
+            }
+
+        }
     },
     methods: {
         __,
+        async selectReport() {
+            try {
+                this.reportType     =   await new Promise( ( resolve, reject )  => {
+                    Popup.show( nsSelectPopupVue, {
+                        label: __( 'Report Type' ),
+                        options: this.options,
+                        resolve, reject
+                    });
+                })
+            } catch( exception ) {
+                // ...
+            }
+        },
         printSaleReport() {
             this.$htmlToPaper( 'low-stock-report' );
         },

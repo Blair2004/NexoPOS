@@ -427,7 +427,10 @@ class CustomersController extends DashboardController
      */
     public function getAccountHistory( Customer $customer )
     {
-        return $customer->account_history()->paginate(20);
+        return $customer
+            ->account_history()
+            ->orderBy( 'created_at', 'desc' )
+            ->paginate(20);
     }
 }
 

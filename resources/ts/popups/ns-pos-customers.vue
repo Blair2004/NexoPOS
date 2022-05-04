@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Account Amount' ) }}</h3>
+                                        <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
                                         </div>
@@ -78,7 +78,7 @@
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingOrders">
                                             <ns-spinner size="36"></ns-spinner>
                                         </div>
-                                        <template  v-if="isLoadingOrders">
+                                        <template  v-if="! isLoadingOrders">
                                             <div class="py-2 w-full">
                                                 <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
                                             </div>
@@ -150,8 +150,11 @@
                                                                     <div class="flex flex-col items-start">
                                                                         <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
-                                                                            <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                                <small>{{ __( 'Amount' ) }}: {{ order.amount | currency }}</small>
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/3">
+                                                                                <small>{{ __( 'Amount' ) }}: {{ history.amount | currency }}</small>
+                                                                            </div>
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/3">
+                                                                                <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -464,9 +467,16 @@ export default {
         },
 
         loadCustomerOrders() {
+            this.isLoadingOrders    =   true;
             nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/orders` )
-                .subscribe( orders => {
-                    this.orders     =   orders;
+                .subscribe({
+                    next: orders => {
+                        this.orders     =   orders;
+                        this.isLoadingOrders    =   false;
+                    },
+                    error: e => {
+                        this.isLoadingOrders    =   false;
+                    }
                 });
         },
 
