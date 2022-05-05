@@ -17,9 +17,4 @@ class BankingController extends Controller
     {
         return CashFlowHistoryCrud::form();
     }
-
-    public function editCashFlow( CashFlow $cashFlow )
-    {
-        return CashFlowHistoryCrud::form( $cashFlow );
-    }
 }

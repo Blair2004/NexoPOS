@@ -13,7 +13,6 @@ class Option extends NsModel
     public $parsed      =   false;
     protected $key;
     
-    //
     public function scopeKey( $query, $key )
     {
         return $query->where( 'key', $key )->first();

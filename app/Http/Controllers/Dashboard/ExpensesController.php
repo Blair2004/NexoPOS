@@ -153,10 +153,5 @@ class ExpensesController extends DashboardController
     {
         return CashFlowHistoryCrud::table();
     }
-
-    public function createCashFlowHistory()
-    {
-        return CashFlowHistoryCrud::form();
-    }
 }
 
