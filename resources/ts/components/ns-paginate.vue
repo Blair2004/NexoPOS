@@ -1,14 +1,14 @@
 <template>
     <div id="pagination" class="flex -mx-1">
         <template v-if="pagination.current_page">
-            <a href="javascript:void(0)" @click="gotoPage( pagination.first_page )" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+            <a href="javascript:void(0)" @click="gotoPage( pagination.first_page )" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-inset-button info shadow">
                 <i class="las la-angle-double-left"></i>
             </a>
             <template v-for="(_paginationPage, index) of getPagination">
-                <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'bg-blue-400 text-white' : 'bg-gray-200 text-gray-700'" @click="gotoPage( _paginationPage )" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full hover:bg-blue-400 hover:text-white">{{ _paginationPage }}</a>
-                <a :key="index" v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700">...</a>
+                <a :key="index" v-if="page !== '...'" :class="page == _paginationPage ? 'active' : ''" @click="gotoPage( _paginationPage )" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-inset-button info">{{ _paginationPage }}</a>
+                <a :key="index" v-if="page === '...'" href="javascript:void(0)" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-inset-button">...</a>
             </template>
-            <a href="javascript:void(0)" @click="gotoPage( pagination.last_page )" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-700 hover:bg-blue-400 hover:text-white shadow">
+            <a href="javascript:void(0)" @click="gotoPage( pagination.last_page )" class="mx-1 flex items-center justify-center h-8 w-8 rounded-full ns-inset-button info shadow">
                 <i class="las la-angle-double-right"></i>
             </a>
         </template>

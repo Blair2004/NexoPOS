@@ -370,7 +370,7 @@ class MenuService
                         'href'  =>  ns()->url( '/dashboard/reports/sales-progress' )
                     ], 
                     'low-stock'  =>  [
-                        'label' =>  __( 'Low Stock Report' ),
+                        'label' =>  __( 'Stock Report' ),
                         'permissions'   =>  [ 'nexopos.reports.low-stock' ],
                         'href'  =>  ns()->url( '/dashboard/reports/low-stock' )
                     ], 
@@ -431,10 +431,6 @@ class MenuService
                     'invoice-settings'  =>  [
                         'label'         =>  __( 'Invoice Settings'),
                         'href'          =>  ns()->url( '/dashboard/settings/invoice-settings' )
-                    ],
-                    'service-providers'     =>  [
-                        'label'             =>  __( 'Service Providers'),
-                        'href'              =>  ns()->url( '/dashboard/settings/service-providers' )
                     ],
                     'workers'           =>  [
                         'label'         =>  __( 'Workers' ),

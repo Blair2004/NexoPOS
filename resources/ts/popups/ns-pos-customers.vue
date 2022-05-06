@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="px-4 mb-4 w-full md:w-1/4">
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
-                                        <h3 class="font-medium text-lg">{{ __( 'Account Amount' ) }}</h3>
+                                        <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
                                             <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
                                         </div>
@@ -75,50 +75,96 @@
                             <div class="flex flex-auto flex-col overflow-hidden">
                                 <ns-tabs :active="selectedTab" @changeTab="doChangeTab( $event )">
                                     <ns-tabs-item identifier="orders" :label="__( 'Orders' )">
-                                        <div class="py-2 w-full">
-                                            <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
+                                        <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingOrders">
+                                            <ns-spinner size="36"></ns-spinner>
                                         </div>
-                                        <div class="flex-auto flex-col flex overflow-hidden">
-                                            <div class="flex-auto overflow-y-auto">
-                                                <table class="table ns-table w-full">
-                                                    <thead>
-                                                        <tr class="text-primary">
-                                                            <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
-                                                            <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="text-primary">
-                                                        <tr v-if="orders.length === 0">
-                                                            <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
-                                                        </tr>
-                                                        <tr v-for="order of orders" :key="order.id">
-                                                            <td colspan="3" class="border p-2 text-center">
-                                                                <div class="flex flex-col items-start">
-                                                                    <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
-                                                                    <div class="md:-mx-2 w-full flex flex-col md:flex-row">
-                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                            <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
-                                                                        </div>
-                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                            <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
-                                                                        </div>
-                                                                        <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                            <small>{{ __( 'Delivery' ) }}: {{ order.human_delivery_status }}</small>
+                                        <template  v-if="! isLoadingOrders">
+                                            <div class="py-2 w-full">
+                                                <h2 class="font-semibold text-primary">{{ __( 'Last Purchases' ) }}</h2>
+                                            </div>
+                                            <div class="flex-auto flex-col flex overflow-hidden">
+                                                <div class="flex-auto overflow-y-auto">
+                                                    <table class="table ns-table w-full">
+                                                        <thead>
+                                                            <tr class="text-primary">
+                                                                <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Order' ) }}</th>
+                                                                <th width="50" class="p-2 border font-semibold">{{ __( 'Options' ) }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="text-primary">
+                                                            <tr v-if="orders.length === 0">
+                                                                <td class="border p-2 text-center" colspan="4">{{ __( 'No orders...' ) }}</td>
+                                                            </tr>
+                                                            <tr v-for="order of orders" :key="order.id">
+                                                                <td colspan="3" class="border p-2 text-center">
+                                                                    <div class="flex flex-col items-start">
+                                                                        <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
+                                                                        <div class="md:-mx-2 w-full flex flex-col md:flex-row">
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                                <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
+                                                                            </div>
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                                <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
+                                                                            </div>
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/4">
+                                                                                <small>{{ __( 'Delivery' ) }}: {{ order.human_delivery_status }}</small>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="border p-2 text-center">
-                                                                <button @click="openOrderOptions( order )" class="rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button success">
-                                                                    <i class="las la-wallet"></i>
-                                                                    <span class="ml-1">{{ __( 'Options' ) }}</span>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                                </td>
+                                                                <td class="border p-2 text-center">
+                                                                    <button @click="openOrderOptions( order )" class="rounded-full h-8 px-2 flex items-center justify-center border border-gray ns-inset-button success">
+                                                                        <i class="las la-wallet"></i>
+                                                                        <span class="ml-1">{{ __( 'Options' ) }}</span>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
+                                        </template>
+                                    </ns-tabs-item>
+                                    <ns-tabs-item identifier="wallet-history" :label="__( 'Wallet History' )">
+                                        <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingHistory">
+                                            <ns-spinner size="36"></ns-spinner>
                                         </div>
+                                        <template v-if="! isLoadingHistory">
+                                            <div class="py-2 w-full">
+                                                <h2 class="font-semibold text-primary">{{ __( 'Wallet History' ) }}</h2>
+                                            </div>
+                                            <div class="flex-auto flex-col flex overflow-hidden">
+                                                <div class="flex-auto overflow-y-auto">
+                                                    <table class="table ns-table w-full">
+                                                        <thead>
+                                                            <tr class="text-primary">
+                                                                <th colspan="3" width="150" class="p-2 border font-semibold">{{ __( 'Transaction' ) }}</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="text-primary">
+                                                            <tr v-if="walletHistories.length === 0">
+                                                                <td class="border p-2 text-center" colspan="3">{{ __( 'No History...' ) }}</td>
+                                                            </tr>
+                                                            <tr v-for="history of walletHistories" :key="history.id">
+                                                                <td colspan="3" class="border p-2 text-center">
+                                                                    <div class="flex flex-col items-start">
+                                                                        <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
+                                                                        <div class="md:-mx-2 w-full flex flex-col md:flex-row">
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/3">
+                                                                                <small>{{ __( 'Amount' ) }}: {{ history.amount | currency }}</small>
+                                                                            </div>
+                                                                            <div class="md:px-2 flex items-start w-full md:w-1/3">
+                                                                                <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </template>
                                     </ns-tabs-item>
                                     <ns-tabs-item identifier="coupons" :label="__( 'Coupons' )">
                                         <div class="flex-auto h-full justify-center flex items-center" v-if="isLoadingCoupons">
@@ -255,9 +301,12 @@ export default {
             selectedTab: 'orders',
             isLoadingCoupons: false,
             isLoadingRewards: false,
+            isLoadingHistory: false,
+            isLoadingOrders: false,
             coupons: [],
             rewardsResponse: [],
             order: null,
+            walletHistories: [],
         }
     }, 
     components: {
@@ -281,11 +330,11 @@ export default {
             if ( this.$popupParams.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
                 this.customer   =   this.$popupParams.customer;
-                this.loadCustomerOrders( this.customer.id );
+                this.loadCustomerOrders();
             } else if ( order.customer !== undefined ) {
                 this.activeTab  =   'account-payment';
                 this.customer   =   order.customer;
-                this.loadCustomerOrders( this.customer.id );
+                this.loadCustomerOrders();
             }
         });
 
@@ -295,11 +344,26 @@ export default {
         __,
 
         reload() {
-            this.loadCustomerOrders( this.customer.id );
+            this.loadCustomerOrders();
         },
 
         popupResolver,
         popupCloser,
+
+        getWalletHistoryLabel( type ) {
+            switch( type ) {
+                case 'add':
+                    return __( 'Crediting' );
+                case 'deduct':
+                    return __( 'Removing' );
+                case 'refund':
+                    return __( 'Refunding' );
+                case 'payment':
+                    return __( 'Payment' );
+                default:
+                    return __( 'Unknow' );
+            }
+        },
 
         getType( type ) {
             switch( type ) {
@@ -339,6 +403,28 @@ export default {
             if ( tab === 'rewards' ) {
                 this.loadRewards();
             }
+
+            if ( tab === 'wallet-history' ) {
+                this.loadAccounHistory();
+            }
+
+            if ( tab === 'orders' ) {
+                this.loadCustomerOrders();
+            }
+        },
+
+        loadAccounHistory() {
+            this.isLoadingHistory   =   true;
+            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/account-history` )
+                .subscribe({
+                    next: ( result ) => {
+                        this.walletHistories    =   result.data;
+                        this.isLoadingHistory   =   false;
+                    },
+                    error: ( error ) => {
+                        this.isLoadingHistory   =   false;
+                    }
+                });
         },
 
         loadCoupons() {
@@ -380,10 +466,17 @@ export default {
             Popup.show( nsPosCustomerSelectPopupVue );
         },
 
-        loadCustomerOrders( customerID ) {
-            nsHttpClient.get( `/api/nexopos/v4/customers/${customerID}/orders` )
-                .subscribe( orders => {
-                    this.orders     =   orders;
+        loadCustomerOrders() {
+            this.isLoadingOrders    =   true;
+            nsHttpClient.get( `/api/nexopos/v4/customers/${this.customer.id}/orders` )
+                .subscribe({
+                    next: orders => {
+                        this.orders     =   orders;
+                        this.isLoadingOrders    =   false;
+                    },
+                    error: e => {
+                        this.isLoadingOrders    =   false;
+                    }
                 });
         },
 

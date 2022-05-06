@@ -51,34 +51,6 @@ class Users
     }
 
     /**
-     * Send Activation Email
-     * @param user id
-     */
-    public function sendActivationEmail( User $user )
-    {
-        /**
-         * Send user activation code
-         */
-        $date               =   app()->make( DateService::class );
-        $activationCode     =   Str::random( 10 ) . $user->id;
-        $userOptions        =   new UserOptions( $user->id );
-        $userOptions->set( 'activation-code', $activationCode );
-        $userOptions->set( 'activation-expiration', $date->copy()->addDays(2)->toDateTimeString() ); // activation code expires in 2 days
-
-        /**
-         * @todo
-         * if it shouldn't activate the user, we might send an email
-         * for letting him know his account has been created
-         */
-        Mail::to( $user->email )
-            ->queue( new ActivateAccountMail( url( 
-                sprintf( '/tendoo/auth/activate?code=%s&user_id=%s', $activationCode, $user->id ) 
-            ), $user ) );
-
-        Hook::action( 'auth.send-activation', $user );
-    }
-
-    /**
      * Activate account using a 
      * code and the user id
      * @param string coe

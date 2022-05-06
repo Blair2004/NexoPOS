@@ -134,6 +134,7 @@ class AuthenticationTest extends TestCase
         $path       =   "/new-password/" . $user->id . '/' . $user->activation_token;
 
         $response = $this->get( $path );
+        $response->assertSee( 'The token has expired. Please request a new activation token.' );
         $response->assertStatus(200);
     }
 

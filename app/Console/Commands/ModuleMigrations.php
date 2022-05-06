@@ -6,9 +6,6 @@ use App\Models\ModuleMigration;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Services\Modules;
-use App\Services\Setup;
-use App\Services\Helper;
 use App\Services\ModulesService;
 use Illuminate\Support\Facades\Artisan;
 

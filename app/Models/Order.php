@@ -86,7 +86,6 @@ class Order extends NsModel
     const DELIVERY_DELIVERED                =   'delivered';
 
     public $casts    =   [
-        'created_at'                =>  DateCast::class,
         'final_payment_date'        =>  DateCast::class,
     ];
 

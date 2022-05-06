@@ -115,6 +115,12 @@ class CrudService
     protected $slug;
 
     /**
+     * Define the columns that should 
+     * be included on the exportation.
+     */
+    protected $exportColumns    =   [];
+
+    /**
      * Construct Parent
      */
     public function __construct()
@@ -343,6 +349,14 @@ class CrudService
         return $this->namespace;
     }
 
+    /**
+     * Will return the columns that should
+     * be included on the exportation.
+     */
+    public function getExportColumns()
+    {
+        return $this->exportColumns;
+    }
 
     /**
      * Get Bulk Actions
@@ -789,7 +803,9 @@ class CrudService
          * looping entries to provide inline 
          * options
          */
-        foreach( $entries[ 'data' ] as &$entry ) {
+        $entries[ 'data' ]  =   collect( $entries[ 'data' ] )->map( function( $entry ) {
+            $entry      =   new CrudEntry( ( array ) $entry );
+
             /**
              * apply casting to crud resources
              * as it's defined by the class casting
@@ -807,11 +823,14 @@ class CrudService
             }
             
             /**
-             * @hook crud.entry
+             * We'll allow any resource to mutate the
+             * entries but make sure to keep the originals.
              */
             $entry  =   Hook::filter( $this->namespace . '-crud-actions', $entry );
             $entry  =   Hook::filter( get_class( $this )::method( 'setActions' ), $entry );
-        }
+
+            return $entry;
+        });
 
         return $entries;
     }

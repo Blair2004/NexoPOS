@@ -20,7 +20,7 @@ const nsSpinner     =   Vue.component( 'ns-spinner', {
     props: [ 'color', 'size', 'border' ],
     template: `
     <div class="flex items-center justify-center">
-    <div class="loader ease-linear rounded-full border-gray-200" :class="validatedAnimation + ' border-4 border-t-4' + ' w-' + validatedSize + ' h-' + validatedSize"></div>
+        <div class="loader ease-linear rounded-full border-gray-200" :class="validatedAnimation + ' border-4 border-t-4' + ' w-' + validatedSize + ' h-' + validatedSize"></div>
     </div>
     `,
 });

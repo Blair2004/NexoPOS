@@ -79,11 +79,6 @@ class AppServiceProvider extends ServiceProvider
             $timeZone   =   $options->get( 'ns_datetime_timezone', 'Europe/London' );
             return new DateService( 'now', $timeZone );
         });
-
-        // save Singleton for options
-        $this->app->singleton( AuthService::class, function(){
-            return new AuthService();
-        });
         
         // save Singleton for options
         $this->app->singleton( UserOptions::class, function(){
@@ -197,10 +192,6 @@ class AppServiceProvider extends ServiceProvider
             return new ExpenseService(
                 app()->make( DateService::class )
             );
-        });
-
-        $this->app->singleton( WebSocketService::class, function( $app ) {
-            return new WebSocketService();
         });
 
         $this->app->singleton( OrdersService::class, function( $app ) {

@@ -71,19 +71,19 @@ export default Vue.extend({
 })
 </script>
 <template>
-    <div class="flex flex-auto flex-col mb-2">
-        <label :for="field.name" :class="hasError ? 'text-red-700' : 'text-gray-700'" class="block leading-5 font-medium"><slot></slot></label>
-        <div :class="hasError ? 'border-red-400' : 'border-gray-200'" class="mt-1 relative flex border-2 rounded-md focus:shadow-sm">
+    <div class="flex flex-auto flex-col mb-2 ns-date-range-picker">
+        <label :for="field.name" :class="hasError ? 'text-error-primary' : 'text-primary'" class="block leading-5 font-medium"><slot></slot></label>
+        <div :class="hasError ? 'error' : ''" class="mt-1 relative flex input-group border-2 rounded-md overflow-hidden focus:shadow-sm">
             <div v-if="leading" class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="text-gray-500 sm:text-sm sm:leading-5">
+                <span class="text-primary sm:text-sm sm:leading-5">
                 {{ leading }}
                 </span>
             </div>
-            <button class="px-3 outline-none bg-red-500 font-semibold text-white" @click="clearDate()">
+            <button class="px-3 outline-none bg-error-secondary font-semibold text-white" @click="clearDate()">
                 <i class="las la-times"></i>
             </button>
             <date-range-picker
-                class="w-full flex items-center"
+                class="w-full flex items-center bg-input-background"
                 ref="picker"
                 :locale-data="{ firstDay: 1, format: 'yyyy-mm-dd HH:mm:ss' }"
                 :timePicker="true"

@@ -21,7 +21,6 @@ use App\Services\CustomerService;
 
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
-use App\Models\CustomerAccountHistory;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
@@ -418,6 +417,19 @@ class CustomersController extends DashboardController
     public function getCustomerRewards( Customer $customer )
     {
         return $customer->rewards()->paginate(20);
+    }
+
+    /**
+     * Will return the customer account history
+     * @param Customer $customer
+     * @return array
+     */
+    public function getAccountHistory( Customer $customer )
+    {
+        return $customer
+            ->account_history()
+            ->orderBy( 'created_at', 'desc' )
+            ->paginate(20);
     }
 }
 

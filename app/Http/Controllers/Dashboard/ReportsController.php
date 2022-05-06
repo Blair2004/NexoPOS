@@ -17,25 +17,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ReportsController extends DashboardController
 {
-    /**
-     * @var OrdersService
-     */
-    protected $ordersService;
-
-    /**
-     * @var ReportService
-     */
-    protected $reportService;
-
     public function __construct(
-        OrdersService $ordersService,
-        ReportService $reportService
+        protected OrdersService $ordersService,
+        protected ReportService $reportService
     )
     {
         parent::__construct();
-
-        $this->ordersService    =   $ordersService;
-        $this->reportService    =   $reportService;
     }
 
     public function salesReport()
@@ -62,11 +49,11 @@ class ReportsController extends DashboardController
         ]);
     }
 
-    public function lowStockReport()
+    public function stockReport()
     {
         return $this->view( 'pages.dashboard.reports.low-stock-report', [
-            'title'         =>  __( 'Low Stock Report' ),
-            'description'   =>  __( 'Provides an overview of the product which stock are low.' )
+            'title'         =>  __( 'Stock Report' ),
+            'description'   =>  __( 'Provides an overview of the products stock.' )
         ]);
     }
 
@@ -273,13 +260,18 @@ class ReportsController extends DashboardController
         );
     }
 
-    public function getMyReport( Request $request )
+    public function getMyReport()
     {
         return $this->reportService->getCashierDashboard( Auth::id() );
     }
 
-    public function getLowStock( Request $request )
+    public function getLowStock()
     {
         return $this->reportService->getLowStockProducts();
+    }
+
+    public function getStockReport()
+    {
+        return $this->reportService->getStockReport();
     }
 }

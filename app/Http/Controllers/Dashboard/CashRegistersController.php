@@ -117,7 +117,7 @@ class CashRegistersController extends DashboardController
             ->first();
 
         if ( ! $register instanceof Register ) {
-            throw new Exception( __( 'No register has been opened by the logged user.' ) );
+            throw new NotAllowedException( __( 'No register has been opened by the logged user.' ) );
         }
         
         return [

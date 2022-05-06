@@ -11,6 +11,7 @@ use App\Models\DashboardMonth;
 use App\Models\Order;
 use App\Models\OrderRefund;
 use App\Models\Procurement;
+use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
@@ -1046,6 +1047,11 @@ class ReportService
             'status'    =>  'success',
             'message'   =>  __( 'The report has been computed successfully.' )
         ];
+    }
+
+    public function getStockReport()
+    {
+        return Product::with( 'unit_quantities.unit' )->paginate(50);
     }
 
     /**

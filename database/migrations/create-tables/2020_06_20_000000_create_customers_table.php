@@ -66,7 +66,9 @@ class CreateCustomersTable extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'customer_id' );
                 $table->integer( 'order_id' )->nullable();
+                $table->float( 'previous_amount' )->default(0);
                 $table->float( 'amount' )->default(0);
+                $table->float( 'next_amount' )->default(0);
                 $table->string( 'operation' ); // sub / add
                 $table->integer( 'author' );
                 $table->text( 'description' )->nullable();

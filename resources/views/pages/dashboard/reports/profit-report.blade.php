@@ -46,7 +46,7 @@
                     </div>
                     <div class="shadow rounded my-4">
                         <div class="ns-box">
-                            <div class="border-b ns-box-body p-2">
+                            <div class="border-b ns-box-body">
                                 <table class="table ns-table w-full">
                                     <thead>
                                         <tr>

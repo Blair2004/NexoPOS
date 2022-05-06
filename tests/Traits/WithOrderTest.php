@@ -92,7 +92,7 @@ trait WithOrderTest
         }
 
         $result         =   $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
-        $previousValue  =   $result[ 'data' ][ 'history' ]->value;
+        $previousValue  =   ( float ) $result[ 'data' ][ 'history' ]->value;
         
         /**
          * Step 1 : let's prepare the order
@@ -113,6 +113,12 @@ trait WithOrderTest
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
             $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue + $response[ 'data' ][ 'order' ][ 'total' ] ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
         }
+
+        /**
+         * let's update tha value for making
+         * accurate comparisons.
+         */
+        $previousValue  =   ( float ) $cashRegister->balance;
         
         /**
          * Step 2 : disburse (cash-out) some cash
@@ -127,6 +133,12 @@ trait WithOrderTest
         $cashRegister->refresh();
 
         $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
+
+        /**
+         * let's update tha value for making
+         * accurate comparisons.
+         */
+        $previousValue  =   ( float ) $cashRegister->balance;
 
         /**
          * Step 3 : cash in some cash

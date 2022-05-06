@@ -16,6 +16,7 @@
       <directory suffix="FieldsTest.php">./tests/Feature</directory>
       <directory suffix="TestSetOrderType.php">./tests/Feature</directory>
       <directory suffix="OptionSavingTest.php">./tests/Feature</directory>
+      <directory suffix="TestOtherGetRoutes.php">./tests/Feature</directory>
       <directory suffix="ManageRoleTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxGroupTest.php">./tests/Feature</directory>
       <directory suffix="CreateTaxTest.php">./tests/Feature</directory>
@@ -60,6 +61,7 @@
       <directory suffix="CrudEditEntitiesTest.php">./tests/Feature</directory>
       <directory suffix="CreateUserTest.php">./tests/Feature</directory>
       <directory suffix="AuthenticationTest.php">./tests/Feature</directory>
+      <directory suffix="CustomerRouteTest.php">./tests/Feature</directory>
     </testsuite>
   </testsuites>
   <php>

@@ -5,6 +5,7 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
 use App\Models\CustomerGroup;
+use App\Models\CustomerReward;
 use App\Models\RewardSystem;
 use App\Services\CustomerService;
 use Exception;
@@ -81,7 +82,7 @@ trait WithCustomerTest
         $customerService    =   app()->make( CustomerService::class );
         $group              =   CustomerGroup::first();
 
-        for( $i = 0 ; $i < 100; $i++ ) {
+        for( $i = 0 ; $i < 20; $i++ ) {
             /**
              * Creating a first customer
              */
@@ -91,7 +92,7 @@ trait WithCustomerTest
                     'general'   =>  [
                         'group_id'  =>  $group->id,
                         'surname'   =>  $faker->lastName,
-                        'email'     =>  $faker->randomElement([ $faker->email, '' ])
+                        'email'     =>  $faker->email
                     ],
                     'shipping'  =>  [
                         'name'  =>  $faker->firstName,
@@ -110,17 +111,47 @@ trait WithCustomerTest
              * let's create a crediting operation
              */
             if ( $this->faker->randomElement([ true, false ]) ) {
-                $customerAccountHistory                 =   new CustomerAccountHistory();
-                $customerAccountHistory->customer_id    =   $lastCustomer->id;
-                $customerAccountHistory->operation      =   CustomerAccountHistory::OPERATION_ADD;
-                $customerAccountHistory->amount         =   $this->faker->randomNumber(3,true);
-                $customerAccountHistory->author         =   Auth::id();
-                $customerAccountHistory->save();
-    
-                $customerService->updateCustomerAccount( $customerAccountHistory );
+                $randomAmount   =   $this->faker->randomNumber(3,true);
+
+                /**
+                 * Step 1: we'll make some transaction
+                 * and verify how it goes.
+                 */
+                $result     =   $customerService->saveTransaction(
+                    $lastCustomer,
+                    CustomerAccountHistory::OPERATION_ADD,
+                    $randomAmount,
+                    'Created from tests',
+                );
+
+                $history    =   $result[ 'data' ][ 'customerAccountHistory' ];
+
+                $this->assertSame( ( float ) $history->amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->next_amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->previous_amount, ( float ) 0, 'The previous amount is not accurate.' );
+                
                 $lastCustomer->refresh();
     
-                $this->assertTrue( $customerAccountHistory->amount == $lastCustomer->account_amount, 'The customer account hasn\'t been updated.' );
+                $this->assertSame( ( float ) $randomAmount, ( float ) $lastCustomer->account_amount, 'The customer account hasn\'t been updated.' );
+
+                /**
+                 * Step 2: second control and verification on
+                 * how it goes.
+                 */
+                $result     =   $customerService->saveTransaction(
+                    $lastCustomer,
+                    CustomerAccountHistory::OPERATION_DEDUCT,
+                    $randomAmount,
+                    'Created from tests',
+                );
+
+                $lastCustomer->refresh();
+
+                $history    =   $result[ 'data' ][ 'customerAccountHistory' ];
+
+                $this->assertSame( ( float ) $history->amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->next_amount, ( float ) 0, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->previous_amount, ( float ) $randomAmount, 'The previous amount is not accurate.' );
             }
         }
     }
@@ -152,5 +183,62 @@ trait WithCustomerTest
             ]);
 
         $response->assertStatus(200);
+    }
+
+    protected function attemptGetCustomerHistory()
+    {
+        $accountHistory     =   CustomerAccountHistory::first();
+
+        if ( $accountHistory instanceof CustomerAccountHistory ) {
+            $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'GET', 'api/nexopos/v4/customers/' . $accountHistory->customer_id . '/account-history' );
+
+            $response->assertOk();
+            $response       =   json_decode( $response->getContent(), true );
+            $result         =   collect( $response[ 'data' ] )->filter( fn( $entry ) => ( int ) $accountHistory->id === ( int ) $entry[ 'id' ] );
+
+            return $this->assertTrue( 
+                $result->isNotEmpty(),
+                'The customer history doesn\'t have recognized information'
+            );
+        }
+
+        throw new Exception( 'Unable to perform the test without a valid history.' );
+    }
+
+    protected function attemptGetCustomerReward()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/rewards' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetCustomerOrders()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/orders' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetOrdersAddresses()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/addresses' );
+
+        $response->assertOk();
+    }
+
+    protected function attemptGetCustomerGroup()
+    {
+        $customer       =   Customer::first();
+        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'GET', 'api/nexopos/v4/customers/' . $customer->id . '/group' );
+
+        $response->assertOk();
     }
 }

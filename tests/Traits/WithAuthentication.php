@@ -8,11 +8,16 @@ trait WithAuthentication
 {
     protected function attemptAuthenticate( $user = null )
     {
-        $user   =   $user === null ? Role::namespace( 'admin' )->users->first() : $user;
+        $user   =   $user === null ? $this->attemptGetAnyUserFromRole() : $user;
 
         Sanctum::actingAs(
             $user,
             ['*']
         );
+    }
+
+    protected function attemptGetAnyUserFromRole( $name = 'admin' )
+    {
+        return Role::namespace( 'admin' )->users->first();
     }
 }

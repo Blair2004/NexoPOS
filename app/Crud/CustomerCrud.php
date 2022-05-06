@@ -46,6 +46,12 @@ class CustomerCrud extends CrudService
     protected $model      =   \App\Models\Customer::class;
 
     /**
+     * Determine if the options column should display
+     * before the crud columns
+     */
+    protected $prependOptions     =   true;
+
+    /**
      * Adding relation
      */
     public $relations   =  [
@@ -563,7 +569,7 @@ class CustomerCrud extends CrudService
                 'type'          =>      'GOTO',
                 'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' )
             ], [
-                'label'         =>      __( 'Account History' ),
+                'label'         =>      __( 'Wallet History' ),
                 'namespace'     =>      'customers_rewards',
                 'type'          =>      'GOTO',
                 'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' )

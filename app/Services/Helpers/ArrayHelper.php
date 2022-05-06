@@ -112,23 +112,6 @@ trait ArrayHelper {
     }
 
     /**
-     * True or False Option Select
-     * @return array of true/false 
-     */
-    static function booleanToggle() 
-    {
-        return [
-            [
-                'label' =>  __( 'Yes' ),
-                'value' =>  true
-            ], [
-                'label' =>  __( 'No' ),
-                'value' =>  false
-            ]
-        ];
-    }
-
-    /**
      * flat multidimensional array using 
      * keys
      * @param array $data
