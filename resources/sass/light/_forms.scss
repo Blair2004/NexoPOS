@@ -347,3 +347,7 @@
         @apply bg-white;
     }
 }
+
+.ns-date-range-picker .form-control.reportrange-text {
+    @apply bg-input-background border-transparent;
+}

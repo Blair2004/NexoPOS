@@ -1,17 +1,16 @@
 <?php
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
+use App\Events\CrudBeforeExportEvent;
 use Illuminate\Http\Request;
 use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\CustomerAccountHistory;
 use App\Services\CustomerService;
 use App\Services\Helper;
+use Illuminate\Support\Facades\Event;
 
 class CustomerAccountCrud extends CrudService
 {
@@ -49,6 +48,10 @@ class CustomerAccountCrud extends CrudService
         'update'    =>  'nexopos.customers.manage-account-history',
         'delete'    =>  'nexopos.customers.manage-account-history',
     ];
+
+    protected $queryFilters     =   [];
+
+    protected $exportColumns    =   [];
 
     /**
      * We would like to manually
@@ -125,9 +128,110 @@ class CustomerAccountCrud extends CrudService
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
         /**
+         * We'll define custom export columns
+         */
+        $this->exportColumns    =   [
+            'previous_amount'   =>  [
+                'label' =>  __( 'Previous Amount' ),
+            ],
+            'amount'    =>  [
+                'label' =>  __( 'Amount' ),
+            ],
+            'next_amount'   =>  [
+                'label' =>  __( 'Next Amount' ),
+            ],
+            'operation' =>  [
+                'label' =>  __( 'Operation' ),
+            ],
+            'description'   =>  [
+                'label' =>  __( 'Description' ),
+            ],
+            'order_code'    =>  [
+                'label' =>  __( 'Order' ),
+            ],
+            'user_username' =>  [
+                'label' =>  __( 'By' ),
+            ],
+            'created_at'    =>  [
+                'label' =>  __( 'Created At' ),
+            ],
+        ];
+
+        /**
+         * This will allow module to change the bound
+         * class for the default User model.
+         */
+        $UserClass              =   app()->make( User::class );
+
+        $this->queryFilters     =   [
+            [
+                'type'  =>  'daterangepicker',
+                'name'  =>  'nexopos_customers_account_history.created_at',
+                'description'   =>  __( 'Restrict the records by the creation date.' ),
+                'label' =>  __( 'Created Between' )
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Operation Type' ),
+                'name'      =>  'payment_status',
+                'description'   =>  __( 'Restrict the orders by the payment status.' ),
+                'options'   =>  Helper::kvToJsOptions([
+                    CustomerAccountHistory::OPERATION_ADD   =>  __( 'Crediting (Add)' ),
+                    CustomerAccountHistory::OPERATION_REFUND   =>  __( 'Refund (Add)' ),
+                    CustomerAccountHistory::OPERATION_DEDUCT   =>  __( 'Deducting (Remove)' ),
+                    CustomerAccountHistory::OPERATION_PAYMENT   =>  __( 'Payment (Remove)' ),
+                ])
+            ], [
+                'type'      =>  'select',
+                'label'     =>  __( 'Author' ),
+                'name'      =>  'nexopos_customers_account_history.author',
+                'description'   =>  __( 'Restrict the records by the author.' ),
+                'options'   =>  Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ])
+            ], 
+        ];
+
+        /**
          * @var CustomerService
          */
         $this->customerService  =   app()->make( CustomerService::class );
+
+        /**
+         * This will add a footer summary to
+         * every exportation
+         */
+        Event::listen( CrudBeforeExportEvent::class, [ $this, 'addFooterSummary' ]);
+    }
+
+    public function addFooterSummary( CrudBeforeExportEvent $event )
+    {
+        // total mention
+        $event->sheet->setCellValue( 
+            $event->sheetColumns[0] . ( $event->totalRows + 3 ),
+            __( 'Total' )
+        );
+
+        $totalPositive  =   collect( $event->entries[ 'data' ] )->map( function( $entry ) {
+            if ( in_array( $entry->getOriginalValue( 'operation' ), [
+                CustomerAccountHistory::OPERATION_ADD,
+                CustomerAccountHistory::OPERATION_REFUND
+            ])) {
+                return $entry->getOriginalValue( 'amount' );
+            }
+        })->sum();
+
+        $totalNegative  =   collect( $event->entries[ 'data' ] )->map( function( $entry ) {
+            if ( in_array( $entry->getOriginalValue( 'operation' ), [
+                CustomerAccountHistory::OPERATION_DEDUCT,
+                CustomerAccountHistory::OPERATION_PAYMENT
+            ])) {
+                return $entry->getOriginalValue( 'amount' );
+            }
+        })->sum();
+
+        // total value
+        $event->sheet->setCellValue( 
+            $event->sheetColumns[1] . ( $event->totalRows + 3 ),
+            ns()->currency->define( $totalPositive - $totalNegative )->format()
+        );
     }
 
     /**
@@ -324,8 +428,18 @@ class CustomerAccountCrud extends CrudService
      */
     public function getColumns() {
         return [
+            'previous_amount'  =>  [
+                'label'  =>  __( 'Previous Amount' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'amount'  =>  [
                 'label'  =>  __( 'Amount' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
+            'next_amount'  =>  [
+                'label'  =>  __( 'Next Amount' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -365,6 +479,8 @@ class CustomerAccountCrud extends CrudService
         $entry->{ 'order_code' }    =   $entry->{ 'order_code' } === null ? __( 'N/A' ) : $entry->{ 'order_code' };
         $entry->operation           =   $this->customerService->getCustomerAccountOperationLabel( $entry->operation );
         $entry->amount              =   ( string ) ns()->currency->define( $entry->amount );
+        $entry->previous_amount     =   ( string ) ns()->currency->define( $entry->previous_amount );
+        $entry->next_amount         =   ( string ) ns()->currency->define( $entry->next_amount );
 
         // you can make changes here
         $entry->{'$actions'}    =   [

@@ -78,6 +78,12 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     ];
 
     /**
+     * Export Columns defines the columns that
+     * should be included on the exported csv file.
+     */
+    protected $exportColumns    =   []; // @getColumns will be used by default.
+
+    /**
      * Pick
      * Restrict columns you retreive from relation.
      * Should be an array of associative keys, where 

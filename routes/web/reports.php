@@ -11,7 +11,7 @@ Route::get( '/reports/sales-progress', [ ReportsController::class, 'salesProgres
  */
 Route::get( '/reports/products-report', [ ReportsController::class, 'salesProgress' ]);
 
-Route::get( '/reports/low-stock', [ ReportsController::class, 'lowStockReport' ])->name( ns()->routeName( 'ns.dashboard.reports-low-stock' ) );
+Route::get( '/reports/low-stock', [ ReportsController::class, 'stockReport' ])->name( ns()->routeName( 'ns.dashboard.reports-low-stock' ) );
 Route::get( '/reports/sold-stock', [ ReportsController::class, 'soldStock' ]);
 Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);

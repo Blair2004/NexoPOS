@@ -352,18 +352,18 @@
         }
         .ns-payment-buttons {
             .ns-payment-type-button {
-                @apply text-white bg-info-primary;
+                @apply text-white bg-info-tertiary;
             }
             .ns-submit-button {
-                @apply bg-success-primary text-white;
+                @apply bg-success-tertiary text-white;
             }
             .ns-layaway-button {
-                @apply bg-warning-primary text-white;
+                @apply bg-warning-tertiary text-white;
             }
             .ns-payment-button {
-                @apply bg-input-button text-white;
+                @apply bg-gray-200 text-primary;
                 .ns-label {
-                    @apply bg-success-primary text-white;
+                    @apply bg-success-tertiary text-white;
                 }
             }
         }

@@ -276,12 +276,40 @@ class CustomerService
             ) );
         }
 
-        $customerAccount                =   new CustomerAccountHistory;
-        $customerAccount->operation     =   $operation;
-        $customerAccount->customer_id   =   $customer->id;
-        $customerAccount->amount        =   $amount;
-        $customerAccount->description   =   $description;
-        $customerAccount->author        =   Auth::id();
+        /**
+         * We'll pull the last recent record
+         * and base on that we'll populate the 
+         * previous_amount
+         */
+        $beforeRecord   =   CustomerAccountHistory::where( 'customer_id', $customer->id )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        $previousNextAmount   =   $beforeRecord instanceof CustomerAccountHistory ? $beforeRecord->next_amount : 0;
+        
+        /**
+         * We'll make sure to define that are the previous and next amount.
+         */
+        if ( in_array( $operation, [ 
+            CustomerAccountHistory::OPERATION_DEDUCT,
+            CustomerAccountHistory::OPERATION_PAYMENT,
+        ] ) ) {
+            $next_amount        =   $previousNextAmount - $amount;
+        } else if ( in_array( $operation, [
+            CustomerAccountHistory::OPERATION_ADD,
+            CustomerAccountHistory::OPERATION_REFUND,
+        ]) ) {
+            $next_amount        =   $previousNextAmount + $amount;
+        } 
+
+        $customerAccountHistory                    =   new CustomerAccountHistory;
+        $customerAccountHistory->operation         =   $operation;
+        $customerAccountHistory->customer_id       =   $customer->id;
+        $customerAccountHistory->previous_amount   =   $previousNextAmount;
+        $customerAccountHistory->amount            =   $amount;
+        $customerAccountHistory->next_amount       =   $next_amount;
+        $customerAccountHistory->description       =   $description;
+        $customerAccountHistory->author            =   Auth::id();
 
         /**
          * We can now optionally provide
@@ -289,17 +317,29 @@ class CustomerService
          */
         if ( ! empty( $details ) ) {
             foreach( $details as $key => $value ) {
-                $customerAccount->$key  =   $value;
+                /**
+                 * Some details must be sensitive 
+                 * and not changed.
+                 */
+                if ( ! in_array( $key, [
+                    'id', 
+                    'next_amount',
+                    'previous_amount',
+                    'amount'
+                ]) ) {
+                    $customerAccountHistory->$key  =   $value;
+                }
             }
         }
-
-        $customerAccount->save();
-
-        event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccount ) );
-
+        
+        $customerAccountHistory->save();
+        
+        event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccountHistory ) );
+        
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The customer account has been updated.' )
+            'message'   =>  __( 'The customer account has been updated.' ),
+            'data'      =>  compact( 'customerAccountHistory' )
         ];
     }
 

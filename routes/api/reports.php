@@ -1,6 +1,4 @@
 <?php
-// Route::get( 'reset', 'Dashboard\ResetController@truncateAllTables' );
-
 use App\Http\Controllers\Dashboard\ReportsController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,3 +12,4 @@ Route::post( 'reports/products-report', [ ReportsController::class, 'getProducts
 Route::post( 'reports/compute/{type}', [ ReportsController::class, 'computeReport' ]);
 Route::get( 'reports/cashier-report', [ ReportsController::class, 'getMyReport' ]);
 Route::get( 'reports/low-stock', [ ReportsController::class, 'getLowStock' ]);
+Route::get( 'reports/stock-report', [ ReportsController::class, 'getStockReport' ]);

@@ -5,6 +5,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Events\CrudAfterDeleteEvent;
+use App\Events\CrudBeforeExportEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use Illuminate\Http\Request;
@@ -349,7 +350,7 @@ class CrudController extends DashboardController
 
         $columns            =   Hook::filter( 
             get_class( $resource ) . '@getColumns', 
-            $resource->getColumns()
+            $resource->getExportColumns() ?: $resource->getColumns()
         );
 
         $sheetColumns       =   [ 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' ];
@@ -358,10 +359,19 @@ class CrudController extends DashboardController
             throw new Exception( __( 'The crud columns exceed the maximum column that can be exported (27)' ) );
         }
 
+        /**
+         * in case custom custom export columns are provided
+         * we'll make sure to use them instead of the
+         * default columns.
+         */
         foreach( array_values( $columns ) as $index => $column ) {
             $sheet->setCellValue( $sheetColumns[ $index ] . '1', $column[ 'label' ] );
         } 
 
+        /**
+         * We'll disable the perPage argument to make
+         * sure to pull all the data from the database.
+         */
         $config     =   [ 'perPage' => false ];
 
         /**
@@ -375,12 +385,18 @@ class CrudController extends DashboardController
         $entries         =   $resource->getEntries( $config );
 
         foreach( $entries[ 'data' ] as $rowIndex => $entry ) {
-            $sheetIndex     =   0;
+            $totalColumns     =   0;
             foreach( $columns as $columnName => $column ) {
-                $sheet->setCellValue( $sheetColumns[ $sheetIndex ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
-                $sheetIndex++;
+                $sheet->setCellValue( $sheetColumns[ $totalColumns ] . ( $rowIndex + 2 ), strip_tags( $entry->$columnName ) );
+                $totalColumns++;
             }
         }
+
+        /**
+         * We'll emit an event to allow any procees
+         * to edit the current file.
+         */
+        CrudBeforeExportEvent::dispatch( $sheet, $totalColumns, $rowIndex, $sheetColumns, $entries );
 
         /**
          * let's define what will be the output name

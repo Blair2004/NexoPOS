@@ -23,10 +23,6 @@ class CustomerAccountHistory extends NsModel
     const OPERATION_ADD         =   'add';
     const OPERATION_PAYMENT     =   'payment';
 
-    protected $casts    =   [
-        'created_at'    =>  DateCast::class
-    ];
-
     protected $table    =   'nexopos_' . 'customers_account_history';
 
     public function customer()

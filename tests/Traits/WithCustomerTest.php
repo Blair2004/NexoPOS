@@ -82,7 +82,7 @@ trait WithCustomerTest
         $customerService    =   app()->make( CustomerService::class );
         $group              =   CustomerGroup::first();
 
-        for( $i = 0 ; $i < 100; $i++ ) {
+        for( $i = 0 ; $i < 20; $i++ ) {
             /**
              * Creating a first customer
              */
@@ -92,7 +92,7 @@ trait WithCustomerTest
                     'general'   =>  [
                         'group_id'  =>  $group->id,
                         'surname'   =>  $faker->lastName,
-                        'email'     =>  $faker->randomElement([ $faker->email, '' ])
+                        'email'     =>  $faker->email
                     ],
                     'shipping'  =>  [
                         'name'  =>  $faker->firstName,
@@ -111,17 +111,47 @@ trait WithCustomerTest
              * let's create a crediting operation
              */
             if ( $this->faker->randomElement([ true, false ]) ) {
-                $customerAccountHistory                 =   new CustomerAccountHistory();
-                $customerAccountHistory->customer_id    =   $lastCustomer->id;
-                $customerAccountHistory->operation      =   CustomerAccountHistory::OPERATION_ADD;
-                $customerAccountHistory->amount         =   $this->faker->randomNumber(3,true);
-                $customerAccountHistory->author         =   Auth::id();
-                $customerAccountHistory->save();
-    
-                $customerService->updateCustomerAccount( $customerAccountHistory );
+                $randomAmount   =   $this->faker->randomNumber(3,true);
+
+                /**
+                 * Step 1: we'll make some transaction
+                 * and verify how it goes.
+                 */
+                $result     =   $customerService->saveTransaction(
+                    $lastCustomer,
+                    CustomerAccountHistory::OPERATION_ADD,
+                    $randomAmount,
+                    'Created from tests',
+                );
+
+                $history    =   $result[ 'data' ][ 'customerAccountHistory' ];
+
+                $this->assertSame( ( float ) $history->amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->next_amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->previous_amount, ( float ) 0, 'The previous amount is not accurate.' );
+                
                 $lastCustomer->refresh();
     
-                $this->assertTrue( $customerAccountHistory->amount == $lastCustomer->account_amount, 'The customer account hasn\'t been updated.' );
+                $this->assertSame( ( float ) $randomAmount, ( float ) $lastCustomer->account_amount, 'The customer account hasn\'t been updated.' );
+
+                /**
+                 * Step 2: second control and verification on
+                 * how it goes.
+                 */
+                $result     =   $customerService->saveTransaction(
+                    $lastCustomer,
+                    CustomerAccountHistory::OPERATION_DEDUCT,
+                    $randomAmount,
+                    'Created from tests',
+                );
+
+                $lastCustomer->refresh();
+
+                $history    =   $result[ 'data' ][ 'customerAccountHistory' ];
+
+                $this->assertSame( ( float ) $history->amount, ( float ) $randomAmount, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->next_amount, ( float ) 0, 'The amount is not refected on the history.' );
+                $this->assertSame( ( float ) $history->previous_amount, ( float ) $randomAmount, 'The previous amount is not accurate.' );
             }
         }
     }

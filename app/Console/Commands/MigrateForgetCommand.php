@@ -53,7 +53,7 @@ class MigrateForgetCommand extends Command
     {
         $module     =   $this->moduleService->get( $this->argument( 'module' ) );
 
-        if ( $module !== null ) {
+        if ( $module !== null && $this->argument( 'module' ) !== null ) {
             if ( ! in_array( $this->option( 'file' ), $module[ 'all-migrations' ] ) ) {
                 ModuleMigration::where( 'namespace', $this->argument( 'module' ) )
                     ->delete();
@@ -65,13 +65,24 @@ class MigrateForgetCommand extends Command
             
             Artisan::call( 'cache:clear' );
     
+            return $this->info( 
+                sprintf( 
+                    __( 'The migration file has been successfully forgotten for the module %s.' ),
+                    $module[ 'name' ]
+                )
+            );
         } else {
 
-            Migration::where( 'migration', $this->option( 'file' ) )->delete();
+            $deleted    =   Migration::where( 'migration', $this->option( 'file' ) )->delete();
             Artisan::call( 'cache:clear' );
 
+            return $this->info( 
+                sprintf(
+                    __( '%s migration(s) has been deleted.' ),
+                    $deleted
+                )
+            );
         }
 
-        return $this->info( __( 'The migration file has been successfully forgotten.' ) );
     }
 }
