@@ -153,12 +153,6 @@ class Setup
         $user->save();
 
         /**
-         * @var Users $usersService
-         */
-        $usersService       =   app()->make( Users::class );
-        $usersService->createAttribute( $user );
-
-        /**
          * let's create default payment
          * for the system
          */
