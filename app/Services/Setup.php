@@ -142,6 +142,7 @@ class Setup
             });
 
         $userID             =   rand(1,99);
+        
         $user               =   new User;
         $user->id           =   $userID;
         $user->username     =   $fields[ 'admin_username' ];
@@ -150,6 +151,12 @@ class Setup
         $user->author       =   $userID;
         $user->active       =   true; // first user active by default;
         $user->save();
+
+        /**
+         * @var Users $usersService
+         */
+        $usersService       =   app()->make( Users::class );
+        $usersService->createAttribute( $user );
 
         /**
          * let's create default payment
