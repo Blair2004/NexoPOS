@@ -33,4 +33,14 @@ class CrudEntry implements JsonSerializable
     {
         return $this->values;
     }
+
+    public function addAction( $identifier, $action )
+    {
+        $this->values[ '$actions' ][ $identifier ]  =   $action;
+    }
+
+    public function removeAction( $identifier )
+    {
+        unset( $this->values[ '$actions' ][ $identifier ] );
+    }
 }
