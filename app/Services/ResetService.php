@@ -102,7 +102,9 @@ class ResetService
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
         DotenvEditor::save();
 
-        Migration::truncate();
+        if ( Helper::installed() ) {
+            Migration::truncate();
+        }
 
         Artisan::call( 'key:generate' );
 
