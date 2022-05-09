@@ -61,33 +61,32 @@ class Users
      */
     public function setUser( $attributes, $user = null )
     {
-        $query   =   User::where( 'username', $attributes[ 'username' ] );
-        
-        if ( $user instanceof User ) {
-            $query->where( 'id', '<>', $user->id );
-        }
-        
-        $user   =   $query->first();
+        collect([ 
+            'username'  =>  fn() => User::where( 'username', $attributes[ 'username' ] ), 
+            'email'  =>  fn() => User::where( 'email', $attributes[ 'email' ] )
+        ])->each( function( $callback, $key ) use ( $user ) {
+            $query  =   $callback();
 
-        if ( $user instanceof User ) {
-            throw new NotAllowedException( __( 'The username is already taken.' ) );
-        }
+            if ( $user instanceof User ) {
+                $query->where( 'id', '<>', $user->id );
+            }
 
-        $query   =   User::where( 'email', $attributes[ 'email' ] );
-        
-        if ( $user instanceof User ) {
-            $query->where( 'id', '<>', $user->id );
-        }
-        
-        $user   =   $query->first();
+            $user   =   $query->first();
 
-        if ( $user instanceof User ) {
-            throw new NotAllowedException( __( 'The email is already taken.' ) );
-        }
+            if ( $user instanceof User ) {
+                throw new NotAllowedException( 
+                    sprintf( 
+                        __( 'The %s is already taken.' ),
+                        $key
+                    )
+                );
+            }
+        });
 
         $user               =   new User;
         $user->username     =   $attributes[ 'username' ];
         $user->email        =   $attributes[ 'email' ];
+        $user->active       =   $attributes[ 'active' ] ;
         $user->password     =   Hash::make( $attributes[ 'password' ] );
 
         /**
@@ -100,7 +99,8 @@ class Users
                     'username',
                     'id',
                     'password',
-                    'emaile',
+                    'email',
+                    'active',
                     'roles', // will be used elsewhere
                 ]
             )) {
@@ -131,6 +131,8 @@ class Users
 
     /**
      * We'll define user role
+     * @param User $user
+     * @param array $roles
      */
     public function setUserRole( User $user, $roles )
     {

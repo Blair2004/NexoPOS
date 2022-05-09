@@ -82,6 +82,8 @@ class UserCrud extends CrudService
         'role_id',
     ];
 
+    private Users $userService;
+
     /**
      * Define Constructor
      * @param  
@@ -91,6 +93,8 @@ class UserCrud extends CrudService
         parent::__construct();
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+
+        $this->userService  =   app()->make( Users::class );
     }
 
     /**
@@ -247,30 +251,16 @@ class UserCrud extends CrudService
     public function afterPost( $request, User $entry )
     {
         if ( isset( $request[ 'roles'] ) ) {
-            
-            UserRoleRelation::where( 'user_id', $entry->id )->delete();
-            
-            foreach( $request[ 'roles' ] as $role ) {
-                $role   =   Role::find( $role );
-
-                if ( $role instanceof Role ) {
-                    $relation           =   new UserRoleRelation;
-                    $relation->user_id  =   $entry->id;
-                    $relation->role_id  =   $role->id;
-                    $relation->save();
-                }
-            }
-
-            /**
-             * We'll create user attribute
-             * if that's necessary for that user
-             * @var Users
-             */
-            $usersService       =   app()->make( Users::class );
-            $usersService->createAttribute( $entry );
-        }
-
-        
+            $this->userService
+                ->setUserRole( 
+                    $entry, 
+                    collect( $request[ 'roles' ] )
+                        ->map( fn( $role ) => $role[ 'id' ] )
+                        ->toArray() 
+                );
+                
+            $this->userService->createAttribute( $entry );
+        }        
 
         return $request;
     }
@@ -310,19 +300,15 @@ class UserCrud extends CrudService
     public function afterPut( $request, $entry )
     {
         if ( isset( $request[ 'roles'] ) ) {
-            
-            UserRoleRelation::where( 'user_id', $entry->id )->delete();
-            
-            foreach( $request[ 'roles' ] as $role ) {
-                $role   =   Role::find( $role );
-
-                if ( $role instanceof Role ) {
-                    $relation           =   new UserRoleRelation;
-                    $relation->user_id  =   $entry->id;
-                    $relation->role_id  =   $role->id;
-                    $relation->save();
-                }
-            }
+            $this->userService
+                ->setUserRole( 
+                    $entry, 
+                    collect( $request[ 'roles' ] )
+                        ->map( fn( $role ) => $role[ 'id' ] )
+                        ->toArray() 
+                );
+                
+            $this->userService->createAttribute( $entry );
         }
 
         return $request;

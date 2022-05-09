@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Migration;
 use App\Models\PaymentType;
 use App\Services\Options;
+use Illuminate\Support\Facades\Hash;
 
 class Setup
 {
@@ -77,7 +78,7 @@ class Setup
                 default     :   
                     $message =  [
                         'name'      => 'hostname',
-                        'message'   =>  sprintf( __( 'Unexpected error occurred. :%s' ), $e->getCode() ),
+                        'message'   =>  $e->getMessage(),
                         'status'    =>  'failed'
                     ]; 
                 break;
@@ -146,11 +147,23 @@ class Setup
         $user               =   new User;
         $user->id           =   $userID;
         $user->username     =   $fields[ 'admin_username' ];
-        $user->password     =   bcrypt( $fields[ 'password' ] );
+        $user->password     =   Hash::make( $fields[ 'password' ] );
         $user->email        =   $fields[ 'admin_email' ];
         $user->author       =   $userID;
         $user->active       =   true; // first user active by default;
         $user->save();
+
+        /**
+         * The main user is the master
+         */
+        User::set( $user )->as( 'admin' );
+        
+        /**
+         * define default user language
+         */
+        $user->attribute()->create([
+            'language'  =>  'en'
+        ]);
 
         /**
          * let's create default payment
@@ -176,18 +189,6 @@ class Setup
         $paymentType->readonly      =   true;
         $paymentType->author        =   $user->id;
         $paymentType->save();
-        
-        /**
-         * The main user is the master
-         */
-        User::set( $user )->as( 'admin' );
-        
-        /**
-         * define default user language
-         */
-        $attribute      =   $user->attribute()->create([
-            'language'  =>  'en'
-        ]);
 
         $domain     =   pathinfo( url()->to( '/' ) );
 
@@ -269,7 +270,7 @@ class Setup
                 default     :   
                     $message =  [
                          'name'        => 'hostname',
-                         'message'      =>  sprintf( __( 'Unexpected error occurred. Provided Code :%s' ), $e->getCode() ),
+                         'message'      =>  $e->getMessage(),
                          'status'       =>  'failed'
                     ]; 
                 break;

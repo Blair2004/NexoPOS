@@ -17,6 +17,8 @@ use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\UnitGroup;
 use App\Models\User;
+use App\Services\Users;
+use Exception;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -27,34 +29,71 @@ use Tests\Traits\WithAuthentication;
 class CreateUserTest extends TestCase
 {
     use WithAuthentication, WithFaker;
+    
+    protected Users $users;
 
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    private function test_create_users()
+    public function test_create_users()
     {
         $this->attemptAuthenticate();
+
+        $this->users        =   app()->make( Users::class );
 
         return Role::get()->map( function( $role ) {
             $password   =   Hash::make( Str::random(20) );
 
+            $configuration  =   [
+                'username'  =>  $this->faker->username(),
+                'general'   =>  [
+                    'email'     =>  $this->faker->email(),
+                    'password'  =>  $password,
+                    'password_confirm'  =>  $password,
+                    'roles'     =>  [ $role ],
+                    'active'    =>  1, // true
+                ]
+            ];
+
             $response   =   $this->withSession( $this->app[ 'session' ]->all() )
-                ->json( 'post', '/api/nexopos/v4/crud/ns.users', [
-                    'username'  =>  $this->faker->username(),
-                    'general'   =>  [
-                        'email'     =>  $this->faker->email(),
-                        'password'  =>  $password,
-                        'password_confirm'  =>  $password,
-                        'roles'     =>  [ $role->id ],
-                        'active'    =>  1, // true
-                    ]
-                ]);
+                ->json( 'post', '/api/nexopos/v4/crud/ns.users', $configuration );
               
-            
             $response->assertJsonPath( 'status', 'success' );
             $result     =   json_decode( $response->getContent() );
+            
+            
+            /**
+             * Step 1: create user with same username
+             * but a different email
+             */
+            try {
+                $this->users->setUser([
+                    'username'  =>  $configuration[ 'username' ],
+                    'email'     =>  $this->faker->email(),
+                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
+                    'active'    =>  true,
+                ]);
+            } catch( Exception $exception ) {
+                $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
+            }
+
+            /**
+             * Step 2: create user with same email
+             * but a different username
+             */
+            try {
+                $this->users->setUser([
+                    'username'  =>  $this->faker->userName(),
+                    'email'     =>  $configuration[ 'general' ][ 'email' ],
+                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
+                    'active'    =>  true,
+                ]);
+            } catch( Exception $exception ) {
+                $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
+            }
+            
             return $result->entry;
         });
     }
