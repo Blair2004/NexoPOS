@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Register;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 
 class RegisterCrud extends CrudService
@@ -337,37 +338,35 @@ class RegisterCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }      =   false;
-        $entry->{ '$toggled' }      =   false;
-        $entry->{ '$id' }           =   $entry->id;
         $entry->cashier_username    =   $entry->cashier_username ?: __( 'N/A' );
         $entry->balance             =   ( string ) ns()->currency->define( $entry->balance );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'Register History' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'register-history', [
+            'label'         =>      __( 'Register History' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

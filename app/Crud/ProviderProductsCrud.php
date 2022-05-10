@@ -7,6 +7,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\ProcurementProduct;
 use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\ProviderProduct;
+use App\Services\CrudEntry;
 
 class ProviderProductsCrud extends CrudService
 {
@@ -333,35 +334,30 @@ class ProviderProductsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-        
         $entry->purchase_price          =   ns()->currency->define( $entry->purchase_price )->format();
         $entry->tax_value               =   ns()->currency->define( $entry->tax_value )->format();
         $entry->total_purchase_price    =   ns()->currency->define( $entry->total_purchase_price )->format();
         $entry->expiration_date         =   $entry->expiration_date ?: __( 'N/A' );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers-products/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers-products/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

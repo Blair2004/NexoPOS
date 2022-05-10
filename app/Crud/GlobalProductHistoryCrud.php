@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ProductHistory;
+use App\Services\CrudEntry;
 
 class GlobalProductHistoryCrud extends CrudService
 {
@@ -348,13 +349,8 @@ class GlobalProductHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->procurement_name    =   $entry->procurement_name ?: __( 'N/A' );
         $entry->order_code          =   $entry->order_code ?: __( 'N/A' );
         $entry->total_price         =   ns()->currency->fresh( $entry->total_price )->format();
@@ -392,18 +388,16 @@ class GlobalProductHistoryCrud extends CrudService
         }
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
-
+        ]);
+        
         return $entry;
     }
 

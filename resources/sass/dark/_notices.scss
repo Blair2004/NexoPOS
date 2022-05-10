@@ -9,7 +9,7 @@
         @apply text-white;
     }
 
-    .danger {
+    &.danger {
         @apply border-danger-secondary bg-danger-primary;
     
         pre {

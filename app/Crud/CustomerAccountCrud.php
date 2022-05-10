@@ -8,6 +8,7 @@ use App\Exceptions\NotAllowedException;
 use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\CustomerAccountHistory;
+use App\Services\CrudEntry;
 use App\Services\CustomerService;
 use App\Services\Helper;
 use Illuminate\Support\Facades\Event;
@@ -469,13 +470,8 @@ class CustomerAccountCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->{ 'order_code' }    =   $entry->{ 'order_code' } === null ? __( 'N/A' ) : $entry->{ 'order_code' };
         $entry->operation           =   $this->customerService->getCustomerAccountOperationLabel( $entry->operation );
         $entry->amount              =   ( string ) ns()->currency->define( $entry->amount );
@@ -483,22 +479,22 @@ class CustomerAccountCrud extends CrudService
         $entry->next_amount         =   ( string ) ns()->currency->define( $entry->next_amount );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

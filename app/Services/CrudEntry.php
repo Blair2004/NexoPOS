@@ -12,6 +12,10 @@ class CrudEntry implements JsonSerializable
     {
         $this->original     =   $params;
         $this->values       =   $params;
+        
+        $this->{ '$checked' }       =   false;
+        $this->{ '$toggled' }       =   false;
+        $this->{ '$id' }            =   $params[ 'id' ];
     }
 
     public function __get( $index ) 
@@ -32,5 +36,15 @@ class CrudEntry implements JsonSerializable
     public function jsonSerialize()
     {
         return $this->values;
+    }
+
+    public function addAction( $identifier, $action )
+    {
+        $this->values[ '$actions' ][ $identifier ]  =   $action;
+    }
+
+    public function removeAction( $identifier )
+    {
+        unset( $this->values[ '$actions' ][ $identifier ] );
     }
 }

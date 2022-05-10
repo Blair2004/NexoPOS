@@ -11,6 +11,7 @@ use App\Services\Users;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ProductCategory;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 
 class ProductCategoryCrud extends CrudService
@@ -342,40 +343,36 @@ class ProductCategoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->parent_name     =   $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
         $entry->displays_on_pos =   ( int ) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
         
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'Compute Products' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'compute', [
+            'label'         =>      __( 'Compute Products' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\CrudService;
 use App\Exceptions\NotAllowedException;
 use App\Models\CashFlow;
+use App\Services\CrudEntry;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class CashFlowHistoryCrud extends CrudService
@@ -335,7 +336,7 @@ class CashFlowHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
         // Don't overwrite
         $entry->{ '$checked' }  =   false;
@@ -364,17 +365,15 @@ class CashFlowHistoryCrud extends CrudService
         }
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

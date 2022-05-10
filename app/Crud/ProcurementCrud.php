@@ -8,6 +8,7 @@ use App\Services\Users;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Procurement;
+use App\Services\CrudEntry;
 use App\Services\ProviderService;
 
 class ProcurementCrud extends CrudService
@@ -381,13 +382,8 @@ class ProcurementCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->delivery_status     =   $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
         $entry->payment_status      =   $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
@@ -406,39 +402,42 @@ class ProcurementCrud extends CrudService
             ->define( $entry->tax_value )
             ->format();
 
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'Invoice' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
-            ], [
-                'label'         =>      __( 'Refresh' ),
-                'namespace'     =>      'refresh',
-                'type'          =>      'GET',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to refresh this ?' ),
-                ]
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'invoice', [
+            'label'         =>      __( 'Invoice' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
+        ]);
+        
+        $entry->addAction( 'refresh', [
+            'label'         =>      __( 'Refresh' ),
+            'namespace'     =>      'refresh',
+            'type'          =>      'GET',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to refresh this ?' ),
             ]
-        ];
+        ]);
+        
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
+            ]
+        ]);
 
         return $entry;
     }

@@ -547,47 +547,52 @@ class CustomerCrud extends CrudService
         $entry->purchases_amount    =   ( string ) ns()->currency->define( $entry->purchases_amount );
         $entry->phone               =   empty( $entry->phone ) ? __( 'Not Defined' ) : $entry->phone;
         
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit_customers_group',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( 'dashboard/customers/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'Orders' ),
-                'namespace'     =>      'customers_orders',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
-            ], [
-                'label'         =>      __( 'Rewards' ),
-                'namespace'     =>      'customers_rewards',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' )
-            ], [
-                'label'         =>      __( 'Coupons' ),
-                'namespace'     =>      'customers_rewards',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' )
-            ], [
-                'label'         =>      __( 'Wallet History' ),
-                'namespace'     =>      'customers_rewards',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' )
-            ], [
-                'label'     =>      __( 'Delete' ),
-                'namespace' =>      'delete',
-                'type'      =>      'DELETE',
-                'url'       =>      ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'   =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a customers' )
-                ]
+        $entry->addAction( 'edit_customers_group', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit_customers_group',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( 'dashboard/customers/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'customers_orders', [
+            'label'         =>      __( 'Orders' ),
+            'namespace'     =>      'customers_orders',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/orders' )
+        ]);
+        
+        $entry->addAction( 'customers_rewards', [
+            'label'         =>      __( 'Rewards' ),
+            'namespace'     =>      'customers_rewards',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' )
+        ]);
+        
+        $entry->addAction( 'customers_coupons', [
+            'label'         =>      __( 'Coupons' ),
+            'namespace'     =>      'customers_coupons',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' )
+        ]);
+        
+        $entry->addAction( 'customers_history', [
+            'label'         =>      __( 'Wallet History' ),
+            'namespace'     =>      'customers_history',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' )
+        ]);
+        
+        $entry->addAction( 'delete', [
+            'label'     =>      __( 'Delete' ),
+            'namespace' =>      'delete',
+            'type'      =>      'DELETE',
+            'url'       =>      ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
+            'confirm'   =>  [
+                'message'   =>  __( 'Would you like to delete this ?' ),
+                'title'     =>  __( 'Delete a customers' )
             ]
-        ];
+        ]);
 
-        $entry->{ '$checked' }          =   false;
-        $entry->{ '$toggled' }          =   false;
-        $entry->{ '$id' }               =   $entry->id;
         $entry->surname                 =   $entry->surname ?? __( 'Not Defined' );
         $entry->pobox                   =   $entry->pobox ?? __( 'Not Defined' );
         $entry->reward_system_id        =   $entry->reward_system_id ?? __( 'Not Defined' );
@@ -611,15 +616,12 @@ class CustomerCrud extends CrudService
     public function bulkAction( Request $request ) 
     {
         /**
-         * Deleting licence is only allowed for admin
-         * and supervisor.
+         * Will control if the user has the permissoin to do that.
          */
-        $user   =   app()->make( Users::class );
-        if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
-            return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
-            ], 403 );
+        if ( $this->permissions[ 'delete' ] !== false ) {
+            ns()->restrict( $this->permissions[ 'delete' ] );
+        } else {
+            throw new NotAllowedException();
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {

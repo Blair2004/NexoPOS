@@ -9,16 +9,18 @@ use App\Services\UserOptions;
 use App\Services\DateService;
 
 use App\Classes\Hook;
-
+use App\Exceptions\NotAllowedException;
 use App\Mail\ActivateAccountMail;
 
 use App\Models\UserAttribute;
+use App\Models\UserRoleRelation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 
 class Users
 {
@@ -47,6 +49,100 @@ class Users
             return @$this->roles[ $namespace ][ 'users' ];
         } else {
             return $this->users;
+        }
+    }
+
+    /**
+     * Will either create or update an existing user
+     * that will check the attribute or the user
+     * @param array $attributes
+     * @param User $user
+     * @return array $response
+     */
+    public function setUser( $attributes, $user = null )
+    {
+        collect([ 
+            'username'  =>  fn() => User::where( 'username', $attributes[ 'username' ] ), 
+            'email'  =>  fn() => User::where( 'email', $attributes[ 'email' ] )
+        ])->each( function( $callback, $key ) use ( $user ) {
+            $query  =   $callback();
+
+            if ( $user instanceof User ) {
+                $query->where( 'id', '<>', $user->id );
+            }
+
+            $user   =   $query->first();
+
+            if ( $user instanceof User ) {
+                throw new NotAllowedException( 
+                    sprintf( 
+                        __( 'The %s is already taken.' ),
+                        $key
+                    )
+                );
+            }
+        });
+
+        $user               =   new User;
+        $user->username     =   $attributes[ 'username' ];
+        $user->email        =   $attributes[ 'email' ];
+        $user->active       =   $attributes[ 'active' ] ;
+        $user->password     =   Hash::make( $attributes[ 'password' ] );
+
+        /**
+         * For additional parameters
+         * we'll provide them.
+         */
+        foreach( $attributes as $name => $value ) {
+            if ( ! in_array(
+                $name, [
+                    'username',
+                    'id',
+                    'password',
+                    'email',
+                    'active',
+                    'roles', // will be used elsewhere
+                ]
+            )) {
+                $user->$name    =   $value;
+            }
+        }
+
+        $user->save();
+
+        /**
+         * if the role are defined we'll use them. Otherwise, we'll use
+         * the role defined by default.
+         */
+        $this->setUserRole( $user, $attributes[ 'roles' ] ?? ns()->option->get( 'ns_registration_role' ) );
+
+        /**
+         * Every new user comes with attributes that 
+         * should be explicitely defined.
+         */
+        $this->createAttribute( $user );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The user has been successfully created' ),
+            'data'      =>  compact( 'user' ),
+        ];
+    }
+
+    /**
+     * We'll define user role
+     * @param User $user
+     * @param array $roles
+     */
+    public function setUserRole( User $user, $roles )
+    {
+        UserRoleRelation::where( 'user_id', $user->id )->delete();
+
+        foreach( $roles as $roleId ) {
+            $relation           =   new UserRoleRelation;
+            $relation->user_id  =   $user->id;
+            $relation->role_id  =   $roleId;
+            $relation->save();
         }
     }
 

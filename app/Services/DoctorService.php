@@ -32,28 +32,32 @@ class DoctorService
     {
         $rolesLabels    =   [
             Role::ADMIN         =>  [
-                'label'     =>  __( 'Administrator' ),
+                'name'      =>  __( 'Administrator' ),
                 'dashid'    =>  Role::DASHID_STORE,
             ],
             Role::STOREADMIN    =>  [
-                'label'     =>  __( 'Store Administrator' ),
+                'name'      =>  __( 'Store Administrator' ),
                 'dashid'    =>  Role::DASHID_STORE,
             ],
             Role::STORECASHIER  =>  [
-                'label'     =>  __( 'Store Cashier' ),
+                'name'      =>  __( 'Store Cashier' ),
                 'dashid'    =>  Role::DASHID_CASHIER,
             ],
             Role::USER          =>  [
-                'label'     =>  __( 'User' ),
+                'name'      =>  __( 'User' ),
                 'dashid'    =>  Role::DASHID_DEFAULT,
             ],
         ];
 
         foreach( array_keys( $rolesLabels ) as $roleNamespace ) {
-            $role      =   Role::namespace( $roleNamespace )->first();
+            $role      =   Role::where( 'namespace', $roleNamespace )
+                ->first();
 
             if ( ! $role instanceof Role ) {
-                $role   =   new Role;
+
+                Role::where( 'name', $rolesLabels[ $roleNamespace ][ 'name' ] )->delete();
+
+                $role               =   new Role;
                 $role->namespace    =   $roleNamespace;
                 $role->name         =   $rolesLabels[ $roleNamespace ][ 'name' ];
                 $role->dashid       =   $rolesLabels[ $roleNamespace ][ 'dashid' ];

@@ -9,6 +9,7 @@ use App\Services\CrudService;
 use App\Services\Users;
 use App\Models\User;
 use App\Models\UserRoleRelation;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
@@ -82,6 +83,8 @@ class UserCrud extends CrudService
         'role_id',
     ];
 
+    private Users $userService;
+
     /**
      * Define Constructor
      * @param  
@@ -91,6 +94,8 @@ class UserCrud extends CrudService
         parent::__construct();
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+
+        $this->userService  =   app()->make( Users::class );
     }
 
     /**
@@ -247,30 +252,16 @@ class UserCrud extends CrudService
     public function afterPost( $request, User $entry )
     {
         if ( isset( $request[ 'roles'] ) ) {
-            
-            UserRoleRelation::where( 'user_id', $entry->id )->delete();
-            
-            foreach( $request[ 'roles' ] as $role ) {
-                $role   =   Role::find( $role );
-
-                if ( $role instanceof Role ) {
-                    $relation           =   new UserRoleRelation;
-                    $relation->user_id  =   $entry->id;
-                    $relation->role_id  =   $role->id;
-                    $relation->save();
-                }
-            }
-
-            /**
-             * We'll create user attribute
-             * if that's necessary for that user
-             * @var Users
-             */
-            $usersService       =   app()->make( Users::class );
-            $usersService->createAttribute( $entry );
-        }
-
-        
+            $this->userService
+                ->setUserRole( 
+                    $entry, 
+                    collect( $request[ 'roles' ] )
+                        ->map( fn( $role ) => $role[ 'id' ] )
+                        ->toArray() 
+                );
+                
+            $this->userService->createAttribute( $entry );
+        }        
 
         return $request;
     }
@@ -310,19 +301,15 @@ class UserCrud extends CrudService
     public function afterPut( $request, $entry )
     {
         if ( isset( $request[ 'roles'] ) ) {
-            
-            UserRoleRelation::where( 'user_id', $entry->id )->delete();
-            
-            foreach( $request[ 'roles' ] as $role ) {
-                $role   =   Role::find( $role );
-
-                if ( $role instanceof Role ) {
-                    $relation           =   new UserRoleRelation;
-                    $relation->user_id  =   $entry->id;
-                    $relation->role_id  =   $role->id;
-                    $relation->save();
-                }
-            }
+            $this->userService
+                ->setUserRole( 
+                    $entry, 
+                    collect( $request[ 'roles' ] )
+                        ->map( fn( $role ) => $role[ 'id' ] )
+                        ->toArray() 
+                );
+                
+            $this->userService->createAttribute( $entry );
         }
 
         return $request;
@@ -398,35 +385,30 @@ class UserCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->active          =   ( bool ) $entry->active ? __( 'Yes' ) : __( 'No' );
         $roles                  =   User::find( $entry->id )->roles()->get();
         $entry->rolesNames      =   $roles->map( fn( $role ) => $role->name )->join( ', ' ) ?: __( 'Not Assigned' );
 
         // you can make changes here
-        $entry->{'$actions'}    =   Hook::filter( 'ns-users-actions', [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'users' . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.users/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'users' . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.users/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ], $entry );
+        ]);
 
         return $entry;
     }

@@ -13,6 +13,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 use App\Services\TaxService;
 
@@ -659,53 +660,54 @@ class ProductCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->category_name       =   $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
-                'namespace'     =>      'ns.quantities',
-                'type'          =>      'POPUP',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' )
-            ], [
-                'label'         =>      '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' )
-            ], [
-                'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'ns.quantities', [
+            'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
+            'namespace'     =>      'ns.quantities',
+            'type'          =>      'POPUP',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'units', [
+            'label'         =>      '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
+            'namespace'     =>      'units',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' )
+        ]);
+        
+        $entry->addAction( 'history', [
+            'label'         =>      '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
+            'namespace'     =>      'history',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' )
+        ]);
+        
+        $entry->addAction( 'delete', [
+            'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

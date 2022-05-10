@@ -11,6 +11,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
 use App\Models\OrderTax;
+use App\Services\CrudEntry;
 
 class HoldOrderCrud extends CrudService
 {
@@ -445,21 +446,13 @@ class HoldOrderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Continue' ),
-                'namespace'     =>      'ns.open',
-                'type'          =>      'POPUP',
-            ]
-        ];
+        $entry->addAction( 'ns.open', [
+            'label'         =>      __( 'Continue' ),
+            'namespace'     =>      'ns.open',
+            'type'          =>      'POPUP',
+        ]);
 
         return $entry;
     }

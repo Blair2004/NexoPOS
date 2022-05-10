@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use App\Models\CustomerGroup;
 use App\Models\RewardSystem;
+use App\Services\CrudEntry;
 use Exception;
 use Illuminate\Database\Query\Builder;
 
@@ -300,32 +301,31 @@ class CustomerGroupCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->reward_system_id   =    $entry->reward_system_id === 0 ? __( 'N/A' ) : $entry->reward_system_id;
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit_customers_group',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( 'dashboard/customers/groups/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                    'title'     =>  __( 'Delete a licence' )
-                ]
+
+        $entry->addAction( 'edit_customers_groups', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit_customers_group',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( 'dashboard/customers/groups/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'index'     =>  'id',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.customers-groups/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
+                'title'     =>  __( 'Delete a licence' )
             ]
-        ];
+        ]);
+        
         $entry->reward_name     =   $entry->reward_name ?: __( 'N/A' );
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
 
         return $entry;
     }

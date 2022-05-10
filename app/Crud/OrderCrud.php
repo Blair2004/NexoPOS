@@ -11,6 +11,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Order;
 use App\Models\Register;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 use App\Services\OrdersService;
 use Illuminate\Support\Facades\DB;
@@ -522,17 +523,13 @@ class OrderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
         /**
          * @var OrdersService
          */
         $orderService           =   app()->make( OrdersService::class );
 
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
         $entry->nexopos_customers_phone     =   $entry->nexopos_customers_phone ?: __( 'N/A' );
         $entry->total                       =   ( string ) ns()->currency->define( $entry->total );
         $entry->discount                    =   ( string ) ns()->currency->define( $entry->discount );
@@ -574,32 +571,12 @@ class OrderCrud extends CrudService
         $entry->payment_status  =   ns()->order->getPaymentLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
-                'namespace'     =>      'ns.order-options',
-                'type'          =>      'POPUP',
-                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
-            ], [
-                'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id )
-            ], [
-                'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
-            ]
-        ];
+        $entry->addAction( 'ns.order-options', [
+            'label'         =>      '<i class="mr-2 las la-cogs"></i> ' . __( 'Options' ),
+            'namespace'     =>      'ns.order-options',
+            'type'          =>      'POPUP',
+            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/edit/' . $entry->id )
+        ]);
 
         /**
          * We'll check if the order has refunds 
@@ -612,15 +589,37 @@ class OrderCrud extends CrudService
         $hasRefunds     =   $refundCount > 0;
 
         if ( $hasRefunds ) {
-            array_splice( $entry->{ '$actions' }, 3, 0, [
-                [
-                    'label'         =>  '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
-                    'type'          =>  'POPUP',
-                    'namespace'     =>  'ns.order-refunds',
-                    'url'           =>  ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
-                ]
+            $entry->addAction( 'ns.order-refunds', [
+                'label'         =>  '<i class="mr-2 las la-receipt"></i> ' . __( 'Refund Receipt' ),
+                'type'          =>  'POPUP',
+                'namespace'     =>  'ns.order-refunds',
+                'url'           =>  ns()->url( '/dashboard/' . 'orders' . '/refund-receipt/' . $entry->id ),
             ]);
         }
+
+        $entry->addAction( 'invoice', [
+            'label'         =>      '<i class="mr-2 las la-file-invoice-dollar"></i> ' . __( 'Invoice' ),
+            'namespace'     =>      'invoice',
+            'type'          =>      'GOTO',
+            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/invoice/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'receipt', [
+            'label'         =>      '<i class="mr-2 las la-receipt"></i> ' . __( 'Receipt' ),
+            'namespace'     =>      'receipt',
+            'type'          =>      'GOTO',
+            'url'           =>     ns()->url( '/dashboard/' . 'orders' . '/receipt/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.orders/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
+            ]
+        ]);
 
         return $entry;
     }

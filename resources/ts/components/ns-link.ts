@@ -11,7 +11,7 @@ const nsLink      =   Vue.component( 'ns-link', {
     template: `
     <div class="flex">
         <router-link v-if="to" :to="to" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></router-link>
-        <a v-if="href" :target="target" :href="href" :class="buttonclass" class="rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
+        <a v-if="href" :target="target" :href="href" :class="buttonclass" class="hover:underline rounded cursor-pointer py-2 px-3 font-semibold"><slot></slot></a>
     </div>
     `,
     computed: {
