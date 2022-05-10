@@ -8,6 +8,7 @@ return [
         'it'        =>  'Italian',
         'ar'        =>  'Arabic',
         'pt'        =>  'Portuguese',
+        'tr'        =>  'Türkçe',
     ],
     'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [
