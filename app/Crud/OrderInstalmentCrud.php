@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\OrderInstalment;
+use App\Services\CrudEntry;
 
 class OrderInstalmentCrud extends CrudService
 {
@@ -339,33 +340,29 @@ class OrderInstalmentCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
         $entry->amount          =   ( string ) ns()->currency->define( $entry->amount );
         $entry->{ '$cssClass' } =   $entry->paid == 0 ? 'error' : 'success';
         $entry->paid            =   ( bool ) $entry->paid ? __( 'Yes' ) : __( 'No' );
         $entry->date            =   ns()->date->getFormatted( $entry->date );
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

@@ -11,6 +11,7 @@ use App\Models\CouponCategory;
 use App\Models\CouponProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Services\CrudEntry;
 use App\Services\CustomerService;
 use App\Services\Helper;
 use Carbon\Carbon;
@@ -577,7 +578,7 @@ class CouponCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
         // Don't overwrite
         $entry->{'$checked'}  =   false;
@@ -601,25 +602,25 @@ class CouponCrud extends CrudService
         $entry->valid_until     =   $entry->valid_until ?? __('Undefined');
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __('Edit'),
-                'namespace'     =>      'edit.licence',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url('/dashboard/customers/coupons/edit/' . $entry->id)
-            ], [
-                'label'     =>  __('Delete'),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       => ns()->url('/api/nexopos/v4/crud/ns.coupons/' . $entry->id),
-                'confirm'   =>  [
-                    'message'  =>  __('Would you like to delete this ?'),
-                    'title'     =>  __('Delete a licence')
-                ]
+        $entry->addAction( 'edit.license', [
+            'label'         =>      __('Edit'),
+            'namespace'     =>      'edit.licence',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url('/dashboard/customers/coupons/edit/' . $entry->id)
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __('Delete'),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'index'     =>  'id',
+            'url'       => ns()->url('/api/nexopos/v4/crud/ns.coupons/' . $entry->id),
+            'confirm'   =>  [
+                'message'  =>  __('Would you like to delete this ?'),
+                'title'     =>  __('Delete a licence')
             ]
-        ];
+        ]);
 
         return $entry;
     }

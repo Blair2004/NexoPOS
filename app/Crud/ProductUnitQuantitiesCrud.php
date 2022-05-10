@@ -337,16 +337,6 @@ class ProductUnitQuantitiesCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            // ...
-        ];
-
         return $entry;
     }
 

@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\ExpenseCategory;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 
 class ExpenseCategoryCrud extends CrudService
@@ -296,31 +297,26 @@ class ExpenseCategoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

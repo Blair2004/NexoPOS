@@ -6,6 +6,7 @@ use App\Models\ProductHistory;
 use App\Services\CrudService;
 use App\Services\Users;
 use App\Models\User;
+use App\Services\CrudEntry;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
@@ -427,13 +428,8 @@ class ProductHistoryCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }      =   false;
-        $entry->{ '$toggled' }      =   false;
-        $entry->{ '$id' }           =   $entry->id;
-
         $entry->orders_code         =   $entry->orders_code ?: __( 'N/A' );
         $entry->procurements_name   =   $entry->procurements_name ?: __( 'N/A' );
         $entry->unit_price          =   ns()->currency->define( $entry->unit_price )
@@ -488,13 +484,11 @@ class ProductHistoryCrud extends CrudService
         }
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
-                'namespace'     =>      'ns.description',
-                'type'          =>      'POPUP',
-            ], 
-        ];
+        $entry->addAction( 'ns.description', [
+            'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Description' ),
+            'namespace'     =>      'ns.description',
+            'type'          =>      'POPUP',
+        ]);
 
         return $entry;
     }

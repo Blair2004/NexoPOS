@@ -8,6 +8,7 @@ use App\Services\CrudService;
 use App\Models\User;
 use Exception;
 use App\Models\Provider;
+use App\Services\CrudEntry;
 use App\Services\Users;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -326,49 +327,47 @@ class ProviderCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-
         $entry->phone           =   $entry->phone ?? __( 'N/A' );
         $entry->email           =   $entry->email ?? __( 'N/A' );
 
         $entry->amount_due      =   ns()->currency->define( $entry->amount_due )->format();
         $entry->amount_paid     =   ns()->currency->define( $entry->amount_paid )->format();
 
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'See Procurements' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
-            ], [
-                'label'         =>      __( 'See Products' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/products/' )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
+        ]);
+        
+        $entry->addAction( 'see-procurements', [
+            'label'         =>      __( 'See Procurements' ),
+            'namespace'     =>      'see-procurements',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
+        ]);
+        
+        $entry->addAction( 'see-products', [
+            'label'         =>      __( 'See Products' ),
+            'namespace'     =>      'see-products',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/products/' )
+        ]);
+        
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

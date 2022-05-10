@@ -11,6 +11,7 @@ use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\RewardSystem;
 use App\Models\RewardSystemRule;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 
 class RewardSystemCrud extends CrudService
@@ -382,34 +383,30 @@ class RewardSystemCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
         $entry->name            =   $entry->name . ' (' . RewardSystem::find( $entry->id )->rules()->count() . ')';
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit.licence',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'index'     =>  'id',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this reward system ?' ),
-                    'title'     =>  __( 'Delete a licence' )
-                ]
+        $entry->addAction( 'edit.rewards', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit.licence',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/customers/rewards-system/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'index'     =>  'id',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this reward system ?' ),
+                'title'     =>  __( 'Delete a licence' )
             ]
-        ];
+        ]);
 
         return $entry;
     }

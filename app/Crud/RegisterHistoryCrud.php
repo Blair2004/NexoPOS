@@ -389,11 +389,6 @@ class RegisterHistoryCrud extends CrudService
      */
     public function setActions( $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
-        
         switch( $entry->action ) {
             case RegisterHistory::ACTION_SALE: 
                 $entry->{ '$cssClass' }    =   'success border';
@@ -425,11 +420,6 @@ class RegisterHistoryCrud extends CrudService
         $entry->balance_before      =   ( string ) ns()->currency->define( $entry->balance_before );
         $entry->balance_after       =   ( string ) ns()->currency->define( $entry->balance_after );
         $entry->transaction_type    =   $this->getHumanTransactionType( $entry->transaction_type );
-
-        // you can make changes here
-        $entry->{'$actions'}    =   [
-            // ...
-        ];
 
         return $entry;
     }

@@ -8,6 +8,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Role;
+use App\Services\CrudEntry;
 use App\Services\Helper;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -356,43 +357,40 @@ class RolesCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
         $entry->locked          =   ( bool ) $entry->locked;
-
         $entry->dashid          =   $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'         =>      __( 'Edit' ),
-                'namespace'     =>      'edit',
-                'type'          =>      'GOTO',
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
-            ], [
-                'label'         =>      __( 'Clone' ),
-                'namespace'     =>      'clone',
-                'type'          =>      'GET',
-                'confirm'       =>      [
-                    'message'   =>  __( 'Would you like to clone this role ?' ),
-                ],
-                'index'         =>      'id',
-                'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' )
-            ], [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'edit', [
+            'label'         =>      __( 'Edit' ),
+            'namespace'     =>      'edit',
+            'type'          =>      'GOTO',
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
+        ]);
+
+        $entry->addAction( 'clone', [
+            'label'         =>      __( 'Clone' ),
+            'namespace'     =>      'clone',
+            'type'          =>      'GET',
+            'confirm'       =>      [
+                'message'   =>  __( 'Would you like to clone this role ?' ),
+            ],
+            'index'         =>      'id',
+            'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' )
+        ]);
+
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }

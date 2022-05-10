@@ -10,6 +10,7 @@ use App\Models\User;
 use TorMorten\Eventy\Facades\Events as Hook;
 use Exception;
 use App\Models\Procurement;
+use App\Services\CrudEntry;
 use App\Services\ProviderService;
 
 class ProviderProcurementsCrud extends CrudService
@@ -381,12 +382,8 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( $entry, $namespace )
+    public function setActions( CrudEntry $entry, $namespace )
     {
-        // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
         $entry->tax_value       =   ( string ) ns()->currency->define( $entry->tax_value );
         $entry->value           =   ( string ) ns()->currency->define( $entry->value );
 
@@ -394,17 +391,15 @@ class ProviderProcurementsCrud extends CrudService
         $entry->payment_status      =   $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         // you can make changes here
-        $entry->{'$actions'}    =   [
-            [
-                'label'     =>  __( 'Delete' ),
-                'namespace' =>  'delete',
-                'type'      =>  'DELETE',
-                'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
-                'confirm'   =>  [
-                    'message'  =>  __( 'Would you like to delete this ?' ),
-                ]
+        $entry->addAction( 'delete', [
+            'label'     =>  __( 'Delete' ),
+            'namespace' =>  'delete',
+            'type'      =>  'DELETE',
+            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'confirm'   =>  [
+                'message'  =>  __( 'Would you like to delete this ?' ),
             ]
-        ];
+        ]);
 
         return $entry;
     }
