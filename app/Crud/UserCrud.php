@@ -255,9 +255,7 @@ class UserCrud extends CrudService
             $this->userService
                 ->setUserRole( 
                     $entry, 
-                    collect( $request[ 'roles' ] )
-                        ->map( fn( $role ) => $role[ 'id' ] )
-                        ->toArray() 
+                    $request[ 'roles' ] 
                 );
                 
             $this->userService->createAttribute( $entry );
@@ -304,9 +302,7 @@ class UserCrud extends CrudService
             $this->userService
                 ->setUserRole( 
                     $entry, 
-                    collect( $request[ 'roles' ] )
-                        ->map( fn( $role ) => $role[ 'id' ] )
-                        ->toArray() 
+                    $request[ 'roles' ]
                 );
                 
             $this->userService->createAttribute( $entry );

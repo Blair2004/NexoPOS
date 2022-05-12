@@ -52,7 +52,7 @@ class CreateUserTest extends TestCase
                     'email'     =>  $this->faker->email(),
                     'password'  =>  $password,
                     'password_confirm'  =>  $password,
-                    'roles'     =>  [ $role ],
+                    'roles'     =>  [ $role->id ],
                     'active'    =>  1, // true
                 ]
             ];
@@ -62,7 +62,6 @@ class CreateUserTest extends TestCase
               
             $response->assertJsonPath( 'status', 'success' );
             $result     =   json_decode( $response->getContent() );
-            
             
             /**
              * Step 1: create user with same username
@@ -93,6 +92,26 @@ class CreateUserTest extends TestCase
             } catch( Exception $exception ) {
                 $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
             }
+
+            /**
+             * Step 3: Update user from Crud component
+             */
+            $configuration  =   [
+                'username'  =>  $this->faker->username(),
+                'general'   =>  [
+                    'email'     =>  $this->faker->email(),
+                    'password'  =>  $password,
+                    'password_confirm'  =>  $password,
+                    'roles'     =>  [ $role->id ],
+                    'active'    =>  1, // true
+                ]
+            ];
+
+            $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'put', '/api/nexopos/v4/crud/ns.users/' . $result->entry->id, $configuration );
+              
+            $response->assertJsonPath( 'status', 'success' );
+            $result     =   json_decode( $response->getContent() );
             
             return $result->entry;
         });
