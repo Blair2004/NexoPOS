@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <button class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
+                            <button @click="removeInstalment( instalment )" class="items-center flex justify-center h-8 w-8 rounded border text-primary ns-inset-button error">
                                 <i class="las la-times"></i>
                             </button>
                         </div>
@@ -168,6 +168,11 @@ export default {
             } else {
                 this.totalPayments  =   0;
             }
+        },
+        removeInstalment( instament ) {
+            const index     =   this.order.instalments.indexOf( instament );
+            this.order.instalments.splice( index, 1 );
+            this.$forceUpdate();
         },
         generatePaymentFields( totalInstalments ) {
             this.order.instalments    =   ( new Array( parseInt( totalInstalments ) ) )

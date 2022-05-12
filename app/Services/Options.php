@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Option;
 use App\Services\OptionWrapper;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class Options 
@@ -40,7 +41,6 @@ class Options
      * Build option array
      * @return void
     **/
-
     public function build()
     {
         $this->options          =   [];
@@ -208,7 +208,7 @@ class Options
     /**
      * Delete Key
      * @param string key
-     * @return Eloquent Model Result
+     * @return Collection
     **/
     public function delete( $key ) 
     {
