@@ -290,6 +290,7 @@ class ProductCrud extends CrudService
                                     'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
                                         'materialized'      =>  __( 'Materialized Product' ),
                                         'dematerialized'    =>  __( 'Dematerialized Product' ),
+                                        'grouped'           =>  __( 'Grouped Product' ),
                                     ] ) ),
                                     'description'   =>  __( 'Define the product type. Applies to all variations.' ),
                                     'name'          =>  'type',
@@ -325,6 +326,23 @@ class ProductCrud extends CrudService
                                     'value' =>  $entry->description ?? '',
                                 ],                 
                             ]
+                        ],
+                        'groups'    =>  [
+                            'label' =>  __( 'Groups' ),
+                            'fields'    =>  [
+                                [
+                                    'label' =>  __( 'Price' ),
+                                    'name'  =>  'sale_price',
+                                    'description'   =>  __( 'Set the sale price of the grouped product.' ),
+                                    'validation'    =>  'required'
+                                ], [
+                                    'label' =>  __( 'Wholesale' ),
+                                    'name'  =>  'wholesale_price',
+                                    'description'   =>  __( 'Set the sale price of the grouped product.' ),
+                                    'validation'    =>  'required'
+                                ], 
+                            ],
+                            'component' =>  'nsProductGroup'
                         ],
                         'units'     =>  [
                             'label' =>  __( 'Units' ),

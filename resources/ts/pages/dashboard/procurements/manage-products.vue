@@ -32,10 +32,12 @@
                     <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
                         <div id="card-header" class="flex flex-wrap justify-between ns-tab">
                             <div class="flex flex-wrap">
-                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
-                                    <span class="block mr-2">{{ tab.label }}</span>
-                                    <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
-                                </div>
+                                <template v-for="( tab, index ) in variation.tabs">
+                                    <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                        <span class="block mr-2">{{ tab.label }}</span>
+                                        <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
+                                    </div>
+                                </template>
                             </div>
                             <div class="flex items-center justify-center -mx-1">
                                 <!-- <div class="px-1" v-if="form.variations.length > 1 && variation_index > 0">
@@ -56,7 +58,7 @@
                             </div>
                         </div>
                         <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units' ].includes( getActiveTabKey( variation.tabs ) )">
+                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
                                 <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field :field="field"></ns-field>
@@ -85,6 +87,9 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
+                                <ns-product-group :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
                             </div>
                             <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                 <div class="px-4 w-full md:w-1/2 lg:w-1/3">
@@ -136,7 +141,11 @@ import FormValidation from '@/libraries/form-validation'
 import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { __ } from '@/libraries/lang';
+import nsProductGroup from './ns-product-group.vue';
 export default {
+    components: {
+        nsProductGroup
+    },
     data: () => {
         return {
             formValidation: new FormValidation,
@@ -144,6 +153,46 @@ export default {
             nsHttpClient,
             _sampleVariation: null,
             form: '',
+        }
+    },
+    watch: {
+        form: {
+            deep: true,
+            handler( value ) {
+                this.form.variations.forEach( variation => {
+                    const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
+                    
+                    if ( identification.type === 'grouped' )  {
+                        for( let index in variation.tabs ) {
+                            if ( ! [ 'identification', 'groups' ].includes( index ) ) {
+                                this.$set( variation.tabs[ index ], 'visible', false );
+                            }
+                        }
+
+                        /**
+                         * explicitely enable the groups tab
+                         */
+                        if ( variation.tabs[ 'groups' ] ) {
+                            this.$set( variation.tabs[ 'groups' ], 'visible', true );
+                        }
+                    } else {
+                        for( let index in variation.tabs ) {
+                            if ( ! [ 'identification', 'groups' ].includes( index ) ) {
+                                this.$set( variation.tabs[ index ], 'visible', true );
+                            }
+                        }
+
+                        /**
+                         * explicitely disable the groups tab
+                         */
+                        if ( variation.tabs[ 'groups' ] ) {
+                            this.$set( variation.tabs[ 'groups' ], 'visible', false );
+                        }
+                    }
+                });
+
+                this.$forceUpdate();
+            }
         }
     },
     computed: {
@@ -154,9 +203,9 @@ export default {
                 newVariation[ tabIndex ]            =   new Object;
                 newVariation[ tabIndex ].label      =   this._sampleVariation.tabs[ tabIndex ].label;
                 newVariation[ tabIndex ].active     =   this._sampleVariation.tabs[ tabIndex ].active;
+                // newVariation[ tabIndex ].visible    =   this._sampleVariation.tabs[ tabIndex ].visible;
                 newVariation[ tabIndex ].fields     =   this._sampleVariation.tabs[ tabIndex ].fields
                     .filter( field => {
-                        console.log( field );
                         return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
                     })
                     .map( field => {
@@ -462,6 +511,8 @@ export default {
                      */
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active    =   true;
+                        variation.tabs[ key ].visible   =   true;
+
                         this._sampleVariation           =   Object.assign({}, variation );
                         if ( variation.tabs[ key ].fields ) {
                             variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );

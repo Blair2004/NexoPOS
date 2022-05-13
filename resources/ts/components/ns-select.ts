@@ -24,7 +24,7 @@ const nsSelect      =   Vue.component( 'ns-select', {
         }
     },
     mounted() {
-        console.log( this.field.value );
+        // ...
     },
     methods: { __ },
     template: `

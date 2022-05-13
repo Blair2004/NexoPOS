@@ -1403,15 +1403,24 @@ class ProductService
         });
     }
 
-    public function searchProduct( $argument, $limit = 5 )
+    public function searchProduct( $argument, $limit = 5, $attributes = [] )
     {
-        return Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+        $query  =   Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
             ->searchable()
             ->with( 'unit_quantities.unit' )
             ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
             ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
-            ->limit( $limit )
-            ->get()
+            ->limit( $limit );
+
+        /**
+         * if custom attributes are provided
+         * we'll parse it
+         */
+        if ( ! empty( $attributes ) ) {
+
+        }
+        
+        return  $query->get()
             ->map( function( $product ) {
                 $units  =   json_decode( $product->purchase_unit_ids );
                 

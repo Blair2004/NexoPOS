@@ -163,7 +163,10 @@ class ProductsController extends DashboardController
      */
     public function searchProduct( Request $request )
     {
-        return $this->productService->searchProduct( $request->input( 'search' ) );
+        return $this->productService->searchProduct( 
+            argument: $request->input( 'search' ),
+            attributes: ( array ) $request->input( 'attributes' )
+        );
     }
 
     public function refreshPrices( $id )
