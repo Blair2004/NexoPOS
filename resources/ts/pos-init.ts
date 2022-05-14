@@ -22,18 +22,18 @@ import moment from "moment";
  * these are dynamic component
  * that are loaded conditionally
  */
-const NsPosDashboardButton = (<any>window).NsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
-const NsPosPendingOrderButton = (<any>window).NsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
-const NsPosOrderTypeButton = (<any>window).NsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
-const NsPosCustomersButton = (<any>window).NsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
-const NsPosResetButton = (<any>window).NsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
-const NsPosCashRegister = (<any>window).NsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
-const NsAlertPopup = (<any>window).NsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
-const NsConfirmPopup = (<any>window).NsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
-const NsPOSLoadingPopup = (<any>window).NsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
-const NsPromptPopup = (<any>window).NsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
-const NsLayawayPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
-const NSPosShippingPopup = (<any>window).NsLayawayPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
+const nsPosDashboardButton      = (<any>window).nsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
+const nsPosPendingOrderButton   = (<any>window).nsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
+const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
+const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
+const nsPosResetButton          = (<any>window).nsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
+const nsPosCashRegister         = (<any>window).nsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
+const nsAlertPopup              = (<any>window).nsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
+const nsConfirmPopup            = (<any>window).nsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
+const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
+const nsPromptPopup             = (<any>window).nsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
+const nsLayawayPopup            = (<any>window).nsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
+const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -192,7 +192,7 @@ export class POS {
                 identifier: 'handle.delivery-order',
                 promise: (selectedType: OrderType) => new Promise<StatusResponse>((resolve, reject) => {
                     if ( selectedType && selectedType.identifier === 'delivery') {
-                        return Popup.show(NSPosShippingPopup, { resolve, reject });
+                        return Popup.show(nsPosShippingPopup, { resolve, reject });
                     }
 
                     return resolve({
@@ -392,11 +392,11 @@ export class POS {
          */
         const data = {
             buttons: {
-                NsPosDashboardButton,
-                NsPosPendingOrderButton,
-                NsPosOrderTypeButton,
-                NsPosCustomersButton,
-                NsPosResetButton,
+                nsPosDashboardButton,
+                nsPosPendingOrderButton,
+                nsPosOrderTypeButton,
+                nsPosCustomersButton,
+                nsPosResetButton,
             }
         };
 
@@ -406,7 +406,7 @@ export class POS {
          * of button available.
          */
         if (this.options.getValue().ns_pos_registers_enabled === 'yes') {
-            data.buttons['NsPosCashRegister'] = NsPosCashRegister;
+            data.buttons['nsPosCashRegister'] = nsPosCashRegister;
         }
 
         /**
@@ -626,12 +626,12 @@ export class POS {
              */
             try {
                 const order = await new Promise<Order>((resolve, reject) => {
-                    Popup.show(NsLayawayPopup, { order: _order, reject, resolve });
+                    Popup.show(nsLayawayPopup, { order: _order, reject, resolve });
                 });
 
                 if (order.instalments.length === 0 && order.tendered < expected) {
                     const message = __(`Before saving the order as laid away, a minimum payment of {amount} is required`).replace('{amount}', Vue.filter('currency')(expected));
-                    Popup.show(NsAlertPopup, { title: __('Unable to proceed'), message });
+                    Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
                     return reject({ status: 'failed', message });
                 } else {
                     const paymentType = this.selectedPaymentType.getValue();
@@ -648,7 +648,7 @@ export class POS {
                      * the waiter and invite him to add the first slice as 
                      * the payment.
                      */
-                    Popup.show(NsConfirmPopup, {
+                    Popup.show(nsConfirmPopup, {
                         title: __(`Confirm Payment`),
                         message: __(`An instalment has been detected. Would you like to add as first payment {amount} for the selected payment type "{paymentType}"?`)
                             .replace('{amount}', Vue.filter('currency')(firstSlice))
@@ -1617,7 +1617,7 @@ export class POS {
     voidOrder(order) {
         if (order.id !== undefined) {
             if (['hold'].includes(order.payment_status)) {
-                Popup.show(NsConfirmPopup, {
+                Popup.show(nsConfirmPopup, {
                     title: __( 'Order Deletion' ),
                     message: __( 'The current order will be deleted as no payment has been made so far.' ),
                     onAction: (action) => {
@@ -1633,7 +1633,7 @@ export class POS {
                     }
                 });
             } else {
-                Popup.show(NsPromptPopup, {
+                Popup.show(nsPromptPopup, {
                     title: __( 'Void The Order' ),
                     message: __( 'The current order will be void. This will cancel the transaction, but the order won\'t be deleted. Further details about the operation will be tracked on the report. Consider providing the reason of this operation.' ),
                     onAction: (reason) => {

@@ -1094,4 +1094,20 @@ class ReportService
             $this->computeDashboardMonth( $day );
         }
     }
+
+    /**
+     * Will return the actual customer statement
+     * @param Customer $customer
+     * @return array
+     */
+    public function getCustomerStatement( Customer $customer, $rangeStart = null, $rangeEnds = null )
+    {
+        return [
+            'purchases_amount'  =>  $customer->purchases_amount,
+            'owed_amount'       =>  $customer->owed_amount,
+            'account_amount'    =>  $customer->account_amount,
+            'total_orders'      =>  $customer->orders()->count(),
+            'credit_limit_amount'      =>  $customer->credit_limit_amount,
+        ];
+    }
 }

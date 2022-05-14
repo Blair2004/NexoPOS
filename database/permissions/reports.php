@@ -29,19 +29,25 @@ if ( defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
     $permission                 =   new Permission;
     $permission->name           =   __( 'See Yearly Sales' );
     $permission->namespace      =   'nexopos.reports.yearly';
-    $permission->description    =   __( 'Let you see the yearly report' );
+    $permission->description    =   __( 'Allow to see the yearly sales.' );
     $permission->save();
 
     $permission                 =   new Permission;
     $permission->name           =   __( 'See Customers' );
     $permission->namespace      =   'nexopos.reports.customers';
-    $permission->description    =   __( 'Let you see the Yearly report' );
+    $permission->description    =   __( 'Allow to see the customers' );
     $permission->save();
 
     $permission                 =   new Permission;
     $permission->name           =   __( 'See Inventory Tracking' );
     $permission->namespace      =   'nexopos.reports.inventory';
-    $permission->description    =   __( 'Let you see the Yearly report' );
+    $permission->description    =   __( 'Allow to see the inventory' );
+    $permission->save();
+
+    $permission                 =   new Permission;
+    $permission->name           =   __( 'See Customers Statement' );
+    $permission->namespace      =   'nexopos.reports.customers-statement';
+    $permission->description    =   __( 'Allow to see the customers statement.' );
     $permission->save();
 
     $permission                 =   new Permission;

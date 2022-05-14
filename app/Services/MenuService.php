@@ -369,6 +369,11 @@ class MenuService
                         'permissions'   =>  [ 'nexopos.reports.products-report' ],
                         'href'  =>  ns()->url( '/dashboard/reports/sales-progress' )
                     ], 
+                    'customers-statement'  =>  [
+                        'label' =>  __( 'Customers Statement' ),
+                        'permissions'   =>  [ 'nexopos.reports.customers-statement' ],
+                        'href'  =>  ns()->url( '/dashboard/reports/customers-statement' )
+                    ], 
                     'low-stock'  =>  [
                         'label' =>  __( 'Stock Report' ),
                         'permissions'   =>  [ 'nexopos.reports.low-stock' ],

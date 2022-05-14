@@ -9,9 +9,9 @@ import * as baseComponents from './components/components';
 import VirtualCollection from 'vue-virtual-collection';
 import { NsHotPress } from './libraries/ns-hotpress';
 
-const NsPos                     =   () => import( './pages/dashboard/pos/ns-pos.vue' );
-const NsPosCart                 =   () => import( './pages/dashboard/pos/ns-pos-cart.vue' );
-const NsPosGrid                 =   () => import( './pages/dashboard/pos/ns-pos-grid.vue' );
+const nsPos                     =   () => import( './pages/dashboard/pos/ns-pos.vue' );
+const nsPosCart                 =   () => import( './pages/dashboard/pos/ns-pos-cart.vue' );
+const nsPosGrid                 =   () => import( './pages/dashboard/pos/ns-pos-grid.vue' );
 
 ( window as any ).nsComponents  =   { ...baseComponents };
 ( window as any ).nsHotPress    =   new NsHotPress;
@@ -24,9 +24,9 @@ new Vue({
         // ...
     },
     components: {
-        NsPos,
-        NsPosCart,
-        NsPosGrid,
+        nsPos,
+        nsPosCart,
+        nsPosGrid,
         ...( window as any ).nsComponents,
     }
 })

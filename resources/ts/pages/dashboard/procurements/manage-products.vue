@@ -9,10 +9,10 @@
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-primary">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-primary">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-primary  px-2 py-1">{{ __( 'Return' ) }}</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-tertiary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-primary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
@@ -20,10 +20,10 @@
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
                         class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-primary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
+                <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
@@ -164,7 +164,7 @@ export default {
                     
                     if ( identification.type === 'grouped' )  {
                         for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups', 'taxes' ].includes( index ) ) {
+                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
                                 this.$set( variation.tabs[ index ], 'visible', false );
                             }
                         }
@@ -177,7 +177,7 @@ export default {
                         }
                     } else {
                         for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups', 'taxes' ].includes( index ) ) {
+                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
                                 this.$set( variation.tabs[ index ], 'visible', true );
                             }
                         }

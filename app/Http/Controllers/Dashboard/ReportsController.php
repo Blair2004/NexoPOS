@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Jobs\ComputeYearlyReportJob;
 use App\Models\AccountType;
 use App\Models\CashFlow;
+use App\Models\Customer;
 use App\Models\DashboardDay;
 use App\Models\ExpenseCategory;
 use App\Services\OrdersService;
@@ -273,5 +274,22 @@ class ReportsController extends DashboardController
     public function getStockReport()
     {
         return $this->reportService->getStockReport();
+    }
+
+    public function showCustomerStatement()
+    {
+        return $this->view( 'pages.dashboard.reports.customers-statement', [
+            'title'         =>  __( 'Customers Statement' ),
+            'description'   =>  __( 'Display the complete customer statement.' )
+        ]); 
+    }
+
+    public function getCustomerStatement( Customer $customer, Request $request )
+    {
+        return $this->reportService->getCustomerStatement( 
+            customer: $customer,
+            rangeStart: $request->input( 'rangeStart' ),
+            rangeEnds: $request->input( 'rangeEnds' )
+        );
     }
 }

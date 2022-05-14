@@ -20,8 +20,8 @@
     </div>
 </template>
 <script>
-import NsPosCart from './ns-pos-cart';
-import NsPosGrid from './ns-pos-grid.vue';
+import nsPosCart from './ns-pos-cart';
+import nsPosGrid from './ns-pos-grid.vue';
 
 export default {
     name: 'ns-pos',
@@ -45,8 +45,8 @@ export default {
         }
     },
     components: {
-        NsPosCart,
-        NsPosGrid,
+        nsPosCart,
+        nsPosGrid,
     }
 }
 </script>

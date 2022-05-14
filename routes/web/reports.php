@@ -17,3 +17,4 @@ Route::get( '/reports/profit', [ ReportsController::class, 'profit' ]);
 Route::get( '/reports/cash-flow', [ ReportsController::class, 'cashFlow' ]);
 Route::get( '/reports/annual-report', [ ReportsController::class, 'annualReport' ])->name( ns()->routeName( 'ns.dashboard.reports-annual' ) );
 Route::get( '/reports/payment-types', [ ReportsController::class, 'salesByPaymentTypes' ]);
+Route::get( '/reports/customers-statement', [ ReportsController::class, 'showCustomerStatement' ]);

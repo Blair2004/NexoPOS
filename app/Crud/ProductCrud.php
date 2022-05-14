@@ -330,17 +330,7 @@ class ProductCrud extends CrudService
                         'groups'    =>  [
                             'label' =>  __( 'Groups' ),
                             'fields'    =>  [
-                                [
-                                    'label' =>  __( 'Price' ),
-                                    'name'  =>  'sale_price',
-                                    'description'   =>  __( 'Set the sale price of the grouped product.' ),
-                                    'validation'    =>  'required'
-                                ], [
-                                    'label' =>  __( 'Wholesale' ),
-                                    'name'  =>  'wholesale_price',
-                                    'description'   =>  __( 'Set the sale price of the grouped product.' ),
-                                    'validation'    =>  'required'
-                                ], 
+                                // ...
                             ],
                             'component' =>  'nsProductGroup'
                         ],

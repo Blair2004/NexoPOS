@@ -1,10 +1,7 @@
 <template>
     <div class="flex flex-col px-4 w-full">
         <div class="md:-mx-4 flex flex-col md:flex-row">
-            <div class="md:px-4 w-full md:w-1/3">
-                <ns-field :field="field" v-for="(field,index) of fields" :key="index"></ns-field>
-            </div>
-            <div class="md:px-4 w-full md:w-2/3">
+            <div class="md:px-4 w-full">
                 <div class="input-group border-2 rounded info flex w-full">
                     <input :placeholder="__( 'Search products...' )" v-model="searchValue" type="text" class="flex-auto p-2 outline-none">
                 </div>
@@ -17,12 +14,12 @@
                     <table class="ns-table">
                         <thead>
                             <tr>
-                                <th class="border">{{ __( 'Products' ) }}</th>
+                                <th colspan="2" class="border">{{ __( 'Products' ) }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(product,index) of products" :key="index">
-                                <td class="border p-2">
+                                <td colspan="2" class="border p-2">
                                     <h3 class="font-bold">{{ product.name }}</h3>
                                     <ul>
                                         <li class="flex justify-between">
@@ -46,6 +43,12 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="border">{{ __( 'Total' ) }}</td>
+                                <td>12541</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
