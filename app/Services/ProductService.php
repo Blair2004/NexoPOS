@@ -1414,10 +1414,12 @@ class ProductService
 
         /**
          * if custom attributes are provided
-         * we'll parse it
+         * we'll parse it and convert it into
+         * eloquent arguments
          */
         if ( ! empty( $attributes ) ) {
-
+            $eloquenize     =   new EloquenizeArrayService;
+            $eloquenize->parse( $query, $attributes );
         }
         
         return  $query->get()

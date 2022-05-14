@@ -35,7 +35,7 @@
                                 <template v-for="( tab, index ) in variation.tabs">
                                     <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
                                         <span class="block mr-2">{{ tab.label }}</span>
-                                        <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
+                                        <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-error-secondary text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
                                     </div>
                                 </template>
                             </div>
@@ -164,7 +164,7 @@ export default {
                     
                     if ( identification.type === 'grouped' )  {
                         for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups' ].includes( index ) ) {
+                            if ( ! [ 'identification', 'groups', 'taxes' ].includes( index ) ) {
                                 this.$set( variation.tabs[ index ], 'visible', false );
                             }
                         }
@@ -177,7 +177,7 @@ export default {
                         }
                     } else {
                         for( let index in variation.tabs ) {
-                            if ( ! [ 'identification', 'groups' ].includes( index ) ) {
+                            if ( ! [ 'identification', 'groups', 'taxes' ].includes( index ) ) {
                                 this.$set( variation.tabs[ index ], 'visible', true );
                             }
                         }
@@ -190,8 +190,6 @@ export default {
                         }
                     }
                 });
-
-                this.$forceUpdate();
             }
         }
     },
@@ -511,7 +509,6 @@ export default {
                      */
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active    =   true;
-                        variation.tabs[ key ].visible   =   true;
 
                         this._sampleVariation           =   Object.assign({}, variation );
                         if ( variation.tabs[ key ].fields ) {
@@ -523,7 +520,8 @@ export default {
                         }
                     }
 
-                    variation.tabs[ key ].active    =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].active        =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].visible       =   variation.tabs[ key ].visible === undefined ? true : variation.tabs[ key ].visible;
 
                     index++;
                 }

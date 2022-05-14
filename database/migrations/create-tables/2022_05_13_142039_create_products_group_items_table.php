@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer( 'product_id' );
             $table->integer( 'unit_id' );
+            $table->integer( 'unit_quantity_id' );
             $table->float( 'quantity' )->default(0);
             $table->integer( 'author' );
             $table->timestamps();
