@@ -4,6 +4,7 @@
             <div class="md:px-4 w-full">
                 <div class="input-group border-2 rounded info flex w-full">
                     <input :placeholder="__( 'Search products...' )" v-model="searchValue" type="text" class="flex-auto p-2 outline-none">
+                    <button @click="setSalePrice()" class="px-2">{{ __( 'Set Sale Price' ) }}</button>
                 </div>
                 <div class="h-0 relative" v-if="results.length > 0 && searchValue.length > 0">
                     <ul class="ns-vertical-menu absolute w-full">
@@ -20,33 +21,40 @@
                         <tbody>
                             <tr v-for="(product,index) of products" :key="index">
                                 <td colspan="2" class="border p-2">
-                                    <h3 class="font-bold">{{ product.name }}</h3>
+                                    <div class="flex justify-between">
+                                        <h3 class="font-bold">{{ product.name }}</h3>
+                                        <span @click="removeProduct( index )" class="hover:underline text-error-secondary cursor-pointer">{{ __( 'Remove' ) }}</span>
+                                    </div>
                                     <ul>
-                                        <li class="flex justify-between">
+                                        <li @click="toggleUnitField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Unit' ) }}:</span> 
-                                            <span class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.unit.name }}</span>
+                                            <select @change="redefineUnit( product )" ref="unitField" type="text" v-model="product.unit_quantity_id">
+                                                <option :key="unitQuantity.id" :value="unitQuantity.id" v-for="unitQuantity of product.unit_quantities">{{ unitQuantity.unit.name }}</option>
+                                            </select>
                                         </li>
-                                        <li class="flex justify-between">
+                                        <li @click="toggleQuantityField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Quantity' ) }}:</span> 
-                                            <span class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.quantity }}</span>
+                                            <span v-if="! product._quantity_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.quantity }}</span>
+                                            <input ref="quantityField" type="text" v-model="product.quantity" v-if="product._quantity_toggled">
                                         </li>
-                                        <li class="flex justify-between">
+                                        <li @click="togglePriceField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Price' ) }}:</span> 
-                                            <span class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.sale_price }}</span>
+                                            <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.sale_price | currency }}</span>
+                                            <input ref="priceField" type="text" v-model="product.sale_price" v-if="product._price_toggled">
                                         </li>
                                     </ul>
                                 </td>
                             </tr>
                             <tr v-if="products.length === 0">
-                                <td class="border p-2 text-center">
+                                <td colspan="2" class="border p-2 text-center">
                                     {{ __( 'No product are added to this group.' ) }}
                                 </td>
                             </tr>
                         </tbody>
-                        <tfoot>
+                        <tfoot v-if="products.length > 0">
                             <tr>
-                                <td class="border">{{ __( 'Total' ) }}</td>
-                                <td>12541</td>
+                                <td class="w-1/2 border p-2 text-left">{{ __( 'Total' ) }}</td>
+                                <td class="w-1/2 border p-2 text-right">{{ totalProducts | currency }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -60,6 +68,7 @@ import { __ } from '@/libraries/lang';
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { Popup } from '@/libraries/popup';
 import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 export default {
     name: 'ns-product-group',
     props: [ 'fields' ],
@@ -70,10 +79,35 @@ export default {
             this.searchTimeout  =   setTimeout( () => {
                 this.searchProducts( this.searchValue );
             }, 1000 );
+        },
+        products: {
+            deep: true,
+            handler() {
+                this.$forceUpdate();
+            }
+        }
+    },
+    computed: {
+        totalProducts() {
+            if ( this.products.length > 0 ) {
+                this.$emit( 'update', this.products );
+
+                return this.products.map( product => {
+                        return parseFloat( product.sale_price ) * parseFloat( product.quantity );
+                    })
+                    .reduce( ( a, b ) => a + b );
+            }
+
+            return 0;
         }
     },
     mounted() {
-        console.log( this.fields );
+        const field  =   this.fields.filter( field => field.name === 'product_subitems' );
+
+        if ( field.length > 0 && field[0].value !== undefined && field[0].value.length > 0) {
+            this.products   =   field[0].value;
+            console.log( this.products );
+        }
     },
     data() {
         return {
@@ -85,6 +119,71 @@ export default {
     },
     methods: {
         __,
+        setSalePrice() {
+            this.$emit( 'updateSalePrice', this.totalProducts );
+        },
+        removeProduct( index ) {
+            Popup.show( nsPosConfirmPopupVue, {
+                title: __( 'Delete Sub item' ),
+                message: __( 'Would you like to delete this sub item?' ),
+                onAction: action => {
+                    if ( action ) {
+                        this.products.splice( index, 1 );
+                    }
+                }
+            });
+        },
+        toggleUnitField( product ) {
+            if ( ! product._unit_toggled ) {
+                product._unit_toggled   =   ! product._unit_toggled;
+            }            
+
+            setTimeout( () => {
+                if ( product._unit_toggled ) {
+                    this.$refs.unitField[0].addEventListener( 'blur', () => {
+                        product._unit_toggled = false;
+                        this.$forceUpdate();
+                    });
+                }
+            }, 200 );
+        },
+        toggleQuantityField( product ) {
+            product._quantity_toggled   =   ! product._quantity_toggled;
+
+            setTimeout( () => {
+                if ( product._quantity_toggled ) {
+                    this.$refs.quantityField[0].select();
+                    this.$refs.quantityField[0].addEventListener( 'blur', () => {
+                        this.toggleQuantityField( product );
+                        this.$forceUpdate();
+                    });
+                }
+            }, 200 );
+        },
+        togglePriceField( product ) {
+            product._price_toggled   =   ! product._price_toggled;
+
+            setTimeout( () => {
+                if ( product._price_toggled ) {
+                    this.$refs.priceField[0].select();
+                    this.$refs.priceField[0].addEventListener( 'blur', () => {
+                        this.togglePriceField( product );
+                        this.$forceUpdate();
+                    });
+                }
+            }, 200 );
+        },
+        redefineUnit( product ) {
+            const unitQuantity          =   product.unit_quantities.filter( unitQuantity => unitQuantity.id === product.unit_quantity_id );
+
+            if ( unitQuantity.length > 0 ) {
+                product.unit_quantity       =   unitQuantity[0];
+                product.unit_id             =   unitQuantity[0].unit.id;
+                product.unit                =   unitQuantity[0].unit;
+                product.sale_price          =   unitQuantity[0].sale_price;
+            }
+        },
+
         async addResult( result ) {
             this.searchValue    =   '';
 
@@ -112,11 +211,19 @@ export default {
                 this.products.push({
                     name: result.name,
                     unit_quantity_id: selection[0].value,
+                    unit_quantity: unitQuantity[0],
                     unit_id: unitQuantity[0].unit.id,
                     unit: unitQuantity[0].unit,
+                    product_id: unitQuantity[0].product_id,
                     quantity: 1,
+                    _price_toggled: false,
+                    _quantity_toggled: false,
+                    _unit_toggled: false,
+                    unit_quantities: result.unit_quantities,
                     sale_price: unitQuantity[0].sale_price
                 });
+
+                this.$emit( 'update', this.products );
 
             } catch( exception ) {
                 console.log( exception );

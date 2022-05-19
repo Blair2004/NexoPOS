@@ -131,8 +131,8 @@ export default {
                  * The stock should be handled differently
                  * according to wether the stock management
                  * is enabled or not.
-                 */
-                if ( product.$original().stock_management === 'enabled' ) {
+                 */                
+                if ( product.$original().stock_management === 'enabled' && product.$original().type === 'materialized' ) {
 
                     /**
                      * If the stock management is enabled,

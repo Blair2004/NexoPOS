@@ -19,7 +19,7 @@
         @apply bg-crud-button-edge text-primary;
     }
     button {
-        @apply bg-input-button text-white outline-none;
+        @apply bg-input-disabled text-white outline-none;
         i, span {
             @apply text-primary;
         }

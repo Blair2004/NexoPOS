@@ -31,11 +31,12 @@ trait WithProductTest
         $unitGroup      =   UnitGroup::first();
         $sale_price     =   $faker->numberBetween(5,10);
         $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
+            ->orWhere( 'parent_id', null )
             ->get()
             ->map( fn( $cat ) => $cat->id )
             ->toArray();
 
-        for( $i = 0; $i < 30; $i++ ) {
+        for( $i = 0; $i < 10; $i++ ) {
             $response   = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
@@ -54,7 +55,7 @@ trait WithProductTest
                             'category_id'       =>  $faker->randomElement( $categories ),
                             'description'       =>  __( 'Created via tests' ),
                             'product_type'      =>  'product',
-                            'type'              =>  $faker->randomElement([ 'materialized', 'dematerialized' ]),
+                            'type'              =>  $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
                             'sku'               =>  Str::random(15) . '-sku',
                             'status'            =>  'available',
                             'stock_management'  =>  'enabled',   
@@ -89,6 +90,133 @@ trait WithProductTest
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price', 0 ), $sale_price );
             }
+
+            $response->assertStatus(200);
+        }
+    }
+
+    protected function attemptCreateGroupedProduct()
+    {
+        /**
+         * @var CurrencyService
+         */
+        $currency       =   app()->make( CurrencyService::class );
+
+        $faker          =   \Faker\Factory::create();
+
+        /**
+         * @var TaxService
+         */
+        $taxService     =   app()->make( TaxService::class );
+        $taxType        =   $faker->randomElement([ 'exclusive', 'inclusive' ]);
+        $unitGroup      =   UnitGroup::first();
+        $sale_price     =   $faker->numberBetween(5,10);
+        $categories     =   ProductCategory::where( 'parent_id', '>', 0 )
+            ->orWhere( 'parent_id', null )
+            ->get()
+            ->map( fn( $cat ) => $cat->id )
+            ->toArray();
+
+        for( $i = 0; $i < 10; $i++ ) {
+            $products   =   Product::where( 'type', Product::TYPE_DEMATERIALIZED )
+                ->limit(2)
+                ->get()
+                ->map( function( $product ) use ( $faker ) {
+                    /**
+                     * @var ProductUnitQuantity $unitQuantity
+                     */
+                    $unitQuantity       =   $product->unit_quantities->first();
+                    $unitQuantityID     =   $unitQuantity->id;
+
+                    return [
+                        'unit_quantity_id'  =>  $unitQuantityID,
+                        'product_id'        =>  $product->id,
+                        'unit_id'           =>  $unitQuantity->unit->id,
+                        'quantity'          =>  $faker->randomNumber(1),
+                        'sale_price'        =>  $unitQuantity->sale_price,
+                    ];
+                })
+                ->toArray();
+                
+            $response   = $this
+                ->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', '/api/nexopos/v4/products/', [
+                'name'          =>  $faker->word,
+                'variations'    =>  [
+                    [
+                        '$primary'  =>  true,
+                        'expiracy'  =>  [
+                            'expires'       =>  0,
+                            'on_expiration' =>  'prevent_sales',
+                        ],
+                        'identification'    =>  [
+                            'barcode'           =>  $faker->ean13(),
+                            'barcode_type'      =>  'ean13',
+                            'searchable'        =>  $faker->randomElement([ true, false ]),
+                            'category_id'       =>  $faker->randomElement( $categories ),
+                            'description'       =>  __( 'Created via tests' ),
+                            'product_type'      =>  'product',
+                            'type'              =>  Product::TYPE_GROUPED,
+                            'sku'               =>  Str::random(15) . '-sku',
+                            'status'            =>  'available',
+                            'stock_management'  =>  'enabled',   
+                        ],
+                        'groups'            =>  [
+                            'product_subitems'  =>  $products
+                        ],
+                        'images'            =>  [],
+                        'taxes'             =>  [
+                            'tax_group_id'  =>  1,
+                            'tax_type'      =>  $taxType,
+                        ],
+                        'units'             =>  [
+                            'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                                return [
+                                    'sale_price_edit'       =>  $sale_price,
+                                    'wholesale_price_edit'  =>  $faker->numberBetween(20,25),
+                                    'unit_id'               =>  $unit->id
+                                ];
+                            }),
+                            'unit_group'    =>  $unitGroup->id
+                        ]
+                    ]
+                ]
+            ]);
+
+            $result     =   json_decode( $response->getContent(), true );
+
+            if ( $taxType === 'exclusive' ) {
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price' ), $sale_price );
+            } else {
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $sale_price );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price', 0 ), $sale_price );
+            }
+
+            /**
+             * We'll test if the subitems were correctly stored.
+             */
+            $product    =   Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
+
+            $this->assertTrue( count( $products ) === $product->sub_items->count(), 'Sub items aren\'t matching' );
+            
+            $matched    =   $product->sub_items->filter( function( $subItem ) use ( $products ) {
+                return collect( $products )->filter( function( $_product ) use ( $subItem ) {
+                    $argument   =   (
+                        ( int ) $_product[ 'unit_id' ]  === ( int ) $subItem->unit_id &&
+                        ( int ) $_product[ 'product_id' ] === ( int ) $subItem->product_id && 
+                        ( int ) $_product[ 'unit_quantity_id' ] === ( int ) $subItem->unit_quantity_id &&
+                        ( float ) $_product[ 'sale_price' ] === ( float ) $subItem->sale_price &&
+                        ( float ) $_product[ 'quantity' ] === ( float ) $subItem->quantity
+                    );
+
+                    return $argument;
+                })->isNotEmpty();
+            });
+
+            $this->assertTrue( $matched->count() === count( $products ), 'Sub items accuracy failed' );
 
             $response->assertStatus(200);
         }

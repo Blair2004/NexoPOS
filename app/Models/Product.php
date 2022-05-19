@@ -40,6 +40,10 @@ class Product extends NsModel
 
     const EXPIRES_PREVENT_SALES         =   'prevent_sales';
     const EXPIRES_ALLOW_SALES           =   'allow_sales';
+
+    const TYPE_MATERIALIZED             =   'materialized';
+    const TYPE_DEMATERIALIZED           =   'dematerialized';
+    const TYPE_GROUPED                  =   'grouped';
     
     protected $table                    =   'nexopos_' . 'products';
     protected $cats                     =   [
@@ -162,6 +166,11 @@ class Product extends NsModel
     public function procurementHistory()
     {
         return $this->hasMany( ProcurementProduct::class, 'product_id', 'id' );
+    }
+
+    public function sub_items()
+    {
+        return $this->hasMany( ProductSubItem::class, 'parent_id', 'id' );
     }
 
     /**

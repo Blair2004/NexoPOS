@@ -16,15 +16,17 @@ class ProductAfterUpdatedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $product;
+    public $fields;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Product $product )
+    public function __construct( Product $product, $fields )
     {
         $this->product      =   $product;
+        $this->fields       =   $fields;
     }
 
     /**

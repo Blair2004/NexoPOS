@@ -54,31 +54,58 @@
                 </div>
                 <div class="shadow rounded">
                     <div class="ns-box">
+                        <div class="text-center ns-box-header p-2">
+                            <h3 class="font-bold">{{ __( 'Summary' ) }}</h3>
+                        </div>
                         <div class="border-b ns-box-body">
-                        <table class="table ns-table w-full">
-                            <tbody class="text-primary">
-                                <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-info-primary text-white print:text-black">{{ __( 'Total Purchases' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">@{{ report.purchases_amount | currency }}</td>
-                                </tr>
-                                <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-warning-secondary border-info-primary text-white print:text-black">{{ __( 'Due Amount' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">@{{ report.owed_amount | currency }}</td>
-                                </tr>
-                                <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">@{{ report.account_amount | currency }}</td>
-                                </tr>                                   
-                                <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Credit Limit' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">@{{ report.credit_limit_amount | currency }}</td>
-                                </tr>                             
-                                <tr class="">
-                                    <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Total Orders' ) }}</td>
-                                    <td class="p-2 border text-right border-info-primary">@{{ report.total_orders }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <table class="table ns-table w-full">
+                                <tbody class="text-primary">
+                                    <tr class="">
+                                        <td width="200" class="font-semibold p-2 border text-left bg-success-secondary border-info-primary text-white print:text-black">{{ __( 'Total Purchases' ) }}</td>
+                                        <td class="p-2 border text-right border-info-primary">@{{ report.purchases_amount | currency }}</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td width="200" class="font-semibold p-2 border text-left bg-warning-secondary border-info-primary text-white print:text-black">{{ __( 'Due Amount' ) }}</td>
+                                        <td class="p-2 border text-right border-info-primary">@{{ report.owed_amount | currency }}</td>
+                                    </tr>
+                                    <tr class="">
+                                        <td width="200" class="font-semibold p-2 border text-left bg-info-secondary border-info-primary text-white print:text-black">{{ __( 'Wallet Balance' ) }}</td>
+                                        <td class="p-2 border text-right border-info-primary">@{{ report.account_amount | currency }}</td>
+                                    </tr>                                   
+                                    <tr class="">
+                                        <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Credit Limit' ) }}</td>
+                                        <td class="p-2 border text-right border-info-primary">@{{ report.credit_limit_amount | currency }}</td>
+                                    </tr>                             
+                                    <tr class="">
+                                        <td width="200" class="font-semibold p-2 border text-left border-info-primary">{{ __( 'Total Orders' ) }}</td>
+                                        <td class="p-2 border text-right border-info-primary">@{{ report.total_orders }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+                <div class="shadow rounded overflow-hidden" v-if="report.orders.length > 0">
+                    <div class="ns-box">
+                        <div class="text-center ns-box-header p-2">
+                            <h3 class="font-bold">{{ __( 'Orders' ) }}</h3>
+                        </div>
+                        <div class="border-b ns-box-body">
+                            <table class="table ns-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="p-2 border text-left">{{ __( 'Order' ) }}</th>
+                                        <th class="p-2 border text-right">{{ __( 'Total' ) }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-primary">
+                                    <tr class="" v-for="order of report.orders" :key="order.id">
+                                        <td width="200" class="font-semibold p-2 border text-left">@{{ order.code }}</td>
+                                        <td class="p-2 border text-right">@{{ order.total | currency }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -101,7 +128,8 @@
                     account_amount: 0,
                     owed_amount:0,
                     credit_limit_amount: 0,
-                    transactions: [],
+                    orders: [],
+                    wallet_transactions: [],
                 }
             }
         },
@@ -120,6 +148,12 @@
         methods: {
             printSaleReport() {
                 this.$htmlToPaper( 'report' );
+            },
+            setStartDate( date ) {
+                this.startDate  =   date;
+            },
+            setEndDate( date ) {
+                this.endDate    =   date;
             },
             handleSelectedCustomer( customer ) {
                 this.selectedCustomer   =   customer;

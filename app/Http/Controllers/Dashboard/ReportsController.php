@@ -288,7 +288,7 @@ class ReportsController extends DashboardController
     {
         return $this->reportService->getCustomerStatement( 
             customer: $customer,
-            rangeStart: $request->input( 'rangeStart' ),
+            rangeStarts: $request->input( 'rangeStarts' ),
             rangeEnds: $request->input( 'rangeEnds' )
         );
     }

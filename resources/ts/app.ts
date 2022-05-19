@@ -61,6 +61,7 @@ const VueHtmlToPaperOptions     =   {
     ],
     styles: [
       '/css/app.css',
+      '/css/light.css'
     ]
 };
 

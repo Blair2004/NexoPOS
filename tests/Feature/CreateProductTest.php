@@ -14,6 +14,15 @@ class CreateProductTest extends TestCase
     use WithProductTest, WithAuthentication, WithCategoryTest;
 
     /**
+     * @depends testCreateProducts
+     */
+    public function testCreateGroupedProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateGroupedProduct();
+    }
+
+    /**
      * A basic feature test example.
      *
      * @return void

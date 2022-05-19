@@ -682,9 +682,10 @@ class CrudService
         }
 
         /**
-         * if hook method is defined
+         * if hook method is defined and only when conditional argument
+         * that affect result sorting is not active.
          */
-        if ( method_exists( $this, 'hook' ) ) {
+        if ( method_exists( $this, 'hook' ) && request()->query( 'active' ) === null ) {
             $this->hook( $query );
         }
 
@@ -696,17 +697,6 @@ class CrudService
                 $query->whereIn( $key, $values );
             }
         }
-
-        /**
-         * Order the current result, according to the mentionned columns
-         * means the user has clicked on "reorder"
-         */
-        if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
-            $query->orderBy( 
-                $request->query( 'active' ),
-                $request->query( 'direction' )
-            );
-        } 
 
         /**
          * @since 4.5.5
@@ -780,6 +770,17 @@ class CrudService
                 }
             });
         }
+        
+        /**
+         * Order the current result, according to the mentionned columns
+         * means the user has clicked on "reorder"
+         */
+        if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
+            $query->orderBy( 
+                $request->query( 'active' ),
+                $request->query( 'direction' )
+            );
+        } 
 
         /**
          * if some enties ID are provided. These 

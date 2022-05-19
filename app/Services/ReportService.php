@@ -1100,14 +1100,26 @@ class ReportService
      * @param Customer $customer
      * @return array
      */
-    public function getCustomerStatement( Customer $customer, $rangeStart = null, $rangeEnds = null )
+    public function getCustomerStatement( Customer $customer, $rangeStarts = null, $rangeEnds = null )
     {
+        $rangeStarts    =   Carbon::parse( $rangeStarts )->toDateTimeString();
+        $rangeEnds      =   Carbon::parse( $rangeEnds )->toDateTimeString();
+
         return [
-            'purchases_amount'  =>  $customer->purchases_amount,
-            'owed_amount'       =>  $customer->owed_amount,
-            'account_amount'    =>  $customer->account_amount,
-            'total_orders'      =>  $customer->orders()->count(),
-            'credit_limit_amount'      =>  $customer->credit_limit_amount,
+            'purchases_amount'      =>  $customer->purchases_amount,
+            'owed_amount'           =>  $customer->owed_amount,
+            'account_amount'        =>  $customer->account_amount,
+            'total_orders'          =>  $customer->orders()->count(),
+            'credit_limit_amount'   =>  $customer->credit_limit_amount,
+            'orders'                =>  Order::where( 'customer_id', $customer->id )
+                ->paymentStatusIn([ Order::PAYMENT_PAID, Order::PAYMENT_UNPAID, Order::PAYMENT_REFUNDED, Order::PAYMENT_PARTIALLY ])
+                ->where( 'created_at', '>=', $rangeStarts )
+                ->where( 'created_at', '<=', $rangeEnds )
+                ->get(),
+            'wallet_transactions'   =>  CustomerAccountHistory::where( 'customer_id', $customer->id )
+                ->where( 'created_at', '>=', $rangeStarts )
+                ->where( 'created_at', '<=', $rangeEnds )
+                ->get()
         ];
     }
 }

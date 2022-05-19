@@ -63,50 +63,17 @@ use Illuminate\Database\Eloquent\Collection;
 
 class OrdersService
 {
-    /** @var CustomerService */
-    protected $customerService;
-
-    /** @var ProductService */
-    protected $productService;
-
-    /** @var UnitService */
-    protected $unitService;
-
-    /** @var DateService */
-    protected $dateService;
-
-    /** @var CurrencyService */
-    protected $currencyService;
-
-    /** @var Options */
-    protected $optionsService;
-
-    /** @var TaxService */
-    protected $taxService;
-
-    /**
-     * @var ReportService
-     */
-    protected $reportService;
-
     public function __construct(
-        CustomerService $customerService,
-        ProductService $productService,
-        UnitService $unitService,
-        DateService $dateService,
-        CurrencyService $currencyService,
-        Options $optionsService,
-        TaxService $taxService,
-        ReportService $reportService
+        protected CustomerService $customerService,
+        protected ProductService $productService,
+        protected UnitService $unitService,
+        protected DateService $dateService,
+        protected CurrencyService $currencyService,
+        protected Options $optionsService,
+        protected TaxService $taxService,
+        protected ReportService $reportService
     ) {
-        $this->customerService  =   $customerService;
-        $this->productService   =   $productService;
-        $this->dateService      =   $dateService;
-        $this->unitService      =   $unitService;
-        $this->currencyService  =   $currencyService;
-        $this->optionsService   =   $optionsService;
-        $this->taxService       =   $taxService;
-        $this->reportService    =   $reportService;
+        // ...
     }
 
     /**
@@ -1205,12 +1172,65 @@ class OrdersService
          */
         $items  =  collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
             if ( $orderProduct[ 'product' ] instanceof Product ) {
-                $this->checkQuantityAvailability( 
-                    $orderProduct[ 'product' ], 
-                    $orderProduct[ 'unitQuantity' ],
-                    $orderProduct,
-                    $session_identifier
-                );
+
+                /**
+                 * Checking inventory for the grouped products,
+                 * by loading all the subitems and multiplying the quantity
+                 * with the order quantity.
+                 */
+                if ( $orderProduct[ 'product' ] === Product::TYPE_GROUPED ) {
+                    
+                    $orderProduct[ 'product' ]->load( 'sub_items' );
+                    $orderProduct[ 'product' ]->each( function( Product $subitem ) use ( $session_identifier, $orderProduct ) {
+
+                        /**
+                         * Stock management should be enabled
+                         * for the sub item.
+                         */
+                        if ( $subitem->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
+                            /**
+                             * We need a fake orderProduct
+                             * that will have necessary attributes for verification.
+                             */
+                            $unitGroup                              =   $this->unitService->getUnitParentGroup( $orderProduct[ 'unit_id' ] );
+                            $currentUnit                            =   $this->unitService->get( $orderProduct[ 'unit_id' ] );
+                            $baseUnit                               =   $currentUnit;
+
+                            /**
+                             * in case the current unit is not the base unit
+                             */
+                            if ( $currentUnit->base_unit ) {
+                                $baseUnit                               =   $this->unitService->getBaseUnit( $unitGroup );
+                            }
+
+                            /**
+                             * computing the exact quantity that will be pulled
+                             * from the actual product inventory.
+                             */
+                            $quantity       =   ( 
+                                ( $currentUnit->value * $baseUnit->value ) * ( float ) $orderProduct[ 'quantity' ] 
+                            ) * ( float ) $subitem->quantity;
+
+                            $newFakeOrderProduct                    =   new OrderProduct;
+                            $newFakeOrderProduct->quantity          =   $quantity;
+                            $newFakeOrderProduct->unit_quantity_id  =   $subitem->unit_quantity_id;
+    
+                            $this->checkQuantityAvailability(
+                                product: $subitem,
+                                productUnitQuantity: $subitem->unit_quantity,
+                                orderProduct: $newFakeOrderProduct,
+                                session_identifier: $session_identifier
+                            );
+                        }
+                    });
+                } else {
+                    $this->checkQuantityAvailability( 
+                        product: $orderProduct[ 'product' ], 
+                        productUnitQuantity: $orderProduct[ 'unitQuantity' ],
+                        orderProduct: $orderProduct,
+                        session_identifier: $session_identifier
+                    );
+                }
             }
 
             return $orderProduct;

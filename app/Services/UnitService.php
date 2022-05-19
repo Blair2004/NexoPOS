@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\UnitGroup;
 use App\Services\CurrencyService;
 use App\Exceptions\NotFoundException;
+use Illuminate\Support\Collection;
 
 class UnitService 
 {
@@ -110,7 +111,7 @@ class UnitService
 
     /**
      * Get all units defined
-     * @return array|Unit
+     * @return Collection|Unit
      */
     public function get( $id = null )
     {
@@ -125,6 +126,7 @@ class UnitService
 
             return $unit;
         }
+
         return Unit::get();
     }
 
@@ -191,7 +193,7 @@ class UnitService
      * retrieve a group of a 
      * specific unit using an id
      * @param int Parent Group
-     * @return json
+     * @return UnitGroup
      */
     public function getUnitParentGroup( $id )
     {
@@ -207,9 +209,12 @@ class UnitService
      */
     public function getBaseUnit( UnitGroup $group )
     {
-        $baseUnit   =   ( UnitGroup::find( $group->id )->units )->filter( function( $unit ) {
-            return $unit->base_unit;
-        });
+        $baseUnit   =   UnitGroup::find( $group->id )
+            ->units()
+            ->get()
+            ->filter( function( $unit ) {
+                return $unit->base_unit;
+            });
 
         $unitCount  =   $baseUnit->count();
 
@@ -219,7 +224,7 @@ class UnitService
             throw new Exception( sprintf( __( 'The unit group %s doesn\'t have a base unit' ), $group->name ) );
         }
         
-        return $baseUnit[0];
+        return $baseUnit->first();
     }
 
     /**

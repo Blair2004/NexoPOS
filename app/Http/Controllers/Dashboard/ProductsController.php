@@ -70,6 +70,7 @@ class ProductsController extends DashboardController
          */
         unset( $primary[ 'units' ] );
         unset( $primary[ 'images' ] );
+        unset( $primary[ 'groups' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
         $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
@@ -81,6 +82,7 @@ class ProductsController extends DashboardController
          */
         $primary[ 'images' ]        =   $source[ 'images' ];
         $primary[ 'units' ]         =   $source[ 'units' ];
+        $primary[ 'groups' ]        =   $source[ 'groups' ] ?? [];
         
         unset( $primary[ '$primary' ] );
 
@@ -130,6 +132,7 @@ class ProductsController extends DashboardController
          */
         unset( $primary[ 'images' ] );
         unset( $primary[ 'units' ] );
+        unset( $primary[ 'groups' ] );
 
         $primary[ 'identification' ][ 'name' ]          =   $request->input( 'name' );
         $primary                                        =    Helper::flatArrayWithKeys( $primary )->toArray();
@@ -141,6 +144,7 @@ class ProductsController extends DashboardController
          */
         $primary[ 'images' ]                =   $source[ 'images' ];
         $primary[ 'units' ]                 =   $source[ 'units' ];
+        $primary[ 'groups' ]                =   $source[ 'groups' ];
         
         unset( $primary[ '$primary' ] );
 

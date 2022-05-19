@@ -330,7 +330,31 @@ class ProductCrud extends CrudService
                         'groups'    =>  [
                             'label' =>  __( 'Groups' ),
                             'fields'    =>  [
-                                // ...
+                                [
+                                    'type'  =>  'hidden',
+                                    'name'  =>  'product_subitems',
+                                    'value' =>  $entry !== null ? $entry->sub_items()->get()->map( function( $subItem ) {
+                                        
+                                        $subItem->load( 'product.unit_quantities.unit' );
+
+                                        return [
+                                            '_quantity_toggled'     =>  false,
+                                            '_price_toggled'        =>  false,
+                                            '_unit_toggled'         =>  false,
+                                            'id'                    =>  $subItem->id,
+                                            'name'                  =>  $subItem->product->name,
+                                            'unit_quantity_id'      =>  $subItem->unit_quantity_id,
+                                            'unit_quantity'         =>  $subItem->unit_quantity,
+                                            'product_id'            =>  $subItem->product_id,
+                                            'parent_id'             =>  $subItem->parent_id,
+                                            'unit_id'               =>  $subItem->unit_id,
+                                            'unit'                  =>  $subItem->unit,
+                                            'quantity'              =>  $subItem->quantity,
+                                            'unit_quantities'       =>  $subItem->product->unit_quantities,
+                                            'sale_price'            =>  $subItem->sale_price
+                                        ];
+                                    }) : []
+                                ]
                             ],
                             'component' =>  'nsProductGroup'
                         ],
@@ -527,8 +551,6 @@ class ProductCrud extends CrudService
      */
     public function afterPost( $request, Product $entry )
     {
-        // $this->calculateTaxes( $request->all(), $entry );
-
         return $request;
     }
 
@@ -612,10 +634,11 @@ class ProductCrud extends CrudService
 
     public function deleteProductAttachedRelation( $model )
     {
-        $model->galleries->each( fn( $gallery ) => $gallery->delete() );
-        $model->variations->each( fn( $variation ) => $variation->delete() );
-        $model->product_taxes->each( fn( $product_taxes ) => $product_taxes->delete() );
-        $model->unit_quantities->each( fn( $unitQuantity ) => $unitQuantity->delete() );
+        $model->sub_items()->delete();
+        $model->galleries()->delete();
+        $model->variations()->delete();
+        $model->product_taxes()->delete();
+        $model->unit_quantities()->delete();
     }
 
     /**
@@ -624,6 +647,11 @@ class ProductCrud extends CrudService
      */
     public function getColumns() {
         return [
+            'type'  =>  [
+                'label'         =>  __( 'Type' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false
+            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
@@ -638,11 +666,6 @@ class ProductCrud extends CrudService
             'category_name'  =>  [
                 'label'  =>  __( 'Category' ),
                 'width'         =>  '150px',
-                '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'type'  =>  [
-                'label'         =>  __( 'Type' ),
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -670,7 +693,19 @@ class ProductCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
+        $class                  =   match( $entry->type ) {
+            'grouped'           =>  'text-success-tertiary',
+            default             =>  'text-info-tertiary'
+        };
+
+        $entry->type            =   match( $entry->type ) {
+            'materialized'      =>  __( 'Materialized' ),
+            'dematerialized'    =>  __( 'Dematerialized' ),
+            'grouped'           =>  __( 'Grouped' )
+        };
+
+        $entry->type                =   '<strong class="' . $class . ' ">' . $entry->type . '</strong>';
+
         $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
         $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
         $entry->category_name       =   $entry->category_name ?: __( 'Unassigned' );

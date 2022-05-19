@@ -20,9 +20,11 @@ use App\Services\UnitService;
 use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
 use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
 use App\Models\Procurement;
 use App\Models\ProductCategory;
 use App\Models\ProductGallery;
+use App\Models\ProductSubItem;
 use App\Models\Unit;
 
 class ProductService
@@ -296,7 +298,14 @@ class ProductService
          */
         $this->saveGallery( $product, $fields[ 'images' ]);
 
-        event( new ProductAfterCreatedEvent( $product ) );
+        /**
+         * We'll now save all attached sub items
+         */
+        if(  $product->type === Product::TYPE_GROUPED ) {
+            $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
+        }
+
+        event( new ProductAfterCreatedEvent( $product, $data ) );
 
         return [
             'status'    =>      'success',
@@ -408,12 +417,80 @@ class ProductService
          */
         $this->saveGallery( $product, $fields[ 'images' ]);
 
-        event( new ProductAfterUpdatedEvent( $product ) );
+        /**
+         * We'll now save all attached sub items
+         */
+        if(  $product->type === Product::TYPE_GROUPED ) {
+            $this->saveSubItems( $product, $fields[ 'groups' ] ?? [] );
+        }
+
+        event( new ProductAfterUpdatedEvent( $product, $fields ) );
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The product has been udpated' ),
             'data'      =>  compact( 'product' )
+        ];
+    }
+
+    /**
+     * Saves the sub items by binding that to a product
+     * @param Product $product
+     * @param array $subItems
+     * @return array response
+     */
+    public function saveSubItems( Product $product, $subItems )
+    {
+        if ( ! isset( $subItems[ 'product_subitems' ] )  ) {
+            throw new NotAllowedException( __( 'A grouped product cannot be saved without any sub items.' ) );
+        }
+
+        $savedItems     =   collect([]);
+
+        foreach( $subItems[ 'product_subitems' ] as $item ) {
+            if ( ! isset( $item[ 'id' ] ) ) {
+                $subitem                    =   new ProductSubItem;
+                $subitem->parent_id         =   $product->id;
+                $subitem->product_id        =   $item[ 'product_id' ];
+                $subitem->unit_id           =   $item[ 'unit_id' ];
+                $subitem->unit_quantity_id  =   $item[ 'unit_quantity_id' ];
+                $subitem->sale_price        =   $item[ 'sale_price' ];
+                $subitem->quantity          =   $item[ 'quantity' ];
+                $subitem->total_price       =   $item[ 'total_price' ] ?? ( float ) $item[ 'sale_price' ] * ( float) $item[ 'quantity' ];
+                $subitem->author            =   Auth::id();
+                $subitem->save();
+            } else {
+                $subitem    =   ProductSubItem::find( $item[ 'id' ] );
+
+                if ( ! $subitem instanceof ProductSubItem ) {
+                    throw new NotFoundException( __( 'The requested sub item doesn\'t exists.' ) );
+                }
+
+                $subitem->parent_id         =   $product->id;
+                $subitem->product_id        =   $item[ 'product_id' ];
+                $subitem->unit_id           =   $item[ 'unit_id' ];
+                $subitem->unit_quantity_id  =   $item[ 'unit_quantity_id' ];
+                $subitem->sale_price        =   $item[ 'sale_price' ];
+                $subitem->quantity          =   $item[ 'quantity' ];
+                $subitem->total_price       =   $item[ 'total_price' ] ?? ( float ) $item[ 'sale_price' ] * ( float) $item[ 'quantity' ];
+                $subitem->author            =   Auth::id();
+                $subitem->save();
+            }
+
+            $savedItems->push( $subitem->id );
+        }
+
+        /**
+         * We'll delete all products
+         * that aren't submitted
+         */
+        ProductSubItem::where( 'parent_id', $product->id )
+            ->whereNotIn( 'id', $savedItems->toArray() )
+            ->delete();
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The subitem has been saved.' )
         ];
     }
 
@@ -555,7 +632,7 @@ class ProductService
          */
         extract( $data );
 
-        if ( ! in_array( $field, [ 'units', 'images' ]) && ! is_array( $value ) ) {
+        if ( ! in_array( $field, [ 'units', 'images', 'groups' ]) && ! is_array( $value ) ) {
             $product->$field    =   $value;
         } else if ( $field === 'units' ) {
             $product->unit_group            =   $fields[ 'units' ][ 'unit_group' ];
@@ -964,7 +1041,8 @@ class ProductService
          */       
         $product                =   isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
         $product_id             =   $product->id;
-        $unit_id                =   isset( $unit_id ) ? $unit_id : Unit::identifier( $unit_identifier )->firstOrFail()->id;
+        $unit                   =   Unit::identifier( $unit_identifier )->firstOrFail();
+        $unit_id                =   isset( $unit_id ) ? $unit_id : $unit->id;
         $procurementProduct     =   isset( $procurement_product_id ) ? ProcurementProduct::find( $procurement_product_id ) : false;
 
         /**
@@ -1001,65 +1079,25 @@ class ProductService
             ->get() : $data[ 'total_price' ];
 
         /**
-         * we would like to verify if
-         * by editing a procurement product
-         * the remaining quantity will be greather than 0
-         */
-        $oldQuantity        =   $this->getQuantity( $product_id, $unit_id );
-
-        /**
          * the change on the stock is only performed
          * if the Product has the stock management enabled.
          */
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
-
-            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
-
-                $diffQuantity       =   $this->currency
-                    ->define( $oldQuantity )
-                    ->subtractBy( $quantity )
-                    ->get();
-    
-                /**
-                 * this should prevent negative 
-                 * stock on the current item
-                 */
-                if ( $diffQuantity < 0 ) {
-                    throw new NotAllowedException( sprintf( __( 'Unable to proceed, this action will cause negative stock (%s). Old Quantity : (%s),  Quantity : (%s).' ), $diffQuantity, $oldQuantity, $quantity ) );
-                }
-    
-                /**
-                 * @var string status
-                 * @var string message
-                 * @var array [ 'oldQuantity', 'newQuantity' ]
-                 */
-                $result             =   $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-
-                /**
-                 * We should reduce the quantity if
-                 * we're dealing with a product that has 
-                 * accurate stock tracking
-                 */
-                if ( $procurementProduct instanceof ProcurementProduct ) {
-                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
-                }
+            if ( $product->type === Product::TYPE_GROUPED ) {
+                $this->handleStockAdjustmentsForGroupedProducts(
+                    action: $action,
+                    quantity: $quantity,
+                    product: $product,
+                    unit: $unit
+                );
             } else {
-    
-                /**
-                 * @var string status
-                 * @var string message
-                 * @var array [ 'oldQuantity', 'newQuantity' ]
-                 */
-                $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
-
-                /**
-                 * We should reduce the quantity if
-                 * we're dealing with a product that has 
-                 * accurate stock tracking
-                 */
-                if ( $procurementProduct instanceof ProcurementProduct ) {
-                    $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
-                }
+                $this->handleStockAdjustmentRegularProducts( 
+                    action: $action,
+                    quantity: $quantity,
+                    product_id: $product_id,
+                    unit_id: $unit_id,
+                    procurementProduct: $procurementProduct = null 
+                );
             }
         }
 
@@ -1082,6 +1120,146 @@ class ProductService
         event( new ProductAfterStockAdjustmentEvent( $history ) );
 
         return $history;
+    }
+
+    /**
+     * Handle stock transaction for the grouped products
+     * @param string $action
+     * @param float $quantity
+     * @param Product $product
+     * @param Unit $unit
+     * @return void
+     */
+    private function handleStockAdjustmentsForGroupedProducts( $action, $quantity, Product $product, Unit $unit )
+    {
+        $product->load( 'sub_items' );
+
+        $product->sub_items->each( function( ProductSubItem $subItem ) use ( $action, $quantity, $unit ) {
+            $unitGroup          =   $this->unitService->getGroups( $unit->group_id );
+            $baseUnit           =   $this->unitService->getBaseUnit( $unitGroup );
+            $finalQuantity      =   ( ( $quantity * $unit->value ) * $baseUnit->value ) * $quantity;
+
+            /**
+             * Let's retrieve the old item quantity.
+             */
+            $oldQuantity        =   $this->getQuantity( $subItem->product_id, $subItem->unit_id );
+
+            if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+                
+                $this->preventNegativity( 
+                    oldQuantity: $oldQuantity, 
+                    quantity: $quantity 
+                );
+
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result             =   $this->reduceUnitQuantities( 
+                    product_id: $subItem->product_id, 
+                    unit_id: $subItem->unit_id, 
+                    quantity: $finalQuantity,
+                    oldQuantity: $oldQuantity 
+                );
+            } else {
+                /**
+                 * @var string status
+                 * @var string message
+                 * @var array [ 'oldQuantity', 'newQuantity' ]
+                 */
+                $result             =   $this->increaseUnitQuantities( 
+                    product_id: $subItem->product_id, 
+                    unit_id: $subItem->unit_id, 
+                    quantity: $finalQuantity, 
+                    oldQuantity: $oldQuantity 
+                );
+            }
+        });
+    }
+
+    /**
+     * Will prevent negativity to occurs
+     * @param float $oldQuantity
+     * @param float $quantity
+     * @return void
+     */
+    private function preventNegativity( $oldQuantity, $quantity )
+    {
+        $diffQuantity       =   $this->currency
+            ->define( $oldQuantity )
+            ->subtractBy( $quantity )
+            ->get();
+
+        /**
+         * this should prevent negative 
+         * stock on the current item
+         */
+        if ( $diffQuantity < 0 ) {
+            throw new NotAllowedException( sprintf( __( 'Unable to proceed, this action will cause negative stock (%s). Old Quantity : (%s),  Quantity : (%s).' ), $diffQuantity, $oldQuantity, $quantity ) );
+        }
+    }
+
+    /**
+     * We'll handle here stock adjustment
+     * for all regular products
+     * @param string $action
+     * @param float $oldQuantity
+     * @param float $quantity
+     * @param int $product_id
+     * @param int $unit_id
+     * @param ProcurementProduct $procurementProduct
+     * @return void
+     */
+    private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $procurementProduct = null )
+    {
+        /**
+         * we would like to verify if
+         * by editing a procurement product
+         * the remaining quantity will be greather than 0
+         */
+        $oldQuantity        =   $this->getQuantity( $product_id, $unit_id );
+
+        if ( in_array( $action, ProductHistory::STOCK_REDUCE ) ) {
+
+            $this->preventNegativity( 
+                oldQuantity: $oldQuantity, 
+                quantity: $quantity 
+            );
+
+            /**
+             * @var string status
+             * @var string message
+             * @var array [ 'oldQuantity', 'newQuantity' ]
+             */
+            $result             =   $this->reduceUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+
+            /**
+             * We should reduce the quantity if
+             * we're dealing with a product that has 
+             * accurate stock tracking
+             */
+            if ( $procurementProduct instanceof ProcurementProduct ) {
+                $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_REDUCE );
+            }
+        } else {
+
+            /**
+             * @var string status
+             * @var string message
+             * @var array [ 'oldQuantity', 'newQuantity' ]
+             */
+            $result             =   $this->increaseUnitQuantities( $product_id, $unit_id, abs( $quantity ), $oldQuantity );
+
+            /**
+             * We should reduce the quantity if
+             * we're dealing with a product that has 
+             * accurate stock tracking
+             */
+            if ( $procurementProduct instanceof ProcurementProduct ) {
+                $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
+            }
+        }
     }
 
     /**

@@ -89,7 +89,10 @@
                                 </div>
                             </div>
                             <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
-                                <ns-product-group :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
+                                <ns-product-group
+                                    @update="setProducts( $event, variation.tabs )"
+                                    @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
+                                    :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
                             </div>
                             <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                 <div class="px-4 w-full md:w-1/2 lg:w-1/3">
@@ -201,15 +204,19 @@ export default {
                 newVariation[ tabIndex ]            =   new Object;
                 newVariation[ tabIndex ].label      =   this._sampleVariation.tabs[ tabIndex ].label;
                 newVariation[ tabIndex ].active     =   this._sampleVariation.tabs[ tabIndex ].active;
-                // newVariation[ tabIndex ].visible    =   this._sampleVariation.tabs[ tabIndex ].visible;
                 newVariation[ tabIndex ].fields     =   this._sampleVariation.tabs[ tabIndex ].fields
                     .filter( field => {
-                        return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
-                    })
+                            return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
+                        })
                     .map( field => {
-                    field.value     =   '';
-                    return field;
-                });
+                        if ( 
+                            ( typeof field.value === 'string' && field.value.length === 0 ) ||
+                            ( field.value === null )
+                        ) {
+                            field.value     =   '';
+                        }
+                        return field;
+                    });
             }
 
             return {
@@ -221,7 +228,31 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
         __,
-        
+        getGroupProducts( tabs ) {
+            if ( tabs[ 'groups' ] ) {
+                const products  =   tabs.groups.fields.filter( field => field.name === 'products_subitems' );
+
+                console.log( products );
+
+                if ( products.length > 0 ) {
+                    return products[0].value;
+                }
+            }
+
+            return [];
+        },
+        setProducts( products, tabs ) {
+            tabs[ 'groups' ].fields.forEach( field => {
+                if ( field.name === 'product_subitems' ) {
+                    field.value     =   products;
+                }
+            });
+
+            console.log( tabs.groups );
+        },
+        triggerRecompute( value ) {
+            console.log( this.form );
+        },
         getUnitQuantity( fields ) {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
             return quantity.length > 0 ? quantity[0] : 0;
@@ -510,7 +541,8 @@ export default {
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active    =   true;
 
-                        this._sampleVariation           =   Object.assign({}, variation );
+                        this._sampleVariation           =   JSON.parse( JSON.stringify( variation ) );
+
                         if ( variation.tabs[ key ].fields ) {
                             variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );
                         }
