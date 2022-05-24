@@ -49,6 +49,7 @@ use App\Models\OrderTax;
 use App\Models\PaymentType;
 use App\Models\ProcurementProduct;
 use App\Models\ProductHistory;
+use App\Models\ProductSubItem;
 use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Models\Unit;
@@ -547,6 +548,7 @@ class OrdersService
                                     'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
                                     'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
                                     'quantity'      =>  $adjustment[ 'quantity' ],
+                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
                                     'order_id'      =>  $order->id
                                 ]
                             );
@@ -558,6 +560,7 @@ class OrdersService
                                     'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
                                     'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
                                     'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
+                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
                                     'quantity'      =>  $adjustment[ 'quantity' ],
                                     'order_id'      =>  $order->id
                                 ]
@@ -600,6 +603,7 @@ class OrdersService
                             ProductHistory::ACTION_ADJUSTMENT_RETURN, [
                                 'unit_id'       =>  $orderProduct->unit_id,
                                 'unit_price'    =>  $orderProduct->unit_price,
+                                'orderProduct'  =>  $orderProduct,
                                 'product_id'    =>  $orderProduct->product_id,
                                 'quantity'      =>  $orderProduct->quantity,
                                 'order_id'      =>  $order->id
@@ -1100,13 +1104,14 @@ class OrdersService
                  * storing the product
                  * history as a sale
                  */
-                $history                    =   [
-                    'order_id'      =>  $order->id,
-                    'unit_id'       =>  $product[ 'unit_id' ],
-                    'product_id'    =>  $product[ 'product' ]->id,
-                    'quantity'      =>  $product[ 'quantity' ],
-                    'unit_price'    =>  $orderProduct->net_price,
-                    'total_price'   =>  $orderProduct->total_net_price
+                $history                =   [
+                    'order_id'          =>  $order->id,
+                    'unit_id'           =>  $product[ 'unit_id' ],
+                    'product_id'        =>  $product[ 'product' ]->id,
+                    'quantity'          =>  $product[ 'quantity' ],
+                    'unit_price'        =>  $orderProduct->net_price,
+                    'orderProduct'      =>  $orderProduct,
+                    'total_price'       =>  $orderProduct->total_net_price
                 ];
 
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -1170,7 +1175,7 @@ class OrdersService
          * we'll also populate the unit for the item 
          * so that it can be reused 
          */
-        $items  =  collect($items)->map( function ( array $orderProduct ) use ( $session_identifier ) {
+        $items  =  $items->map( function ( array $orderProduct ) use ( $session_identifier ) {
             if ( $orderProduct[ 'product' ] instanceof Product ) {
 
                 /**
@@ -1178,16 +1183,18 @@ class OrdersService
                  * by loading all the subitems and multiplying the quantity
                  * with the order quantity.
                  */
-                if ( $orderProduct[ 'product' ] === Product::TYPE_GROUPED ) {
+                if ( $orderProduct[ 'product' ]->type === Product::TYPE_GROUPED ) {
                     
-                    $orderProduct[ 'product' ]->load( 'sub_items' );
-                    $orderProduct[ 'product' ]->each( function( Product $subitem ) use ( $session_identifier, $orderProduct ) {
+                    $orderProduct[ 'product' ]->load( 'sub_items.product' );
+                    $orderProduct[ 'product' ]
+                        ->sub_items
+                        ->each( function( ProductSubItem $subitem ) use ( $session_identifier, $orderProduct ) {
 
                         /**
                          * Stock management should be enabled
                          * for the sub item.
                          */
-                        if ( $subitem->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
+                        if ( $subitem->product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
                             /**
                              * We need a fake orderProduct
                              * that will have necessary attributes for verification.
@@ -1216,7 +1223,7 @@ class OrdersService
                             $newFakeOrderProduct->unit_quantity_id  =   $subitem->unit_quantity_id;
     
                             $this->checkQuantityAvailability(
-                                product: $subitem,
+                                product: $subitem->product,
                                 productUnitQuantity: $subitem->unit_quantity,
                                 orderProduct: $newFakeOrderProduct,
                                 session_identifier: $session_identifier
@@ -1816,6 +1823,7 @@ class OrdersService
                 'quantity'          =>  $productRefund->quantity,
                 'unit_price'        =>  $productRefund->unit_price,
                 'product_id'        =>  $productRefund->product_id,
+                'orderProduct'      =>  $orderProduct,
                 'unit_id'           =>  $productRefund->unit_id,
                 'order_id'          =>  $order->id
             ]);
@@ -1830,6 +1838,7 @@ class OrdersService
                     'quantity'          =>  $productRefund->quantity,
                     'unit_price'        =>  $productRefund->unit_price,
                     'product_id'        =>  $productRefund->product_id,
+                    'orderProduct'      =>  $orderProduct,
                     'unit_id'           =>  $productRefund->unit_id,
                     'order_id'          =>  $order->id
                 ]);
@@ -2171,6 +2180,7 @@ class OrdersService
                     'total_price'       =>  $product->total_price,
                     'product_id'        =>  $product->product_id,
                     'unit_id'           =>  $product->unit_id,
+                    'orderProduct'      =>  $product,
                     'quantity'          =>  $product->quantity,
                     'unit_price'        =>  $product->unit_price
                 ]);
@@ -2503,6 +2513,7 @@ class OrdersService
                 'total_price'       =>  $product->total_price,
                 'product_id'        =>  $product->product_id,
                 'unit_id'           =>  $product->unit_id,
+                'orderProduct'      =>  $product,
                 'quantity'          =>  $product->quantity,
                 'unit_price'        =>  $product->unit_price
             ]);

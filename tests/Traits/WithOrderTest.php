@@ -16,6 +16,7 @@ use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\PaymentType;
 use App\Models\Product;
+use App\Models\ProductHistory;
 use App\Models\ProductUnitQuantity;
 use App\Models\Register;
 use App\Models\RegisterHistory;
@@ -28,6 +29,7 @@ use App\Services\OrdersService;
 use App\Services\ProductService;
 use App\Services\TaxService;
 use App\Services\TestService;
+use App\Services\UnitService;
 use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -197,6 +199,100 @@ trait WithOrderTest
         );
 
         return compact( 'response', 'cashRegister' );
+    }
+
+    public function attemptCreateOrderWithGroupedProducts( $data = [] )
+    {
+        /**
+         * @var TestService
+         */
+        $testService            =   app()->make( TestService::class );
+
+        /**
+         * @var ProductService
+         */
+        $productService         =   app()->make( ProductService::class );
+
+        /**
+         * @var UnitService
+         */
+        $unitService            =   app()->make( UnitService::class );
+
+        $product                =   Product::type( Product::TYPE_GROUPED )->with([ 'sub_items.product', 'unit_quantities' ])->first();
+        $unitQuantity           =   $product->unit_quantities->first();
+        $unit                   =   $unitService->get( $unitQuantity->unit_id );
+        $unitGroup              =   $unitService->getGroups( $unit->group_id );
+        $baseUnit               =   $unitService->getBaseUnit( $unitGroup );
+        $orderProductQuantity   =   $this->faker->numberBetween(1,10);
+
+        /**
+         * We would like to store the current Quantity
+         * and the quantity on the grouped product
+         * for a better computation later
+         */
+        $quantities     =   $product->sub_items->mapWithKeys( function( $value, $key ) use ( $productService ) {
+            return [ $value->product_id . '-' . $value->unit_id => [
+                'currentQuantity'   =>  $productService->getQuantity(
+                    product_id: $value->product_id,
+                    unit_id: $value->unit_id
+                ),
+                'quantity'          =>  $value->quantity
+            ] ];
+        })->toArray();
+
+        /**
+         * Let's prepare the order to submit that.
+         */
+        $orderDetails   =   $testService->prepareOrder( ns()->date->now(), array_merge([
+            'products'  =>  [
+                [
+                    'name'                  =>  $product->name,
+                    'quantity'              =>  $orderProductQuantity,
+                    'unit_price'            =>  $unitQuantity->sale_price,
+                    'product_id'            =>  $product->id,
+                    'tax_type'              =>  'inclusive',
+                    'unit_quantity_id'      =>  $unitQuantity->id,
+                    'unit_id'               =>  $unitQuantity->unit_id,
+                ]
+            ]
+        ], $data ) );
+
+        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+        
+        /**
+         * Step 0: Ensure no error occured
+         */
+        $response->assertStatus( 200 );
+
+        /**
+         * Let's convert the response for a
+         * better computation.
+         */
+        $response   =   json_decode( $response->getContent(), true );
+
+        $query      =   ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] );
+
+        /**
+         * Step 1: assert match on the items included with the history
+         */
+        $this->assertTrue( $query->count() === $product->sub_items->count(), 'Mismatch between the sold product and the included products.' );
+        
+        /**
+         * Step 2: assert valid deduction of quantities
+         */
+        foreach( $query->get() as $productHistory ) {
+            $savedQuantity  =   $quantities[ $productHistory->product_id . '-' . $productHistory->unit_id ];
+            $finalQuantity  =   ( ( ( $savedQuantity[ 'quantity' ] * $unit->value ) * $baseUnit->value ) * $orderProductQuantity );
+            $actualQuantity =   $productService->getQuantity(
+                product_id:  $productHistory->product_id,
+                unit_id: $productHistory->unit_id
+            );
+
+            $this->assertTrue( ( float ) ( $savedQuantity[ 'currentQuantity' ] - ( $finalQuantity ) ) === ( float ) $actualQuantity, 'Quantity sold and recorded not matching' );
+        }
+
+        return $response;
     }
 
     public function attemptUpdateOrderOnRegister()

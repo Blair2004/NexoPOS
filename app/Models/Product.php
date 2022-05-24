@@ -3,7 +3,6 @@ namespace App\Models;
 
 use App\Models\ProductGallery;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -76,6 +75,16 @@ class Product extends NsModel
     public function scopeTrackingEnabled( $query )
     {
         return $query->where( 'accurate_tracking', true );
+    }
+
+    /**
+     * get products having accurate tracking enabled
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeType( $query, $type )
+    {
+        return $query->where( 'type', $type );
     }
 
     /**

@@ -727,11 +727,12 @@ class ProcurementService
              * history
              */
             $this->productService->stockAdjustment( 'deleted', [
-                'total_price'   =>  $procurementProduct->total_purchase_price,
-                'unit_price'    =>  $procurementProduct->purchase_price,
-                'unit_id'       =>  $procurementProduct->unit_id,
-                'product_id'    =>  $procurementProduct->product_id,
-                'quantity'      =>  $procurementProduct->quantity,
+                'total_price'           =>  $procurementProduct->total_purchase_price,
+                'unit_price'            =>  $procurementProduct->purchase_price,
+                'unit_id'               =>  $procurementProduct->unit_id,
+                'product_id'            =>  $procurementProduct->product_id,
+                'quantity'              =>  $procurementProduct->quantity,
+                'procurementProduct'    =>  $procurementProduct
             ]);
         }
 

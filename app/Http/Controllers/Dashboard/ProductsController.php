@@ -21,17 +21,13 @@ use Illuminate\Http\Request;
 
 
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Models\ProductHistory;
 use App\Models\Unit;
 use App\Models\ProductUnitQuantity;
-use App\Services\CrudService;
 use App\Services\DateService;
 use App\Services\Helper;
 use App\Services\ProductService;
-use App\Services\Options;
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends DashboardController
@@ -168,8 +164,8 @@ class ProductsController extends DashboardController
     public function searchProduct( Request $request )
     {
         return $this->productService->searchProduct( 
-            argument: $request->input( 'search' ),
-            attributes: ( array ) $request->input( 'attributes' )
+            search: $request->input( 'search' ),
+            arguments: ( array ) $request->input( 'arguments' )
         );
     }
 

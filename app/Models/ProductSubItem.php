@@ -5,6 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $parent_id
+ * @property int $product_id
+ * @property int $unit_id
+ * @property int $unit_quantity_id
+ * @property float $quantity
+ * @property float $sale_price
+ * @property float $total_price
+ * @property int $author
+ * @property string $created_at
+ * @property string $updated_at
+ */
 class ProductSubItem extends Model
 {
     use HasFactory;

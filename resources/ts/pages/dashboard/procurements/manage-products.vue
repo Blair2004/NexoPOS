@@ -247,8 +247,6 @@ export default {
                     field.value     =   products;
                 }
             });
-
-            console.log( tabs.groups );
         },
         triggerRecompute( value ) {
             console.log( this.form );

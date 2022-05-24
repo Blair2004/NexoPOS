@@ -106,7 +106,6 @@ export default {
 
         if ( field.length > 0 && field[0].value !== undefined && field[0].value.length > 0) {
             this.products   =   field[0].value;
-            console.log( this.products );
         }
     },
     data() {
@@ -186,6 +185,12 @@ export default {
 
         async addResult( result ) {
             this.searchValue    =   '';
+
+            if ( result.type === 'grouped' ) {
+                return nsSnackBar
+                    .error( __( 'Unable to add a grouped product.' ) )
+                    .subscribe();
+            }
 
             try {
                 const selection    =   await new Promise( ( resolve, reject ) => {

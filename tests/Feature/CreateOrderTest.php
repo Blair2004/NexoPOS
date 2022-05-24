@@ -16,7 +16,7 @@ class CreateOrderTest extends TestCase
      *
      * @return void
      */
-    public function testPostingOrder( $callback = null )
+    private function testPostingOrder( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -31,13 +31,13 @@ class CreateOrderTest extends TestCase
      * Will only make order using
      * the customer balance
      */
-    public function testOrderCreatedForCustomer()
+    private function testOrderCreatedForCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    public function testCreateOrderWithNoPayment( $callback = null )
+    private function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -62,5 +62,11 @@ class CreateOrderTest extends TestCase
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
         }
+    }
+
+    public function testCreateOrderWithGroupedProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptCreateOrderWithGroupedProducts();
     }
 }

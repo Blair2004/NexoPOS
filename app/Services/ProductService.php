@@ -21,11 +21,15 @@ use App\Services\CurrencyService;
 use App\Services\ProductCategoryService;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
+use App\Models\OrderProduct;
 use App\Models\Procurement;
 use App\Models\ProductCategory;
 use App\Models\ProductGallery;
 use App\Models\ProductSubItem;
 use App\Models\Unit;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Query\Expression;
 
 class ProductService
 {
@@ -170,6 +174,15 @@ class ProductService
          */
         if ( ! $this->categoryService->get( $data[ 'category_id' ] ) ) {
             throw new Exception( __( 'The category to which the product is attached doesn\'t exists or has been deleted' ) );
+        }
+
+        /**
+         * We need to check the product
+         * before proceed and avoiding adding grouped
+         * product within grouped product.
+         */
+        if ( $data[ 'type' ] === Product::TYPE_GROUPED ) {
+            $this->checkGroupProduct( $data[ 'groups' ] );
         }
 
         /**
@@ -330,6 +343,15 @@ class ProductService
             throw new Exception( __( 'The category to which the product is attached doesn\'t exists or has been deleted' ) );
         }
 
+        /**
+         * We need to check the product
+         * before proceed and avoiding adding grouped
+         * product within grouped product.
+         */
+        if ( $data[ 'type' ] === Product::TYPE_GROUPED ) {
+            $this->checkGroupProduct( $data[ 'groups' ] );
+        }
+
         switch( $data[ 'product_type' ] ) {
             case 'product':
                 return $this->updateSimpleProduct( $product, $data );
@@ -352,6 +374,27 @@ class ProductService
     public function releaseProductTaxes( $product ) 
     {
         $product->product_taxes()->delete();
+    }
+
+    /**
+     * Performs a verification to see if the subitems only
+     * consist of valid items (not gruoped items).
+     * @param array $fields
+     * @return void
+     */
+    public function checkGroupProduct( $fields ): void
+    {
+        if ( ! isset( $fields[ 'product_subitems' ] )  ) {
+            throw new NotAllowedException( __( 'A grouped product cannot be saved without any sub items.' ) );
+        }
+
+        foreach( $fields[ 'product_subitems' ] as $item ) {
+            $product    =   Product::find( $item[ 'product_id' ] );
+
+            if ( $product->type === Product::TYPE_GROUPED ) {
+                throw new NotAllowedException( __( 'A grouped product cannot contain grouped product.' ) );
+            }
+        }
     }
 
     /**
@@ -441,10 +484,6 @@ class ProductService
      */
     public function saveSubItems( Product $product, $subItems )
     {
-        if ( ! isset( $subItems[ 'product_subitems' ] )  ) {
-            throw new NotAllowedException( __( 'A grouped product cannot be saved without any sub items.' ) );
-        }
-
         $savedItems     =   collect([]);
 
         foreach( $subItems[ 'product_subitems' ] as $item ) {
@@ -1006,6 +1045,7 @@ class ProductService
             'unit_price'                =>      $oldProduct->purchase_price,
             'total_price'               =>      $oldProduct->total_price,
             'procurement_id'            =>      $oldProduct->procurement_id,
+            'procurementProduct'        =>      $oldProduct,
             'procurement_product_id'    =>      $oldProduct->id,
             'quantity'                  =>      $fields[ 'quantity' ]
         ]);
@@ -1022,28 +1062,29 @@ class ProductService
      * a specific product
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
      * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
-     * @return ProductHistory
+     * @return ProductHistory|EloquentCollection
      */
-    public function stockAdjustment( $action, $data )
+    public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection
     {
         extract( $data, EXTR_REFS );
         /**
-         * @param int product_id
-         * @param float unit_price
-         * @param id unit_id
+         * @param int $product_id
          * @param float $unit_price
-         * @param float total_price
-         * @param int procurement_product_id
+         * @param id $unit_id
+         * @param float $unit_price
+         * @param float $total_price
+         * @param int $procurement_product_id
+         * @param OrderProduct $orderProduct
+         * @param ProcurementProduct $procurementProduct
          * @param string $description
-         * @param float quantity
-         * @param string sku
+         * @param float $quantity
+         * @param string $sku
          * @param string $unit_identifier
          */       
         $product                =   isset( $product_id ) ? Product::findOrFail( $product_id ) : Product::usingSKU( $sku )->first();
         $product_id             =   $product->id;
-        $unit                   =   Unit::identifier( $unit_identifier )->firstOrFail();
         $unit_id                =   isset( $unit_id ) ? $unit_id : $unit->id;
-        $procurementProduct     =   isset( $procurement_product_id ) ? ProcurementProduct::find( $procurement_product_id ) : false;
+        $unit                   =   Unit::findOrFail( $unit_id );
 
         /**
          * let's check the different 
@@ -1084,42 +1125,26 @@ class ProductService
          */
         if ( $product->stock_management === Product::STOCK_MANAGEMENT_ENABLED ) {
             if ( $product->type === Product::TYPE_GROUPED ) {
-                $this->handleStockAdjustmentsForGroupedProducts(
+                return $this->handleStockAdjustmentsForGroupedProducts(
                     action: $action,
-                    quantity: $quantity,
+                    orderProductQuantity: $quantity,
                     product: $product,
+                    orderProduct: $orderProduct,
                     unit: $unit
                 );
             } else {
-                $this->handleStockAdjustmentRegularProducts( 
+                return $this->handleStockAdjustmentRegularProducts( 
                     action: $action,
                     quantity: $quantity,
                     product_id: $product_id,
                     unit_id: $unit_id,
-                    procurementProduct: $procurementProduct = null 
+                    total_price: $total_price,
+                    unit_price: $unit_price,
+                    orderProduct: $orderProduct,
+                    procurementProduct: $procurementProduct
                 );
             }
         }
-
-        $history                                =   new ProductHistory;
-        $history->product_id                    =   $product_id;
-        $history->procurement_id                =   $procurement_id ?? null;
-        $history->procurement_product_id        =   $procurement_product_id ?? null;
-        $history->unit_id                       =   $unit_id;
-        $history->order_id                      =   $order_id ?? null;
-        $history->operation_type                =   $action;
-        $history->unit_price                    =   $unit_price;
-        $history->total_price                   =   $total_price;
-        $history->description                   =   $description ?? ''; // a description might be provided to describe the operation
-        $history->before_quantity               =   $result[ 'data' ][ 'oldQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
-        $history->quantity                      =   abs( $quantity );
-        $history->after_quantity                =   $result[ 'data' ][ 'newQuantity' ] ?? 0; // if the stock management is 0, it shouldn't change
-        $history->author                        =   Auth::id();
-        $history->save();
-
-        event( new ProductAfterStockAdjustmentEvent( $history ) );
-
-        return $history;
     }
 
     /**
@@ -1128,16 +1153,16 @@ class ProductService
      * @param float $quantity
      * @param Product $product
      * @param Unit $unit
-     * @return void
+     * @return EloquentCollection
      */
-    private function handleStockAdjustmentsForGroupedProducts( $action, $quantity, Product $product, Unit $unit )
+    private function handleStockAdjustmentsForGroupedProducts( $action, $orderProductQuantity, Product $product, Unit $unit, OrderProduct $orderProduct = null  ): EloquentCollection
     {
         $product->load( 'sub_items' );
 
-        $product->sub_items->each( function( ProductSubItem $subItem ) use ( $action, $quantity, $unit ) {
+        return $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $unit, $orderProduct ) {
             $unitGroup          =   $this->unitService->getGroups( $unit->group_id );
             $baseUnit           =   $this->unitService->getBaseUnit( $unitGroup );
-            $finalQuantity      =   ( ( $quantity * $unit->value ) * $baseUnit->value ) * $quantity;
+            $finalQuantity      =   ( ( $orderProductQuantity * $unit->value ) * $baseUnit->value ) * $subItem->quantity;
 
             /**
              * Let's retrieve the old item quantity.
@@ -1148,7 +1173,7 @@ class ProductService
                 
                 $this->preventNegativity( 
                     oldQuantity: $oldQuantity, 
-                    quantity: $quantity 
+                    quantity: $finalQuantity 
                 );
 
                 /**
@@ -1175,6 +1200,22 @@ class ProductService
                     oldQuantity: $oldQuantity 
                 );
             }
+
+            /**
+             * We would like to record for every sub product
+             * included an history of the stock transaction.
+             */
+            return $this->recordStockHistory(
+                product_id: $subItem->product_id,
+                action: $action,
+                unit_id: $subItem->unit_id,
+                unit_price: $subItem->sale_price,
+                quantity: $finalQuantity,
+                order_id: $orderProduct->order_id,
+                total_price: $finalQuantity * $subItem->sale_price,
+                old_quantity: $result[ 'data' ][ 'oldQuantity' ],
+                new_quantity: $result[ 'data' ][ 'newQuantity' ]
+            );
         });
     }
 
@@ -1207,11 +1248,13 @@ class ProductService
      * @param float $oldQuantity
      * @param float $quantity
      * @param int $product_id
+     * @param int $order_id
+     * @param int $order_product_id
      * @param int $unit_id
      * @param ProcurementProduct $procurementProduct
      * @return void
      */
-    private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $procurementProduct = null )
+    private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $orderProduct = null, $unit_price = 0, $total_price = 0, $procurementProduct = null )
     {
         /**
          * we would like to verify if
@@ -1260,6 +1303,52 @@ class ProductService
                 $this->updateProcurementProductQuantity( $procurementProduct, $quantity, ProcurementProduct::STOCK_INCREASE );
             }
         }
+
+        return $this->recordStockHistory(
+            product_id: $product_id,
+            action: $action,
+            unit_id: $unit_id,
+            unit_price: $unit_price,
+            quantity: $quantity,
+            total_price: $total_price,
+            order_id: $order_id,
+            old_quantity: $result[ 'data' ][ 'oldQuantity' ],
+            new_quantity: $result[ 'data' ][ 'newQuantity' ]
+        );
+    }
+
+    /**
+     * Records stock transaction for the provided product.
+     * @param int $product_id
+     * @param string $action
+     * @param int $unit_id
+     * @param float $unit_price
+     * @param float $quantity
+     * @param float $total_price
+     * @param float $old_quantity
+     * @param float $new_quantity
+     */
+    public function recordStockHistory( $product_id, $action, $unit_id, $unit_price, $quantity, $total_price, $order_id = null, $old_quantity = 0, $new_quantity = 0 )
+    {
+        $history                                =   new ProductHistory;
+        $history->product_id                    =   $product_id;
+        $history->procurement_id                =   $procurement_id ?? null;
+        $history->procurement_product_id        =   $procurement_product_id ?? null;
+        $history->unit_id                       =   $unit_id;
+        $history->order_id                      =   $order_id ?? null;
+        $history->operation_type                =   $action;
+        $history->unit_price                    =   $unit_price;
+        $history->total_price                   =   $total_price;
+        $history->description                   =   $description ?? ''; // a description might be provided to describe the operation
+        $history->before_quantity               =   $old_quantity; // if the stock management is 0, it shouldn't change
+        $history->quantity                      =   abs( $quantity );
+        $history->after_quantity                =   $new_quantity; // if the stock management is 0, it shouldn't change
+        $history->author                        =   Auth::id();
+        $history->save();
+
+        event( new ProductAfterStockAdjustmentEvent( $history ) );
+
+        return $history;
     }
 
     /**
@@ -1369,6 +1458,7 @@ class ProductService
             'unit_price'                =>      $product->purchase_price,
             'total_price'               =>      $product->total_price,
             'procurement_id'            =>      $product->procurement_id,
+            'procurementProduct'        =>      $product,
             'procurement_product_id'    =>      $product->id,
             'quantity'                  =>      $fields[ 'quantity' ]
         ]);
@@ -1581,23 +1671,30 @@ class ProductService
         });
     }
 
-    public function searchProduct( $argument, $limit = 5, $attributes = [] )
+    public function searchProduct( $search, $limit = 5, $arguments = [] )
     {
-        $query  =   Product::query()->orWhere( 'name', 'LIKE', "%{$argument}%" )
+        /**
+         * @var Builder $query
+         */
+        $query  =   Product::query()
             ->searchable()
+            ->where( function( $query ) use ( $search ) {
+                $query
+                ->orWhere( 'name', 'LIKE', "%{$search}%" )
+                ->orWhere( 'sku', 'LIKE', "%{$search}%" )
+                ->orWhere( 'barcode', 'LIKE', "%{$search}%" );
+            })
             ->with( 'unit_quantities.unit' )
-            ->orWhere( 'sku', 'LIKE', "%{$argument}%" )
-            ->orWhere( 'barcode', 'LIKE', "%{$argument}%" )
             ->limit( $limit );
 
         /**
-         * if custom attributes are provided
+         * if custom arguments are provided
          * we'll parse it and convert it into
          * eloquent arguments
          */
-        if ( ! empty( $attributes ) ) {
+        if ( ! empty( $arguments ) ) {
             $eloquenize     =   new EloquenizeArrayService;
-            $eloquenize->parse( $query, $attributes );
+            $eloquenize->parse( $query, $arguments );
         }
         
         return  $query->get()
