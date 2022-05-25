@@ -223,7 +223,6 @@ trait WithOrderTest
         $unit                   =   $unitService->get( $unitQuantity->unit_id );
         $unitGroup              =   $unitService->getGroups( $unit->group_id );
         $baseUnit               =   $unitService->getBaseUnit( $unitGroup );
-        $orderProductQuantity   =   $this->faker->numberBetween(1,10);
 
         /**
          * We would like to store the current Quantity
@@ -243,19 +242,13 @@ trait WithOrderTest
         /**
          * Let's prepare the order to submit that.
          */
-        $orderDetails   =   $testService->prepareOrder( ns()->date->now(), array_merge([
-            'products'  =>  [
-                [
-                    'name'                  =>  $product->name,
-                    'quantity'              =>  $orderProductQuantity,
-                    'unit_price'            =>  $unitQuantity->sale_price,
-                    'product_id'            =>  $product->id,
-                    'tax_type'              =>  'inclusive',
-                    'unit_quantity_id'      =>  $unitQuantity->id,
-                    'unit_id'               =>  $unitQuantity->unit_id,
-                ]
+        $orderDetails   =   $testService->prepareOrder( 
+            date: ns()->date->now(), 
+            config: [
+                'allow_quick_products'  =>  false,
+                'products'  =>  fn() => Product::type( Product::TYPE_GROUPED )->limit(1)->get()
             ]
-        ], $data ) );
+        );
 
         $response   =   $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
@@ -270,6 +263,8 @@ trait WithOrderTest
          * better computation.
          */
         $response   =   json_decode( $response->getContent(), true );
+
+        $orderProductQuantity   =   $response[ 'data' ][ 'order' ][ 'products' ][0][ 'quantity' ];
 
         $query      =   ProductHistory::where( 'order_id', $response[ 'data' ][ 'order' ][ 'id' ] );
 
@@ -293,6 +288,94 @@ trait WithOrderTest
         }
 
         return $response;
+    }
+
+    public function attemptRefundOrderWithGroupedProducts()
+    {
+        /**
+         * @var OrdersService $orderService
+         */
+        $orderService   =   app()->make( OrdersService::class );
+
+        /**
+         * @var ProductService $productService
+         */
+        $productService   =   app()->make( ProductService::class );
+
+        /**
+         * @var UnitService
+         */
+        $unitService            =   app()->make( UnitService::class );
+
+        $lastOrder      =   Order::orderBy( 'id', 'desc' )->first();
+
+        
+        $inventory      =   $lastOrder->products->map( function( $orderProduct ) use ( $productService, $unitService ) {
+            return $orderProduct->product->sub_items->mapWithKeys( function( $subItem ) use ( $productService, $unitService ) {
+                $unit                   =   $unitService->get( $subItem->unit_id );
+                $unitGroup              =   $unitService->getGroups( $unit->group_id );
+                $baseUnit               =   $unitService->getBaseUnit( $unitGroup );
+
+                return [
+                    $subItem->product_id . '-' . $subItem->unit_id  =>  [
+                        'currentQuantity'   =>  $productService->getQuantity(
+                            product_id: $subItem->product_id,
+                            unit_id: $subItem->unit_id
+                        ),
+                        'unit'              =>  $unit,
+                        'baseUnit'          =>  $baseUnit,
+                        'unitGroup'         =>  $unitGroup,
+                        'quantity'          =>  $subItem->quantity
+                    ]
+                ];
+            });
+        })->toArray();
+
+        /**
+         * Let's refund the order and see if the included products
+         * are returned to the inventory.
+         */
+        $orderService->refundOrder(
+            order: $lastOrder,
+            fields: [
+                'payment'  =>  [
+                    'identifier'    =>  OrderPayment::PAYMENT_CASH,
+                ],
+                'products'  =>  $lastOrder->products->map( function( OrderProduct $product ) {
+                    return [
+                        'id'            =>  $product->id,
+                        'condition'     =>  OrderProductRefund::CONDITION_UNSPOILED,
+                        'description'   =>  'Returned from tests',
+                        'quantity'      =>  $product->quantity,
+                        'unit_price'    =>  $product->unit_price,
+                    ];
+                })->toArray()
+            ]
+        );
+
+        $lastOrder
+            ->products()
+            ->get()
+            ->each( function( OrderProduct $orderProduct, $index ) use ( $inventory, $productService ) {
+                $entry  =   $inventory[ $index ];
+
+                $orderProduct->product->sub_items->each( function( $subItem ) use ( $inventory, $entry, $orderProduct, $productService ) {
+                    $savedQuantity  =   $entry[ $subItem->product_id . '-' . $subItem->unit_id ];
+                    $finalQuantity  =   ( ( ( $savedQuantity[ 'quantity' ] * $savedQuantity[ 'unit' ]->value ) * $savedQuantity[ 'baseUnit' ]->value ) * $orderProduct->refunded_product->quantity );
+                    $actualQuantity =   $productService->getQuantity(
+                        product_id:  $subItem->product_id,
+                        unit_id: $subItem->unit_id
+                    );
+
+                    /**
+                     * Step 1: Assert quantity is correctly updated
+                     */
+                    $this->assertTrue(
+                        ( float ) $actualQuantity === ( float ) ( $finalQuantity + $savedQuantity[ 'currentQuantity' ] ),
+                        'The new quantity doesn\'t match.'
+                    );
+                });
+            });
     }
 
     public function attemptUpdateOrderOnRegister()

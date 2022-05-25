@@ -1129,7 +1129,7 @@ class ProductService
                     action: $action,
                     orderProductQuantity: $quantity,
                     product: $product,
-                    orderProduct: $orderProduct,
+                    orderProduct: isset( $orderProduct ) ? $orderProduct : null,
                     unit: $unit
                 );
             } else {
@@ -1140,8 +1140,8 @@ class ProductService
                     unit_id: $unit_id,
                     total_price: $total_price,
                     unit_price: $unit_price,
-                    orderProduct: $orderProduct,
-                    procurementProduct: $procurementProduct
+                    orderProduct: isset( $orderProduct ) ? $orderProduct : null,
+                    procurementProduct: isset( $procurementProduct ) ? $procurementProduct : null
                 );
             }
         }
@@ -1311,7 +1311,7 @@ class ProductService
             unit_price: $unit_price,
             quantity: $quantity,
             total_price: $total_price,
-            order_id: $order_id,
+            order_id: isset( $orderProduct ) ? $orderProduct->order_id : null,
             old_quantity: $result[ 'data' ][ 'oldQuantity' ],
             new_quantity: $result[ 'data' ][ 'newQuantity' ]
         );

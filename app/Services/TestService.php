@@ -30,7 +30,7 @@ class TestService
             $unitElement    =   $faker->randomElement( $product->unit_quantities );
 
             $data           =   array_merge([
-                'name'                  =>  'Fees',
+                'name'                  =>  $product->name,
                 'quantity'              =>  $faker->numberBetween(1,10),
                 'unit_price'            =>  $unitElement->sale_price,
                 'tax_type'              =>  'inclusive',

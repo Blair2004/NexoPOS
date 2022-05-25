@@ -362,12 +362,12 @@ class ProductHistoryCrud extends CrudService
             'operation_type'  =>  [
                 'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
-                'width'         =>  '200px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'before_quantity'  =>  [
                 'label'  =>  __( 'P. Quantity' ),
-                'width'         =>  '150px',
+                'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
@@ -379,19 +379,19 @@ class ProductHistoryCrud extends CrudService
             'after_quantity'  =>  [
                 'label'         =>  __( 'N. Quantity' ),
                 '$direction'    =>  '',
-                'width'         =>  '150px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'units_name'  =>  [
                 'label'         =>  __( 'Unit' ),
                 '$direction'    =>  '',
-                'width'         =>  '200px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'orders_code'  =>  [
                 'label'         =>  __( 'Order' ),
                 '$direction'    =>  '',
-                'width'         =>  '200px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'procurements_name'  =>  [
@@ -402,13 +402,13 @@ class ProductHistoryCrud extends CrudService
             'unit_price'  =>  [
                 'label'         =>  __( 'Unit Price' ),
                 '$direction'    =>  '',
-                'width'         =>  '150px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'total_price'  =>  [
                 'label'         =>  __( 'Total Price' ),
                 '$direction'    =>  '',
-                'width'         =>  '150px',
+                'width'         =>  '100px',
                 '$sort'         =>  false
             ],
             'users_username'  =>  [
@@ -418,7 +418,7 @@ class ProductHistoryCrud extends CrudService
             ],
             'created_at'  =>  [
                 'label'         =>  __( 'Date' ),
-                'width'         =>  '150px',
+                'width'         =>  '100px',
                 '$direction'    =>  '',
                 '$sort'         =>  false
             ],
