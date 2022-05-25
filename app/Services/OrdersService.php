@@ -1206,7 +1206,7 @@ class OrdersService
                             /**
                              * in case the current unit is not the base unit
                              */
-                            if ( $currentUnit->base_unit ) {
+                            if ( ! ( bool ) $currentUnit->base_unit ) {
                                 $baseUnit                               =   $this->unitService->getBaseUnit( $unitGroup );
                             }
 
@@ -1214,9 +1214,12 @@ class OrdersService
                              * computing the exact quantity that will be pulled
                              * from the actual product inventory.
                              */
-                            $quantity       =   ( 
-                                ( $currentUnit->value * $baseUnit->value ) * ( float ) $orderProduct[ 'quantity' ] 
-                            ) * ( float ) $subitem->quantity;
+                            $quantity       =   $this->productService->computeSubItemQuantity(
+                                baseUnit: $baseUnit,
+                                currentUnit: $currentUnit,
+                                orderProductQuantity: $orderProduct[ 'quantity' ],
+                                subItemQuantity: ( float ) $subitem->quantity
+                            );
 
                             $newFakeOrderProduct                    =   new OrderProduct;
                             $newFakeOrderProduct->quantity          =   $quantity;
@@ -1225,7 +1228,7 @@ class OrdersService
                             $this->checkQuantityAvailability(
                                 product: $subitem->product,
                                 productUnitQuantity: $subitem->unit_quantity,
-                                orderProduct: $newFakeOrderProduct,
+                                orderProduct: $newFakeOrderProduct->toArray(),
                                 session_identifier: $session_identifier
                             );
                         }
@@ -1288,6 +1291,7 @@ class OrdersService
                     ->sum( 'quantity' );
 
                 if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
+                    dump( $productUnitQuantity->quantity, $storageQuantity, $orderProduct );
                     throw new \Exception( 
                         sprintf( 
                             __( 'Unable to proceed, there is not enough stock for %s using the unit %s. Requested : %s, available %s' ),

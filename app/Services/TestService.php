@@ -22,7 +22,12 @@ class TestService
          */
         $currency       =   app()->make( CurrencyService::class );
         $faker          =   Factory::create();
-        $products       =   isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->get()->shuffle()->take(3);
+        $products       =   isset( $config[ 'products' ] ) ? $config[ 'products' ]() : Product::where( 'tax_group_id', '>', 0 )
+            ->where( 'type', '<>', Product::TYPE_GROUPED )
+            ->with( 'unit_quantities' )
+            ->get()
+            ->shuffle()
+            ->take(3);
         $shippingFees   =   $faker->randomElement([10,15,20,25,30,35,40]);
         $discountRate   =   $faker->numberBetween(0,5);
 
@@ -159,7 +164,7 @@ class TestService
                 });
             })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
 
-                $quantity   =   $faker->numberBetween(800,1500);
+                $quantity   =   $faker->numberBetween(50000,90000);
 
                 return [
                     'product_id'            =>  $data->product->id,

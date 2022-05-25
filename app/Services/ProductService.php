@@ -1162,7 +1162,12 @@ class ProductService
         return $product->sub_items->map( function( ProductSubItem $subItem ) use ( $action, $orderProductQuantity, $unit, $orderProduct ) {
             $unitGroup          =   $this->unitService->getGroups( $unit->group_id );
             $baseUnit           =   $this->unitService->getBaseUnit( $unitGroup );
-            $finalQuantity      =   ( ( $orderProductQuantity * $unit->value ) * $baseUnit->value ) * $subItem->quantity;
+            $finalQuantity      =   $this->computeSubItemQuantity(
+                baseUnit: $baseUnit,
+                currentUnit: $unit,
+                orderProductQuantity: $orderProductQuantity,
+                subItemQuantity: $subItem->quantity
+            );
 
             /**
              * Let's retrieve the old item quantity.
@@ -1349,6 +1354,13 @@ class ProductService
         event( new ProductAfterStockAdjustmentEvent( $history ) );
 
         return $history;
+    }
+
+    public function computeSubItemQuantity( Unit $baseUnit, Unit $currentUnit, $orderProductQuantity, $subItemQuantity )
+    {
+        return ( 
+            ( ( bool ) $currentUnit->base_unit ? $currentUnit->value : $currentUnit->value * $baseUnit->value ) * ( float ) $orderProductQuantity
+        ) * ( float ) $subItemQuantity;
     }
 
     /**

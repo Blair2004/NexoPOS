@@ -2,10 +2,11 @@
 
 namespace Tests\Feature;
 
+use Modules\NsGastro\Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
 
-class DeleteOrderTest extends CreateOrderTest
+class DeleteOrderTest extends TestCase
 {
     use WithAuthentication, WithOrderTest;
 
@@ -14,13 +15,11 @@ class DeleteOrderTest extends CreateOrderTest
 
     /**
      * A basic feature test example.
-     *
      * @return void
      */
     public function test_delete_order()
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteOrder();
-
     }
 }
