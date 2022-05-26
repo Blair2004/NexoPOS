@@ -81,7 +81,7 @@
                                             <i class="las la-trash text-xl"></i>
                                         </a>
                                     </div>
-                                    <div class="px-1"> 
+                                    <div class="px-1" v-if="options.ns_pos_allow_wholesale_price"> 
                                         <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
@@ -377,6 +377,7 @@ export default {
     },
     methods: {
         __,
+
         switchTo,
 
         openAddQuickProduct() {
@@ -507,7 +508,7 @@ export default {
         async holdOrder() {
 
             if ( this.order.payment_status !== 'hold' && this.order.payments.length > 0 ) {
-                return nsSnackBar.error( 'Unable to hold an order which payment status has been updated already.' ).subscribe();
+                return nsSnackBar.error( __( 'Unable to hold an order which payment status has been updated already.' ) ).subscribe();
             }
 
             const queues    =   nsHooks.applyFilters( 'ns-hold-queue', [
@@ -561,11 +562,11 @@ export default {
 
         openDiscountPopup( reference, type ) {
             if ( ! this.settings.products_discount && type === 'product' ) {
-                return nsSnackBar.error( `You're not allowed to add a discount on the product.` ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the product.` ) ).subscribe();
             }
 
             if ( ! this.settings.cart_discount && type === 'cart' ) {
-                return nsSnackBar.error( `You're not allowed to add a discount on the cart.` ).subscribe();
+                return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
             }
 
             Popup.show( nsPosDiscountPopupVue, { 
@@ -588,10 +589,14 @@ export default {
         },
 
         toggleMode( product ) {
+            if ( ! this.options.ns_pos_allow_wholesale_price ) {
+                return nsSnackBar.error( __( 'Unable to change the price mode. This feature has been disabled.' ) ).subscribe();
+            }
+
             if ( product.mode === 'normal' ) {
                 Popup.show( PosConfirmPopup, {
-                    title: 'Enable WholeSale Price',
-                    message: 'Would you like to switch to wholesale price ?',
+                    title: __( 'Enable WholeSale Price' ),
+                    message: __( 'Would you like to switch to wholesale price ?' ),
                     onAction( action ) {
                         if ( action ) {
                             POS.updateProduct( product, { mode: 'wholesale' });
@@ -600,8 +605,8 @@ export default {
                 });
             } else {
                 Popup.show( PosConfirmPopup, {
-                    title: 'Enable Normal Price',
-                    message: 'Would you like to switch to normal price ?',
+                    title: __( 'Enable Normal Price' ),
+                    message: __( 'Would you like to switch to normal price ?' ),
                     onAction( action ) {
                         if ( action ) {
                             POS.updateProduct( product, { mode: 'normal' });
@@ -612,8 +617,8 @@ export default {
         },
         remove( product ) {
             Popup.show( PosConfirmPopup, {
-                title: 'Confirm Your Action',
-                message: 'Would you like to delete this product ?',
+                title: __( 'Confirm Your Action' ),
+                message: __( 'Would you like to delete this product ?' ),
                 onAction( action ) {
                     if ( action ) {
                         POS.removeProduct( product );

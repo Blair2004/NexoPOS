@@ -26,6 +26,26 @@ return [
             ]),
             'description'       =>  __( 'Will enforce similar products to be merged from the POS.' ),
         ], [
+            'name'              =>  'ns_pos_allow_wholesale_price',
+            'value'             =>  ns()->option->get( 'ns_pos_allow_wholesale_price' ),
+            'label'             =>  __( 'Allow Wholesale Price' ), 
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' )
+            ]),
+            'description'       =>  __( 'Define if the wholesale price can be selected on the POS.' ),
+        ], [
+            'name'              =>  'ns_pos_allow_decimal_quantities',
+            'value'             =>  ns()->option->get( 'ns_pos_allow_decimal_quantities' ),
+            'label'             =>  __( 'Allow Decimal Quantities' ), 
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' )
+            ]),
+            'description'       =>  __( 'Will change the numeric keyboard for allowing decimal for quantities.' ),
+        ], [
             'name'              =>  'ns_pos_customers_creation_enabled',
             'value'             =>  ns()->option->get( 'ns_pos_customers_creation_enabled' ),
             'label'             =>  __( 'Allow Customer Creation' ), 

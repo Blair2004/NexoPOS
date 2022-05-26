@@ -1,11 +1,10 @@
 <template>
-    <div id="numpad" class="grid grid-flow-row grid-cols-3 gap-2 grid-rows-3" style="padding: 1px">
+    <div id="numpad" class="grid grid-flow-row grid-cols-3 grid-rows-3">
         <div 
             @click="inputValue( key )"
             :key="index" 
             v-for="(key,index) of keys" 
-            style="margin:-1px;"
-            class="select-none ns-numpad-key border h-16 flex items-center justify-center cursor-pointer">
+            class="select-none ns-numpad-key border-l border-b h-24 font-bold flex items-center justify-center cursor-pointer">
             <span v-if="key.value !== undefined">{{ key.value }}</span>
             <i v-if="key.icon" class="las" :class="key.icon"></i>
         </div>
@@ -13,6 +12,7 @@
     </div>
 </template>
 <script>
+import { __ } from '@/libraries/lang';
 export default {
     name: 'ns-numpad',
     props: [ 'value', 'currency', 'floating', 'limit' ],
@@ -33,7 +33,7 @@ export default {
                 ...([7,8,9].map( key => ({ identifier: key, value: key }))),
                 ...([4,5,6].map( key => ({ identifier: key, value: key }))),
                 ...([1,2,3].map( key => ({ identifier: key, value: key }))),
-                ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
+                ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 },{ identifier: 'next', value: __( 'Enter' ) }],
             ]
         }
     },
@@ -43,7 +43,7 @@ export default {
         } else {
             this.screenValue    =   this.value || 0;
         }
-        
+
         /**
          * will bind keyboard event listening
          */
