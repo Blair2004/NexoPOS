@@ -7,6 +7,7 @@ use App\Events\ExpenseAfterRefreshEvent;
 use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Events\CashFlowHistoryBeforeDeleteEvent;
+use App\Events\DashboardDayAfterComputedEvent;
 use App\Models\DashboardDay;
 use App\Services\DateService;
 use App\Services\ReportService;
@@ -59,7 +60,10 @@ class ComputeDashboardExpensesJob implements ShouldQueue
         $todayEnd           =   Carbon::parse( $this->event->cashFlow->created_at )->endOfDay()->toDateTimeString();
         $dashboardDay       =   DashboardDay::from( $todayStart )
             ->to( $todayEnd )
-            ->first();
+            ->firstOrCreate([
+                'range_starts'  =>  $todayStart,
+                'range_ends'    =>  $todayEnd
+            ]);
 
         /**
          * According to the event that is triggered
@@ -83,12 +87,22 @@ class ComputeDashboardExpensesJob implements ShouldQueue
              * the day the expense has been created
              */
             $reports->each( function( $dashboardDay ) use ( &$now ) {
-                event( new ExpenseBeforeRefreshEvent( $dashboardDay, $now ) );
+                ExpenseBeforeRefreshEvent::dispatch(
+                    $dashboardDay,
+                    $now
+                );
+
                 $now->addMinute();
             });
 
-            event( new ExpenseAfterRefreshEvent( $this->event, $now->addSeconds( 10 ) ) );
-            event( new DashboardDayAfterUpdatedEvent );
+            ExpenseAfterRefreshEvent::dispatch(
+                $this->event,
+                $now->addSeconds(10)
+            );
+
+            DashboardDayAfterUpdatedEvent::dispatch( $dashboardDay );
+
+            DashboardDayAfterComputedEvent::dispatch( $dashboardDay );
         }
     }
 }

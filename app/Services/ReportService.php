@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
+use App\Events\DashboardDayAfterComputedEvent;
+use App\Events\DashboardMonthAfterComputedEvent;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
@@ -93,6 +95,12 @@ class ReportService
 
         $this->refreshFromDashboardDay( $todayReport );
 
+        /**
+         * When a dashboard day is computed, 
+         * we should trigger an event.
+         */
+        DashboardDayAfterComputedEvent::dispatch( $todayReport );
+
         $todayReport->save();
 
         return $todayReport;
@@ -108,8 +116,7 @@ class ReportService
         $monthEnds      =   $todayCarbon->endOfMonth()->toDateTimeString();
 
         $entries            =   DashboardDay::from( $monthStarts )
-            ->to( $monthEnds )
-            ->get();
+            ->to( $monthEnds );
 
         $dashboardMonth     =   DashboardMonth::from( $monthStarts )
             ->to( $monthEnds )
@@ -123,7 +130,7 @@ class ReportService
             $dashboardMonth->save();
         }
 
-        $dashboardMonth->month_unpaid_orders                    =   $entries->sum( 'day_unpaid_order' );
+        $dashboardMonth->month_unpaid_orders                    =   $entries->sum( 'day_unpaid_orders' );
         $dashboardMonth->month_unpaid_orders_count              =   $entries->sum( 'day_unpaid_orders_count' );
         $dashboardMonth->month_paid_orders                      =   $entries->sum( 'day_paid_orders' );
         $dashboardMonth->month_paid_orders_count                =   $entries->sum( 'day_paid_orders_count' );
@@ -150,10 +157,16 @@ class ReportService
             "total_wasted_goods",
             "total_expenses",
         ] as $field ) {
-            $dashboardMonth->$field     =   $entries->last()->$field ?? 0;
+            $dashboardMonth->$field     =   $entries->get()->last()->$field ?? 0;
         }
         
         $dashboardMonth->save();
+
+        /**
+         * When a dashboard month is computed, 
+         * we should trigger an event.
+         */
+        DashboardMonthAfterComputedEvent::dispatch( $dashboardMonth );
 
         return $dashboardMonth;
     }

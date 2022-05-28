@@ -1062,9 +1062,9 @@ class ProductService
      * a specific product
      * @param string operation : deducted, sold, procured, deleted, adjusted, damaged
      * @param mixed[]<$unit_id,$product_id,$unit_price,?$total_price,?$procurement_id,?$procurement_product_id,?$sale_id,?$quantity> $data to manage
-     * @return ProductHistory|EloquentCollection
+     * @return ProductHistory|EloquentCollection|bool
      */
-    public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection
+    public function stockAdjustment( $action, $data ): ProductHistory|EloquentCollection|bool
     {
         extract( $data, EXTR_REFS );
         /**
@@ -1145,6 +1145,8 @@ class ProductService
                 );
             }
         }
+
+        return false;
     }
 
     /**
@@ -1257,7 +1259,7 @@ class ProductService
      * @param int $order_product_id
      * @param int $unit_id
      * @param ProcurementProduct $procurementProduct
-     * @return void
+     * @return ProductHistory
      */
     private function handleStockAdjustmentRegularProducts( $action, $quantity, $product_id, $unit_id, $orderProduct = null, $unit_price = 0, $total_price = 0, $procurementProduct = null )
     {

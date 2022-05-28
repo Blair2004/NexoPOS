@@ -85,9 +85,8 @@
     animation: FadeOutExit;
 }
 
-@for $i from 100 through 1000 {
+@for $i from 100 to 1000 by 200 {
     .anim-duration-#{$i} {
         animation-duration: #{$i}ms;
     }
-    $i : $i + 200;
 }

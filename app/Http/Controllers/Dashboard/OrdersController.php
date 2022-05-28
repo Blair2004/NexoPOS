@@ -71,17 +71,6 @@ class OrdersController extends DashboardController
         return $this->ordersService->create( $request->all(), $id );
     }
 
-    public function refundOrderProduct( $order_id, $product_id )
-    {
-        $order      =   $this->ordersService->getOrder( $order_id );
-        
-        $product    =   $order->products->filter( function( $product ) use ( $product_id ) {
-            return $product->id === $product_id;
-        })->flatten();
-
-        return $this->ordersService->refundSingleProduct( $order, $product );
-    }
-
     public function addProductToOrder( $order_id, Request $request )
     {
         $order      =   $this->ordersService->getOrder( $order_id );

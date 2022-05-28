@@ -34,6 +34,20 @@ export default {
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection    =   section;
         });
+
+        /**
+         * Assuming all vue component
+         * has been loaded
+         */
+        const loader    =   document.getElementById( 'loader' );
+        loader.classList.remove( 'fade-in-entrance' );
+        loader.classList.add( 'fade-out-exit' );
+        
+        setTimeout( () => {
+            loader.remove();
+            POS.reset();
+        }, 500 ); 
+        
     },
     destroyed() {
         this.visibleSectionSubscriber.unsubscribe();

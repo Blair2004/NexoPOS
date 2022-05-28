@@ -12,8 +12,9 @@ class DashboardDay extends NsModel
 {
     use HasFactory;
 
-    public $timestamps  =   false;
-    protected $table    =   'nexopos_' . 'dashboard_days';
+    public $timestamps      =   false;
+    protected $fillable     =   [ 'range_starts', 'range_ends' ];
+    protected $table        =   'nexopos_' . 'dashboard_days';
 
     public function scopeFrom( $query, $param )
     {

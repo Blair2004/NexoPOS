@@ -298,8 +298,6 @@ export class POS {
                 return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
             }
         }
-
-        this.defineCurrentScreen();
     }
 
     public getSalePrice(item, original) {

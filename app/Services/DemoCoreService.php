@@ -24,7 +24,7 @@ class DemoCoreService
 {
     protected $categoryService;
     protected $productService;
-    protected $orderCount           =   25;
+    protected $orderCount           =   1;
     protected $customOrderParams    =   [];
     protected $customDate           =   true;
     protected $customProductParams  =   []; 

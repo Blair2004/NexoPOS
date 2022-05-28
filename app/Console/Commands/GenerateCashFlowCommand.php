@@ -2,12 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\CashFlow;
-use App\Models\DashboardDay;
-use App\Models\DashboardMonth;
 use App\Models\Role;
-use App\Models\User;
-use App\Services\ExpenseService;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;

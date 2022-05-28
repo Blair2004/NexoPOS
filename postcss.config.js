@@ -9,17 +9,19 @@ module.exports = (ctx) => {
 
   if ( ctx.file.basename ) {
     files.forEach( file => {
-      if ( 
-        ( wildcard( 'app.*.css', file ) || wildcard( 'app.css', file ) ) ||
-        ( wildcard( 'dark.*.css', file ) || wildcard( 'dark.css', file ) ) ||
-        ( wildcard( 'light.*.css', file ) || wildcard( 'light.css', file ) ) ||
-        ( wildcard( 'fonts.*.css', file ) || wildcard( 'fonts.css', file ) ) ||
-        ( wildcard( 'typography.*.css', file ) || wildcard( 'typography.css', file ) ) ||
-        ( wildcard( 'animations.*.css', file ) || wildcard( 'animations.css', file ) )
-      ) {
-        const path  = `${__dirname}/public/css/${file}`;
-        if( fs.existsSync( path ) ) {
-          fs.unlinkSync( path );
+      if ( file === ctx.file.basename ) {
+        if ( 
+          ( wildcard( 'app.*.css', file ) || wildcard( 'app.css', file ) ) ||
+          ( wildcard( 'dark.*.css', file ) || wildcard( 'dark.css', file ) ) ||
+          ( wildcard( 'light.*.css', file ) || wildcard( 'light.css', file ) ) ||
+          ( wildcard( 'fonts.*.css', file ) || wildcard( 'fonts.css', file ) ) ||
+          ( wildcard( 'typography.*.css', file ) || wildcard( 'typography.css', file ) ) ||
+          ( wildcard( 'animations.*.css', file ) || wildcard( 'animations.css', file ) )
+        ) {
+          const path  = `${__dirname}/public/css/${file}`;
+          if( fs.existsSync( path ) ) {
+            fs.unlinkSync( path );
+          }
         }
       }
     });
@@ -31,6 +33,7 @@ module.exports = (ctx) => {
       parser: 'postcss-scss',
       plugins: {
         'postcss-css-variables': {},
+        'postcss-advanced-variables': {},
         'postcss-import': {},
         'postcss-nesting': {},
         'autoprefixer': {},
