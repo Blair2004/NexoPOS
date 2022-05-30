@@ -83,25 +83,21 @@ class ReportService
         
         $todayReport        =   DashboardDay::from( $this->dayStarts )
             ->to( $this->dayEnds )
-            ->first();
-
-        if ( ! $todayReport instanceof DashboardDay ) {
-            $todayReport                =   new DashboardDay;
-            $todayReport->day_of_year   =   Carbon::parse( $this->dayStarts )->dayOfYear;
-        }
-
-        $todayReport->range_starts  =   $this->dayStarts;
-        $todayReport->range_ends    =   $this->dayEnds;
+            ->firstOrCreate([
+                'range_starts'  =>  $this->dayStarts,
+                'range_ends'    =>  $this->dayEnds,
+                'day_of_year'   =>  Carbon::parse( $this->dayStarts )->dayOfYear
+            ]);
 
         $this->refreshFromDashboardDay( $todayReport );
+
+        $todayReport->save();
 
         /**
          * When a dashboard day is computed, 
          * we should trigger an event.
          */
         DashboardDayAfterComputedEvent::dispatch( $todayReport );
-
-        $todayReport->save();
 
         return $todayReport;
     }

@@ -62,7 +62,8 @@ class ComputeDashboardExpensesJob implements ShouldQueue
             ->to( $todayEnd )
             ->firstOrCreate([
                 'range_starts'  =>  $todayStart,
-                'range_ends'    =>  $todayEnd
+                'range_ends'    =>  $todayEnd,
+                'day_of_year'   =>  Carbon::parse( $todayStart )->dayOfYear
             ]);
 
         /**

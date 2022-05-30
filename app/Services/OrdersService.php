@@ -271,6 +271,7 @@ class OrdersService
      * total.
      * @param array $fields
      * @return void
+     * @throws NotAllowedException
      */
     public function __checkProvidedInstalments( $fields )
     {
@@ -629,7 +630,8 @@ class OrdersService
      * Check wether a discount is valid or 
      * not
      * @param array fields
-     * @return void|Exception
+     * @return void
+     * @throws NotAllowedException
      */
     public function __checkDiscountVality( $fields )
     {
@@ -676,7 +678,7 @@ class OrdersService
 
         /**
          * this will erase the unsupported
-         * attribute before saving the order.
+         * attribute before saving the customer addresses.
          */
         if ( ! empty( $fields[ 'addresses' ] ) ) {
             foreach (['shipping', 'billing'] as $type) {
@@ -847,13 +849,13 @@ class OrdersService
          * payment hasn't been deleted.
          */
         if ( $order instanceof Order ) {
-            $currenctPayments   =   collect( $fields[ 'payments' ] )
+            $paymentIds   =   collect( $fields[ 'payments' ] )
                 ->map( fn( $payment ) => $payment[ 'id' ] ?? false )
                 ->filter( fn( $payment ) => $payment !== false )
                 ->toArray();
             
-            $order->payments->each( function( $payment ) use ( $currenctPayments ) {
-                if ( ! in_array( $payment->id, $currenctPayments ) ) {
+            $order->payments->each( function( $payment ) use ( $paymentIds ) {
+                if ( ! in_array( $payment->id, $paymentIds ) ) {
                     throw new NotAllowedException( __( 'Unable to proceed as one of the previous submitted payment is missing from the order.' ) );
                 }
             });
@@ -866,7 +868,6 @@ class OrdersService
                 throw new NotAllowedException( __( 'The order payment status cannot switch to hold as a payment has already been made on that order.' ) );
             }
         }
-
         
         $totalPayments  =   0;
 
@@ -954,8 +955,8 @@ class OrdersService
         }
 
         /**
-         * Ultimately, we'll check if a payment is provided
-         * if the logged user has right to perform a payment
+         * Ultimately, we'll check when a payment is provided
+         * the logged user must have the rights to perform a payment
          */
         if ( $totalPayments > 0 ) {
             ns()->restrict( 'nexopos.make-payment.orders', __( 'You\'re not allowed to make payments.' ) );
@@ -1162,7 +1163,8 @@ class OrdersService
     }
 
     /**
-     * @param array of orderProduct
+     * @param Collection $items
+     * @return Collection $items
      */
     private function __checkProductStock( $items )
     {
@@ -1371,28 +1373,6 @@ class OrdersService
             ) - $fields[ 'discount' ];
         }
 
-        if ( $product instanceof Product ) {
-
-            /**
-             * We'll retreive the last defined purchase price
-             * for the defined item. Won't work for unmaterial item
-             */
-            $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
-                ->where( 'unit_id', $productUnitQuantity->unit_id )
-                ->orderBy( 'id', 'desc' )
-                ->first();
-    
-            /**
-             * @todo we might check if the barcode provided
-             * here include a procurement id
-             */
-            if ( $procurementProduct instanceof ProcurementProduct ) {
-                $fields[ 'total_purchase_price' ]       =   $this->currencyService->define( $procurementProduct->purchase_price )
-                    ->multiplyBy( $fields[ 'quantity' ] )
-                    ->getRaw();
-            }
-        }
-
         return $fields;
     }
 
@@ -1446,7 +1426,11 @@ class OrdersService
          * explicitely allowed on this filter
          */
         foreach( Hook::filter( 'ns-order-attributes', [] ) as $attribute ) {
-            $order->$attribute      =   $fields[ $attribute ];
+            if ( ! in_array( $attribute, [
+                'id'
+            ])) {
+                $order->$attribute      =   $fields[ $attribute ];
+            }
         }
 
         /**
@@ -1477,7 +1461,6 @@ class OrdersService
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
         $order->code                    =   $order->code ?: ''; // to avoid generating a new code
-
         $order->save();
 
         if ( $order->code === '' ) {

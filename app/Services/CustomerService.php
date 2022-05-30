@@ -38,9 +38,7 @@ class CustomerService
                 ->orderBy( 'created_at', 'desc' )->get();
         } else {
             try {
-                $customer   =   Customer::find( $id );
-                $customer->address;
-                return $customer;
+                return Customer::with( 'addresses' )->find( $id );
             } catch( Exception $exception ) {
                 throw new Exception( __( 'Unable to find the customer using the provided id.' ) );
             }
