@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\DashboardDay;
+use App\Models\CashFlow;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class DashboardDayAfterComputedEvent
+class CashFlowHistoryAfterDeletedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,8 +20,8 @@ class DashboardDayAfterComputedEvent
      *
      * @return void
      */
-    public function __construct(
-        public DashboardDay $dashboardDay 
+    public function __construct( 
+        public CashFlow $cashFlow
     )
     {
         //

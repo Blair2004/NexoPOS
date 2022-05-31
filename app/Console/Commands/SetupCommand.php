@@ -49,10 +49,6 @@ class SetupCommand extends Command
      */
     public function handle()
     {
-        if ( ns()->installed() ) {
-            return $this->error( __( 'Unable to proceed the system is already installed.' ) );
-        }
-
         if ( 
             ! empty( $this->option( 'store_name' ) ) &&
             ! empty( $this->option( 'admin_email' ) ) &&

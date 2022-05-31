@@ -58,8 +58,6 @@ class GenerateActivityCommand extends Command
         $app    =   require base_path( 'bootstrap/app.php' );
         $app->make( HttpKernel::class )->bootstrap();
 
-        dd( $app->session() );
-
         foreach( $totalDays as $day ) {
             /**
              * include test files

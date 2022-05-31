@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Routing\Route as RoutingRoute;
@@ -40,12 +41,16 @@ class TestOtherGetRoutes extends TestCase
                     /**
                      * Route that allow exception
                      */
-                    if ( in_array( $uri, [
-                        'api/nexopos/v4/cash-registers/used',
-                    ] ) ) {
-                        $response->assertStatus(401);
+                    if ( in_array( $response->status(), [ 401, 200 ] ) ) {
+                        if ( in_array( $uri, [
+                            'api/nexopos/v4/cash-registers/used',
+                        ] ) ) {
+                            $response->assertStatus(401);
+                        } else {
+                            $response->assertStatus(200);
+                        }
                     } else {
-                        $response->assertStatus(200);
+                        throw new Exception( 'Not supported status detected.' );
                     }
                 }
             }
@@ -75,12 +80,14 @@ class TestOtherGetRoutes extends TestCase
                     $response   =   $this->actingAs( $user )
                         ->json( 'GET', $uri );
     
-                    $response->assertStatus(200);
-
-                    if ( $uri === 'dashboard/pos' ) {
-                        $response->assertSee( 'ns-pos' ); // pos component
+                    if ( $response->status() == 200 ) {
+                        if ( $uri === 'dashboard/pos' ) {
+                            $response->assertSee( 'ns-pos' ); // pos component
+                        } else {
+                            $response->assertSee( 'dashboard-body' );
+                        }
                     } else {
-                        $response->assertSee( 'dashboard-body' );
+                        throw new Exception( 'Not supported status detected.' );
                     }
                 } 
             }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\DashboardDay;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -19,18 +20,10 @@ class DashboardDayAfterUpdatedEvent
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(
+        public DashboardDay $dashboardDay 
+    )
     {
-        //
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('ns.private-channel');
+        // ...
     }
 }

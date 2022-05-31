@@ -40,19 +40,24 @@ class SaveSettingsTest extends TestCase
                     return [
                         $key    =>  collect( $value[ 'fields' ] )
                             ->mapWithKeys( function( $field ) {
-                            if ( $field[ 'name' ] === 'ns_store_language' ) {
-                                return [ 
-                                    $field[ 'name' ]    =   'en'
-                                ]; // the site should always be in english for the tests.
-                            } else {
                                 return [
-                                    $field[ 'name' ]    =>  match( $field[ 'type' ] ) {
-                                        'text', 'textarea'      =>  strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
-                                        'select'                =>  ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
-                                        default                 =>  $field[ 'value' ]
+                                    $field[ 'name' ]    =>  match( $field[ 'name' ] ) {
+                                        'ns_store_language'                 =>  'en',
+                                        'ns_currency_symbol'                =>  '$',
+                                        'ns_currency_iso'                   =>  'USD',
+                                        'ns_currency_thousand_separator'    =>  '.',
+                                        'ns_currency_decimal_separator'     =>  ',',
+                                        'ns_date_format'                    =>  'Y-m-d',
+                                        'ns_datetime_format'                =>  'Y-m-d H:i',
+                                        default                 =>  (
+                                            match( $field[ 'type' ] ) {
+                                                'text', 'textarea'      =>  strstr( $field[ 'name' ], 'email' ) ? $this->faker->email() : $this->faker->text(20),
+                                                'select'                =>  ! empty( $field[ 'options' ] ) ? collect( $field[ 'options' ] )->random()[ 'value' ] : '',
+                                                default                 =>  $field[ 'value' ]
+                                            }
+                                        )
                                     }
                                 ];
-                            }
                         })
                     ];
                 })->toArray();

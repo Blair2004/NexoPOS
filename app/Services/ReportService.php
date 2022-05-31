@@ -3,8 +3,6 @@ namespace App\Services;
 
 use App\Classes\Currency;
 use App\Classes\Hook;
-use App\Events\DashboardDayAfterComputedEvent;
-use App\Events\DashboardMonthAfterComputedEvent;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
@@ -81,9 +79,7 @@ class ReportService
          */
         $this->clearUnassignedCashFlow( $this->dayStarts, $this->dayEnds );
         
-        $todayReport        =   DashboardDay::from( $this->dayStarts )
-            ->to( $this->dayEnds )
-            ->firstOrCreate([
+        $todayReport        =   DashboardDay::firstOrCreate([
                 'range_starts'  =>  $this->dayStarts,
                 'range_ends'    =>  $this->dayEnds,
                 'day_of_year'   =>  Carbon::parse( $this->dayStarts )->dayOfYear
@@ -92,12 +88,6 @@ class ReportService
         $this->refreshFromDashboardDay( $todayReport );
 
         $todayReport->save();
-
-        /**
-         * When a dashboard day is computed, 
-         * we should trigger an event.
-         */
-        DashboardDayAfterComputedEvent::dispatch( $todayReport );
 
         return $todayReport;
     }
@@ -157,12 +147,6 @@ class ReportService
         }
         
         $dashboardMonth->save();
-
-        /**
-         * When a dashboard month is computed, 
-         * we should trigger an event.
-         */
-        DashboardMonthAfterComputedEvent::dispatch( $dashboardMonth );
 
         return $dashboardMonth;
     }
@@ -449,6 +433,9 @@ class ReportService
         $todayReport->total_discounts   = ( $previousReport->total_discounts ?? 0 ) + $totalDiscount;
     }
 
+    /**
+     * @deprecated
+     */
     public function increaseDailyExpenses( CashFlow $cashFlow, $today = null )
     {
         $today  =   $today === null ? DashboardDay::forToday() : $today;
@@ -476,6 +463,9 @@ class ReportService
         return $this->notifyIncorrectDashboardReport();
     }
 
+    /**
+     * @deprecated
+     */
     public function reduceDailyExpenses( CashFlow $cashFlow, $today = null )
     {
         $today  =   $today === null ? DashboardDay::forToday() : $today;
@@ -523,43 +513,12 @@ class ReportService
         ];
     }
 
+    /**
+     * @deprecated
+     */
     public function initializeDailyReport()
     {
         $dashboardDay   =   $this->computeDayReport();
-        $this->initializeWastedGood( $dashboardDay );
-    }
-
-    /**
-     * Will initialize a report for wasted good
-     * @param DashboardDay $dashboardDay
-     * @return void
-     */
-    public function initializeWastedGood( DashboardDay $dashboardDay )
-    {
-        $previousReport                                     =   DashboardDay::forLastRecentDay( $dashboardDay );
-        $dashboardDay->total_unpaid_orders                  =   $previousReport->total_unpaid_orders ?? 0;
-        $dashboardDay->day_unpaid_orders                    =   0;
-        $dashboardDay->total_unpaid_orders_count            =   $previousReport->total_unpaid_orders_count ?? 0;
-        $dashboardDay->day_unpaid_orders_count              =   0;
-        $dashboardDay->total_paid_orders                    =   $previousReport->total_paid_orders ?? 0;
-        $dashboardDay->day_paid_orders                      =   0;
-        $dashboardDay->total_paid_orders_count              =   $previousReport->total_paid_orders_count ?? 0;
-        $dashboardDay->day_paid_orders_count                =   0;
-        $dashboardDay->total_partially_paid_orders          =   $previousReport->total_partially_paid_orders ?? 0;
-        $dashboardDay->day_partially_paid_orders            =   0;
-        $dashboardDay->total_partially_paid_orders_count    =   $previousReport->total_partially_paid_orders_count ?? 0;
-        $dashboardDay->day_partially_paid_orders_count      =   0;
-        $dashboardDay->total_income                         =   $previousReport->total_income ?? 0;
-        $dashboardDay->day_income                           =   0;
-        $dashboardDay->total_discounts                      =   $previousReport->total_discounts ?? 0;
-        $dashboardDay->day_discounts                        =   0;
-        $dashboardDay->total_wasted_goods_count             =   $previousReport->total_wasted_goods_count ?? 0;
-        $dashboardDay->day_wasted_goods_count               =   0;
-        $dashboardDay->total_wasted_goods                   =   $previousReport->total_wasted_goods ?? 0;
-        $dashboardDay->day_wasted_goods                     =   0;
-        $dashboardDay->total_expenses                       =   $previousReport->total_expenses ?? 0;
-        $dashboardDay->day_expenses                         =   0;
-        $dashboardDay->save();
     }
 
     /**

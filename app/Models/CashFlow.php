@@ -2,6 +2,10 @@
 namespace App\Models;
 
 use App\Casts\DateCast;
+use App\Events\CashFlowHistoryAfterCreatedEvent;
+use App\Events\CashFlowHistoryAfterDeletedEvent;
+use App\Events\CashFlowHistoryAfterUpdatedEvent;
+use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CashFlow extends NsModel
@@ -55,6 +59,12 @@ class CashFlow extends NsModel
      * Unique identifier for customer credit debit.
      */
     const ACCOUNT_CUSTOMER_DEBIT    =   '008';
+
+    protected $dispatchEvents   =   [
+        'created'   =>  CashFlowHistoryAfterCreatedEvent::class,
+        'updated'   =>  CashFlowHistoryAfterUpdatedEvent::class,
+        'deleted'   =>  CashFlowHistoryAfterDeletedEvent::class,
+    ];
 
     public function expense()
     {

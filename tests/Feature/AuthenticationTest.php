@@ -281,7 +281,8 @@ class AuthenticationTest extends TestCase
         $user->activation_expiration    =   ns()->date->addDay();
         $user->save();
 
-        $password   =   $this->faker->password();
+        // we'll keeping that way as it's a weak password for testing purpose.
+        $password   =   '123456';
 
         $response = $this
             ->withSession([])

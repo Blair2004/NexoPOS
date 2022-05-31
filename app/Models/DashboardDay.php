@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Events\DashboardDayAfterCreatedEvent;
+use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Services\DateService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DashboardDay extends NsModel
@@ -13,8 +13,13 @@ class DashboardDay extends NsModel
     use HasFactory;
 
     public $timestamps      =   false;
-    protected $fillable     =   [ 'range_starts', 'range_ends' ];
+    protected $fillable     =   [ 'range_starts', 'range_ends', 'day_of_year' ];
     protected $table        =   'nexopos_' . 'dashboard_days';
+
+    protected $dispatchEvents   =   [
+        'created'   =>  DashboardDayAfterCreatedEvent::class,
+        'updated'   =>  DashboardDayAfterUpdatedEvent::class,
+    ];
 
     public function scopeFrom( $query, $param )
     {
@@ -30,9 +35,11 @@ class DashboardDay extends NsModel
     {
         $date   =   app()->make( DateService::class );
         
-        return DashboardDay::from( $date->copy()->startOfDay()->toDateTimeString() )
-            ->to( $date->copy()->endOfDay()->toDateTimeString() )
-            ->first();
+        return DashboardDay::firstOrCreate([
+            'range_starts'  =>  $date->copy()->startOfDay()->toDateTimeString(),
+            'range_ends'    =>  $date->copy()->endOfDay()->toDateTimeString(),
+            'day_of_year'   =>  $date->dayOfYear
+        ]);
     }
 
     public static function forDayBefore( $day ): DashboardDay
@@ -56,20 +63,10 @@ class DashboardDay extends NsModel
     {
         $date       =   Carbon::parse( $day->range_starts )->subDay();
 
-        $dashboardDay   =   DashboardDay::from( $date->startOfDay()->toDateTimeString() )
-            ->to( $date->endOfDay()->toDateTimeString() )
-            ->first();
-            
-        if ( $dashboardDay instanceof DashboardDay ) {
-            return $dashboardDay;
-        }
-
-        $previousDashboardDay                   =   new DashboardDay;
-        $previousDashboardDay->range_starts     =   $date->startOfDay()->toDateTimeString();
-        $previousDashboardDay->range_ends       =   $date->endOfDay()->toDateTimeString();
-        $previousDashboardDay->day_of_year      =   $date->dayOfYear;
-        $previousDashboardDay->save();
-
-        return $previousDashboardDay;
+        return DashboardDay::firstOrCreate([
+            'range_starts'  =>  $date->startOfDay()->toDateTimeString(),
+            'range_ends'    =>  $date->endOfDay()->toDateTimeString(),
+            'day_of_year'  =>  $date->dayOfYear,
+        ]);
     }
 }

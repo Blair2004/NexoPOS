@@ -128,19 +128,20 @@ class ExpenseService
 
     /**
      * @deprecated
+     * @use getAccountType
      */
     public function getCategories( $id = null )
     {
         if ( $id !== null ) {
-            $category   =   ExpenseCategory::find( $id );
-            if ( ! $category instanceof ExpenseCategory ) {
-                throw new NotFoundException( __( 'Unable to find the requested expense category using the provided id.' ) );
+            $category   =   AccountType::find( $id );
+            if ( ! $category instanceof AccountType ) {
+                throw new NotFoundException( __( 'Unable to find the requested account category using the provided id.' ) );
             }
 
             return $category;
         }
 
-        return ExpenseCategory::get();
+        return AccountType::get();
     }
 
     /**
@@ -198,9 +199,9 @@ class ExpenseService
      */
     public function deleteCategory( $id, $force = false )
     {
-        $expenseCategory    =   $this->getCategories( $id );
+        $accountType    =   $this->getAccountTypeByID( $id );
 
-        if ( $expenseCategory->expenses->count() > 0 && $force === false ) {
+        if ( $accountType->expenses->count() > 0 && $force === false ) {
             throw new NotAllowedException( __( 'You cannot delete a category which has expenses bound.' ) );
         }
 
@@ -208,11 +209,11 @@ class ExpenseService
          * if there is not expense, it 
          * won't be looped
          */
-        $expenseCategory->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function( $expense ) {
             $expense->delete();
         });
 
-        $expenseCategory->delete();
+        $accountType->delete();
         
         return [
             'status'    =>  'success',
@@ -228,13 +229,13 @@ class ExpenseService
      */
     public function getCategory( $id )
     {
-        $expenseCategory    =   ExpenseCategory::find( $id );
+        $accountType    =   AccountType::with( 'expenses' )->find( $id );
         
-        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+        if ( ! $accountType instanceof AccountType ) {
             throw new NotFoundException( __( 'Unable to find the expense category using the provided ID.' ) );
         }
 
-        return $expenseCategory;
+        return $accountType;
     }
 
     /**
@@ -246,7 +247,7 @@ class ExpenseService
      */
     public function createCategory( $fields )
     {
-        $category    =   new ExpenseCategory;
+        $category    =   new AccountType;
 
         foreach( $fields as $field => $value ) {
             $category->$field    =   $value;
@@ -330,8 +331,8 @@ class ExpenseService
 
     public function getCategoryExpense( $id )
     {
-        $expenseCategory    =   $this->getCategory( $id );
-        return $expenseCategory->expenses;
+        $accountType    =   $this->getCategory( $id );
+        return $accountType->expenses;
     }
 
     public function recordCashFlowHistory( Expense $expense )
@@ -393,7 +394,7 @@ class ExpenseService
 
             $history->save();
 
-            event( new CashFlowHistoryAfterCreatedEvent( $history ) );
+            CashFlowHistoryAfterCreatedEvent::dispatch( $history );
         }
     }
 
@@ -494,7 +495,7 @@ class ExpenseService
             $procurement->payment_status === Procurement::PAYMENT_PAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
-            $expenseCategory    =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_PROCUREMENTS );
+            $accountTypeCode        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_PROCUREMENTS );
                                     
             /**
              * this behave as a flash expense
@@ -507,7 +508,7 @@ class ExpenseService
             $expense->procurement_id    =   $procurement->id;
             $expense->name              =   sprintf( __( 'Procurement : %s' ), $procurement->name );
             $expense->id                =   0; // this is not assigned to an existing expense
-            $expense->category          =   $expenseCategory;
+            $expense->category          =   $accountTypeCode;
             $expense->created_at        =   $procurement->created_at;
             $expense->updated_at        =   $procurement->updated_at;
 

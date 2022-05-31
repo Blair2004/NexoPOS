@@ -5,8 +5,9 @@ namespace App\Providers;
 use App\Classes\Hook;
 use App\Filters\MenusFilter;
 use App\Listeners\CashRegisterEventsSubscriber;
-use App\Listeners\CoreEventSubscriber;
 use App\Listeners\CustomerEventSubscriber;
+use App\Listeners\DashboardDayAfterCreatedEventListener;
+use App\Listeners\DashboardDayAfterUpdatedEventListener;
 use App\Listeners\ExpensesEventSubscriber;
 use App\Listeners\OrderEventsSubscriber;
 use Illuminate\Auth\Events\Registered;
@@ -53,7 +54,6 @@ class EventServiceProvider extends ServiceProvider
             Event::subscribe( ProductEventsSubscriber::class );
             Event::subscribe( OrderEventsSubscriber::class );
             Event::subscribe( ExpensesEventSubscriber::class );
-            Event::subscribe( CoreEventSubscriber::class );
             Event::subscribe( CustomerEventSubscriber::class );
             Event::subscribe( CashRegisterEventsSubscriber::class );
         }

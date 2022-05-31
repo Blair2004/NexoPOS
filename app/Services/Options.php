@@ -28,6 +28,28 @@ class Options
     }
 
     /**
+     * Will reset the default options
+     * @param array $options
+     * @return void
+     */
+    public function setDefault( $options = [] ): void
+    {
+        Option::truncate();
+
+        $defaultOptions     =   [
+            'ns_registration_enabled'   =>  false,
+            'ns_store_name'             =>  'NexoPOS 4.x',
+            'ns_pos_order_types'        =>  [ 'takeaway', 'delivery' ]
+        ];
+
+        $options        =   array_merge( $defaultOptions, $options );
+
+        foreach( $options as $key => $value ) {
+            $this->set( $key, $value );
+        }
+    }
+
+    /**
      * return option service
      * @return object
      */

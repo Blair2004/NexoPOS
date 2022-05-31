@@ -209,9 +209,7 @@ class Setup
          * then we can launch option service
          */
         $this->options      =   app()->make( Options::class );
-        $this->options->set( 'ns_store_name', $fields[ 'ns_store_name' ] );
-        $this->options->set( 'ns_registration_enabled', false );
-        $this->options->set( 'ns_pos_order_types', [ 'takeaway', 'delivery' ]);
+        $this->options->setDefault();
 
         return [
             'status'    =>  'success',

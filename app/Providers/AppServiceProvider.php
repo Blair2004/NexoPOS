@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
+use App\Jobs\RefreshReportJob;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\AuthService;
@@ -217,6 +218,8 @@ class AppServiceProvider extends ServiceProvider
                 $app->make( BarcodeService::class ),
             );
         });
+
+        $this->app->bindMethod([ RefreshReportJob::class, 'handle' ], fn( $job, $app ) => $job->handle( $app->make( ReportService::class ) ) );
 
         /**
          * When the module has started, 

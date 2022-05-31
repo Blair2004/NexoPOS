@@ -18,7 +18,7 @@ class HardResetTest extends TestCase
      */
     public function testHardResetSystem()
     {
-        Artisan::call( 'ns:reset' );
+        Artisan::call( 'ns:reset --mode=hard' );
         
         Artisan::call( 'ns:setup', [ 
             '--admin_username'  =>  env( 'NS_RESET_USERNAME', 'admin' ),
@@ -30,6 +30,8 @@ class HardResetTest extends TestCase
         Artisan::call( 'migrate --path=database/migrations/default' );
         Artisan::call( 'migrate --path=database/migrations/create-tables' );
         Artisan::call( 'migrate --path=database/migrations/misc' );
+
+        ns()->option->setDefault();
 
         return $this->assertTrue( true );
     }
