@@ -37,7 +37,7 @@
     "postcss-mixins": "^9.0.1",
     "postcss-nested": "^5.0.6",
     "postcss-nesting": "^10.1.4",
-    "postcss-scss": "^4.0.3",
+    "postcss-scss": "^4.0.4",
     "postcss-simple-vars": "^6.0.3",
     "postcss-url": "^10.1.3",
     "pusher-js": "^7.0.3",
@@ -56,7 +56,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
     "@ckeditor/ckeditor5-vue": "^4.0.0",
-    "@ckeditor/ckeditor5-vue2": "^3.0.0",
+    "@ckeditor/ckeditor5-vue2": "^3.0.1",
     "@dicebear/avatars": "^4.9.0",
     "@dicebear/avatars-avataaars-sprites": "^4.9.0",
     "@wordpress/hooks": "^3.7.0",
