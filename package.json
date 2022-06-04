@@ -60,7 +60,7 @@
     "@dicebear/avatars": "^4.9.0",
     "@dicebear/avatars-avataaars-sprites": "^4.9.0",
     "@wordpress/hooks": "^3.7.0",
-    "acorn": "^8.6.0",
+    "acorn": "^8.7.1",
     "apexcharts": "^3.35.0",
     "chart.js": "^3.3.0",
     "css-loader": "^6.5.1",
