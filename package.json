@@ -18,7 +18,7 @@
     "asset-build": "npm run font-build && npm run css-build"
   },
   "devDependencies": {
-    "@types/node": "^17.0.25",
+    "@types/node": "^17.0.39",
     "autoprefixer": "^10.4.7",
     "axios": "^0.27.2",
     "babel-loader": "^8.2.5",
@@ -36,7 +36,7 @@
     "postcss-import": "^14.1.0",
     "postcss-mixins": "^9.0.1",
     "postcss-nested": "^5.0.6",
-    "postcss-nesting": "^10.1.4",
+    "postcss-nesting": "^10.1.8",
     "postcss-scss": "^4.0.4",
     "postcss-simple-vars": "^6.0.3",
     "postcss-url": "^10.1.3",
@@ -56,12 +56,12 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^34.0.0",
     "@ckeditor/ckeditor5-vue": "^4.0.0",
-    "@ckeditor/ckeditor5-vue2": "^3.0.0",
+    "@ckeditor/ckeditor5-vue2": "^3.0.1",
     "@dicebear/avatars": "^4.9.0",
     "@dicebear/avatars-avataaars-sprites": "^4.9.0",
     "@wordpress/hooks": "^3.7.0",
     "acorn": "^8.7.1",
-    "apexcharts": "^3.35.0",
+    "apexcharts": "^3.35.3",
     "chart.js": "^3.3.0",
     "css-loader": "^6.5.1",
     "currency.js": "^2.0.4",
@@ -79,7 +79,7 @@
     "vue-html-to-paper": "1.4.4",
     "rxjs": "^7.5.5",
     "vue-custom-scrollbar": "^1.4.4",
-    "vue-router": "^3.4.3",
+    "vue-router": "^3.5.4",
     "vue-upload-component": "^2.8.20",
     "vue-virtual-collection": "^1.5.0",
     "vue2-daterange-picker": "^0.6.6"
