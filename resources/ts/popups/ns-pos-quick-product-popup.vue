@@ -11,7 +11,9 @@
                 <ns-spinner></ns-spinner>
             </div>
             <template v-if="loaded">
-                <ns-field v-for="(field, key) of fields" :key="key" :field="field"></ns-field>
+                <template v-for="( field, key ) of fields">
+                    <ns-field v-if="( field.show && field.show( form ) ) || ! field.show" :key="key" :field="field"></ns-field>
+                </template>
             </template>
         </div>
         <div class="ns-box-footer border-t flex justify-between p-2">
@@ -62,8 +64,14 @@ export default {
                 }
             }
 
-            product.unit_name   =   this.units.filter( unit => unit.id === product.unit_id )[0].name;
-            product.quantity    =   parseFloat( product.quantity );
+            if ( product.product_type === 'product' ) {
+                product.unit_name   =   this.units.filter( unit => unit.id === product.unit_id )[0].name;
+                product.quantity    =   parseFloat( product.quantity );
+            } else {
+                product.unit_name   =   __( 'N/A' );
+                product.unit_price  =   0;
+                product.quantity    =   1; // it's always 1
+            }
             
             POS.addToCart( product );
 
@@ -115,6 +123,11 @@ export default {
             this.loaded     =   true;
         }
     },
+    computed: {
+        form() {
+            return this.validation.extractFields( this.fields );
+        }
+    },
     data() {
         return {
             units: [],
@@ -129,18 +142,47 @@ export default {
                     description: __( 'Provide a unique name for the product.' ),
                     validation: 'required',
                 }, {
+                    label: __( 'Product Type' ),
+                    name: 'product_type',
+                    type: 'select',
+                    description: __( 'Define the product type.' ),
+                    options: [{
+                        label: __( 'Regular' ),
+                        value: 'regular',
+                    }, {
+                        label: __( 'Dynamic' ),
+                        value: 'dynamic',
+                    }],
+                    value: 'product',
+                    validation: 'required',
+                }, {
+                    label: __( 'Rate' ),
+                    name: 'rate',
+                    type: 'text',
+                    description: __( 'In case the product is computed based on a percentage, define the rate here.' ),
+                    validation: 'required',
+                    show( form ) {
+                        return form.product_type === 'dynamic';
+                    }
+                }, {
                     label: __( 'Unit Price' ),
                     name: 'unit_price',
                     type: 'text',
                     description: __( 'Define what is the sale price of the item.' ),
-                    validation: 'required',
+                    validation: '',
+                    show( form ) {
+                        return form.product_type === 'product';
+                    }
                 }, {
                     label: __( 'Quantity' ),
                     name: 'quantity',
                     type: 'text',
                     value: 1,
                     description: __( 'Set the quantity of the product.' ),
-                    validation: 'required'
+                    validation: '',
+                    show( form ) {
+                        return form.product_type === 'product';
+                    }
                 }, {
                     label: __( 'Unit' ),
                     name: 'unit_id',
@@ -149,7 +191,10 @@ export default {
                         // ...
                     ],
                     description: __( 'Assign a unit to the product.' ),
-                    validation: 'required',                    
+                    validation: '',  
+                    show( form ) {
+                        return form.product_type === 'product';
+                    }                  
                 }, {
                     label: __( 'Tax Type' ),
                     name: 'tax_type',
@@ -166,7 +211,10 @@ export default {
                             value: 'exclusive'
                         }
                     ],
-                    description: __( 'Define what is tax type of the item.' ),               
+                    description: __( 'Define what is tax type of the item.' ),  
+                    show( form ) {
+                        return form.product_type === 'product';
+                    }             
                 }, {
                     label: __( 'Tax Group' ),
                     name: 'tax_group_id',
@@ -174,7 +222,10 @@ export default {
                     options: [
                         // ...
                     ],
-                    description: __( 'Choose the tax group that should apply to the item.' ),                   
+                    description: __( 'Choose the tax group that should apply to the item.' ),  
+                    show( form ) {
+                        return form.product_type === 'product';
+                    }                 
                 }
             ]
         }

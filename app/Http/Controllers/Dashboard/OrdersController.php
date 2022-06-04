@@ -201,8 +201,8 @@ class OrdersController extends DashboardController
                 'ns_pos_show_quantity'                  =>  ns()->option->get( 'ns_pos_show_quantity', 'no' ) === 'no' ? false : true,
                 'ns_pos_new_item_audio'                 =>  ns()->option->get( 'ns_pos_new_item_audio', '' ),
                 'ns_pos_complete_sale_audio'            =>  ns()->option->get( 'ns_pos_complete_sale_audio', '' ),
-                'ns_pos_allow_wholesale_price'          =>  ns()->option->get( 'ns_pos_allow_wholesale_price', 'yes' ) === 'yes' ? true : false,
-                'ns_pos_allow_decimal_quantities'       =>  ns()->option->get( 'ns_pos_allow_decimal_quantities', 'yes' ) === 'yes' ? true : false,
+                'ns_pos_allow_wholesale_price'          =>  ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
+                'ns_pos_allow_decimal_quantities'       =>  ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
             ]),
             'urls'              =>  [
                 'sale_printing_url'     =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
