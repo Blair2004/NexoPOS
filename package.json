@@ -65,7 +65,7 @@
     "chart.js": "^3.3.0",
     "css-loader": "^6.5.1",
     "currency.js": "^2.0.4",
-    "dayjs": "^1.11.1",
+    "dayjs": "^1.11.2",
     "jspdf": "^2.1.1",
     "mini-css-extract-plugin": "^2.5.2",
     "moment": "^2.29.3",
