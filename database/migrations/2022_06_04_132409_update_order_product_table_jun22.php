@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'type' ) ) {
-                $table->string( 'product_type' )->default( 'regular' );
+                $table->string( 'product_type' )->default( 'product' );
             }
 
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'rate' ) ) {

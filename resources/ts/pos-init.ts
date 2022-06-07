@@ -1162,7 +1162,7 @@ export class POS {
                 });
 
             if ( dynamicProducts.length > 0 ) {
-                dynamicProducts.reduce( (b,a) => b + a );
+                dynamicProductValue     =   dynamicProducts.reduce( (b,a) => b + a );
             }
             
             order.subtotal = productTotalValue + dynamicProductValue;
@@ -1305,8 +1305,6 @@ export class POS {
          */
         let productData = new Object;
 
-        console.log( product );
-
         /**
          * Let's combien the built product
          * with the data resolved by the promises
@@ -1318,6 +1316,7 @@ export class POS {
             discount: 0,
             discount_percentage: 0,
             product_type: product.product_type || 'product',
+            rate: product.rate || 0,
             quantity: product.quantity || 0,
             tax_group_id: product.tax_group_id,
             tax_type: product.tax_type || undefined,
