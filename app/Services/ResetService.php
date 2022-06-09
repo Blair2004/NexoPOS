@@ -96,13 +96,14 @@ class ResetService
     {
         Artisan::call( 'migrate:reset --path=/database/migrations/default' );
         Artisan::call( 'migrate:reset --path=/database/migrations/create-tables' );
+        Artisan::call( 'migrate:reset --path=/database/migrations/misc' );
         
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
         DotenvEditor::save();
 
-        Migration::truncate();
+        // Migration::truncate();
 
         Artisan::call( 'key:generate' );
 

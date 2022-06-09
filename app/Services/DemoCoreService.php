@@ -24,7 +24,8 @@ class DemoCoreService
 {
     protected $categoryService;
     protected $productService;
-    protected $orderCount           =   1;
+    protected $orderCount           =   14;
+    protected $daysRange            =   14;
     protected $customOrderParams    =   [];
     protected $customDate           =   true;
     protected $customProductParams  =   []; 
@@ -262,9 +263,9 @@ class DemoCoreService
          */
         $reportService      =   app()->make( ReportService::class );
         $dates              =   [];
-        $startOfRange       =   ns()->date->clone()->subDays(7);
+        $startOfRange       =   ns()->date->clone()->subDays($this->daysRange);
 
-        for( $i = 0; $i <= 7; $i++ ) {
+        for( $i = 0; $i <= $this->daysRange; $i++ ) {
             $dates[]    =   $startOfRange->clone();
             $startOfRange->addDay();
         }

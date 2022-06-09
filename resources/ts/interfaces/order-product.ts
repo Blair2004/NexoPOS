@@ -9,6 +9,8 @@ export interface OrderProduct extends Product {
     unit_name: string | undefined;
     unit_price: number;    
     total_price: number;
+    product_type: 'product' | 'dynamic';
+    rate?: number;
     quantity: number;
     product?: Product;
     $quantities?: () => ProductUnitQuantity

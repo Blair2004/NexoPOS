@@ -1143,11 +1143,29 @@ export class POS {
 
         const products = this.products.getValue();
         let order = this.order.getValue();
+
         const productTotal = products
+            .filter( product => product.product_type !== 'dynamic' )
             .map(product => product.total_price);
 
         if (productTotal.length > 0) {
-            order.subtotal = productTotal.reduce((b, a) => b + a);
+            let productTotalValue       =   productTotal.reduce((b, a) => b + a);
+            let dynamicProductValue     =   0;
+
+            let dynamicProducts     =   products
+                .filter( product => product.product_type === 'dynamic' )
+                .map( product => {
+                    product.unit_price      =   ( productTotalValue * product.rate ) / 100;
+                    product.total_price     =   product.unit_price * product.quantity;
+
+                    return product.total_price;
+                });
+
+            if ( dynamicProducts.length > 0 ) {
+                dynamicProductValue     =   dynamicProducts.reduce( (b,a) => b + a );
+            }
+            
+            order.subtotal = productTotalValue + dynamicProductValue;
         } else {
             order.subtotal = 0;
         }
@@ -1297,6 +1315,8 @@ export class POS {
             discount_type: 'percentage',
             discount: 0,
             discount_percentage: 0,
+            product_type: product.product_type || 'product',
+            rate: product.rate || 0,
             quantity: product.quantity || 0,
             tax_group_id: product.tax_group_id,
             tax_type: product.tax_type || undefined,
@@ -1578,15 +1598,17 @@ export class POS {
          * determining what is the 
          * real sale price
          */
-        if (product.mode === 'normal') {
-            product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
-            product.tax_value = product.$quantities().sale_price_tax * product.quantity;
-        } else if (product.mode === 'wholesale') {
-            product.unit_price = this.getWholesalePrice(product.$quantities(), product.$original());
-            product.tax_value = product.$quantities().wholesale_price_tax * product.quantity;
-        } if (product.mode === 'custom') {
-            product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
-            product.tax_value = product.$quantities().custom_price_tax * product.quantity;
+        if ( product.product_type === 'product' ) {
+            if (product.mode === 'normal') {
+                product.unit_price = this.getSalePrice(product.$quantities(), product.$original());
+                product.tax_value = product.$quantities().sale_price_tax * product.quantity;
+            } else if (product.mode === 'wholesale') {
+                product.unit_price = this.getWholesalePrice(product.$quantities(), product.$original());
+                product.tax_value = product.$quantities().wholesale_price_tax * product.quantity;
+            } if (product.mode === 'custom') {
+                product.unit_price = this.getCustomPrice(product.$quantities(), product.$original());
+                product.tax_value = product.$quantities().custom_price_tax * product.quantity;
+            }
         }
 
         /**
