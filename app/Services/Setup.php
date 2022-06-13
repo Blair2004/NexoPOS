@@ -165,30 +165,7 @@ class Setup
             'language'  =>  'en'
         ]);
 
-        /**
-         * let's create default payment
-         * for the system
-         */
-        $paymentType                =   new PaymentType();
-        $paymentType->label         =   __( 'Cash' );
-        $paymentType->identifier    =   'cash-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
-
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Bank Payment' );
-        $paymentType->identifier    =   'bank-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
-
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Customer Account' );
-        $paymentType->identifier    =   'account-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
+        $this->createDefaultPayment( $user );
 
         $domain     =   pathinfo( url()->to( '/' ) );
 
@@ -215,6 +192,34 @@ class Setup
             'status'    =>  'success',
             'message'   =>  __( 'NexoPOS has been successfuly installed.' )
         ];
+    }
+
+    public function createDefaultPayment( $user )
+    {
+        /**
+         * let's create default payment
+         * for the system
+         */
+        $paymentType                =   new PaymentType();
+        $paymentType->label         =   __( 'Cash' );
+        $paymentType->identifier    =   'cash-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
+
+        $paymentType                =   new PaymentType;
+        $paymentType->label         =   __( 'Bank Payment' );
+        $paymentType->identifier    =   'bank-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
+
+        $paymentType                =   new PaymentType;
+        $paymentType->label         =   __( 'Customer Account' );
+        $paymentType->identifier    =   'account-payment';
+        $paymentType->readonly      =   true;
+        $paymentType->author        =   $user->id;
+        $paymentType->save();
     }
 
     public function testDBConnexion()

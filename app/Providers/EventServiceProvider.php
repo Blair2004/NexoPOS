@@ -39,30 +39,43 @@ class EventServiceProvider extends ServiceProvider
     }
 
     /**
+     * Get the listener directories that should be used to discover events.
+     *
+     * @return array
+     */
+    protected function discoverEventsWithin()
+    {
+        /**
+         * @var ModulesService
+         */
+        $modulesServices    =   app()->make( ModulesService::class );
+
+        $paths              =   collect( $modulesServices->getEnabled() )->map( function( $module ) {
+            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+        })->values()->toArray();
+        
+        return $paths;
+    }
+
+    /**
      * Register any events for your application.
      *
      * @return void
      */
     public function boot()
     {
-        /**
-         * if something doesn't prevent the subscribers to be registered
-         * We'll then register them.
-         */
-        if ( Hook::filter( 'ns-register-subscribers', true ) ) {
-            Event::subscribe( ProcurementEventsSubscriber::class );
-            Event::subscribe( ProductEventsSubscriber::class );
-            Event::subscribe( OrderEventsSubscriber::class );
-            Event::subscribe( ExpensesEventSubscriber::class );
-            Event::subscribe( CustomerEventSubscriber::class );
-            Event::subscribe( CashRegisterEventsSubscriber::class );
-        }
+        Event::subscribe( ProcurementEventsSubscriber::class );
+        Event::subscribe( ProductEventsSubscriber::class );
+        Event::subscribe( OrderEventsSubscriber::class );
+        Event::subscribe( ExpensesEventSubscriber::class );
+        Event::subscribe( CustomerEventSubscriber::class );
+        Event::subscribe( CashRegisterEventsSubscriber::class );
 
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);
     }
 
     public function shouldDiscoverEvents()
     {
-        return true;
+        return false;
     }
 }

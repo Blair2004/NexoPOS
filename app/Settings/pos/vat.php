@@ -30,7 +30,9 @@ if ( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_flat_v
         'label'     =>  __( 'Tax Group' ),
         'description'   =>  __( 'Define the tax group that applies to the sales.' )
     ];
+}
 
+if( in_array( ns()->option->get( 'ns_pos_vat' ), [ 'flat_vat', 'products_vat', 'products_flat_vat', 'variable_vat', 'products_variable_vat' ]) ) {
     $fields[]       =   [
         'type'      =>  'select',
         'name'      =>  'ns_pos_tax_type',

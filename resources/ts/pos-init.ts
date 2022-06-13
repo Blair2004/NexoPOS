@@ -209,12 +209,13 @@ export class POS {
          * and set it as default tax group.
          */
         this.initialQueue.push(() => new Promise((resolve, reject) => {
-            const options = this.options.getValue();
-            const order = this.order.getValue();
+            const options   = this.options.getValue();
+            const order     = this.order.getValue();
+
+            order.tax_type  = options.ns_pos_tax_type;
 
             if (options.ns_pos_tax_group !== false) {
                 order.tax_group_id = options.ns_pos_tax_group;
-                order.tax_type = options.ns_pos_tax_type;
                 this.order.next(order);
             }
 
@@ -498,7 +499,13 @@ export class POS {
             order       =   this.computeProductsTaxes( order );
 
             if (order.tax_group_id === undefined || order.tax_group_id === null) {
-                return reject(false);
+                
+                this.computeOrderTaxes( order );
+
+                return resolve({ 
+                    data: { order },
+                    status: 'success'
+                });
             }
 
             const groups = order.tax_groups;
@@ -507,11 +514,18 @@ export class POS {
              * if the tax group is already cached
              * we'll pull that rather than doing a new request.
              */
-            if (groups && groups[order.tax_group_id] !== undefined) {
-                order.taxes = groups[order.tax_group_id].taxes.map(tax => {
-                    tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
-                    return tax;
-                });
+            if (groups) {
+
+                /**
+                 * Only if a tax group is assigned to the 
+                 * order we should then get the real VAT value.
+                 */
+                if ( groups[order.tax_group_id] !== undefined ) {
+                    order.taxes = groups[order.tax_group_id].taxes.map(tax => {
+                        tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
+                        return tax;
+                    });
+                }
 
                 order       =   this.computeOrderTaxes( order );
 
@@ -567,7 +581,7 @@ export class POS {
     computeOrderTaxes( order: Order ) {
         const posVat    =   this.options.getValue().ns_pos_vat;
 
-        if (['flat_vat', 'variable_vat', 'products_variable_vat'].includes(posVat) && order.taxes && order.taxes.length > 0) {
+        if ([ 'flat_vat', 'variable_vat', 'products_variable_vat' ].includes(posVat) && order.taxes && order.taxes.length > 0) {
             order.tax_value += order.taxes
                 .map(tax => tax.tax_value)
                 .reduce((before, after) => before + after);
@@ -597,7 +611,7 @@ export class POS {
 
         const posVat = this.options.getValue().ns_pos_vat;
 
-        if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) && totalTaxes.length > 0) {
+        if ([ 'products_flat_vat', 'products_variable_vat', 'products_vat' ].includes(posVat) && totalTaxes.length > 0) {
             order.product_taxes += totalTaxes.reduce((b, a) => b + a);
         }
 
@@ -1185,6 +1199,7 @@ export class POS {
         });
 
         order.total_coupons = 0;
+
         if (totalValue.length > 0) {
             order.total_coupons = totalValue.reduce((before, after) => before + after);
         }
@@ -1244,9 +1259,7 @@ export class POS {
 
         let tax_value   =   0;
 
-        if (['flat_vat', 'variable_vat'].includes(posVat) ) {
-            tax_value   =   order.tax_value;
-        } else if (['products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
+        if (['flat_vat', 'variable_vat', 'products_vat', 'products_flat_vat', 'products_variable_vat'].includes(posVat) ) {
             tax_value   =   order.tax_value ;
         }
 
@@ -1470,7 +1483,7 @@ export class POS {
     }
 
     refreshProducts(products = null) {
-        products.forEach(product => {
+        products.forEach( product => {
             this.computeProduct(product);
         });
     }

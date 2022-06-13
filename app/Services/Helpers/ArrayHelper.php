@@ -61,9 +61,20 @@ trait ArrayHelper {
      * @param Array [ value, label ]
      * @return array of options
      */
-    static function toJsOptions( Collection|EloquentCollection $collections, $config ): Array 
+    static function toJsOptions( Collection|EloquentCollection $collections, $config, $defaults = [] ): Array 
     {
         $result         =   [];
+
+        /**
+         * This will populate defaults
+         * value for the options
+         */
+        if( ! empty ( $defaults ) ) {
+            foreach( $defaults as $value => $label ) {
+                $result[]  =  compact( 'label', 'value' );
+            }
+        }
+
         if ( $collections ) {
             foreach ( $collections as $collection ) {
                 $id     =   $config[0];

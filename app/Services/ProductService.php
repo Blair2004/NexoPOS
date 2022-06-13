@@ -291,7 +291,7 @@ class ProductService
             }
         }
         
-        $product->author        =   Auth::id();
+        $product->author        =   $fields[ 'author' ] ?? Auth::id();
         $product->save();
 
         /**
@@ -309,7 +309,7 @@ class ProductService
         /**
          * save product images
          */
-        $this->saveGallery( $product, $fields[ 'images' ]);
+        $this->saveGallery( $product, $fields[ 'images' ] ?? [] );
 
         /**
          * We'll now save all attached sub items
@@ -446,7 +446,7 @@ class ProductService
             $this->__fillProductFields( $product, compact( 'field', 'value', 'mode', 'fields' ) );
         }
         
-        $product->author        =   Auth::id();
+        $product->author        =   $fields[ 'author' ] ?? Auth::id();
         $product->save();
 
         /**
@@ -458,7 +458,7 @@ class ProductService
         /**
          * save product images
          */
-        $this->saveGallery( $product, $fields[ 'images' ]);
+        $this->saveGallery( $product, $fields[ 'images' ] ?? [] );
 
         /**
          * We'll now save all attached sub items
@@ -681,48 +681,51 @@ class ProductService
 
     private function __computeUnitQuantities( $fields, $product )
     {
-        foreach( $fields[ 'units' ][ 'selling_group' ] as $group ) {
+        if( $fields[ 'units' ] ) {
 
-            $unitQuantity    =   $this->getUnitQuantity(
-                $product->id,
-                $group[ 'unit_id' ]
-            );
-
-            if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
-                $unitQuantity               =   new ProductUnitQuantity;
-                $unitQuantity->unit_id      =   $group[ 'unit_id' ];
-                $unitQuantity->product_id   =   $product->id;
-                $unitQuantity->quantity     =   0;
+            foreach( $fields[ 'units' ][ 'selling_group' ] as $group ) {
+    
+                $unitQuantity    =   $this->getUnitQuantity(
+                    $product->id,
+                    $group[ 'unit_id' ]
+                );
+    
+                if ( ! $unitQuantity instanceof ProductUnitQuantity ) {
+                    $unitQuantity               =   new ProductUnitQuantity;
+                    $unitQuantity->unit_id      =   $group[ 'unit_id' ];
+                    $unitQuantity->product_id   =   $product->id;
+                    $unitQuantity->quantity     =   0;
+                }
+    
+                /**
+                 * We don't need tos ave all the informations
+                 * available on the group variable, that's why we define
+                 * explicitely how everything is saved here.
+                 */
+                $unitQuantity->sale_price               =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
+                $unitQuantity->sale_price               =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
+                $unitQuantity->sale_price_edit          =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
+                $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
+                $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
+                $unitQuantity->low_quantity             =   $group[ 'low_quantity' ] ?? 0;
+                $unitQuantity->stock_alert_enabled      =   $group[ 'stock_alert_enabled' ] ?? false;
+    
+                /**
+                 * Let's compute the tax only
+                 * when the tax group is provided.
+                 */
+                $this->taxService->computeTax( 
+                    $unitQuantity, 
+                    $fields[ 'tax_group_id' ] ?? null, 
+                    $fields[ 'tax_type' ] ?? null 
+                );
+    
+                /**
+                 * save custom barcode for the created unit quantity
+                 */
+                $unitQuantity->barcode      =       $product->barcode . '-' . $unitQuantity->id;
+                $unitQuantity->save();
             }
-
-            /**
-             * We don't need tos ave all the informations
-             * available on the group variable, that's why we define
-             * explicitely how everything is saved here.
-             */
-            $unitQuantity->sale_price               =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-            $unitQuantity->sale_price               =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-            $unitQuantity->sale_price_edit          =   $this->currency->define( $group[ 'sale_price_edit' ] )->getRaw();
-            $unitQuantity->wholesale_price_edit     =   $this->currency->define( $group[ 'wholesale_price_edit' ] )->getRaw();
-            $unitQuantity->preview_url              =   $group[ 'preview_url' ] ?? '';
-            $unitQuantity->low_quantity             =   $group[ 'low_quantity' ] ?? 0;
-            $unitQuantity->stock_alert_enabled      =   $group[ 'stock_alert_enabled' ] ?? false;
-
-            /**
-             * Let's compute the tax only
-             * when the tax group is provided.
-             */
-            $this->taxService->computeTax( 
-                $unitQuantity, 
-                $fields[ 'tax_group_id' ] ?? null, 
-                $fields[ 'tax_type' ] ?? null 
-            );
-
-            /**
-             * save custom barcode for the created unit quantity
-             */
-            $unitQuantity->barcode      =       $product->barcode . '-' . $unitQuantity->id;
-            $unitQuantity->save();
         }
     }
 

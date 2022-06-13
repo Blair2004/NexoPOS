@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\CashRegisterHistoryAfterCreatedEvent;
 use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Services\CashRegistersService;

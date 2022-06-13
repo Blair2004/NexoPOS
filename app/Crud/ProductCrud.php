@@ -431,7 +431,9 @@ class ProductCrud extends CrudService
                             'fields'    =>  [
                                 [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ]),
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ], [
+                                        null  =>  __( 'Choose Group' )
+                                    ]),
                                     'description'   =>  __( 'Select the tax group that applies to the product/variation.' ),
                                     'name'  =>  'tax_group_id',
                                     'label' =>  __( 'Tax Group' ),
