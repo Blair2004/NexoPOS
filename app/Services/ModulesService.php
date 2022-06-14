@@ -301,33 +301,6 @@ class ModulesService
     }
 
     /**
-     * @deprecated
-     */
-    public function autoloadModule( $config )
-    {
-        /**
-         * Load module folder contents
-         */
-        foreach([ 'Models', 'Services', 'Events', 'Facades', 'Crud', 'Mails', 'Http', 'Queues', 'Gates', 'Observers', 'Listeners', 'Tests', 'Forms', 'Settings' ] as $folder ) {
-            /**
-             * Load all valid files for autoloading.
-             */
-            $files   =   Storage::disk( 'ns-modules' )->allFiles( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
-
-            foreach( $files as $file ) {
-                /**
-                 * @todo run service provider
-                 */
-                $fileInfo   =   pathinfo(  $this->modulesPath . $file );
-
-                if ( $fileInfo[ 'extension' ] == 'php' ) {
-                    include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $file );
-                }
-            }
-        }
-    }
-
-    /**
      * Will check for a specific module or all the module
      * enabled if there is a dependency error.
      * @param null|array $module

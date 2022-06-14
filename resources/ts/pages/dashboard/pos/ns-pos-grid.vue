@@ -68,8 +68,7 @@
                         :collection="products"
                         :height="gridItemsHeight"
                         :width="gridItemsWidth"
-                        v-if="! hasCategories"
-                    >
+                        v-if="! hasCategories">
                         <div slot="cell" class="w-full h-full" slot-scope="{ data }">
                             <div @click="addToTheCart( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
                                 <div class="h-full w-full flex items-center justify-center overflow-hidden">
@@ -79,7 +78,9 @@
                                 <div class="h-0 w-full">
                                     <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                         <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
-                                        <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">{{ data.unit_quantities[0].sale_price | currency }}</span>
+                                        <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
+                                            {{ data.unit_quantities[0].sale_price | currency }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -288,12 +289,15 @@ export default {
         submitSearch( value ) {
             if ( value.length > 0 ) {
                 nsHttpClient.get( `/api/nexopos/v4/products/search/using-barcode/${value}` )
-                    .subscribe( result => {
-                        this.barcode     =   '';
-                        POS.addToCart( result.product );
-                    }, ( error ) => {
-                        this.barcode     =   '';
-                        nsSnackBar.error( error.message ).subscribe();
+                    .subscribe({
+                        next: result => {
+                            this.barcode     =   '';
+                            POS.addToCart( result.product );
+                        },
+                        error: ( error ) => {
+                            this.barcode     =   '';
+                            nsSnackBar.error( error.message ).subscribe();
+                        }
                     })
             }
         },

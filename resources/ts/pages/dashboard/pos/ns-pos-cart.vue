@@ -81,7 +81,7 @@
                                             <i class="las la-trash text-xl"></i>
                                         </a>
                                     </div>
-                                    <div class="px-1" v-if="options.ns_pos_allow_wholesale_price"> 
+                                    <div class="px-1" v-if="options.ns_pos_allow_wholesale_price && allowQuantityModification( product )"> 
                                         <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
@@ -98,10 +98,10 @@
                                         >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1"> 
-                                        <a @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
-                                        <a @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
+                                        <a v-if="allowQuantityModification( product )" @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity :' ) }} {{ product.quantity }}</a>
                                     </div>
                                     <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
                                         <span class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Total :' ) }} {{ product.total_price | currency }}</span>
@@ -109,8 +109,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div @click="changeQuantity( product )" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center cursor-pointer ns-numpad-key">
-                            <span class="border-b border-dashed border-info-primary p-2">{{ product.quantity }}</span>
+                        <div @click="changeQuantity( product )" :class="allowQuantityModification( product ) ? 'cursor-pointer ns-numpad-key' : ''" class="hidden lg:flex w-1/6 p-2 border-b items-center justify-center">
+                            <span v-if="allowQuantityModification( product )" class="border-b border-dashed border-info-primary p-2">{{ product.quantity }}</span>
                         </div>
                         <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
@@ -397,6 +397,10 @@ export default {
                 return nsSnackBar.error( __( `You don't have the right to edit the purchase price.` ) ).subscribe();
             }
 
+            if ( product.product_type === 'dynamic' ) {
+                return nsSnackBar.error( __( 'Dynamic product can\'t have their price updated.' ) ).subscribe();
+            }
+
             if ( this.settings.unit_price_editable ) {
                 try {
                     const newPrice  =   await new Promise( ( resolve, reject ) => {
@@ -416,8 +420,8 @@ export default {
                      * We need to change the price mode
                      * to avoid restoring the original prices.
                      */
-                    product.mode        =   'custom';
-                    product     =   POS.computeProductTax( product );
+                    product.mode    =   'custom';
+                    product         =   POS.computeProductTax( product );
                                         
                     POS.refreshProducts( POS.products.getValue() );
                     POS.refreshCart();
@@ -627,19 +631,25 @@ export default {
             });
         },
 
+        allowQuantityModification( product ) {
+            return product.product_type === 'product';
+        },
+
         /**
          * This will use the previously used 
          * popup to run the promise.
          */
         changeQuantity( product ) {
-            const quantityPromise   =   new ProductQuantityPromise( product );
-            quantityPromise.run({ 
-                unit_quantity_id    : product.unit_quantity_id, 
-                unit_name           : product.unit_name, 
-                $quantities         : product.$quantities 
-            }).then( result => {
-                POS.updateProduct( product, result );
-            });
+            if ( this.allowQuantityModification( product ) ) {
+                const quantityPromise   =   new ProductQuantityPromise( product );
+                quantityPromise.run({ 
+                    unit_quantity_id    : product.unit_quantity_id, 
+                    unit_name           : product.unit_name, 
+                    $quantities         : product.$quantities 
+                }).then( result => {
+                    POS.updateProduct( product, result );
+                });
+            }
         },
 
         async payOrder() {

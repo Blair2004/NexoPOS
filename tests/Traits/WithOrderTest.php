@@ -739,7 +739,7 @@ trait WithOrderTest
 
             $customerCoupon     =   CustomerCoupon::get()->last();
 
-            if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon ) {
+            if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon && $customerCoupon->usage < $customerCoupon->limit_usage ) {
                 $allCoupons         =   [
                     [
                         'customer_coupon_id'    =>  $customerCoupon->id,
