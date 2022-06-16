@@ -942,7 +942,7 @@ class CrudService
         return $rules;
     }
     
-    public function getForm( $entry = null )
+    public function getForm()
     {
         return [];
     }
