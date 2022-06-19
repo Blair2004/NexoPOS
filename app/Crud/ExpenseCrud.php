@@ -132,7 +132,8 @@ class ExpenseCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
+                'validation'    =>  'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -179,11 +180,13 @@ class ExpenseCrud extends CrudService
                             'description'   =>  __( 'Is the value or the cost of the expense.' ),
                             'label'         =>  __( 'Value' ),
                             'value'         =>  $entry->value ?? '',
+                            'validation'    =>  'required',
                         ], [
                             'type'          =>  'switch',
                             'name'          =>  'recurring',
                             'description'   =>  __( 'If set to Yes, the expense will trigger on defined occurence.' ),
                             'label'         =>  __( 'Recurring' ),
+                            'validation'    =>  'required',
                             'options'       =>  [
                                 [
                                     'label' =>  __( 'Yes' ),

@@ -420,8 +420,8 @@ export default {
                      * We need to change the price mode
                      * to avoid restoring the original prices.
                      */
-                    product.mode        =   'custom';
-                    product     =   POS.computeProductTax( product );
+                    product.mode    =   'custom';
+                    product         =   POS.computeProductTax( product );
                                         
                     POS.refreshProducts( POS.products.getValue() );
                     POS.refreshCart();

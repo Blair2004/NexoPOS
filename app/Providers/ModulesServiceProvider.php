@@ -42,7 +42,6 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // register module singleton
         $this->app->singleton( ModulesService::class, function( $app ) {
             $this->modules  =   new ModulesService;
             $this->modules->load();

@@ -1297,7 +1297,6 @@ class OrdersService
                     ->sum( 'quantity' );
 
                 if ( $productUnitQuantity->quantity - $storageQuantity < $orderProduct[ 'quantity' ] ) {
-                    dump( $productUnitQuantity->quantity, $storageQuantity, $orderProduct );
                     throw new \Exception( 
                         sprintf( 
                             __( 'Unable to proceed, there is not enough stock for %s using the unit %s. Requested : %s, available %s' ),

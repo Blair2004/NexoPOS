@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int id
+ * @property string name
+ * @property string namespace
+ * @property string description
+ */
 class Permission extends Model
 {
     use HasFactory;
@@ -20,7 +26,7 @@ class Permission extends Model
     /**
      * Get Name
      * @param string permission name
-     * @return model
+     * @return Permission
     **/
     public static function namespace( $name )
     {

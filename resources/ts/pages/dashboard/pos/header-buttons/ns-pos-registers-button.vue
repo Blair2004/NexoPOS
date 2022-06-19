@@ -65,8 +65,6 @@ export default {
                     throw exception;
                 }
             });
-
-            POS.reset();
         },
         setButtonName() {
             if ( this.settings.register === undefined ) {

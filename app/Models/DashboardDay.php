@@ -59,7 +59,7 @@ class DashboardDay extends NsModel
      * @param DashboardDay $day
      * @return DashboardDay
      */
-    public static function forLastRecentDay( DashboardDay $day )
+    public static function forLastRecentDay( self $day )
     {
         $date       =   Carbon::parse( $day->range_starts )->subDay();
 

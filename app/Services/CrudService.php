@@ -941,6 +941,63 @@ class CrudService
         
         return $rules;
     }
+    
+    public function getForm()
+    {
+        return [];
+    }
+
+    /**
+     * Will extract form with the entry 
+     * as a reference for the values.
+     * 
+     * @param object $entry
+     * @return array $final
+     */
+    public function getExtractedForm( $entry = null, $multiEntry = false )
+    {
+        $form   =   $this->getForm( $entry );
+
+        $final  =   [];
+
+        if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
+            $final[ $form[ 'main' ][ 'name' ] ]     =   $form[ 'main' ][ 'value' ];
+        }
+
+        /**
+         * this is specific to products
+         */
+        if( isset( $form[ 'variations' ] ) ) {
+            foreach( $form[ 'variations' ] as $variation ) {
+                if( $multiEntry ) {
+                    $final[ 'variations' ][]    =   $this->extractTabs( $variation );
+                } else {
+                    $final          =   array_merge( $final, $this->extractTabs( $variation ) );
+                }
+            }
+        } else {
+            $final      =   $this->extractTabs( $form );
+        }
+        
+        return $final;
+    }
+
+    private function extractTabs( $form )
+    {
+        $final      =   [];
+
+        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+            if ( ! empty( $tab[ 'fields' ] ) ) {
+                foreach( $tab[ 'fields' ] as $field ) {
+                    if ( isset( $field[ 'value' ] ) ) {
+                        $final[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'value' ]; 
+                    }
+                }
+            }
+        }
+
+        return $final;
+    }
 
     /**
      * Return flat fields for the crud form provided

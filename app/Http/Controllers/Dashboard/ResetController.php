@@ -1,16 +1,12 @@
 <?php
 namespace App\Http\Controllers\Dashboard;
 
-use App\Classes\Hook;
 use App\Http\Controllers\DashboardController;
 use App\Services\DemoService;
 use App\Services\ResetService;
 use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Exception;
 
 
