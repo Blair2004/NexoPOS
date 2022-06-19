@@ -120,7 +120,8 @@ class UnitGroupCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
+                'validation'    =>  'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [

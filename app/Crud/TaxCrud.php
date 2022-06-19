@@ -147,7 +147,8 @@ class TaxCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the tax.' )
+                'description'   =>  __( 'Provide a name to the tax.' ),
+                'validation'    => 'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -160,12 +161,14 @@ class TaxCrud extends CrudService
                             'label'     =>  __( 'Parent' ),
                             'description'   =>  __( 'Assign the tax to a tax group.' ),
                             'value'     =>  $entry->tax_group_id ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'rate',
                             'label' =>  __( 'Rate' ),
                             'description'   =>  __( 'Define the rate value for the tax.' ),
                             'value' =>  $entry->rate ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',

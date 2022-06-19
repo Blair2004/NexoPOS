@@ -136,7 +136,8 @@ class RolesCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the role.' )
+                'description'   =>  __( 'Provide a name to the role.' ),
+                'validation'    => 'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
