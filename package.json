@@ -23,7 +23,7 @@
     "axios": "^0.27.2",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.2",
-    "cssnano": "^5.1.7",
+    "cssnano": "^5.1.12",
     "laravel-echo": "^1.11.7",
     "laravel-mix": "^6.0.49",
     "lodash": "^4.17.20",
