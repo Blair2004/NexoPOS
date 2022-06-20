@@ -96,6 +96,7 @@ class ResetCommand extends Command
     private function hardReset()
     {
         $result     =   $this->resetService->hardReset();
+        
         $this->info( $result[ 'message' ] );
     }
 

@@ -13,6 +13,7 @@ use App\Services\ModulesService;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
@@ -34,7 +35,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command( 'telescope:prune' )->daily();
+        $schedule->schedule( function() {
+            if ( env( 'TELESCOPE_ENABLED', false ) ) {
+                Artisan::call( 'telescope:prune', [ 'hours' => 12 ]);
+            }
+        })->daily();
 
         /**
          * Will check hourly if the script

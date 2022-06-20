@@ -12,7 +12,7 @@ class SetupCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:setup {--store_name=} {--admin_username=} {--admin_email=} {--password=}';
+    protected $signature = 'ns:setup {--store_name=} {--admin_username=} {--admin_email=} {--admin_password=}';
 
     /**
      * The console command description.
@@ -24,7 +24,7 @@ class SetupCommand extends Command
     private $ns_store_name;
     private $admin_username;
     private $admin_email;
-    private $password;
+    private $admin_password;
 
     /**
      * determine if the actual command requis
@@ -53,12 +53,12 @@ class SetupCommand extends Command
             ! empty( $this->option( 'store_name' ) ) &&
             ! empty( $this->option( 'admin_email' ) ) &&
             ! empty( $this->option( 'admin_username' ) ) &&
-            ! empty( $this->option( 'password' ) )
+            ! empty( $this->option( 'admin_password' ) )
         ) {
             $this->ns_store_name            =   $this->option( 'store_name' );
             $this->admin_email              =   $this->option( 'admin_email' );
             $this->admin_username           =   $this->option( 'admin_username' );
-            $this->password                 =   $this->option( 'password' );
+            $this->admin_password           =   $this->option( 'admin_password' );
             $this->requireConfirmation      =   false;
         }
 
@@ -91,7 +91,7 @@ class SetupCommand extends Command
             $service->runMigration([
                 'admin_username'    =>  $this->admin_username,
                 'admin_email'       =>  $this->admin_email,
-                'password'          =>  $this->password,
+                'password'          =>  $this->admin_password,
                 'ns_store_name'     =>  $this->ns_store_name,
             ]);
 
@@ -120,17 +120,17 @@ class SetupCommand extends Command
 
     private function setupAdminPassword()
     {
-        while( empty( $this->password ) ) {
-            $this->password     =   $this->secret( __( 'What is the administrator password ? [Q] to quit.' ) );
+        while( empty( $this->admin_password ) ) {
+            $this->admin_password     =   $this->secret( __( 'What is the administrator password ? [Q] to quit.' ) );
 
-            if ( $this->password === 'Q' ) {
+            if ( $this->admin_password === 'Q' ) {
                 $this->info( 'the setup has been interrupted' );
                 exit;
             }
 
-            if ( strlen( $this->password ) < 6 ) {
+            if ( strlen( $this->admin_password ) < 6 ) {
                 $this->error( __( 'Please provide at least 6 characters for the administrator password.' ) );
-                $this->password     =   null;
+                $this->admin_password     =   null;
             }
         }
     }

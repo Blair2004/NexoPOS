@@ -138,6 +138,7 @@ class NotificationService
             ->get()
             ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
+                $this->proceedDeleteNotification( $notification );
             });        
     }
 
@@ -146,6 +147,8 @@ class NotificationService
         $notification       =   Notification::find( $id );        
                                                                   
         NotificationDeletedEvent::dispatch( $notification );
+
+        $this->proceedDeleteNotification( $notification );
     }
 
     public function deleteNotificationsFor( User $user )
@@ -154,6 +157,20 @@ class NotificationService
             ->get()
             ->each( function( $notification ) {
                 NotificationDeletedEvent::dispatch( $notification );
+
+                $this->proceedDeleteNotification( $notification );
             });
+    }
+
+    /**
+     * Deletes a notification if the socket are disabled
+     * @param Notification $notification
+     * @return void
+     */
+    public function proceedDeleteNotification( Notification $notification )
+    {
+        if ( ! env( 'NS_SOCKET_ENABLED', false ) ) {
+            $notification->delete();
+        }
     }
 }
