@@ -44,3 +44,4 @@ tests/database.sqlite
 tests/database.sqlite-journal
 tests/Post/*
 storage/snapshots/*.sql
+.idea

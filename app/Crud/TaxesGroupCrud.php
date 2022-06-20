@@ -116,7 +116,7 @@ class TaxesGroupCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'valudation'    =>  'required',
+                'validation'    =>  'required',
                 'description'   =>  __( 'Provide a name to the resource.' )
             ],
             'tabs'  =>  [

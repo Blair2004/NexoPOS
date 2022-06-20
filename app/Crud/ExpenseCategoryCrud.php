@@ -119,7 +119,8 @@ class ExpenseCategoryCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
+                'validation'    => 'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -130,6 +131,7 @@ class ExpenseCategoryCrud extends CrudService
                             'name'  =>  'operation',
                             'label' =>  __( 'Operation' ),
                             'description'   =>  __( 'All entities attached to this category will either produce a "credit" or "debit" to the cash flow history.' ),
+                            'validation'    => 'required',
                             'options'   =>  Helper::kvToJsOptions([
                                 'credit'    =>  __( 'Credit' ),
                                 'debit'     =>  __( 'Debit' )
@@ -141,6 +143,7 @@ class ExpenseCategoryCrud extends CrudService
                             'label'         =>  __( 'Account' ),
                             'description'   =>  __( 'Provide the accounting number for this category.' ),
                             'value'         =>  $entry->account ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
