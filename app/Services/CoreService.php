@@ -185,6 +185,6 @@ class CoreService
      */
     public function isProduction() 
     {
-        return in_array( env( 'NS_ENV', 'prod' ), [ 'prod', 'production' ]);
+        return in_array( strtolower( env( 'NS_ENV', 'prod' ) ), [ 'prod', 'production' ]);
     }
 }

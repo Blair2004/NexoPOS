@@ -17,6 +17,8 @@ class Options
     private $hasFound;
     private $removableIndex;
 
+    public readonly string $tableName;
+
     /**
      * the option class can be constructed with the user id. If the user is not connected we
      * would like to avoid getting general option. So even if the user is not connected
@@ -24,6 +26,7 @@ class Options
      */
     public function __construct()
     {
+        $this->tableName    =   ( new Option )->getTable();
         $this->build();
     }
 

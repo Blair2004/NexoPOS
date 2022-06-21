@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Classes\Schema;
+use App\Events\AfterHardResetEvent;
+use App\Events\BeforeHardResetEvent;
 use App\Events\OnCustomResetModeEvent;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
@@ -94,6 +96,8 @@ class ResetService
      */
     public function hardReset()
     {
+        BeforeHardResetEvent::dispatch();
+        
         Artisan::call( 'migrate:reset --path=/database/migrations/default' );
         Artisan::call( 'migrate:reset --path=/database/migrations/create-tables' );
         Artisan::call( 'migrate:reset --path=/database/migrations/misc' );
@@ -108,6 +112,8 @@ class ResetService
         Artisan::call( 'key:generate' );
 
         exec( 'rm -rf public/storage' );
+
+        AfterHardResetEvent::dispatch();
 
         return [
             'status'    =>  'success',

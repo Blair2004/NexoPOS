@@ -20,18 +20,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property boolean $stock_alert_enabled
  * @property float $sale_price
  * @property float $sale_price_edit
- * @property float $excl_tax_sale_price
- * @property float $incl_tax_sale_price
+ * @property float $gross_sale_price
+ * @property float $net_sale_price
  * @property float $sale_price_tax
  * @property float $wholesale_price
  * @property float $wholesale_price_edit
- * @property float $incl_tax_wholesale_price
- * @property float $excl_tax_wholesale_price
+ * @property float $net_wholesale_price
+ * @property float $gross_wholesale_price
  * @property float $wholesale_price_tax
  * @property float $custom_price
  * @property float $custom_price_edit
- * @property float $incl_tax_custom_price
- * @property float $excl_tax_custom_price
+ * @property float $net_custom_price
+ * @property float $gross_custom_price
  */
 class ProductUnitQuantity extends NsModel
 {

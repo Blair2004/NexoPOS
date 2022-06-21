@@ -4,9 +4,13 @@ namespace App\Console\Commands;
 
 use App\Crud\ProductCrud;
 use App\Models\Product;
+use App\Models\ProductGallery;
+use App\Models\ProductSubItem;
+use App\Models\ProductUnitQuantity;
 use App\Services\ProductService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
+use Modules\NsMultiStore\Models\Store;
 
 class ProductCommand extends Command
 {
@@ -15,7 +19,7 @@ class ProductCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:products {action} {--where=*} {--orWhere=*}';
+    protected $signature = 'ns:products {action} {--where=*} {--orWhere=*} {--store=0}';
 
     /**
      * The console command description.
@@ -24,9 +28,9 @@ class ProductCommand extends Command
      */
     protected $description = 'Perform various operations on the products';
 
-    public function __construct(
-        protected ProductService $productService
-    )
+    protected $productService;
+
+    public function __construct()
     {
         parent::__construct();
     }
@@ -38,6 +42,15 @@ class ProductCommand extends Command
      */
     public function handle()
     {
+        /**
+         * explicit support for multistore
+         */
+        if ( class_exists( Store::class ) && ! empty( $this->option( 'store' ) ) ) {
+            ns()->store->setStore( Store::find( $this->option( 'store' ) ) );
+        }
+
+        $this->productService       =   app()->make( ProductService::class );
+
         match( $this->argument( 'action' ) ) {
             'update'            =>  $this->updateProducts(),
             'refresh-barcode'   =>  $this->refreshBarcodes()
@@ -68,7 +81,21 @@ class ProductCommand extends Command
         $queryBuilder   =   $this->queryBuilder();
 
         $this->perform( $queryBuilder, function( $product ) {
-            $this->productService->update( $product, $product->toArray() );
+            $gallery    =   ProductGallery::where( 'product_id', $product->id )->get();
+            $units      =   ProductUnitQuantity::where( 'product_id', $product->id )->get();
+            $subItems   =   ProductSubItem::where( 'product_id', $product->id )->get();
+
+            $this->productService->update( $product, array_merge( $product->toArray(), [
+                'units'     =>  [
+                    'unit_group'        =>  $product->unit_group,
+                    'accurate_tracking' =>  $product->accurate_tracking,
+                    'selling_group'     =>  $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() ) ->toArray()
+                ],
+                'images'                =>  $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
+                'groups'                =>  [
+                    'product_subitems'      =>  $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
+                ]
+            ]) );
         });
 
         $this->newLine();
@@ -112,7 +139,6 @@ class ProductCommand extends Command
                             $query->$option( $lessThanStatement[0], '<', $lessThanStatement[1] );
                         }
                     }
-
                 }
             }
             

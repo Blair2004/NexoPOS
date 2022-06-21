@@ -520,8 +520,8 @@ class ProductCrud extends CrudService
      */
     private function calculateTaxes( $inputs, Product $product = null )
     {
-        $inputs[ 'incl_tax_sale_price' ]        =   $inputs[ 'sale_price_edit' ];
-        $inputs[ 'excl_tax_sale_price' ]        =   $inputs[ 'sale_price_edit' ];
+        $inputs[ 'net_sale_price' ]             =   $inputs[ 'sale_price_edit' ];
+        $inputs[ 'gross_sale_price' ]           =   $inputs[ 'sale_price_edit' ];
         $inputs[ 'sale_price' ]                 =   $inputs[ 'sale_price_edit' ];
 
         $inputs[ 'incl_tax_wholesale_price' ]   =   $inputs[ 'wholesale_price_edit' ];

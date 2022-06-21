@@ -1083,8 +1083,8 @@ class OrdersService
              * gross price and determine where we should pull it.
              */
             $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
-            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->incl_tax_sale_price ?? 0 )->getRaw();
-            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->excl_tax_sale_price ?? 0 )->getRaw();
+            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->net_sale_price ?? 0 )->getRaw();
+            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->gross_sale_price ?? 0 )->getRaw();
             $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;

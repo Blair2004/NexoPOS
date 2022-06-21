@@ -65,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
             return new UpdateService();
         });
 
-        $this->app->singleton( DemoService::class, function(){
+        $this->app->bind( DemoService::class, function(){
             return new DemoService(
                 app()->make( ProductCategoryService::class ),
                 app()->make( ProductService::class ),
@@ -118,7 +118,7 @@ class AppServiceProvider extends ServiceProvider
             return new ResetService;
         });
 
-        $this->app->singleton( ReportService::class, function() {
+        $this->app->bind( ReportService::class, function() {
             return new ReportService(
                 app()->make( DateService::class )
             );
@@ -136,17 +136,17 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( ProductCategoryService::class, function( $app ) {
+        $this->app->bind( ProductCategoryService::class, function( $app ) {
             return new ProductCategoryService;
         });
 
-        $this->app->singleton( TaxService::class, function( $app ) {
+        $this->app->bind( TaxService::class, function( $app ) {
             return new TaxService( 
                 $app->make( CurrencyService::class )
             );
         });
 
-        $this->app->singleton( CurrencyService::class, function( $app ) {
+        $this->app->bind( CurrencyService::class, function( $app ) {
             $options    =   app()->make( Options::class );
             return new CurrencyService( 
                 0, [
@@ -161,7 +161,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( ProductService::class, function( $app ) {
+        $this->app->bind( ProductService::class, function( $app ) {
             return new ProductService( 
                 $app->make( ProductCategoryService::class ),
                 $app->make( TaxService::class ),
@@ -175,7 +175,7 @@ class AppServiceProvider extends ServiceProvider
             return new Validation();
         });
 
-        $this->app->singleton( UnitService::class, function( $app ) {
+        $this->app->bind( UnitService::class, function( $app ) {
             return new UnitService(
                 $app->make( CurrencyService::class )
             );
@@ -189,13 +189,13 @@ class AppServiceProvider extends ServiceProvider
             return new CustomerService();
         });
 
-        $this->app->singleton( ExpenseService::class, function( $app ) {
+        $this->app->bind( ExpenseService::class, function( $app ) {
             return new ExpenseService(
                 app()->make( DateService::class )
             );
         });
 
-        $this->app->singleton( OrdersService::class, function( $app ) {
+        $this->app->bind( OrdersService::class, function( $app ) {
             return new OrdersService(
                 $app->make( CustomerService::class ),
                 $app->make( ProductService::class ),
@@ -208,7 +208,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( ProcurementService::class, function( $app ) {
+        $this->app->bind( ProcurementService::class, function( $app ) {
             return new ProcurementService(
                 $app->make( ProviderService::class ),
                 $app->make( UnitService::class ),

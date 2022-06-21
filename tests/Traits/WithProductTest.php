@@ -83,12 +83,12 @@ trait WithProductTest
 
             if ( $taxType === 'exclusive' ) {
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price' ), $sale_price );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $sale_price );
             } else {
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $sale_price );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price', 0 ), $sale_price );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $sale_price );
             }
 
             $response->assertStatus(200);
@@ -187,12 +187,12 @@ trait WithProductTest
 
             if ( $taxType === 'exclusive' ) {
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price' ), $sale_price );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.net_sale_price' ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price' ), $sale_price );
             } else {
                 $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.sale_price', 0 ), $sale_price );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.incl_tax_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
-                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.excl_tax_sale_price', 0 ), $sale_price );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.net_sale_price', 0 ), $taxService->getTaxGroupComputedValue( $taxType, TaxGroup::find(1), $sale_price ) );
+                $this->assertEquals( ( float ) data_get( $result, 'data.product.unit_quantities.0.gross_sale_price', 0 ), $sale_price );
             }
 
             /**

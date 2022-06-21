@@ -15,12 +15,9 @@ use App\Models\TaxGroup;
 
 class TaxService
 {
-    /** @param CurrencyService */
-    protected $currency;
-
-    public function __construct( CurrencyService $currency )
+    public function __construct( protected CurrencyService $currency )
     {
-        $this->currency     =   $currency;
+        // ...
     }
 
     private function __checkTaxParentExists( $parent )
@@ -275,11 +272,11 @@ class TaxService
         $taxGroup                               =   TaxGroup::find( $tax_group_id );
 
         $product->sale_price                    =   $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->incl_tax_sale_price           =   $this->currency->define( $product->sale_price_edit )->getRaw();
-        $product->excl_tax_sale_price           =   $this->currency->define( $product->sale_price_edit )->getRaw();
+        $product->net_sale_price                =   $this->currency->define( $product->sale_price_edit )->getRaw();
+        $product->gross_sale_price              =   $this->currency->define( $product->sale_price_edit )->getRaw();
         $product->wholesale_price               =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->incl_tax_wholesale_price      =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-        $product->excl_tax_wholesale_price      =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
+        $product->net_wholesale_price           =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
+        $product->gross_wholesale_price         =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
         $product->sale_price_tax                =   0;
         $product->wholesale_price_tax           =   0;
 
@@ -295,23 +292,23 @@ class TaxService
                 ->sum();
 
             if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
-                $product->excl_tax_sale_price       =   ( floatval( $product->sale_price_edit ) );
-                $product->sale_price_tax            =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
+                $product->gross_sale_price      =   ( floatval( $product->sale_price_edit ) );
+                $product->sale_price_tax        =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
+                $product->net_sale_price        =   $this->getComputedTaxValue(
                     'inclusive',
                     $taxRate,
                     $product->sale_price_edit
                 );
-                $product->sale_price                =   $product->excl_tax_sale_price;
+                $product->sale_price            =   $product->gross_sale_price;
             } else {
-                $product->excl_tax_sale_price       =   floatval( $product->sale_price_edit );
-                $product->sale_price_tax            =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->incl_tax_sale_price       =   $this->getComputedTaxValue(
+                $product->net_sale_price        =   floatval( $product->sale_price_edit );
+                $product->sale_price_tax        =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
+                $product->gross_sale_price      =   $this->getComputedTaxValue(
                     'exclusive',
                     $taxRate,
                     $product->sale_price_edit
                 );
-                $product->sale_price                =   $product->incl_tax_sale_price;
+                $product->sale_price            =   $product->gross_sale_price;
             }
         }
 
@@ -327,23 +324,23 @@ class TaxService
                 ->sum();
 
             if ( ( $tax_type ?? $product->tax_type ) === 'inclusive' ) {
-                $product->wholesale_price_tax               =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit    ) ) );
-                $product->excl_tax_wholesale_price          =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->incl_tax_wholesale_price          =   $this->getComputedTaxValue(
+                $product->wholesale_price_tax           =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit ) ) );
+                $product->gross_wholesale_price         =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
+                $product->net_wholesale_price           =   $this->getComputedTaxValue(
                     'inclusive',
                     $taxRate,
                     $product->wholesale_price_edit
                 );
-                $product->wholesale_price                   =   $product->excl_tax_wholesale_price;
+                $product->wholesale_price               =   $product->gross_wholesale_price;
             } else {
-                $product->wholesale_price_tax               =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit    ) ) );
-                $product->excl_tax_wholesale_price          =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->incl_tax_wholesale_price          =   $this->getComputedTaxValue(
+                $product->wholesale_price_tax           =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit ) ) );
+                $product->net_wholesale_price           =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
+                $product->gross_wholesale_price         =   $this->getComputedTaxValue(
                     'exclusive',
                     $taxRate,
                     $product->wholesale_price_edit
                 );
-                $product->wholesale_price                   =   $product->incl_tax_wholesale_price;
+                $product->wholesale_price               =   $product->gross_wholesale_price;
             }
         }
 

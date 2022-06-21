@@ -6,8 +6,8 @@ export interface ProductUnitQuantity {
     expiration_date: string;
     sale_price: number;
     sale_price_edit: number;
-    excl_tax_sale_price: number;
-    incl_tax_sale_price: number;
+    gross_sale_price: number;
+    net_sale_price: number;
     wholesale_price: number;
     wholesale_price_edit: number;
     incl_tax_wholesale_price: number;

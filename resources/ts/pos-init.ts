@@ -304,9 +304,9 @@ export class POS {
     public getSalePrice(item, original) {
         switch ( original.tax_type ) {
             case 'inclusive':
-                return item.incl_tax_sale_price;
+                return item.net_sale_price;
             default:
-                return item.excl_tax_sale_price;
+                return item.gross_sale_price;
         }
     }
 
@@ -789,8 +789,8 @@ export class POS {
             const quantities    =   {
                 unit: unit[0] || {},
                 
-                incl_tax_sale_price: parseFloat( product.unit_price ),
-                excl_tax_sale_price: parseFloat( product.unit_price ),
+                net_sale_price: parseFloat( product.unit_price ),
+                gross_sale_price: parseFloat( product.unit_price ),
                 sale_price: parseFloat( product.unit_price ),
                 sale_price_tax: 0,
                 sale_price_edit: 0,
@@ -828,8 +828,8 @@ export class POS {
                                         return this.getVatValue( quantities.wholesale_price, tax.rate, product.tax_type );
                                     }).reduce( ( b, a ) => b + a );
         
-                                    quantities.excl_tax_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
-                                    quantities.incl_tax_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
+                                    quantities.gross_sale_price  =  quantities.sale_price + quantities.sale_price_tax;
+                                    quantities.net_sale_price  =  quantities.sale_price - quantities.sale_price_tax;
                                     
                                     tax_group            =   taxGroup;
         
@@ -842,7 +842,7 @@ export class POS {
                     } else {
                         quantities.sale_price_tax       =   0;
                         quantities.wholesale_price_tax  =   0;
-                        quantities.excl_tax_sale_price  =  product.unit_price;
+                        quantities.gross_sale_price  =  product.unit_price;
                         
                         return resolve( quantities );
                     }
@@ -1579,8 +1579,8 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.sale_price_edit );
 
-        quantities.excl_tax_sale_price    =   result.price_without_tax;
-        quantities.incl_tax_sale_price    =   result.price_with_tax;
+        quantities.gross_sale_price    =   result.price_without_tax;
+        quantities.net_sale_price    =   result.price_with_tax;
         quantities.sale_price_tax         =   result.tax_value;
 
         product.$quantities     =   () => {
