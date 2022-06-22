@@ -1462,16 +1462,16 @@
         },
         {
             "name": "gumlet/php-image-resize",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gumlet/php-image-resize.git",
-                "reference": "39066a32de8476a32c9ac6322f9658021cee8638"
+                "reference": "aee4e2573e83476ffd0ac64b7269f838c8cd9d68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gumlet/php-image-resize/zipball/39066a32de8476a32c9ac6322f9658021cee8638",
-                "reference": "39066a32de8476a32c9ac6322f9658021cee8638",
+                "url": "https://api.github.com/repos/gumlet/php-image-resize/zipball/aee4e2573e83476ffd0ac64b7269f838c8cd9d68",
+                "reference": "aee4e2573e83476ffd0ac64b7269f838c8cd9d68",
                 "shasum": ""
             },
             "require": {
@@ -1515,9 +1515,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gumlet/php-image-resize/issues",
-                "source": "https://github.com/gumlet/php-image-resize/tree/2.0.2"
+                "source": "https://github.com/gumlet/php-image-resize/tree/2.0.3"
             },
-            "time": "2022-05-12T11:03:20+00:00"
+            "time": "2022-06-21T16:20:34+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
