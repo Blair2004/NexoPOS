@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudService 
@@ -325,6 +326,9 @@ class CrudService
         return [
             'status'    =>  'success',
             'entry'     =>  $entry,
+            'data'      =>  [
+                'editUrl'   =>  str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
+            ],
             'message'   =>  __( 'A new entry has been successfully created.' )
         ];
     }

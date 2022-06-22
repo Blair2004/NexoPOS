@@ -320,10 +320,12 @@ class ProductService
 
         event( new ProductAfterCreatedEvent( $product, $data ) );
 
+        $editUrl        =   ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
+
         return [
             'status'    =>      'success',
             'message'   =>      __( 'The product has been saved.' ),
-            'data'      =>      compact( 'product' )
+            'data'      =>      compact( 'product', 'editUrl' )
         ];
     }
 
@@ -469,10 +471,12 @@ class ProductService
 
         event( new ProductAfterUpdatedEvent( $product, $fields ) );
 
+        $editUrl        =   ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The product has been udpated' ),
-            'data'      =>  compact( 'product' )
+            'data'      =>  compact( 'product', 'editUrl' )
         ];
     }
 

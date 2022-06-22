@@ -294,7 +294,7 @@ class TaxService
             if ( ( $tax_type ?? $product->tax_type) === 'inclusive' ) {
                 $product->gross_sale_price      =   ( floatval( $product->sale_price_edit ) );
                 $product->sale_price_tax        =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->net_sale_price        =   $this->getComputedTaxValue(
+                $product->net_sale_price        =   $this->getNetPrice(
                     'inclusive',
                     $taxRate,
                     $product->sale_price_edit
@@ -303,7 +303,7 @@ class TaxService
             } else {
                 $product->net_sale_price        =   floatval( $product->sale_price_edit );
                 $product->sale_price_tax        =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->sale_price_edit ) ) );
-                $product->gross_sale_price      =   $this->getComputedTaxValue(
+                $product->gross_sale_price      =   $this->getGrossPrice(
                     'exclusive',
                     $taxRate,
                     $product->sale_price_edit
@@ -326,7 +326,7 @@ class TaxService
             if ( ( $tax_type ?? $product->tax_type ) === 'inclusive' ) {
                 $product->wholesale_price_tax           =   ( floatval( $this->getVatValue( 'inclusive', $taxRate, $product->wholesale_price_edit ) ) );
                 $product->gross_wholesale_price         =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->net_wholesale_price           =   $this->getComputedTaxValue(
+                $product->net_wholesale_price           =   $this->getNetPrice(
                     'inclusive',
                     $taxRate,
                     $product->wholesale_price_edit
@@ -335,7 +335,7 @@ class TaxService
             } else {
                 $product->wholesale_price_tax           =   ( floatval( $this->getVatValue( 'exclusive', $taxRate, $product->wholesale_price_edit ) ) );
                 $product->net_wholesale_price           =   $this->currency->define( $product->wholesale_price_edit )->getRaw();
-                $product->gross_wholesale_price         =   $this->getComputedTaxValue(
+                $product->gross_wholesale_price         =   $this->getGrossPrice(
                     'exclusive',
                     $taxRate,
                     $product->wholesale_price_edit
@@ -353,13 +353,132 @@ class TaxService
      * @param TaxGroup $group
      * @param float|int $value
      * @return float
+     * @deprecated
      */
     public function getTaxGroupComputedValue( $type, TaxGroup $group, $value )
     {
         $rate   =   $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
-        return $this->getComputedTaxValue( $type, $rate, $value );
+
+        switch( $type ) {
+            case 'inclusive': return $this->getNetPrice( $type, $rate, $value );
+            case 'exclusive': return $this->getGrossPrice( $type, $rate, $value );
+        }
+
+        return 0;
     }
 
+    public function computeNetAndGrossPrice( $orderProduct )
+    {
+        $taxGroup       =   TaxGroup::find( $orderProduct->tax_group_id );
+        $grossPriceEnabled     =   ns()->option->get( 'ns_pos_gross_price_used', 'no' ) === 'yes';
+
+        /**
+         * if the tax group is not defined, 
+         * then probably it's not assigned to the product.
+         */
+        if ( $taxGroup instanceof TaxGroup ) {
+            if ( $grossPriceEnabled ) {
+
+                $orderProduct->net_price      =   match( $orderProduct->tax_type ) {
+                    'inclusive' =>  $this->getTaxGroupNetPrice(
+                        type: $orderProduct->tax_type,
+                        group: $taxGroup,
+                        value: $orderProduct->unit_price
+                    ),
+                    'exclusive' =>  $this->getTaxGroupNetPrice(
+                        type: $orderProduct->tax_type,
+                        group: $taxGroup,
+                        value: $orderProduct->unit_price - ( $orderProduct->tax_value / $orderProduct->quantity )
+                    )
+                };
+
+                $orderProduct->gross_price      =   $orderProduct->unit_price;
+            } else {
+                $orderProduct->net_price        =   $orderProduct->unit_price;
+
+                $orderProduct->gross_price      =   match( $orderProduct->tax_type ) {
+                    'inclusive' =>  $this->getTaxGroupGrossPrice(
+                        type: $orderProduct->tax_type,
+                        group: $taxGroup,
+                        value: $orderProduct->unit_price + ( $orderProduct->tax_value / $orderProduct->quantity )
+                    ),
+                    'exclusive' =>  $this->getTaxGroupGrossPrice(
+                        type: $orderProduct->tax_type,
+                        group: $taxGroup,
+                        value: $orderProduct->unit_price
+                    )
+                };
+            }    
+        }
+
+        return $orderProduct;
+    }
+
+    /**
+     * Will only return the net price
+     * using a tax group provided
+     * @param string $type
+     * @param TaxGroup $group
+     * @param $value
+     * @return float
+     */
+    public function getTaxGroupNetPrice( $type, TaxGroup $group, $value )
+    {
+        $rate   =   $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+        return $this->getNetPrice( $type, $rate, $value );
+    }
+
+    /**
+     * Will only return the gross price
+     * using a tax group provided
+     * @param string $type
+     * @param TaxGroup $group
+     * @param $value
+     * @return float
+     */
+    public function getTaxGroupGrossPrice( $type, TaxGroup $group, $value )
+    {
+        $rate   =   $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+        return $this->getGrossPrice( $type, $rate, $value );
+    }
+
+    /**
+     * Compute the net price using a rate
+     * and a tax type provided
+     * @param string $type
+     * @param float $rate
+     * @param float $value
+     * @return float
+     */
+    public function getNetPrice( $type, float $rate, float $value )
+    {
+        if ( $type === 'inclusive' ) {
+            return $this->currency->getRaw( ( $value / ( $rate + 100 ) ) * 100 );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Compute the gross price using a rate
+     * and a tax type provided
+     * @param string $type
+     * @param float $rate
+     * @param float $value
+     * @return float
+     */
+    public function getGrossPrice( $type, float $rate, float $value )
+    {
+        if ( $type === 'exclusive' ) {
+            return $this->currency->getRaw( ( $value / 100 ) * ( $rate + 100 ) );
+        }
+
+        return $value;
+    }
+
+    /**
+     * @deprecated
+     */
     public function getComputedTaxValue( $type, float $rate, float $value )
     {
         if ( $type === 'inclusive' ) {
@@ -374,9 +493,9 @@ class TaxService
     public function getVatValue( $type, float $rate, float $value )
     {
         if ( $type === 'inclusive' ) {
-            return $value - $this->getComputedTaxValue( $type, $rate, $value );
+            return $value - $this->getNetPrice( $type, $rate, $value );
         } else if ( $type === 'exclusive' ) {
-            return $this->getComputedTaxValue( $type, $rate, $value ) - $value;
+            return $this->getGrossPrice( $type, $rate, $value ) - $value;
         }
     }
 
@@ -391,9 +510,9 @@ class TaxService
     public function getTaxGroupVatValue( $type, TaxGroup $group, float $value )
     {
         if ( $type === 'inclusive' ) {
-            return $value - $this->getTaxGroupComputedValue( $type, $group, $value );
+            return $value - $this->getTaxGroupNetPrice( $type, $group, $value );
         } else if ( $type === 'exclusive' ) {
-            return $this->getTaxGroupComputedValue( $type, $group, $value ) - $value;
+            return $this->getTaxGroupGrossPrice( $type, $group, $value ) - $value;
         }
     }
 

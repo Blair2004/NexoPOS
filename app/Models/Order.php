@@ -28,6 +28,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float total_coupons
  * @property float total
  * @property float tax_value
+ * @property float products_tax_value
+ * @property float total_tax_value
  * @property int tax_group_id
  * @property string tax_type
  * @property float tendered

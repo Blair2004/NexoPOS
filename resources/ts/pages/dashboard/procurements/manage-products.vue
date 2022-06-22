@@ -457,11 +457,15 @@ export default {
             this.formValidation.disableForm( this.form );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( data => {
-                    if ( data.status === 'success' ) {
-                        if ( this.returnUrl !== false ) {
-                            return document.location   =   this.returnUrl;
+                .subscribe( result => {
+                    if ( result.status === 'success' ) {
+                        
+                        if ( this.submitMethod === 'POST' && this.returnUrl !== false ) {
+                            return document.location   =   result.data.editUrl || this.returnUrl;
+                        } else {
+                            nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
                         }
+
                         this.$emit( 'save' );
                     }
                     this.formValidation.enableForm( this.form );

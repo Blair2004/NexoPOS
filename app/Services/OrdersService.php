@@ -437,6 +437,7 @@ class OrdersService
                 /**
                  * in case the tax value is not provided,
                  * we'll compute that using the defined value
+                 * @todo deduct discount from subtotal
                  */
                 $orderTax->tax_value    =   $tax[ 'tax_value' ] ?? $this->taxService->getVatValue(
                     $order->tax_type,
@@ -470,19 +471,21 @@ class OrdersService
     {
         switch( ns()->option->get( 'ns_pos_vat' ) ) {
             case 'products_vat';
-                $order->tax_value   =   $this->getOrderProductsTaxes( $order );
+                $order->products_tax_value   =   $this->getOrderProductsTaxes( $order );
             break;
             case 'flat_vat';
             case 'variable_vat';
-                $order->tax_value   =   Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->tax_value           =   Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->products_tax_value  =   0;
             break;
             case 'products_variable_vat':
             case 'products_flat_vat';
-                $order->tax_value   =   
-                    Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) ) + 
-                    $this->getOrderProductsTaxes( $order );
+                $order->tax_value           =   Currency::raw( $this->__saveOrderTaxes( $order, $taxes ) );
+                $order->products_tax_value  =   $this->getOrderProductsTaxes( $order );
             break;
         }
+
+        $order->total_tax_value         =   $order->tax_value + $order->products_tax_value;
     }
 
     /**
@@ -1083,8 +1086,6 @@ class OrdersService
              * gross price and determine where we should pull it.
              */
             $orderProduct->unit_price           =   $this->currencyService->define( $product[ 'unit_price' ] )->getRaw();
-            $orderProduct->net_price            =   $this->currencyService->define( $product[ 'unitQuantity' ]->net_sale_price ?? 0 )->getRaw();
-            $orderProduct->gross_price          =   $this->currencyService->define( $product[ 'unitQuantity' ]->gross_sale_price ?? 0 )->getRaw();
             $orderProduct->discount_type        =   $product[ 'discount_type' ] ?? 'none';
             $orderProduct->discount             =   $product[ 'discount' ] ?? 0;
             $orderProduct->discount_percentage  =   $product[ 'discount_percentage' ] ?? 0;
@@ -1463,6 +1464,8 @@ class OrdersService
         $order->author                  =   $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title                   =   $fields[ 'title' ] ?? null;
         $order->tax_value               =   $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );
+        $order->products_tax_value      =   $this->currencyService->getRaw( $fields[ 'products_tax_value' ] ?? 0 );
+        $order->total_tax_value         =   $this->currencyService->getRaw( $fields[ 'total_tax_value' ] ?? 0 );
         $order->code                    =   $order->code ?: ''; // to avoid generating a new code
         $order->save();
 
@@ -1850,37 +1853,43 @@ class OrdersService
      */
     public function computeOrderProduct( OrderProduct $orderProduct )
     {
+        $orderProduct   =   $this->taxService->computeNetAndGrossPrice( $orderProduct );
+
         /**
          * let's compute the discount
          * for that specific product
          */
-        $total_gross_discount   =   ( float ) $orderProduct->discount;
-        $total_discount         =   ( float ) $orderProduct->discount;
-        $total_net_discount     =   ( float ) $orderProduct->discount;
+        $total_gross_discount   =   ( float ) 0;
+        $total_discount         =   ( float ) 0;
+        $total_net_discount     =   ( float ) 0;
         $net_discount           =   ( float ) 0;
 
         if ( $orderProduct->discount_type === 'percentage' ) {
             $total_gross_discount       =   $this->computeDiscountValues( 
                 $orderProduct->discount_percentage,
-                $orderProduct->total_gross_price
+                $orderProduct->gross_price * $orderProduct->quantity
             );
 
             $total_discount             =   $this->computeDiscountValues( 
                 $orderProduct->discount_percentage,
-                $orderProduct->total_gross_price
+                $orderProduct->unit_price * $orderProduct->quantity
             );
 
             $total_net_discount         =   $this->computeDiscountValues( 
                 $orderProduct->discount_percentage,
-                $orderProduct->total_gross_price
+                $orderProduct->net_price * $orderProduct->quantity
             );
 
             $net_discount               =   $this->computeDiscountValues(
                 $orderProduct->discount_percentage,
-                $orderProduct->unit_price * $orderProduct->quantity
+                $orderProduct->unit_price
             );
 
         } else if ( $orderProduct->discount_type === 'flat' ) {
+            /**
+             * @todo not exactly correct.  The discount should be defined per 
+             * price type on the frontend.
+             */
             $total_discount             =   $orderProduct->discount;
             $total_gross_discount       =   $orderProduct->discount;
             $total_net_discount         =   $orderProduct->discount;
@@ -1889,17 +1898,13 @@ class OrdersService
 
         $orderProduct->discount     =   $net_discount;
 
-        $orderProduct->net_price        =   $this->currencyService
-            ->fresh( $orderProduct->unit_price )
-            ->getFullRaw();
-
         $orderProduct->total_gross_price    =   $this->currencyService
             ->fresh( $orderProduct->gross_price )
             ->multiplyBy( $orderProduct->quantity )
             ->get();
 
         $orderProduct->total_price          =   $this->currencyService
-            ->fresh( $orderProduct->net_price )
+            ->fresh( $orderProduct->unit_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $net_discount )
             ->getFullRaw();
@@ -2077,7 +2082,7 @@ class OrdersService
             return floatval($product->total_price);
         })->sum();
 
-        $productTotalQuatity    =   $products->map( function( $product) {
+        $productsQuantity    =   $products->map( function( $product) {
             return floatval( $product->quantity );
         })->sum();
 
@@ -2131,7 +2136,7 @@ class OrdersService
             } else if ( $order->total == 0 && $totalRefunds == 0 ) {
                 $order->payment_status      =       Order::PAYMENT_UNPAID;
             }
-        } else if ( $productTotal == 0 && $productTotalQuatity == 0 ) {
+        } else if ( $productTotal == 0 && $productsQuantity == 0 ) {
             $order->payment_status      =   Order::PAYMENT_REFUNDED;
         }
 

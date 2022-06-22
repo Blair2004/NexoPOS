@@ -808,9 +808,9 @@ class ProductCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  'ns.products',
-            'create'    =>  'ns.products/create',
-            'edit'      =>  'ns.products/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'products' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'products/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'products/edit/' ),
         ];
     }
 

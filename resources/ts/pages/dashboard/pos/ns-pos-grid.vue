@@ -78,9 +78,16 @@
                                 <div class="h-0 w-full">
                                     <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                         <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
-                                        <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
-                                            {{ data.unit_quantities[0].sale_price | currency }}
-                                        </span>
+                                        <template v-if="options.ns_pos_gross_price_used === 'yes'">
+                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
+                                                {{ data.unit_quantities[0].gross_sale_price | currency }}
+                                            </span>
+                                        </template>
+                                        <template v-if="options.ns_pos_gross_price_used === 'no'">
+                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
+                                                {{ data.unit_quantities[0].net_sale_price | currency }}
+                                            </span>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -116,6 +123,8 @@ export default {
             currentCategory: null,
             settings: false,
             settingsSubscriber: null,
+            options: false,
+            optionsSubscriber: null,
             interval: null,
             searchTimeout: null,
             gridItemsWidth: 0,
@@ -145,7 +154,10 @@ export default {
 
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
-            console.log( settings );
+        });
+
+        this.optionsSubscriber         =   POS.options.subscribe( options => {
+            this.options               =   options;
         });
 
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
@@ -219,6 +231,7 @@ export default {
         this.visibleSectionSubscriber.unsubscribe();
         this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
         
         clearInterval( this.interval );
 
