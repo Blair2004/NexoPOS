@@ -1568,6 +1568,7 @@ class OrdersService
      * @param float $value
      * @param string $type
      * @return float
+     * @deprecated
      */
     public function getTaxComputedFromOrderTaxes( Order $order, $value, $type )
     {
@@ -1777,11 +1778,7 @@ class OrdersService
         $productRefund                      =   new OrderProductRefund;
         $productRefund->condition           =   $details[ 'condition' ];
         $productRefund->description         =   $details[ 'description' ];
-        $productRefund->unit_price          =   $this->getTaxComputedFromOrderTaxes(
-            $order, 
-            $details[ 'unit_price' ], 
-            ns()->option->get( 'ns_pos_tax_type' ) 
-        );
+        $productRefund->unit_price          =   $details[ 'unit_price' ];
 
         $productRefund->unit_id             =   $orderProduct->unit_id;
         $productRefund->total_price         =   $this->currencyService
@@ -2091,6 +2088,11 @@ class OrdersService
             return floatval($product->total_gross_price);
         })->sum();
 
+        $productsNetTotal      =   $products
+            ->map(function ($product) {
+            return floatval($product->total_net_price);
+        })->sum();
+
         $this->computeOrderTaxes( $order );
 
         $orderShipping          =   $order->shipping;
@@ -2102,6 +2104,7 @@ class OrdersService
          */
         $order->subtotal        =   Currency::raw( $productTotal );
         $order->gross_total     =   $productGrossTotal;
+        $order->net_total       =   $productsNetTotal;
         $order->discount        =   $this->computeOrderDiscount( $order );  
         $order->total           =   Currency::fresh( $order->subtotal )
             ->additionateBy( $orderShipping )

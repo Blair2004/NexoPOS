@@ -159,7 +159,7 @@ export class POS {
         return this._processingAddQueue;
     }
 
-    reset() {
+    async reset() {
         this._isSubmitting = false;
 
         /**
@@ -172,7 +172,7 @@ export class POS {
         this.defineCurrentScreen();
         this.setHoldPopupEnabled(true);
 
-        this.processInitialQueue();
+        await this.processInitialQueue();
         this.refreshCart();
     }
 
@@ -340,7 +340,7 @@ export class POS {
      * It also run when the pos is reset.
      * @return void
      */
-    public async processInitialQueue() {
+    async processInitialQueue() {
         for (let index in this._initialQueue) {
             try {
                 const response = await this._initialQueue[index]();
@@ -504,8 +504,7 @@ export class POS {
             let order   =   this.order.getValue();
             order       =   this.computeProductsTaxes( order );
 
-            if (order.tax_group_id === undefined || order.tax_group_id === null) {
-                
+            if (order.tax_group_id === undefined && order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
 
                 return resolve({ 
@@ -520,7 +519,7 @@ export class POS {
              * if the tax group is already cached
              * we'll pull that rather than doing a new request.
              */
-            if (groups) {
+            if (Object.values(groups).length > 0) {
 
                 /**
                  * Only if a tax group is assigned to the 
@@ -533,7 +532,7 @@ export class POS {
                          * on the discounted price
                          * should deduct "subtotal" with "discount"
                          */
-                        tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
+                        tax.tax_value = this.getVatValue(order.subtotal - order.discount, tax.rate, order.tax_type);
 
                         return tax;
                     });
@@ -547,7 +546,7 @@ export class POS {
                 });
             }
 
-            if (order.tax_group_id !== null && order.tax_group_id.toString().length > 0 ) {
+            if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
@@ -556,7 +555,7 @@ export class POS {
                                     tax_id: _tax.id,
                                     tax_name: _tax.name,
                                     rate: parseFloat(_tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal, _tax.rate, order.tax_type)
+                                    tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
                                 };
                             });
 
@@ -1701,12 +1700,15 @@ export class POS {
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
-                                .subscribe((result: any) => {
-                                    nsSnackBar.success(result.message).subscribe();
-                                    this.reset();
-                                }, (error) => {
-                                    return nsSnackBar.error(error.message).subscribe();
-                                })
+                                .subscribe({
+                                    next: (result: any) => {
+                                        nsSnackBar.success(result.message).subscribe();
+                                        this.reset();
+                                    },
+                                    error: (error) => {
+                                        return nsSnackBar.error(error.message).subscribe();
+                                    }
+                                });
                         }
                     }
                 });
