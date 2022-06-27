@@ -313,9 +313,9 @@ export class POS {
     public getCustomPrice(item, original) {
         switch ( original.tax_type ) {
             case 'inclusive':
-                return item.incl_tax_custom_price;
+                return item.custom_price_edit;
             default:
-                return item.excl_tax_custom_price;
+                return item.custom_price_edit;
         }
     }
 
@@ -1506,7 +1506,7 @@ export class POS {
         let tax_value           =   0;
         let price_with_tax      =   this.getProductUnitPrice( product.mode, product.$quantities() );
 
-        if ( taxGroup !== undefined && taxGroup.taxes !== undefined ) {
+        if ( taxGroup !== undefined && taxGroup !== null && taxGroup.taxes !== undefined ) {
 
             /**
              * get summarize rates

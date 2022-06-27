@@ -304,6 +304,10 @@ export default {
             this.visibleSection     =   section;
         });
 
+        nsHooks.addAction( 'ns-after-cart-changed', 'ns-pos-listen-cart-change', () => {
+            this.$forceUpdate();
+        });
+
         /**
          * let's register hotkeys
          */
@@ -416,14 +420,16 @@ export default {
                      * to avoid restoring the original prices.
                      */
                     product.mode        =   'custom';
-                    product     =   POS.computeProductTax( product );
+                    product             =   POS.computeProductTax( product );
                                         
-                    POS.refreshProducts( POS.products.getValue() );
-                    POS.refreshCart();
+                    POS.recomputeProducts( POS.products.getValue() );
+
+                    nsHooks.doAction( 'ns-after-cart-changed' );
 
                     return nsSnackBar.success( __( 'The product price has been updated.' ) ).subscribe();
                 } catch( exception ) {
-                    return;
+                    nsSnackBar.error( exception ).subscribe();
+                    throw exception;
                 }
             }
 
