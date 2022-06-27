@@ -17,7 +17,7 @@ use App\Classes\Output;
             <template v-slot:title>{{ $mainFieldLabel ?? __( 'mainFieldLabel not defined' ) }}</template>
             <template v-slot:save>{{ $saveButton ?? __( 'Save' ) }}</template>
             <template v-slot:error-required>{{ $fieldRequired ?? __( 'This field is required' ) }}</template>
-            <template v-slot:error-invalid-form>{{ $formNotValid ?? __( 'The form is not valid. Please check it and try again' ) }}</template>
+            <template v-slot:error-invalid>{{ $formNotValid ?? __( 'The form is not valid. Please check it and try again' ) }}</template>
         </ns-crud-form>
     </div>
 </div>

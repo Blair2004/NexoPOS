@@ -152,7 +152,8 @@ class RegisterCrud extends CrudService
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
+                'validation'    => 'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -168,6 +169,7 @@ class RegisterCrud extends CrudService
                             ]),
                             'description'   =>  __( 'Define what is the status of the register.' ),
                             'value' =>  $entry->status ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
