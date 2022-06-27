@@ -158,7 +158,7 @@ export class POS {
         return this._processingAddQueue;
     }
 
-    reset() {
+    async reset() {
         this._isSubmitting = false;
 
         /**
@@ -171,8 +171,9 @@ export class POS {
         this.defineCurrentScreen();
         this.setHoldPopupEnabled(true);
 
-        this.processInitialQueue();
-        this.refreshCart();
+        await this.processInitialQueue();
+
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     public initialize() {
@@ -258,29 +259,6 @@ export class POS {
         }));
 
         /**
-         * Whenever there is a change
-         * on the products, we'll update
-         * the cart.
-         */
-        this.products.subscribe(_ => {
-            this.refreshCart();
-        });
-
-        /**
-         * listen to type for updating
-         * the order accordingly
-         */
-        this.types.subscribe(types => {
-            const selected = Object.values(types).filter((type: any) => type.selected);
-
-            if (selected.length > 0) {
-                const order = this.order.getValue();
-                order.type = selected[0];
-                this.order.next(order);
-            }
-        });
-
-        /**
          * We're handling here the responsive aspect
          * of the POS.
          */
@@ -298,6 +276,27 @@ export class POS {
                 return __( 'Some products has been added to the cart. Would youl ike to discard this order ?' );
             }
         }
+
+        /**
+         * Whenever there is a change
+         * on the products, we'll update
+         * the cart.
+         */
+        nsHooks.addAction( 'ns-after-cart-changed', 'listen-add-to-cart', () => this.refreshCart());
+
+        /**
+         * listen to type for updating
+         * the order accordingly
+         */
+        this.types.subscribe(types => {
+            const selected = Object.values(types).filter((type: any) => type.selected);
+
+            if (selected.length > 0) {
+                const order = this.order.getValue();
+                order.type = selected[0];
+                this.order.next(order);
+            }
+        });
 
         this.defineCurrentScreen();
     }
@@ -499,7 +498,7 @@ export class POS {
             let order   =   this.order.getValue();
             order       =   this.computeProductsTaxes( order );
 
-            if (order.tax_group_id === undefined || order.tax_group_id === null) {
+            if (order.tax_group_id === undefined && order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
 
                 return resolve({ 
@@ -514,7 +513,7 @@ export class POS {
              * if the tax group is already cached
              * we'll pull that rather than doing a new request.
              */
-            if (groups) {
+            if (Object.values(groups).length > 0) {
 
                 /**
                  * Only if a tax group is assigned to the 
@@ -522,7 +521,7 @@ export class POS {
                  */
                 if ( groups[order.tax_group_id] !== undefined ) {
                     order.taxes = groups[order.tax_group_id].taxes.map(tax => {
-                        tax.tax_value = this.getVatValue(order.subtotal, tax.rate, order.tax_type);
+                        tax.tax_value = this.getVatValue(order.subtotal - order.discount, tax.rate, order.tax_type);
                         return tax;
                     });
                 }
@@ -534,8 +533,10 @@ export class POS {
                     data: { tax: groups[order.tax_group_id], order }
                 });
             }
+            
+            console.log( order.tax_group_id );
 
-            if (order.tax_group_id !== null && order.tax_group_id.toString().length > 0 ) {
+            if (order.tax_group_id !== undefined && order.tax_group_id.toString().length > 0 ) {
                 nsHttpClient.get(`/api/nexopos/v4/taxes/groups/${order.tax_group_id}`)
                     .subscribe({
                         next: (tax: any) => {
@@ -544,7 +545,7 @@ export class POS {
                                     tax_id: _tax.id,
                                     tax_name: _tax.name,
                                     rate: parseFloat(_tax.rate),
-                                    tax_value: this.getVatValue(order.subtotal, _tax.rate, order.tax_type)
+                                    tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
                                 };
                             });
 
@@ -944,8 +945,9 @@ export class POS {
     }
 
     buildProducts(products) {
-        this.refreshProducts(products);
+        this.recomputeProducts(products);
         this.products.next(products);
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     printOrderReceipt( order ) {
@@ -1418,7 +1420,7 @@ export class POS {
          * Once the product has been added to the cart
          * it's being computed
          */
-        this.refreshProducts(products);
+        this.recomputeProducts(products);
 
         /**
          * dispatch event that the 
@@ -1435,6 +1437,8 @@ export class POS {
         if ( url.length > 0 ) {
             ( new Audio( url ) ).play();
         }
+
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     defineTypes(types) {
@@ -1445,7 +1449,8 @@ export class POS {
         const products = this._products.getValue();
         const index = products.indexOf(product);
         products.splice(index, 1);
-        this._products.next(products);
+        this.products.next(products);
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     updateProduct(product, data, index = null) {
@@ -1457,11 +1462,13 @@ export class POS {
          */
         Vue.set(products, index, { ...product, ...data });
 
-        this.refreshProducts(products);
-        this._products.next(products);
+        this.recomputeProducts(products);
+        this.products.next(products);
+
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
-    refreshProducts(products = null) {
+    recomputeProducts(products = null) {
         products.forEach(product => {
             this.computeProduct(product);
         });
@@ -1633,11 +1640,14 @@ export class POS {
                     onAction: (action) => {
                         if (action) {
                             nsHttpClient.delete(`/api/nexopos/v4/orders/${order.id}`)
-                                .subscribe((result: any) => {
-                                    nsSnackBar.success(result.message).subscribe();
-                                    this.reset();
-                                }, (error) => {
-                                    return nsSnackBar.error(error.message).subscribe();
+                                .subscribe({
+                                    next: (result: any) => {
+                                        nsSnackBar.success(result.message).subscribe();
+                                        this.reset();
+                                    },
+                                    error: (error) => {
+                                        return nsSnackBar.error(error.message).subscribe();
+                                    }
                                 })
                         }
                     }

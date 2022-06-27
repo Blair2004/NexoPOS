@@ -472,7 +472,7 @@ class OrdersService
                 $orderTax->tax_value    =   $tax[ 'tax_value' ] ?? $this->taxService->getVatValue(
                     $order->tax_type,
                     $tax[ 'rate' ],
-                    $order->subtotal
+                    $order->subtotal - $order->discount
                 );
 
                 $orderTax->rate         =   $tax[ 'rate' ];
@@ -1591,7 +1591,7 @@ class OrdersService
                 ->sum( 'total_price' );
 
             $taxValue               =   $order->taxes->map( function( $tax ) use ( $order, $subTotal ) {
-                $tax->tax_value     =   $this->taxService->getVatValue( $order->tax_type, $tax->rate, $subTotal );
+                $tax->tax_value     =   $this->taxService->getVatValue( $order->tax_type, $tax->rate, $subTotal - $order->discount );
                 $tax->save();
 
                 return $tax->tax_value;
