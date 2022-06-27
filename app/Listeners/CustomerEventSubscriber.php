@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Events\CustomerRewardAfterCreatedEvent;
 use App\Services\CustomerService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CustomerEventSubscriber
 {
@@ -22,9 +20,8 @@ class CustomerEventSubscriber
      */
     public function __construct(
         CustomerService $customerService
-    )
-    {
-        $this->customerService      =   $customerService;
+    ) {
+        $this->customerService = $customerService;
     }
 
     public function subscribe( $event )
@@ -36,8 +33,8 @@ class CustomerEventSubscriber
 
         $event->listen(
             CustomerRewardAfterCreatedEvent::class,
-            fn( $event ) => $this->customerService->applyReward( 
-                $event->customerReward, 
+            fn( $event ) => $this->customerService->applyReward(
+                $event->customerReward,
                 $event->customer,
                 $event->reward
             )

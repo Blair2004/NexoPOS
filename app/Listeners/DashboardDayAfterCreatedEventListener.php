@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\DashboardDayAfterCreatedEvent;
 use App\Jobs\ComputeDashboardMonthReportJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class DashboardDayAfterCreatedEventListener
 {

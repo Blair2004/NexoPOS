@@ -1,17 +1,19 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductTax extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'products_taxes';
+
+    protected $table = 'nexopos_' . 'products_taxes';
 
     /**
      * define the relationship
+     *
      * @return Model\RelationShip
      */
     public function parentTax()
@@ -20,8 +22,9 @@ class ProductTax extends NsModel
     }
 
     /**
-     * find combinaison of product id 
+     * find combinaison of product id
      * and tax id
+     *
      * @param array {product_id: int, tax_id: int}
      * @return Query
      */

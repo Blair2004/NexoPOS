@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Models\Order;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,7 +13,9 @@ class OrderAfterPaymentStatusChangedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $order;
+
     public $previous;
+
     public $new;
 
     /**
@@ -26,9 +25,9 @@ class OrderAfterPaymentStatusChangedEvent
      */
     public function __construct( Order $order, $previous, $new )
     {
-        $this->order        =   $order;
-        $this->previous     =   $previous;
-        $this->new          =   $new;
+        $this->order = $order;
+        $this->previous = $previous;
+        $this->new = $new;
     }
 
     /**

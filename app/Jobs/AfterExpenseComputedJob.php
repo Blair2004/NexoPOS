@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,7 +22,7 @@ class AfterExpenseComputedJob implements ShouldQueue
      */
     public function __construct( $event )
     {
-        $this->event    =   $event;
+        $this->event = $event;
     }
 
     /**

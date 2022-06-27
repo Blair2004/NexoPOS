@@ -27,7 +27,7 @@ class ProcurementRequest extends FormRequest
             'name'                      =>  'required',
             'general.delivery_status'   =>  'required',
             'general.payment_status'    =>  'required',
-            'general.provider_id'       =>  'required'
+            'general.provider_id'       =>  'required',
         ];
     }
 }

@@ -1,125 +1,131 @@
 <?php
+
 namespace App\Services;
 
 use App\Exceptions\NotAllowedException;
-use App\Exceptions\NotEnoughPermissionException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\View\View as ContractView;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use TorMorten\Eventy\Facades\Events as Hook;
 
-class CrudService 
+class CrudService
 {
     /**
      * Toggle feature array
-     * @param boolean
+     *
+     * @param bool
      */
-    protected $features       =   [
+    protected $features = [
         'bulk-actions'      =>  true, // enable bulk action
         'single-action'     =>  true, // enable single action
-        'checkboxes'        =>  true // enable checkboxes
+        'checkboxes'        =>  true, // enable checkboxes
     ];
 
     /**
      * Actions Array
      */
-    protected $actions  =   [];
+    protected $actions = [];
 
     /**
      * Protected columns
      */
-    protected   $columns    =   [];
+    protected $columns = [];
 
     /**
      * Query filters
+     *
      * @param array
      */
-    protected $queryFilters  =   [];
+    protected $queryFilters = [];
 
     /**
      * Link
+     *
      * @return array
      */
-    protected   $links       =   [
+    protected $links = [
         'list'      =>  [],
         'edit'      =>  [],
-        'create'    =>  []
+        'create'    =>  [],
     ];
 
     /**
      * Define a where for getEntries
+     *
      * @var array
      */
-    protected $listWhere    =   [];
+    protected $listWhere = [];
 
     /**
      * Bulk Options
+     *
      * @param array
      */
-    protected $bulkActions  =   [];
+    protected $bulkActions = [];
 
     /**
      * define where in statement
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * define tabs relations
      */
-    protected $tabsRelations    =   [];
+    protected $tabsRelations = [];
 
     /**
      * Will ensure every POST request
      * aren't persistent while events
      * for this request are triggered.
      */
-    public $disablePost      =   false;
+    public $disablePost = false;
 
     /**
      * Will ensure every PUT requests aren't persisten
      * while the events for that request are triggered.
      */
-    public $disablePut       =   false;
+    public $disablePut = false;
 
     /**
      * define all fiels that shouldn't be used for saving
+     *
      * @param array
      */
-    public $skippable          =   [];
+    public $skippable = [];
 
     /**
      * Determine if the options column should display
      * before the crud columns
      */
-    protected $prependOptions     =   false;
+    protected $prependOptions = false;
 
     /**
      * Determine if actions should be displayed
      */
-    protected $showOptions      =   true;
+    protected $showOptions = true;
 
     /**
      * Will enforce slug to be defined as
      * a protected property.
+     *
      * @param string
      */
     protected $slug;
 
     /**
-     * Define the columns that should 
+     * Define the columns that should
      * be included on the exportation.
      */
-    protected $exportColumns    =   [];
+    protected $exportColumns = [];
 
     /**
      * Construct Parent
@@ -129,19 +135,20 @@ class CrudService
         /**
          * @todo provide more build in actions
          */
-        $this->bulkActions  =   [
-            'delete_selected'   =>  __( 'Delete Selected entries' )
+        $this->bulkActions = [
+            'delete_selected'   =>  __( 'Delete Selected entries' ),
         ];
 
         /**
          * Bulk action messages
          */
-        $this->bulkDeleteSuccessMessage     =   __( '%s entries has been deleted' );
-        $this->bulkDeleteDangerMessage      =   __( '%s entries has not been deleted' );
+        $this->bulkDeleteSuccessMessage = __( '%s entries has been deleted' );
+        $this->bulkDeleteDangerMessage = __( '%s entries has not been deleted' );
     }
 
     /**
      * Shorthand for preparing and submitting crud request
+     *
      * @param string $namespace
      * @param array $inputs
      * @param mixed $id
@@ -149,15 +156,16 @@ class CrudService
      */
     public function submitPreparedRequest( $namespace, $inputs, $id = null ): array
     {
-        $crudInstance   =   $this->getCrudInstance( $namespace );
-        $model          =   $id !== null ? $crudInstance->getModel()::find( $id ) : null;
-        $data           =   $this->getFlatForm( $crudInstance, $inputs, $model );
-        
+        $crudInstance = $this->getCrudInstance( $namespace );
+        $model = $id !== null ? $crudInstance->getModel()::find( $id ) : null;
+        $data = $this->getFlatForm( $crudInstance, $inputs, $model );
+
         return $this->submitRequest( $namespace, $data, $id );
     }
 
     /**
      * Submit a prepared request to a crud instance
+     *
      * @param string $namespace
      * @param array $inputs
      * @param int|null $id
@@ -165,34 +173,33 @@ class CrudService
      */
     public function submitRequest( $namespace, $inputs, $id = null ): array
     {
-        $resource   =   $this->getCrudInstance( $namespace );
-        $model      =   $resource->getModel();
-        $isEditing  =   $id !== null;
-        $entry      =   ! $isEditing ? new $model : $model::find( $id );
-        
+        $resource = $this->getCrudInstance( $namespace );
+        $model = $resource->getModel();
+        $isEditing = $id !== null;
+        $entry = ! $isEditing ? new $model : $model::find( $id );
+
         /**
          * let's keep old form inputs
          */
-        $unfiltredInputs    =   $inputs;
+        $unfiltredInputs = $inputs;
 
         if ( method_exists( $resource, 'filterPostInputs' ) && ! $isEditing ) {
-            $inputs    =   $resource->filterPostInputs( $inputs, null );
+            $inputs = $resource->filterPostInputs( $inputs, null );
         }
 
         if ( method_exists( $resource, 'filterPutInputs' ) && $isEditing ) {
-            $inputs    =   $resource->filterPutInputs( $inputs, $entry );
+            $inputs = $resource->filterPutInputs( $inputs, $entry );
         }
 
         /**
          * this trigger a global filter
          * on the actual crud instance
          */
-        $inputs     =   Hook::filter( 
-            get_class( $resource ) . ( $isEditing ? '@filterPutInputs' : '@filterPostInputs' ), 
+        $inputs = Hook::filter(
+            get_class( $resource ) . ( $isEditing ? '@filterPutInputs' : '@filterPostInputs' ),
             $inputs,
             $isEditing ? $entry : null
         );
-
 
         if ( method_exists( $resource, 'beforePost' ) && ! $isEditing ) {
             $resource->beforePost( $unfiltredInputs, null, $inputs );
@@ -206,13 +213,12 @@ class CrudService
          * If we would like to handle the PUT request
          * by any other handler than the CrudService
          */
-        if ( 
+        if (
             ( ! $isEditing && ! $resource->disablePost ) ||
             ( $isEditing && ! $resource->disablePut )
         ) {
-
-            $fillable   =   Hook::filter( 
-                get_class( $resource ) . '@getFillable', 
+            $fillable = Hook::filter(
+                get_class( $resource ) . '@getFillable',
                 $resource->getFillable()
             );
 
@@ -228,34 +234,34 @@ class CrudService
                      * If submitted field are part of fillable fields
                      */
                     if ( in_array( $name, $fillable ) || count( $fillable ) === 0 ) {
-    
+
                         /**
-                         * We might give the capacity to filter fields 
+                         * We might give the capacity to filter fields
                          * before storing. This can be used to apply specific formating to the field.
                          */
                         if ( method_exists( $resource, 'filterPostInput' ) || method_exists( $resource, 'filterPutInput' ) ) {
-                            $entry->$name   =   $isEditing ? $resource->filterPutInput( $value, $name ) : $resource->filterPostInput( $value, $name );
+                            $entry->$name = $isEditing ? $resource->filterPutInput( $value, $name ) : $resource->filterPostInput( $value, $name );
                         } else {
-                            $entry->$name   =   $value;
+                            $entry->$name = $value;
                         }
                     }
-    
+
                     /**
                      * sanitizing input to remove
                      * all script tags
                      */
-                    if ( ! empty( $entry->$name ) && ! array( $entry->$name ) ) {
-                        $entry->$name       =   strip_tags( $entry->$name );
+                    if ( ! empty( $entry->$name ) && ! [ $entry->$name ] ) {
+                        $entry->$name = strip_tags( $entry->$name );
                     }
                 }
             }
-            
+
             /**
              * If fillable is empty or if "author" it's explicitely
              * mentionned on the fillable array.
              */
             if ( empty( $fillable ) || in_array( 'author', $fillable ) ) {
-                $entry->author      =   Auth::id();
+                $entry->author = Auth::id();
             }
 
             /**
@@ -263,9 +269,9 @@ class CrudService
              * In case a field is not provided, the default value is used.
              */
             if ( ! empty( $entry->created_at ) || ! empty( $entry->updated_at ) ) {
-                $entry->timestamps      =   false;
-                $entry->created_at      =   $entry->created_at ?: ns()->date->getNowFormatted();
-                $entry->updated_at      =   $entry->updated_at ?: ns()->date->getNowFormatted();
+                $entry->timestamps = false;
+                $entry->created_at = $entry->created_at ?: ns()->date->getNowFormatted();
+                $entry->updated_at = $entry->updated_at ?: ns()->date->getNowFormatted();
             }
 
             $entry->save();
@@ -274,33 +280,33 @@ class CrudService
              * loop the tabs relations
              * and store it
              */
-            foreach( $resource->getTabsRelations() as $tab => $relationParams ) {
-                $fields         =   request()->input( $tab );
-                $class          =   $relationParams[0];
-                $localKey       =   $relationParams[1];
-                $foreighKey     =   $relationParams[2];
-                
+            foreach ( $resource->getTabsRelations() as $tab => $relationParams ) {
+                $fields = request()->input( $tab );
+                $class = $relationParams[0];
+                $localKey = $relationParams[1];
+                $foreighKey = $relationParams[2];
+
                 if ( ! empty( $fields ) ) {
-                    $model  =   $class::where( $localKey, $entry->$foreighKey )->first();
+                    $model = $class::where( $localKey, $entry->$foreighKey )->first();
 
                     /**
                      * no relation has been found
                      * so we'll store that.
                      */
                     if ( ! $model instanceof $class ) {
-                        $model  =   new $relationParams[0]; // should be the class;
+                        $model = new $relationParams[0]; // should be the class;
                     }
 
                     /**
-                     * We're saving here all the fields for 
+                     * We're saving here all the fields for
                      * the related model
                      */
-                    foreach( $fields as $name => $value ) {
-                        $model->$name   =   $value;
+                    foreach ( $fields as $name => $value ) {
+                        $model->$name = $value;
                     }
 
-                    $model->$localKey   =   $entry->$foreighKey;
-                    $model->author      =   Auth::id();
+                    $model->$localKey = $entry->$foreighKey;
+                    $model->author = Auth::id();
                     $model->save();
                 }
             }
@@ -329,13 +335,14 @@ class CrudService
             'data'      =>  [
                 'editUrl'   =>  str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
             ],
-            'message'   =>  __( 'A new entry has been successfully created.' )
+            'message'   =>  __( 'A new entry has been successfully created.' ),
         ];
     }
 
     /**
      * Is enabled
      * Return whether a feature is enabled (true) or not (false)
+     *
      * @param string feature name
      * @return boolean/null
      */
@@ -346,6 +353,7 @@ class CrudService
 
     /**
      * Get namespace
+     *
      * @return string current namespace
      */
     public function getNamespace(): string
@@ -364,6 +372,7 @@ class CrudService
 
     /**
      * Get Bulk Actions
+     *
      * @return array of bulk actions
      */
     public function getBulkActions(): array
@@ -373,6 +382,7 @@ class CrudService
 
     /**
      * Will return picked array
+     *
      * @return array
      */
     public function getPicked(): array
@@ -382,6 +392,7 @@ class CrudService
 
     /**
      * Will handle the definition operator
+     *
      * @param Builder $query
      * @param array $definition
      * @param array $searchKeyValue
@@ -394,7 +405,6 @@ class CrudService
          * @param string $key
          * @param mixed $value
          */
-
         if ( isset( $definition[ 'operator' ] ) ) {
             $query->where( $key, $definition[ 'operator' ], $value );
         } else {
@@ -404,6 +414,7 @@ class CrudService
 
     /**
      * Returns the available query filters
+     *
      * @return array
      */
     public function getQueryFilters(): array
@@ -413,7 +424,7 @@ class CrudService
 
     public function __extractTable( $relation ): string
     {
-        $parts  =   explode( ' as ', $relation[0] );
+        $parts = explode( ' as ', $relation[0] );
         if ( count( $parts ) === 2 ) {
             return trim( $parts[0] );
         } else {
@@ -424,6 +435,7 @@ class CrudService
     /**
      * Will return mutated relation
      * for the Crud instance
+     *
      * @return array $relations
      */
     public function getRelations(): array
@@ -433,15 +445,16 @@ class CrudService
 
     /**
      * Will returns the CRUD component slug
+     *
      * @return string
      */
-    public function getSlug(): string 
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
     /**
-     * Returns a boolean that determine if the options should be displayed 
+     * Returns a boolean that determine if the options should be displayed
      * before the crud columns or after the crud columns. This method is defined
      * for allowing other module to override this behavior.
      */
@@ -452,16 +465,17 @@ class CrudService
 
     /**
      * Get crud instance entries.
+     *
      * @param array config
      * @return array entries
      */
     public function getEntries( $config = [] ): array
     {
-        $table              =   $this->hookTableName( $this->table );
-        $request            =   app()->make( Request::class );
-        $query              =   DB::table( $table );
-        $columnsLongName    =   [];
-        
+        $table = $this->hookTableName( $this->table );
+        $request = app()->make( Request::class );
+        $query = DB::table( $table );
+        $columnsLongName = [];
+
         /**
          * Let's loop relation if they exists
          */
@@ -469,92 +483,91 @@ class CrudService
             /**
              * First loop to retreive the columns and rename it
              */
-            $select         =   [];
+            $select = [];
 
             /**
              * Building Select field for primary table
-             * We're caching the table columns, since we would like to 
+             * We're caching the table columns, since we would like to
              * avoid many DB Calls
              */
-            if( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
-                $columns        =   Cache::get( 'table-columns-' . $table );
+            if ( ! empty( Cache::get( 'table-columns-' . $table ) ) && true === false ) {
+                $columns = Cache::get( 'table-columns-' . $table );
             } else {
-                $columns        =   Schema::getColumnListing( $table );
+                $columns = Schema::getColumnListing( $table );
                 Cache::put( 'table-columns-' . $table, $columns, Carbon::now()->addDays(1) );
             }
 
-            foreach( $columns as $index => $column ) {
-                $__name             =   $table . '.' . $column;
-                $columnsLongName[]  =   $__name;
-                $select[]           =   $__name . ' as ' . $column;
+            foreach ( $columns as $index => $column ) {
+                $__name = $table . '.' . $column;
+                $columnsLongName[] = $__name;
+                $select[] = $__name . ' as ' . $column;
             }
 
             /**
              * we're extracting the joined table
              * to make sure building the alias works
              */
-            $relations      =   [];
-            $relatedTables  =   [];
-            
-            collect( $this->getRelations() )->each( function( $relation ) use ( &$relations, &$relatedTables ){
+            $relations = [];
+            $relatedTables = [];
+
+            collect( $this->getRelations() )->each( function( $relation ) use ( &$relations, &$relatedTables ) {
                 if ( isset( $relation[0] ) ) {
                     if ( ! is_array( $relation[0] ) ) {
-                        $relations[]    =   $relation;
+                        $relations[] = $relation;
 
                         /**
                          * We do extract the table name
                          * defined on the relation array
                          */
-                        $relatedTables[]    = $this->__extractTable( $relation );
-
+                        $relatedTables[] = $this->__extractTable( $relation );
                     } else {
                         collect( $relation )->each( function( $_relation ) use ( &$relations, &$relatedTables ) {
-                            $relations[]    =   $_relation;
+                            $relations[] = $_relation;
 
                             /**
                              * We do extract the table name
                              * defined on the relation array
                              */
-                            $relatedTables[]    = $this->__extractTable( $_relation );
+                            $relatedTables[] = $this->__extractTable( $_relation );
                         });
                     }
                 }
             });
 
-            $relatedTables      =   collect( $relatedTables )
+            $relatedTables = collect( $relatedTables )
                 ->unique()
                 ->push( $this->table ) // the crud table must be considered as a related table as well.
                 ->toArray();
-            
+
             /**
              * Build Select for joined table
              */
-            foreach( $relations as $relation ) {
+            foreach ( $relations as $relation ) {
                 /**
                  * We're caching the columns to avoid once again many DB request
                  */
-                if( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) && true == false ) {
-                    $columns        =   Cache::get( 'table-columns-' . $relation[0] );
+                if ( ! empty( Cache::get( 'table-columns-' . $relation[0] ) ) && true == false ) {
+                    $columns = Cache::get( 'table-columns-' . $relation[0] );
                 } else {
                     /**
                      * Will ensure to only pick
                      * some columns from the related tables
                      */
-                    $table          =   $relation[0];
+                    $table = $relation[0];
 
                     /**
-                     * If the CRUD instance has osme entries 
+                     * If the CRUD instance has osme entries
                      * that are picked, we'll allow extensibility
                      * using the filter "getPicked".
                      */
-                    $pick           =   Hook::filter( self::method( 'getPicked' ), $this->getPicked() );
+                    $pick = Hook::filter( self::method( 'getPicked' ), $this->getPicked() );
 
-                    $hasAlias       =   explode( ' as ', $relation[0] ); // if there is an alias, let's just pick the table name
-                    $hasAlias[0]    =   $this->hookTableName( $hasAlias[0] ); // make the table name hookable
-                    $aliasName      =   $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
-                    $columns        =   collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
+                    $hasAlias = explode( ' as ', $relation[0] ); // if there is an alias, let's just pick the table name
+                    $hasAlias[0] = $this->hookTableName( $hasAlias[0] ); // make the table name hookable
+                    $aliasName = $hasAlias[1] ?? false; // for aliased relation. The pick use the alias as a reference.
+                    $columns = collect( Schema::getColumnListing( count( $hasAlias ) === 2 ? trim( $hasAlias[0] ) : $relation[0] ) )
                         ->filter( function( $column ) use ( $pick, $table, $aliasName ) {
-                            $picked     =   $pick[ $aliasName ? trim( $aliasName ) : $table ] ?? [];
+                            $picked = $pick[ $aliasName ? trim( $aliasName ) : $table ] ?? [];
                             if ( ! empty( $picked ) ) {
                                 if ( in_array( $column, $picked ) ) {
                                     return true;
@@ -562,29 +575,30 @@ class CrudService
                                     return false;
                                 }
                             }
+
                             return true;
-                    })->toArray();
+                        })->toArray();
 
                     Cache::put( 'table-columns-' . $relation[0], $columns, Carbon::now()->addDays(1) );
                 }
 
-                foreach( $columns as $index => $column ) {
-                    $hasAlias           =   explode( ' as ', $relation[0]);
-                    $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
+                foreach ( $columns as $index => $column ) {
+                    $hasAlias = explode( ' as ', $relation[0]);
+                    $hasAlias[0] = $this->hookTableName( $hasAlias[0] );
 
                     /**
-                     * If the relation has an alias, we'll 
+                     * If the relation has an alias, we'll
                      * use the provided alias to compose
                      * the juncture.
                      */
                     if ( count( $hasAlias ) === 2 ) {
-                        $__name             =   trim( $hasAlias[1] ) . '.' . $column;
-                        $columnsLongName[]  =   $__name;
-                        $select[]           =   $__name . ' as ' . trim( $hasAlias[1] ) . '_' . $column;
+                        $__name = trim( $hasAlias[1] ) . '.' . $column;
+                        $columnsLongName[] = $__name;
+                        $select[] = $__name . ' as ' . trim( $hasAlias[1] ) . '_' . $column;
                     } else {
-                        $__name             =   $this->hookTableName( $relation[0] ) . '.' . $column;
-                        $columnsLongName[]  =   $__name;
-                        $select[]           =   $__name . ' as ' . $relation[0] . '_' . $column;
+                        $__name = $this->hookTableName( $relation[0] ) . '.' . $column;
+                        $columnsLongName[] = $__name;
+                        $select[] = $__name . ' as ' . $relation[0] . '_' . $column;
                     }
                 }
             }
@@ -592,38 +606,38 @@ class CrudService
             /**
              * @var Builder
              */
-            $query          =   call_user_func_array([ $query, 'select' ], $select );
+            $query = call_user_func_array([ $query, 'select' ], $select );
 
-            foreach( $this->getRelations() as $junction => $relation ) {
+            foreach ( $this->getRelations() as $junction => $relation ) {
                 /**
                  * if no junction statement is provided
                  * then let's make it inner by default
                  */
-                $junction   =   is_numeric( $junction ) ? 'join' : $junction;
+                $junction = is_numeric( $junction ) ? 'join' : $junction;
 
                 if ( in_array( $junction, [ 'join', 'leftJoin', 'rightJoin', 'crossJoin' ] ) ) {
                     if ( $junction !== 'join' ) {
-                        foreach( $relation as $junction_relation ) {
-                            $hasAlias           =   explode( ' as ', $junction_relation[0]);
-                            $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
+                        foreach ( $relation as $junction_relation ) {
+                            $hasAlias = explode( ' as ', $junction_relation[0]);
+                            $hasAlias[0] = $this->hookTableName( $hasAlias[0] );
 
                             /**
-                             * makes sure first table can be filtered. We should also check 
+                             * makes sure first table can be filtered. We should also check
                              * if the column are actual column and not aliases
                              */
-                            $relatedTableParts  =   explode( '.', $junction_relation[1] );
+                            $relatedTableParts = explode( '.', $junction_relation[1] );
 
                             if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                                $junction_relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                                $junction_relation[1] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                             }
 
                             /**
-                             * makes sure the second table can be filtered. We should also check 
+                             * makes sure the second table can be filtered. We should also check
                              * if the column are actual column and not aliases
                              */
-                            $relatedTableParts  =   explode( '.', $junction_relation[3] );
+                            $relatedTableParts = explode( '.', $junction_relation[3] );
                             if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                                $junction_relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                                $junction_relation[3] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                             }
 
                             if ( count( $hasAlias ) === 2 ) {
@@ -633,33 +647,32 @@ class CrudService
                             }
                         }
                     } else {
-                        $hasAlias           =   explode( ' as ', $relation[0]);
-                        $hasAlias[0]        =   $this->hookTableName( $hasAlias[0] );
+                        $hasAlias = explode( ' as ', $relation[0]);
+                        $hasAlias[0] = $this->hookTableName( $hasAlias[0] );
 
                         /**
-                         * makes sure the first table can be filtered. We should also check 
+                         * makes sure the first table can be filtered. We should also check
                          * if the column are actual column and not aliases
                          */
-                        $relation[0]   =   $this->hookTableName( $relation[0] );
+                        $relation[0] = $this->hookTableName( $relation[0] );
 
                         /**
-                         * makes sure the first table can be filtered. We should also check 
+                         * makes sure the first table can be filtered. We should also check
                          * if the column are actual column and not aliases
                          */
-                        $relatedTableParts  =   explode( '.', $relation[1] );
+                        $relatedTableParts = explode( '.', $relation[1] );
                         if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                            $relation[1]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                            $relation[1] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                         }
 
                         /**
-                         * makes sure the second table can be filtered. We should also check 
+                         * makes sure the second table can be filtered. We should also check
                          * if the column are actual column and not aliases
                          */
-                        $relatedTableParts  =   explode( '.', $relation[3] );
+                        $relatedTableParts = explode( '.', $relation[3] );
                         if ( count( $relatedTableParts ) === 2 && in_array( $relatedTableParts[0], $relatedTables ) ) {
-                            $relation[3]   =   $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
+                            $relation[3] = $this->hookTableName( $relatedTableParts[0] ) . '.' . $relatedTableParts[1];
                         }
-                        
 
                         if ( count( $hasAlias ) === 2 ) {
                             $query->$junction( trim($hasAlias[0]) . ' as ' . trim($hasAlias[1]), $relation[1], $relation[2], $relation[3] );
@@ -667,7 +680,6 @@ class CrudService
                             $query->$junction( $relation[0], $relation[1], $relation[2], $relation[3] );
                         }
                     }
-
                 }
             }
         }
@@ -676,7 +688,7 @@ class CrudService
          * check if the query has a where statement
          */
         if ( $this->listWhere ) {
-            foreach( $this->listWhere as $key => $value ) {
+            foreach ( $this->listWhere as $key => $value ) {
                 if ( count( $this->listWhere ) > 1 ) {
                     $query->orWhere( $key, $value );
                 } else {
@@ -697,7 +709,7 @@ class CrudService
          * try to run the where in statement
          */
         if ( $this->whereIn ) {
-            foreach( $this->whereIn as $key => $values ) {
+            foreach ( $this->whereIn as $key => $values ) {
                 $query->whereIn( $key, $values );
             }
         }
@@ -708,14 +720,14 @@ class CrudService
          * query filters
          */
         if ( $request->query( 'queryFilters' ) ) {
-            $filters    =   json_decode( urldecode( $request->query( 'queryFilters' ) ), true );
+            $filters = json_decode( urldecode( $request->query( 'queryFilters' ) ), true );
 
             /**
              * @todo we might need to get the filter from the resource
              * so that we can parse correctly the provider query filters.
              */
             if ( ! empty( $filters ) ) {
-                foreach( $filters as $key => $value ) {
+                foreach ( $filters as $key => $value ) {
                     /**
                      * we won't handle empty value
                      */
@@ -723,10 +735,10 @@ class CrudService
                         continue;
                     }
 
-                    $definition     =   collect( $this->queryFilters )->filter( fn( $filter ) => $filter[ 'name' ] === $key )->first();
+                    $definition = collect( $this->queryFilters )->filter( fn( $filter ) => $filter[ 'name' ] === $key )->first();
 
                     if ( ! empty( $definition ) ) {
-                        switch( $definition[ 'type' ] ) {
+                        switch ( $definition[ 'type' ] ) {
                             case 'daterangepicker':
                                 if ( $value[ 'startDate' ] !== null && $value[ 'endDate' ] !== null ) {
                                     $query->where( $key, '>=', Carbon::parse( $value[ 'startDate' ] )->toDateTimeString() );
@@ -738,10 +750,10 @@ class CrudService
                                  * We would like to apply a specific operator
                                  * if it's provided to each requests
                                  */
-                                $this->handleDefinitionOperator( 
-                                    $query, 
-                                    $definition, 
-                                    compact( 'key', 'value' ) 
+                                $this->handleDefinitionOperator(
+                                    $query,
+                                    $definition,
+                                    compact( 'key', 'value' )
                                 );
                             break;
                         }
@@ -755,9 +767,9 @@ class CrudService
         /**
          * let's make the "perPage" value adjustable
          */
-        $perPage    =   $config[ 'per_page' ] ?? 20;
+        $perPage = $config[ 'per_page' ] ?? 20;
         if ( $request->query( 'per_page' ) ) {
-            $perPage    =   $request->query( 'per_page' );
+            $perPage = $request->query( 'per_page' );
         }
 
         /**
@@ -765,7 +777,7 @@ class CrudService
          */
         if ( $request->query( 'search' ) ) {
             $query->where( function( $query ) use ( $request, $columnsLongName ) {
-                foreach( $columnsLongName as $index => $column ) {
+                foreach ( $columnsLongName as $index => $column ) {
                     if ( $index == 0 ) {
                         $query->where( $column, 'like', "%{$request->query( 'search' )}%" );
                     } else {
@@ -774,24 +786,24 @@ class CrudService
                 }
             });
         }
-        
+
         /**
          * Order the current result, according to the mentionned columns
          * means the user has clicked on "reorder"
          */
         if ( $request->query( 'direction' ) && $request->query( 'active' ) ) {
-            $query->orderBy( 
+            $query->orderBy(
                 $request->query( 'active' ),
                 $request->query( 'direction' )
             );
-        } 
+        }
 
         /**
-         * if some enties ID are provided. These 
+         * if some enties ID are provided. These
          * reference will only be part of the result.
          */
         if ( isset( $config[ 'pick' ] ) ) {
-            $query->whereIn( $this->hookTableName( $this->table ) . ".id", $config[ 'pick' ] );
+            $query->whereIn( $this->hookTableName( $this->table ) . '.id', $config[ 'pick' ] );
         }
 
         /**
@@ -799,40 +811,41 @@ class CrudService
          * probably we're trying to return all the entries.
          */
         if ( $perPage ) {
-            $entries    =   $query->paginate( $perPage )->toArray();
+            $entries = $query->paginate( $perPage )->toArray();
         } else {
-            $entries    =   $query->get()->toArray();
+            $entries = $query->get()->toArray();
         }
 
         /**
-         * looping entries to provide inline 
+         * looping entries to provide inline
          * options
          */
-        $entries[ 'data' ]  =   collect( $entries[ 'data' ] )->map( function( $entry ) {
-            $entry      =   new CrudEntry( ( array ) $entry );
+        $entries[ 'data' ] = collect( $entries[ 'data' ] )->map( function( $entry ) {
+            $entry = new CrudEntry( (array) $entry );
 
             /**
              * apply casting to crud resources
              * as it's defined by the class casting
+             *
              * @todo add support for default casting.
              */
-            $casts  =   ( new $this->model )->casts;
+            $casts = ( new $this->model )->casts;
 
             if ( ! empty( $casts ) ) {
-                foreach( $casts as $column => $cast ) {
+                foreach ( $casts as $column => $cast ) {
                     if ( class_exists( $cast ) ) {
-                        $castObject         =   new $cast;
-                        $entry->$column     =   $castObject->get( $entry, $column, $entry->$column, []);
+                        $castObject = new $cast;
+                        $entry->$column = $castObject->get( $entry, $column, $entry->$column, []);
                     }
                 }
             }
-            
+
             /**
              * We'll allow any resource to mutate the
              * entries but make sure to keep the originals.
              */
-            $entry  =   Hook::filter( $this->namespace . '-crud-actions', $entry );
-            $entry  =   Hook::filter( get_class( $this )::method( 'setActions' ), $entry );
+            $entry = Hook::filter( $this->namespace . '-crud-actions', $entry );
+            $entry = Hook::filter( get_class( $this )::method( 'setActions' ), $entry );
 
             return $entry;
         });
@@ -852,6 +865,7 @@ class CrudService
 
     /**
      * Get action
+     *
      * @return array of actions
      */
     public function getActions(): array
@@ -861,6 +875,7 @@ class CrudService
 
     /**
      * Get link
+     *
      * @return array of link
      */
     public function getLinks(): array
@@ -870,7 +885,8 @@ class CrudService
 
     /**
      * Get route
-     * @return string 
+     *
+     * @return string
      */
     public function getMainRoute(): string
     {
@@ -879,6 +895,7 @@ class CrudService
 
     /**
      * Get Model
+     *
      * @return current model
      */
     public function getModel(): string
@@ -888,6 +905,7 @@ class CrudService
 
     /**
      * Get Fillable fields
+     *
      * @return array of string as field name
      */
     public function getFillable(): array
@@ -897,12 +915,13 @@ class CrudService
 
     /**
      * Get crud instance
+     *
      * @param string namespace
      * @return Crud
      */
     public function getCrudInstance( $namespace )
     {
-        $crudClass          =   Hook::filter( 'ns-crud-resource', $namespace );
+        $crudClass = Hook::filter( 'ns-crud-resource', $namespace );
 
         /**
          * In case nothing handle this crud
@@ -916,85 +935,86 @@ class CrudService
 
     /**
      * Extracts Crud validation from a crud resource
+     *
      * @param Crud $resource
      * @return arra
      */
     public function extractCrudValidation( $crud, $model = null ): array
     {
-        $form   =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+        $form = Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
 
         if ( is_subclass_of( $crud, CrudService::class ) ) {
-            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+            $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
         }
 
-        $rules  =   [];
+        $rules = [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
-            $rules[ $form[ 'main' ][ 'name' ] ]     =   $form[ 'main' ][ 'validation' ];
+            $rules[ $form[ 'main' ][ 'name' ] ] = $form[ 'main' ][ 'validation' ];
         }
 
-        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
             if ( ! empty( $tab[ 'fields' ] ) ) {
-                foreach( $tab[ 'fields' ] as $field ) {
+                foreach ( $tab[ 'fields' ] as $field ) {
                     if ( isset( $field[ 'validation' ] ) ) {
-                        $rules[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'validation' ]; 
+                        $rules[ $tabKey ][ $field[ 'name' ] ] = $field[ 'validation' ];
                     }
                 }
             }
         }
-        
+
         return $rules;
     }
-    
+
     public function getForm()
     {
         return [];
     }
 
     /**
-     * Will extract form with the entry 
+     * Will extract form with the entry
      * as a reference for the values.
-     * 
+     *
      * @param object $entry
      * @return array $final
      */
     public function getExtractedForm( $entry = null, $multiEntry = false )
     {
-        $form   =   $this->getForm( $entry );
+        $form = $this->getForm( $entry );
 
-        $final  =   [];
+        $final = [];
 
         if ( isset( $form[ 'main' ][ 'validation' ] ) ) {
-            $final[ $form[ 'main' ][ 'name' ] ]     =   $form[ 'main' ][ 'value' ];
+            $final[ $form[ 'main' ][ 'name' ] ] = $form[ 'main' ][ 'value' ];
         }
 
         /**
          * this is specific to products
          */
-        if( isset( $form[ 'variations' ] ) ) {
-            foreach( $form[ 'variations' ] as $variation ) {
-                if( $multiEntry ) {
-                    $final[ 'variations' ][]    =   $this->extractTabs( $variation );
+        if ( isset( $form[ 'variations' ] ) ) {
+            foreach ( $form[ 'variations' ] as $variation ) {
+                if ( $multiEntry ) {
+                    $final[ 'variations' ][] = $this->extractTabs( $variation );
                 } else {
-                    $final          =   array_merge( $final, $this->extractTabs( $variation ) );
+                    $final = array_merge( $final, $this->extractTabs( $variation ) );
                 }
             }
         } else {
-            $final      =   $this->extractTabs( $form );
+            $final = $this->extractTabs( $form );
         }
-        
+
         return $final;
     }
 
     private function extractTabs( $form )
     {
-        $final      =   [];
+        $final = [];
 
-        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
             if ( ! empty( $tab[ 'fields' ] ) ) {
-                foreach( $tab[ 'fields' ] as $field ) {
+                foreach ( $tab[ 'fields' ] as $field ) {
                     if ( isset( $field[ 'value' ] ) ) {
-                        $final[ $tabKey ][ $field[ 'name' ] ]   =   $field[ 'value' ]; 
+                        $final[ $tabKey ][ $field[ 'name' ] ] = $field[ 'value' ];
                     }
                 }
             }
@@ -1005,6 +1025,7 @@ class CrudService
 
     /**
      * Return flat fields for the crud form provided
+     *
      * @param CrudService
      * @param array $fields
      * @param Model|null $model
@@ -1012,27 +1033,27 @@ class CrudService
      */
     public function getFlatForm( $crud, $fields, $model = null ): array
     {
-        $form       =   Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
+        $form = Hook::filter( 'ns.crud.form', $crud->getForm( $model ), $crud->getNamespace(), compact( 'model' ) );
 
         if ( is_subclass_of( $crud, CrudService::class ) ) {
-            $form   =   Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
+            $form = Hook::filter( get_class( $crud )::method( 'getForm' ), $crud->getForm( $model ), compact( 'model' ) );
         }
-        
-        $data   =   [];
+
+        $data = [];
 
         if ( isset( $form[ 'main' ][ 'name' ] ) ) {
-            $data[ $form[ 'main' ][ 'name' ] ]  =   $fields[ $form[ 'main' ][ 'name' ] ];
+            $data[ $form[ 'main' ][ 'name' ] ] = $fields[ $form[ 'main' ][ 'name' ] ];
         }
 
-        foreach( $form[ 'tabs' ] as $tabKey => $tab ) {
+        foreach ( $form[ 'tabs' ] as $tabKey => $tab ) {
             /**
              * if the object bein used is not an instance
              * of a Crud and include the method, let's skip
              * this.
              */
-            $keys       =   [];
+            $keys = [];
             if ( method_exists( $crud, 'getTabsRelations' ) ) {
-                $keys   =   array_keys( $crud->getTabsRelations() );
+                $keys = array_keys( $crud->getTabsRelations() );
             }
 
             /**
@@ -1040,15 +1061,15 @@ class CrudService
              * that are linked to a model.
              */
             if ( ! in_array( $tabKey, $keys ) && ! empty( $tab[ 'fields' ] ) ) {
-                foreach( $tab[ 'fields' ] as $field ) {
-                    $value      =       data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
+                foreach ( $tab[ 'fields' ] as $field ) {
+                    $value = data_get( $fields, $tabKey . '.' . $field[ 'name' ] );
 
                     /**
                      * if the field doesn't have any value
                      * we'll omit it. To avoid filling wrong value
                      */
-                    if ( ! empty( $value ) || ( int ) $value === 0 ) {
-                        $data[ $field[ 'name' ] ]   =   $value;
+                    if ( ! empty( $value ) || (int) $value === 0 ) {
+                        $data[ $field[ 'name' ] ] = $value;
                     }
                 }
             }
@@ -1058,11 +1079,11 @@ class CrudService
          * We'll add custom fields
          * that might be added by modules
          */
-        $fieldsToIgnore     =   array_keys( collect( $form[ 'tabs' ] )->toArray() );
+        $fieldsToIgnore = array_keys( collect( $form[ 'tabs' ] )->toArray() );
 
-        foreach( $fields as $field => $value ) {
+        foreach ( $fields as $field => $value ) {
             if ( ! in_array( $field, $fieldsToIgnore ) ) {
-                $data[ $field ]     =   $value;
+                $data[ $field ] = $value;
             }
         }
 
@@ -1070,22 +1091,24 @@ class CrudService
     }
 
     /**
-     * Return plain data that can be used 
+     * Return plain data that can be used
      * for inserting. The data is parsed from the defined
      * form on the Request
+     *
      * @param Crud $resource
      * @param Request $request
      * @return array
      */
     public function getPlainData( $crud, Request $request, $model = null )
     {
-        $fields     =   $request->all();
-        
+        $fields = $request->all();
+
         return $this->getFlatForm( $crud, $fields, $model );
     }
 
     /**
      * To pull out the tabs relations
+     *
      * @return array
      */
     public function getTabsRelations(): array
@@ -1095,20 +1118,21 @@ class CrudService
 
     /**
      * Isolate Rules that use the Rule class
+     *
      * @param array
      * @return array
      */
     public function isolateArrayRules( $arrayRules, $parentKey = '' ): array
     {
-        $rules      =   [];
+        $rules = [];
 
-        foreach( $arrayRules as $key => $value ) {
+        foreach ( $arrayRules as $key => $value ) {
             if ( is_array( $value ) && collect( array_keys( $value ) )->filter( function( $key ) {
                 return is_string( $key );
             })->count() > 0 ) {
-                $rules  =   array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
+                $rules = array_merge( $rules, $this->isolateArrayRules( $value, $key ) );
             } else {
-                $rules[]  =   [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
+                $rules[] = [ ( ! empty( $parentKey ) ? $parentKey . '.' : '' ) . $key, $value ];
             }
         }
 
@@ -1117,8 +1141,8 @@ class CrudService
 
     public static function table( $config = [] ): ContractView
     {
-        $className  =   get_called_class();
-        $instance   =   new $className();
+        $className = get_called_class();
+        $instance = new $className;
 
         /**
          * "manage.profile" is the default permission
@@ -1128,9 +1152,9 @@ class CrudService
         if ( $instance->getPermission( 'read' ) !== false ) {
             ns()->restrict([ $instance->getPermission( 'read' ) ]);
         } else {
-            throw new NotAllowedException();
+            throw new NotAllowedException;
         }
-        
+
         return View::make( 'pages.dashboard.crud.table', array_merge([
             /**
              * that displays the title on the page.
@@ -1164,23 +1188,24 @@ class CrudService
              * to provide custom query params
              * to every outgoing request on the table
              */
-            'queryParams'   =>  []
+            'queryParams'   =>  [],
         ], $config ) );
     }
 
     /**
      * Will render a form UI
+     *
      * @param Model|null reference passed
      * @param array custom configuration
      */
     public static function form( $entry = null, $config = [] )
     {
-        $className          =   get_called_class();
-        $instance           =   new $className;
-        $permissionType     =   $entry === null ? 'create' : 'update';
+        $className = get_called_class();
+        $instance = new $className;
+        $permissionType = $entry === null ? 'create' : 'update';
 
         /**
-         * if a permission for creating or updating is 
+         * if a permission for creating or updating is
          * not disabled let's make a validation.
          */
         if ( $instance->getPermission( $permissionType ) !== false ) {
@@ -1188,7 +1213,7 @@ class CrudService
         } else {
             throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
         }
-        
+
         /**
          * use crud form to render
          * a valid form.
@@ -1223,9 +1248,9 @@ class CrudService
              * provided or not. can be overwritten on the configuration ($config).
              */
             'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
-            
+
             /**
-             * By default the method used is "post" but might change to "put" according to 
+             * By default the method used is "post" but might change to "put" according to
              * wether the entry is provided (Model). Can be changed from the $config.
              */
             'submitMethod'  =>  $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
@@ -1238,7 +1263,7 @@ class CrudService
             /**
              * provide the current crud namespace
              */
-            'namespace'     =>  $instance->getNamespace()
+            'namespace'     =>  $instance->getNamespace(),
         ]);
     }
 
@@ -1246,29 +1271,31 @@ class CrudService
      * perform a quick check over
      * the permissions array provided on the instance
      */
-    public function allowedTo( $permission ) 
+    public function allowedTo( $permission )
     {
         if ( isset( $this->permissions ) && $this->permissions[ $permission ] !== false ) {
             ns()->restrict( $this->permissions[ $permission ] );
         } else {
-            throw new NotAllowedException();
+            throw new NotAllowedException;
         }
     }
 
     /**
      * retrieve one of the declared permissions
      * the name must either be "create", "read", "update", "delete".
+     *
      * @param string $name
      * @return string $permission
      */
-    public function getPermission( $name ) 
+    public function getPermission( $name )
     {
         return $this->permissions[ $name ] ?? false;
     }
 
     /**
-     * Provide a callback notation for 
+     * Provide a callback notation for
      * a specific method
+     *
      * @param string $methodName
      * @return string
      */
@@ -1279,8 +1306,9 @@ class CrudService
 
     /**
      * Shortcut for filtering CRUD methods
+     *
      * @param string $methodName
-     * @param callback $callback
+     * @param callable $callback
      * @return mixed
      */
     public static function filterMethod( $methodName, $callback )
@@ -1290,7 +1318,8 @@ class CrudService
 
     /**
      * Return if the table show display raw actions.
-     * @return boolean
+     *
+     * @return bool
      */
     public function getShowOptions()
     {

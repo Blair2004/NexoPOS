@@ -1,19 +1,19 @@
 <?php
+
 namespace App\Services;
 
 use Exception;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
 class Module
 {
     protected $module;
+
     protected $file;
 
     public function __construct( $file )
     {
-        $this->file     =   $file;
+        $this->file = $file;
     }
 
     /**
@@ -24,11 +24,11 @@ class Module
         /**
          * @var ModulesService
          */
-        $modules        =   app()->make( ModulesService::class );
-        $module         =   $modules->get( $namespace );
+        $modules = app()->make( ModulesService::class );
+        $module = $modules->get( $namespace );
 
         /**
-         * when there is a match 
+         * when there is a match
          * for the requested module
          */
         if ( $module ) {
@@ -40,13 +40,15 @@ class Module
 
     /**
      * Include specific module file
+     *
      * @param string $file
      * @return void
+     *
      * @deprecated
      */
     public function loadFile( $file )
     {
-        $filePath   =   Str::finish( $this->module[ 'path' ] . $file, '.php' );
-        require( $filePath );
+        $filePath = Str::finish( $this->module[ 'path' ] . $file, '.php' );
+        require $filePath;
     }
 }

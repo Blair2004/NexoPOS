@@ -15,7 +15,7 @@ class UpdateProcurementTableNov2521 extends Migration
     {
         Schema::table( 'nexopos_procurements', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_procurements', 'value' ) && ! Schema::hasColumn( 'nexopos_procurements', 'cost' ) ) {
-                $table->renameColumn( 'value', 'cost' );   
+                $table->renameColumn( 'value', 'cost' );
             }
         });
 

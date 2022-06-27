@@ -23,7 +23,7 @@ class RefreshReportJob implements ShouldQueue
      */
     public function __construct( $event )
     {
-        $this->event    =   $event;
+        $this->event = $event;
     }
 
     /**
@@ -33,9 +33,9 @@ class RefreshReportJob implements ShouldQueue
      */
     public function handle( ReportService $reportService )
     {
-        $date   =   Carbon::parse( $this->event->cashFlow->created_at );
+        $date = Carbon::parse( $this->event->cashFlow->created_at );
 
-        $reportService->computeDayReport( 
+        $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),
             dateEnd: $date->endOfDay()->toDateTimeString()
         );

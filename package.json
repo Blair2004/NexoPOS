@@ -9,7 +9,7 @@
     "webpack": "webpack",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "production": "npx mix --production && npm run asset-build",
+    "production": "npx mix --production && npm run asset-build && ./vendor/bin/pint --preset laravel",
     "css-build": "postcss resources/sass/*.scss -d public/css/ --ext css --env production",
     "css-watch": "postcss resources/sass/*.scss -d public/css/ --ext css --watch",
     "font-watch": "sass resources/sass/line-awesome/1.3.0/scss/line-awesome.scss public/css/line-awesome.css --watch",

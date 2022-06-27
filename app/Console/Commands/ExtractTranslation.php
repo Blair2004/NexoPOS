@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\ModulesService;
-use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -35,11 +33,10 @@ class ExtractTranslation extends Command
      */
     public function __construct(
         ModulesService $modulesService
-    )
-    {
+    ) {
         parent::__construct();
 
-        $this->modulesService   =   $modulesService;
+        $this->modulesService = $modulesService;
     }
 
     /**
@@ -51,7 +48,7 @@ class ExtractTranslation extends Command
     {
         if ( $this->option( 'extract' ) ) {
             $this->extracting();
-        } else if ( $this->option( 'symlink' ) ) {
+        } elseif ( $this->option( 'symlink' ) ) {
             $this->createSymlink();
         }
     }
@@ -62,12 +59,12 @@ class ExtractTranslation extends Command
     private function createSymLink()
     {
         if ( ! \windows_os() ) {
-            $link       =   @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
+            $link = @\symlink( base_path( 'lang' ), public_path( '/lang' ) );
         } else {
-            $mode       =   'J';
-            $link       =   public_path( 'lang' );
-            $target     =   base_path( 'lang' );
-            $link       =   exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+            $mode = 'J';
+            $link = public_path( 'lang' );
+            $target = base_path( 'lang' );
+            $link = exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
         }
 
         return $this->info( 'Language Symbolic Link has been created !' );
@@ -76,6 +73,7 @@ class ExtractTranslation extends Command
     /**
      * That will extrac tthe language string
      * for a specific language code
+     *
      * @param string $lang
      * @param array $module
      * @param Collection $files
@@ -83,9 +81,9 @@ class ExtractTranslation extends Command
      */
     private function extractForModuleLanguage( $lang, $module, $files )
     {
-        $filePath       =   Str::finish( $module[ 'lang-relativePath' ], DIRECTORY_SEPARATOR ) . $lang . '.json';
-        $finalArray     =   $this->extractLocalization( $files->flatten() );
-        $finalArray     =   $this->flushTranslation( $finalArray, $filePath );
+        $filePath = Str::finish( $module[ 'lang-relativePath' ], DIRECTORY_SEPARATOR ) . $lang . '.json';
+        $finalArray = $this->extractLocalization( $files->flatten() );
+        $finalArray = $this->flushTranslation( $finalArray, $filePath );
 
         Storage::disk( 'ns' )->put( $filePath, json_encode( $finalArray ) );
 
@@ -98,13 +96,13 @@ class ExtractTranslation extends Command
         $this->info( 'Extracting...' );
 
         if ( $this->argument( 'module' ) ) {
-            $module         =   $this->modulesService->get( $this->argument( 'module' ) );
+            $module = $this->modulesService->get( $this->argument( 'module' ) );
 
             if ( ! empty( $module ) ) {
-                $directories    =   Storage::disk( 'ns' )->directories( $module[ 'relativePath' ] );
-                $files          =   collect([]);
-                
-                foreach( $directories as $directory ) {
+                $directories = Storage::disk( 'ns' )->directories( $module[ 'relativePath' ] );
+                $files = collect([]);
+
+                foreach ( $directories as $directory ) {
                     if ( ! in_array( basename( $directory ), [ 'node_modules', 'vendor', 'Public', '.git' ]) ) {
                         $files->push( Storage::disk( 'ns' )->allFiles( $directory ) );
                     }
@@ -116,7 +114,7 @@ class ExtractTranslation extends Command
                  * We'll loop all the languages that are available
                  */
                 if ( $this->option( 'lang' ) === 'all' ) {
-                    foreach( config( 'nexopos.languages' ) as $lang => $humanName ) {
+                    foreach ( config( 'nexopos.languages' ) as $lang => $humanName ) {
                         $this->extractForModuleLanguage( $lang, $module, $files );
                     }
                 } else {
@@ -124,18 +122,17 @@ class ExtractTranslation extends Command
                 }
 
                 return $this->info( sprintf( __( 'Translation process is complete for the module %s !' ), $module[ 'name' ] ) );
-                
             } else {
                 return $this->error( __( 'Unable to find the requested module.' ) );
             }
         } else {
-            $files      =   array_merge( 
-                Storage::disk( 'ns' )->allFiles( 'resources' ), 
+            $files = array_merge(
+                Storage::disk( 'ns' )->allFiles( 'resources' ),
                 Storage::disk( 'ns' )->allFiles( 'app' )
             );
-            
+
             if ( $this->option( 'lang' ) === 'all' ) {
-                foreach( config( 'nexopos.languages' ) as $lang => $humanName ) {
+                foreach ( config( 'nexopos.languages' ) as $lang => $humanName ) {
                     $this->extractLanguageForSystem( $lang, $files );
                 }
                 $this->info( 'Translation process is complete !' );
@@ -146,17 +143,18 @@ class ExtractTranslation extends Command
     }
 
     /**
-     * Will perform string extraction for 
+     * Will perform string extraction for
      * the system files
+     *
      * @param string $lang
      * @param array $files
      * @return void
      */
     private function extractLanguageForSystem( $lang, $files )
     {
-        $filePath               =   'lang/' . $lang . '.json';
-        $finalArray             =   $this->extractLocalization( $files );
-        $finalArray             =   $this->flushTranslation( $finalArray, $filePath );
+        $filePath = 'lang/' . $lang . '.json';
+        $finalArray = $this->extractLocalization( $files );
+        $finalArray = $this->flushTranslation( $finalArray, $filePath );
 
         Storage::disk( 'ns' )->put( 'lang/' . $lang . '.json', json_encode( $finalArray ) );
 
@@ -167,31 +165,32 @@ class ExtractTranslation extends Command
     /**
      * Will merge translation files
      * by deleting old string that aren't referenced
+     *
      * @param array $newTranslation
      * @param string $filePath
      * @return array $updatedTranslation
      */
     private function flushTranslation( $newTranslation, $filePath )
     {
-        $existingTranslation    =   [];
+        $existingTranslation = [];
 
         if ( Storage::disk( 'ns' )->exists( $filePath ) ) {
-            $existingTranslation    =   json_decode( Storage::disk( 'ns' )->get( $filePath ), true );
+            $existingTranslation = json_decode( Storage::disk( 'ns' )->get( $filePath ), true );
         }
 
         if ( ! empty( $existingTranslation ) ) {
             /**
              * delete all keys that doesn't exists
              */
-            $purgedTranslation  =   collect( $existingTranslation )
+            $purgedTranslation = collect( $existingTranslation )
                 ->filter( function( $translation, $key ) use ( $newTranslation ) {
-                return in_array( $key, array_keys( $newTranslation ) );
-            });
+                    return in_array( $key, array_keys( $newTranslation ) );
+                });
 
             /**
              * pull new keys
              */
-            $newKeys        =   collect( $newTranslation )->filter( function( $translation, $key ) use ( $existingTranslation ) {
+            $newKeys = collect( $newTranslation )->filter( function( $translation, $key ) use ( $existingTranslation ) {
                 return ! in_array( $key, array_keys( $existingTranslation ) );
             });
 
@@ -203,26 +202,27 @@ class ExtractTranslation extends Command
 
     private function extractLocalization( $files )
     {
-        $supportedExtensions    =   [ 'vue', 'php', 'ts', 'js' ];
+        $supportedExtensions = [ 'vue', 'php', 'ts', 'js' ];
 
-        $filtered               =   collect( $files )->filter( function( $file ) use ( $supportedExtensions ) {
-            $info   =   pathinfo( $file );
+        $filtered = collect( $files )->filter( function( $file ) use ( $supportedExtensions ) {
+            $info = pathinfo( $file );
+
             return in_array( $info[ 'extension' ], $supportedExtensions );
         });
 
-        $exportable     =   [];
+        $exportable = [];
 
         /**
          * we'll extract all the string that can be translated
          * and save them within an array.
          */
         $this->withProgressBar( $filtered, function( $file ) use ( &$exportable ) {
-            $fileContent    =   Storage::disk( 'ns' )->get( $file );
+            $fileContent = Storage::disk( 'ns' )->get( $file );
             preg_match_all('/\_\_[m]?\(\s*[\'\"\`]([\w\s\+\"\\/\d\-é&\[\]\@*$#\.\?\%,;)\{\}]*)[\'\"\`]\s*(\,?\s*[\'\"\`]?(\w)*[\'\"\`]?\s*)?\)/', $fileContent, $output_array);
-            
+
             if ( isset( $output_array[1] ) ) {
-                foreach( $output_array[1] as $string ) {
-                    $exportable[ $string ]  =   compact( 'file', 'string' );
+                foreach ( $output_array[1] as $string ) {
+                    $exportable[ $string ] = compact( 'file', 'string' );
                 }
             }
         });

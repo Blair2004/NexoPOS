@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Providers;
 
+use App\Events\ModulesBootedEvent;
+use App\Events\ModulesLoadedEvent;
 use App\Services\ModulesService;
 use Illuminate\Support\ServiceProvider;
-use App\Events\ModulesLoadedEvent;
-use App\Events\ModulesBootedEvent;
 
 class ModulesServiceProvider extends ServiceProvider
 {
-    protected $modulesCommands  =   [];
+    protected $modulesCommands = [];
+
     protected ModulesService $modules;
 
     /**
@@ -43,11 +45,11 @@ class ModulesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton( ModulesService::class, function( $app ) {
-            $this->modules  =   new ModulesService;
+            $this->modules = new ModulesService;
             $this->modules->load();
 
             collect( $this->modules->getEnabled() )->each( fn( $module ) => $this->modules->boot( $module ) );
-                
+
             /**
              * trigger register method only for enabled modules
              * service providers that extends ModulesServiceProvider.
@@ -56,7 +58,7 @@ class ModulesServiceProvider extends ServiceProvider
                 /**
                  * register module commands
                  */
-                $this->modulesCommands    =   array_merge(
+                $this->modulesCommands = array_merge(
                     $this->modulesCommands,
                     array_keys( $module[ 'commands' ] )
                 );

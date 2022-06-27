@@ -1,25 +1,23 @@
 <?php
 
-use App\Models\Expense;
-use App\Models\ExpenseCategory;
 use App\Services\Helper;
 
-$cashRegisters  =   [
+$cashRegisters = [
     [
         'name'          =>  'ns_pos_registers_enabled',
         'value'         =>  ns()->option->get( 'ns_pos_registers_enabled' ),
         'options'         =>  Helper::kvToJsOptions([
             'yes'       =>  __( 'Yes' ),
-            'no'        =>  __( 'No' )
+            'no'        =>  __( 'No' ),
         ]),
-        'label'         =>  __( 'Enable Cash Registers' ), 
+        'label'         =>  __( 'Enable Cash Registers' ),
         'type'          =>  'select',
         'description'   =>  __( 'Determine if the POS will support cash registers.' ),
-    ], 
+    ],
 ];
 
 if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
-    $cashRegisters[]    =   [
+    $cashRegisters[] = [
         'label'     =>  __( 'Cashier Idle Counter' ),
         'name'     =>  'ns_pos_idle_counter',
         'type'          =>  'select',
@@ -35,7 +33,7 @@ if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
         'description'   =>  __( 'Selected after how many minutes the system will set the cashier as idle.' ),
     ];
 
-    $cashRegisters[]    =   [
+    $cashRegisters[] = [
         'label'         =>  __( 'Cash Disbursement' ),
         'name'          =>  'ns_pos_disbursement',
         'type'          =>  'select',
@@ -44,11 +42,11 @@ if ( ns()->option->get( 'ns_pos_registers_enabled' ) === 'yes' ) {
         'options'   =>  Helper::kvToJsOptions([
             'yes'       =>  __( 'Yes' ),
             'no'        =>  __( 'No' ),
-        ])
+        ]),
     ];
 }
 
 return [
     'label' =>  __( 'Cash Registers' ),
-    'fields'    =>  $cashRegisters
+    'fields'    =>  $cashRegisters,
 ];

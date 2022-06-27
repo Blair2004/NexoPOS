@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -15,6 +12,7 @@ class AfterMigrationStatusCheckedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $next;
+
     public $request;
 
     /**
@@ -24,8 +22,8 @@ class AfterMigrationStatusCheckedEvent
      */
     public function __construct( $next, $request )
     {
-        $this->next     =   $next;
-        $this->request  =   $request;
+        $this->next = $next;
+        $this->request = $request;
     }
 
     /**

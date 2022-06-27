@@ -15,7 +15,7 @@ class CreateTelescopeEntriesTable extends Migration
     {
         return false;
     }
-    
+
     /**
      * The database schema.
      *

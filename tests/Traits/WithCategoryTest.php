@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Models\Product;
@@ -12,14 +13,14 @@ trait WithCategoryTest
      */
     protected function attemptDeleteCategory()
     {
-        $product    =   Product::first();
+        $product = Product::first();
 
         if ( $product instanceof Product ) {
-            $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+            $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'DELETE', 'api/nexopos/v4/crud/ns.products-categories/' . $product->category_id );
-    
+
             return $response->assertJson([
-                'status'    =>  'failed'
+                'status'    =>  'failed',
             ]);
         }
 
@@ -28,44 +29,44 @@ trait WithCategoryTest
 
     protected function attemptCreateCategory()
     {
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
                 'name'                  =>  __( 'Computers' ),
                 'general'               =>  [
-                    'displays_on_pos'   =>  true
-                ]
+                    'displays_on_pos'   =>  true,
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
-        $category       =   ProductCategory::first();
+        $category = ProductCategory::first();
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
                 'name'          =>  __( 'Laptops' ),
                 'general'       =>  [
                     'parent_id' =>  $category->id,
-                    'displays_on_pos'    =>  true
-                ]
+                    'displays_on_pos'    =>  true,
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.products-categories', [
                 'name'          =>  __( 'Desktop' ),
                 'general'       =>  [
                     'parent_id' =>  $category->id,
-                    'displays_on_pos'    =>  true
-                ]
+                    'displays_on_pos'    =>  true,
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
     }
 }

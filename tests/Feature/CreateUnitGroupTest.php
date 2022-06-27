@@ -9,6 +9,7 @@ use Tests\Traits\WithUnitTest;
 class CreateUnitGroupTest extends TestCase
 {
     use WithAuthentication, WithUnitTest;
+
     /**
      * A basic feature test example.
      *

@@ -1,4 +1,5 @@
 <?php
+
 return [
     'label'     =>      __( 'General' ),
     'fields'    =>      [
@@ -8,6 +9,6 @@ return [
             'value'         =>  ns()->option->get( 'public_name' ),
             'type'          =>  'text',
             'description'   =>  __( 'Define what is the user public name. If not provided, the username is used instead.' ),
-        ], 
-    ]
+        ],
+    ],
 ];

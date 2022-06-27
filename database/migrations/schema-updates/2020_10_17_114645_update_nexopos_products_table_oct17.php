@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateNexoposProductsTableOct17 extends Migration
 {
@@ -14,7 +14,7 @@ class UpdateNexoposProductsTableOct17 extends Migration
     public function up()
     {
         Schema::table( 'nexopos_products', function( Blueprint $table ) {
-            foreach([
+            foreach ([
                 'selling_unit_ids',
                 'purchase_unit_ids',
                 'transfer_unit_ids',
@@ -35,7 +35,7 @@ class UpdateNexoposProductsTableOct17 extends Migration
     {
         if ( Schema::hasTable( 'nexopos_products' ) ) {
             Schema::table( 'nexopos_products', function( Blueprint $table ) {
-                foreach([
+                foreach ([
                     'selling_unit_ids',
                     'purchase_unit_ids',
                     'transfer_unit_ids',

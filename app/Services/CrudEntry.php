@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use JsonSerializable;
@@ -6,26 +7,27 @@ use JsonSerializable;
 class CrudEntry implements JsonSerializable
 {
     private $original;
+
     public $values;
 
     public function __construct( $params )
     {
-        $this->original     =   $params;
-        $this->values       =   $params;
-        
-        $this->{ '$checked' }       =   false;
-        $this->{ '$toggled' }       =   false;
-        $this->{ '$id' }            =   $params[ 'id' ];
+        $this->original = $params;
+        $this->values = $params;
+
+        $this->{ '$checked' } = false;
+        $this->{ '$toggled' } = false;
+        $this->{ '$id' } = $params[ 'id' ];
     }
 
-    public function __get( $index ) 
+    public function __get( $index )
     {
         return $this->values[ $index ] ?? null;
     }
 
     public function __set( $index, $value )
     {
-        $this->values[ $index ]     =   $value;
+        $this->values[ $index ] = $value;
     }
 
     public function getOriginalValue( $index )
@@ -40,7 +42,7 @@ class CrudEntry implements JsonSerializable
 
     public function addAction( $identifier, $action )
     {
-        $this->values[ '$actions' ][ $identifier ]  =   $action;
+        $this->values[ '$actions' ][ $identifier ] = $action;
     }
 
     public function removeAction( $identifier )

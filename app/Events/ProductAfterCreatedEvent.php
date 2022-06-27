@@ -3,19 +3,17 @@
 namespace App\Events;
 
 use App\Models\Product;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class ProductAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     public $product;
+
     public $fields;
 
     /**
@@ -25,8 +23,8 @@ class ProductAfterCreatedEvent
      */
     public function __construct( Product $product, $fields )
     {
-        $this->product      =   $product;
-        $this->fields       =   $fields;
+        $this->product = $product;
+        $this->fields = $fields;
     }
 
     /**

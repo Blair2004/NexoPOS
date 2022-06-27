@@ -1,13 +1,10 @@
 <?php
+
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
-use App\Services\Options;
-use App\Services\DateService;
-use App\Services\Modules;
 use App\Services\ModulesService;
-use Carbon\Carbon;
+use App\Services\Options;
+use Illuminate\Console\Command;
 
 class ModuleSymlinkCommand extends Command
 {
@@ -23,13 +20,14 @@ class ModuleSymlinkCommand extends Command
         /**
          * @var ModulesService
          */
-        $moduleService     =   app()->make( ModulesService::class );
-        $optionsService    =   app()->make( Options::class );
+        $moduleService = app()->make( ModulesService::class );
+        $optionsService = app()->make( Options::class );
 
-        $module     =   $moduleService->get( $this->argument( 'namespace' ) );
+        $module = $moduleService->get( $this->argument( 'namespace' ) );
 
         if ( $module ) {
             $moduleService->createSymLink( $this->argument( 'namespace' ) );
+
             return $this->info( sprintf( 'The symbolink directory has been created/refreshed for the module "%s".', $module[ 'name' ] ) );
         }
 

@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Events;
 
-use Illuminate\Queue\SerializesModels;
 use App\Models\Procurement;
+use Illuminate\Queue\SerializesModels;
 
-class ProcurementDeletionEvent 
+class ProcurementDeletionEvent
 {
     use SerializesModels;
 
@@ -12,6 +13,6 @@ class ProcurementDeletionEvent
 
     public function __construct( Procurement $procurement )
     {
-        $this->procurement  =   $procurement;
+        $this->procurement = $procurement;
     }
 }

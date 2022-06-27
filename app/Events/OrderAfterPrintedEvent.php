@@ -3,9 +3,7 @@
 namespace App\Events;
 
 use App\Models\Order;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -16,6 +14,7 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $order;
+
     public $doc;
 
     /**
@@ -25,8 +24,8 @@ class OrderAfterPrintedEvent implements ShouldBroadcast
      */
     public function __construct( Order $order, $doc )
     {
-        $this->order    =   $order;
-        $this->doc      =   $doc;
+        $this->order = $order;
+        $this->doc = $doc;
     }
 
     /**

@@ -1,74 +1,78 @@
 <?php
+
 namespace App\Crud;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
+
 use App\Models\Role;
+use App\Models\User;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class RolesCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_roles';
+    protected $table = 'nexopos_roles';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.roles';
+    protected $mainRoute = 'ns.roles';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.roles';
+    protected $namespace = 'ns.roles';
 
     /**
      * Model Used
      */
-    protected $model      =   Role::class;
+    protected $model = Role::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick = [];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     protected $permissions = [
         'create' => 'create.roles',
@@ -79,7 +83,8 @@ class RolesCrud extends CrudService
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -87,7 +92,7 @@ class RolesCrud extends CrudService
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
-        $this->dashboardOptions     =   Hook::filter( 'ns-dashboard-identifiers', [
+        $this->dashboardOptions = Hook::filter( 'ns-dashboard-identifiers', [
             'none'      =>  __( 'No Dashboard' ),
             'store'     =>  __( 'Store Dashboard' ),
             'cashier'   =>  __( 'Cashier Dashboard' ),
@@ -96,10 +101,11 @@ class RolesCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -117,8 +123,9 @@ class RolesCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -126,10 +133,11 @@ class RolesCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -148,7 +156,7 @@ class RolesCrud extends CrudService
                             'name'  =>  'namespace',
                             'label' =>  __( 'Namespace' ),
                             'validation'    =>  $entry === null ? 'unique:nexopos_roles,namespace' : [
-                                Rule::unique( 'nexopos_roles', 'namespace' )->ignore( $entry->id )
+                                Rule::unique( 'nexopos_roles', 'namespace' )->ignore( $entry->id ),
                             ],
                             'description'   =>  __( 'Should be a unique value with no spaces or special character' ),
                             'value' =>  $entry->namespace ?? '',
@@ -166,15 +174,16 @@ class RolesCrud extends CrudService
                             'label'         =>  __( 'Description' ),
                             'description'   =>  __( 'Provide more details about what this role is about.' ),
                             'value'         =>  $entry->description ?? '',
-                        ],  
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -184,7 +193,7 @@ class RolesCrud extends CrudService
          * the namespace can be automatted
          */
         if ( empty( $inputs[ 'namespace' ] ) ) {
-            $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'name' ] );
+            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
         }
 
         /**
@@ -194,18 +203,19 @@ class RolesCrud extends CrudService
             Role::ADMIN,
             Role::STOREADMIN,
             Role::STORECASHIER,
-            Role::USER
+            Role::USER,
         ] )) {
-            $inputs[ 'namespace' ]  =   Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+            $inputs[ 'namespace' ] = Str::replace( ' ', '-', $inputs[ 'namespace' ] );
         }
 
-        $inputs[ 'locked' ]     =   false;
+        $inputs[ 'locked' ] = false;
 
         return $inputs;
     }
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -215,7 +225,7 @@ class RolesCrud extends CrudService
          * the namespace can be automatted
          */
         if ( empty( $inputs[ 'namespace' ] ) ) {
-            $inputs[ 'namespace' ]  =   Str::slug( $inputs[ 'name' ] );
+            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
         }
 
         /**
@@ -225,16 +235,17 @@ class RolesCrud extends CrudService
             Role::ADMIN,
             Role::STOREADMIN,
             Role::STORECASHIER,
-            Role::USER
+            Role::USER,
         ] )) {
-            $inputs[ 'namespace' ]  =   Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+            $inputs[ 'namespace' ] = Str::replace( ' ', '-', $inputs[ 'namespace' ] );
         }
-        
+
         return $inputs;
     }
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -247,6 +258,7 @@ class RolesCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Role $entry
      * @return  void
@@ -256,21 +268,22 @@ class RolesCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -284,6 +297,7 @@ class RolesCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -292,20 +306,21 @@ class RolesCrud extends CrudService
     {
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -314,9 +329,11 @@ class RolesCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.roles' ) {
             $this->allowedTo( 'delete' );
 
@@ -328,29 +345,31 @@ class RolesCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'namespace'  =>  [
                 'label'  =>  __( 'Namespace' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
-            ],            
+                '$sort'         =>  false,
+            ],
             'dashid'  =>  [
                 'label'  =>  __( 'Namespace' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
-            ],            
+                '$sort'         =>  false,
+            ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -360,8 +379,8 @@ class RolesCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->locked          =   ( bool ) $entry->locked;
-        $entry->dashid          =   $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
+        $entry->locked = (bool) $entry->locked;
+        $entry->dashid = $this->dashboardOptions[ $entry->dashid ] ?? __( 'Unknown Dashboard' );
 
         // you can make changes here
         $entry->addAction( 'edit', [
@@ -369,7 +388,7 @@ class RolesCrud extends CrudService
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'users/roles' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'clone', [
@@ -380,7 +399,7 @@ class RolesCrud extends CrudService
                 'message'   =>  __( 'Would you like to clone this role ?' ),
             ],
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' )
+            'url'           =>     ns()->url( '/api/nexopos/v4/' . 'users/roles/' . $entry->id . '/clone' ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -390,46 +409,45 @@ class RolesCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.roles/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
+        $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
+                'message'   =>  __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-            
             ns()->restrict(
                 [ 'delete.roles' ],
                 __( 'You do not have enough permissions to perform this action.' )
             );
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
 
                 /**
                  * make sure system roles can't be deleted
@@ -445,6 +463,7 @@ class RolesCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -453,6 +472,7 @@ class RolesCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -468,8 +488,9 @@ class RolesCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -477,16 +498,17 @@ class RolesCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

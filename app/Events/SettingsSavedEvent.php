@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -15,7 +12,9 @@ class SettingsSavedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $options;
+
     public $inputs;
+
     public $class;
 
     /**
@@ -23,12 +22,11 @@ class SettingsSavedEvent
      *
      * @return void
      */
-
     public function __construct( $options, $inputs, $class )
     {
-        $this->options      =   $options;
-        $this->inputs       =   $inputs;
-        $this->class        =   $class;
+        $this->options = $options;
+        $this->inputs = $inputs;
+        $this->class = $class;
     }
 
     /**

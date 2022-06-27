@@ -10,7 +10,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class TaskSchedulingPingJob implements ShouldQueue
 {
@@ -36,13 +35,13 @@ class TaskSchedulingPingJob implements ShouldQueue
         /**
          * @var NotificationService
          */
-        $notification       =   app()->make( NotificationService::class );
+        $notification = app()->make( NotificationService::class );
         $notification->deleteHavingIdentifier( NotificationsEnum::NSCRONDISABLED );
-        
+
         /**
          * @var DateService
          */
-        $date               =   app()->make( DateService::class );
+        $date = app()->make( DateService::class );
 
         ns()->option->set( 'ns_cron_ping', $date->toDateTimeString() );
     }

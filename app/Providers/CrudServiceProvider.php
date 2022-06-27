@@ -18,25 +18,25 @@ use App\Crud\OrderCrud;
 use App\Crud\OrderInstalmentCrud;
 use App\Crud\PartiallyPaidOrderCrud;
 use App\Crud\PaymentTypeCrud;
-use App\Crud\ProviderCrud;
-use App\Crud\RewardSystemCrud;
-use App\Crud\UnitCrud;
-use App\Crud\UnitGroupCrud;
-use App\Crud\ProductCategoryCrud;
-use App\Crud\ProductCrud;
-use App\Crud\TaxCrud;
-use App\Crud\TaxesGroupCrud;
-use App\Crud\UserCrud;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
+use App\Crud\ProductCategoryCrud;
+use App\Crud\ProductCrud;
 use App\Crud\ProductHistoryCrud;
 use App\Crud\ProductUnitQuantitiesCrud;
+use App\Crud\ProviderCrud;
 use App\Crud\ProviderProcurementsCrud;
 use App\Crud\ProviderProductsCrud;
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
+use App\Crud\RewardSystemCrud;
 use App\Crud\RolesCrud;
+use App\Crud\TaxCrud;
+use App\Crud\TaxesGroupCrud;
+use App\Crud\UnitCrud;
+use App\Crud\UnitGroupCrud;
 use App\Crud\UnpaidOrderCrud;
+use App\Crud\UserCrud;
 use Illuminate\Support\ServiceProvider;
 use TorMorten\Eventy\Facades\Events as Hook;
 
@@ -64,7 +64,7 @@ class CrudServiceProvider extends ServiceProvider
          * added here in order to be available and supported.
          */
         Hook::addFilter( 'ns-crud-resource', function( $namespace ) {
-            switch( $namespace ) {
+            switch ( $namespace ) {
                 case 'ns.orders': return OrderCrud::class;
                 case 'ns.orders-instalments': return OrderInstalmentCrud::class;
                 case 'ns.payments-types': return PaymentTypeCrud::class;
@@ -97,10 +97,11 @@ class CrudServiceProvider extends ServiceProvider
                 case 'ns.procurements-products': return ProcurementProductCrud::class;
                 case 'ns.roles': return RolesCrud::class;
                 case 'ns.global-products-history': return GlobalProductHistoryCrud::class;
-                case 'ns.providers-procurements' : return ProviderProcurementsCrud::class;
-                case 'ns.customers-account-history' : return CustomerAccountCrud::class;
+                case 'ns.providers-procurements': return ProviderProcurementsCrud::class;
+                case 'ns.customers-account-history': return CustomerAccountCrud::class;
                 case 'ns.providers-products': return ProviderProductsCrud::class;
             }
+
             return $namespace;
         });
     }

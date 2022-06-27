@@ -1,23 +1,26 @@
 <?php
+
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterCreateEvent;
 use App\Events\ProcurementAfterDeleteEvent;
 use App\Events\ProcurementAfterUpdateEvent;
-use App\Services\ProductService;
-use App\Services\ProcurementService;
-use App\Events\ProcurementCancelationEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
 use App\Events\ProcurementBeforeUpdateProductEvent;
+use App\Events\ProcurementCancelationEvent;
 use App\Models\Provider;
 use App\Services\ExpenseService;
+use App\Services\ProcurementService;
+use App\Services\ProductService;
 use App\Services\ProviderService;
 
 class ProcurementEventsSubscriber
 {
     protected $procurementService;
+
     protected $providerService;
+
     protected $productService;
 
     /**
@@ -25,16 +28,16 @@ class ProcurementEventsSubscriber
      */
     protected $expenseService;
 
-    public function __construct( 
+    public function __construct(
         ProcurementService $procurementService,
         ProductService $productService,
         ProviderService $providerService,
         ExpenseService $expenseService
     ) {
-        $this->procurementService   =   $procurementService;
-        $this->providerService      =   $providerService;
-        $this->productService       =   $productService;
-        $this->expenseService       =   $expenseService;
+        $this->procurementService = $procurementService;
+        $this->providerService = $providerService;
+        $this->productService = $productService;
+        $this->expenseService = $expenseService;
     }
 
     public function subscribe( $events )
@@ -55,7 +58,7 @@ class ProcurementEventsSubscriber
 
         /**
          * This will record an history
-         * only when the created procurement as his 
+         * only when the created procurement as his
          * status set to delivered
          */
         $events->listen(
@@ -67,13 +70,13 @@ class ProcurementEventsSubscriber
          * This will cancel the payment made on the provider
          * that was assigned to the procurement
          */
-        $events->listen( 
+        $events->listen(
             ProcurementBeforeUpdateEvent::class,
             fn( $event ) => $this->providerService->cancelPaymentForProcurement( $event->procurement )
         );
 
         /**
-         * This will compute the 
+         * This will compute the
          * value of the procurement (total_items, value, tax_value )
          */
         $events->listen(
@@ -85,14 +88,14 @@ class ProcurementEventsSubscriber
          * This will recompute the provider assigned to the procurement
          * summary (amount_paid & amount_due)
          */
-        $events->listen( 
+        $events->listen(
             ProcurementAfterUpdateEvent::class,
             fn( $event ) => $this->providerService->computeSummary( $event->procurement->provider )
         );
 
         /**
          * This will record an history
-         * only when the updated procurement as his 
+         * only when the updated procurement as his
          * status set to delivered
          */
         $events->listen(
@@ -128,8 +131,9 @@ class ProcurementEventsSubscriber
 
         /**
          * this will helps to remove the
-         * stock which has been previously 
+         * stock which has been previously
          * provided on the product
+         *
          * @param ProcurementBeforeUpdateProductEvent
          * @return void
          */
@@ -160,8 +164,8 @@ class ProcurementEventsSubscriber
 
         $events->listen(
             ProcurementAfterDeleteEvent::class,
-            fn( $event ) => $this->providerService->computeSummary( 
-                Provider::find( $event->procurement_data[ 'provider_id' ] ) 
+            fn( $event ) => $this->providerService->computeSummary(
+                Provider::find( $event->procurement_data[ 'provider_id' ] )
             )
         );
 

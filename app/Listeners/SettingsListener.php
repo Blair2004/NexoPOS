@@ -8,8 +8,6 @@ use App\Jobs\TestWorkerJob;
 use App\Models\Role;
 use App\Services\NotificationService;
 use App\Services\Options;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SettingsListener
 {
@@ -22,9 +20,8 @@ class SettingsListener
      */
     public function __construct(
         NotificationService $notificationService
-    )
-    {
-        $this->notificationService  =   $notificationService;
+    ) {
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -35,11 +32,11 @@ class SettingsListener
      */
     public function handle( SettingsSavedEvent $event)
     {
-        $options        =   app()->make( Options::class );
+        $options = app()->make( Options::class );
 
         if ( $options->get( 'ns_workers_enabled' ) === 'await_confirm' ) {
-            $notification_id    =   NotificationsEnum::NSWORKERDISABLED;
-            
+            $notification_id = NotificationsEnum::NSWORKERDISABLED;
+
             TestWorkerJob::dispatch( $notification_id )
                 ->delay( now() );
 

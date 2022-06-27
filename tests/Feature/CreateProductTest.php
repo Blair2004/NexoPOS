@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Role;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithCategoryTest;
@@ -37,10 +35,11 @@ class CreateProductTest extends TestCase
     public function testSearchableAreSearchable()
     {
         $this->attemptAuthenticate();
+
         return $this->attemptTestSearchable();
     }
 
-    public function testNotSearchableAreSearchable() 
+    public function testNotSearchableAreSearchable()
     {
         $this->attemptAuthenticate();
         $this->attemptNotSearchableAreSearchable();

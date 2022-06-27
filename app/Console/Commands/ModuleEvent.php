@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Services\Modules;
-use App\Services\Setup;
-use App\Services\Helper;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ModuleEvent extends Command
 {
@@ -43,7 +40,7 @@ class ModuleEvent extends Command
      */
     public function handle()
     {
-        $modules    =   app()->make( ModulesService::class );
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
@@ -52,21 +49,24 @@ class ModuleEvent extends Command
             /**
              * Define Variables
              */
-            $eventsPath     =   $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR;
-            $name           =   ucwords( Str::camel( $this->argument( 'name' ) ) );
-            $fileName       =   $eventsPath . $name;
-            $namespace      =   $this->argument( 'namespace' );
+            $eventsPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Events' . DIRECTORY_SEPARATOR;
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
+            $fileName = $eventsPath . $name;
+            $namespace = $this->argument( 'namespace' );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists( 
-                $fileName 
+            if ( ! Storage::disk( 'ns-modules' )->exists(
+                $fileName
             ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.event', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
+
                 return $this->info( 'The event has been created !' );
-            }      
+            }
+
             return $this->error( 'The event already exists !' );
         }
+
         return $this->error( 'Unable to locate the module !' );
     }
 }

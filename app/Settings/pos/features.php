@@ -8,90 +8,90 @@ return [
         [
             'name'              =>  'ns_pos_show_quantity',
             'value'             =>  ns()->option->get( 'ns_pos_show_quantity' ),
-            'label'             =>  __( 'Show Quantity' ), 
+            'label'             =>  __( 'Show Quantity' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Will show the quantity selector while choosing a product. Otherwise the default quantity is set to 1.' ),
         ], [
             'name'              =>  'pos_items_merge',
             'value'             =>  ns()->option->get( 'pos_items_merge' ),
-            'label'             =>  __( 'Merge Similar Items' ), 
+            'label'             =>  __( 'Merge Similar Items' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Will enforce similar products to be merged from the POS.' ),
         ], [
             'name'              =>  'ns_pos_allow_wholesale_price',
             'value'             =>  ns()->option->get( 'ns_pos_allow_wholesale_price' ),
-            'label'             =>  __( 'Allow Wholesale Price' ), 
+            'label'             =>  __( 'Allow Wholesale Price' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Define if the wholesale price can be selected on the POS.' ),
         ], [
             'name'              =>  'ns_pos_allow_decimal_quantities',
             'value'             =>  ns()->option->get( 'ns_pos_allow_decimal_quantities' ),
-            'label'             =>  __( 'Allow Decimal Quantities' ), 
+            'label'             =>  __( 'Allow Decimal Quantities' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Will change the numeric keyboard for allowing decimal for quantities.' ),
         ], [
             'name'              =>  'ns_pos_customers_creation_enabled',
             'value'             =>  ns()->option->get( 'ns_pos_customers_creation_enabled' ),
-            'label'             =>  __( 'Allow Customer Creation' ), 
+            'label'             =>  __( 'Allow Customer Creation' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Allow customers to be created on the POS.' ),
         ], [
             'name'              =>  'ns_pos_quick_product',
             'value'             =>  ns()->option->get( 'ns_pos_quick_product' ),
-            'label'             =>  __( 'Quick Product' ), 
+            'label'             =>  __( 'Quick Product' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Allow quick product to be created from the POS.' ),
         ], [
             'name'              =>  'ns_pos_unit_price_ediable',
             'value'             =>  ns()->option->get( 'ns_pos_unit_price_ediable' ),
-            'label'             =>  __( 'Editable Unit Price' ), 
+            'label'             =>  __( 'Editable Unit Price' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Allow product unit price to be edited.' ),
         ], [
             'name'              =>  'ns_pos_gross_price_used',
             'value'             =>  ns()->option->get( 'ns_pos_gross_price_used' ),
-            'label'             =>  __( 'Use Gross Prices' ), 
+            'label'             =>  __( 'Use Gross Prices' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
                 'yes'           =>  __( 'Yes' ),
-                'no'            =>  __( 'No' )
+                'no'            =>  __( 'No' ),
             ]),
             'description'       =>  __( 'Will use gross prices for each products.' ),
         ], [
             'name'              =>  'ns_pos_order_types',
             'value'             =>  ns()->option->get( 'ns_pos_order_types' ),
-            'label'             =>  __( 'Order Types' ), 
+            'label'             =>  __( 'Order Types' ),
             'type'              =>  'multiselect',
             'options'           =>  Helper::kvToJsOptions( config( 'nexopos.orders.types-labels' ) ),
             'description'       =>  __( 'Control the order type enabled.' ),
         ],
-    ]
+    ],
 ];

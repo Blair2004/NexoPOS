@@ -37,7 +37,7 @@ class ComputeDayReportJob implements ShouldQueue
         /**
          * @var ReportService
          */
-        $this->reportService    =   app()->make( ReportService::class );
+        $this->reportService = app()->make( ReportService::class );
         $this->reportService->computeDayReport();
     }
 }

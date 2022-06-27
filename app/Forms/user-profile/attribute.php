@@ -25,7 +25,7 @@ return [
             'type'          =>  'select',
             'options'       =>  Helper::kvToJsOptions([
                 'dark'      =>  __( 'Dark' ),
-                'light'     =>  __( 'Light' )
+                'light'     =>  __( 'Light' ),
             ]),
             'description'   =>  __( 'Define what is the theme that applies to the dashboard.' ),
         ], [
@@ -35,7 +35,7 @@ return [
             'type'          =>  'media',
             'data'          =>  [
                 'user_id'   =>  Auth::id(),
-                'type'      =>  'url'
+                'type'      =>  'url',
             ],
             'description'   =>  __( 'Define the image that should be used as an avatar.' ),
         ], [
@@ -46,5 +46,5 @@ return [
             'options'       =>  Helper::kvToJsOptions( config( 'nexopos.languages' ) ),
             'description'   =>  __( 'Choose the language for the current account.' ),
         ],
-    ]
+    ],
 ];

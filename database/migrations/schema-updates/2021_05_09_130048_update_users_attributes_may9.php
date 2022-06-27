@@ -5,17 +5,17 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class UpdateUsersAttributesMay9 extends Migration
-{    
+{
     /**
-    * Determine wether the migration
-    * should execute when we're accessing
-    * a multistore instance.
-    */
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
     public function runOnMultiStore()
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

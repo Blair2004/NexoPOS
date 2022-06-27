@@ -1,49 +1,53 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Register;
+use App\Models\User;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class RegisterCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_registers';
+    protected $table = 'nexopos_registers';
 
     /**
      * default slug
+     *
      * @param  string
      */
-    protected $slug   =   'cash-registers';
+    protected $slug = 'cash-registers';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.registers';
+    protected $namespace = 'ns.registers';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   Register::class;
+    protected $model = Register::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  'nexopos.create.registers',
         'read'      =>  'nexopos.read.registers',
         'update'    =>  'nexopos.update.registers',
@@ -52,57 +56,61 @@ class RegisterCrud extends CrudService
 
     /**
      * Adding relation
+     *
      * @param  array
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'nexopos_registers.author', '=', 'user.id' ],
         'leftJoin'  =>  [
             [ 'nexopos_users as cashier', 'nexopos_registers.used_by', '=', 'cashier.id' ],
-        ]
+        ],
     ];
 
     /**
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
+    public $pick = [
         'user'      =>  [ 'username' ],
         'cashier'   =>  [ 'username' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -112,10 +120,11 @@ class RegisterCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -133,8 +142,9 @@ class RegisterCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -142,10 +152,11 @@ class RegisterCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -176,16 +187,17 @@ class RegisterCrud extends CrudService
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                            'description'   =>  __( 'Provide mode details about this cash register.' )
-                        ], 
-                    ]
-                ]
-            ]
+                            'description'   =>  __( 'Provide mode details about this cash register.' ),
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -196,6 +208,7 @@ class RegisterCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -206,6 +219,7 @@ class RegisterCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -222,6 +236,7 @@ class RegisterCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Register $entry
      * @return  void
@@ -231,21 +246,22 @@ class RegisterCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -263,6 +279,7 @@ class RegisterCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -274,9 +291,11 @@ class RegisterCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.registers' ) {
             /**
              *  Perform an action before deleting an entry
@@ -286,7 +305,7 @@ class RegisterCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -301,39 +320,41 @@ class RegisterCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'status'  =>  [
                 'label'  =>  __( 'Status' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'cashier_username'  =>  [
                 'label'  =>  __( 'Used By' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'balance'  =>  [
                 'label'         =>  __( 'Balance' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -343,22 +364,22 @@ class RegisterCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->cashier_username    =   $entry->cashier_username ?: __( 'N/A' );
-        $entry->balance             =   ( string ) ns()->currency->define( $entry->balance );
+        $entry->cashier_username = $entry->cashier_username ?: __( 'N/A' );
+        $entry->balance = (string) ns()->currency->define( $entry->balance );
 
         // you can make changes here
         $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'register-history', [
             'label'         =>      __( 'Register History' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . 'cash-registers' . '/history/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -368,25 +389,24 @@ class RegisterCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.registers/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -398,13 +418,13 @@ class RegisterCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Register ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -412,6 +432,7 @@ class RegisterCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -420,6 +441,7 @@ class RegisterCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -435,8 +457,9 @@ class RegisterCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -444,16 +467,17 @@ class RegisterCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

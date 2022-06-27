@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Classes;
 
 use Illuminate\Support\Facades\Schema as ParentSchema;
@@ -25,6 +26,7 @@ class Schema extends ParentSchema
         if ( ! parent::hasTable( Hook::filter( 'ns-table-name', $table ) ) ) {
             return parent::create( Hook::filter( 'ns-table-name', $table ), $callback );
         }
+
         return null;
     }
 

@@ -38,10 +38,10 @@ class ModuleDetailsCommand extends Command
      */
     public function handle()
     {
-        $moduleService  =   app()->make( ModulesService::class );
-        $module         =   $moduleService->get( $this->argument( 'identifier' ) );
+        $moduleService = app()->make( ModulesService::class );
+        $module = $moduleService->get( $this->argument( 'identifier' ) );
 
-        $entries        =   [
+        $entries = [
             [ __( 'Name' ), $module[ 'name' ] ],
             [ __( 'Version' ), $module[ 'version' ] ],
             [ __( 'Enabled' ), $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ) ],
@@ -57,7 +57,7 @@ class ModuleDetailsCommand extends Command
 
         return $this->table([
             __( 'Attribute' ),
-            __( 'Value' )
+            __( 'Value' ),
         ], $entries );
     }
 }

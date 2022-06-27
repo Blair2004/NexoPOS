@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use App\Classes\Schema;
 use App\Models\OrderProduct;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class UpdateOrderProductsTableMar30 extends Migration
 {
@@ -21,7 +21,7 @@ class UpdateOrderProductsTableMar30 extends Migration
         });
 
         OrderProduct::get()->each( function( $product ) {
-            $product->product_category_id   =   $product->product->category->id ?? 0;  
+            $product->product_category_id = $product->product->category->id ?? 0;
             $product->save();
         });
     }

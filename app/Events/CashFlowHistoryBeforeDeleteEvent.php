@@ -20,6 +20,6 @@ class CashFlowHistoryBeforeDeleteEvent
      */
     public function __construct( CashFlow $cashFlow )
     {
-        $this->cashFlow   =   $cashFlow;
+        $this->cashFlow = $cashFlow;
     }
 }

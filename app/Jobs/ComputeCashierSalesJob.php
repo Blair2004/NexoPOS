@@ -25,7 +25,7 @@ class ComputeCashierSalesJob implements ShouldQueue
      */
     public function __construct( $event )
     {
-        $this->event    =   $event;
+        $this->event = $event;
     }
 
     /**
@@ -35,22 +35,22 @@ class ComputeCashierSalesJob implements ShouldQueue
      */
     public function handle()
     {
-        $order      =   $this->event->order;
+        $order = $this->event->order;
 
         if ( $this->event instanceof OrderAfterCreatedEvent ) {
             if ( $order->payment_status === Order::PAYMENT_PAID ) {
-                $order->user->total_sales           =   $order->user->total_sales + $order->total;
-                $order->user->total_sales_count     =   $order->user->total_sales_count + 1;
+                $order->user->total_sales = $order->user->total_sales + $order->total;
+                $order->user->total_sales_count = $order->user->total_sales_count + 1;
                 $order->user->save();
             }
-        } else if ( $this->event instanceof OrderBeforeDeleteEvent ) {
+        } elseif ( $this->event instanceof OrderBeforeDeleteEvent ) {
             if ( $order->payment_status === Order::PAYMENT_PAID ) {
-                $order->user->total_sales           =   $order->user->total_sales - $order->total;
-                $order->user->total_sales_count     =   $order->user->total_sales_count - 1;
+                $order->user->total_sales = $order->user->total_sales - $order->total;
+                $order->user->total_sales_count = $order->user->total_sales_count - 1;
                 $order->user->save();
             }
-        } else if ( $this->event instanceof OrderAfterRefundedEvent ) {
-            $order->user->total_sales           -=  $this->event->orderRefund->total;
+        } elseif ( $this->event instanceof OrderAfterRefundedEvent ) {
+            $order->user->total_sales -= $this->event->orderRefund->total;
             $order->user->save();
         }
     }

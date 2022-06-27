@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Events;
 
-use Illuminate\Queue\SerializesModels;
 use App\Models\Product;
+use Illuminate\Queue\SerializesModels;
 
-class ProductResetEvent 
+class ProductResetEvent
 {
     use SerializesModels;
 
@@ -12,6 +13,6 @@ class ProductResetEvent
 
     public function __construct( Product $product )
     {
-        $this->product  =   $product;
+        $this->product = $product;
     }
 }

@@ -13,6 +13,7 @@ class RefreshExpenseJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $range_starts;
+
     public $range_ends;
 
     /**
@@ -22,8 +23,8 @@ class RefreshExpenseJob implements ShouldQueue
      */
     public function __construct( $range_starts, $range_ends )
     {
-        $this->range_ends       =   $range_ends;
-        $this->range_starts     =   $range_starts;
+        $this->range_ends = $range_ends;
+        $this->range_starts = $range_starts;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
@@ -6,14 +7,13 @@ use App\Services\DemoService;
 use App\Services\ResetService;
 use Database\Seeders\DefaultSeeder;
 use Database\Seeders\FirstDemoSeeder;
-use Illuminate\Http\Request;
 use Exception;
-
+use Illuminate\Http\Request;
 
 class ResetController extends DashboardController
 {
     /**
-     * @var ResetService $resetService
+     * @var ResetService
      */
     protected $resetService;
 
@@ -25,14 +25,14 @@ class ResetController extends DashboardController
     public function __construct(
         ResetService $resetService,
         DemoService $demoService
-    )
-    {
-        $this->resetService     =   $resetService;
-        $this->demoService      =   $demoService;
+    ) {
+        $this->resetService = $resetService;
+        $this->demoService = $demoService;
     }
 
     /**
      * perform a hard reset
+     *
      * @param Request $request
      * @return array $array
      */
@@ -47,6 +47,7 @@ class ResetController extends DashboardController
 
     /**
      * Will truncate the database and seed
+     *
      * @param Request $request
      * @return array
      */
@@ -54,7 +55,7 @@ class ResetController extends DashboardController
     {
         $this->resetService->softReset( $request );
 
-        switch( $request->input( 'mode' ) ) {
+        switch ( $request->input( 'mode' ) ) {
             case 'wipe_plus_grocery':
                 $this->demoService->run( $request->all() );
             break;
@@ -65,7 +66,7 @@ class ResetController extends DashboardController
                 ( new DefaultSeeder )->run();
             break;
             default:
-                $this->resetService->handleCustom( 
+                $this->resetService->handleCustom(
                     $request->all()
                 );
             break;
@@ -73,7 +74,7 @@ class ResetController extends DashboardController
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The database has been successfully seeded.' )
+            'message'   =>  __( 'The database has been successfully seeded.' ),
         ];
     }
 }

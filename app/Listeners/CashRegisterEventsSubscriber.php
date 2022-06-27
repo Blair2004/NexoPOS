@@ -19,9 +19,8 @@ class CashRegisterEventsSubscriber
      */
     public function __construct(
         CashRegistersService $registerService
-    )
-    {
-        $this->registerService      =       $registerService;
+    ) {
+        $this->registerService = $registerService;
     }
 
     /**
@@ -37,22 +36,22 @@ class CashRegisterEventsSubscriber
 
     public function subscribe( $event )
     {
-        $event->listen( 
-            CashRegisterHistoryAfterCreatedEvent::class, 
+        $event->listen(
+            CashRegisterHistoryAfterCreatedEvent::class,
             [ $this->registerService, 'updateRegisterAmount' ]
         );
 
-        $event->listen( 
+        $event->listen(
             OrderAfterPaymentStatusChangedEvent::class,
             [ $this->registerService, 'increaseFromPaidOrder' ]
         );
 
-        $event->listen( 
+        $event->listen(
             OrderAfterCreatedEvent::class,
             [ $this->registerService, 'increaseFromOrderCreatedEvent' ]
         );
 
-        $event->listen( 
+        $event->listen(
             OrderAfterUpdatedEvent::class,
             [ $this->registerService, 'increaseFromOrderCreatedEvent' ]
         );

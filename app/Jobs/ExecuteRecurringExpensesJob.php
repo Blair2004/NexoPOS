@@ -33,7 +33,7 @@ class ExecuteRecurringExpensesJob implements ShouldQueue
         /**
          * @var ExpenseService
          */
-        $expenses       =   app()->make( ExpenseService::class );
+        $expenses = app()->make( ExpenseService::class );
         $expenses->handleRecurringExpenses();
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class RemoveUselessFieldsNexoposProductsOct16 extends Migration
 {
@@ -13,7 +13,7 @@ class RemoveUselessFieldsNexoposProductsOct16 extends Migration
      */
     public function up()
     {
-        foreach([ 
+        foreach ([
             'wholesale_price_edit',
             'sale_price_edit',
             'sale_price',
@@ -25,7 +25,7 @@ class RemoveUselessFieldsNexoposProductsOct16 extends Migration
             'incl_tax_wholesale_price',
             'excl_tax_wholesale_price',
         ] as $field ) {
-            Schema::table( 'nexopos_products', function( Blueprint $table ) use( $field ) {
+            Schema::table( 'nexopos_products', function( Blueprint $table ) use ( $field ) {
                 if ( Schema::hasColumn( 'nexopos_products', $field ) ) {
                     $table->dropColumn( $field );
                 }
@@ -40,7 +40,7 @@ class RemoveUselessFieldsNexoposProductsOct16 extends Migration
      */
     public function down()
     {
-        foreach([ 
+        foreach ([
             'wholesale_price_edit',
             'sale_price_edit',
             'sale_price',
@@ -53,7 +53,7 @@ class RemoveUselessFieldsNexoposProductsOct16 extends Migration
             'excl_tax_wholesale_price',
         ] as $field ) {
             if ( Schema::hasTable( 'nexopos_products' ) ) {
-                Schema::table( 'nexopos_products', function( Blueprint $table ) use( $field ) {
+                Schema::table( 'nexopos_products', function( Blueprint $table ) use ( $field ) {
                     if ( ! Schema::hasColumn( 'nexopos_products', $field ) ) {
                         $table->float( $field )->default(0);
                     }

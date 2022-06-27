@@ -1,10 +1,10 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
-use App\Models\Unit;
 use App\Models\UnitGroup;
 use Illuminate\Database\Seeder;
 
@@ -30,7 +30,7 @@ class ProductsSeeder extends Seeder
                                 ->count(1)
                                 ->create([
                                     'product_id'    =>  $product->id,
-                                    'unit_id'       =>  $unit->id
+                                    'unit_id'       =>  $unit->id,
                                 ]);
                         });
                     });

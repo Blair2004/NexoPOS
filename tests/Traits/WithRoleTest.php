@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Crud\RolesCrud;
@@ -10,19 +11,19 @@ trait WithRoleTest
 
     public function attemptCreateReservedRole()
     {
-        $role   =   Role::whereIn( 'namespace', [
+        $role = Role::whereIn( 'namespace', [
             Role::ADMIN,
             Role::STOREADMIN,
             Role::STORECASHIER,
-            Role::USER
+            Role::USER,
         ])->first();
 
-        $response   =   $this->submitRequest( ( new RolesCrud )->getNamespace(), [
+        $response = $this->submitRequest( ( new RolesCrud )->getNamespace(), [
             'name'  =>  $role->name,
             'general'   =>  [
                 'namespace'     =>  $role->namespace,
-                'dashid'        =>  $role->dashid
-            ]
+                'dashid'        =>  $role->dashid,
+            ],
         ]);
 
         /**
@@ -33,36 +34,36 @@ trait WithRoleTest
 
     public function attemptEditReservedRole()
     {
-        $role   =   Role::whereIn( 'namespace', [
+        $role = Role::whereIn( 'namespace', [
             Role::ADMIN,
             Role::STOREADMIN,
             Role::STORECASHIER,
-            Role::USER
+            Role::USER,
         ])->first();
 
         $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [
             'name'  =>  $role->name,
             'general'   =>  [
                 'namespace'     =>  $role->namespace,
-                'dashid'        =>  $role->dashid
-            ]
+                'dashid'        =>  $role->dashid,
+            ],
         ], 'PUT' );
 
-        $newRole    =   $role->fresh();
+        $newRole = $role->fresh();
 
         $this->assertTrue( $role->namespace === $newRole->namespace, 'The namespace has been updated.' );
     }
 
     public function attemptDeleteReservedRole()
     {
-        $role   =   Role::whereIn( 'namespace', [
+        $role = Role::whereIn( 'namespace', [
             Role::ADMIN,
             Role::STOREADMIN,
             Role::STORECASHIER,
-            Role::USER
+            Role::USER,
         ])->first();
-        
-        $response   =   $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id , [], 'DELETE' );
+
+        $response = $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [], 'DELETE' );
 
         /**
          * A system role can't be deleted

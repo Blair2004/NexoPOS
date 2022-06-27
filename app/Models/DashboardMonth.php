@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use App\Services\DateService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DashboardMonth extends NsModel
 {
     use HasFactory;
 
-    public $timestamps  =   false;
-    protected $table    =   'nexopos_' . 'dashboard_months';
+    public $timestamps = false;
 
-    protected $dispatchEvents   =   [
+    protected $table = 'nexopos_' . 'dashboard_months';
+
+    protected $dispatchEvents = [
         'created'   =>  DashboardMonthAfterCreatedEvent::class,
         'updated'   =>  DashboardMonthAfterCreatedEvent::class,
     ];

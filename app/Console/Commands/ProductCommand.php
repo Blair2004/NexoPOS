@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Crud\ProductCrud;
 use App\Models\Product;
 use App\Models\ProductGallery;
 use App\Models\ProductSubItem;
@@ -49,9 +48,9 @@ class ProductCommand extends Command
             ns()->store->setStore( Store::find( $this->option( 'store' ) ) );
         }
 
-        $this->productService       =   app()->make( ProductService::class );
+        $this->productService = app()->make( ProductService::class );
 
-        match( $this->argument( 'action' ) ) {
+        match ( $this->argument( 'action' ) ) {
             'update'            =>  $this->updateProducts(),
             'refresh-barcode'   =>  $this->refreshBarcodes()
         };
@@ -59,9 +58,9 @@ class ProductCommand extends Command
 
     private function refreshBarcodes()
     {
-        $queryBuilder   =   $this->queryBuilder();
+        $queryBuilder = $this->queryBuilder();
 
-        $products   =   $this->withProgressBar( $queryBuilder->get(), function( $product ) {
+        $products = $this->withProgressBar( $queryBuilder->get(), function( $product ) {
             $this->productService->generateProductBarcode( $product );
         });
 
@@ -78,30 +77,30 @@ class ProductCommand extends Command
 
     private function updateProducts()
     {
-        $queryBuilder   =   $this->queryBuilder();
+        $queryBuilder = $this->queryBuilder();
 
         $this->perform( $queryBuilder, function( $product ) {
-            $gallery    =   ProductGallery::where( 'product_id', $product->id )->get();
-            $units      =   ProductUnitQuantity::where( 'product_id', $product->id )->get();
-            $subItems   =   ProductSubItem::where( 'product_id', $product->id )->get();
+            $gallery = ProductGallery::where( 'product_id', $product->id )->get();
+            $units = ProductUnitQuantity::where( 'product_id', $product->id )->get();
+            $subItems = ProductSubItem::where( 'product_id', $product->id )->get();
 
             $this->productService->update( $product, array_merge( $product->toArray(), [
                 'units'     =>  [
                     'unit_group'        =>  $product->unit_group,
                     'accurate_tracking' =>  $product->accurate_tracking,
-                    'selling_group'     =>  $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() ) ->toArray()
+                    'selling_group'     =>  $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() )->toArray(),
                 ],
                 'images'                =>  $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
                 'groups'                =>  [
                     'product_subitems'      =>  $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
-                ]
+                ],
             ]) );
         });
 
         $this->newLine();
 
         return $this->info( sprintf(
-            __( '%s prodcuts where updated.' ), 
+            __( '%s prodcuts where updated.' ),
             $queryBuilder->count()
         ) );
     }
@@ -109,41 +108,40 @@ class ProductCommand extends Command
     private function queryBuilder()
     {
         if ( ! empty( $this->option( 'where' ) ) || ! empty( $this->option( 'orWhere' ) ) ) {
-            $query  =   ( new Product )->newQuery();
+            $query = ( new Product )->newQuery();
 
-            foreach([ 'where', 'orWhere' ] as $option ) {
+            foreach ([ 'where', 'orWhere' ] as $option ) {
                 if ( ! empty( $this->option( $option ) ) ) {
-                    foreach( $this->option( $option ) as $optionStatement ) {
-                        $equalStatement     =   explode( ':', $optionStatement );
-                        $greatherStatement  =   explode( '>', $optionStatement );
-                        $lessThanStatement  =   explode( '<', $optionStatement );
-    
-                        if ( 
-                            count( $equalStatement ) === 2 && 
-                            count( $greatherStatement ) === 1 && 
+                    foreach ( $this->option( $option ) as $optionStatement ) {
+                        $equalStatement = explode( ':', $optionStatement );
+                        $greatherStatement = explode( '>', $optionStatement );
+                        $lessThanStatement = explode( '<', $optionStatement );
+
+                        if (
+                            count( $equalStatement ) === 2 &&
+                            count( $greatherStatement ) === 1 &&
                             count( $lessThanStatement ) === 1 ) {
                             $query->$option( $equalStatement[0], $equalStatement[1] );
                         }
 
-                        if ( 
-                            count( $greatherStatement ) === 2 && 
-                            count( $equalStatement ) === 1 && 
+                        if (
+                            count( $greatherStatement ) === 2 &&
+                            count( $equalStatement ) === 1 &&
                             count( $lessThanStatement ) === 1 ) {
                             $query->$option( $greatherStatement[0], '>', $greatherStatement[1] );
                         }
 
-                        if ( 
-                            count( $lessThanStatement ) === 2 && 
-                            count( $equalStatement ) === 1 && 
+                        if (
+                            count( $lessThanStatement ) === 2 &&
+                            count( $equalStatement ) === 1 &&
                             count( $greatherStatement ) === 1 ) {
                             $query->$option( $lessThanStatement[0], '<', $lessThanStatement[1] );
                         }
                     }
                 }
             }
-            
-            return $query;
 
+            return $query;
         } else {
             return Product::where( 'id', '>', 0 );
         }

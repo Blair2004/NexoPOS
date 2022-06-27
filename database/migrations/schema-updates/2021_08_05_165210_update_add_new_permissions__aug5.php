@@ -3,8 +3,6 @@
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class UpdateAddNewPermissionsAug5 extends Migration
 {
@@ -25,7 +23,7 @@ class UpdateAddNewPermissionsAug5 extends Migration
      */
     public function up()
     {
-        include( dirname( __FILE__ ) . '/../../permissions/pos.php' );
+        include dirname( __FILE__ ) . '/../../permissions/pos.php';
 
         Role::namespace( 'admin' )
             ->addPermissions( Permission::includes( '.pos' )

@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\LocaleDefinedEvent;
 use App\Models\UserAttribute;
 use Closure;
 use Illuminate\Http\Request;
-use App\Events\LocaleDefinedEvent;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,16 +21,16 @@ class LoadLangMiddleware
     public function handle(Request $request, Closure $next)
     {
         if ( Auth::check() ) {
-            $userAttribute  =   Auth::user()->attribute;
+            $userAttribute = Auth::user()->attribute;
 
-            $language       =   ns()->option->get( 'ns_store_language', 'en' );
+            $language = ns()->option->get( 'ns_store_language', 'en' );
 
             /**
              * if the user attribute is not defined,
              * we'll use the default system locale or english by default.
              */
             if ( $userAttribute instanceof UserAttribute ) {
-                $language   =   Auth::user()->attribute->language;
+                $language = Auth::user()->attribute->language;
             }
 
             App::setLocale( in_array( $language, array_keys( config( 'nexopos.languages' ) ) ) ? $language : 'en' );
@@ -44,7 +44,7 @@ class LoadLangMiddleware
          * locale as well.
          */
         LocaleDefinedEvent::dispatch( App::getLocale() );
-        
+
         return $next($request);
     }
 }

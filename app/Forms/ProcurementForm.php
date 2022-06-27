@@ -1,29 +1,27 @@
 <?php
+
 namespace App\Forms;
 
 use App\Classes\Hook;
 use App\Models\Procurement;
 use App\Models\Product;
-use App\Models\Unit;
-use App\Models\UnitGroup;
-use App\Services\Helper;
 use App\Services\SettingsPage;
-use App\Services\UserOptions;
 
 class ProcurementForm extends SettingsPage
 {
-    protected $identifier       =   'ns.procurement';
+    protected $identifier = 'ns.procurement';
+
     public $form;
-    
+
     public function __construct()
-    {        
+    {
         if ( ! empty( request()->route( 'identifier' ) ) ) {
-            $procurement    =   Procurement::with( 'products' )
+            $procurement = Procurement::with( 'products' )
                 ->with( 'provider' )
                 ->find( request()->route( 'identifier' ) );
         }
 
-        $this->form    =   Hook::filter( 'ns-procurement-form', [
+        $this->form = Hook::filter( 'ns-procurement-form', [
             'main'          =>  [
                 'name'      =>  'name',
                 'type'      =>  'text',
@@ -39,45 +37,45 @@ class ProcurementForm extends SettingsPage
                 ],
                 'purchase_price_edit'    =>  [
                     'label' =>  __( 'Unit Price' ),
-                    'type'  =>  'text'
+                    'type'  =>  'text',
                 ],
                 'tax_group_id'  =>  [
                     'label' =>  __( 'Tax' ),
-                    'type'  =>  'tax_group_id'
+                    'type'  =>  'tax_group_id',
                 ],
                 'tax_value'       =>  [
                     'label' =>  __( 'Tax Value' ),
-                    'type'  =>  'currency'
+                    'type'  =>  'currency',
                 ],
                 'unit_quantities'       =>  [
                     'label' =>  __( 'UOM' ),
-                    'type'  =>  'unit_quantities'
+                    'type'  =>  'unit_quantities',
                 ],
                 'quantity'      =>  [
                     'label' =>  __( 'Quantity' ),
-                    'type'  =>  'text'
+                    'type'  =>  'text',
                 ],
                 'total_purchase_price'   =>  [
                     'label' =>  __( 'Total Price' ),
-                    'type'  =>  'currency'
+                    'type'  =>  'currency',
                 ],
             ]),
             'products'          =>  isset( $procurement ) ? $procurement->products->map( function( $_product ) {
-                $product                    =   Product::findOrFail( $_product->product_id );
+                $product = Product::findOrFail( $_product->product_id );
                 $product->load( 'unit_quantities.unit' )->get();
-                
-                $_product->procurement      =   array_merge( $_product->toArray(), [
+
+                $_product->procurement = array_merge( $_product->toArray(), [
                     '$invalid'              =>  false,
-                    'purchase_price_edit'   =>  $_product->purchase_price
+                    'purchase_price_edit'   =>  $_product->purchase_price,
                 ]);
 
-                $_product->unit_quantities  =   $product->unit_quantities;
+                $_product->unit_quantities = $product->unit_quantities;
 
                 return $_product;
             }) : [],
             'tabs'              =>  [
                 'general'       =>  include( dirname( __FILE__ ) . '/procurement/general.php' ),
-            ]
+            ],
         ]);
     }
 }

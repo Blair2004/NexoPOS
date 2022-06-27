@@ -1,17 +1,16 @@
 <?php
+
 namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
 use App\Models\ProductCategory;
 use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductCategoryFactory extends Factory
 {
-    protected $model    =   ProductCategory::class;
+    protected $model = ProductCategory::class;
 
     public function definition()
     {

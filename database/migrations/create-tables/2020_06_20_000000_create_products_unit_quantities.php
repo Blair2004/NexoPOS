@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateProductsUnitQuantities extends Migration
 {
@@ -23,8 +21,8 @@ class CreateProductsUnitQuantities extends Migration
                 $table->bigIncrements( 'id' );
                 $table->integer( 'product_id' );
                 $table->string( 'type' )->default( 'product' ); // product | variation
-                $table->string( 'preview_url' )->nullable(); 
-                $table->datetime( 'expiration_date' )->nullable(); 
+                $table->string( 'preview_url' )->nullable();
+                $table->datetime( 'expiration_date' )->nullable();
                 $table->integer( 'unit_id' );
                 $table->string( 'barcode' )->nullable();
                 $table->float( 'quantity', 18, 5 );
@@ -62,4 +60,3 @@ class CreateProductsUnitQuantities extends Migration
         }
     }
 }
-

@@ -2,8 +2,9 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
@@ -11,14 +12,11 @@ use App\Crud\CustomerGroupCrud;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-
-use App\Models\CustomerGroup;
 use App\Models\Customer;
+use App\Models\CustomerGroup;
 use Exception;
-use Illuminate\Support\Facades\Cookie;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomersGroupsController extends DashboardController
 {
@@ -45,10 +43,11 @@ class CustomersGroupsController extends DashboardController
     /**
      * get a list or a single customer
      * group using a provided id
+     *
      * @param int customer id
      * @return Model
      */
-    public function get( $id = null ) 
+    public function get( $id = null )
     {
         if ( $id !== null ) {
             return CustomerGroup::find( $id );
@@ -59,11 +58,12 @@ class CustomersGroupsController extends DashboardController
 
     /**
      * delete a single customer group
+     *
      * @param int customer group id
      */
-    public function delete( $id ) 
+    public function delete( $id )
     {
-        $group   =   CustomerGroup::find( $id );
+        $group = CustomerGroup::find( $id );
         if ( $group instanceof CustomerGroup ) {
             if ( $group->customers->count() > 0 ) {
                 throw new Exception( __( 'Unable to delete a group to which customers are still assigned.' ) );
@@ -77,7 +77,7 @@ class CustomersGroupsController extends DashboardController
 
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The customer group has been deleted.' )
+                'message'   =>  __( 'The customer group has been deleted.' ),
             ];
         }
 
@@ -86,74 +86,76 @@ class CustomersGroupsController extends DashboardController
 
     /**
      * @todo implement validation
+     *
      * @param object Request
-     * @return array 
+     * @return array
      */
     public function post( Request $request )
     {
-        $fields     =   $request->only([
+        $fields = $request->only([
             'name',
             'description',
-            'reward_system_id'
+            'reward_system_id',
         ]);
 
-        $group  =   new CustomerGroup;
-        foreach( $fields as $name => $value ) {
-            $group->$name   =   $value;
+        $group = new CustomerGroup;
+        foreach ( $fields as $name => $value ) {
+            $group->$name = $value;
         }
-        $group->author      =   Auth::id();
+        $group->author = Auth::id();
         $group->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The customer group has been successfully created.' ),
-            'data'      =>  compact( 'group' )
+            'data'      =>  compact( 'group' ),
         ];
     }
 
     /**
      * edit a customer group
+     *
      * @param object Request
      * @param int customer group id
      * @return array
      */
     public function put( Request $request, $id )
     {
-        $group      =   CustomerGroup::find( $id );
-        $fields     =   $request->only([
+        $group = CustomerGroup::find( $id );
+        $fields = $request->only([
             'name',
             'description',
-            'reward_system_id'
+            'reward_system_id',
         ]);
 
         if ( $group instanceof CustomerGroup ) {
-            foreach( $fields as $name => $value ) {
-                $group->$name   =   $value;
+            foreach ( $fields as $name => $value ) {
+                $group->$name = $value;
             }
         }
 
-        $group->author      =   Auth::id();
+        $group->author = Auth::id();
         $group->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The customer group has been successfully saved.' ),
-            'data'      =>  compact( 'group' )
+            'data'      =>  compact( 'group' ),
         ];
     }
 
     public function transferOwnership( Request $request )
     {
-        $from   =   $request->input( 'from' );
-        $to     =   $request->input( 'to' );
+        $from = $request->input( 'from' );
+        $to = $request->input( 'to' );
 
-        if( $to === $from ) {
+        if ( $to === $from ) {
             throw new NotAllowedException( __( 'Unable to transfer customers to the same account.' ) );
         }
 
-        $fromModel      =   CustomerGroup::findOrFail( $from );
-        $toModel        =   CustomerGroup::findOrFail( $to );
-        $customersID    =   $request->input( 'ids' );
+        $fromModel = CustomerGroup::findOrFail( $from );
+        $toModel = CustomerGroup::findOrFail( $to );
+        $customersID = $request->input( 'ids' );
 
         /**
          * if we attemps to move
@@ -161,39 +163,37 @@ class CustomersGroupsController extends DashboardController
          * one group to another
          */
         if ( $customersID === '*' ) {
-            
-            $customers  =   Customer::where( 'group_id', $fromModel->id )
+            $customers = Customer::where( 'group_id', $fromModel->id )
                 ->get();
             $customers
                 ->forEach( function( $customer ) use ( $toModel ) {
-                $customer->group_id     =   $toModel->id;
-                $customer->save();
-            });
+                    $customer->group_id = $toModel->id;
+                    $customer->save();
+                });
 
             return [
                 'status'    =>  'success',
-                'message'   =>  sprintf( __( 'All the customers has been transfered to the new group %s.' ), $toModel->name )
+                'message'   =>  sprintf( __( 'All the customers has been transfered to the new group %s.' ), $toModel->name ),
             ];
-
-        } else if ( is_array( $customersID ) ) {
+        } elseif ( is_array( $customersID ) ) {
             /**
              * here we're trying to move
-             * more than one customer using a 
+             * more than one customer using a
              * provided id
              */
-            foreach( $customersID as $customerID ) {
-                $customer   =   Customer::where( 'id', $customerID )
+            foreach ( $customersID as $customerID ) {
+                $customer = Customer::where( 'id', $customerID )
                     ->where( 'group_id', $fromModel->id )
                     ->get()
                     ->forEach( function( $customer ) use ( $toModel ) {
-                        $customer->group_id     =   $toModel->id;
+                        $customer->group_id = $toModel->id;
                         $customer->save();
                     });
             }
 
             return [
                 'status'    =>  'success',
-                'message'   =>  sprintf( __( 'The categories has been transfered to the group %s.' ), $toModel->name )
+                'message'   =>  sprintf( __( 'The categories has been transfered to the group %s.' ), $toModel->name ),
             ];
         }
 
@@ -202,13 +202,12 @@ class CustomersGroupsController extends DashboardController
 
     public function getCustomers( $group_id )
     {
-        $customerGroup  =   CustomerGroup::find( $group_id );
+        $customerGroup = CustomerGroup::find( $group_id );
 
-        if( ! $customerGroup instanceof CustomerGroup ) {
+        if ( ! $customerGroup instanceof CustomerGroup ) {
             throw new NotFoundException( __( 'Unable to find the requested group using the provided id.' ) );
         }
 
         return $customerGroup->customers;
     }
 }
-

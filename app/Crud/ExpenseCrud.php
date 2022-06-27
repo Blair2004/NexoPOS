@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Crud;
 
 use App\Events\ExpenseAfterCreateEvent;
@@ -7,51 +8,49 @@ use App\Events\ExpenseBeforeCreateEvent;
 use App\Events\ExpenseBeforeDeleteEvent;
 use App\Events\ExpenseBeforeUpdateEvent;
 use App\Models\AccountType;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Expense;
-use App\Models\ExpenseCategory;
 use App\Models\Role;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ExpenseCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_expenses';
+    protected $table = 'nexopos_expenses';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.expenses';
+    protected $mainRoute = 'ns.expenses';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.expenses';
+    protected $namespace = 'ns.expenses';
 
     /**
      * Model Used
      */
-    protected $model      =   Expense::class;
+    protected $model = Expense::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'nexopos_expenses.author', '=', 'user.id' ],
         [ 'nexopos_expenses_categories as expense_category', 'expense_category.id', '=', 'nexopos_expenses.category_id' ],
     ];
 
-    protected $pick     =   [
+    protected $pick = [
         'user'                  =>  [ 'username' ],
         'expense_category'      =>  [ 'name' ],
     ];
@@ -65,24 +64,27 @@ class ExpenseCrud extends CrudService
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -92,10 +94,11 @@ class ExpenseCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -113,8 +116,9 @@ class ExpenseCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -122,10 +126,11 @@ class ExpenseCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -159,12 +164,12 @@ class ExpenseCrud extends CrudService
                             'label'         =>  __( 'Users Group' ),
                             'value'         =>  $entry->group_id ?? '',
                             'description'   =>  __( 'Assign expense to users group. Expense will therefore be multiplied by the number of entity.' ),
-                            'options'       =>  [ 
+                            'options'       =>  [
                                 [
                                     'label' =>  __( 'None' ),
-                                    'value' =>  '0',                                     
-                                ], 
-                                ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ]) 
+                                    'value' =>  '0',
+                                ],
+                                ...Helper::toJsOptions( Role::get(), [ 'id', 'name' ]),
                             ],
                         ], [
                             'type'          =>  'select',
@@ -190,11 +195,11 @@ class ExpenseCrud extends CrudService
                             'options'       =>  [
                                 [
                                     'label' =>  __( 'Yes' ),
-                                    'value' =>  true
+                                    'value' =>  true,
                                 ], [
                                     'label' =>  __( 'No' ),
-                                    'value' =>  false
-                                ]
+                                    'value' =>  false,
+                                ],
                             ],
                             'value' =>  $entry->recurring ?? '',
                         ], [
@@ -215,7 +220,7 @@ class ExpenseCrud extends CrudService
                                 ], [
                                     'label' =>  __( 'X days After Month Starts' ),
                                     'value' =>  'x_after_month_starts',
-                                ]
+                                ],
                             ],
                             'name'          =>  'occurence',
                             'label'         =>  __( 'Occurence' ),
@@ -232,15 +237,16 @@ class ExpenseCrud extends CrudService
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -251,6 +257,7 @@ class ExpenseCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -261,6 +268,7 @@ class ExpenseCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -275,6 +283,7 @@ class ExpenseCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Expense $entry
      * @return  void
@@ -290,21 +299,23 @@ class ExpenseCrud extends CrudService
     {
         $query->orderBy( 'id', 'desc' );
     }
-    
+
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -320,6 +331,7 @@ class ExpenseCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -330,20 +342,21 @@ class ExpenseCrud extends CrudService
 
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -352,11 +365,12 @@ class ExpenseCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.expenses' ) {
-            
             $this->allowedTo( 'delete' );
 
             event( new ExpenseBeforeDeleteEvent( $model ) );
@@ -365,44 +379,46 @@ class ExpenseCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'expense_category_name'  =>  [
                 'label'  =>  __( 'Category' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'value'  =>  [
                 'label'  =>  __( 'Value' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'recurring'  =>  [
                 'label'  =>  __( 'Recurring' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'occurence'  =>  [
                 'label'  =>  __( 'Occurence' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -412,15 +428,15 @@ class ExpenseCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->value           =   ( string ) ns()->currency->value( $entry->value );
-        $entry->recurring       =   ( bool ) $entry->recurring ? __( 'Yes' ) : __( 'No' );
+        $entry->value = (string) ns()->currency->value( $entry->value );
+        $entry->recurring = (bool) $entry->recurring ? __( 'Yes' ) : __( 'No' );
 
-        switch( $entry->occurence ) {
-            case 'month_start' : $entry->occurence = __( 'Month Starts' );break;
-            case 'month_mid' : $entry->occurence = __( 'Month Middle' );break;
-            case 'month_end' : $entry->occurence = __( 'Month Ends' );break;
-            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' );break;
-            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' );break;
+        switch ( $entry->occurence ) {
+            case 'month_start' : $entry->occurence = __( 'Month Starts' ); break;
+            case 'month_mid' : $entry->occurence = __( 'Month Middle' ); break;
+            case 'month_end' : $entry->occurence = __( 'Month Ends' ); break;
+            case 'x_after_month_starts' : $entry->occurence = __( 'X Days Before Month Starts' ); break;
+            case 'x_before_month_ends' : $entry->occurence = __( 'X Days Before Month Ends' ); break;
             default: $entry->occurence = __( 'Unknown Occurance' ); break;
         }
 
@@ -430,7 +446,7 @@ class ExpenseCrud extends CrudService
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'expenses' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -440,40 +456,40 @@ class ExpenseCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.expenses/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
+        $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
+                'message'   =>  __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Expense ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -481,6 +497,7 @@ class ExpenseCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -489,6 +506,7 @@ class ExpenseCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -504,8 +522,9 @@ class ExpenseCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -513,16 +532,17 @@ class ExpenseCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

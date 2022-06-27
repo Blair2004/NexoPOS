@@ -1,23 +1,21 @@
 <?php
+
 namespace App\Models;
 
-use App\Models\Unit;
-use App\Models\Product;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @property integer $id
- * @property integer $product_id
+ * @property int $id
+ * @property int $product_id
  * @property string $type
  * @property string $preview_url
  * @property string $expiration_date
- * @property integer $unit_id
+ * @property int $unit_id
  * @property string $barcode
  * @property float $quantity
  * @property float $low_quantity
- * @property boolean $stock_alert_enabled
+ * @property bool $stock_alert_enabled
  * @property float $sale_price
  * @property float $sale_price_edit
  * @property float $gross_sale_price
@@ -36,15 +34,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProductUnitQuantity extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'products_unit_quantities';
+
+    protected $table = 'nexopos_' . 'products_unit_quantities';
 
     /**
      * Fetch products unique a barcode filter
+     *
      * @param QueryBuilder $query
      * @param string $reference
      * @return QueryBuilder
-    **/
+     **/
     public function scopeBarcode( $query, $reference )
     {
         return $query->where( 'barcode', $reference );

@@ -1,19 +1,20 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Unit extends NsModel 
+class Unit extends NsModel
 {
     use HasFactory;
-    
+
     protected $table = 'nexopos_units';
-    protected $casts    =   [
-        'base_unit'     =>  'boolean'
+
+    protected $casts = [
+        'base_unit'     =>  'boolean',
     ];
 
-    protected $guarded  =   [];
+    protected $guarded = [];
 
     public function group()
     {
@@ -22,7 +23,8 @@ class Unit extends NsModel
 
     /**
      * retreive a unit using a defined
-     * identifier 
+     * identifier
+     *
      * @param Query $query
      * @param string $identifier
      * @return Query
@@ -31,4 +33,4 @@ class Unit extends NsModel
     {
         return $query->where( 'identifier', $identifier );
     }
-} 
+}

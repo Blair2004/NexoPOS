@@ -23,7 +23,7 @@ class HandleStockAdjustmentJob implements ShouldQueue
      */
     public function __construct( ProductAfterStockAdjustmentEvent $event )
     {
-        $this->history  =   $event->history;
+        $this->history = $event->history;
     }
 
     /**
@@ -36,7 +36,7 @@ class HandleStockAdjustmentJob implements ShouldQueue
         /**
          * @var ReportService
          */
-        $reportService     =   app()->make( ReportService::class );
+        $reportService = app()->make( ReportService::class );
         $reportService->handleStockAdjustment( $this->history );
     }
 }

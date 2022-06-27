@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Fields;
 
 use App\Classes\Hook;
@@ -6,11 +7,11 @@ use App\Services\FieldsService;
 
 class CashRegisterOpeningFields extends FieldsService
 {
-    protected $identifier   =   'ns.cash-registers-opening';
+    protected $identifier = 'ns.cash-registers-opening';
 
     public function get()
     {
-        $fields     =   Hook::filter( 'ns-cash-register-open-fields', [
+        $fields = Hook::filter( 'ns-cash-register-open-fields', [
             [
                 'label'         =>  __( 'Amount' ),
                 'description'   =>  __( 'define the amount of the transaction.' ),
@@ -24,7 +25,7 @@ class CashRegisterOpeningFields extends FieldsService
                 'type'          =>  'textarea',
             ],
         ]);
-        
+
         return $fields;
     }
 }

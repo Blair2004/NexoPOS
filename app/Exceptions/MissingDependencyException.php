@@ -3,13 +3,12 @@
 namespace App\Exceptions;
 
 use Exception;
-use Throwable;
 
 class MissingDependencyException extends Exception
 {
-    public function __construct( $message = null ) 
+    public function __construct( $message = null )
     {
-        $this->message  =   $message ?: __('There is a missing dependency issue.' );
+        $this->message = $message ?: __('There is a missing dependency issue.' );
     }
 
     public function render( $request )
@@ -17,13 +16,13 @@ class MissingDependencyException extends Exception
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.missing-dependency', [
                 'title'         =>  __( 'Missing Dependency' ),
-                'message'       =>  $this->getMessage()
+                'message'       =>  $this->getMessage(),
             ]);
         }
 
-        return response()->json([ 
+        return response()->json([
             'status'  =>  'failed',
-            'message' => $this->getMessage()
+            'message' => $this->getMessage(),
         ], 401);
     }
 }

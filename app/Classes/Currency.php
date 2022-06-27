@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Classes;
 
 use App\Services\CurrencyService;
 
-class Currency 
+class Currency
 {
     public static function define( $amount )
     {
@@ -13,7 +14,7 @@ class Currency
     /**
      * Will return a new intance using
      * the default value.
-     * 
+     *
      * @param float $amount
      * @return CurrencyService
      */

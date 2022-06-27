@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -23,8 +22,7 @@ class CrudBeforeExportEvent
         public int $totalRows,
         public array $sheetColumns,
         public array $entries
-    )
-    {
+    ) {
         //
     }
 }

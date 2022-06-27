@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateAddNoteAndNoteVisibilityToOrdersJan13 extends Migration
 {
@@ -17,7 +17,7 @@ class UpdateAddNoteAndNoteVisibilityToOrdersJan13 extends Migration
             if ( ! Schema::hasColumn( 'nexopos_orders', 'note' ) ) {
                 $table->text( 'note' )->nullable();
             }
-            
+
             if ( ! Schema::hasColumn( 'nexopos_orders', 'note_visibility' ) ) {
                 $table->string( 'note_visibility' )->nullable();
             }

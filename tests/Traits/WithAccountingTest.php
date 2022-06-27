@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Classes\Currency;
@@ -13,7 +14,7 @@ trait WithAccountingTest
 {
     protected function attemptCreateBankingAccounts()
     {
-        $accounts        =   [             
+        $accounts = [
             [
                 'name'  =>  __( 'Stock Procurement' ),
                 'account'   =>  '000001',
@@ -53,25 +54,25 @@ trait WithAccountingTest
             ],
         ];
 
-        foreach( $accounts as $account ) {
-            $AccountType    =   AccountType::where( 'account', $account[ 'account' ] )
+        foreach ( $accounts as $account ) {
+            $AccountType = AccountType::where( 'account', $account[ 'account' ] )
                 ->first();
 
             /**
-             * in case the test is executed twice, we don't want to repeatedly 
+             * in case the test is executed twice, we don't want to repeatedly
              * record the same account on the database.
              */
             if ( ! $AccountType instanceof AccountType ) {
-                $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+                $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'POST', 'api/nexopos/v4/crud/ns.accounting-accounts', [
                         'name'          =>  $account[ 'name' ],
                         'general'       =>  [
                             'operation'     =>  $account[ 'operation' ],
                             'author'        =>  Auth::id(),
                             'account'       =>  $account[ 'account' ],
-                        ]
+                        ],
                     ]);
-    
+
                 $response->assertStatus(200);
             }
         }
@@ -92,53 +93,54 @@ trait WithAccountingTest
         /**
          * @var ReportService $reportService
          */
-        $reportService          =   app()->make( ReportService::class );
-        
+        $reportService = app()->make( ReportService::class );
+
         /**
          * This will be used as a reference to check if
          * there has been any change on the report.
          */
-        $reportService->computeDayReport( 
+        $reportService->computeDayReport(
             ns()->date->copy()->startOfDay()->toDateTimeString(),
             ns()->date->copy()->endOfDay()->toDateTimeString(),
         );
 
-        $dashboardDay           =   DashboardDay::forToday();
+        $dashboardDay = DashboardDay::forToday();
 
         /**
          * Step 1 : let's check if performing a
          * procurement will affect the expenses.
+         *
          * @var TestService
          */
-        $procurementsDetails    =   app()->make( TestService::class );
-        $procurementData        =   $procurementsDetails->prepareProcurement( ns()->date->now(), [] );
+        $procurementsDetails = app()->make( TestService::class );
+        $procurementData = $procurementsDetails->prepareProcurement( ns()->date->now(), [] );
 
-        $response               =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/procurements', $procurementData );
 
         $response->assertStatus(200);
 
-        $array                  =   json_decode( $response->getContent(), true );
-        $procurement            =   $array[ 'data' ][ 'procurement' ];
+        $array = json_decode( $response->getContent(), true );
+        $procurement = $array[ 'data' ][ 'procurement' ];
 
-        $currentDashboardDay    =   DashboardDay::forToday();
+        $currentDashboardDay = DashboardDay::forToday();
 
-        $expenseCategoryID      =   ns()->option->get( 'ns_procurement_cashflow_account' );
-        $totalExpenses          =   CashFlow::where( 'created_at', '>=', $dashboardDay->range_starts )
+        $expenseCategoryID = ns()->option->get( 'ns_procurement_cashflow_account' );
+        $totalExpenses = CashFlow::where( 'created_at', '>=', $dashboardDay->range_starts )
             ->where( 'created_at', '<=', $dashboardDay->range_ends )
             ->where( 'expense_category_id', $expenseCategoryID )
             ->sum( 'value' );
 
-        $this->assertEquals( 
-            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'cost' ] ), 
-            Currency::raw( $currentDashboardDay->day_expenses ), 
-            __( 'hasn\'t affected the expenses' ) 
+        $this->assertEquals(
+            Currency::raw( $dashboardDay->day_expenses + $procurement[ 'cost' ] ),
+            Currency::raw( $currentDashboardDay->day_expenses ),
+            __( 'hasn\'t affected the expenses' )
         );
 
-        $this->assertEquals( 
-            Currency::raw( $totalExpenses ), 
-            Currency::raw( $procurement[ 'cost' ] ), 
-            __( 'The procurement doesn\'t match with the cash flow.' ) 
+        $this->assertEquals(
+            Currency::raw( $totalExpenses ),
+            Currency::raw( $procurement[ 'cost' ] ),
+            __( 'The procurement doesn\'t match with the cash flow.' )
         );
     }
 }

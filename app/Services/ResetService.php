@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Services;
 
 use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
-use App\Events\OnCustomResetModeEvent;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ class ResetService
 {
     public function softReset()
     {
-        $tables     =   Hook::filter( 'ns-wipeable-tables', [
+        $tables = Hook::filter( 'ns-wipeable-tables', [
             'nexopos_coupons',
             'nexopos_coupons_products',
             'nexopos_coupons_categories',
@@ -38,7 +38,7 @@ class ResetService
 
             'nexopos_medias',
             'nexopos_notifications',
-            
+
             'nexopos_orders',
             'nexopos_orders_addresses',
             'nexopos_orders_count',
@@ -77,7 +77,7 @@ class ResetService
             'nexopos_units_groups',
         ]);
 
-        foreach( $tables as $table ) {
+        foreach ( $tables as $table ) {
             if ( Hook::filter( 'ns-reset-table', $table ) !== false && Schema::hasTable( Hook::filter( 'ns-reset-table', $table ) ) ) {
                 DB::table( Hook::filter( 'ns-table-name', $table ) )->truncate();
             }
@@ -85,23 +85,24 @@ class ResetService
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The table has been truncated.' )
+            'message'   =>  __( 'The table has been truncated.' ),
         ];
     }
 
     /**
      * Will completely wipe the database
      * forcing a new installation to be made
+     *
      * @return void
      */
     public function hardReset()
     {
         BeforeHardResetEvent::dispatch();
-        
+
         Artisan::call( 'migrate:reset --path=/database/migrations/default' );
         Artisan::call( 'migrate:reset --path=/database/migrations/create-tables' );
         Artisan::call( 'migrate:reset --path=/database/migrations/misc' );
-        
+
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
@@ -117,7 +118,7 @@ class ResetService
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The database has been hard reset.' )
+            'message'   =>  __( 'The database has been hard reset.' ),
         ];
     }
 
@@ -125,14 +126,14 @@ class ResetService
     {
         /**
          * @var string $mode
-         * @var boolean $create_sales
-         * @var boolean $create_procurements
+         * @var bool $create_sales
+         * @var bool $create_procurements
          */
         extract( $data );
 
         return Hook::filter( 'ns-handle-custom-reset', [
             'status'    =>  'failed',
-            'message'   =>  __( 'No custom handler for the reset "' . $mode . '"' )
+            'message'   =>  __( 'No custom handler for the reset "' . $mode . '"' ),
         ], $data );
     }
 }

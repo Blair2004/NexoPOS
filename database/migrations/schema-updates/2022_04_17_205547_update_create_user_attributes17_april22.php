@@ -27,8 +27,8 @@ class UpdateCreateUserAttributes17April22 extends Migration
         /**
          * @var Users
          */
-        $userService    =   app()->make( Users::class );
-        
+        $userService = app()->make( Users::class );
+
         User::get()->each( fn( $user ) => $userService->createAttribute( $user ) );
 
         Artisan::call( 'ns:translate --symlink' );

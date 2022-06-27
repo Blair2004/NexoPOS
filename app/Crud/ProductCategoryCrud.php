@@ -1,58 +1,60 @@
 <?php
+
 namespace App\Crud;
 
 use App\Events\ProductCategoryAfterCreatedEvent;
 use App\Events\ProductCategoryAfterUpdatedEvent;
 use App\Events\ProductCategoryBeforeDeletedEvent;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\ProductCategory;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ProductCategoryCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_products_categories';
+    protected $table = 'nexopos_products_categories';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.products-categories';
+    protected $mainRoute = 'ns.products-categories';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.products-categories';
+    protected $namespace = 'ns.products-categories';
 
     /**
      * Model Used
      */
-    protected $model      =   ProductCategory::class;
+    protected $model = ProductCategory::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'nexopos_products_categories.author', '=', 'user.id' ],
         'leftJoin'  =>  [
-            [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ]
+            [ 'nexopos_products_categories as parent', 'nexopos_products_categories.parent_id', '=', 'parent.id' ],
         ],
     ];
 
-    protected $pick     =   [
+    protected $pick = [
         'user'      =>  [ 'username' ],
         'parent'    =>  [ 'name' ],
     ];
 
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  'nexopos.create.categories',
         'read'    =>  'nexopos.read.categories',
         'update'    =>  'nexopos.update.categories',
@@ -61,24 +63,27 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -88,10 +93,11 @@ class ProductCategoryCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -109,8 +115,9 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -118,13 +125,14 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
-        $parents    =   ProductCategory::where( 'id', '<>', $entry->id ?? 0 )->get();
-        $parents->prepend( ( object ) [
+        $parents = ProductCategory::where( 'id', '<>', $entry->id ?? 0 )->get();
+        $parents->prepend( (object) [
             'id'    =>    0,
             'name'  =>  __( 'No Parent' ),
         ]);
@@ -167,15 +175,16 @@ class ProductCategoryCrud extends CrudService
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -186,6 +195,7 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -196,6 +206,7 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -208,6 +219,7 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  ProductCategory $entry
      * @return  void
@@ -219,21 +231,22 @@ class ProductCategoryCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -241,11 +254,13 @@ class ProductCategoryCrud extends CrudService
     public function beforePut( $request, $entry )
     {
         $this->allowedTo( 'delete' );
+
         return $request;
     }
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -256,13 +271,13 @@ class ProductCategoryCrud extends CrudService
          * If the category is not visible on the POS
          * the products aren't searchable.
          */
-        if ( ! ( bool ) $entry->displays_on_pos ) {
+        if ( ! (bool) $entry->displays_on_pos ) {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable'    =>  false
+                'searchable'    =>  false,
             ]);
         } else {
             Product::where( 'category_id', $entry->id )->update([
-                'searchable'    =>  true
+                'searchable'    =>  true,
             ]);
         }
 
@@ -270,20 +285,21 @@ class ProductCategoryCrud extends CrudService
 
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -292,9 +308,11 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.products-categories' ) {
             $this->allowedTo( 'delete' );
 
@@ -304,39 +322,41 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'parent_name'  =>  [
                 'label'  =>  __( 'Parent' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'total_items'  =>  [
                 'label'  =>  __( 'Total Products' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'displays_on_pos'  =>  [
                 'label'         =>  __( 'Displays On POS' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -346,25 +366,25 @@ class ProductCategoryCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->parent_name     =   $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
-        $entry->displays_on_pos =   ( int ) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
-        
+        $entry->parent_name = $entry->parent_name === null ? __( 'No Parent' ) : $entry->parent_name;
+        $entry->displays_on_pos = (int) $entry->displays_on_pos === 1 ? __( 'Yes' ) : __( 'No' );
+
         $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/edit/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'compute', [
             'label'         =>      __( 'Compute Products' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'products/categories' . '/compute-products/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'delete', [
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
@@ -372,41 +392,41 @@ class ProductCategoryCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products-categories/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
-        
+        $user = app()->make( Users::class );
+
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
+                'message'   =>  __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof ProductCategory ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -414,6 +434,7 @@ class ProductCategoryCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -422,6 +443,7 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -437,8 +459,9 @@ class ProductCategoryCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -446,16 +469,17 @@ class ProductCategoryCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

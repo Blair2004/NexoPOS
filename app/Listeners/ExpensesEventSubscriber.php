@@ -3,18 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
-use App\Events\ExpenseAfterCreateEvent;
-use App\Events\ExpenseAfterRefreshEvent;
-use App\Events\ExpenseAfterUpdateEvent;
-use App\Events\ExpenseBeforeRefreshEvent;
 use App\Events\CashFlowHistoryAfterCreatedEvent;
-use App\Events\CashFlowHistoryBeforeDeleteEvent;
+use App\Events\ExpenseAfterCreateEvent;
+use App\Events\ExpenseAfterUpdateEvent;
 use App\Events\OrderAfterCreatedEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
-use App\Jobs\AfterExpenseComputedJob;
-use App\Jobs\RefreshReportJobs;
-use App\Jobs\RefreshExpenseJob;
 use App\Jobs\RefreshReportJob;
 use App\Services\ExpenseService;
 
@@ -32,11 +26,10 @@ class ExpensesEventSubscriber
      */
     public function __construct(
         ExpenseService $expense
-    )
-    {
-        $this->expenseService   =   $expense;
+    ) {
+        $this->expenseService = $expense;
     }
-    
+
     public function subscribe( $event )
     {
         /**
@@ -59,7 +52,7 @@ class ExpensesEventSubscriber
         $event->listen(
             ExpenseAfterUpdateEvent::class,
             function( ExpenseAfterUpdateEvent $event ) {
-                if ( ! $event->expense->recurring && ( bool ) $event->expense->active ) {
+                if ( ! $event->expense->recurring && (bool) $event->expense->active ) {
                     $this->expenseService->triggerExpense( $event->expense );
                 }
             }
@@ -100,7 +93,7 @@ class ExpensesEventSubscriber
         /**
          * All refunds should create an expense on the system
          */
-        $event->listen( 
+        $event->listen(
             OrderAfterProductRefundedEvent::class,
             function( OrderAfterProductRefundedEvent $event ) {
                 $this->expenseService->createExpenseFromRefund( $event->order, $event->orderProductRefund, $event->orderProduct );

@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Services\NotificationService;
 use App\Services\ReportService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -14,9 +13,11 @@ use Illuminate\Queue\SerializesModels;
 class ComputeYearlyReportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
+
     public $year;
+
     public $reportService;
+
     public $notificationService;
 
     /**
@@ -26,7 +27,7 @@ class ComputeYearlyReportJob implements ShouldQueue
      */
     public function __construct( $year )
     {
-        $this->year     =   $year;
+        $this->year = $year;
     }
 
     /**
@@ -39,25 +40,26 @@ class ComputeYearlyReportJob implements ShouldQueue
         /**
          * @var ReportService
          */
-        $this->reportService    =   app()->make( ReportService::class );
+        $this->reportService = app()->make( ReportService::class );
         $this->reportService->computeYearReport( $this->year );
 
         /**
          * notification
+         *
          * @var NotificationService
          */
-        $this->notificationService  =   app()->make( NotificationService::class );
+        $this->notificationService = app()->make( NotificationService::class );
         $this->notificationService->create([
             'title'         =>  __( 'Report Refreshed' ),
             'identifier'    =>  'ns-refreshed-annual-' . $this->year,
-            'description'   =>  sprintf( 
+            'description'   =>  sprintf(
                 __( 'The yearly report has been successfully refreshed for the year "%s".' ),
                 $this->year
-            ), 
-            'url'           =>  route( ns()->routeName( 'ns.dashboard.reports-annual' ) )
+            ),
+            'url'           =>  route( ns()->routeName( 'ns.dashboard.reports-annual' ) ),
         ])->dispatchForGroup([
             'admin',
-            'nexopos.store.administrator'
+            'nexopos.store.administrator',
         ]);
     }
 }

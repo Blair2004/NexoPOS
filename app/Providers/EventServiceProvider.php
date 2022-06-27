@@ -6,17 +6,15 @@ use App\Classes\Hook;
 use App\Filters\MenusFilter;
 use App\Listeners\CashRegisterEventsSubscriber;
 use App\Listeners\CustomerEventSubscriber;
-use App\Listeners\DashboardDayAfterCreatedEventListener;
-use App\Listeners\DashboardDayAfterUpdatedEventListener;
 use App\Listeners\ExpensesEventSubscriber;
 use App\Listeners\OrderEventsSubscriber;
+use App\Listeners\ProcurementEventsSubscriber;
+use App\Listeners\ProductEventsSubscriber;
+use App\Services\ModulesService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
-use App\Listeners\ProcurementEventsSubscriber;
-use App\Listeners\ProductEventsSubscriber;
-use App\Services\ModulesService;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -31,7 +29,7 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
-    protected $subscribe    =   [];
+    protected $subscribe = [];
 
     public function register()
     {
@@ -48,12 +46,12 @@ class EventServiceProvider extends ServiceProvider
         /**
          * @var ModulesService
          */
-        $modulesServices    =   app()->make( ModulesService::class );
+        $modulesServices = app()->make( ModulesService::class );
 
-        $paths              =   collect( $modulesServices->getEnabled() )->map( function( $module ) {
+        $paths = collect( $modulesServices->getEnabled() )->map( function( $module ) {
             return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
         })->values()->toArray();
-        
+
         return $paths;
     }
 

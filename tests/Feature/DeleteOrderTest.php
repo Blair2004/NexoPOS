@@ -10,11 +10,13 @@ class DeleteOrderTest extends TestCase
 {
     use WithAuthentication, WithOrderTest;
 
-    protected $count                =   1;
-    protected $totalDaysInterval    =   1;
+    protected $count = 1;
+
+    protected $totalDaysInterval = 1;
 
     /**
      * A basic feature test example.
+     *
      * @return void
      */
     public function test_delete_order()

@@ -3,16 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Exceptions\NotAllowedException;
-use Illuminate\Console\Command;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
 
 class GenerateModuleCommand extends Command
 {
     /**
      * module description
+     *
      * @var array
      */
-    private $module     =   [];
+    private $module = [];
 
     /**
      * The name and signature of the console command.
@@ -35,8 +36,7 @@ class GenerateModuleCommand extends Command
      */
     public function __construct(
         protected ModulesService $moduleService
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -56,17 +56,18 @@ class GenerateModuleCommand extends Command
 
     /**
      * ask for module information
+     *
      * @return void
      */
     public function askInformations()
     {
-        $this->module[ 'namespace' ]        =   ucwords( $this->ask( 'Define the module namespace' ) );
-        $this->module[ 'name' ]             =   $this->ask( 'Define the module name' );
-        $this->module[ 'author' ]           =   $this->ask( 'Define the Author Name' );
-        $this->module[ 'description' ]      =   $this->ask( 'Define a short description' );
-        $this->module[ 'version' ]          =   '1.0';
+        $this->module[ 'namespace' ] = ucwords( $this->ask( 'Define the module namespace' ) );
+        $this->module[ 'name' ] = $this->ask( 'Define the module name' );
+        $this->module[ 'author' ] = $this->ask( 'Define the Author Name' );
+        $this->module[ 'description' ] = $this->ask( 'Define a short description' );
+        $this->module[ 'version' ] = '1.0';
 
-        $table          =   [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
+        $table = [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
         $this->table( $table, [ $this->module ] );
 
         if ( ! $this->confirm( 'Would you confirm theses informations \n' ) ) {
@@ -78,16 +79,14 @@ class GenerateModuleCommand extends Command
          * happens, we can still suggest the user to restart.
          */
         try {
-            
-            $response   =   $this->moduleService->generateModule( $this->module );
+            $response = $this->moduleService->generateModule( $this->module );
             $this->info( $response[ 'message' ] );
-
-        } catch( NotAllowedException $exception ) {
+        } catch ( NotAllowedException $exception ) {
             $this->error( 'A similar module has been found' );
 
             if (  $this->confirm( 'Would you like to restart ?' ) ) {
                 $this->askInformations();
             }
         }
-    }    
+    }
 }

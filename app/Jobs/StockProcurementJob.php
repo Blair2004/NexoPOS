@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Services\ProcurementService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -26,7 +25,7 @@ class StockProcurementJob implements ShouldQueue
      */
     public function __construct()
     {
-        $this->procurementService   =   app()->make( ProcurementService::class );
+        $this->procurementService = app()->make( ProcurementService::class );
     }
 
     /**

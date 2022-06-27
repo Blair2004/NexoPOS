@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use App\Classes\Schema;
 use App\Models\ProductUnitQuantity;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddBarcodeToNexoposProductsUnitQuantitiesMarch14 extends Migration
 {
@@ -21,8 +21,8 @@ class AddBarcodeToNexoposProductsUnitQuantitiesMarch14 extends Migration
         });
 
         ProductUnitQuantity::get()->each( function( ProductUnitQuantity $unitQuantity ) {
-            $barcode                =   $unitQuantity->product->barcode;
-            $unitQuantity->barcode  =   $barcode . '-' . $unitQuantity->id;
+            $barcode = $unitQuantity->product->barcode;
+            $unitQuantity->barcode = $barcode . '-' . $unitQuantity->id;
             $unitQuantity->save();
         });
     }

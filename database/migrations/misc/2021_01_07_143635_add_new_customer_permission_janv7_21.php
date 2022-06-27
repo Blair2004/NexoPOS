@@ -4,7 +4,6 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class AddNewCustomerPermissionJanv721 extends Migration
@@ -18,7 +17,7 @@ class AddNewCustomerPermissionJanv721 extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *
@@ -27,10 +26,10 @@ class AddNewCustomerPermissionJanv721 extends Migration
     public function up()
     {
         if ( ! Permission::namespace( 'nexopos.customers.manage-account' ) instanceof Permission ) {
-            $permission                     =   new Permission;
-            $permission->namespace          =   'nexopos.customers.manage-account';
-            $permission->name               =   __( 'Manage Customers Account' );
-            $permission->description        =   __( 'Allow to manage customer virtual deposit account.' );
+            $permission = new Permission;
+            $permission->namespace = 'nexopos.customers.manage-account';
+            $permission->name = __( 'Manage Customers Account' );
+            $permission->description = __( 'Allow to manage customer virtual deposit account.' );
             $permission->save();
         }
 
@@ -46,8 +45,8 @@ class AddNewCustomerPermissionJanv721 extends Migration
     public function down()
     {
         if ( Schema::hasTable( 'nexopos_permissions' ) ) {
-            $permission     =   Permission::namespace( 'nexopos.customers.manage-account' );
-    
+            $permission = Permission::namespace( 'nexopos.customers.manage-account' );
+
             if ( $permission instanceof Permission ) {
                 RolePermission::where( 'permission_id', $permission->id )->delete();
                 $permission->delete();

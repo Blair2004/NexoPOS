@@ -1,31 +1,31 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductCategory extends NsModel
 {
     use HasFactory;
 
-    protected $guarded  =   [];
-    protected $table    =   'nexopos_' . 'products_categories';
+    protected $guarded = [];
 
-    protected $isDependencyFor  =   [
+    protected $table = 'nexopos_' . 'products_categories';
+
+    protected $isDependencyFor = [
         Product::class  =>  [
             'local_index'   =>  'id',
             'local_name'    =>  'name',
             'foreign_index' =>  'category_id',
-            'foreign_name'  =>  'name'
+            'foreign_name'  =>  'name',
         ],
         self::class     =>  [
             'local_index'   =>  'id',
             'local_name'    =>  'name',
             'foreign_index' =>  'parent_id',
-            'foreign_name'  =>  'name'
-        ]
+            'foreign_name'  =>  'name',
+        ],
     ];
 
     public function scopeDisplayOnPOS( $query, $attribute = true )

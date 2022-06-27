@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateNewPermissionsMarch9 extends Migration
 {
@@ -23,9 +23,9 @@ class CreateNewPermissionsMarch9 extends Migration
      */
     public function up()
     {
-        $permission                 =   Permission::firstOrNew([ 'namespace' => 'nexopos.create.products-labels' ]);
-        $permission->name           =   __( 'Create Products Labels' );
-        $permission->description    =   __( 'Allow the user to create products labels' );
+        $permission = Permission::firstOrNew([ 'namespace' => 'nexopos.create.products-labels' ]);
+        $permission->name = __( 'Create Products Labels' );
+        $permission->description = __( 'Allow the user to create products labels' );
         $permission->save();
 
         Role::namespace( 'admin' )->addPermissions( $permission );
@@ -39,8 +39,8 @@ class CreateNewPermissionsMarch9 extends Migration
      */
     public function down()
     {
-        $permission     =   Permission::namespace( 'nexopos.create.products-labels' );
+        $permission = Permission::namespace( 'nexopos.create.products-labels' );
         $permission->removeFromRoles();
-        $permission->delete();        
+        $permission->delete();
     }
 }

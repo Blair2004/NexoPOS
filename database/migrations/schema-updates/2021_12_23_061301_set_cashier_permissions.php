@@ -3,8 +3,6 @@
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class SetCashierPermissions extends Migration
 {
@@ -25,8 +23,8 @@ class SetCashierPermissions extends Migration
      */
     public function up()
     {
-        $role   =   Role::namespace( Role::STORECASHIER );
-        
+        $role = Role::namespace( Role::STORECASHIER );
+
         Permission::where( 'namespace', 'like', '%nexopos.pos%' )
             ->get()
             ->each( function( $permission ) use ( $role ) {

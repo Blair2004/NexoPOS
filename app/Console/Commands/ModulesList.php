@@ -2,9 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Services\Modules;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
 
 class ModulesList extends Command
 {
@@ -30,7 +29,7 @@ class ModulesList extends Command
     public function __construct( ModulesService $modules )
     {
         parent::__construct();
-        $this->modules  =   $modules;
+        $this->modules = $modules;
     }
 
     /**
@@ -40,7 +39,7 @@ class ModulesList extends Command
      */
     public function handle()
     {
-        $header    =   [
+        $header = [
             __( 'Name' ),
             __( 'Namespace' ),
             __( 'Version' ),
@@ -48,11 +47,11 @@ class ModulesList extends Command
             __( 'Enabled' ),
         ];
 
-        $modulesList        =   $this->modules->get();
-        $modulesTable       =  [];
+        $modulesList = $this->modules->get();
+        $modulesTable = [];
 
-        foreach( $modulesList as $module ) {
-            $modulesTable[]     =   [
+        foreach ( $modulesList as $module ) {
+            $modulesTable[] = [
                 $module[ 'name' ],
                 $module[ 'namespace' ],
                 $module[ 'version' ],
@@ -60,7 +59,7 @@ class ModulesList extends Command
                 $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ),
             ];
         }
-        
+
         $this->table( $header, $modulesTable );
     }
 }

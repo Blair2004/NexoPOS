@@ -1,42 +1,40 @@
 <?php
+
 namespace App\Services;
 
 class Schema
 {
     /**
      * render entry
+     *
      * @param array of schema structure
      * @return void
      */
-    public function render( $schemas ) 
+    public function render( $schemas )
     {
         foreach ( $schemas as $name => $type ) {
-            if ( in_array( $type, [ 
+            if ( in_array( $type, [
                 'bigIncrements',
-                'bigInteger', 'binary', 
-                'boolean', 'char', 'date', 
-                'datetime', 'decimal', 'double', 
+                'bigInteger', 'binary',
+                'boolean', 'char', 'date',
+                'datetime', 'decimal', 'double',
                 'float', 'increments', 'integer', 'json',
                 'jsonb', 'longText', 'mediumInteger', 'mediumText',
                 'morphs', 'nullableTimestamps', 'smallInteger', 'tinyInteger',
-                'string', 'text', 'time', 'timestamp'
+                'string', 'text', 'time', 'timestamp',
             ] ) ) {
-
                 echo "\t\t\t\$table->{$type}( '{$name}' );\n";
-
-            } else if ( in_array( $type, [ 
-                'enum', 'softDeletes', 'timestamps', 'rememberToken', 'unsigned'
+            } elseif ( in_array( $type, [
+                'enum', 'softDeletes', 'timestamps', 'rememberToken', 'unsigned',
             ] ) ) {
-
-
-
             }
         }
     }
 
     /**
      * Render Schema
-     * @param array 
+     *
+     * @param array
      * @return void
      */
     public function renderSchema( $data )
@@ -59,13 +57,14 @@ class Schema
 
     /**
      * Render Drop
+     *
      * @param array of schema details
      * @return string
      */
     public function renderDrop( $details )
     {
         extract( $details );
-        
+
         if ( $table ) {
             echo "Schema::dropIfExists( '{$table}' );\n";
         } else {

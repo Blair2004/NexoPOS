@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateNexoposOrdersProductsOct18 extends Migration
 {
@@ -13,7 +13,7 @@ class UpdateNexoposOrdersProductsOct18 extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ){
+        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_products', 'unit_quantity_id' ) ) {
                 $table->float( 'unit_quantity_id' );
             }
@@ -31,7 +31,7 @@ class UpdateNexoposOrdersProductsOct18 extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders_products', function( Blueprint $table ){
+        Schema::table( 'nexopos_orders_products', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders_products', 'unit_quantity_id' ) ) {
                 $table->dropColumn( 'unit_quantity_id' );
             }

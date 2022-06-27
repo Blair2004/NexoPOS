@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
-use Illuminate\Database\Migrations\Migration;
-
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
 use App\Services\Options;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateRoles extends Migration
 {
@@ -28,40 +26,40 @@ class CreateRoles extends Migration
      */
     public function up()
     {
-        $this->options      =   app()->make( Options::class );
+        $this->options = app()->make( Options::class );
 
         // User Role
-        $user               =   new Role;
-        $user->name         =   __( 'User' );
-        $user->namespace    =   'user';
-        $user->locked       =   true;
-        $user->dashid       =   'default';
-        $user->description  =   __( 'Basic user role.' );
+        $user = new Role;
+        $user->name = __( 'User' );
+        $user->namespace = 'user';
+        $user->locked = true;
+        $user->dashid = 'default';
+        $user->description = __( 'Basic user role.' );
         $user->save();
-        $user->addPermissions([ 
-            'manage.profile' 
-        ]); 
+        $user->addPermissions([
+            'manage.profile',
+        ]);
 
         // Master User
-        $admin                      =   new Role;
-        $admin->name                =   __( 'Administrator' );
-        $admin->namespace           =   'admin';
-        $admin->dashid              =   'store';
-        $admin->locked              =   true;
-        $admin->description         =   __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
-        $admin->save(); 
-        $admin->addPermissions([ 
-            'create.users', 
-            'read.users', 
-            'update.users', 
-            'delete.users', 
-            'create.roles', 
-            'read.roles', 
-            'update.roles', 
-            'delete.roles', 
+        $admin = new Role;
+        $admin->name = __( 'Administrator' );
+        $admin->namespace = 'admin';
+        $admin->dashid = 'store';
+        $admin->locked = true;
+        $admin->description = __( 'Master role which can perform all actions like create users, install/update/delete modules and much more.' );
+        $admin->save();
+        $admin->addPermissions([
+            'create.users',
+            'read.users',
+            'update.users',
+            'delete.users',
+            'create.roles',
+            'read.roles',
+            'update.roles',
+            'delete.roles',
             'update.core',
-            'manage.profile', 
-            'manage.options', 
+            'manage.profile',
+            'manage.options',
             'manage.modules',
             'read.dashboard',
         ]);
@@ -92,15 +90,15 @@ class CreateRoles extends Migration
         $admin->addPermissions( Permission::includes( '.units' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $admin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
-        
+
         /**
          * store administrator role
          */
-        $storeAdmin                 =   new Role;
-        $storeAdmin->name           =   __( 'Store Administrator' );
-        $storeAdmin->namespace      =   'nexopos.store.administrator';
-        $storeAdmin->locked         =   true;
-        $storeAdmin->description    =   __( 'Has a control over an entire store of NexoPOS.' );
+        $storeAdmin = new Role;
+        $storeAdmin->name = __( 'Store Administrator' );
+        $storeAdmin->namespace = 'nexopos.store.administrator';
+        $storeAdmin->locked = true;
+        $storeAdmin->description = __( 'Has a control over an entire store of NexoPOS.' );
         $storeAdmin->save();
         $storeAdmin->addPermissions([ 'read.dashboard' ]);
         $storeAdmin->addPermissions( Permission::includes( '.expenses' )->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -129,15 +127,14 @@ class CreateRoles extends Migration
         $storeAdmin->addPermissions( Permission::includes( '.manage-payments-types' )->get()->map( fn( $permission ) => $permission->namespace ) );
         $storeAdmin->addPermissions( Permission::includes( '.pos' )->get()->map( fn( $permission ) => $permission->namespace ) );
 
-        
         /**
          * store administrator role
          */
-        $storeCashier               =   new Role;
-        $storeCashier->name         =   __( 'Store Cashier' );
-        $storeCashier->namespace    =   'nexopos.store.cashier';
-        $storeCashier->locked       =   true;
-        $storeCashier->description  =   __( 'Has a control over the sale process.' );
+        $storeCashier = new Role;
+        $storeCashier->name = __( 'Store Cashier' );
+        $storeCashier->namespace = 'nexopos.store.cashier';
+        $storeCashier->locked = true;
+        $storeCashier->description = __( 'Has a control over the sale process.' );
         $storeCashier->save();
         $storeCashier->addPermissions([ 'read.dashboard' ]);
         $storeCashier->addPermissions( Permission::includes( '.profile' )->get()->map( fn( $permission ) => $permission->namespace ) );
@@ -151,17 +148,17 @@ class CreateRoles extends Migration
      */
     public function down()
     {
-        $role   =   Role::where( 'namespace', 'nexopos.store.administrator' )->first();
+        $role = Role::where( 'namespace', 'nexopos.store.administrator' )->first();
         if ( $role instanceof Role ) {
             $role->delete();
         }
 
-        $role   =   Role::where( 'namespace', 'nexopos.store.cashier' )->first();
+        $role = Role::where( 'namespace', 'nexopos.store.cashier' )->first();
         if ( $role instanceof Role ) {
             $role->delete();
         }
 
-        $role   =   Role::where( 'namespace', 'nexopos.store.drivers' )->first();
+        $role = Role::where( 'namespace', 'nexopos.store.drivers' )->first();
         if ( $role instanceof Role ) {
             $role->delete();
         }

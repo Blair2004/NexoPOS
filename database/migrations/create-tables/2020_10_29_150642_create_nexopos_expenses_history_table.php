@@ -1,12 +1,9 @@
 <?php
 
-use App\Classes\Hook;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use App\Classes\Schema;
 use App\Models\CashFlow;
-
-;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateNexoposExpensesHistoryTable extends Migration
 {

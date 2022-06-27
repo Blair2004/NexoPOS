@@ -34,8 +34,8 @@ class ComputeCustomerAccountJob implements ShouldQueue
         $event,
         CustomerService $customerService
     ) {
-        $this->event            =   $event;
-        $this->customerService  =   $customerService;
+        $this->event = $event;
+        $this->customerService = $customerService;
     }
 
     /**
@@ -47,9 +47,9 @@ class ComputeCustomerAccountJob implements ShouldQueue
     {
         if ($this->event instanceof OrderBeforeDeleteEvent) {
             $this->handleDeletion($this->event);
-        } else if ($this->event instanceof OrderAfterRefundedEvent) {
+        } elseif ($this->event instanceof OrderAfterRefundedEvent) {
             $this->reduceCustomerPurchases($this->event);
-        } else if (
+        } elseif (
             $this->event instanceof OrderAfterCreatedEvent ||
             $this->event instanceof OrderAfterUpdatedEvent
         ) {
@@ -73,7 +73,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
             /**
              * @var CustomerService
              */
-            $customerService        =       app()->make(CustomerService::class);
+            $customerService = app()->make(CustomerService::class);
 
             $customerService->computeReward(
                 $event->order,
@@ -84,7 +84,7 @@ class ComputeCustomerAccountJob implements ShouldQueue
 
     private function reduceCustomerPurchases(OrderAfterRefundedEvent $event)
     {
-        $event->order->customer->purchases_amount     =  $event->order->customer->purchases_amount - $event->orderRefund->total;
+        $event->order->customer->purchases_amount = $event->order->customer->purchases_amount - $event->orderRefund->total;
         $event->order->customer->save();
     }
 
@@ -92,13 +92,13 @@ class ComputeCustomerAccountJob implements ShouldQueue
     {
         switch ($event->order->payment_status) {
             case 'paid':
-                $event->order->customer->purchases_amount       -=  $event->order->total;
+                $event->order->customer->purchases_amount -= $event->order->total;
                 break;
             case 'partially_paid':
-                $event->order->customer->purchases_amount       -=  $event->order->tendered;
+                $event->order->customer->purchases_amount -= $event->order->tendered;
                 break;
             default:
-                $event->order->customer->owed_amount            -=  $event->order->total;
+                $event->order->customer->owed_amount -= $event->order->total;
                 break;
         }
 

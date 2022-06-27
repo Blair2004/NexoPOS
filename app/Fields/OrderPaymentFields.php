@@ -1,17 +1,17 @@
 <?php
+
 namespace App\Fields;
 
 use App\Models\PaymentType;
 use App\Services\FieldsService;
-use App\Services\Helper;
 
 class OrderPaymentFields extends FieldsService
 {
-    protected $identifier   =   'ns.order-payments';
+    protected $identifier = 'ns.order-payments';
 
     public function get()
     {
-        $fields     =   [
+        $fields = [
             [
                 'label'         =>  __( 'Select Payment' ),
                 'description'   =>  __( 'choose the payment type.' ),
@@ -19,12 +19,13 @@ class OrderPaymentFields extends FieldsService
                 'name'          =>  'identifier',
                 'type'          =>  'select',
                 'options'       =>  collect( PaymentType::active()->get() )->map( function( $payment ) {
-                    $payment[ 'value' ]     =   $payment[ 'identifier' ];
+                    $payment[ 'value' ] = $payment[ 'identifier' ];
+
                     return $payment;
-                })
-            ], 
+                }),
+            ],
         ];
-        
+
         return $fields;
     }
 }

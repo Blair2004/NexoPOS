@@ -1,49 +1,53 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Procurement;
+use App\Models\User;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\ProviderService;
+use App\Services\Users;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ProviderProcurementsCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_procurements';
+    protected $table = 'nexopos_procurements';
 
     /**
      * default slug
+     *
      * @param  string
      */
-    protected $slug   =   '/providers/procurements';
+    protected $slug = '/providers/procurements';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.providers-procurements';
+    protected $namespace = 'ns.providers-procurements';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   Procurement::class;
+    protected $model = Procurement::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  false,
         'read'      =>  true,
         'update'    =>  false,
@@ -53,49 +57,52 @@ class ProviderProcurementsCrud extends CrudService
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *
      * @param  array
      */
-    public $relations   =  [
-        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_procurements.author' ]
+    public $relations = [
+        [ 'nexopos_users as user', 'user.id', '=', 'nexopos_procurements.author' ],
     ];
 
     /**
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
-        'user'  =>  [ 'username' ]
+    public $pick = [
+        'user'  =>  [ 'username' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * @var ProviderService
@@ -104,22 +111,24 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
         parent::__construct();
 
-        $this->providerService  =   app()->make( ProviderService::class );
+        $this->providerService = app()->make( ProviderService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -137,8 +146,9 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -146,17 +156,18 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -207,15 +218,16 @@ class ProviderProcurementsCrud extends CrudService
                             'name'  =>  'created_at',
                             'label' =>  __( 'Created_at' ),
                             'value' =>  $entry->created_at ?? '',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -226,6 +238,7 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -236,6 +249,7 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -252,6 +266,7 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Procurement $entry
      * @return  void
@@ -261,21 +276,22 @@ class ProviderProcurementsCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -293,6 +309,7 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -304,9 +321,11 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.providers-procurements' ) {
             /**
              *  Perform an action before deleting an entry
@@ -316,7 +335,7 @@ class ProviderProcurementsCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -327,54 +346,56 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 'width'         =>  '200px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'delivery_status'  =>  [
                 'label'  =>  __( 'Delivery' ),
                 '$direction'    =>  '',
                 'width'         =>  '120px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'payment_status'  =>  [
                 'label'  =>  __( 'Payment' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'tax_value'  =>  [
                 'label'  =>  __( 'Tax' ),
                 '$direction'    =>  '',
                 'width'         =>  '100px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'total_items'  =>  [
                 'label'  =>  __( 'Items' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'value'  =>  [
                 'label'  =>  __( 'Value' ),
                 '$direction'    =>  '',
                 'width'         =>  '150px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'  =>  __( 'By' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 'width'         =>  '200px',
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -384,11 +405,11 @@ class ProviderProcurementsCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->tax_value       =   ( string ) ns()->currency->define( $entry->tax_value );
-        $entry->value           =   ( string ) ns()->currency->define( $entry->value );
+        $entry->tax_value = (string) ns()->currency->define( $entry->tax_value );
+        $entry->value = (string) ns()->currency->define( $entry->value );
 
-        $entry->delivery_status     =   $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
-        $entry->payment_status      =   $this->providerService->getPaymentStatusLabel( $entry->payment_status );
+        $entry->delivery_status = $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
+        $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
         // you can make changes here
         $entry->addAction( 'delete', [
@@ -398,25 +419,24 @@ class ProviderProcurementsCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -428,13 +448,13 @@ class ProviderProcurementsCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Procurement ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -442,6 +462,7 @@ class ProviderProcurementsCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -450,6 +471,7 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -465,8 +487,9 @@ class ProviderProcurementsCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -474,16 +497,17 @@ class ProviderProcurementsCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

@@ -17,8 +17,8 @@ class ClearRequestCacheMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $response   =   $next($request);
-        
+        $response = $next($request);
+
         Cache::forget( 'ns-core-installed' );
 
         return $response;

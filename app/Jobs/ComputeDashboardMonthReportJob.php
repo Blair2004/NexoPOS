@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Services\ReportService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -31,7 +30,7 @@ class ComputeDashboardMonthReportJob implements ShouldQueue
      */
     public function handle()
     {
-        $reportService      =   app()->make( ReportService::class );
+        $reportService = app()->make( ReportService::class );
         $reportService->computeDashboardMonth();
     }
 }

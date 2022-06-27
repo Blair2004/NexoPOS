@@ -1,10 +1,10 @@
 <?php
+
 namespace App\Models;
 
 use App\Casts\DateCast;
 use App\Classes\Hook;
 use App\Services\DateService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -45,7 +45,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string voidance_reason
  * @property string created_at
  * @property string updated_at
- * 
+ *
  * @method from( $startRange )
  * @method to( $endRange )
  * @method paid( )
@@ -57,37 +57,52 @@ class Order extends NsModel
 {
     use HasFactory;
 
-    public $timestamps   =   false;
-    
-    protected $table    =   'nexopos_' . 'orders';
+    public $timestamps = false;
 
-    const TYPE_DELIVERY     =   'delivery';
-    const TYPE_TAKEAWAY     =   'takeaway';
+    protected $table = 'nexopos_' . 'orders';
 
-    const PAYMENT_PAID                      =   'paid';
-    const PAYMENT_PARTIALLY                 =   'partially_paid';
-    const PAYMENT_UNPAID                    =   'unpaid';
-    const PAYMENT_HOLD                      =   'hold';
-    const PAYMENT_VOID                      =   'order_void';
-    const PAYMENT_REFUNDED                  =   'refunded';
-    const PAYMENT_PARTIALLY_REFUNDED        =   'partially_refunded';
-    const PAYMENT_DUE                       =   'due';
-    const PAYMENT_PARTIALLY_DUE             =   'partially_due';
+    const TYPE_DELIVERY = 'delivery';
 
-    const PROCESSING_PENDING                =   'pending';
-    const PROCESSING_ONGOING                =   'ongoing';
-    const PROCESSING_READY                  =   'ready';
-    const PROCESSING_FAILED                 =   'failed';
+    const TYPE_TAKEAWAY = 'takeaway';
 
-    const DELIVERY_PENDING                  =   'pending';
-    const DELIVERY_ONGOING                  =   'ongoing';
-    const DELIVERY_FAILED                   =   'failed';
+    const PAYMENT_PAID = 'paid';
+
+    const PAYMENT_PARTIALLY = 'partially_paid';
+
+    const PAYMENT_UNPAID = 'unpaid';
+
+    const PAYMENT_HOLD = 'hold';
+
+    const PAYMENT_VOID = 'order_void';
+
+    const PAYMENT_REFUNDED = 'refunded';
+
+    const PAYMENT_PARTIALLY_REFUNDED = 'partially_refunded';
+
+    const PAYMENT_DUE = 'due';
+
+    const PAYMENT_PARTIALLY_DUE = 'partially_due';
+
+    const PROCESSING_PENDING = 'pending';
+
+    const PROCESSING_ONGOING = 'ongoing';
+
+    const PROCESSING_READY = 'ready';
+
+    const PROCESSING_FAILED = 'failed';
+
+    const DELIVERY_PENDING = 'pending';
+
+    const DELIVERY_ONGOING = 'ongoing';
+
+    const DELIVERY_FAILED = 'failed';
 
     // @todo check if it's still useful
-    const DELIVERY_COMPLETED                =   'completed';
-    const DELIVERY_DELIVERED                =   'delivered';
+    const DELIVERY_COMPLETED = 'completed';
 
-    public $casts    =   [
+    const DELIVERY_DELIVERED = 'delivered';
+
+    public $casts = [
         'final_payment_date'        =>  DateCast::class,
     ];
 
@@ -187,7 +202,7 @@ class Order extends NsModel
 
     public function scopePaymentExpired( $query )
     {
-        $date   =   app()->make( DateService::class );
+        $date = app()->make( DateService::class );
 
         return $query
             ->whereIn( 'payment_status', [ Order::PAYMENT_PARTIALLY, Order::PAYMENT_UNPAID ])
@@ -203,42 +218,43 @@ class Order extends NsModel
     /**
      * Will return conditionnaly the merged products
      * or all the product if it's enabled or disabled.
+     *
      * @return array
      */
     public function getCombinedProductsAttribute()
     {
         if ( ns()->option->get( 'ns_invoice_merge_similar_products', 'no' ) === 'yes' ) {
-            $combinaison        =   [];
+            $combinaison = [];
 
-            $this->products()->with( 'unit' )->get()->each( function( $product ) use ( &$combinaison ){
-                $values     =   $product->toArray();
+            $this->products()->with( 'unit' )->get()->each( function( $product ) use ( &$combinaison ) {
+                $values = $product->toArray();
 
                 extract( $values );
 
-                $keys                   =   array_keys( $combinaison );
-                $stringified            =   Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
-                $combinaisonAttributes  =   Hook::filter( 'ns-products-combinaison-attributes', [
+                $keys = array_keys( $combinaison );
+                $stringified = Hook::filter( 'ns-products-combinaison-identifier', $product_id . '-' . $order_id . '-' . $discount . '-' . $product_category_id . '-' . $status, $product );
+                $combinaisonAttributes = Hook::filter( 'ns-products-combinaison-attributes', [
                     'quantity',
                     'total_gross_price',
                     'total_price',
                     'total_purchase_price',
                     'total_net_price',
-                    'discount'
+                    'discount',
                 ]);
 
                 if ( in_array( $stringified, $keys ) ) {
-                    foreach( $combinaisonAttributes as $attribute ) {
-                        $combinaison[ $stringified ][ $attribute ]                  +=  (float) $product->$attribute;
+                    foreach ( $combinaisonAttributes as $attribute ) {
+                        $combinaison[ $stringified ][ $attribute ] += (float) $product->$attribute;
                     }
                 } else {
-                    $rawProduct                     =   $product->toArray();
+                    $rawProduct = $product->toArray();
 
                     unset( $rawProduct[ 'id' ] );
                     unset( $rawProduct[ 'created_at' ] );
                     unset( $rawProduct[ 'updated_at' ] );
                     unset( $rawProduct[ 'procurement_product_id' ] );
 
-                    $combinaison[ $stringified ]    =   $rawProduct;
+                    $combinaison[ $stringified ] = $rawProduct;
                 }
             });
 

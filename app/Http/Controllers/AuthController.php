@@ -2,33 +2,34 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers;
 
 use App\Classes\Hook;
 use App\Events\AfterSuccessfulLoginEvent;
-use App\Exceptions\NotAllowedException;
-use App\Exceptions\NotFoundException;
-use App\Http\Requests\SignInRequest;
-use App\Http\Requests\SignUpRequest;
-use App\Http\Requests\PostPasswordLostRequest;
-use App\Http\Requests\PostNewPasswordRequest;
-use App\Mail\ActivateYourAccountMail;
-use App\Mail\UserRegisteredMail;
-use App\Mail\WelcomeMail;
-use App\Mail\ResetPasswordMail;
-use App\Models\Role;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Events\PasswordAfterRecoveredEvent;
 use App\Events\UserAfterActivationSuccessfulEvent;
-use App\Services\Options;
+use App\Exceptions\NotAllowedException;
+use App\Exceptions\NotFoundException;
+use App\Http\Requests\PostNewPasswordRequest;
+use App\Http\Requests\PostPasswordLostRequest;
+use App\Http\Requests\SignInRequest;
+use App\Http\Requests\SignUpRequest;
+use App\Mail\ActivateYourAccountMail;
+use App\Mail\ResetPasswordMail;
+use App\Mail\UserRegisteredMail;
+use App\Mail\WelcomeMail;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRoleRelation;
-use Exception;
+use App\Services\Options;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -40,14 +41,14 @@ class AuthController extends Controller
     public function signIn()
     {
         return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.auth.sign-in' ), [
-            'title'     =>  __( 'Sign In &mdash; NexoPOS' )
+            'title'     =>  __( 'Sign In &mdash; NexoPOS' ),
         ]);
     }
 
     public function signUp()
     {
         return view( Hook::filter( 'ns-views:pages.sign-up', 'pages.auth.sign-up' ), [
-            'title'     =>      __( 'Sign Up &mdash; NexoPOS' )
+            'title'     =>      __( 'Sign Up &mdash; NexoPOS' ),
         ]);
     }
 
@@ -77,9 +78,9 @@ class AuthController extends Controller
             return redirect( ns()->route( 'ns.login' ) )->with( 'errorMessage', __( 'The expiration token has expired.') );
         }
 
-        $user->activation_expiration    =   null;
-        $user->activation_token         =   null;
-        $user->active                   =   true;
+        $user->activation_expiration = null;
+        $user->activation_token = null;
+        $user->active = true;
         $user->save();
 
         /**
@@ -94,13 +95,13 @@ class AuthController extends Controller
     public function passwordLost()
     {
         return view( 'pages.auth.password-lost', [
-            'title'     =>      __( 'Password Lost' )
+            'title'     =>      __( 'Password Lost' ),
         ]);
     }
 
     public function newPassword( $userId, $token )
     {
-        $user       =   User::find( $userId );
+        $user = User::find( $userId );
 
         if ( ! $user->active ) {
             throw new NotAllowedException( __( 'Unable to change a password for a non active user.' ) );
@@ -117,7 +118,7 @@ class AuthController extends Controller
         return view( 'pages.auth.new-password', [
             'title'     =>      __( 'Set New Password' ),
             'user'      =>      $userId,
-            'token'     =>      $token
+            'token'     =>      $token,
         ]);
     }
 
@@ -134,17 +135,17 @@ class AuthController extends Controller
     public function updateDatabase()
     {
         return view( 'pages.database-update', [
-            'title'     =>  __( 'Database Update' )
+            'title'     =>  __( 'Database Update' ),
         ]);
     }
 
     public function postSignIn( SignInRequest $request )
     {
         Hook::action( 'ns-login-form', $request );
-        
-        $attempt        =   Auth::attempt([
+
+        $attempt = Auth::attempt([
             'username'  =>  $request->input( 'username' ),
-            'password'  =>  $request->input( 'password' )
+            'password'  =>  $request->input( 'password' ),
         ]);
 
         if ( $request->expectsJson() ) {
@@ -158,22 +159,22 @@ class AuthController extends Controller
     {
         if ( $attempt ) {
             /**
-             * check if the account is authorized to 
+             * check if the account is authorized to
              * login
              */
             if ( ! Auth::user()->active ) {
                 Auth::logout();
-                
-                $validator      =   Validator::make( $request->all(), []);
+
+                $validator = Validator::make( $request->all(), []);
                 $validator->errors()->add( 'username', __( 'This account is disabled.' ) );
 
                 return redirect( ns()->route( 'ns.login' ) )->withErrors( $validator );
             }
 
-            return redirect()->intended( Hook::filter( 'ns-login-redirect' ) ); 
+            return redirect()->intended( Hook::filter( 'ns-login-redirect' ) );
         }
 
-        $validator      =   Validator::make( $request->all(), []);
+        $validator = Validator::make( $request->all(), []);
         $validator->errors()->add( 'username', __( 'Unable to find record having that username.' ) );
         $validator->errors()->add( 'password', __( 'Unable to find record having that password.' ) );
 
@@ -187,23 +188,23 @@ class AuthController extends Controller
         }
 
         if ( ! Auth::user()->active ) {
-            Auth::logout();                    
+            Auth::logout();
             throw new NotAllowedException( __( 'Unable to login, the provided account is not active.' ) );
         }
-        
-        $intended       =   redirect()->intended()->getTargetUrl();
+
+        $intended = redirect()->intended()->getTargetUrl();
 
         AfterSuccessfulLoginEvent::dispatch( Auth::user() );
-        
-        $data   =   [
+
+        $data = [
             'status'    =>  'success',
             'message'   =>  __( 'You have been successfully connected.' ),
             'data'      =>  [
-                'redirectTo'    =>  Hook::filter( 'ns-login-redirect', 
-                    ( $intended ) === url('/') ? ns()->route( 'ns.dashboard.home' ) : $intended, 
-                    redirect()->intended()->getTargetUrl() ? true : false 
-                )
-            ]
+                'redirectTo'    =>  Hook::filter( 'ns-login-redirect',
+                    ( $intended ) === url('/') ? ns()->route( 'ns.dashboard.home' ) : $intended,
+                    redirect()->intended()->getTargetUrl() ? true : false
+                ),
+            ],
         ];
 
         return $data;
@@ -211,11 +212,11 @@ class AuthController extends Controller
 
     public function postPasswordLost( PostPasswordLostRequest $request )
     {
-        $user       =   User::where( 'email', $request->input( 'email' ) )->first();
+        $user = User::where( 'email', $request->input( 'email' ) )->first();
 
         if ( $user instanceof User ) {
-            $user->activation_token         =   Str::random(20);
-            $user->activation_expiration    =   now()->addMinutes(30);
+            $user->activation_token = Str::random(20);
+            $user->activation_expiration = now()->addMinutes(30);
             $user->save();
 
             Mail::to( $user )
@@ -227,9 +228,9 @@ class AuthController extends Controller
                 'data'      =>  [
                     'redirectTo'    =>  route( 'ns.intermediate', [
                         'route'     =>  'ns.login',
-                        'from'      =>  'ns.password-lost'
-                    ])
-                ]
+                        'from'      =>  'ns.password-lost',
+                    ]),
+                ],
             ];
         }
 
@@ -238,6 +239,7 @@ class AuthController extends Controller
 
     /**
      * Process user registration
+     *
      * @param SignUpRequest $request
      */
     public function postSignUp( SignUpRequest $request )
@@ -247,7 +249,7 @@ class AuthController extends Controller
         /**
          * check user existence
          */
-        $user   =   User::where( 'email', $request->input( 'email' ) )->first();
+        $user = User::where( 'email', $request->input( 'email' ) )->first();
         if ( $user instanceof User ) {
             throw new NotAllowedException( __( 'Unable to register using this email.' ) );
         }
@@ -255,30 +257,30 @@ class AuthController extends Controller
         /**
          * check user existence
          */
-        $user   =   User::where( 'username', $request->input( 'username' ) )->first();
+        $user = User::where( 'username', $request->input( 'username' ) )->first();
         if ( $user instanceof User ) {
             throw new NotAllowedException( __( 'Unable to register using this username.' ) );
         }
 
-        $defaultRole                =   Role::namespace( Role::USER )->firstOrFail();
+        $defaultRole = Role::namespace( Role::USER )->firstOrFail();
 
-        $options                    =   app()->make( Options::class );
-        $role                       =   $options->get( 'ns_registration_role', $defaultRole->id );
-        $registration_validated     =   $options->get( 'ns_registration_validated', 'yes' );
+        $options = app()->make( Options::class );
+        $role = $options->get( 'ns_registration_role', $defaultRole->id );
+        $registration_validated = $options->get( 'ns_registration_validated', 'yes' );
 
         if ( empty( $role ) ) {
             throw new Exception( __( 'No role has been defined for registration. Please contact the administrators.' ) );
         }
 
-        $user                           =   new User;
-        $user->username                 =   $request->input( 'username' );
-        $user->email                    =   $request->input( 'email' );
-        $user->password                 =   Hash::make( $request->input( 'password' ) );
-        $user->activation_token         =   Str::random(20);
-        $user->activation_expiration    =   now()->addMinutes(30);
+        $user = new User;
+        $user->username = $request->input( 'username' );
+        $user->email = $request->input( 'email' );
+        $user->password = Hash::make( $request->input( 'password' ) );
+        $user->activation_token = Str::random(20);
+        $user->activation_expiration = now()->addMinutes(30);
 
         if ( $registration_validated === 'no' ) {
-            $user->active   =   true;
+            $user->active = true;
         }
 
         $user->save();
@@ -286,19 +288,19 @@ class AuthController extends Controller
         /**
          * We'll assign this user to the first relation
          */
-        $relation           =   new UserRoleRelation;
-        $relation->user_id  =   $user->id;
-        $relation->role_id  =   $role;
+        $relation = new UserRoleRelation;
+        $relation->user_id = $user->id;
+        $relation->role_id = $role;
         $relation->save();
 
         /**
-         * let's try to email the new user with 
+         * let's try to email the new user with
          * the details regarding his new created account.
          */
         try {
             /**
              * if the account validation is required, we'll
-             * send an email to ask the user to validate his account. 
+             * send an email to ask the user to validate his account.
              * Otherwise, we'll notify him about his new account.
              */
             if ( $registration_validated === 'no' ) {
@@ -317,33 +319,33 @@ class AuthController extends Controller
                 Mail::to( $admin->email )
                     ->queue( new UserRegisteredMail( $admin, $user ) );
             });
-        } catch( Exception $exception ) {
+        } catch ( Exception $exception ) {
             Log::error( $exception->getMessage() );
         }
 
         if ( $request->expectsJson() ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  $registration_validated === 'no' ? 
+                'message'   =>  $registration_validated === 'no' ?
                     __( 'Your Account has been successfully creaetd.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
                 'data'      =>  [
-                    'redirectTo'    =>  ns()->route( 'ns.login' )
-                ]
+                    'redirectTo'    =>  ns()->route( 'ns.login' ),
+                ],
             ];
         } else {
             return redirect()->route( 'ns.login', [
                 'status'    =>  'success',
-                'message'   =>  $registration_validated === 'no' ? 
+                'message'   =>  $registration_validated === 'no' ?
                     __( 'Your Account has been successfully creaetd.' ) :
-                    __( 'Your Account has been created but requires email validation.' )
+                    __( 'Your Account has been created but requires email validation.' ),
             ]);
         }
     }
 
     public function postNewPassword( PostNewPasswordRequest $request, $userID, $token )
     {
-        $user       =   User::find( $userID );
+        $user = User::find( $userID );
 
         if ( ! $user instanceof User ) {
             throw new NotFoundException( __( 'Unable to find the requested user.' ) );
@@ -361,9 +363,9 @@ class AuthController extends Controller
             throw new NotAllowedException( __( 'Unable to proceed, the token has expired.' ) );
         }
 
-        $user->password                 =       Hash::make( $request->input( 'password' ) );
-        $user->activation_token         =   null;
-        $user->activation_expiration    =   now()->toDateTimeString();
+        $user->password = Hash::make( $request->input( 'password' ) );
+        $user->activation_token = null;
+        $user->activation_expiration = now()->toDateTimeString();
         $user->save();
 
         event( new PasswordAfterRecoveredEvent( $user ) );
@@ -374,10 +376,9 @@ class AuthController extends Controller
             'data'      =>  [
                 'redirectTo'    =>  route( 'ns.intermediate', [
                     'route'     =>  'ns.login',
-                    'from'      =>  'ns.password-updated'
-                ])
-            ]
+                    'from'      =>  'ns.password-updated',
+                ]),
+            ],
         ];
     }
 }
-

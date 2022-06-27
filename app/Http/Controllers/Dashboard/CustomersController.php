@@ -2,8 +2,9 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
@@ -14,18 +15,16 @@ use App\Crud\CustomerCrud;
 use App\Crud\CustomerOrderCrud;
 use App\Crud\CustomerRewardCrud;
 use App\Exceptions\NotFoundException;
-use App\Models\Customer;
-
-use Illuminate\Http\Request;
-use App\Services\CustomerService;
-
 use App\Http\Controllers\DashboardController;
 use App\Models\Coupon;
+use App\Models\Customer;
 use App\Models\CustomerCoupon;
 use App\Models\CustomerReward;
 use App\Models\Order;
+use App\Services\CustomerService;
 use App\Services\OrdersService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
@@ -44,11 +43,10 @@ class CustomersController extends DashboardController
     public function __construct(
         CustomerService $customerService,
         OrdersService $ordersService
-    )
-    {
+    ) {
         parent::__construct();
-        $this->customerService      =   $customerService;
-        $this->ordersService        =   $ordersService;
+        $this->customerService = $customerService;
+        $this->ordersService = $ordersService;
     }
 
     public function createCustomer()
@@ -59,6 +57,7 @@ class CustomersController extends DashboardController
     /**
      * Shows the list of available customers under a CRUD
      * list
+     *
      * @param void
      * @return backend vue
      */
@@ -69,11 +68,12 @@ class CustomersController extends DashboardController
 
     /**
      * get list of avialable customers
+     *
      * @return json response
      */
     public function get( $customer_id = null )
     {
-        $customer   =   Customer::with( 'group' )->find( $customer_id );
+        $customer = Customer::with( 'group' )->find( $customer_id );
 
         if ( $customer_id !== null ) {
             if ( $customer instanceof Customer ) {
@@ -88,6 +88,7 @@ class CustomersController extends DashboardController
 
     /**
      * delete a customer
+     *
      * @param int customer id
      * @return json
      */
@@ -99,14 +100,16 @@ class CustomersController extends DashboardController
     /**
      * create a customer using the provided
      * form request
+     *
      * @param Request
      * @return json
+     *
      * @todo implement security validation
      */
     public function post( Request $request )
     {
-        $data   =   $request->only([
-            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address'
+        $data = $request->only([
+            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
         return $this->customerService->create( $data );
@@ -115,14 +118,16 @@ class CustomersController extends DashboardController
     /**
      * edit a customer using provided
      * form request
+     *
      * @param Request form data
      * @return json
+     *
      * @todo implement a request for the validation
      */
     public function put( $customer_id, Request $request )
     {
-        $data   =   $request->only([
-            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address'
+        $data = $request->only([
+            'name', 'surname', 'description', 'gender', 'phone', 'email', 'pobox', 'group_id', 'address',
         ]);
 
         return $this->customerService->update( $customer_id, $data );
@@ -130,6 +135,7 @@ class CustomersController extends DashboardController
 
     /**
      * Get specific customers order
+     *
      * @param Customer entity
      * @return json
      */
@@ -140,7 +146,7 @@ class CustomersController extends DashboardController
             ->orderBy( 'created_at', 'desc' )
             ->get()
             ->map( function( Order $order ) {
-                switch( $order->payment_status ) {
+                switch ( $order->payment_status ) {
                     case Order::PAYMENT_HOLD : $order->human_status = __( 'Hold' ); break;
                     case Order::PAYMENT_PAID : $order->human_status = __( 'Paid' ); break;
                     case Order::PAYMENT_PARTIALLY : $order->human_status = __( 'Partially Paid' ); break;
@@ -151,14 +157,15 @@ class CustomersController extends DashboardController
                     default: $order->human_status = $order->payment_status; break;
                 }
 
-                $order->human_delivery_status   =   $this->ordersService->getDeliveryStatus( $order->delivery_status );
+                $order->human_delivery_status = $this->ordersService->getDeliveryStatus( $order->delivery_status );
 
                 return $order;
-        });
+            });
     }
 
     /**
-     * Renders a form for editing a customer 
+     * Renders a form for editing a customer
+     *
      * @param Customer $customer
      * @return string
      */
@@ -170,6 +177,7 @@ class CustomersController extends DashboardController
     /**
      * get the address informations saved
      * under a specific customer id
+     *
      * @param int customer id
      * @return array
      */
@@ -180,6 +188,7 @@ class CustomersController extends DashboardController
 
     /**
      * Deletes a customer using his email
+     *
      * @param string $email
      * @return array
      */
@@ -189,7 +198,7 @@ class CustomersController extends DashboardController
     }
 
     public function listCoupons()
-    {         
+    {
         return CouponCrud::table();
     }
 
@@ -219,8 +228,8 @@ class CustomersController extends DashboardController
 
     public function searchCustomer( Request $request )
     {
-        $search     =   $request->input( 'search' );
-        $customers  =   Customer::with( 'billing' )
+        $search = $request->input( 'search' );
+        $customers = Customer::with( 'billing' )
             ->with( 'shipping' )
             ->where( 'name', 'like', '%' . $search . '%' )
             ->orWhere( 'email', 'like', '%' . $search . '%' )
@@ -232,9 +241,9 @@ class CustomersController extends DashboardController
 
     public function accountTransaction( Customer $customer, Request $request )
     {
-        $validation     =   Validator::make( $request->all(), [
+        $validation = Validator::make( $request->all(), [
             'operation'     =>  'required',
-            'amount'        =>  'required|integer'
+            'amount'        =>  'required|integer',
         ]);
 
         if ( $validation->fails() ) {
@@ -259,14 +268,15 @@ class CustomersController extends DashboardController
         return CustomerOrderCrud::table([
             'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
             'queryParams'   =>  [
-                'customer_id'   =>  $customer->id
-            ]
+                'customer_id'   =>  $customer->id,
+            ],
         ]);
     }
 
     /**
      * Returns a crud component table that lists
      * all customer rewards
+     *
      * @param Customer $customer
      * @return string
      */
@@ -274,14 +284,15 @@ class CustomersController extends DashboardController
     {
         return CustomerRewardCrud::table([
             'queryParams'    =>  [
-                'customer_id'   =>  $customer->id
-            ]
+                'customer_id'   =>  $customer->id,
+            ],
         ]);
     }
 
     /**
-     * Will render a formf or editing 
+     * Will render a formf or editing
      * a customer reward
+     *
      * @param Customer $customer
      * @param CustomerReward $reward
      * @return string
@@ -291,13 +302,14 @@ class CustomersController extends DashboardController
         return CustomerRewardCrud::form( $reward, [
             'returnUrl'     =>  ns()->route( 'ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
             'queryParams'   =>  [
-                'customer_id'   =>  $customer->id
-            ]
+                'customer_id'   =>  $customer->id,
+            ],
         ]);
     }
 
     /**
      * Will render the customer coupon table
+     *
      * @param Customer $customer
      * @return string
      */
@@ -305,13 +317,14 @@ class CustomersController extends DashboardController
     {
         return CustomerCouponCrud::table([
             'queryParams'   =>  [
-                'customer_id'   =>  $customer->id
-            ]
+                'customer_id'   =>  $customer->id,
+            ],
         ]);
     }
 
     /**
      * Returns allt he customer coupons
+     *
      * @param Customer $customer
      * @return array
      */
@@ -321,8 +334,9 @@ class CustomersController extends DashboardController
     }
 
     /**
-     * Loads specific customer coupon and return 
+     * Loads specific customer coupon and return
      * as an array
+     *
      * @param Request $request
      * @param string $code
      * @return array|string
@@ -334,6 +348,7 @@ class CustomersController extends DashboardController
 
     /**
      * Displays the customer account history
+     *
      * @param Customer $customer
      * @return string
      */
@@ -341,7 +356,7 @@ class CustomersController extends DashboardController
     {
         return CustomerAccountCrud::table([
             'queryParams'       =>  [
-                'customer_id'   =>  $customer->id
+                'customer_id'   =>  $customer->id,
             ],
             'createUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
             'description'       =>  sprintf(
@@ -357,6 +372,7 @@ class CustomersController extends DashboardController
 
     /**
      * Will render a form to create a customer account history
+     *
      * @param Customer $customer
      * @return View
      */
@@ -364,7 +380,7 @@ class CustomersController extends DashboardController
     {
         return CustomerAccountCrud::form( null, [
             'queryParams'       =>  [
-                'customer_id'   =>  $customer->id
+                'customer_id'   =>  $customer->id,
             ],
             'returnUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
             'submitUrl'         =>  ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
@@ -381,17 +397,18 @@ class CustomersController extends DashboardController
 
     public function recordAccountHistory( Customer $customer, Request $request )
     {
-        return $this->customerService->saveTransaction( 
-            $customer, 
-            $request->input( 'general.operation' ), 
-            $request->input( 'general.amount' ), 
-            $request->input( 'general.description' ) 
+        return $this->customerService->saveTransaction(
+            $customer,
+            $request->input( 'general.operation' ),
+            $request->input( 'general.amount' ),
+            $request->input( 'general.description' )
         );
     }
 
     /**
      * Will render a form for editing
      * a generated coupon
+     *
      * @param CustomerCoupon $coupon
      * @return View
      */
@@ -403,6 +420,7 @@ class CustomersController extends DashboardController
     /**
      * Will list all coupons generated
      * for the available customer
+     *
      * @return View
      */
     public function listGeneratedCoupons()
@@ -412,6 +430,7 @@ class CustomersController extends DashboardController
 
     /**
      * Will return the customer rewards
+     *
      * @param Customer $customer
      * @return array<CustomerReward> $customerRewards
      */
@@ -422,6 +441,7 @@ class CustomersController extends DashboardController
 
     /**
      * Will return the customer account history
+     *
      * @param Customer $customer
      * @return array
      */
@@ -433,4 +453,3 @@ class CustomersController extends DashboardController
             ->paginate(20);
     }
 }
-

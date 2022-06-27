@@ -1,19 +1,19 @@
 <?php
+
 namespace App\Fields;
 
 use App\Classes\Hook;
-use App\Models\UnitsGroup;
 use App\Models\Unit;
 use App\Services\FieldsService;
 use App\Services\Helper;
 
 class ResetFields extends FieldsService
 {
-    protected $identifier   =   'ns.reset';
-    
+    protected $identifier = 'ns.reset';
+
     public function get( Unit $model = null )
     {
-        $this->fields               =   [
+        $this->fields = [
             [
                 'name'          =>   'mode',
                 'label'         =>   __( 'Mode' ),
@@ -23,7 +23,7 @@ class ResetFields extends FieldsService
                     'wipe_all'              =>  __( 'Wipe All' ),
                     'wipe_plus_grocery'     =>  __( 'Wipe Plus Grocery' ),
                 ])),
-                'description'          =>   __( 'Choose what mode applies to this demo.' )
+                'description'          =>   __( 'Choose what mode applies to this demo.' ),
             ], [
                 'name'          =>   'create_sales',
                 'label'         =>   __( 'Create Sales (needs Procurements)' ),
@@ -36,7 +36,7 @@ class ResetFields extends FieldsService
                 'type'          =>   'checkbox',
                 'value'         =>  1,
                 'description'   =>   __( 'Will create procurements.' ),
-            ]
+            ],
         ];
 
         return $this->fields;

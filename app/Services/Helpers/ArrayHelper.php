@@ -1,139 +1,151 @@
 <?php
+
 namespace App\Services\Helpers;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
-trait ArrayHelper {
+trait ArrayHelper
+{
     /**
      * Return Odds
-     * @param array 
+     *
+     * @param array
      * @param string type
      * @return array
      */
-    static function arrayDivide( array $array, string $type = '' )
+    public static function arrayDivide( array $array, string $type = '' )
     {
-        if( $array ) {
-            $result     =   [
+        if ( $array ) {
+            $result = [
                 'odd'   =>  [],
-                'even'  =>  []
+                'even'  =>  [],
             ];
 
             foreach ($array as $k => $v) {
                 if ($k % 2 == 0) {
                     $result[ 'even' ][] = $v;
-                }
-                else {
+                } else {
                     $result[ 'odd' ][] = $v;
                 }
             }
 
-            if( ! empty( $type ) ) {
+            if ( ! empty( $type ) ) {
                 return $result[ $type ];
             }
+
             return $result;
         }
+
         return [];
     }
 
     /**
      * Collection to options
+     *
      * @param array collection of Eloquent results
      * @return array of options
      */
-    static function toOptions( $collections, $config )
+    public static function toOptions( $collections, $config )
     {
-        $result         =   [];
+        $result = [];
         if ( $collections ) {
             foreach ( $collections as $collection ) {
-                $id     =   $config[0];
-                $name   =   $config[1];
-                $result[ $collection->$id ]   =  $collection->$name; 
+                $id = $config[0];
+                $name = $config[1];
+                $result[ $collection->$id ] = $collection->$name;
             }
+
             return $result;
         }
+
         return [];
     }
 
     /**
      * to JS options
+     *
      * @param Collection
-     * @param Array [ value, label ]
+     * @param array [ value, label ]
      * @return array of options
      */
-    static function toJsOptions( Collection|EloquentCollection $collections, $config, $defaults = [] ): Array 
+    public static function toJsOptions( Collection|EloquentCollection $collections, $config, $defaults = [] ): array
     {
-        $result         =   [];
+        $result = [];
 
         /**
          * This will populate defaults
          * value for the options
          */
-        if( ! empty ( $defaults ) ) {
-            foreach( $defaults as $value => $label ) {
-                $result[]  =  compact( 'label', 'value' );
+        if ( ! empty( $defaults ) ) {
+            foreach ( $defaults as $value => $label ) {
+                $result[] = compact( 'label', 'value' );
             }
         }
 
         if ( $collections ) {
             foreach ( $collections as $collection ) {
-                $id     =   $config[0];
+                $id = $config[0];
                 if ( ! is_array( $config[1] ) ) {
-                    $name   =   $config[1];
+                    $name = $config[1];
 
-                    $result[]   =  [
+                    $result[] = [
                         'label'     =>  $collection->$name,
-                        'value'     =>  $collection->$id
+                        'value'     =>  $collection->$id,
                     ];
-
                 } else {
-                    $name       =   '';
+                    $name = '';
 
-                    foreach( $config[1] as $index => $_name ) {
+                    foreach ( $config[1] as $index => $_name ) {
                         if ( $index + 1 < count( $config[1] ) ) {
-                            $name   .=  $collection->$_name . ( $config[2] ?? ' ' ); // if separator is not provided
+                            $name .= $collection->$_name . ( $config[2] ?? ' ' ); // if separator is not provided
                         } else {
-                            $name   .=  $collection->$_name;
+                            $name .= $collection->$_name;
                         }
                     }
 
-                    $result[]       =  [
+                    $result[] = [
                         'label'     =>  $name,
-                        'value'     =>  $collection->$id
+                        'value'     =>  $collection->$id,
                     ];
-                }                
+                }
             }
+
             return $result;
         }
+
         return [];
     }
 
     /**
      * Key Value To Js Options
+     *
      * @param array
      * @return array of options
      */
-    static function kvToJsOptions( $array )
+    public static function kvToJsOptions( $array )
     {
-        $final  =   [];
-        foreach( $array as $value => $label ) {
-            $final[]    =   compact( 'label', 'value' );
+        $final = [];
+        foreach ( $array as $value => $label ) {
+            $final[] = compact( 'label', 'value' );
         }
+
         return $final;
     }
 
     /**
-     * flat multidimensional array using 
+     * flat multidimensional array using
      * keys
+     *
      * @param array $data
      * @return Collection
      */
-    static function flatArrayWithKeys( $data )
+    public static function flatArrayWithKeys( $data )
     {
         return collect( $data )->mapWithKeys( function( $data, $index ) {
             if ( ! is_array( $data ) || is_numeric( $index ) ) {
                 return [ $index => $data ];
-            } else if ( is_array( $data ) ) {
+            } elseif ( is_array( $data ) ) {
                 if ( array_keys( $data ) !== range(0, count( $data ) - 1) ) {
                     return self::flatArrayWithKeys( $data );
                 } else {

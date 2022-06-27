@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Models;
 
-use App\Models\ProductGallery;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $parent_id
  * @property int $unit_group
  * @property string $on_expiration
- * @property boolean $expires wether or not the product has expired
- * @property boolean $searchable 
+ * @property bool $expires wether or not the product has expired
+ * @property bool $searchable
  * @property int $author
  * @property string $uuid
  */
@@ -34,31 +34,36 @@ class Product extends NsModel
 {
     use HasFactory;
 
-    const STOCK_MANAGEMENT_ENABLED      =   'enabled';
-    const STOCK_MANAGEMENT_DISABLED     =   'disabled';
+    const STOCK_MANAGEMENT_ENABLED = 'enabled';
 
-    const EXPIRES_PREVENT_SALES         =   'prevent_sales';
-    const EXPIRES_ALLOW_SALES           =   'allow_sales';
+    const STOCK_MANAGEMENT_DISABLED = 'disabled';
 
-    const TYPE_MATERIALIZED             =   'materialized';
-    const TYPE_DEMATERIALIZED           =   'dematerialized';
-    const TYPE_GROUPED                  =   'grouped';
-    
-    protected $table                    =   'nexopos_' . 'products';
-    protected $cats                     =   [
-        'accurate_tracking'     =>  'boolean'
+    const EXPIRES_PREVENT_SALES = 'prevent_sales';
+
+    const EXPIRES_ALLOW_SALES = 'allow_sales';
+
+    const TYPE_MATERIALIZED = 'materialized';
+
+    const TYPE_DEMATERIALIZED = 'dematerialized';
+
+    const TYPE_GROUPED = 'grouped';
+
+    protected $table = 'nexopos_' . 'products';
+
+    protected $cats = [
+        'accurate_tracking'     =>  'boolean',
     ];
 
     /**
      * Lock the resource from deletion if
      * it's a dependency for specified models.
      */
-    protected $isDependencyFor     =   [
+    protected $isDependencyFor = [
         OrderProduct::class     =>  [
             'local_index'       =>  'id',
             'local_name'        =>  'name',
             'foreign_index'     =>  'product_id',
-            'foreign_name'      =>  'name'
+            'foreign_name'      =>  'name',
         ],
     ];
 
@@ -69,6 +74,7 @@ class Product extends NsModel
 
     /**
      * get products having accurate tracking enabled
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */
@@ -79,6 +85,7 @@ class Product extends NsModel
 
     /**
      * get products having accurate tracking enabled
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */
@@ -89,6 +96,7 @@ class Product extends NsModel
 
     /**
      * get products having accurate tracking disabled
+     *
      * @param QueryBuilder
      * @return QueryBuilder
      */
@@ -99,6 +107,7 @@ class Product extends NsModel
 
     /**
      * get a product using a barcode
+     *
      * @param QueryBuilder
      * @param string barcode
      * @return QueryBuilder
@@ -110,6 +119,7 @@ class Product extends NsModel
 
     /**
      * get a product using a barcode
+     *
      * @param QueryBuilder
      * @param string barcode
      * @return QueryBuilder
@@ -121,6 +131,7 @@ class Product extends NsModel
 
     /**
      * get a product using a barcode
+     *
      * @param QueryBuilder
      * @param string barcode
      * @return QueryBuilder
@@ -130,9 +141,9 @@ class Product extends NsModel
         return $this->scopeFindUsingSKU( $query, $sku );
     }
 
-
     /**
      * Filter a product using the SKU
+     *
      * @param QueryBuilder
      * @param string sku
      * @return QueryBuilder
@@ -184,6 +195,7 @@ class Product extends NsModel
 
     /**
      * Filter query by getting products that are variations
+     *
      * @param QueryBuilder $query
      * @return QueryBuilder;
      */
@@ -194,6 +206,7 @@ class Product extends NsModel
 
     /**
      * Filter query by getting products that aren't variations
+     *
      * @param QueryBuilder $query
      * @return QueryBuilder;
      */
@@ -205,6 +218,7 @@ class Product extends NsModel
     /**
      * Filter query by getting product with
      * stock management enabled
+     *
      * @param QueryBuilder $query
      * @return QueryBuilder;
      */
@@ -216,6 +230,7 @@ class Product extends NsModel
     /**
      * Filter query by getting product with
      * stock management disabled
+     *
      * @param QueryBuilder $query
      * @return QueryBuilder;
      */
@@ -227,6 +242,7 @@ class Product extends NsModel
     /**
      * Filter query by getitng product with
      * accurate stock enabled or not.
+     *
      * @param QueryBuilder $query
      * @return QueryBuilder
      */
@@ -237,7 +253,8 @@ class Product extends NsModel
 
     /**
      * Filter product that are searchable
-     * @param QueryBuilder 
+     *
+     * @param QueryBuilder
      * @return QueryBuilder
      */
     public function scopeSearchable( $query, $attribute = true )

@@ -41,18 +41,18 @@ class GenerateCashFlowCommand extends Command
      */
     public function handle()
     {
-        $user               =   Role::namespace( 'admin' )->users->first();
+        $user = Role::namespace( 'admin' )->users->first();
         Auth::login( $user );
-        
-        $fromDate   =   Carbon::parse( $this->option( 'from') );
-        $toDate     =   $this->option( 'to' ) === null ? Carbon::parse( $this->option( 'to' ) ) : ns()->date->copy()->endOfDay()->toDateTimeString();
-        
+
+        $fromDate = Carbon::parse( $this->option( 'from') );
+        $toDate = $this->option( 'to' ) === null ? Carbon::parse( $this->option( 'to' ) ) : ns()->date->copy()->endOfDay()->toDateTimeString();
+
         /**
          * @var ReportService $reportService
          */
-        $reportService      =   app()->make( ReportService::class );
+        $reportService = app()->make( ReportService::class );
         $reportService->recomputeCashFlow( $fromDate, $toDate );
-        
+
         $this->info( 'The cash flow has been generated.' );
     }
 }

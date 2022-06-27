@@ -18,8 +18,7 @@ class DashboardMonthAfterUpdatedEvent
      */
     public function __construct(
         public DashboardMonth $dashboardMonth
-    )
-    {
+    ) {
         //
     }
 }

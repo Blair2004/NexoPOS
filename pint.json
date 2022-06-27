@@ -6,9 +6,7 @@
     "rules": {
         "no_spaces_inside_parenthesis": false,
         "Laravel/laravel_phpdoc_alignment": false,
-        "function_declaration": {
-            "closure_function_spacing": "none"
-        },
+        "function_declaration": false,
         "trim_array_spaces": false,
         "no_spaces_around_offset": {
             "positions": ["outside"]

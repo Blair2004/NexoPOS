@@ -2,19 +2,16 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Requests\FormsRequest;
 use App\Models\Notification;
 use App\Services\NotificationService;
-use App\Services\SettingsPage;
-use Exception;
 use Illuminate\Support\Facades\Auth;
-use TorMorten\Eventy\Facades\Events as Hook;
 
 class NotificationsController extends DashboardController
 {
@@ -22,9 +19,8 @@ class NotificationsController extends DashboardController
 
     public function __construct(
         NotificationService $notificationService
-    )
-    {
-        $this->notificationService  =   $notificationService;
+    ) {
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -41,10 +37,10 @@ class NotificationsController extends DashboardController
     public function deleteSingleNotification( $id )
     {
         $this->notificationService->deleteSingleNotification( $id );
-        
+
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The notification has been successfully deleted' )
+            'message'   =>  __( 'The notification has been successfully deleted' ),
         ];
     }
 
@@ -57,9 +53,7 @@ class NotificationsController extends DashboardController
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'All the notificataions has been cleared.' )
-        ]; 
+            'message'   =>  __( 'All the notificataions has been cleared.' ),
+        ];
     }
-
 }
-

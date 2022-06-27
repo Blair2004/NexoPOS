@@ -1,44 +1,45 @@
 <?php
+
 namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Models\ProductUnitQuantity;
+use App\Models\User;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Models\User;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\ProductUnitQuantity;
 
 class ProductUnitQuantitiesCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_products_unit_quantities';
+    protected $table = 'nexopos_products_unit_quantities';
 
     /**
      * default identifier
      */
-    protected $identifier   =   'products/units';
+    protected $identifier = 'products/units';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.products-units';
+    protected $namespace = 'ns.products-units';
 
     /**
      * Model Used
      */
-    protected $model      =   ProductUnitQuantity::class;
+    protected $model = ProductUnitQuantity::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  false,
         'read'      =>  'nexopos.read.products',
         'update'    =>  false,
@@ -48,7 +49,7 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_products as products', 'products.id', '=', 'nexopos_products_unit_quantities.product_id' ],
         [ 'nexopos_units as units', 'units.id', '=', 'nexopos_products_unit_quantities.unit_id' ],
     ];
@@ -56,34 +57,37 @@ class ProductUnitQuantitiesCrud extends CrudService
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [];
+    public $pick = [];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -93,10 +97,11 @@ class ProductUnitQuantitiesCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -121,8 +126,9 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -130,17 +136,18 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -186,14 +193,15 @@ class ProductUnitQuantitiesCrud extends CrudService
                             'name'  =>  'uuid',
                             'label' =>  __( 'Uuid' ),
                             'value' =>  $entry->uuid ?? '',
-                        ],                     ]
-                ]
-            ]
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -204,6 +212,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -214,6 +223,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -222,7 +232,7 @@ class ProductUnitQuantitiesCrud extends CrudService
         if ( $this->permissions[ 'create' ] !== false ) {
             ns()->restrict( $this->permissions[ 'create' ] );
         } else {
-            throw new NotAllowedException();
+            throw new NotAllowedException;
         }
 
         return $request;
@@ -230,6 +240,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  ProductUnitQuantity $entry
      * @return  void
@@ -239,23 +250,22 @@ class ProductUnitQuantitiesCrud extends CrudService
         return $request;
     }
 
-    
-
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -271,6 +281,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -282,9 +293,11 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.products-units' ) {
             /**
              *  Perform an action before deleting an entry
@@ -294,40 +307,42 @@ class ProductUnitQuantitiesCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
-                throw new NotAllowedException();
+                throw new NotAllowedException;
             }
         }
     }
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'products_name'  =>  [
                 'label'  =>  __( 'Product' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'units_name'  =>  [
                 'label'  =>  __( 'Unit' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'quantity'  =>  [
                 'label'  =>  __( 'Quantity' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'updated_at'  =>  [
                 'label'         =>  __( 'Updated At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -340,19 +355,18 @@ class ProductUnitQuantitiesCrud extends CrudService
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -361,16 +375,16 @@ class ProductUnitQuantitiesCrud extends CrudService
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
-                throw new NotAllowedException();
+                throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof ProductUnitQuantity ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -378,6 +392,7 @@ class ProductUnitQuantitiesCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -386,6 +401,7 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -401,8 +417,9 @@ class ProductUnitQuantitiesCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -410,16 +427,17 @@ class ProductUnitQuantitiesCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

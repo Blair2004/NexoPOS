@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,8 +22,7 @@ class InitializeDailyDayReportsJob implements ShouldQueue
      */
     public function __construct(
         public ReportService $reportService
-    )
-    {
+    ) {
         //
     }
 
@@ -39,11 +37,10 @@ class InitializeDailyDayReportsJob implements ShouldQueue
          * We use the user as it's the first
          * created entity on the system
          */
-        $user   =   User::first();
-        $date   =   Carbon::parse( $user->created_at )->endOfDay();
+        $user = User::first();
+        $date = Carbon::parse( $user->created_at )->endOfDay();
 
-        while( ! $date->notEqualTo( ns()->date->endOfDay() ) ) {
-
+        while ( ! $date->notEqualTo( ns()->date->endOfDay() ) ) {
             $this->reportService->computeDayReport(
                 $date->copy()->startOfday()->toDateTimeString(),
                 $date->copy()->endOfDay()->toDateTimeString()

@@ -41,7 +41,6 @@ return new class extends Migration
             /**
              * Dropping...
              */
-
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'excl_tax_sale_price' ) ) {
                 $table->dropColumn( 'excl_tax_sale_price' );
             }
@@ -49,7 +48,7 @@ return new class extends Migration
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'incl_tax_sale_price' ) ) {
                 $table->dropColumn( 'incl_tax_sale_price' );
             }
-            
+
             if ( Schema::hasColumn( 'nexopos_products_unit_quantities', 'excl_tax_wholesale_price' ) ) {
                 $table->dropColumn( 'excl_tax_wholesale_price' );
             }

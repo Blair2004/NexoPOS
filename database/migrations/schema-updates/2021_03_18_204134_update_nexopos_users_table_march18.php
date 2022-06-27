@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateNexoposUsersTableMarch18 extends Migration
 {
@@ -46,7 +46,7 @@ class UpdateNexoposUsersTableMarch18 extends Migration
                 if ( Schema::hasColumn( 'nexopos_users', 'activation_token' ) ) {
                     $table->dropColumn( 'activation_token' );
                 }
-    
+
                 if ( Schema::hasColumn( 'nexopos_users', 'activation_expiration' ) ) {
                     $table->dropColumn( 'activation_expiration' );
                 }

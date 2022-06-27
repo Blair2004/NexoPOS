@@ -12,6 +12,7 @@ class ExpenseAfterRefreshEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $event;
+
     public $date;
 
     /**
@@ -21,8 +22,8 @@ class ExpenseAfterRefreshEvent
      */
     public function __construct( $event, $date )
     {
-        $this->event    =   $event;
-        $this->date     =   $date;
+        $this->event = $event;
+        $this->date = $date;
     }
 
     /**

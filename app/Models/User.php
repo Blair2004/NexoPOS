@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use App\Services\UserOptions;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -27,13 +27,14 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use Notifiable, 
-        HasFactory, 
+    use Notifiable,
+        HasFactory,
         HasApiTokens;
 
-    protected $table    =   'nexopos_users';
-    protected $casts    =   [
-        'active'    =>  'boolean'
+    protected $table = 'nexopos_users';
+
+    protected $casts = [
+        'active'    =>  'boolean',
     ];
 
     /**
@@ -56,10 +57,10 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-        * @var array
+     * @var array
      */
     protected $fillable = [
-        'email', 'password', 'role_id', 'active', 'username'
+        'email', 'password', 'role_id', 'active', 'username',
     ];
 
     /**
@@ -73,9 +74,10 @@ class User extends Authenticatable
 
     /**
      * Permission for a specific user
+     *
      * @var array
      */
-    protected static $permissions  =   [];
+    protected static $permissions = [];
 
     public function __construct( $attributes = [])
     {
@@ -89,11 +91,12 @@ class User extends Authenticatable
 
     /**
      * Relation with roles
+     *
      * @return HasManyThrough
-    **/
+     **/
     public function roles()
     {
-        return $this->hasManyThrough( 
+        return $this->hasManyThrough(
             Role::class,
             UserRoleRelation::class,
             'user_id',
@@ -105,6 +108,7 @@ class User extends Authenticatable
 
     /**
      * Relation with permissions
+     *
      * @return array
      */
     public static function permissions( $user_id = null )
@@ -112,40 +116,39 @@ class User extends Authenticatable
         /**
          * If user id is not provided
          */
-        $user       =   $user_id === null ? User::find( Auth::id() ) : User::find( $user_id );
+        $user = $user_id === null ? User::find( Auth::id() ) : User::find( $user_id );
 
-        $roles_id   =   $user
+        $roles_id = $user
             ->roles()
             ->get()
             ->map( fn( $role ) => $role->id )
             ->toArray();
 
-        foreach( $roles_id as $role_id ) {
+        foreach ( $roles_id as $role_id ) {
             if ( empty( @self::$permissions[ $role_id ] ) ) {
+                $rawPermissions = Role::find( $role_id )->permissions;
 
-                $rawPermissions   =   Role::find( $role_id )->permissions;
-    
                 /**
                  * if the permissions hasn't yet been cached
                  */
-                
+
                 // start caching the user permissions
-                self::$permissions[ $role_id ]    =   [];
-        
+                self::$permissions[ $role_id ] = [];
+
                 /**
                  * if there is a rawPermission available
                  */
                 if ( $rawPermissions->count() ) {
                     foreach ( $rawPermissions as $permission ) {
-                        self::$permissions[ $role_id ][]  =   $permission->namespace;
+                        self::$permissions[ $role_id ][] = $permission->namespace;
                     }
                 }
             }
         }
 
         return collect( self::$permissions )->filter( function( $permission, $key ) use ( $roles_id ) {
-                return in_array( $key, $roles_id );
-            })
+            return in_array( $key, $roles_id );
+        })
             ->flatten()
             ->unique()
             ->toArray();
@@ -158,13 +161,13 @@ class User extends Authenticatable
     {
         if ( ! is_array( $action ) ) {
             // check if there is a wildcard on the permission request
-            $partials       =   explode( '.', $action );
+            $partials = explode( '.', $action );
 
             if ( $partials[0] == '*' ) {
                 /**
                  * Getting all defined permission instead of hard-coding it
                  */
-                $permissions    =   collect( self::permissions() )
+                $permissions = collect( self::permissions() )
                     ->filter( function( $value, $key ) use ( $partials ) {
                         return substr( $value, -strlen( $partials[1] ) ) === $partials[1];
                     });
@@ -176,29 +179,31 @@ class User extends Authenticatable
              * We assume the search is not an array but a string. We can then perform a search
              */
             return in_array( $action, self::permissions() );
-
         } else {
 
             /**
              * While looping, if one permission is not granted, exit the loop and return false
              */
             if ( $action ) {
-                $hasPassed  =   false;
+                $hasPassed = false;
                 foreach ( $action as $_permission ) {
                     if ( ! self::allowedTo( $_permission ) && $type === 'all' ) {
                         return false;
-                    } else if ( self::allowedTo( $_permission ) && $type === 'some' ) {
-                        $hasPassed  =   true;
+                    } elseif ( self::allowedTo( $_permission ) && $type === 'some' ) {
+                        $hasPassed = true;
                     }
-                }    
+                }
+
                 return $type === 'all' ? true : $hasPassed;
             }
+
             return false;
         }
     }
 
     /**
      * Get authenticated user pseudo
+     *
      * @return string
      */
     public function pseudo()
@@ -208,37 +213,40 @@ class User extends Authenticatable
 
     /**
      * Assign user to a role
+     *
      * @param int user id
      * @param role name
-     * @return boolean
+     * @return bool
      */
     public static function setAs( $user, $roleName )
     {
         if ( $role = Role::namespace( $roleName ) ) {
             if ( $user instanceof User ) {
-                $combinaison    =   UserRoleRelation::combinaison( $user, $role )->first();
+                $combinaison = UserRoleRelation::combinaison( $user, $role )->first();
 
                 if ( ! $combinaison instanceof UserRoleRelation ) {
-                    $combinaison    =   new UserRoleRelation;
+                    $combinaison = new UserRoleRelation;
                 }
 
-                $combinaison->user_id   =   $user->id;
-                $combinaison->role_id   =   $role->id;
+                $combinaison->user_id = $user->id;
+                $combinaison->role_id = $role->id;
                 $combinaison->save();
             } else {
-                $user   =   User::find( $user );
+                $user = User::find( $user );
 
                 if ( $user instanceof User ) {
                     return User::setAs( $user, $roleName );
                 }
             }
         }
+
         return false;
     }
 
     /**
      * Set object as a role
      * basically assigning role to user
+     *
      * @param object user
      * @return User<Model>
      */
@@ -249,17 +257,20 @@ class User extends Authenticatable
 
     /**
      * Define user id
+     *
      * @param int user
      */
-    public static function define( $user_id ) 
+    public static function define( $user_id )
     {
-        $user   =   new User;
-        $user->user_id  =   $user_id;
+        $user = new User;
+        $user->user_id = $user_id;
+
         return $user;
     }
 
     /**
      * Assign a role
+     *
      * @param string role namespace
      * @return void
      */
@@ -267,12 +278,13 @@ class User extends Authenticatable
     {
         return self::setAs( $this->user_id, $role );
     }
-    
+
     /**
      * mutator
      * mutate active field
+     *
      * @param string value
-     * @return boolean
+     * @return bool
      */
     public function getActiveAttribute( $value )
     {
@@ -282,9 +294,10 @@ class User extends Authenticatable
     /**
      * Quick access to user options
      */
-    public function options( $option, $default = null ) 
+    public function options( $option, $default = null )
     {
-        $options    =   new UserOptions( $this->id );
+        $options = new UserOptions( $this->id );
+
         return $options->get( $option, $default );
     }
 }

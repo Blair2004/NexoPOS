@@ -1,64 +1,65 @@
 <?php
+
 namespace App\Crud;
 
 use App\Models\AccountType;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\ExpenseCategory;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ExpenseCategoryCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_expenses_categories';
+    protected $table = 'nexopos_expenses_categories';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.accounting-accounts';
+    protected $mainRoute = 'ns.accounting-accounts';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.accounting-accounts';
+    protected $namespace = 'ns.accounting-accounts';
 
     /**
      * Model Used
      */
-    protected $model      =   AccountType::class;
+    protected $model = AccountType::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users', 'nexopos_expenses_categories.author', '=', 'nexopos_users.id' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     protected $permissions = [
         'create' => 'nexopos.create.expenses-categories',
@@ -69,7 +70,8 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -79,10 +81,11 @@ class ExpenseCategoryCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -100,8 +103,9 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -109,10 +113,11 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -134,7 +139,7 @@ class ExpenseCategoryCrud extends CrudService
                             'validation'    => 'required',
                             'options'   =>  Helper::kvToJsOptions([
                                 'credit'    =>  __( 'Credit' ),
-                                'debit'     =>  __( 'Debit' )
+                                'debit'     =>  __( 'Debit' ),
                             ]),
                             'value' =>  $entry->operation ?? '',
                         ], [
@@ -149,15 +154,16 @@ class ExpenseCategoryCrud extends CrudService
                             'name'  =>  'description',
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -168,6 +174,7 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -178,17 +185,20 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
     public function beforePost( $request )
     {
         $this->allowedTo( 'create' );
+
         return $request;
     }
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  AccountType $entry
      * @return  void
@@ -198,21 +208,22 @@ class ExpenseCategoryCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -220,11 +231,13 @@ class ExpenseCategoryCrud extends CrudService
     public function beforePut( $request, $entry )
     {
         $this->allowedTo( 'update' );
+
         return $request;
     }
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -233,20 +246,21 @@ class ExpenseCategoryCrud extends CrudService
     {
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -255,9 +269,11 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.accounting-accounts' ) {
             $this->allowedTo( 'delete' );
         }
@@ -265,34 +281,36 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'account'  =>  [
                 'label'  =>  __( 'Account' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'operation'  =>  [
                 'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -308,7 +326,7 @@ class ExpenseCategoryCrud extends CrudService
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . 'accounting/accounts' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -318,40 +336,40 @@ class ExpenseCategoryCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.accounting-accounts/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
+        $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
+                'message'   =>  __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof AccountType ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -359,6 +377,7 @@ class ExpenseCategoryCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -367,6 +386,7 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -382,8 +402,9 @@ class ExpenseCategoryCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -391,16 +412,17 @@ class ExpenseCategoryCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

@@ -7,7 +7,6 @@ use App\Models\ProductUnitQuantity;
 use App\Models\Role;
 use App\Services\NotificationService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,7 +33,7 @@ class DetectLowStockProductsJob implements ShouldQueue
      */
     public function handle()
     {
-        $products       =       ProductUnitQuantity::stockAlertEnabled()
+        $products = ProductUnitQuantity::stockAlertEnabled()
             ->whereRaw( 'low_quantity > quantity' )
             ->count();
 
@@ -44,10 +43,10 @@ class DetectLowStockProductsJob implements ShouldQueue
             /**
              * @var NotificationService
              */
-            $notificationService    =   app()->make( NotificationService::class );
+            $notificationService = app()->make( NotificationService::class );
             $notificationService->create([
                 'title'         =>  __( 'Low Stock Alert' ),
-                'description'   =>  sprintf( 
+                'description'   =>  sprintf(
                     __( '%s product(s) has low stock. Check those products to reorder them before the stock reach zero.' ),
                     $products
                 ),
@@ -55,7 +54,7 @@ class DetectLowStockProductsJob implements ShouldQueue
                 'url'           =>  ns()->route( 'ns.dashboard.reports-low-stock' ),
             ])->dispatchForGroupNamespaces([
                 Role::ADMIN,
-                Role::STOREADMIN
+                Role::STOREADMIN,
             ]);
         }
     }

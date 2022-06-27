@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Events;
 
 use App\Models\Order;
@@ -13,12 +14,13 @@ class OrderAfterCreatedEvent implements ShouldBroadcast
     use SerializesModels, Dispatchable, InteractsWithSockets;
 
     public $order;
+
     public $fields;
 
     public function __construct( Order $order, $fields )
     {
-        $this->order    =   $order;
-        $this->fields   =   $fields;
+        $this->order = $order;
+        $this->fields = $fields;
     }
 
     /**

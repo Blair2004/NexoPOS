@@ -1,15 +1,13 @@
 <?php
+
 namespace App\Crud;
 
-use App\Exceptions\NotAllowedException;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Models\User;
-use Exception;
 use App\Models\Provider;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class ProviderCrud extends CrudService
@@ -17,53 +15,57 @@ class ProviderCrud extends CrudService
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_providers';
+    protected $table = 'nexopos_providers';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.providers';
+    protected $mainRoute = 'ns.providers';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.providers';
+    protected $namespace = 'ns.providers';
 
     /**
      * Model Used
      */
-    protected $model      =   Provider::class;
+    protected $model = Provider::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
-        [ 'nexopos_users', 'nexopos_users.id', '=', 'nexopos_providers.author' ]
+    public $relations = [
+        [ 'nexopos_users', 'nexopos_users.id', '=', 'nexopos_providers.author' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  'nexopos.create.providers',
         'read'      =>  'nexopos.read.providers',
         'update'    =>  'nexopos.update.providers',
@@ -72,7 +74,8 @@ class ProviderCrud extends CrudService
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -82,10 +85,11 @@ class ProviderCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -103,8 +107,9 @@ class ProviderCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -112,10 +117,11 @@ class ProviderCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
@@ -165,15 +171,16 @@ class ProviderCrud extends CrudService
                             'label' =>  __( 'Description' ),
                             'description'   =>  __( 'Further details about the provider' ),
                             'value' =>  $entry->description ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -184,6 +191,7 @@ class ProviderCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -194,6 +202,7 @@ class ProviderCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -206,6 +215,7 @@ class ProviderCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Provider $entry
      * @return  void
@@ -215,21 +225,22 @@ class ProviderCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -243,6 +254,7 @@ class ProviderCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -251,20 +263,21 @@ class ProviderCrud extends CrudService
     {
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -273,9 +286,11 @@ class ProviderCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.providers' ) {
             $this->allowedTo( 'delete' );
         }
@@ -283,44 +298,46 @@ class ProviderCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'email'  =>  [
                 'label'  =>  __( 'Email' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'phone'  =>  [
                 'label'  =>  __( 'Phone' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'amount_due'  =>  [
                 'label'  =>  __( 'Amount Due' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'amount_paid'  =>  [
                 'label'  =>  __( 'Amount Paid' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'nexopos_users_username'  =>  [
                 'label'  =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'         =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -330,36 +347,36 @@ class ProviderCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->phone           =   $entry->phone ?? __( 'N/A' );
-        $entry->email           =   $entry->email ?? __( 'N/A' );
+        $entry->phone = $entry->phone ?? __( 'N/A' );
+        $entry->email = $entry->email ?? __( 'N/A' );
 
-        $entry->amount_due      =   ns()->currency->define( $entry->amount_due )->format();
-        $entry->amount_paid     =   ns()->currency->define( $entry->amount_paid )->format();
+        $entry->amount_due = ns()->currency->define( $entry->amount_due )->format();
+        $entry->amount_paid = ns()->currency->define( $entry->amount_paid )->format();
 
         $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . 'providers' . '/edit/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'see-procurements', [
             'label'         =>      __( 'See Procurements' ),
             'namespace'     =>      'see-procurements',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/procurements/' )
+            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/procurements/' ),
         ]);
-        
+
         $entry->addAction( 'see-products', [
             'label'         =>      __( 'See Products' ),
             'namespace'     =>      'see-products',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id .  '/products/' )
+            'url'           =>      ns()->url( '/dashboard/' . 'providers/' . $entry->id . '/products/' ),
         ]);
-        
+
         $entry->addAction( 'delete', [
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
@@ -367,40 +384,40 @@ class ProviderCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.providers/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-        $user   =   app()->make( Users::class );
+        $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
                 'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' )
+                'message'   =>  __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Provider ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -408,6 +425,7 @@ class ProviderCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -416,6 +434,7 @@ class ProviderCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -431,8 +450,9 @@ class ProviderCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -440,16 +460,17 @@ class ProviderCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

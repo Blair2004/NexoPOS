@@ -18,12 +18,12 @@ class CreateOrderTest extends TestCase
      */
     public function testPostingOrder( $callback = null )
     {
-        $this->count                =   10;
-        $this->totalDaysInterval    =   14;
+        $this->count = 10;
+        $this->totalDaysInterval = 14;
 
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
-    
+
             return $this->attemptPostOrder( $callback );
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
@@ -44,24 +44,23 @@ class CreateOrderTest extends TestCase
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
-    
-            $this->count                =   1;
-            $this->totalDaysInterval    =   1;
-            $this->processCoupon        =   false;
-            $this->useDiscount          =   false;
-            $this->shouldMakePayment    =   false;
-            $this->customOrderParams    =   [
+
+            $this->count = 1;
+            $this->totalDaysInterval = 1;
+            $this->processCoupon = false;
+            $this->useDiscount = false;
+            $this->shouldMakePayment = false;
+            $this->customOrderParams = [
                 'shipping'  =>  0,
             ];
-            $this->customProductParams  =   [
+            $this->customProductParams = [
                 'unit_price'    =>  0,
                 'discount'      =>  0,
             ];
 
-            $responses  =   $this->attemptPostOrder( $callback );
+            $responses = $this->attemptPostOrder( $callback );
 
             $this->assertEquals( Order::PAYMENT_PAID, $responses[0][0][ 'order-creation' ][ 'data' ][ 'order' ][ 'payment_status' ]);
-
         } else {
             $this->assertTrue( true ); // because we haven't performed any test.
         }

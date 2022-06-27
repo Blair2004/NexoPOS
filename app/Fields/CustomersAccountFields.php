@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Fields;
 
 use App\Services\FieldsService;
@@ -6,11 +7,11 @@ use App\Services\Helper;
 
 class CustomersAccountFields extends FieldsService
 {
-    protected $identifier   =   'ns.customers-account';
+    protected $identifier = 'ns.customers-account';
 
     public function get()
     {
-        $fields     =   [
+        $fields = [
             [
                 'label'         =>  __( 'Type' ),
                 'description'   =>  __( 'determine what is the transaction type.' ),
@@ -19,8 +20,8 @@ class CustomersAccountFields extends FieldsService
                 'type'          =>  'select',
                 'options'       =>  Helper::kvToJsOptions([
                     'add'       =>  __( 'Add' ),
-                    'deduct'    =>  __( 'Deduct' )
-                ])
+                    'deduct'    =>  __( 'Deduct' ),
+                ]),
             ], [
                 'label'         =>  __( 'Amount' ),
                 'description'   =>  __( 'Determine the amount of the transaction.' ),
@@ -31,9 +32,9 @@ class CustomersAccountFields extends FieldsService
                 'description'   =>  __( 'Further details about the transaction.' ),
                 'name'          =>  'description',
                 'type'          =>  'textarea',
-            ]
+            ],
         ];
-        
+
         return $fields;
     }
 }

@@ -1,11 +1,7 @@
 <?php
 
-use App\Models\Order;
-use App\Models\Role;
-use App\Services\NotificationService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
-use Modules\NsGastro\Events\KitchenAfterUpdatedOrderEvent;
 
 /*
 |--------------------------------------------------------------------------

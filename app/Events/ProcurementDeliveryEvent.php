@@ -1,12 +1,11 @@
 <?php
+
 namespace App\Events;
 
-use Illuminate\Queue\SerializesModels;
 use App\Models\Procurement;
-use App\Models\ProductHistory;
-use App\Models\ProductUnitQuantity;
+use Illuminate\Queue\SerializesModels;
 
-class ProcurementDeliveryEvent 
+class ProcurementDeliveryEvent
 {
     use SerializesModels;
 
@@ -14,6 +13,6 @@ class ProcurementDeliveryEvent
 
     public function __construct( Procurement $procurement )
     {
-        $this->procurement  =   $procurement;
+        $this->procurement = $procurement;
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Exceptions\NotAllowedException;
-use Illuminate\Foundation\Http\FormRequest;
 use App\Services\Options;
+use Illuminate\Foundation\Http\FormRequest;
 
 class SignUpRequest extends FormRequest
 {
@@ -15,7 +15,7 @@ class SignUpRequest extends FormRequest
      */
     public function authorize()
     {
-        $options    =   app()->make( Options::class );
+        $options = app()->make( Options::class );
 
         if ( $options->get( 'ns_registration_enabled' ) !== 'yes' ) {
             throw new NotAllowedException( __( 'Unable to register. The registration is closed.' ) );
@@ -35,7 +35,7 @@ class SignUpRequest extends FormRequest
             'username'          =>  'required|min:6',
             'email'             =>  'email',
             'password'          =>  'required',
-            'password_confirm'  => 'same:password'
+            'password_confirm'  => 'same:password',
         ];
     }
 }
