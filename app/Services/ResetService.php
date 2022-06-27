@@ -3,7 +3,6 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Classes\Schema;
-use App\Events\OnCustomResetModeEvent;
 use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;

@@ -66,8 +66,8 @@ class BarcodeService
                 break;
             }
 
-            $product    = Product::where( 'barcode', '<>', $barcode )->first();
-        } while( ! $product instanceof Product );
+            $product    = Product::where( 'barcode', $barcode )->first();
+        } while( $product instanceof Product );
 
         return $barcode;
     }
