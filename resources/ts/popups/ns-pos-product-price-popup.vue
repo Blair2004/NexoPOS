@@ -10,13 +10,11 @@
             <div class="h-16 flex items-center justify-center elevation-surface info font-bold">
                 <h2 class="text-2xl">{{ product.unit_price | currency }}</h2>
             </div>
-            <div class="p-2">
-                <ns-numpad 
-                    @changed="updateProductPrice( $event )"
-                    @next="resolveProductPrice( $event )" 
-                    :floating="true"
-                    :value="product.unit_price"></ns-numpad>
-            </div>
+            <ns-numpad 
+                @changed="updateProductPrice( $event )"
+                @next="resolveProductPrice( $event )" 
+                :floating="true"
+                :value="product.unit_price"></ns-numpad>
         </div>
     </div>
 </template>

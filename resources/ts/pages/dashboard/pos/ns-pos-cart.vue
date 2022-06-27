@@ -426,12 +426,13 @@ export default {
                     product.mode    =   'custom';
                     product         =   POS.computeProductTax( product );
                                         
-                    POS.refreshProducts( POS.products.getValue() );
+                    POS.recomputeProducts( POS.products.getValue() );
                     POS.refreshCart();
 
                     return nsSnackBar.success( __( 'The product price has been updated.' ) ).subscribe();
                 } catch( exception ) {
-                    return;
+                    nsSnackBar.error( exception ).subscribe();
+                    throw exception;
                 }
             }
 

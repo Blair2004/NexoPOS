@@ -166,14 +166,15 @@ export class POS {
          * to reset order details
          */
         this.order.next(this.defaultOrder());
-        this._products.next([]);
+        this.products.next([]);
         this._customers.next([]);
         this._breadcrumbs.next([]);
         this.defineCurrentScreen();
         this.setHoldPopupEnabled(true);
 
         await this.processInitialQueue();
-        this.refreshCart();
+
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     public initialize() {
@@ -264,9 +265,7 @@ export class POS {
          * on the products, we'll update
          * the cart.
          */
-        this.products.subscribe(_ => {
-            this.refreshCart();
-        });
+        nsHooks.addAction( 'ns-after-cart-changed', 'listen-add-to-cart', () => this.refreshCart());
 
         /**
          * listen to type for updating
@@ -965,8 +964,9 @@ export class POS {
     }
 
     buildProducts(products) {
-        this.refreshProducts(products);
+        this.recomputeProducts(products);
         this.products.next(products);
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     printOrderReceipt( order ) {
@@ -1466,13 +1466,13 @@ export class POS {
          * Once the product has been added to the cart
          * it's being computed
          */
-        this.refreshProducts(products);
+        this.recomputeProducts(products);
 
         /**
          * dispatch event that the 
          * product has been added.
          */
-        this._products.next(products);
+        this.products.next(products);
 
         /**
          * when all this has been executed, we can play
@@ -1483,6 +1483,8 @@ export class POS {
         if ( url.length > 0 ) {
             ( new Audio( url ) ).play();
         }
+
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     defineTypes(types) {
@@ -1493,7 +1495,8 @@ export class POS {
         const products = this._products.getValue();
         const index = products.indexOf(product);
         products.splice(index, 1);
-        this._products.next(products);
+        this.products.next(products);
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
     updateProduct(product, data, index = null) {
@@ -1505,11 +1508,12 @@ export class POS {
          */
         Vue.set(products, index, { ...product, ...data });
 
-        this.refreshProducts(products);
-        this._products.next(products);
+        this.recomputeProducts(products);
+        this.products.next(products);
+        nsHooks.doAction( 'ns-after-cart-changed' );
     }
 
-    refreshProducts(products = null) {
+    recomputeProducts(products = null) {
         products.forEach( product => {
             this.computeProduct(product);
         });
@@ -1547,7 +1551,7 @@ export class POS {
         let tax_value           =   0;
         let price_with_tax      =   this.getProductUnitPrice( product.mode, product.$quantities() );
 
-        if ( taxGroup !== undefined && taxGroup.taxes !== undefined ) {
+        if ( taxGroup !== undefined && taxGroup !== null && taxGroup.taxes !== undefined ) {
 
             /**
              * get summarize rates
@@ -1587,6 +1591,8 @@ export class POS {
         const originalProduct   =   product.$original();
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
+
+        console.log( 'foo' );
 
         quantities.gross_custom_price       =   result.price_with_tax;
         quantities.net_custom_price         =   result.price_without_tax;
