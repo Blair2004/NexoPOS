@@ -5,6 +5,7 @@
         "braces": false,
         "no_spaces_inside_parenthesis": false,
         "no_spaces_around_offset": false,
+        "no_unneeded_curly_braces": false,
         "new_with_braces": {
             "anonymous_class": false,
             "named_class": false
