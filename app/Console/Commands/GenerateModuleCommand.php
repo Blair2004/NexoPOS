@@ -20,7 +20,7 @@ class GenerateModuleCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'make:module';
+    protected $signature = 'make:module {--force}';
 
     /**
      * The console command description.
@@ -66,6 +66,7 @@ class GenerateModuleCommand extends Command
         $this->module[ 'author' ] = $this->ask( 'Define the Author Name' );
         $this->module[ 'description' ] = $this->ask( 'Define a short description' );
         $this->module[ 'version' ] = '1.0';
+        $this->module[ 'force' ] = $this->option( 'force' );
 
         $table = [ 'Namespace', 'Name', 'Author', 'Description', 'Version' ];
         $this->table( $table, [ $this->module ] );

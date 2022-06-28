@@ -14,7 +14,7 @@ class ModuleSettings extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:settings {namespace} {name?}';
+    protected $signature = 'modules:settings {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -55,22 +55,20 @@ class ModuleSettings extends Command
             $fileName = $settingsPath . $name;
             $namespace = $this->argument( 'namespace' );
 
-            if ( ! empty( $name ) ) {
-                if ( ! Storage::disk( 'ns-modules' )->exists(
-                    $fileName
-                ) ) {
-                    $path = Storage::disk( 'ns-modules' )->put(
-                        $fileName . '.php', view( 'generate.modules.settings', compact(
-                        'modules', 'module', 'name', 'namespace'
-                    ) ) );
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
 
-                    return $this->info( 'The settings has been created !' );
-                }
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+                $path = Storage::disk( 'ns-modules' )->put(
+                    $fileName . '.php', view( 'generate.modules.settings', compact(
+                    'modules', 'module', 'name', 'namespace'
+                ) ) );
 
-                return $this->error( 'The settings already exists !' );
+                return $this->info( 'The settings has been created !' );
             }
 
-            return $this->error( 'The settings name cannot be empty.' );
+            return $this->error( 'The settings already exists !' );
         }
 
         return $this->error( 'Unable to located the module !' );

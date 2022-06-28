@@ -11,10 +11,11 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-16 border-b primary ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-24 border-b primary ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
-        <ns-numpad :floating="options.ns_pos_allow_decimal_quantities" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad>
+        <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad>
+        <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad-plus>
     </div>
 </template>
 <script>
@@ -22,10 +23,12 @@ import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 import popupCloser from '@/libraries/popup-closer';
 import nsNumpadVue from '@/components/ns-numpad.vue';
+import nsNumpadPlusVue from '@/components/ns-numpad-plus.vue';
 
 export default {
     components: {
-        nsNumpad: nsNumpadVue
+        nsNumpad: nsNumpadVue,
+        nsNumpadPlus: nsNumpadPlusVue
     },
     data() {
         return {

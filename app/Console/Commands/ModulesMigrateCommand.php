@@ -14,7 +14,7 @@ class ModulesMigrateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:migrate {moduleNamespace}';
+    protected $signature = 'modules:migrate {moduleNamespace}';
 
     /**
      * The console command description.

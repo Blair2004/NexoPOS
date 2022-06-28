@@ -16,8 +16,8 @@ return [
             ]),
             'description'       =>  __( 'Will show the quantity selector while choosing a product. Otherwise the default quantity is set to 1.' ),
         ], [
-            'name'              =>  'pos_items_merge',
-            'value'             =>  ns()->option->get( 'pos_items_merge' ),
+            'name'              =>  'ns_pos_items_merge',
+            'value'             =>  ns()->option->get( 'ns_pos_items_merge' ),
             'label'             =>  __( 'Merge Similar Items' ),
             'type'              =>  'switch',
             'options'           =>  Helper::kvToJsOptions([
@@ -44,7 +44,7 @@ return [
                 'yes'           =>  __( 'Yes' ),
                 'no'            =>  __( 'No' ),
             ]),
-            'description'       =>  __( 'Will change the numeric keyboard for allowing decimal for quantities.' ),
+            'description'       =>  __( 'Will change the numeric keyboard for allowing decimal for quantities. Only for "default" numpad.' ),
         ], [
             'name'              =>  'ns_pos_customers_creation_enabled',
             'value'             =>  ns()->option->get( 'ns_pos_customers_creation_enabled' ),
@@ -92,6 +92,16 @@ return [
             'type'              =>  'multiselect',
             'options'           =>  Helper::kvToJsOptions( config( 'nexopos.orders.types-labels' ) ),
             'description'       =>  __( 'Control the order type enabled.' ),
+        ], [
+            'name'              =>  'ns_pos_numpad',
+            'value'             =>  ns()->option->get( 'ns_pos_numpad' ),
+            'label'             =>  __( 'Numpad' ),
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'default'       =>  __( 'Default' ),
+                'advanced'      =>  __( 'Advanced' ),
+            ]),
+            'description'       =>  __( 'Will set what is the numpad used on the POS screen.' ),
         ],
     ],
 ];

@@ -1430,7 +1430,7 @@ export class POS {
          * If it's the case, we'll have to compare the added product
          * with what already exists and decide to increase the quantity or not.
          */
-        if ( this.settings.getValue().pos_items_merge ) {
+        if ( this.settings.getValue().ns_pos_items_merge ) {
             const existing      =   products.filter( product => {
                 /**
                  * we might check other arguments

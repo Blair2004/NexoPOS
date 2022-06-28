@@ -14,7 +14,7 @@ class ModuleController extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:controller {namespace} {name?} {--resource=} {--delete=}';
+    protected $signature = 'modules:controller {namespace} {name?} {--resource=} {--delete=} {--force}';
 
     /**
      * The console command description.
@@ -66,17 +66,21 @@ class ModuleController extends Command
             $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $controllerPath . $name;
             $namespace = $this->argument( 'namespace' );
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
 
             if ( ! empty( $name ) ) {
-                if ( ! Storage::disk( 'ns-modules' )->exists(
-                    $fileName
-                ) ) {
+                if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                     Storage::disk( 'ns-modules' )->put(
                         $fileName . '.php', view( 'generate.modules.controller', compact(
                         'modules', 'module', 'name', 'namespace'
                     ) ) );
 
-                    return $this->info( 'The controller has been created !' );
+                    return $this->info( sprintf(
+                        __( 'The controller has been created for the module "%s"!' ),
+                        $module[ 'name' ]
+                    ) );
                 }
 
                 return $this->error( 'The controller already exists !' );

@@ -14,7 +14,7 @@ class ModuleEvent extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:event {namespace} {name}';
+    protected $signature = 'modules:event {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -53,10 +53,11 @@ class ModuleEvent extends Command
             $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
             $fileName = $eventsPath . $name;
             $namespace = $this->argument( 'namespace' );
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists(
-                $fileName
-            ) ) {
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.event', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );

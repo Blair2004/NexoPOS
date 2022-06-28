@@ -15,7 +15,7 @@
                     <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
                     <button :title="__( 'Toggle auto focus.' )" @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
@@ -244,7 +244,7 @@ export default {
         switchTo,
 
         posToggleMerge() {
-            POS.set( 'pos_items_merge', ! this.settings.pos_items_merge );
+            POS.set( 'ns_pos_items_merge', ! this.settings.ns_pos_items_merge );
         },
 
         computeGridWidth() {

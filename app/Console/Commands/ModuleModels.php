@@ -14,7 +14,7 @@ class ModuleModels extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:model {namespace} {name}';
+    protected $signature = 'modules:model {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -54,9 +54,11 @@ class ModuleModels extends Command
             $fileName = $modelsPath . $name;
             $namespace = $this->argument( 'namespace' );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists(
-                $fileName
-            ) ) {
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
+
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.model', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );

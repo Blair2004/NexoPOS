@@ -21,7 +21,7 @@ class MakeModuleServiceProviderCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:provider {namespace} {name}';
+    protected $signature = 'modules:provider {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -56,8 +56,15 @@ class MakeModuleServiceProviderCommand extends Command
                  */
                 if ( $module = $modules->get( $this->argument( 'namespace') ) ) {
                     $fileName = ucwords( Str::camel( $this->argument( 'name' ) ) );
+
+                    if ( in_array( $fileName, [ 'CoreServiceProvider' ] ) ) {
+                        return $this->error( sprintf( __( '"%s" is a reserved class name' ), $fileName ) );
+                    }
+
                     $filePath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR . $fileName . '.php';
-                    if ( ! Storage::disk( 'ns-modules' )->exists( $filePath ) ) {
+                    $fileExists = Storage::disk( 'ns-modules' )->exists( $filePath );
+
+                    if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                         Storage::disk( 'ns-modules' )->put(
                             $filePath,
                             view( 'generate.modules.providers', [
@@ -69,7 +76,7 @@ class MakeModuleServiceProviderCommand extends Command
                         return $this->info( 'The service provider "' . $fileName . '" has been created for "' . $module[ 'name' ] . '"' );
                     }
 
-                    return $this->info( 'A service provider with the same file name already exists.' );
+                    return $this->error( 'A service provider with the same file name already exists.' );
                 } else {
                     $this->info( 'Unable to find that module.' );
                 }

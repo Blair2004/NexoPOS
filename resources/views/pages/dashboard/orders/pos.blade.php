@@ -51,7 +51,7 @@ use App\Models\User;
         cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
         breadcrumb              :   [],
         products_queue          :   [],
-        pos_items_merge         :   <?php echo ns()->option->get( 'pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
+        ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
         unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
         urls                    :   <?php echo json_encode( $urls );?>
     });

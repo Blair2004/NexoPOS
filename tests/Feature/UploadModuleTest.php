@@ -55,10 +55,25 @@ class UploadModuleTest extends TestCase
         $result = $moduleService->extract( $config[ 'namespace' ] );
 
         /**
-         * Step 4 : We'll delete the generated module
+         * Step 4 : We'll force generate the module
+         * but with a different description
+         */
+        $config[ 'description' ] = 'Changed description';
+        $config[ 'force' ] = true;
+
+        $moduleService->generateModule( $config );
+        $moduleService->load();
+
+        $module = $moduleService->get( $config[ 'namespace' ] );
+
+        $this->assertTrue( $module[ 'description' ] === $config[ 'description' ], 'The force created module wasn\'t effective' );
+
+        /**
+         * Step 5 : We'll delete the generated module
          */
         $moduleService->delete( $config[ 'namespace' ] );
         $moduleService->load();
+
         $module = $moduleService->get( $config[ 'namespace' ] );
 
         $this->assertTrue( $module === null, 'The module wasn\'t deleted' );

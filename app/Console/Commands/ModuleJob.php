@@ -14,7 +14,7 @@ class ModuleJob extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:job {namespace} {name}';
+    protected $signature = 'modules:job {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -54,9 +54,11 @@ class ModuleJob extends Command
             $fileName = $jobsPath . $name;
             $namespace = $this->argument( 'namespace' );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists(
-                $fileName
-            ) ) {
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
+
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.job', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );

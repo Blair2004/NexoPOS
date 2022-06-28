@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\ModulesService;
-use App\Services\Options;
 use Illuminate\Console\Command;
 
 class ModuleSymlinkCommand extends Command
@@ -21,7 +20,6 @@ class ModuleSymlinkCommand extends Command
          * @var ModulesService
          */
         $moduleService = app()->make( ModulesService::class );
-        $optionsService = app()->make( Options::class );
 
         $module = $moduleService->get( $this->argument( 'namespace' ) );
 

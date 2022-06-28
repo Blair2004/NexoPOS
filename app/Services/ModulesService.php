@@ -1490,7 +1490,21 @@ class ModulesService
      */
     public function generateModule( $config )
     {
-        if ( ! $this->get( $config[ 'namespace' ] ) ) {
+        if (
+            ! $this->get( $config[ 'namespace' ] ) ||
+            ( isset( $config[ 'force' ] ) && $this->get( $config[ 'namespace' ] ) && $config[ 'force' ] )
+        ) {
+            /**
+             * If we decide to overwrite the module
+             * we might then consider deleting that already exists
+             */
+            $folderExists = Storage::disk( 'ns-modules' )->exists( $config[ 'namespace' ] );
+            $deleteExisting = isset( $config[ 'force' ] ) && $config[ 'force' ];
+
+            if ( $folderExists && $deleteExisting ) {
+                Storage::disk( 'ns-modules' )->deleteDirectory( $config[ 'namespace' ] );
+            }
+
             Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] );
 
             /**

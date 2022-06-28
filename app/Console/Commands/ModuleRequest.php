@@ -14,7 +14,7 @@ class ModuleRequest extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:request {namespace} {name}';
+    protected $signature = 'modules:request {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -81,13 +81,21 @@ class ModuleRequest extends Command
      */
     public function createRequest()
     {
-        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . Str::studly( $this->argument( 'name' ) ) . '.php';
+        $requestName = Str::studly( $this->argument( 'name' ) );
+        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $requestName . '.php';
 
         /**
          * Make sure the migration don't exist yet
          */
-        if ( Storage::disk( 'ns-modules' )->exists( $fileName ) ) {
-            return $this->info( 'A migration with the same name has been found !' );
+        $fileExists = Storage::disk( 'ns-modules' )->exists(
+            $fileName
+        );
+
+        if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+            return $this->info( sprintf(
+                __( 'A request with the same name has been found !' ),
+                $requestName
+            ) );
         }
 
         /**

@@ -431,8 +431,10 @@ export default {
 
                     return nsSnackBar.success( __( 'The product price has been updated.' ) ).subscribe();
                 } catch( exception ) {
-                    nsSnackBar.error( exception ).subscribe();
-                    throw exception;
+                    if ( exception !== false ) {
+                        nsSnackBar.error( exception ).subscribe();
+                        throw exception;
+                    }
                 }
             }
 
