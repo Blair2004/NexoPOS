@@ -1592,8 +1592,6 @@ export class POS {
         const quantities        =   product.$quantities();
         const result            =   this.proceedProductTaxComputation( product, quantities.custom_price_edit );
 
-        console.log( 'foo' );
-
         quantities.gross_custom_price       =   result.price_with_tax;
         quantities.net_custom_price         =   result.price_without_tax;
         quantities.custom_price_tax         =   result.tax_value;
