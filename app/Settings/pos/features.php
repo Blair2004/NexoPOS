@@ -102,6 +102,16 @@ return [
                 'advanced'      =>  __( 'Advanced' ),
             ]),
             'description'       =>  __( 'Will set what is the numpad used on the POS screen.' ),
+        ], [
+            'name'              =>  'ns_pos_force_autofocus',
+            'value'             =>  ns()->option->get( 'ns_pos_force_autofocus' ),
+            'label'             =>  __( 'Force Barcode Auto Focus' ),
+            'type'              =>  'switch',
+            'options'           =>  Helper::kvToJsOptions([
+                'yes'           =>  __( 'Yes' ),
+                'no'            =>  __( 'No' ),
+            ]),
+            'description'       =>  __( 'Will permanently enable barcode autofocus to ease using a barcode reader.' ),
         ],
     ],
 ];

@@ -365,6 +365,7 @@ class TaxService
      * @param TaxGroup $group
      * @param float|int $value
      * @return float
+     *
      * @deprecated
      */
     public function getTaxGroupComputedValue( $type, TaxGroup $group, $value )

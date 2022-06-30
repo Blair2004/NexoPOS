@@ -18,7 +18,7 @@
                     <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
-                    <button :title="__( 'Toggle auto focus.' )" @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-barcode"></i>
                     </button>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
@@ -112,7 +112,6 @@ export default {
             products: [],
             categories: [],
             breadcrumbs: [],
-            autoFocus: false,
             barcode: '',
             previousCategory: null,
             order: null,
@@ -141,12 +140,17 @@ export default {
         }
     },
     watch: {
-        barcode() {
-            clearTimeout( this.searchTimeout );
-            
-            this.searchTimeout  =   setTimeout( () => {
-                this.submitSearch( this.barcode );
-            }, 200 );
+        options: {
+            handler() {
+                if ( this.options.ns_pos_force_autofocus ) {
+                    clearTimeout( this.searchTimeout );
+                
+                    this.searchTimeout  =   setTimeout( () => {
+                        this.submitSearch( this.barcode );
+                    }, 200 );
+                }
+            },
+            deep: true            
         }
     },
     mounted() {
@@ -156,8 +160,8 @@ export default {
             this.settings               =   settings;
         });
 
-        this.optionsSubscriber         =   POS.options.subscribe( options => {
-            this.options               =   options;
+        this.optionsSubscriber          =   POS.options.subscribe( options => {
+            this.options                =   options;
         });
 
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
@@ -316,8 +320,13 @@ export default {
         },
 
         checkFocus() {
-            if ( this.autoFocus ) {
+            if ( this.options.ns_pos_force_autofocus ) {
                 const popup     =   document.querySelectorAll( '.is-popup' );
+
+                /**
+                 * We don't force focus if 
+                 * any popup is visible.
+                 */
                 if ( popup.length === 0 ) {
                     this.$refs.search.focus();
                 }

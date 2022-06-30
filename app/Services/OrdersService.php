@@ -2724,7 +2724,7 @@ class OrdersService
             $orderInstalment->amount = $fields[ 'amount' ];
             $orderInstalment->date = $fields[ 'date' ];
             $orderInstalment->save();
-    
+
             $this->refreshInstalmentCount( $order );
         }
 

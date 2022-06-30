@@ -209,6 +209,7 @@ class OrdersController extends DashboardController
                 'ns_pos_numpad'                         =>  ns()->option->get( 'ns_pos_numpad', 'default' ),
                 'ns_pos_allow_wholesale_price'          =>  ns()->option->get( 'ns_pos_allow_wholesale_price', 'no' ) === 'yes' ? true : false,
                 'ns_pos_allow_decimal_quantities'       =>  ns()->option->get( 'ns_pos_allow_decimal_quantities', 'no' ) === 'yes' ? true : false,
+                'ns_pos_force_autofocus'                =>  ns()->option->get( 'ns_pos_force_autofocus', 'no' ) === 'yes' ? true : false,
             ]),
             'urls'              =>  [
                 'sale_printing_url'     =>      Hook::filter( 'ns-pos-printing-url', ns()->url( '/dashboard/orders/receipt/{id}?dash-visibility=disabled&autoprint=true' ) ),
