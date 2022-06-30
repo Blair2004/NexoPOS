@@ -19,7 +19,7 @@ class HardResetTest extends TestCase
         Artisan::call( 'ns:setup', [
             '--admin_username'  =>  env( 'NS_RESET_USERNAME', 'admin' ),
             '--admin_email'     =>  env( 'NS_RESET_MAIL', 'contact@nexopos.com' ),
-            '--password'        =>  env( 'NS_RESET_PASSWORD', 123456 ),
+            '--admin_password'  =>  env( 'NS_RESET_PASSWORD', 123456 ),
             '--store_name'      =>  env( 'NS_RESET_APPNAME', 'NexoPOS 4.x' ),
         ]);
 

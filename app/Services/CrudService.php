@@ -335,7 +335,7 @@ class CrudService
             'data'      =>  [
                 'editUrl'   =>  str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
             ],
-            'message'   =>  __( 'A new entry has been successfully created.' ),
+            'message'   =>  $id === null ? __( 'A new entry has been successfully created.' ) : __( 'The entry has been successfully updated.' ),
         ];
     }
 

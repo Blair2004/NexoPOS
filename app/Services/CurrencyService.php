@@ -227,7 +227,7 @@ class CurrencyService
      */
     public function getFullRaw()
     {
-        return $this->value;
+        return (float) $this->value;
     }
 
     /**

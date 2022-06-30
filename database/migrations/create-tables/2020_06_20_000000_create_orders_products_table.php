@@ -39,7 +39,7 @@ class CreateOrdersProductsTable extends Migration
                 $table->float( 'tax_value', 18, 5 )->default(0);
                 $table->float( 'net_price', 18, 5 )->default(0);
                 $table->string( 'mode' )->default( 'normal' ); //
-                $table->string( 'product_type' )->default( 'regular' ); // regular | percentage
+                $table->string( 'product_type' )->default( 'product' ); // group
                 $table->float( 'rate' )->default(0);
                 $table->string( 'unit_name' )->nullable();
                 $table->float( 'total_gross_price', 18, 5 )->default(0);

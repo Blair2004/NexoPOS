@@ -39,12 +39,10 @@ trait WithTaxTest
             }),
         ]);
 
-        $this->assertCheck( $details, function( $order ) use ( $orderService, $taxService ) {
-            $subtotal = $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] );
-
+        $this->assertCheck( $details, function( $order ) use ( $orderService  ) {
             $this->assertEquals(
-                (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ) + (float) $subtotal,
-                (float) $order[ 'tax_value' ],
+                (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
+                (float) $order[ 'products_tax_value' ],
                 __( 'The product tax is not valid.' )
             );
         });
@@ -77,7 +75,7 @@ trait WithTaxTest
         $this->assertCheck( $details, function( $order ) use ( $orderService ) {
             $this->assertEquals(
                 (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
-                (float) $order[ 'tax_value' ],
+                (float) $order[ 'products_tax_value' ],
                 __( 'The product tax is not valid.' )
             );
         });

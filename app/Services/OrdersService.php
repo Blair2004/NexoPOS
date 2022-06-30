@@ -298,10 +298,6 @@ class OrdersService
                 }
             }
 
-            if ( $total < ns()->currency->getRaw( (float) $fields[ 'total' ] ) ) {
-                throw new NotAllowedException( __( 'Unable to save an order with instalments amounts which additionnated is less than the order total.' ) );
-            }
-
             $instalments->each( function( $instalment ) {
                 if ( ns()->date->copy()->startOfDay()->greaterThan( Carbon::parse( $instalment[ 'date' ] ) ) ) {
                     throw new NotAllowedException(
@@ -317,10 +313,6 @@ class OrdersService
 
                 return 0;
             });
-
-            if ( Currency::raw( $paidToday->sum() ) !== Currency::raw( $fields[ 'tendered' ] ) ) {
-                throw new NotAllowedException( __( 'The total amount to be paid today is different from the tendered amount.' ) );
-            }
         }
     }
 
@@ -1083,7 +1075,7 @@ class OrdersService
              * We might need to have another consideration
              * on how we do compute the taxes
              */
-            if ( $product[ 'product' ] instanceof Product && $product[ 'product' ][ 'tax_type' ] !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
+            if ( $product[ 'product' ] instanceof Product && $product[ 'product' ]->tax_type !== 'disabled' && ! empty( $product[ 'product' ]->tax_group_id )) {
                 $orderProduct->tax_group_id = $product[ 'product' ]->tax_group_id;
                 $orderProduct->tax_type = $product[ 'product' ]->tax_type;
                 $orderProduct->tax_value = $product[ 'tax_value' ];
@@ -1125,9 +1117,9 @@ class OrdersService
                     'unit_id'           =>  $product[ 'unit_id' ],
                     'product_id'        =>  $product[ 'product' ]->id,
                     'quantity'          =>  $product[ 'quantity' ],
-                    'unit_price'        =>  $orderProduct->net_price,
+                    'unit_price'        =>  $orderProduct->unit_price,
                     'orderProduct'      =>  $orderProduct,
-                    'total_price'       =>  $orderProduct->total_net_price,
+                    'total_price'       =>  $orderProduct->total_price,
                 ];
 
                 $this->productService->stockAdjustment( ProductHistory::ACTION_SOLD, $history );
@@ -1873,71 +1865,8 @@ class OrdersService
     {
         $orderProduct = $this->taxService->computeNetAndGrossPrice( $orderProduct );
 
-        /**
-         * let's compute the discount
-         * for that specific product
-         */
-        $total_gross_discount = (float) 0;
-        $total_discount = (float) 0;
-        $total_net_discount = (float) 0;
-        $net_discount = (float) 0;
-
-        if ( $orderProduct->discount_type === 'percentage' ) {
-            $total_gross_discount = $this->computeDiscountValues(
-                $orderProduct->discount_percentage,
-                $orderProduct->gross_price * $orderProduct->quantity
-            );
-
-            $total_discount = $this->computeDiscountValues(
-                $orderProduct->discount_percentage,
-                $orderProduct->unit_price * $orderProduct->quantity
-            );
-
-            $total_net_discount = $this->computeDiscountValues(
-                $orderProduct->discount_percentage,
-                $orderProduct->net_price * $orderProduct->quantity
-            );
-
-            $net_discount = $this->computeDiscountValues(
-                $orderProduct->discount_percentage,
-                $orderProduct->unit_price
-            );
-        } elseif ( $orderProduct->discount_type === 'flat' ) {
-            /**
-             * @todo not exactly correct.  The discount should be defined per
-             * price type on the frontend.
-             */
-            $total_discount = $orderProduct->discount;
-            $total_gross_discount = $orderProduct->discount;
-            $total_net_discount = $orderProduct->discount;
-            $net_discount = $orderProduct->discount;
-        }
-
-        $orderProduct->discount = $net_discount;
-
-        $orderProduct->total_gross_price = $this->currencyService
-            ->fresh( $orderProduct->gross_price )
-            ->multiplyBy( $orderProduct->quantity )
-            ->get();
-
-        $orderProduct->total_price = $this->currencyService
-            ->fresh( $orderProduct->unit_price )
-            ->multiplyBy( $orderProduct->quantity )
-            ->subtractBy( $net_discount )
-            ->getFullRaw();
-
-        $orderProduct->total_net_price = $this->currencyService
-            ->fresh( $orderProduct->net_price )
-            ->multiplyBy( $orderProduct->quantity )
-            ->subtractBy( $net_discount )
-            ->get();
-
         OrderProductAfterComputedEvent::dispatch(
             $orderProduct,
-            $total_gross_discount,
-            $total_discount,
-            $total_net_discount,
-            $net_discount
         );
     }
 
@@ -2789,13 +2718,15 @@ class OrdersService
             throw new NotAllowedException( __( 'No further instalments is allowed for this order. The total instalment already covers the order total.' ) );
         }
 
-        $orderInstalment = new OrderInstalment;
-        $orderInstalment->order_id = $order->id;
-        $orderInstalment->amount = $fields[ 'amount' ];
-        $orderInstalment->date = $fields[ 'date' ];
-        $orderInstalment->save();
-
-        $this->refreshInstalmentCount( $order );
+        if ( $fields[ 'amount' ] ) {
+            $orderInstalment = new OrderInstalment;
+            $orderInstalment->order_id = $order->id;
+            $orderInstalment->amount = $fields[ 'amount' ];
+            $orderInstalment->date = $fields[ 'date' ];
+            $orderInstalment->save();
+    
+            $this->refreshInstalmentCount( $order );
+        }
 
         return [
             'status'    =>  'success',

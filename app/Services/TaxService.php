@@ -365,7 +365,6 @@ class TaxService
      * @param TaxGroup $group
      * @param float|int $value
      * @return float
-     *
      * @deprecated
      */
     public function getTaxGroupComputedValue( $type, TaxGroup $group, $value )
@@ -382,6 +381,29 @@ class TaxService
 
     public function computeNetAndGrossPrice( $orderProduct )
     {
+        /**
+         * let's compute the discount
+         * for that specific product
+         * before computing taxes
+         */
+        $discount = (float) 0;
+
+        if ( $orderProduct->discount_type === 'percentage' ) {
+            $discount = $this->getPercentageOf(
+                value: $orderProduct->unit_price * $orderProduct->quantity,
+                rate: $orderProduct->discount_percentage,
+            );
+        } elseif ( $orderProduct->discount_type === 'flat' ) {
+            /**
+             * @todo not exactly correct.  The discount should be defined per
+             * price type on the frontend.
+             */
+            $discount = $orderProduct->discount;
+        }
+
+        /**
+         * Let's now compute the taxes
+         */
         $taxGroup = TaxGroup::find( $orderProduct->tax_group_id );
         $grossPriceEnabled = ns()->option->get( 'ns_pos_gross_price_used', 'no' ) === 'yes';
 
@@ -391,39 +413,95 @@ class TaxService
          */
         if ( $taxGroup instanceof TaxGroup ) {
             if ( $grossPriceEnabled ) {
-                $orderProduct->net_price = match ( $orderProduct->tax_type ) {
-                    'inclusive' =>  $this->getTaxGroupNetPrice(
-                        type: $orderProduct->tax_type,
-                        group: $taxGroup,
-                        value: $orderProduct->unit_price
-                    ),
-                    'exclusive' =>  $this->getTaxGroupNetPrice(
-                        type: $orderProduct->tax_type,
-                        group: $taxGroup,
-                        value: $orderProduct->unit_price - ( $orderProduct->tax_value / $orderProduct->quantity )
-                    )
-                };
+                $net_price = $this->getNetPriceFromGrossPriceUsingGroup( $orderProduct->unit_price - $discount, $taxGroup );
 
-                $orderProduct->gross_price = $orderProduct->unit_price;
+                $orderProduct->net_price = $net_price;
+                $orderProduct->gross_price = $orderProduct->unit_price - $discount;
+                $orderProduct->tax_value = ( $orderProduct->gross_price - $orderProduct->net_price ) * $orderProduct->quantity;
             } else {
-                $orderProduct->net_price = $orderProduct->unit_price;
+                $gross_price = $this->getGrossPriceFromNetPriceUsingGroup( $orderProduct->unit_price - $discount, $taxGroup );
 
-                $orderProduct->gross_price = match ( $orderProduct->tax_type ) {
-                    'inclusive' =>  $this->getTaxGroupGrossPrice(
-                        type: $orderProduct->tax_type,
-                        group: $taxGroup,
-                        value: $orderProduct->unit_price + ( $orderProduct->tax_value / $orderProduct->quantity )
-                    ),
-                    'exclusive' =>  $this->getTaxGroupGrossPrice(
-                        type: $orderProduct->tax_type,
-                        group: $taxGroup,
-                        value: $orderProduct->unit_price
-                    )
-                };
+                $orderProduct->net_price = $orderProduct->unit_price - $discount;
+                $orderProduct->gross_price = $gross_price;
+                $orderProduct->tax_value = ( $orderProduct->gross_price - $orderProduct->net_price ) * $orderProduct->quantity;
             }
         }
 
+        $orderProduct->discount = $discount;
+
+        $orderProduct->total_gross_price = ns()->currency
+            ->fresh( $orderProduct->gross_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->get();
+
+        $orderProduct->total_price = ns()->currency
+            ->fresh( $orderProduct->unit_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->subtractBy( $discount )
+            ->getFullRaw();
+
+        $orderProduct->total_net_price = ns()->currency
+            ->fresh( $orderProduct->net_price )
+            ->multiplyBy( $orderProduct->quantity )
+            ->get();
+
         return $orderProduct;
+    }
+
+    /**
+     * Retuns the gross price from a net price
+     * using a defined rate
+     *
+     * @param float $gross_price
+     * @param float $rate
+     * @return float
+     */
+    public function getGrossPriceFromNetPrice( $net_price, $rate )
+    {
+        return $net_price * ( 100 + $rate ) / 100;
+    }
+
+    /**
+     * Retuns the net price from a gross price
+     * using a defined rate
+     *
+     * @param float $gross_price
+     * @param float $rate
+     * @return float
+     */
+    public function getNetPriceFromGrossPrice( $gross_price, $rate )
+    {
+        return $gross_price * 100 / ( 100 + $rate );
+    }
+
+    /**
+     * Compute the gross price from net price
+     * using the tax group rate
+     *
+     * @param float $net_price
+     * @param TaxGroup $group
+     * @return float
+     */
+    public function getGrossPriceFromNetPriceUsingGroup( $net_price, TaxGroup $group )
+    {
+        $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+
+        return $this->getGrossPriceFromNetPrice( $net_price, $rate );
+    }
+
+    /**
+     * Computes the net price using the gross
+     * price along with a TaxGroup rate
+     *
+     * @param float $gross_price
+     * @param TaxGroup $group
+     * @return float
+     */
+    public function getNetPriceFromGrossPriceUsingGroup( $gross_price, TaxGroup $group )
+    {
+        $rate = $group->taxes->map( fn( $tax ) => $tax->rate )->sum();
+
+        return $this->getNetPriceFromGrossPrice( $gross_price, $rate );
     }
 
     /**

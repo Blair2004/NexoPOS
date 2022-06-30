@@ -658,58 +658,65 @@ export class POS {
              * installments & payment date
              */
             try {
-                const order = await new Promise<Order>((resolve, reject) => {
+                const result = await new Promise<{order: Order}>((resolve, reject) => {
                     Popup.show(nsLayawayPopup, { order: _order, reject, resolve });
                 });
 
-                if (order.instalments.length === 0 && order.tendered < expected) {
-                    const message = __(`Before saving the order as laid away, a minimum payment of {amount} is required`).replace('{amount}', Vue.filter('currency')(expected));
+                if (result.order.instalments.length === 0 && result.order.tendered < expected) {
+                    const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', Vue.filter('currency')(expected));
                     Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
                     return reject({ status: 'failed', message });
                 } else {
                     const paymentType = this.selectedPaymentType.getValue();
-                    const expectedSlice = order.instalments.filter(payment => payment.amount >= expected && moment( payment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
+                    const expectedSlice = result.order.instalments.filter(payment => payment.amount >= expected && moment( payment.date ).isSame( ns.date.moment.startOf( 'day' ), 'day' ) );
 
-                    if (expectedSlice.length === 0) {
-                        return resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
+                    if ( expectedSlice.length === 0 ) {
+                        return resolve({ status: 'success', message: __('Layaway defined'), data: { order: result.order } });
                     }
 
                     const firstSlice = expectedSlice[0].amount;
 
-                    /**
-                     * If the instalment has been configured, we'll ease things for
-                     * the waiter and invite him to add the first slice as 
-                     * the payment.
-                     */
-                    Popup.show(nsConfirmPopup, {
-                        title: __(`Confirm Payment`),
-                        message: __(`An instalment has been detected. Would you like to add as first payment {amount} for the selected payment type "{paymentType}"?`)
-                            .replace('{amount}', Vue.filter('currency')(firstSlice))
-                            .replace('{paymentType}', paymentType.label),
-                        onAction: (action) => {
-                            if ( action ) {
-                                const payment: Payment = {
-                                    identifier: paymentType.identifier,
-                                    label: paymentType.label,
-                                    value: firstSlice,
-                                    readonly: false,
-                                    selected: true,
+                    if ( firstSlice > 0 ) {
+                        /**
+                         * If the instalment has been configured, we'll ease things for
+                         * the waiter and invite him to add the first slice as 
+                         * the payment.
+                         */
+                        Popup.show(nsConfirmPopup, {
+                            title: __(`Initial Payment`),
+                            message: __(`In order to proceed, an initial payment of {amount} is required for the selected payment type "{paymentType}". Would you like to proceed ?`)
+                                .replace('{amount}', Vue.filter('currency')(firstSlice))
+                                .replace('{paymentType}', paymentType.label),
+                            onAction: (action) => {
+                                if ( action ) {
+                                    const payment: Payment = {
+                                        identifier: paymentType.identifier,
+                                        label: paymentType.label,
+                                        value: firstSlice,
+                                        readonly: false,
+                                        selected: true,
+                                    }
+        
+                                    this.addPayment(payment);   
+                                    
+                                    /**
+                                     * The expected slice
+                                     * should be marked as paid once submitted
+                                     */
+                                    expectedSlice[0].paid   =   true;
+        
+                                    resolve({ status: 'success', message: __('Layaway defined'), data: { order: result.order } });
+                                } else {
+                                    reject({ status: 'failed', message: __( 'The request was canceled' ) })
                                 }
-    
-                                this.addPayment(payment);   
-                                
-                                /**
-                                 * The expected slice
-                                 * should be marked as paid once submitted
-                                 */
-                                expectedSlice[0].paid   =   true;
-    
-                                resolve({ status: 'success', message: __('Layaway defined'), data: { order } });
-                            } else {
-                                reject({ status: 'failed', message: __( 'The request was canceled' ) })
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        /**
+                         * no payment required, let's proceed.
+                         */
+                        resolve({ status: 'success', message: __('Layaway defined'), data: { order: result.order } });
+                    }
                 }
 
             } catch (exception) {

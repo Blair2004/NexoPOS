@@ -511,7 +511,7 @@ class ExpenseService
             $expense = new Expense;
             $expense->value = $procurement->cost;
             $expense->active = true;
-            $expense->author = Auth::id();
+            $expense->author = $procurement->author;
             $expense->procurement_id = $procurement->id;
             $expense->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
             $expense->id = 0; // this is not assigned to an existing expense
