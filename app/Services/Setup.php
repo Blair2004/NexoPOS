@@ -226,7 +226,7 @@ class Setup
 
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'Database connexion was successful' )
+                'message'   =>  __( 'Database connection was successful' )
             ];
 
         } catch (\Exception $e) {
