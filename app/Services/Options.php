@@ -23,7 +23,7 @@ class Options
 
     private $removableIndex;
 
-    public readonly string $tableName;
+    public string $tableName;
 
     /**
      * the option class can be constructed with the user id. If the user is not connected we
