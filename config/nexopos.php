@@ -10,6 +10,7 @@ return [
         'ar'        =>  'Arabic',
         'pt'        =>  'Portuguese',
         'tr'        =>  'Türkçe',
+        'vi'        =>  'Vietnamese',
     ],
     'rtl-languages' =>  [ 'ar' ],
     'timezones'      =>  [

@@ -887,6 +887,8 @@ export class POS {
                 .subscribe({
                     next: async (order: any) => {
 
+                        nsHooks.doAction( 'ns-before-load-order', { order });
+
                         const options   =   this.options.getValue();
 
                         order = { ...this.defaultOrder(), ...order };

@@ -273,7 +273,11 @@ class OrdersService
      */
     public function __checkProvidedInstalments( $fields )
     {
-        if ( isset( $fields[ 'instalments' ] ) && ! empty( $fields[ 'instalments' ] ) ) {
+        if (
+            isset( $fields[ 'instalments' ] ) &&
+            ! empty( $fields[ 'instalments' ] ) &&
+            ! in_array( $fields[ 'payment_status' ], [ Order::PAYMENT_HOLD ] )
+        ) {
             $instalments = collect( $fields[ 'instalments' ] );
             $total = Currency::define( $instalments->sum( 'amount' ) )->getRaw();
             $customer = Customer::find( $fields[ 'customer_id' ] );
