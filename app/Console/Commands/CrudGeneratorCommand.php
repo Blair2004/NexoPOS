@@ -107,7 +107,7 @@ class CrudGeneratorCommand extends Command
      */
     public function askMainRoute()
     {
-        $name = $this->ask( __( 'What is the main route name to the resource ? [Q] to quit.' ) );
+        $name = $this->ask( __( 'What slug should be used ? [Q] to quit.' ) );
         if ( $name !== 'Q' && ! empty( $name ) ) {
             $this->crudDetails[ 'route_name' ] = $name;
 
