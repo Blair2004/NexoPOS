@@ -99,9 +99,20 @@ class ResetService
     {
         BeforeHardResetEvent::dispatch();
 
-        Artisan::call( 'migrate:reset --path=/database/migrations/default', [ '--force' => true ] );
-        Artisan::call( 'migrate:reset --path=/database/migrations/create-tables', [ '--force' => true ] );
-        Artisan::call( 'migrate:reset --path=/database/migrations/misc', [ '--force' => true ] );
+        Artisan::call( 'migrate:reset', [
+            '--path'    => '/database/migrations/default',
+            '--force'   => true 
+        ]);
+        
+        Artisan::call( 'migrate:reset', [
+            '--path'    => '/database/migrations/create-tables',
+            '--force'   => true 
+        ]);
+        
+        Artisan::call( 'migrate:reset', [
+            '--path'    => '/database/migrations/misc',
+            '--force'   => true 
+        ]);
 
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );
