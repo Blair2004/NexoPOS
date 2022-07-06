@@ -102,7 +102,7 @@ class Setup
         /**
          * Link the resource storage
          */
-        Artisan::call( 'storage:link' );
+        Artisan::call( 'storage:link', [ '--force' => true ] );
 
         return [
             'status'    =>  'success',
@@ -121,10 +121,10 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        Artisan::call( 'migrate --path=/database/migrations/default' );
-        Artisan::call( 'migrate --path=/database/migrations/create-tables' );
-        Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
-        Artisan::call( 'ns:translate --symlink' );
+        Artisan::call( 'migrate --path=/database/migrations/default', [ '--force' => true ] );
+        Artisan::call( 'migrate --path=/database/migrations/create-tables', [ '--force' => true ] );
+        Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"', [ '--force' => true ] );
+        Artisan::call( 'ns:translate --symlink', [ '--force' => true ] );
 
         /**
          * we'll register all "schema-updates" migration

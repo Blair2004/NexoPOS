@@ -63,7 +63,7 @@ class MigrateForgetCommand extends Command
                 ->where( 'file', $this->option( 'file' ) )
                 ->delete();
 
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return $this->info(
                 sprintf(
@@ -73,7 +73,7 @@ class MigrateForgetCommand extends Command
             );
         } else {
             $deleted = Migration::where( 'migration', $this->option( 'file' ) )->delete();
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return $this->info(
                 sprintf(

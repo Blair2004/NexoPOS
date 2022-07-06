@@ -92,7 +92,7 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return false;
         } elseif ( ! empty( $this->option( 'forget' ) ) ) {
@@ -121,7 +121,7 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return false;
         }
