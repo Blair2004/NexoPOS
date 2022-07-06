@@ -137,7 +137,6 @@ class Setup
         ]);
 
         Artisan::call( 'ns:translate', [ 
-            '--force'   => true,
             '--symlink' => true
         ]);
 
