@@ -511,7 +511,6 @@ export class POS {
                     status: 'success'
                 });
             }
-
             const groups = order.tax_groups;
 
             /**
@@ -557,6 +556,11 @@ export class POS {
                                     tax_value: this.getVatValue(order.subtotal - order.discount, _tax.rate, order.tax_type)
                                 };
                             });
+
+                            if ( tax.taxes.length === 0 ) {
+                                return nsSnackBar.error( __( 'The selected tax group doesn\'t have any assigned sub taxes. This might cause wrong figures.' ), __( 'Proceed' ), { duration: false })
+                                    .subscribe();
+                            }
 
                             order.tax_groups = order.tax_groups || [];
                             order.taxes = tax.taxes;

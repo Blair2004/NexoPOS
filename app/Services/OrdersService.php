@@ -51,6 +51,7 @@ use App\Models\Unit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -276,7 +277,7 @@ class OrdersService
         if (
             isset( $fields[ 'instalments' ] ) &&
             ! empty( $fields[ 'instalments' ] ) &&
-            ! in_array( $fields[ 'payment_status' ], [ Order::PAYMENT_HOLD ] )
+            ! in_array( $fields[ 'payment_status' ] ?? null, [ Order::PAYMENT_HOLD ] )
         ) {
             $instalments = collect( $fields[ 'instalments' ] );
             $total = Currency::define( $instalments->sum( 'amount' ) )->getRaw();
@@ -1173,10 +1174,10 @@ class OrdersService
     }
 
     /**
-     * @param Collection $items
-     * @return Collection $items
+     * @param SupportCollection $items
+     * @return SupportCollection $items
      */
-    private function __checkProductStock( $items )
+    private function __checkProductStock( SupportCollection $items )
     {
         $session_identifier = Str::random( '10' );
 
@@ -1991,7 +1992,7 @@ class OrdersService
      */
     public function addProducts(Order $order, $products)
     {
-        $products = $this->__checkProductStock($products);
+        $products = $this->__checkProductStock( collect( $products) );
 
         /**
          * let's save the products
@@ -2599,7 +2600,6 @@ class OrdersService
             if ( $orderInstalments->count() > 0 ) {
                 $payableDifference = Currency::define( $order->tendered )
                     ->subtractBy( $paidInstalments )
-                    // ->subtractBy( $otherInstalments )
                     ->getRaw();
 
                 $orderInstalments

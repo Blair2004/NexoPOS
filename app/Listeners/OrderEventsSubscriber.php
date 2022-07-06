@@ -94,6 +94,11 @@ class OrderEventsSubscriber
         );
 
         $events->listen(
+            OrderAfterCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleOrderAfterCreatedForCoupons' ]
+        );
+
+        $events->listen(
             OrderAfterUpdatedEvent::class,
             [ OrderEventsSubscriber::class, 'handleInstalmentPayment' ]
         );
