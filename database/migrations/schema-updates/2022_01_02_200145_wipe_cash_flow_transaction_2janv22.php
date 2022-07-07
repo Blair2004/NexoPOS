@@ -22,20 +22,9 @@ class WipeCashFlowTransaction2janv22 extends Migration
         if ( $order instanceof Order ) {
             $fromDate = Carbon::parse( $order->created_at );
             $toDate = ns()->date->copy()->endOfDay();
-            $wasLoggedIn = true;
-
-            if ( ! Auth::check() ) {
-                $wasLoggedIn = false;
-                $user = Role::namespace( 'admin' )->users->first();
-                Auth::login( $user );
-            }
 
             RecomputeCashFlowForDate::dispatch( $fromDate, $toDate )
-                ->delay( now()->addMinute() );
-
-            if ( ! $wasLoggedIn ) {
-                Auth::logout();
-            }
+                ->delay( now()->addMinute() );            
         }
     }
 
