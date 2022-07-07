@@ -9,7 +9,7 @@
     </div>
 </div>
 <script type="text/x-template" id="ns-procurement-invoice">
-<div class="p-4 shadow">
+<div class="p-4 shadow ns-box">
     <div id="printable-container">
 
         <div class="my-4 flex justify-between">
