@@ -27,7 +27,7 @@ class ProductCommand extends Command
      */
     protected $description = 'Perform various operations on the products';
 
-    protected $productService;
+    protected ProductService $productService;
 
     public function __construct()
     {
@@ -48,6 +48,9 @@ class ProductCommand extends Command
             ns()->store->setStore( Store::find( $this->option( 'store' ) ) );
         }
 
+        /**
+         * @var ProductService
+         */
         $this->productService = app()->make( ProductService::class );
 
         match ( $this->argument( 'action' ) ) {
@@ -71,7 +74,8 @@ class ProductCommand extends Command
 
     private function perform( Builder $queryBuilder, $callback )
     {
-        $this->withProgressBar( $queryBuilder->get(), fn( $entry ) => $callback( $entry ) );
+        $results = $queryBuilder->get();
+        $this->withProgressBar( $results, fn( $entry ) => $callback( $entry ) );
         $this->newLine();
     }
 

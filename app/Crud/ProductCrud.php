@@ -466,12 +466,12 @@ class ProductCrud extends CrudService
                             'fields'    =>  [
                                 [
                                     'type'  =>  'media',
-                                    'name'  =>  'image',
+                                    'name'  =>  'url',
                                     'label' =>  __( 'Image' ),
                                     'description'   =>  __( 'Choose an image to add on the product gallery' ),
                                 ], [
                                     'type'          =>  'switch',
-                                    'name'          =>  'primary',
+                                    'name'          =>  'featured',
                                     'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                     'label'         =>  __( 'Is Primary' ),
                                     'description'   =>  __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),

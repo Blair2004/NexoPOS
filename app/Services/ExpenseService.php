@@ -356,7 +356,7 @@ class ExpenseService
                     $history->author = $expense->author;
                     $history->name = str_replace( '{user}', ucwords( $user->username ), $expense->name );
                     $history->expense_category_id = $expense->category->id;
-    
+
                     /**
                      * Just in case we want to set the CashFlow as having been
                      * created at a specific moment
@@ -365,14 +365,14 @@ class ExpenseService
                         $history->timestamps = false;
                         $history->created_at = $expense->created_at;
                     }
-    
+
                     if ( isset( $expense->updated_at ) ) {
                         $history->timestamps = false;
                         $history->updated_at = $expense->updated_at;
                     }
-    
+
                     $history->save();
-    
+
                     event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
             });

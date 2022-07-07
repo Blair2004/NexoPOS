@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Models\Role;
 use App\Services\ReportService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,13 +33,13 @@ class RecomputeCashFlowForDate implements ShouldQueue
     public function handle()
     {
         $wasLoggedIn = true;
-        
+
         if ( ! Auth::check() ) {
             $wasLoggedIn = false;
             $user = Role::namespace( 'admin' )->users->first();
             Auth::login( $user );
         }
-        
+
         /**
          * @var ReportService $reportService
          */

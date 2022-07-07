@@ -2,11 +2,8 @@
 
 use App\Jobs\RecomputeCashFlowForDate;
 use App\Models\Order;
-use App\Models\Role;
-use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Auth;
 
 class WipeCashFlowTransaction2janv22 extends Migration
 {
@@ -24,7 +21,7 @@ class WipeCashFlowTransaction2janv22 extends Migration
             $toDate = ns()->date->copy()->endOfDay();
 
             RecomputeCashFlowForDate::dispatch( $fromDate, $toDate )
-                ->delay( now()->addMinute() );            
+                ->delay( now()->addMinute() );
         }
     }
 

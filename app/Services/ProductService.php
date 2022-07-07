@@ -583,9 +583,9 @@ class ProductService
 
         foreach ( $groups as $group ) {
             $image = new ProductGallery;
-            $image->featured = $group[ 'primary' ] ?? 0;
-            $image->url = $group[ 'image' ];
-            $image->author = Auth::id();
+            $image->featured = $group[ 'featured' ] ?? 0;
+            $image->url = $group[ 'url' ];
+            $image->author = $product->author;
             $image->product_id = $product->id;
             $image->save();
         }
