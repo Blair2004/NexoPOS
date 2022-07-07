@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\RecomputeCashFlowForDate;
 use App\Models\Order;
 use App\Models\Role;
 use App\Services\ReportService;
@@ -29,11 +30,8 @@ class WipeCashFlowTransaction2janv22 extends Migration
                 Auth::login( $user );
             }
 
-            /**
-             * @var ReportService $reportService
-             */
-            $reportService = app()->make( ReportService::class );
-            $reportService->recomputeCashFlow( $fromDate, $toDate );
+            RecomputeCashFlowForDate::dispatch( $fromDate, $toDate )
+                ->delay( now()->addMinute() );
 
             if ( ! $wasLoggedIn ) {
                 Auth::logout();
