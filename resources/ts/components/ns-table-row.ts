@@ -106,10 +106,10 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
             </div>
         </td>
         <td v-for="(column, identifier) of columns" class="font-sans p-2">
-            <template v-if="row[ identifier].type && row[ identifier ].type === 'link'">
+            <template v-if="row[ identifier ] && row[ identifier ].type && row[ identifier ].type === 'link'">
                 <a target="_blank" :href="row[ identifier ].href" v-html="sanitizeHTML( row[ identifier ].label )"></a>
             </template>
-            <template v-if="typeof row[ identifier] === 'string' || typeof row[ identifier] === 'number'">
+            <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
                 <div v-html="sanitizeHTML( row[ identifier ] )"></div>
             </template>
         </td>
