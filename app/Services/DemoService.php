@@ -148,7 +148,7 @@ class DemoService extends DemoCoreService
                         'images'            =>  [
                             [
                                 'primary'       =>  true,
-                                'image'         =>  asset( $product->image ),
+                                'url'           =>  asset( $product->image ),
                             ],
                         ],
                         'units' =>  [
