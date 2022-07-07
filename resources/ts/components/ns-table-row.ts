@@ -112,6 +112,9 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
             <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
                 <div v-html="sanitizeHTML( row[ identifier ] )"></div>
             </template>
+            <template v-if="row[ identifier ] === null">
+                <div>{{ __( 'Undefined' ) }}</div>
+            </template>
         </td>
         <td v-if="!prependOptions && showOptions" class="font-sans p-2 flex flex-col items-center justify-center">
             <div class=""> <!-- flex items-center justify-center -->
