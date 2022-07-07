@@ -101,17 +101,17 @@ class ResetService
 
         Artisan::call( 'migrate:reset', [
             '--path'    => '/database/migrations/default',
-            '--force'   => true 
+            '--force'   => true,
         ]);
-        
+
         Artisan::call( 'migrate:reset', [
             '--path'    => '/database/migrations/create-tables',
-            '--force'   => true 
+            '--force'   => true,
         ]);
-        
+
         Artisan::call( 'migrate:reset', [
             '--path'    => '/database/migrations/misc',
-            '--force'   => true 
+            '--force'   => true,
         ]);
 
         DotenvEditor::load();

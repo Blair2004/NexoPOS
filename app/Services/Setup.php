@@ -121,23 +121,23 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        Artisan::call( 'migrate', [ 
+        Artisan::call( 'migrate', [
             '--force'   =>  true,
-            '--path'    =>  '/database/migrations/default'
+            '--path'    =>  '/database/migrations/default',
         ]);
 
-        Artisan::call( 'migrate', [ 
+        Artisan::call( 'migrate', [
             '--force'   => true,
-            '--path'    => '/database/migrations/create-tables'
+            '--path'    => '/database/migrations/create-tables',
         ]);
 
-        Artisan::call( 'vendor:publish', [ 
+        Artisan::call( 'vendor:publish', [
             '--force'       => true,
-            '--provider'    =>  'Laravel\Sanctum\SanctumServiceProvider'
+            '--provider'    =>  'Laravel\Sanctum\SanctumServiceProvider',
         ]);
 
-        Artisan::call( 'ns:translate', [ 
-            '--symlink' => true
+        Artisan::call( 'ns:translate', [
+            '--symlink' => true,
         ]);
 
         /**

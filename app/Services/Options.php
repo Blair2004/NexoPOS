@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Option;
-use Illuminate\Support\Collection;
 
 class Options
 {
@@ -245,18 +244,13 @@ class Options
      * Delete Key
      *
      * @param string key
-     * @return Collection
      **/
-    public function delete( $key )
+    public function delete( $key ): void
     {
-        $this->rawOptions = collect( $this->rawOptions )->filter( function( $option ) use ( $key ) {
+        collect( $this->rawOptions )->each( function( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
-
-                return false;
             }
-
-            return true;
         });
     }
 }

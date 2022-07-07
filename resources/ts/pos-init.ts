@@ -503,7 +503,7 @@ export class POS {
             let order   =   this.order.getValue();
             order       =   this.computeProductsTaxes( order );
 
-            if (order.tax_group_id === undefined && order.tax_group_id === null) {
+            if (order.tax_group_id === undefined || order.tax_group_id === null) {
                 this.computeOrderTaxes( order );
 
                 return resolve({ 
