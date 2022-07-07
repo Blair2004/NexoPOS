@@ -348,31 +348,33 @@ class ExpenseService
     {
         if ( ! empty( $expense->group_id  ) ) {
             Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
-                $history = new CashFlow;
-                $history->value = $expense->value;
-                $history->expense_id = $expense->id;
-                $history->operation = 'debit';
-                $history->author = $expense->author;
-                $history->name = str_replace( '{user}', ucwords( $user->username ), $expense->name );
-                $history->expense_category_id = $expense->category->id;
-
-                /**
-                 * Just in case we want to set the CashFlow as having been
-                 * created at a specific moment
-                 */
-                if ( isset( $expense->created_at ) ) {
-                    $history->timestamps = false;
-                    $history->created_at = $expense->created_at;
+                if ( $expense->category instanceof ExpenseCategory ) {
+                    $history = new CashFlow;
+                    $history->value = $expense->value;
+                    $history->expense_id = $expense->id;
+                    $history->operation = 'debit';
+                    $history->author = $expense->author;
+                    $history->name = str_replace( '{user}', ucwords( $user->username ), $expense->name );
+                    $history->expense_category_id = $expense->category->id;
+    
+                    /**
+                     * Just in case we want to set the CashFlow as having been
+                     * created at a specific moment
+                     */
+                    if ( isset( $expense->created_at ) ) {
+                        $history->timestamps = false;
+                        $history->created_at = $expense->created_at;
+                    }
+    
+                    if ( isset( $expense->updated_at ) ) {
+                        $history->timestamps = false;
+                        $history->updated_at = $expense->updated_at;
+                    }
+    
+                    $history->save();
+    
+                    event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
-
-                if ( isset( $expense->updated_at ) ) {
-                    $history->timestamps = false;
-                    $history->updated_at = $expense->updated_at;
-                }
-
-                $history->save();
-
-                event( new CashFlowHistoryAfterCreatedEvent( $history ) );
             });
         } else {
             $history = new CashFlow;
