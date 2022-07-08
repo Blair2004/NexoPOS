@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->schedule( function() {
+        $schedule->call( function() {
             if ( env( 'TELESCOPE_ENABLED', false ) ) {
                 Artisan::call( 'telescope:prune', [ 'hours' => 12 ]);
             }
