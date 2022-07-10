@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Modules\NsGastro\Tests\TestCase;
+use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
 
