@@ -32,7 +32,7 @@ class ResetSessionCookieCommand extends Command
         switch( $this->argument( 'action' ) ) {
             case 'generate':
                 DotenvEditor::load();
-                DotenvEditor::setKey( 'SESSION_COOKIE', env( 'APP_NAME' ) . '_' . Str::random(5) );
+                DotenvEditor::setKey( 'SESSION_COOKIE', strtolower( str::snake( env( 'APP_NAME' ) ) . '_' . Str::random(5) ) );
                 DotenvEditor::save();
             break;
         }
