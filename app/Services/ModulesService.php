@@ -1477,7 +1477,7 @@ class ModulesService
      */
     public function checkManagementStatus()
     {
-        if ( env( 'NS_MODULES_MANAGEMENT_DISABLED', false ) && env( 'NS_LOCK_MODULES', false ) ) {
+        if ( env( 'NS_LOCK_MODULES', false ) ) {
             throw new NotAllowedException( __( 'Unable to proceed, the modules management is disabled.' ) );
         }
     }
