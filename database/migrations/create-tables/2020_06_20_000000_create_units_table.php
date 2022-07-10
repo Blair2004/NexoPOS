@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateUnitsTable extends Migration
 {
@@ -27,7 +25,7 @@ class CreateUnitsTable extends Migration
                 $table->integer( 'author' );
                 $table->integer( 'group_id' );
                 $table->float( 'value', 18, 5 );
-                $table->string( 'preview_url' )->nullable();        
+                $table->string( 'preview_url' )->nullable();
                 $table->boolean( 'base_unit' ); // 0, 1
                 $table->string( 'uuid' )->nullable();
                 $table->timestamps();
@@ -47,4 +45,3 @@ class CreateUnitsTable extends Migration
         }
     }
 }
-

@@ -1,35 +1,34 @@
 <?php
+
 namespace App\Services;
 
-use App\Events\ExpenseAfterCreateEvent;
 use App\Events\CashFlowHistoryAfterCreatedEvent;
+use App\Events\ExpenseAfterCreateEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Exceptions\NotAllowedException;
-use App\Models\Expense;
-use Illuminate\Support\Facades\Auth;
-use App\Models\ExpenseCategory;
 use App\Exceptions\NotFoundException;
 use App\Models\AccountType;
 use App\Models\CashFlow;
 use App\Models\Customer;
 use App\Models\CustomerAccountHistory;
+use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Order;
-use App\Models\OrderPayment;
 use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Models\Procurement;
-use App\Models\RegisterHistory;
 use App\Models\Role;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
-class ExpenseService 
+class ExpenseService
 {
     /**
      * @var DateService
      */
     protected $dateService;
 
-    protected $accountTypes  =   [
+    protected $accountTypes = [
         CashFlow::ACCOUNT_SALES             =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
         CashFlow::ACCOUNT_REFUNDS           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
         CashFlow::ACCOUNT_SPOILED           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
@@ -41,19 +40,19 @@ class ExpenseService
     ];
 
     public function __construct( DateService $dateService )
-    {   
-        $this->dateService      =   $dateService;
+    {
+        $this->dateService = $dateService;
     }
-    
+
     public function create( $fields )
     {
-        $expense    =   new Expense;
+        $expense = new Expense;
 
-        foreach( $fields as $field => $value ) {
-            $expense->$field    =   $value;
+        foreach ( $fields as $field => $value ) {
+            $expense->$field = $value;
         }
 
-        $expense->author        =   Auth::id();
+        $expense->author = Auth::id();
         $expense->save();
 
         event( new ExpenseAfterCreateEvent( $expense, request() ) );
@@ -61,27 +60,26 @@ class ExpenseService
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The expense has been successfully saved.' ),
-            'data'      =>  compact( 'expense' )
+            'data'      =>  compact( 'expense' ),
         ];
     }
 
     public function edit( $id, $fields )
     {
-        $expense    =   $this->get( $id );
+        $expense = $this->get( $id );
 
         if ( $expense instanceof Expense ) {
-            
-            foreach( $fields as $field => $value ) {
-                $expense->$field    =   $value;
+            foreach ( $fields as $field => $value ) {
+                $expense->$field = $value;
             }
 
-            $expense->author        =   Auth::id();
+            $expense->author = Auth::id();
             $expense->save();
 
             return [
                 'status'    =>  'success',
                 'message'   =>  __( 'The expense has been successfully updated.' ),
-                'data'      =>  compact( 'expense' )
+                'data'      =>  compact( 'expense' ),
             ];
         }
 
@@ -91,17 +89,18 @@ class ExpenseService
     /**
      * get a specific expense using
      * the provided id
+     *
      * @param int expense id
      * @return Collection|Expense|NotFoundException
      */
-    public function get( $id = null ) 
+    public function get( $id = null )
     {
         if ( $id === null ) {
             return Expense::get();
         }
 
-        $expense    =   Expense::find( $id );
-        
+        $expense = Expense::find( $id );
+
         if ( ! $expense instanceof Expense ) {
             throw new NotFoundException( __( 'Unable to find the requested expense using the provided id.' ) );
         }
@@ -110,47 +109,49 @@ class ExpenseService
     }
 
     /**
-     * Delete an expense using the 
+     * Delete an expense using the
      * provided id
+     *
      * @param int expense id
      * @return array
      */
     public function delete( $id )
     {
-        $expense        =   $this->get( $id );              
+        $expense = $this->get( $id );
         $expense->delete();
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The expense has been correctly deleted.' )
+            'message'   =>  __( 'The expense has been correctly deleted.' ),
         ];
     }
 
     /**
      * @deprecated
+     * @use getAccountType
      */
     public function getCategories( $id = null )
     {
         if ( $id !== null ) {
-            $category   =   ExpenseCategory::find( $id );
-            if ( ! $category instanceof ExpenseCategory ) {
-                throw new NotFoundException( __( 'Unable to find the requested expense category using the provided id.' ) );
+            $category = AccountType::find( $id );
+            if ( ! $category instanceof AccountType ) {
+                throw new NotFoundException( __( 'Unable to find the requested account category using the provided id.' ) );
             }
 
             return $category;
         }
 
-        return ExpenseCategory::get();
+        return AccountType::get();
     }
 
     /**
-     * Retreive a specific account type 
+     * Retreive a specific account type
      * or all accuont type
      */
     public function getAccountTypeByID( $id )
     {
         if ( $id !== null ) {
-            $category   =   AccountType::find( $id );
+            $category = AccountType::find( $id );
             if ( ! $category instanceof AccountType ) {
                 throw new NotFoundException( __( 'Unable to find the requested account type using the provided id.' ) );
             }
@@ -163,18 +164,19 @@ class ExpenseService
 
     /**
      * Delete specific account type
+     *
      * @todo must be implemented
      */
     public function deleteAccountType( $id, $force = true )
     {
-        $accountType    =   $this->getAccountTypeByID( $id );
+        $accountType = $this->getAccountTypeByID( $id );
 
         if ( $accountType->expenses->count() > 0 && $force === false ) {
             throw new NotAllowedException( __( 'You cannot delete an account type that has transaction bound.' ) );
         }
 
         /**
-         * if there is not expense, it 
+         * if there is not expense, it
          * won't be looped
          */
         $accountType->expenses->map( function( $expense ) {
@@ -182,136 +184,143 @@ class ExpenseService
         });
 
         $accountType->delete();
-        
+
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The account type has been deleted.' )
+            'message'   =>  __( 'The account type has been deleted.' ),
         ];
     }
 
     /**
      * Delete a specific category
      * using the provided id, along with the expenses
+     *
      * @param int id
-     * @param boolean force deleting
+     * @param bool force deleting
      * @return array|NotAllowedException
      */
     public function deleteCategory( $id, $force = false )
     {
-        $expenseCategory    =   $this->getCategories( $id );
+        $accountType = $this->getAccountTypeByID( $id );
 
-        if ( $expenseCategory->expenses->count() > 0 && $force === false ) {
+        if ( $accountType->expenses->count() > 0 && $force === false ) {
             throw new NotAllowedException( __( 'You cannot delete a category which has expenses bound.' ) );
         }
 
         /**
-         * if there is not expense, it 
+         * if there is not expense, it
          * won't be looped
          */
-        $expenseCategory->expenses->map( function( $expense ) {
+        $accountType->expenses->map( function( $expense ) {
             $expense->delete();
         });
 
-        $expenseCategory->delete();
-        
+        $accountType->delete();
+
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been deleted.' )
+            'message'   =>  __( 'The expense category has been deleted.' ),
         ];
     }
 
     /**
      * Get a specific expense
      * category using the provided ID
+     *
      * @param int expense category id
      * @return void|Collection
      */
     public function getCategory( $id )
     {
-        $expenseCategory    =   ExpenseCategory::find( $id );
-        
-        if ( ! $expenseCategory instanceof ExpenseCategory ) {
+        $accountType = AccountType::with( 'expenses' )->find( $id );
+
+        if ( ! $accountType instanceof AccountType ) {
             throw new NotFoundException( __( 'Unable to find the expense category using the provided ID.' ) );
         }
 
-        return $expenseCategory;
+        return $accountType;
     }
 
     /**
-     * Create a category using 
+     * Create a category using
      * the provided details
+     *
      * @param array category detail
      * @return array status of the operation
+     *
      * @deprecated
      */
     public function createCategory( $fields )
     {
-        $category    =   new ExpenseCategory;
+        $category = new AccountType;
 
-        foreach( $fields as $field => $value ) {
-            $category->$field    =   $value;
+        foreach ( $fields as $field => $value ) {
+            $category->$field = $value;
         }
 
-        $category->author    =   Auth::id();
+        $category->author = Auth::id();
         $category->save();
-        
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The expense category has been saved' ),
-            'data'      =>  compact( 'category' )
+            'data'      =>  compact( 'category' ),
         ];
     }
 
     /**
      * Creates an accounting account
+     *
      * @param array $fields
      * @return array status
      */
     public function createAccount( $fields )
     {
-        $category    =   new AccountType;
+        $category = new AccountType;
 
-        foreach( $fields as $field => $value ) {
-            $category->$field    =   $value;
+        foreach ( $fields as $field => $value ) {
+            $category->$field = $value;
         }
 
-        $category->author    =   Auth::id();
+        $category->author = Auth::id();
         $category->save();
-        
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The account has been created.' ),
-            'data'      =>  compact( 'category' )
+            'data'      =>  compact( 'category' ),
         ];
     }
 
     /**
      * Update specified expense
      * category using a provided ID
+     *
      * @param int expense category ID
      * @param array of values to update
      * @return array operation status
      */
     public function editCategory( $id, $fields )
     {
-        $category    =   $this->getCategory( $id );
+        $category = $this->getCategory( $id );
 
-        foreach( $fields as $field => $value ) {
-            $category->$field    =   $value;
+        foreach ( $fields as $field => $value ) {
+            $category->$field = $value;
         }
 
-        $category->author        =   Auth::id();
+        $category->author = Auth::id();
         $category->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The expense category has been updated.' ),
-            'data'      =>  compact( 'category' )
+            'data'      =>  compact( 'category' ),
         ];
     }
 
     /**
      * Will trigger for not recurring expense
+     *
      * @param Expense $expense
      * @return void
      */
@@ -321,110 +330,113 @@ class ExpenseService
 
         /**
          * a non recurring expenses
-         * once triggered should be disabled to 
+         * once triggered should be disabled to
          * prevent futher execution on modification.
          */
-        $expense->active    =   false;
+        $expense->active = false;
         $expense->save();
     }
 
     public function getCategoryExpense( $id )
     {
-        $expenseCategory    =   $this->getCategory( $id );
-        return $expenseCategory->expenses;
+        $accountType = $this->getCategory( $id );
+
+        return $accountType->expenses;
     }
 
     public function recordCashFlowHistory( Expense $expense )
     {
         if ( ! empty( $expense->group_id  ) ) {
             Role::find( $expense->group_id )->users->each( function( $user ) use ( $expense ) {
-                $history                            =   new CashFlow;
-                $history->value                     =   $expense->value;
-                $history->expense_id                =   $expense->id;
-                $history->operation                 =   'debit';
-                $history->author                    =   $expense->author;
-                $history->name                      =   str_replace( '{user}', ucwords( $user->username ), $expense->name );
-                $history->expense_category_id       =   $expense->category->id;
+                if ( $expense->category instanceof ExpenseCategory ) {
+                    $history = new CashFlow;
+                    $history->value = $expense->value;
+                    $history->expense_id = $expense->id;
+                    $history->operation = 'debit';
+                    $history->author = $expense->author;
+                    $history->name = str_replace( '{user}', ucwords( $user->username ), $expense->name );
+                    $history->expense_category_id = $expense->category->id;
 
-                /**
-                 * Just in case we want to set the CashFlow as having been
-                 * created at a specific moment
-                 */
-                if ( isset( $expense->created_at ) ) {
-                    $history->timestamps    =   false;
-                    $history->created_at    =   $expense->created_at;
+                    /**
+                     * Just in case we want to set the CashFlow as having been
+                     * created at a specific moment
+                     */
+                    if ( isset( $expense->created_at ) ) {
+                        $history->timestamps = false;
+                        $history->created_at = $expense->created_at;
+                    }
+
+                    if ( isset( $expense->updated_at ) ) {
+                        $history->timestamps = false;
+                        $history->updated_at = $expense->updated_at;
+                    }
+
+                    $history->save();
+
+                    event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
-
-                if ( isset( $expense->updated_at ) ) {
-                    $history->timestamps    =   false;
-                    $history->updated_at    =   $expense->updated_at;
-                }
-
-                $history->save();
-
-                event( new CashFlowHistoryAfterCreatedEvent( $history ) );
             });
         } else {
-            $history                                =   new CashFlow;
-            $history->value                         =   $expense->value;
-            $history->expense_id                    =   $expense->id;
-            $history->operation                     =   $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
-            $history->author                        =   $expense->author;
-            $history->name                          =   $expense->name;
-            $history->procurement_id                =   $expense->procurement_id ?? 0; // if the cash flow is created from a procurement
-            $history->order_id                      =   $expense->order_id ?? 0; // if the cash flow is created from a refund
-            $history->register_history_id           =   $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
-            $history->customer_account_history_id   =   $expense->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
-            $history->expense_category_id           =   $expense->category->id;
+            $history = new CashFlow;
+            $history->value = $expense->value;
+            $history->expense_id = $expense->id;
+            $history->operation = $expense->operation ?? 'debit'; // if the operation is not defined, by default is a "debit"
+            $history->author = $expense->author;
+            $history->name = $expense->name;
+            $history->procurement_id = $expense->procurement_id ?? 0; // if the cash flow is created from a procurement
+            $history->order_id = $expense->order_id ?? 0; // if the cash flow is created from a refund
+            $history->register_history_id = $expense->register_history_id ?? 0; // if the cash flow is created from a register transaction
+            $history->customer_account_history_id = $expense->customer_account_history_id ?? 0; // if the cash flow is created from a customer payment.
+            $history->expense_category_id = $expense->category->id;
 
             /**
              * Just in case we want to set the CashFlow as having been
              * created at a specific moment
              */
             if ( isset( $expense->created_at ) ) {
-                $history->timestamps    =   false;
-                $history->created_at    =   $expense->created_at;
+                $history->timestamps = false;
+                $history->created_at = $expense->created_at;
             }
 
             if ( isset( $expense->updated_at ) ) {
-                $history->timestamps    =   false;
-                $history->updated_at    =   $expense->updated_at;
+                $history->timestamps = false;
+                $history->updated_at = $expense->updated_at;
             }
 
             $history->save();
 
-            event( new CashFlowHistoryAfterCreatedEvent( $history ) );
+            CashFlowHistoryAfterCreatedEvent::dispatch( $history );
         }
     }
 
     /**
      * Process recorded expenses
-     * and check wether they are supposed to be processed 
-     * on the current day. 
-     * 
+     * and check wether they are supposed to be processed
+     * on the current day.
+     *
      * @return array of process results.
      */
     public function handleRecurringExpenses()
     {
-        $processStatus      =   Expense::recurring()
+        $processStatus = Expense::recurring()
             ->active()
             ->get()
             ->map( function( $expense ) {
-                switch( $expense->occurence ) {
+                switch ( $expense->occurence ) {
                     case 'month_starts':
-                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth() );   
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth() );
                     break;
                     case 'month_mid':
-                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays(14) );
                     break;
                     case 'month_ends':
-                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->endOfMonth() );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth() );
                     break;
                     case 'x_before_month_ends':
-                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->endOfMonth()->subDays( $expense->occurence_value ) );
                     break;
                     case 'x_after_month_starts':
-                        $expenseScheduledDate   =   Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
+                        $expenseScheduledDate = Carbon::parse( $this->dateService->copy()->startOfMonth()->addDays( $expense->occurence_value ) );
                     break;
                 }
 
@@ -433,38 +445,35 @@ class ExpenseService
                  * already issued on the occuring day.
                  */
                 if ( $this->dateService->isSameDay( $expenseScheduledDate ) ) {
-                    
                     if ( ! $this->hadCashFlowRecordedAlready( $expenseScheduledDate, $expense ) ) {
-                        
                         $this->recordCashFlowHistory( $expense );
-                        
+
                         return [
                             'status'    =>  'success',
                             'message'   =>  sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
                         ];
-                    } 
+                    }
 
                     return [
                         'status'    =>  'failed',
                         'message'   =>  sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
                     ];
-                } 
+                }
 
                 return [
                     'status'    =>  'failed',
-                    'message'   =>  sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name )
+                    'message'   =>  sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
                 ];
-
             });
 
-        $successFulProcesses    =   collect( $processStatus )->filter( fn( $process ) => $process[ 'status' ] === 'success' );
+        $successFulProcesses = collect( $processStatus )->filter( fn( $process ) => $process[ 'status' ] === 'success' );
 
         return [
             'status'    =>  'success',
             'data'      =>  $processStatus->toArray(),
             'message'   =>  $successFulProcesses->count() === $processStatus->count() ?
                 __( 'The process has been correctly executed and all expenses has been processed.' ) :
-                    sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() )
+                    sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() ),
         ];
     }
 
@@ -475,7 +484,7 @@ class ExpenseService
      */
     public function hadCashFlowRecordedAlready( $date, Expense $expense )
     {
-        $history    =   CashFlow::where( 'expense_id', $expense->id )
+        $history = CashFlow::where( 'expense_id', $expense->id )
             ->where( 'created_at', '>=', $date->startOfDay()->toDateTimeString() )
             ->where( 'created_at', '<=', $date->endOfDay()->toDateTimeString() )
             ->get();
@@ -485,31 +494,32 @@ class ExpenseService
 
     /**
      * Will record an expense resulting from a paid procurement
+     *
      * @param Procurement $procurement
      * @return void
      */
     public function handleProcurementExpense( Procurement $procurement )
     {
-        if ( 
+        if (
             $procurement->payment_status === Procurement::PAYMENT_PAID &&
             $procurement->delivery_status === Procurement::STOCKED
         ) {
-            $expenseCategory    =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_PROCUREMENTS );
-                                    
+            $accountTypeCode = $this->getAccountTypeByCode( CashFlow::ACCOUNT_PROCUREMENTS );
+
             /**
              * this behave as a flash expense
              * made only for recording an history.
              */
-            $expense                    =   new Expense;
-            $expense->value             =   $procurement->cost;
-            $expense->active            =   true;
-            $expense->author            =   Auth::id();
-            $expense->procurement_id    =   $procurement->id;
-            $expense->name              =   sprintf( __( 'Procurement : %s' ), $procurement->name );
-            $expense->id                =   0; // this is not assigned to an existing expense
-            $expense->category          =   $expenseCategory;
-            $expense->created_at        =   $procurement->created_at;
-            $expense->updated_at        =   $procurement->updated_at;
+            $expense = new Expense;
+            $expense->value = $procurement->cost;
+            $expense->active = true;
+            $expense->author = $procurement->author;
+            $expense->procurement_id = $procurement->id;
+            $expense->name = sprintf( __( 'Procurement : %s' ), $procurement->name );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $accountTypeCode;
+            $expense->created_at = $procurement->created_at;
+            $expense->updated_at = $procurement->updated_at;
 
             $this->recordCashFlowHistory( $expense );
         }
@@ -517,27 +527,28 @@ class ExpenseService
 
     /**
      * Will record an expense for every refund performed
+     *
      * @param OrderProduct $orderProduct
      * @return void
      */
     public function createExpenseFromRefund( Order $order, OrderProductRefund $orderProductRefund, OrderProduct $orderProduct )
     {
-        $expenseCategory    =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );
-                                
+        $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );
+
         /**
          * Every product refund produce a debit
          * operation on the system.
          */
-        $expense                    =   new Expense;
-        $expense->value             =   $orderProductRefund->total_price;
-        $expense->active            =   true;
-        $expense->operation         =   CashFlow::OPERATION_DEBIT;
-        $expense->author            =   Auth::id();
-        $expense->order_id          =   $order->id;
-        $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
-        $expense->name              =   sprintf( __( 'Refunding : %s' ), $orderProduct->name );
-        $expense->id                =   0; // this is not assigned to an existing expense
-        $expense->category          =   $expenseCategory;
+        $expense = new Expense;
+        $expense->value = $orderProductRefund->total_price;
+        $expense->active = true;
+        $expense->operation = CashFlow::OPERATION_DEBIT;
+        $expense->author = Auth::id();
+        $expense->order_id = $order->id;
+        $expense->order_refund_id = $orderProductRefund->order_refund_id;
+        $expense->name = sprintf( __( 'Refunding : %s' ), $orderProduct->name );
+        $expense->id = 0; // this is not assigned to an existing expense
+        $expense->category = $expenseCategory;
 
         $this->recordCashFlowHistory( $expense );
 
@@ -546,19 +557,19 @@ class ExpenseService
              * Only if the product is damaged we should
              * consider saving that as a waste.
              */
-            $expenseCategory    =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_SPOILED );
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SPOILED );
 
-            $expense                    =   new Expense;
-            $expense->value             =   $orderProductRefund->total_price;
-            $expense->active            =   true;
-            $expense->operation         =   CashFlow::OPERATION_DEBIT;
-            $expense->author            =   Auth::id();
-            $expense->order_id          =   $order->id;
-            $expense->order_refund_id   =   $orderProductRefund->order_refund_id;
-            $expense->name              =   sprintf( __( 'Spoiled Good : %s' ), $orderProduct->name );
-            $expense->id                =   0; // this is not assigned to an existing expense
-            $expense->category          =   $expenseCategory;
-    
+            $expense = new Expense;
+            $expense->value = $orderProductRefund->total_price;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_DEBIT;
+            $expense->author = Auth::id();
+            $expense->order_id = $order->id;
+            $expense->order_refund_id = $orderProductRefund->order_refund_id;
+            $expense->name = sprintf( __( 'Spoiled Good : %s' ), $orderProduct->name );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+
             $this->recordCashFlowHistory( $expense );
         }
     }
@@ -567,24 +578,25 @@ class ExpenseService
      * If the order has just been
      * created and the payment status is PAID
      * we'll store the total as a cash flow transaction.
+     *
      * @param Order $order
      * @return void
      */
     public function handleCreatedOrder( Order $order )
     {
-        $expenseCategory    =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
+        $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
-        $expense                        =   new Expense;
-        $expense->value                 =   $order->total;
-        $expense->active                =   true;
-        $expense->operation             =   CashFlow::OPERATION_CREDIT;
-        $expense->author                =   Auth::id();
-        $expense->order_id              =   $order->id;
-        $expense->name                  =   sprintf( __( 'Sale : %s' ), $order->code );
-        $expense->id                    =   0; // this is not assigned to an existing expense
-        $expense->category              =   $expenseCategory;
-        $expense->created_at            =   $order->created_at;
-        $expense->updated_at            =   $order->updated_at;
+        $expense = new Expense;
+        $expense->value = $order->total;
+        $expense->active = true;
+        $expense->operation = CashFlow::OPERATION_CREDIT;
+        $expense->author = Auth::id();
+        $expense->order_id = $order->id;
+        $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
+        $expense->id = 0; // this is not assigned to an existing expense
+        $expense->category = $expenseCategory;
+        $expense->created_at = $order->created_at;
+        $expense->updated_at = $order->updated_at;
 
         $this->recordCashFlowHistory( $expense );
     }
@@ -592,27 +604,28 @@ class ExpenseService
     /**
      * Will pul the defined account
      * or will create a new one according to the settings
+     *
      * @param string $accountSettingsName
      * @param array $defaults
      * @return ExpenseCategory $expenseCategory
      */
     public function getDefinedAccountType( $accountSettingsName, $defaults )
     {
-        $accountType    =   AccountType::find( ns()->option->get( $accountSettingsName ) );
+        $accountType = AccountType::find( ns()->option->get( $accountSettingsName ) );
 
         if ( ! $accountType instanceof AccountType ) {
-            $result     =   $this->createAccount( $defaults );
+            $result = $this->createAccount( $defaults );
 
-            $accountType    =   ( object ) $result[ 'data' ][ 'category' ];
-            
+            $accountType = (object) $result[ 'data' ][ 'category' ];
+
             /**
              * Will set the expense as the default category expense
              * category for subsequent expenses.
              */
             ns()->option->set( $accountSettingsName, $accountType->id );
 
-            $accountType    =   AccountType::find( ns()->option->get( $accountSettingsName ) );
-        } 
+            $accountType = AccountType::find( ns()->option->get( $accountSettingsName ) );
+        }
 
         return $accountType;
     }
@@ -621,6 +634,7 @@ class ExpenseService
      * Will compare order payment status
      * and if the previous and the new payment status are supported
      * the transaction will be record to the cash flow
+     *
      * @param OrderAfterPaymentStatusChangedEvent $event
      * @return void
      */
@@ -631,23 +645,23 @@ class ExpenseService
             Order::PAYMENT_DUE,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_PARTIALLY_DUE,
-            Order::PAYMENT_UNPAID
+            Order::PAYMENT_UNPAID,
         ]) && in_array(
             $event->new, [
-                Order::PAYMENT_PAID
+                Order::PAYMENT_PAID,
             ]
         )) {
-            $expenseCategory                =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );   
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
-            $expense                        =   new Expense;
-            $expense->value                 =   $event->order->total;
-            $expense->active                =   true;
-            $expense->operation             =   CashFlow::OPERATION_CREDIT;
-            $expense->author                =   Auth::id();
-            $expense->order_id              =   $event->order->id;
-            $expense->name                  =   sprintf( __( 'Sale : %s' ), $event->order->code );
-            $expense->id                    =   0; // this is not assigned to an existing expense
-            $expense->category              =   $expenseCategory;
+            $expense = new Expense;
+            $expense->value = $event->order->total;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_CREDIT;
+            $expense->author = Auth::id();
+            $expense->order_id = $event->order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $event->order->code );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
 
             $this->recordCashFlowHistory( $expense );
         }
@@ -667,35 +681,36 @@ class ExpenseService
     }
 
     /**
-     * Retreive the account configuration 
+     * Retreive the account configuration
      * using the account type
+     *
      * @param string $type
      * @return ExpenseCategory|AccountType
      */
     public function getAccountTypeByCode( $type )
     {
-        $account    =   $this->accountTypes[ $type ] ?? false;
+        $account = $this->accountTypes[ $type ] ?? false;
 
         if ( ! empty( $account ) ) {
 
             /**
              * This will define the label
              */
-            switch( $type ) {
-                case CashFlow::ACCOUNT_CUSTOMER_CREDIT : $label = __( 'Customer Credit Account' ); break;
-                case CashFlow::ACCOUNT_CUSTOMER_DEBIT : $label = __( 'Customer Debit Account' ); break;
-                case CashFlow::ACCOUNT_PROCUREMENTS : $label = __( 'Procurements Account' ); break;
-                case CashFlow::ACCOUNT_REFUNDS : $label = __( 'Sales Refunds Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHIN : $label = __( 'Register Cash-In Account' ); break;
-                case CashFlow::ACCOUNT_REGISTER_CASHOUT : $label = __( 'Register Cash-Out Account' ); break;
-                case CashFlow::ACCOUNT_SALES : $label = __( 'Sales Account' ); break;
-                case CashFlow::ACCOUNT_SPOILED : $label = __( 'Spoiled Goods Account' ); break;
+            switch ( $type ) {
+                case CashFlow::ACCOUNT_CUSTOMER_CREDIT: $label = __( 'Customer Credit Account' ); break;
+                case CashFlow::ACCOUNT_CUSTOMER_DEBIT: $label = __( 'Customer Debit Account' ); break;
+                case CashFlow::ACCOUNT_PROCUREMENTS: $label = __( 'Procurements Account' ); break;
+                case CashFlow::ACCOUNT_REFUNDS: $label = __( 'Sales Refunds Account' ); break;
+                case CashFlow::ACCOUNT_REGISTER_CASHIN: $label = __( 'Register Cash-In Account' ); break;
+                case CashFlow::ACCOUNT_REGISTER_CASHOUT: $label = __( 'Register Cash-Out Account' ); break;
+                case CashFlow::ACCOUNT_SALES: $label = __( 'Sales Account' ); break;
+                case CashFlow::ACCOUNT_SPOILED: $label = __( 'Spoiled Goods Account' ); break;
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
                 'name'      =>  $label,
                 'operation' =>  $account[ 'operation' ],
-                'account'   =>  $type
+                'account'   =>  $type,
             ]);
         }
 
@@ -707,31 +722,32 @@ class ExpenseService
 
     /**
      * Will process refunded orders
+     *
      * @param string $rangeStart
      * @param string $rangeEnds
      * @return void
      */
     public function processRefundedOrders( $rangeStarts, $rangeEnds )
     {
-        $orders     =   Order::where( 'created_at', '>=', $rangeStarts )
+        $orders = Order::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
             ->paymentStatus( Order::PAYMENT_REFUNDED )
             ->get();
 
-        $expenseCategory                =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );   
+        $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_REFUNDS );
 
         $orders->each( function( $order ) use ( $expenseCategory ) {
-            $expense                                =   new Expense;
-            $expense->value                         =   $order->total;
-            $expense->active                        =   true;
-            $expense->operation                     =   CashFlow::OPERATION_DEBIT;
-            $expense->author                        =   Auth::id();
-            $expense->customer_account_history_id   =   $order->id;
-            $expense->name                          =   sprintf( __( 'Refund : %s' ), $order->code );
-            $expense->id                            =   0; // this is not assigned to an existing expense
-            $expense->category                      =   $expenseCategory;
-            $expense->created_at                    =   $order->created_at;
-            $expense->updated_at                    =   $order->updated_at;
+            $expense = new Expense;
+            $expense->value = $order->total;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_DEBIT;
+            $expense->author = Auth::id();
+            $expense->customer_account_history_id = $order->id;
+            $expense->name = sprintf( __( 'Refund : %s' ), $order->code );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $order->created_at;
+            $expense->updated_at = $order->updated_at;
 
             $this->recordCashFlowHistory( $expense );
         });
@@ -739,39 +755,40 @@ class ExpenseService
 
     /**
      * Will process paid orders
+     *
      * @param string $rangeStart
      * @param string $rangeEnds
      * @return void
      */
     public function processPaidOrders( $rangeStart, $rangeEnds )
     {
-        $orders     =   Order::where( 'created_at', '>=', $rangeStart )
+        $orders = Order::where( 'created_at', '>=', $rangeStart )
             ->with( 'customer' )
             ->where( 'created_at', '<=', $rangeEnds )
             ->paymentStatus( Order::PAYMENT_PAID )
             ->get();
 
-        $expenseCategory                =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );   
+        $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
         Customer::where( 'id', '>', 0 )->update([ 'purchases_amount' => 0 ]);
 
         $orders->each( function( $order ) use ( $expenseCategory ) {
-            $expense                                =   new Expense;
-            $expense->value                         =   $order->total;
-            $expense->active                        =   true;
-            $expense->operation                     =   CashFlow::OPERATION_CREDIT;
-            $expense->author                        =   Auth::id();
-            $expense->customer_account_history_id   =   $order->id;
-            $expense->name                          =   sprintf( __( 'Sale : %s' ), $order->code );
-            $expense->id                            =   0; // this is not assigned to an existing expense
-            $expense->category                      =   $expenseCategory;
-            $expense->created_at                    =   $order->created_at;
-            $expense->updated_at                    =   $order->updated_at;
+            $expense = new Expense;
+            $expense->value = $order->total;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_CREDIT;
+            $expense->author = Auth::id();
+            $expense->customer_account_history_id = $order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $order->created_at;
+            $expense->updated_at = $order->updated_at;
 
-            $customer   =   Customer::find( $order->customer_id );
+            $customer = Customer::find( $order->customer_id );
 
             if ( $customer instanceof Customer ) {
-                $customer->purchases_amount     +=  $order->total;
+                $customer->purchases_amount += $order->total;
                 $customer->save();
             }
 
@@ -781,11 +798,12 @@ class ExpenseService
 
     /**
      * Will process the customer histories
+     *
      * @return void
      */
     public function processCustomerAccountHistories( $rangeStarts, $rangeEnds )
     {
-        $histories  =   CustomerAccountHistory::where( 'created_at', '>=', $rangeStarts )
+        $histories = CustomerAccountHistory::where( 'created_at', '>=', $rangeStarts )
             ->where( 'created_at', '<=', $rangeEnds )
             ->get();
 
@@ -796,6 +814,7 @@ class ExpenseService
 
     /**
      * Will create an expense for each created procurement
+     *
      * @return void
      */
     public function processProcurements( $rangeStarts, $rangeEnds )
@@ -804,11 +823,12 @@ class ExpenseService
             ->where( 'created_at', '<=', $rangeEnds )
             ->get()->each( function( $procurement ) {
                 $this->handleProcurementExpense( $procurement );
-        });
+            });
     }
 
     /**
      * Will trigger not recurring expense
+     *
      * @return void
      */
     public function processExpenses( $rangeStarts, $rangeEnds )
@@ -819,18 +839,18 @@ class ExpenseService
             ->get()
             ->each( function( $expense ) {
                 $this->triggerExpense( $expense );
-        });
+            });
     }
 
     public function processRecurringExpenses( $rangeStart, $rangeEnds )
     {
-        $startDate  =   Carbon::parse( $rangeStart );
-        $endDate    =   Carbon::parse( $rangeEnds );
-        $current    =   ns()->date->copy();
+        $startDate = Carbon::parse( $rangeStart );
+        $endDate = Carbon::parse( $rangeEnds );
+        $current = ns()->date->copy();
 
         if ( $startDate->lessThan( $endDate ) && $startDate->diffInDays( $endDate ) >= 1 ) {
-            while( $startDate->isSameDay() ) {
-                ns()->date      =   $startDate;
+            while ( $startDate->isSameDay() ) {
+                ns()->date = $startDate;
 
                 $this->handleRecurringExpenses();
 
@@ -840,8 +860,9 @@ class ExpenseService
     }
 
     /**
-     * Will add customer credit operation 
+     * Will add customer credit operation
      * to the cash flow history
+     *
      * @param CustomerAccountHistory $customerHistory
      * @return void
      */
@@ -851,63 +872,62 @@ class ExpenseService
             CustomerAccountHistory::OPERATION_ADD,
             CustomerAccountHistory::OPERATION_REFUND,
         ]) ) {
-            $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_CREDIT );   
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_CREDIT );
 
-            $expense                                =   new Expense;
-            $expense->value                         =   $customerHistory->amount;
-            $expense->active                        =   true;
-            $expense->operation                     =   CashFlow::OPERATION_CREDIT;
-            $expense->author                        =   Auth::id();
-            $expense->customer_account_history_id   =   $customerHistory->id;
-            $expense->name                          =   sprintf( __( 'Customer Account Crediting : %s' ), $customerHistory->customer->name );
-            $expense->id                            =   0; // this is not assigned to an existing expense
-            $expense->category                      =   $expenseCategory;
-            $expense->created_at                    =   $customerHistory->created_at;
-            $expense->updated_at                    =   $customerHistory->updated_at;
+            $expense = new Expense;
+            $expense->value = $customerHistory->amount;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_CREDIT;
+            $expense->author = Auth::id();
+            $expense->customer_account_history_id = $customerHistory->id;
+            $expense->name = sprintf( __( 'Customer Account Crediting : %s' ), $customerHistory->customer->name );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $customerHistory->created_at;
+            $expense->updated_at = $customerHistory->updated_at;
 
             $this->recordCashFlowHistory( $expense );
-        } else if ( in_array(
+        } elseif ( in_array(
             $customerHistory->operation, [
                 CustomerAccountHistory::OPERATION_PAYMENT,
             ]
         ) ) {
-            $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );   
-    
-            $expense                                =   new Expense;
-            $expense->value                         =   $customerHistory->amount;
-            $expense->active                        =   true;
-            $expense->operation                     =   CashFlow::OPERATION_DEBIT;
-            $expense->author                        =   Auth::id();
-            $expense->customer_account_history_id   =   $customerHistory->id;
-            $expense->order_id                      =   $customerHistory->order_id;
-            $expense->name                          =   sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
-            $expense->id                            =   0; // this is not assigned to an existing expense
-            $expense->category                      =   $expenseCategory;
-            $expense->created_at                    =   $customerHistory->created_at;
-            $expense->updated_at                    =   $customerHistory->updated_at;
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );
+
+            $expense = new Expense;
+            $expense->value = $customerHistory->amount;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_DEBIT;
+            $expense->author = Auth::id();
+            $expense->customer_account_history_id = $customerHistory->id;
+            $expense->order_id = $customerHistory->order_id;
+            $expense->name = sprintf( __( 'Customer Account Purchase : %s' ), $customerHistory->customer->name );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $customerHistory->created_at;
+            $expense->updated_at = $customerHistory->updated_at;
 
             $this->recordCashFlowHistory( $expense );
-
-        } else if ( in_array(
+        } elseif ( in_array(
             $customerHistory->operation, [
                 CustomerAccountHistory::OPERATION_DEDUCT,
             ]
         ) ) {
-            $expenseCategory                        =   $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );   
-    
-            $expense                                =   new Expense;
-            $expense->value                         =   $customerHistory->amount;
-            $expense->active                        =   true;
-            $expense->operation                     =   CashFlow::OPERATION_DEBIT;
-            $expense->author                        =   Auth::id();
-            $expense->customer_account_history_id   =   $customerHistory->id;
-            $expense->name                          =   sprintf( __( 'Customer Account Deducting : %s' ), $customerHistory->customer->name );
-            $expense->id                            =   0; // this is not assigned to an existing expense
-            $expense->category                      =   $expenseCategory;
-            $expense->created_at                    =   $customerHistory->created_at;
-            $expense->updated_at                    =   $customerHistory->updated_at;
+            $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_CUSTOMER_DEBIT );
+
+            $expense = new Expense;
+            $expense->value = $customerHistory->amount;
+            $expense->active = true;
+            $expense->operation = CashFlow::OPERATION_DEBIT;
+            $expense->author = Auth::id();
+            $expense->customer_account_history_id = $customerHistory->id;
+            $expense->name = sprintf( __( 'Customer Account Deducting : %s' ), $customerHistory->customer->name );
+            $expense->id = 0; // this is not assigned to an existing expense
+            $expense->category = $expenseCategory;
+            $expense->created_at = $customerHistory->created_at;
+            $expense->updated_at = $customerHistory->updated_at;
 
             $this->recordCashFlowHistory( $expense );
-        }        
+        }
     }
 }

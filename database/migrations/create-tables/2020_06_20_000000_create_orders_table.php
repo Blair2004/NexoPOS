@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateOrdersTable extends Migration
 {
@@ -27,7 +25,7 @@ class CreateOrdersTable extends Migration
                 $table->string( 'type' ); // delivery, in_store
                 $table->string( 'payment_status' ); // paid, unpaid, partially_paid
                 $table->string( 'process_status' )->default( 'pending' ); // complete, ongoing, pending
-                $table->string( 'delivery_status' )->default( 'pending' ); // pending, shipped, delivered, 
+                $table->string( 'delivery_status' )->default( 'pending' ); // pending, shipped, delivered,
                 $table->float( 'discount', 18, 5 )->default(0);
                 $table->string( 'discount_type' )->nullable();
                 $table->float( 'discount_percentage', 18, 5 )->nullable();
@@ -40,8 +38,10 @@ class CreateOrdersTable extends Migration
                 $table->float( 'total_coupons', 18, 5 )->default(0);
                 $table->float( 'total', 18, 5 )->default(0);
                 $table->float( 'tax_value', 18, 5 )->default(0);
+                $table->float( 'products_tax_value' )->default(0);
+                $table->float( 'total_tax_value' )->default(0);
                 $table->integer( 'tax_group_id' )->nullable();
-                $table->string( 'tax_type' )->nullable();;
+                $table->string( 'tax_type' )->nullable();
                 $table->float( 'tendered', 18, 5 )->default(0);
                 $table->float( 'change', 18, 5 )->default(0);
                 $table->datetime( 'final_payment_date' )->nullable();
@@ -97,4 +97,3 @@ class CreateOrdersTable extends Migration
         }
     }
 }
-

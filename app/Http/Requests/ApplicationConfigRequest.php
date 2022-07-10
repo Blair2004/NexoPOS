@@ -28,7 +28,7 @@ class ApplicationConfigRequest extends FormRequest
             'admin_email'       =>  'email|required',
             'admin_username'    =>  'min:5|required',
             'password'          =>  'min:6|required',
-            'confirm_password'  =>  'same:password'
+            'confirm_password'  =>  'same:password',
         ];
     }
 }

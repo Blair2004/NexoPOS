@@ -19,14 +19,14 @@ class UpdateCustomerTableJan1122 extends Migration
             $keyExists = DB::select(
                 DB::raw(
                     'SHOW KEYS
-                    FROM ' . DB::getTablePrefix() . Hook::filter( 'ns-model-table', 'nexopos_customers' ) .' 
+                    FROM ' . DB::getTablePrefix() . Hook::filter( 'ns-model-table', 'nexopos_customers' ) . ' 
                     WHERE Key_name=\'email\''
                 )
             );
 
             if ( Schema::hasColumn( 'nexopos_customers', 'email' ) && ! empty( $keyExists ) ) {
                 $table->dropUnique( 'email' );
-            } 
+            }
 
             if ( ! Schema::hasColumn( 'nexopos_customers', 'credit_limit_amount' ) ) {
                 $table->float( 'credit_limit_amount' )->default(0)->nullable();

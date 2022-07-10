@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Models\Order;
@@ -8,42 +9,40 @@ use App\Services\TaxService;
 use App\Services\TestService;
 
 trait WithTaxTest
-{    
+{
     protected function attemptProductTaxVariable()
     {
         /**
          * @var OrdersService
          */
-        $orderService   =   app()->make( OrdersService::class );
-        
+        $orderService = app()->make( OrdersService::class );
+
         /**
          * @var TaxService
          */
-        $taxService   =   app()->make( TaxService::class );
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
+        $taxService = app()->make( TaxService::class );
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
 
         ns()->option->set( 'ns_pos_vat', self::TAX_PRODUCTS_VAVT );
         ns()->option->set( 'ns_pos_tax_group', $taxGroup->id );
         ns()->option->set( 'ns_pos_tax_type', 'exclusive' );
 
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'exclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
-        $this->assertCheck( $details, function( $order ) use ( $orderService, $taxService ) {
-            
-            $subtotal   =   $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] - $order[ 'discount' ] );
-
-            $this->assertEquals( 
-                ( float ) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ) + ( float ) $subtotal, 
-                ( float ) $order[ 'tax_value' ],
+        $this->assertCheck( $details, function( $order ) use ( $orderService  ) {
+            $this->assertEquals(
+                (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
+                (float) $order[ 'products_tax_value' ],
                 __( 'The product tax is not valid.' )
             );
         });
@@ -54,28 +53,29 @@ trait WithTaxTest
         /**
          * @var OrdersService
          */
-        $orderService   =   app()->make( OrdersService::class );
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
+        $orderService = app()->make( OrdersService::class );
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
 
         ns()->option->set( 'ns_pos_vat', self::TAX_PRODUCTS_VAT );
         ns()->option->set( 'ns_pos_tax_group', $taxGroup->id );
         ns()->option->set( 'ns_pos_tax_type', 'exclusive' );
 
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'exclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
         $this->assertCheck( $details, function( $order ) use ( $orderService ) {
-            $this->assertEquals( 
-                ( float ) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ), 
-                ( float ) $order[ 'tax_value' ],
+            $this->assertEquals(
+                (float) $orderService->getOrderProductsTaxes( Order::find( $order[ 'id' ] ) ),
+                (float) $order[ 'products_tax_value' ],
                 __( 'The product tax is not valid.' )
             );
         });
@@ -83,21 +83,22 @@ trait WithTaxTest
 
     protected function attemptFlatExpense()
     {
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
 
         ns()->option->set( 'ns_pos_vat', self::TAX_FLAT );
         ns()->option->set( 'ns_pos_tax_group', $taxGroup->id );
         ns()->option->set( 'ns_pos_tax_type', 'exclusive' );
 
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'exclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
         $this->assertCheck( $details );
@@ -105,16 +106,17 @@ trait WithTaxTest
 
     protected function attemptInclusiveTax()
     {
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'inclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
         $this->assertCheck( $details );
@@ -122,16 +124,17 @@ trait WithTaxTest
 
     protected function attemptExclusiveTax()
     {
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'exclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
         $this->assertCheck( $details );
@@ -139,44 +142,45 @@ trait WithTaxTest
 
     protected function attemptVariableVat()
     {
-        $taxGroup       =   TaxGroup::with( 'taxes' )->first();
+        $taxGroup = TaxGroup::with( 'taxes' )->first();
 
         ns()->option->set( 'ns_pos_vat', self::TAX_VARIABLE );
         ns()->option->set( 'ns_pos_tax_group', $taxGroup->id );
         ns()->option->set( 'ns_pos_tax_type', 'exclusive' );
 
-        $testService    =   new TestService;
-        $details        =   $testService->prepareOrder( ns()->date->now(), [
+        $testService = new TestService;
+        $details = $testService->prepareOrder( ns()->date->now(), [
             'tax_group_id'  =>  $taxGroup->id,
             'tax_type'      =>  'exclusive',
             'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
-                $tax->tax_name  =   $tax->name;
-                $tax->tax_id    =   $tax->id;
+                $tax->tax_name = $tax->name;
+                $tax->tax_id = $tax->id;
+
                 return $tax;
-            })
+            }),
         ]);
 
         $this->assertCheck( $details );
     }
 
     private function assertCheck( $details, callable $callback = null )
-    {        
+    {
         /**
          * @var TaxService
          */
-        $taxService     =   app()->make( TaxService::class );
+        $taxService = app()->make( TaxService::class );
 
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', $details );
 
         $response->assertStatus( 200 );
 
-        $json           =   json_decode( $response->getContent(), true );
-        $order          =   $json[ 'data' ][ 'order' ];
-        $expectedTax    =   $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] - $order[ 'discount' ] );
+        $json = json_decode( $response->getContent(), true );
+        $order = $json[ 'data' ][ 'order' ];
+        $expectedTax = $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] );
 
         if ( $callback === null ) {
-            $this->assertEquals( ( float ) $expectedTax, ( float ) $order[ 'tax_value' ], __( 'The computed taxes aren\'t correct.' ) );
+            $this->assertEquals( (float) $expectedTax, (float) $order[ 'tax_value' ], __( 'The computed taxes aren\'t correct.' ) );
         } else {
             $callback( $order );
         }
@@ -184,44 +188,44 @@ trait WithTaxTest
 
     protected function attemptCreateTaxGroup()
     {
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', '/api/nexopos/v4/crud/ns.taxes-groups', [
                 'name'          =>  __( 'GST' ),
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
     }
 
     protected function attemptCreateTax()
     {
-        $group          =   TaxGroup::get()->shuffle()->first();
+        $group = TaxGroup::get()->shuffle()->first();
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
                 'name'          =>  __( 'SGST' ),
                 'general'       =>  [
                     'rate'      =>  5.5,
-                    'tax_group_id'  =>  $group->id
-                ]
+                    'tax_group_id'  =>  $group->id,
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
                 'name'          =>  __( 'CGST' ),
                 'general'       =>  [
                     'rate'      =>  6.5,
-                    'tax_group_id'  =>  $group->id
-                ]
+                    'tax_group_id'  =>  $group->id,
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
     }
 }

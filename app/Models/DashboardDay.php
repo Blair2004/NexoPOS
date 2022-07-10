@@ -3,17 +3,25 @@
 namespace App\Models;
 
 use App\Events\DashboardDayAfterCreatedEvent;
+use App\Events\DashboardDayAfterUpdatedEvent;
 use App\Services\DateService;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DashboardDay extends NsModel
 {
     use HasFactory;
 
-    public $timestamps  =   false;
-    protected $table    =   'nexopos_' . 'dashboard_days';
+    public $timestamps = false;
+
+    protected $fillable = [ 'range_starts', 'range_ends', 'day_of_year' ];
+
+    protected $table = 'nexopos_' . 'dashboard_days';
+
+    protected $dispatchEvents = [
+        'created'   =>  DashboardDayAfterCreatedEvent::class,
+        'updated'   =>  DashboardDayAfterUpdatedEvent::class,
+    ];
 
     public function scopeFrom( $query, $param )
     {
@@ -27,18 +35,20 @@ class DashboardDay extends NsModel
 
     public static function forToday()
     {
-        $date   =   app()->make( DateService::class );
-        
-        return DashboardDay::from( $date->copy()->startOfDay()->toDateTimeString() )
-            ->to( $date->copy()->endOfDay()->toDateTimeString() )
-            ->first();
+        $date = app()->make( DateService::class );
+
+        return DashboardDay::firstOrCreate([
+            'range_starts'  =>  $date->copy()->startOfDay()->toDateTimeString(),
+            'range_ends'    =>  $date->copy()->endOfDay()->toDateTimeString(),
+            'day_of_year'   =>  $date->dayOfYear,
+        ]);
     }
 
     public static function forDayBefore( $day ): DashboardDay
     {
-        $date           =   app()->make( DateService::class );
-        $startRange     =   $date->copy()->subDays( $day )->startOfDay()->toDateTimeString();
-        $endRange       =   $date->copy()->subDays( $day )->endOfDay()->toDateTimeString();
+        $date = app()->make( DateService::class );
+        $startRange = $date->copy()->subDays( $day )->startOfDay()->toDateTimeString();
+        $endRange = $date->copy()->subDays( $day )->endOfDay()->toDateTimeString();
 
         return DashboardDay::from( $startRange )
             ->to( $endRange )
@@ -47,28 +57,20 @@ class DashboardDay extends NsModel
 
     /**
      * This should retreive the previous DashboardDay instance
+     *
      * @todo Maybe there is a better way to do this
+     *
      * @param DashboardDay $day
      * @return DashboardDay
      */
     public static function forLastRecentDay( DashboardDay $day )
     {
-        $date       =   Carbon::parse( $day->range_starts )->subDay();
+        $date = Carbon::parse( $day->range_starts )->subDay();
 
-        $dashboardDay   =   DashboardDay::from( $date->startOfDay()->toDateTimeString() )
-            ->to( $date->endOfDay()->toDateTimeString() )
-            ->first();
-            
-        if ( $dashboardDay instanceof DashboardDay ) {
-            return $dashboardDay;
-        }
-
-        $previousDashboardDay                   =   new DashboardDay;
-        $previousDashboardDay->range_starts     =   $date->startOfDay()->toDateTimeString();
-        $previousDashboardDay->range_ends       =   $date->endOfDay()->toDateTimeString();
-        $previousDashboardDay->day_of_year      =   $date->dayOfYear;
-        $previousDashboardDay->save();
-
-        return $previousDashboardDay;
+        return DashboardDay::firstOrCreate([
+            'range_starts'  =>  $date->startOfDay()->toDateTimeString(),
+            'range_ends'    =>  $date->endOfDay()->toDateTimeString(),
+            'day_of_year'  =>  $date->dayOfYear,
+        ]);
     }
 }

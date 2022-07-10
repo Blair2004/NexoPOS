@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCustomersMetasTable extends Migration
 {
@@ -37,9 +35,8 @@ class CreateCustomersMetasTable extends Migration
      */
     public function down()
     {
-        if ( Schema::hasTable( 'nexopos_customers_metas' ) ) { 
+        if ( Schema::hasTable( 'nexopos_customers_metas' ) ) {
             Schema::drop( 'nexopos_customers_metas' );
         }
     }
 }
-

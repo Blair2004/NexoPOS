@@ -1,68 +1,72 @@
 <?php
+
 namespace App\Crud;
 
 use App\Exceptions\NotAllowedException;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Procurement;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\ProviderService;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ProcurementCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_procurements';
+    protected $table = 'nexopos_procurements';
 
     /**
      * base route name
      */
-    protected $identifier   =   '/procurements';
+    protected $identifier = '/procurements';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.procurements';
+    protected $namespace = 'ns.procurements';
 
     /**
      * Model Used
      */
-    protected $model      =   Procurement::class;
+    protected $model = Procurement::class;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as users', 'nexopos_procurements.author', '=', 'users.id' ],
-        [ 'nexopos_providers as providers', 'nexopos_procurements.provider_id', '=', 'providers.id' ]
+        [ 'nexopos_providers as providers', 'nexopos_procurements.provider_id', '=', 'providers.id' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * define permission
      */
-    public $permissions     =   [
+    public $permissions = [
         'create'    =>  'nexopos.create.procurements',
         'read'      =>  'nexopos.read.procurements',
         'update'    =>  false,
@@ -76,22 +80,24 @@ class ProcurementCrud extends CrudService
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
         parent::__construct();
 
-        $this->providerService  =   app()->make( ProviderService::class );
+        $this->providerService = app()->make( ProviderService::class );
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -120,8 +126,9 @@ class ProcurementCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -129,17 +136,18 @@ class ProcurementCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -200,21 +208,22 @@ class ProcurementCrud extends CrudService
                             'name'  =>  'value',
                             'label' =>  __( 'Value' ),
                             'value' =>  $entry->value ?? '',
-                        ],                     ]
-                ]
-            ]
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
     public function filterPostInputs( $inputs )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ]   =   ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
         }
 
         return $inputs;
@@ -222,13 +231,14 @@ class ProcurementCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
     public function filterPutInputs( $inputs, Procurement $entry )
     {
         if ( empty( $inputs[ 'invoice_date' ] ) ) {
-            $inputs[ 'invoice_date' ]   =   ns()->date->getNowFormatted();
+            $inputs[ 'invoice_date' ] = ns()->date->getNowFormatted();
         }
 
         return $inputs;
@@ -236,6 +246,7 @@ class ProcurementCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -248,6 +259,7 @@ class ProcurementCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Procurement $entry
      * @return  void
@@ -257,21 +269,22 @@ class ProcurementCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -285,6 +298,7 @@ class ProcurementCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -293,20 +307,21 @@ class ProcurementCrud extends CrudService
     {
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -315,9 +330,11 @@ class ProcurementCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.procurements' ) {
             $this->allowedTo( 'delete' );
         }
@@ -325,56 +342,58 @@ class ProcurementCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'providers_name'  =>  [
                 'label'  =>  __( 'Provider' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'delivery_status'  =>  [
                 'label'  =>  __( 'Delivery Status' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'payment_status'  =>  [
                 'label'  =>  __( 'Payment Status' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'invoice_date'  =>  [
                 'label'  =>  __( 'Invoice Date' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'value'  =>  [
                 'label'         =>  __( 'Sale Value' ),
                 '$direction'    =>  '',
                 'width'         =>  '150px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'cost'  =>  [
                 'label'         =>  __( 'Purchase Value' ),
                 '$direction'    =>  '',
                 'width'         =>  '150px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'tax_value'  =>  [
                 'label'         =>  __( 'Taxes' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'users_username'    =>  [
                 'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -384,20 +403,20 @@ class ProcurementCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->delivery_status     =   $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
-        $entry->payment_status      =   $this->providerService->getPaymentStatusLabel( $entry->payment_status );
+        $entry->delivery_status = $this->providerService->getDeliveryStatusLabel( $entry->delivery_status );
+        $entry->payment_status = $this->providerService->getPaymentStatusLabel( $entry->payment_status );
 
-        $entry->value       =   ns()
+        $entry->value = ns()
             ->currency
             ->define( $entry->value )
             ->format();
 
-        $entry->cost       =   ns()
+        $entry->cost = ns()
             ->currency
             ->define( $entry->cost )
             ->format();
 
-        $entry->tax_value   =   ns()
+        $entry->tax_value = ns()
             ->currency
             ->define( $entry->tax_value )
             ->format();
@@ -407,17 +426,17 @@ class ProcurementCrud extends CrudService
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'invoice', [
             'label'         =>      __( 'Invoice' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' )
+            'url'           =>     ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ),
         ]);
-        
+
         $entry->addAction( 'refresh', [
             'label'         =>      __( 'Refresh' ),
             'namespace'     =>      'refresh',
@@ -426,9 +445,9 @@ class ProcurementCrud extends CrudService
             'url'           =>     ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/refresh' ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to refresh this ?' ),
-            ]
+            ],
         ]);
-        
+
         $entry->addAction( 'delete', [
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
@@ -436,19 +455,19 @@ class ProcurementCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
@@ -461,13 +480,13 @@ class ProcurementCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Procurement ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -475,6 +494,7 @@ class ProcurementCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -483,6 +503,7 @@ class ProcurementCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -490,14 +511,15 @@ class ProcurementCrud extends CrudService
         return  [
             'list'      =>  'procurements',
             'create'    =>  'procurements/create',
-            'edit'      =>  'procurements/edit'
+            'edit'      =>  'procurements/edit',
         ];
     }
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -505,16 +527,17 @@ class ProcurementCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

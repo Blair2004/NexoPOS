@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Services\Modules;
-use App\Services\Setup;
-use App\Services\Helper;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ModuleModels extends Command
 {
@@ -17,7 +14,7 @@ class ModuleModels extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:model {namespace} {name}';
+    protected $signature = 'modules:model {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -43,7 +40,7 @@ class ModuleModels extends Command
      */
     public function handle()
     {
-        $modules    =   app()->make( ModulesService::class );
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
@@ -52,21 +49,26 @@ class ModuleModels extends Command
             /**
              * Define Variables
              */
-            $modelsPath     =   $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR;
-            $name           =   ucwords( Str::camel( $this->argument( 'name' ) ) );
-            $fileName       =   $modelsPath . $name;
-            $namespace      =   $this->argument( 'namespace' );
+            $modelsPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR;
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
+            $fileName = $modelsPath . $name;
+            $namespace = $this->argument( 'namespace' );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists( 
-                $fileName 
-            ) ) {
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
+
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.model', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
+
                 return $this->info( 'The model has been created !' );
-            }      
+            }
+
             return $this->error( 'The model already exists !' );
         }
+
         return $this->error( 'Unable to locate the module !' );
     }
 }

@@ -17,7 +17,7 @@ Route::post( '/auth/sign-in', [ AuthController::class, 'postSignIn' ])->name( ns
  * the registration is explictely disabled
  */
 Route::middleware([
-    RegistrationMiddleware::class,  
+    RegistrationMiddleware::class,
 ])->group( function() {
     Route::post( '/auth/sign-up', [ AuthController::class, 'postSignUp' ])->name( ns()->routeName( 'ns.register.post' ) );
 });

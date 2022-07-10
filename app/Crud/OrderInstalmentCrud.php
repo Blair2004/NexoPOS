@@ -1,48 +1,52 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Exceptions\NotAllowedException;
+use App\Models\OrderInstalment;
+use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Exceptions\NotAllowedException;
-use App\Models\User;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\OrderInstalment;
-use App\Services\CrudEntry;
 
 class OrderInstalmentCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_orders_instalments';
+    protected $table = 'nexopos_orders_instalments';
 
     /**
      * default slug
+     *
      * @param  string
      */
-    protected $slug   =   'orders/instalments';
+    protected $slug = 'orders/instalments';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.orders-instalments';
+    protected $namespace = 'ns.orders-instalments';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   OrderInstalment::class;
+    protected $model = OrderInstalment::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  false,
         'read'      =>  true,
         'update'    =>  true,
@@ -50,17 +54,18 @@ class OrderInstalmentCrud extends CrudService
     ];
 
     /**
-     * Installment can't be managed from 
+     * Installment can't be managed from
      * the crud component (for now).
      */
-    protected $showOptions  =   false;
+    protected $showOptions = false;
 
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *
      * @param  array
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_orders_instalments.order_id' ],
         [ 'nexopos_customers as customer', 'customer.id', '=', 'order.customer_id' ],
     ];
@@ -69,43 +74,46 @@ class OrderInstalmentCrud extends CrudService
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
-        'customer'      =>  [ 'name' ]
+    public $pick = [
+        'customer'      =>  [ 'name' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -115,10 +123,11 @@ class OrderInstalmentCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -136,8 +145,9 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -145,17 +155,18 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -186,14 +197,15 @@ class OrderInstalmentCrud extends CrudService
                             'name'  =>  'paid',
                             'label' =>  __( 'Paid' ),
                             'value' =>  $entry->paid ?? '',
-                        ],                     ]
-                ]
-            ]
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -204,6 +216,7 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -214,6 +227,7 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -230,6 +244,7 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  OrderInstalment $entry
      * @return  void
@@ -239,21 +254,22 @@ class OrderInstalmentCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -271,6 +287,7 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -282,9 +299,11 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.orders-instalments' ) {
             /**
              *  Perform an action before deleting an entry
@@ -294,7 +313,7 @@ class OrderInstalmentCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -305,34 +324,36 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'customer_name'  =>  [
                 'label'  =>  __( 'Customer' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'order_code'  =>  [
                 'label'  =>  __( 'Order' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'amount'  =>  [
                 'label'  =>  __( 'Amount' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'date'  =>  [
                 'label'  =>  __( 'Date' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'paid'  =>  [
                 'label'  =>  __( 'Paid' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -342,16 +363,16 @@ class OrderInstalmentCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->amount          =   ( string ) ns()->currency->define( $entry->amount );
-        $entry->{ '$cssClass' } =   $entry->paid == 0 ? 'error' : 'success';
-        $entry->paid            =   ( bool ) $entry->paid ? __( 'Yes' ) : __( 'No' );
-        $entry->date            =   ns()->date->getFormatted( $entry->date );
+        $entry->amount = (string) ns()->currency->define( $entry->amount );
+        $entry->{ '$cssClass' } = $entry->paid == 0 ? 'error' : 'success';
+        $entry->paid = (bool) $entry->paid ? __( 'Yes' ) : __( 'No' );
+        $entry->date = ns()->date->getFormatted( $entry->date );
         // you can make changes here
         $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -361,25 +382,24 @@ class OrderInstalmentCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -391,13 +411,13 @@ class OrderInstalmentCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof OrderInstalment ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -405,6 +425,7 @@ class OrderInstalmentCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -413,6 +434,7 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -428,8 +450,9 @@ class OrderInstalmentCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -437,16 +460,17 @@ class OrderInstalmentCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

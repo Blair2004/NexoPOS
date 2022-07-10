@@ -4,11 +4,8 @@ namespace App\Events;
 
 use App\Models\Order;
 use App\Models\OrderInstalment;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -33,8 +30,8 @@ class OrderAfterInstalmentPaidEvent
      */
     public function __construct( OrderInstalment $instalment, Order $order )
     {
-        $this->instalment   =   $instalment;
-        $this->order        =   $order;
+        $this->instalment = $instalment;
+        $this->order = $order;
     }
 
     /**

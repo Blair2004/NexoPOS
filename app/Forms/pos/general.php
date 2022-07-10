@@ -12,12 +12,12 @@ return [
             'options'   =>  Helper::kvToJsOptions([
                 'flat'  =>  __( 'Flat' ),
             ]),
-            'description'   =>  __( 'Define how the shipping is calculated.' )
+            'description'   =>  __( 'Define how the shipping is calculated.' ),
         ], [
             'type'  =>  'number',
             'label' =>  __( 'Shipping Fees' ),
             'name'  =>  'shipping',
-            'description'   =>  __( 'Define shipping fees.' )
-        ], 
-    ]
+            'description'   =>  __( 'Define shipping fees.' ),
+        ],
+    ],
 ];

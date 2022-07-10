@@ -30,7 +30,9 @@ class ClearHoldOrdersJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
      * @todo refactor to OrdersService
+     *
      * @return void
      */
     public function handle()
@@ -38,25 +40,25 @@ class ClearHoldOrdersJob implements ShouldQueue
         /**
          * @var Options
          */
-        $options        =   app()->make( Options::class );
+        $options = app()->make( Options::class );
 
         /**
          * @var DateService
          */
-        $date           =   app()->make( DateService::class );
+        $date = app()->make( DateService::class );
 
         /**
          * @var NotificationService;
          */
-        $notification   =   app()->make( NotificationService::class );
+        $notification = app()->make( NotificationService::class );
 
-        $deleted        =   Order::paymentStatus( Order::PAYMENT_HOLD )
+        $deleted = Order::paymentStatus( Order::PAYMENT_HOLD )
             ->get()
             ->filter( function( $order ) use ( $options, $date ) {
                 /**
                  * @var Carbon
                  */
-                $expectedDate   =   Carbon::parse( $order->created_at )
+                $expectedDate = Carbon::parse( $order->created_at )
                     ->addDays( $options->get( 'ns_orders_quotation_expiration', 5 ) );
 
                 if ( $expectedDate->lessThan( $date->now() ) ) {
@@ -64,8 +66,10 @@ class ClearHoldOrdersJob implements ShouldQueue
                      * @todo we might consider soft deleting for now
                      */
                     $order->delete();
+
                     return true;
                 }
+
                 return false;
             });
 
@@ -77,7 +81,7 @@ class ClearHoldOrdersJob implements ShouldQueue
             $notification->create([
                 'title'         =>  __( 'Hold Order Cleared' ),
                 'identifier'    =>  self::class,
-                'description'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() )
+                'description'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() ),
             ])->dispatchForGroup([
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),

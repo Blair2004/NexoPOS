@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Services\NotificationService;
 use App\Services\ProcurementService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,7 +28,7 @@ class ProcurementRefreshJob implements ShouldQueue
      */
     public function __construct( Procurement $procurement )
     {
-        $this->procurement  =   $procurement;
+        $this->procurement = $procurement;
     }
 
     /**
@@ -42,15 +41,15 @@ class ProcurementRefreshJob implements ShouldQueue
         /**
          * @var ProcurementService
          */
-        $procurementService     =   app()->make( ProcurementService::class );
+        $procurementService = app()->make( ProcurementService::class );
 
         /**
          * @var NotificationService
          */
-        $notificationService    =   app()->make( NotificationService::class );
-        
+        $notificationService = app()->make( NotificationService::class );
+
         $procurementService->refresh( $this->procurement );
-        
+
         $notificationService->create([
             'title'         =>      __( 'Procurement Refreshed' ),
             'description'   =>  sprintf(
@@ -58,10 +57,10 @@ class ProcurementRefreshJob implements ShouldQueue
                 $this->procurement->name
             ),
             'identifier'    =>  'ns.procurement-refresh' . $this->procurement->id,
-            'url'           =>  ns()->route( 'ns.procurement-invoice', [ 'procurement' => $this->procurement->id ])
+            'url'           =>  ns()->route( 'ns.procurement-invoice', [ 'procurement' => $this->procurement->id ]),
         ])->dispatchForGroup([
             Role::ADMIN,
-            Role::STOREADMIN
-        ]);   
+            Role::STOREADMIN,
+        ]);
     }
 }

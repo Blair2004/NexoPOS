@@ -79,7 +79,7 @@ return [
         'web',
         Authorize::class,
         'auth',
-        'ns.restrict-role:admin'
+        'ns.restrict-role:admin',
     ],
 
     /*

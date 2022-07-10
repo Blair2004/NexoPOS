@@ -17,7 +17,7 @@ class DefaultProviderSeeder extends Seeder
     {
         return Provider::create([
             'name'      =>  __( 'Default Provider' ),
-            'author'    =>  Role::namespace( Role::ADMIN )->users->first()->id
+            'author'    =>  Role::namespace( Role::ADMIN )->users->first()->id,
         ]);
     }
 }

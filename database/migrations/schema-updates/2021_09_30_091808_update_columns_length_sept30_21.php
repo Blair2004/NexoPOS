@@ -140,7 +140,7 @@ class UpdateColumnsLengthSept3021 extends Migration
             $table->float( 'tax_value', 18, 5 )->change();
             $table->float( 'shipping', 18, 5 )->change();
         });
-        
+
         Schema::table( 'nexopos_orders_products_refunds', function( Blueprint $table ) {
             $table->float( 'unit_price', 18, 5 )->change();
             $table->float( 'tax_value', 18, 5 )->change();
@@ -206,13 +206,13 @@ class UpdateColumnsLengthSept3021 extends Migration
         });
 
         Schema::table( 'nexopos_dashboard_days', function (Blueprint $table) {
-            foreach([
+            foreach ([
                 'total_unpaid_orders',
                 'day_unpaid_orders',
-                
+
                 'total_unpaid_orders_count',
                 'day_unpaid_orders_count',
-                
+
                 'total_paid_orders',
                 'day_paid_orders',
 
@@ -239,7 +239,7 @@ class UpdateColumnsLengthSept3021 extends Migration
 
                 'total_wasted_goods',
                 'day_wasted_goods',
-                
+
                 'total_expenses',
                 'day_expenses',
             ] as $column ) {

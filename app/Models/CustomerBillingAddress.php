@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerBillingAddress extends CustomerAddress
@@ -16,11 +16,11 @@ class CustomerBillingAddress extends CustomerAddress
         });
 
         static::creating( function( $address ) {
-            $address->type  =   'billing';
+            $address->type = 'billing';
         });
-        
+
         static::updating( function( $address ) {
-            $address->type  =   'billing';
+            $address->type = 'billing';
         });
     }
 }

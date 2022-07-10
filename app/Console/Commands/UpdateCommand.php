@@ -55,11 +55,11 @@ class UpdateCommand extends Command
      */
     private function proceedCoreUpdate()
     {
-        switch( $this->argument( 'argument' ) ) {
+        switch ( $this->argument( 'argument' ) ) {
             case 'dev':
                 $this->proceedDevPull();
             break;
-            default: 
+            default:
                 $this->proceedTagUpdate( $this->argument( 'argument' ) );
             break;
         }
@@ -67,7 +67,7 @@ class UpdateCommand extends Command
 
     private function proceedTagUpdate( $tag )
     {
-        $gitpath        =   env( 'NS_GIT', 'git' );
+        $gitpath = env( 'NS_GIT', 'git' );
 
         $this->info( __( 'Downloading latest dev build...' ) );
 
@@ -82,20 +82,21 @@ class UpdateCommand extends Command
 
     private function build()
     {
-        $composerpath   =   env( 'NS_COMPOSER', 'composer' );
-        $npmpath        =   env( 'NS_NPM', 'npm' );
+        $composerpath = env( 'NS_COMPOSER', 'composer' );
+        $npmpath = env( 'NS_NPM', 'npm' );
 
         $this->line( exec( "{$npmpath} i" ) );
         $this->line( exec( "{$composerpath} i" ) );
-        $this->line( exec( "{$npmpath} run prod" ) );}
+        $this->line( exec( "{$npmpath} run prod" ) );
+    }
 
     /**
-     * perform dev update and optionally 
+     * perform dev update and optionally
      * clear local changes.
      */
     private function proceedDevPull()
     {
-        $gitpath        =   env( 'NS_GIT', 'git' );
+        $gitpath = env( 'NS_GIT', 'git' );
 
         $this->info( __( 'Downloading latest dev build...' ) );
 

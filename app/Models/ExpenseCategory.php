@@ -1,8 +1,7 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use App\Observers\UUIDObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -11,8 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ExpenseCategory extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'expenses_categories';
+
+    protected $table = 'nexopos_' . 'expenses_categories';
 
     public function expenses()
     {

@@ -3,11 +3,19 @@
 use App\Models\PaymentType;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class UpdateDefaultPaymentTypes extends Migration
 {
+    /**
+     * Determine wether the migration
+     * should execute when we're accessing
+     * a multistore instance.
+     */
+    public function runOnMultiStore()
+    {
+        return false;
+    }
+
     /**
      * Run the migrations.
      *
@@ -15,27 +23,27 @@ class UpdateDefaultPaymentTypes extends Migration
      */
     public function up()
     {
-        $admin  =   Role::namespace( 'admin' )->users->first();
-        
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Cash' );
-        $paymentType->identifier    =   'cash-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $admin->id;
+        $admin = Role::namespace( 'admin' )->users->first();
+
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Cash' );
+        $paymentType->identifier = 'cash-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $admin->id;
         $paymentType->save();
 
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Bank Payment' );
-        $paymentType->identifier    =   'bank-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $admin->id;
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Bank Payment' );
+        $paymentType->identifier = 'bank-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $admin->id;
         $paymentType->save();
 
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Customer Account' );
-        $paymentType->identifier    =   'account-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $admin->id;
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Customer Account' );
+        $paymentType->identifier = 'account-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $admin->id;
         $paymentType->save();
     }
 

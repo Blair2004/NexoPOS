@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Fields;
 
 use App\Services\FieldsService;
-use App\Services\Helper;
 
 class PosOrderSettingsFields extends FieldsService
 {
-    protected $identifier   =   'ns.pos-order-settings';
+    protected $identifier = 'ns.pos-order-settings';
 
     public function get()
     {
-        $fields     =   [
+        $fields = [
             [
                 'label'         =>  __( 'Name' ),
                 'description'   =>  __( 'Define the order name.' ),
@@ -22,9 +22,9 @@ class PosOrderSettingsFields extends FieldsService
                 'description'   =>  __( 'Define the date of creation of the order.' ),
                 'name'          =>  'created_at',
                 'type'          =>  'date',
-            ], 
+            ],
         ];
-        
+
         return $fields;
     }
 }

@@ -1,83 +1,85 @@
 <?php
+
 namespace App\Services;
 
-use Exception;
+use App\Exceptions\NotFoundException;
 use App\Models\Unit;
-
+use App\Models\UnitGroup;
+use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\UnitGroup;
-use App\Services\CurrencyService;
-use App\Exceptions\NotFoundException;
-
-class UnitService 
+class UnitService
 {
     public function __construct( CurrencyService $currency )
     {
-        $this->currency     =   $currency;
+        $this->currency = $currency;
     }
 
     public function createGroup( $data )
     {
-        $unitGroup                  =   new UnitGroup;
-        $unitGroup->name            =   $data[ 'name' ];
-        $unitGroup->description     =   @$data[ 'description' ] ?: '';
-        $unitGroup->author          =   Auth::id();
+        $unitGroup = new UnitGroup;
+        $unitGroup->name = $data[ 'name' ];
+        $unitGroup->description = @$data[ 'description' ] ?: '';
+        $unitGroup->author = Auth::id();
         $unitGroup->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The Unit Group has been created.' ),
             'data'      =>  [
-                'group'  =>  $unitGroup
-            ]
+                'group'  =>  $unitGroup,
+            ],
         ];
     }
 
     public function updateGroup( $id, $data )
     {
-        $unitGroup                  =   UnitGroup::findOrFail( $id );
-        $unitGroup->name            =   $data[ 'name' ];
-        $unitGroup->description     =   @$data[ 'description' ] ?: '';
-        $unitGroup->author          =   Auth::id();
+        $unitGroup = UnitGroup::findOrFail( $id );
+        $unitGroup->name = $data[ 'name' ];
+        $unitGroup->description = @$data[ 'description' ] ?: '';
+        $unitGroup->author = Auth::id();
         $unitGroup->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  sprintf( __( 'The unit group %s has been updated.' ), $unitGroup->name ),
             'data'      =>  [
-                'group' =>  $unitGroup
-            ]
+                'group' =>  $unitGroup,
+            ],
         ];
     }
 
     /**
      * get a specific defined group
+     *
      * @param int group id
      * @return array|UnitGroup
      */
     public function getGroups( $id = null )
     {
         if ( $id !== null ) {
-            $group      =   UnitGroup::find( $id );
+            $group = UnitGroup::find( $id );
 
             if ( ! $group instanceof UnitGroup ) {
                 throw new Exception( __( 'Unable to find the unit group to which this unit is attached.' ) );
             }
+
             return $group;
         } else {
             return UnitGroup::get();
-        }        
+        }
     }
 
     /**
      * Create a unit using the provided informations
+     *
      * @param array unit array
      * @return array response
      */
     public function createUnit( $data )
     {
-        $group          =   $this->getGroups( $data[ 'group_id' ] ); 
+        $group = $this->getGroups( $data[ 'group_id' ] );
 
         /**
          * Let's make sure that if the
@@ -86,51 +88,54 @@ class UnitService
          */
         if ( $data[ 'base_unit' ] === true ) {
             $group->units->map( function( $unit ) {
-                $unit->base_unit    =   false;
+                $unit->base_unit = false;
                 $unit->save();
             });
         }
 
-        $unit       =   new Unit;
-        $fields     =   $data;
+        $unit = new Unit;
+        $fields = $data;
 
-        foreach( $fields as $field => $value ) {
-            $unit->$field   =   $value;
+        foreach ( $fields as $field => $value ) {
+            $unit->$field = $value;
         }
 
-        $unit->author   =   Auth::id();
+        $unit->author = Auth::id();
         $unit->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The unit has been saved.' ),
-            'data'      =>  compact( 'unit' )
+            'data'      =>  compact( 'unit' ),
         ];
     }
 
     /**
      * Get all units defined
-     * @return array|Unit
+     *
+     * @return Collection|Unit
      */
     public function get( $id = null )
     {
         if ( $id !== null ) {
-            $unit   =   Unit::find( $id );
-            if( ! $unit instanceof Unit ) {
+            $unit = Unit::find( $id );
+            if ( ! $unit instanceof Unit ) {
                 throw new NotFoundException([
                     'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the Unit using the provided id.' )
+                    'message'   =>  __( 'Unable to find the Unit using the provided id.' ),
                 ]);
             }
 
             return $unit;
         }
+
         return Unit::get();
     }
 
     /**
      * get a unit that uses a specific
      * identififer
+     *
      * @param string
      * @return Unit
      */
@@ -142,20 +147,21 @@ class UnitService
     /**
      * update a specific unit
      * using the provided id
+     *
      * @param int id
      * @param array data
      * @return array response
      */
     public function updateUnit( $id, $fields )
     {
-        $unit       =   Unit::findOrFail( $id );
+        $unit = Unit::findOrFail( $id );
 
         try {
-            $group      =   $this->getGroups( $fields[ 'group_id' ]);
-        } catch( \Exception $exception ) {
+            $group = $this->getGroups( $fields[ 'group_id' ]);
+        } catch ( \Exception $exception ) {
             throw new NotFoundException([
                 'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the unit group to which this unit is attached.' )
+                'message'   =>  __( 'Unable to find the unit group to which this unit is attached.' ),
             ]);
         }
 
@@ -167,71 +173,78 @@ class UnitService
         if ( $fields[ 'base_unit' ] === true ) {
             $group->units->map( function( $unit ) use ( $id ) {
                 if ( $unit->id !== $id ) {
-                    $unit->base_unit    =   false;
+                    $unit->base_unit = false;
                     $unit->save();
                 }
             });
-        }      
-
-        foreach( $fields as $field => $value ) {
-            $unit->$field   =   $value;
         }
 
-        $unit->author   =   Auth::id();
+        foreach ( $fields as $field => $value ) {
+            $unit->$field = $value;
+        }
+
+        $unit->author = Auth::id();
         $unit->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The unit has been updated.' ),
-            'data'      =>  compact( 'unit' )
+            'data'      =>  compact( 'unit' ),
         ];
     }
 
     /**
-     * retrieve a group of a 
+     * retrieve a group of a
      * specific unit using an id
+     *
      * @param int Parent Group
-     * @return json
+     * @return UnitGroup
      */
     public function getUnitParentGroup( $id )
     {
-        $unit   =   Unit::findOrFail( $id );
+        $unit = Unit::findOrFail( $id );
+
         return $unit->group;
     }
 
     /**
      * get the single base unit defined
      * for a specific group
+     *
      * @param UnitGroup $group
      * @return Unit
      */
     public function getBaseUnit( UnitGroup $group )
     {
-        $baseUnit   =   ( UnitGroup::find( $group->id )->units )->filter( function( $unit ) {
-            return $unit->base_unit;
-        });
+        $baseUnit = UnitGroup::find( $group->id )
+            ->units()
+            ->get()
+            ->filter( function( $unit ) {
+                return $unit->base_unit;
+            });
 
-        $unitCount  =   $baseUnit->count();
+        $unitCount = $baseUnit->count();
 
         if ( $unitCount > 1 ) {
             throw new Exception( sprintf( __( 'The unit group %s has more than one base unit' ), $group->name ) );
-        } else if ( $unitCount === 0 ) {
+        } elseif ( $unitCount === 0 ) {
             throw new Exception( sprintf( __( 'The unit group %s doesn\'t have a base unit' ), $group->name ) );
         }
-        
-        return $baseUnit[0];
+
+        return $baseUnit->first();
     }
 
     /**
      * return what is the exact total base unit
      * value of 2 Unit instance provided
+     *
      * @param Unit $unit
      * @param Unit base unit
      * @param
      */
     public function computeBaseUnit( Unit $unit, Unit $base, $quantity )
     {
-        $value  =   $this->currency->value( $base->value )
+        $value = $this->currency->value( $base->value )
             ->multiplyBy( $unit->value )
             ->get();
 
@@ -243,15 +256,15 @@ class UnitService
     public function deleteUnit( $id )
     {
         /**
-         * @todo we might check if the 
+         * @todo we might check if the
          * unit is currently in use
          */
-        $unit   =   $this->get( $id );
+        $unit = $this->get( $id );
         $unit->delete();
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The unit has been deleted.' )
+            'message'   =>  __( 'The unit has been deleted.' ),
         ];
     }
 }

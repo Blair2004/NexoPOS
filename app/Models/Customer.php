@@ -1,26 +1,28 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Customer extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'customers';
 
-    protected $isDependencyFor  =   [
+    protected $table = 'nexopos_' . 'customers';
+
+    protected $isDependencyFor = [
         Order::class    =>  [
             'local_name'    =>  'name',
             'local_index'   =>  'id',
             'foreign_name'  =>  'code',
-            'foreign_index' =>  'customer_id'
-        ]
+            'foreign_index' =>  'customer_id',
+        ],
     ];
-    
+
     /**
      * define the relationship
+     *
      * @return Model\RelationShip
      */
     public function group()
@@ -40,6 +42,7 @@ class Customer extends NsModel
 
     /**
      * define the relationship
+     *
      * @return Model\RelationShip
      */
     public function orders()
@@ -69,6 +72,7 @@ class Customer extends NsModel
 
     /**
      * Get customer using email
+     *
      * @param Query
      * @param string email
      */

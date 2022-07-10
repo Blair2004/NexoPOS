@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\DashboardDay;
-use App\Services\ReportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,6 +13,7 @@ class RefreshExpenseJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $range_starts;
+
     public $range_ends;
 
     /**
@@ -24,8 +23,8 @@ class RefreshExpenseJob implements ShouldQueue
      */
     public function __construct( $range_starts, $range_ends )
     {
-        $this->range_ends       =   $range_ends;
-        $this->range_starts     =   $range_starts;
+        $this->range_ends = $range_ends;
+        $this->range_starts = $range_starts;
     }
 
     /**
@@ -35,23 +34,6 @@ class RefreshExpenseJob implements ShouldQueue
      */
     public function handle()
     {
-        /**
-         * @var ReportService
-         */
-        $reportService  =   app()->make( ReportService::class );
-
-        $dashboardDay   =   DashboardDay::from( $this->range_starts )->to( $this->range_ends )->first();
-
-        if ( $dashboardDay instanceof DashboardDay ) {
-            $reportService->refreshFromDashboardDay( $dashboardDay );
-    
-            /**
-             * as it's not saved from that "refreshFromDashboardDay".
-             */
-            DashboardDay::withoutEvents( function() use ( $dashboardDay ) {
-                $dashboardDay->save();
-            });
-        }
-
+        // ...
     }
 }

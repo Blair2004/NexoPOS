@@ -1,0 +1,25 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "modules"
+    ],
+    "rules": {
+        "no_spaces_inside_parenthesis": false,
+        "Laravel/laravel_phpdoc_alignment": false,
+        "function_declaration": false,
+        "trim_array_spaces": false,
+        "no_spaces_around_offset": {
+            "positions": ["outside"]
+        },
+        "no_unneeded_curly_braces": {
+            "namespaces": false
+        },
+        "concat_space": {
+            "spacing": "one"
+        },
+        "new_with_braces": {
+            "anonymous_class": false,
+            "named_class": false
+        }
+    }
+}

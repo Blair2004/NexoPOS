@@ -2,12 +2,9 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
-use App\Models\Role;
-use Laravel\Sanctum\Sanctum;
 
 class RenderCrudFormTest extends TestCase
 {
@@ -24,7 +21,7 @@ class RenderCrudFormTest extends TestCase
          * we'll test all crud forms
          * and see if it throws any php errors
          */
-        $cruds  =   [
+        $cruds = [
             'cash-registers',
             'customers',
             'customers/groups',
@@ -42,16 +39,16 @@ class RenderCrudFormTest extends TestCase
             'units/groups',
             'users/roles',
             'users',
-            'orders/payments-types'
+            'orders/payments-types',
         ];
 
-        foreach( $cruds as $crud ) {
+        foreach ( $cruds as $crud ) {
             dump( 'Testing : ' . $crud );
-            
+
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'GET', '/dashboard/' . $crud . '/create' );
-    
+
             $response->assertDontSee( 'exception' );
         }
     }

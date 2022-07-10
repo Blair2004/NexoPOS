@@ -18,6 +18,10 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
+    <link rel="stylesheet" href="{{ loadcss( 'grid.css' ) }}">
+    <link rel="stylesheet" href="{{ loadcss( 'fonts.css' ) }}">
+    <link rel="stylesheet" href="{{ loadcss( 'animations.css' ) }}">
+    <link rel="stylesheet" href="{{ loadcss( 'typography.css' ) }}">
     <link rel="stylesheet" href="{{ loadcss( 'app.css' ) }}">
     <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
     <link rel="stylesheet" href="{{ loadcss( $theme . '.css' ) }}">

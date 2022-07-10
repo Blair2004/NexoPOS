@@ -1,15 +1,15 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderBillingAddress extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'orders_addresses';
+
+    protected $table = 'nexopos_' . 'orders_addresses';
 
     protected static function booted()
     {
@@ -18,11 +18,11 @@ class OrderBillingAddress extends NsModel
         });
 
         static::creating( function( $address ) {
-            $address->type  =   'billing';
+            $address->type = 'billing';
         });
-        
+
         static::updating( function( $address ) {
-            $address->type  =   'billing';
+            $address->type = 'billing';
         });
     }
 }

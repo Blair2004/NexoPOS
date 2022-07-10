@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateOrdersAddressesTable extends Migration
 {
@@ -27,7 +25,7 @@ class CreateOrdersAddressesTable extends Migration
                 $table->string( 'surname' )->nullable();
                 $table->string( 'phone' )->nullable();
                 $table->string( 'address_1' )->nullable();
-                $table->string ( 'email' )->nullable();
+                $table->string( 'email' )->nullable();
                 $table->string( 'address_2' )->nullable();
                 $table->string( 'country' )->nullable();
                 $table->string( 'city' )->nullable();
@@ -52,4 +50,3 @@ class CreateOrdersAddressesTable extends Migration
         }
     }
 }
-

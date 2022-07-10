@@ -1,54 +1,56 @@
 <?php
+
 namespace App\Crud;
 
 use App\Events\ProductBeforeDeleteEvent;
 use App\Exceptions\NotAllowedException;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductUnitQuantity;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
 use App\Services\TaxService;
+use App\Services\Users;
+use Exception;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class ProductCrud extends CrudService
 {
     /**
      * define the base table
      */
-    protected $table      =   'nexopos_products';
+    protected $table = 'nexopos_products';
 
     /**
      * base route name
      */
-    protected $mainRoute      =   'ns.products';
+    protected $mainRoute = 'ns.products';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.products';
+    protected $namespace = 'ns.products';
 
     /**
      * Model Used
      */
-    protected $model      =   Product::class;
+    protected $model = Product::class;
 
     /**
      * Will prepend the system options.
      */
-    protected $prependOptions   =   true;
+    protected $prependOptions = true;
 
     /**
      * Adding relation
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'nexopos_products.author', '=', 'user.id' ],
         'leftJoin'  =>  [
             [ 'nexopos_products_categories as category', 'nexopos_products.category_id', '=', 'category.id' ],
@@ -57,7 +59,7 @@ class ProductCrud extends CrudService
         ],
     ];
 
-    protected $pick     =   [
+    protected $pick = [
         'parent'    =>  [ 'name' ],
         'user'      =>  [ 'username' ],
         'category'  =>  [ 'name' ],
@@ -65,9 +67,10 @@ class ProductCrud extends CrudService
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  'nexopos.create.products',
         'read'      =>  'nexopos.read.products',
         'update'    =>  'nexopos.update.products',
@@ -76,30 +79,34 @@ class ProductCrud extends CrudService
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * protected tax service
+     *
      * @param TaxService
      */
     protected $taxService;
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -107,14 +114,15 @@ class ProductCrud extends CrudService
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
-        $this->taxService       =   app()->make( TaxService::class );
+        $this->taxService = app()->make( TaxService::class );
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -132,8 +140,9 @@ class ProductCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -141,26 +150,27 @@ class ProductCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
-        $groups             =   UnitGroup::get();
+        $groups = UnitGroup::get();
 
         if ( $entry instanceof Product ) {
-            $unitGroup      =   UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
-            $units          =   UnitGroup::find( $entry->unit_group )->units;
+            $unitGroup = UnitGroup::where( 'id', $entry->unit_group )->with( 'units' )->first() ?? [];
+            $units = UnitGroup::find( $entry->unit_group )->units;
         } else {
-            $unitGroup      =   $groups->first();
-            $units          =   collect([]);
-            
+            $unitGroup = $groups->first();
+            $units = collect([]);
+
             if ( $unitGroup instanceof UnitGroup ) {
-                $units          =   UnitGroup::find( $unitGroup->id )->units;
+                $units = UnitGroup::find( $unitGroup->id )->units;
             }
         }
 
-        $fields             =   [
+        $fields = [
             [
                 'type'          =>  'select',
                 'errors'        =>  [],
@@ -169,7 +179,7 @@ class ProductCrud extends CrudService
                 'label'         =>  __( 'Assigned Unit' ),
                 'description'   =>  __( 'The assigned unit for sale' ),
                 'validation'    =>  'required',
-                'value'         =>  ! $units->isEmpty() ? $units->first()->id : ''
+                'value'         =>  ! $units->isEmpty() ? $units->first()->id : '',
             ], [
                 'type'  =>  'number',
                 'errors'        =>  [],
@@ -211,7 +221,7 @@ class ProductCrud extends CrudService
                 'type'          =>  'hidden',
                 'errors'        =>  [],
                 'name'          =>  'quantity',
-            ]
+            ],
         ];
 
         return Hook::filter( 'ns-products-crud-form', [
@@ -220,7 +230,7 @@ class ProductCrud extends CrudService
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
                 'validation'    =>  'required',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'variations'    =>  [
                 [
@@ -290,6 +300,7 @@ class ProductCrud extends CrudService
                                     'options'       =>  Helper::kvToJsOptions( Hook::filter( 'ns-products-type', [
                                         'materialized'      =>  __( 'Materialized Product' ),
                                         'dematerialized'    =>  __( 'Dematerialized Product' ),
+                                        'grouped'           =>  __( 'Grouped Product' ),
                                     ] ) ),
                                     'description'   =>  __( 'Define the product type. Applies to all variations.' ),
                                     'name'          =>  'type',
@@ -323,8 +334,38 @@ class ProductCrud extends CrudService
                                     'name'  =>  'description',
                                     'label' =>  __( 'Description' ),
                                     'value' =>  $entry->description ?? '',
-                                ],                 
-                            ]
+                                ],
+                            ],
+                        ],
+                        'groups'    =>  [
+                            'label' =>  __( 'Groups' ),
+                            'fields'    =>  [
+                                [
+                                    'type'  =>  'hidden',
+                                    'name'  =>  'product_subitems',
+                                    'value' =>  $entry !== null ? $entry->sub_items()->get()->map( function( $subItem ) {
+                                        $subItem->load( 'product.unit_quantities.unit' );
+
+                                        return [
+                                            '_quantity_toggled'     =>  false,
+                                            '_price_toggled'        =>  false,
+                                            '_unit_toggled'         =>  false,
+                                            'id'                    =>  $subItem->id,
+                                            'name'                  =>  $subItem->product->name,
+                                            'unit_quantity_id'      =>  $subItem->unit_quantity_id,
+                                            'unit_quantity'         =>  $subItem->unit_quantity,
+                                            'product_id'            =>  $subItem->product_id,
+                                            'parent_id'             =>  $subItem->parent_id,
+                                            'unit_id'               =>  $subItem->unit_id,
+                                            'unit'                  =>  $subItem->unit,
+                                            'quantity'              =>  $subItem->quantity,
+                                            'unit_quantities'       =>  $subItem->product->unit_quantities,
+                                            'sale_price'            =>  $subItem->sale_price,
+                                        ];
+                                    }) : [],
+                                ],
+                            ],
+                            'component' =>  'nsProductGroup',
                         ],
                         'units'     =>  [
                             'label' =>  __( 'Units' ),
@@ -352,23 +393,24 @@ class ProductCrud extends CrudService
                                     'name'          =>  'selling_group',
                                     'description'   =>  __( 'Determine the unit for sale.' ),
                                     'label'         =>  __( 'Selling Unit' ),
-                                    'fields'        =>  $fields,  
-                                    
+                                    'fields'        =>  $fields,
+
                                     /**
                                      * We make sure to popular the unit quantity
-                                     * with the entry values using the fields array. 
+                                     * with the entry values using the fields array.
                                      */
                                     'groups'        =>  ( $entry instanceof Product ? ProductUnitQuantity::withProduct( $entry->id )
                                         ->get()
                                         ->map( function( $productUnitQuantity ) use ( $fields ) {
                                             return collect( $fields )->map( function( $field ) use ( $productUnitQuantity ) {
-                                                $field[ 'value' ]   =   $productUnitQuantity->{ $field[ 'name' ] };
+                                                $field[ 'value' ] = $productUnitQuantity->{ $field[ 'name' ] };
+
                                                 return $field;
                                             });
-                                        })  : [] ),
+                                        }) : [] ),
                                     'options'       =>  $entry instanceof Product ? UnitGroup::find( $entry->unit_group )->units : [],
-                                ]
-                            ]
+                                ],
+                            ],
                         ],
                         'expiracy'      =>  [
                             'label'     =>  __( 'Expiry' ),
@@ -391,18 +433,17 @@ class ProductCrud extends CrudService
                                     'name'              =>  'on_expiration',
                                     'label'             =>  __( 'On Expiration' ),
                                     'value'             =>  $entry->on_expiration ?? 'prevent-sales',
-                                ]
-                            ]
+                                ],
+                            ],
                         ],
                         'taxes'    =>  [
                             'label' =>  __( 'Taxes' ),
                             'fields'    =>  [
                                 [
                                     'type'  =>  'select',
-                                    'options'   =>  Helper::toJsOptions( TaxGroup::get()->prepend( (object) [
-                                        'id'    =>  0,
-                                        'name'  =>  __( 'Disabled' )
-                                    ]), [ 'id', 'name' ]),
+                                    'options'   =>  Helper::toJsOptions( TaxGroup::get(), [ 'id', 'name' ], [
+                                        null  =>  __( 'Choose Group' ),
+                                    ]),
                                     'description'   =>  __( 'Select the tax group that applies to the product/variation.' ),
                                     'name'  =>  'tax_group_id',
                                     'label' =>  __( 'Tax Group' ),
@@ -417,24 +458,24 @@ class ProductCrud extends CrudService
                                     'name'  =>  'tax_type',
                                     'label' =>  __( 'Tax Type' ),
                                     'value' =>  $entry->tax_type ?? 'inclusive',
-                                ], 
-                            ]
+                                ],
+                            ],
                         ],
                         'images'    =>  [
                             'label'     =>  __( 'Images' ),
                             'fields'    =>  [
                                 [
                                     'type'  =>  'media',
-                                    'name'  =>  'image',
+                                    'name'  =>  'url',
                                     'label' =>  __( 'Image' ),
                                     'description'   =>  __( 'Choose an image to add on the product gallery' ),
                                 ], [
                                     'type'          =>  'switch',
-                                    'name'          =>  'primary',
+                                    'name'          =>  'featured',
                                     'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                     'label'         =>  __( 'Is Primary' ),
                                     'description'   =>  __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
-                                ]
+                                ],
                             ],
                             'groups'    =>  $entry ? $entry->galleries->map( function( $gallery ) {
                                 return [
@@ -449,20 +490,21 @@ class ProductCrud extends CrudService
                                         'name'          =>  'primary',
                                         'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                         'label'         =>  __( 'Is Primary' ),
-                                        'value'         =>  ( int ) $gallery->featured,
+                                        'value'         =>  (int) $gallery->featured,
                                         'description'   =>  __( 'Define wether the image should be primary. If there are more than one primary image, one will be choosed for you.' ),
-                                    ]
+                                    ],
                                 ];
                             }) : [],
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ], $entry );
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -473,6 +515,7 @@ class ProductCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -483,19 +526,21 @@ class ProductCrud extends CrudService
 
     /**
      * Will only calculate taxes
+     *
      * @param array $fields
      * @return array $fields
+     *
      * @deprecated
      */
     private function calculateTaxes( $inputs, Product $product = null )
     {
-        $inputs[ 'incl_tax_sale_price' ]        =   $inputs[ 'sale_price_edit' ];
-        $inputs[ 'excl_tax_sale_price' ]        =   $inputs[ 'sale_price_edit' ];
-        $inputs[ 'sale_price' ]                 =   $inputs[ 'sale_price_edit' ];
+        $inputs[ 'net_sale_price' ] = $inputs[ 'sale_price_edit' ];
+        $inputs[ 'gross_sale_price' ] = $inputs[ 'sale_price_edit' ];
+        $inputs[ 'sale_price' ] = $inputs[ 'sale_price_edit' ];
 
-        $inputs[ 'incl_tax_wholesale_price' ]   =   $inputs[ 'wholesale_price_edit' ];
-        $inputs[ 'excl_tax_wholesale_price' ]   =   $inputs[ 'wholesale_price_edit' ];
-        $inputs[ 'wholesale_price' ]            =   $inputs[ 'wholesale_price_edit' ];
+        $inputs[ 'incl_tax_wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
+        $inputs[ 'excl_tax_wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
+        $inputs[ 'wholesale_price' ] = $inputs[ 'wholesale_price_edit' ];
 
         $this->taxService->computeTax( $product, $inputs[ 'tax_id' ] );
 
@@ -504,6 +549,7 @@ class ProductCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -516,32 +562,32 @@ class ProductCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Product $entry
      * @return  void
      */
     public function afterPost( $request, Product $entry )
     {
-        // $this->calculateTaxes( $request->all(), $entry );
-
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -555,6 +601,7 @@ class ProductCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -562,7 +609,7 @@ class ProductCrud extends CrudService
     public function afterPut( $request, Product $product )
     {
         /**
-         * delete all assigned taxes as it 
+         * delete all assigned taxes as it
          * be newly assigned
          */
         if ( $product instanceof Product ) {
@@ -571,20 +618,21 @@ class ProductCrud extends CrudService
 
         return $request;
     }
-    
+
     /**
      * Protect an access to a specific crud UI
+     *
      * @param  array { namespace, id, type }
      * @return  array | throw Exception
-    **/
+     **/
     public function canAccess( $fields )
     {
-        $users      =   app()->make( Users::class );
-        
+        $users = app()->make( Users::class );
+
         if ( $users->is([ 'admin' ]) ) {
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' )
+                'message'   =>  __( 'The access is granted.' ),
             ];
         }
 
@@ -593,9 +641,11 @@ class ProductCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.products' ) {
             $this->allowedTo( 'delete' );
         }
@@ -607,55 +657,58 @@ class ProductCrud extends CrudService
 
     public function deleteProductAttachedRelation( $model )
     {
-        $model->galleries->each( fn( $gallery ) => $gallery->delete() );
-        $model->variations->each( fn( $variation ) => $variation->delete() );
-        $model->product_taxes->each( fn( $product_taxes ) => $product_taxes->delete() );
-        $model->unit_quantities->each( fn( $unitQuantity ) => $unitQuantity->delete() );
+        $model->sub_items()->delete();
+        $model->galleries()->delete();
+        $model->variations()->delete();
+        $model->product_taxes()->delete();
+        $model->unit_quantities()->delete();
     }
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
+            'type'  =>  [
+                'label'         =>  __( 'Type' ),
+                '$direction'    =>  '',
+                '$sort'         =>  false,
+            ],
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
                 'width'         =>  '150px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'sku'               =>  [
                 'label'         =>  __( 'Sku' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'category_name'  =>  [
                 'label'  =>  __( 'Category' ),
                 'width'         =>  '150px',
                 '$direction'    =>  '',
-                '$sort'         =>  false
-            ],
-            'type'  =>  [
-                'label'         =>  __( 'Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'status'  =>  [
                 'label'         =>  __( 'Status' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'         =>  __( 'Date' ),
                 'width'         =>  '150px',
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -665,43 +718,55 @@ class ProductCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->type                =   $entry->type === 'materialized' ? __( 'Materialized' ) : __( 'Dematerialized' );
-        $entry->stock_management    =   $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
-        $entry->status              =   $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
-        $entry->category_name       =   $entry->category_name ?: __( 'Unassigned' );
+        $class = match ( $entry->type ) {
+            'grouped'           =>  'text-success-tertiary',
+            default             =>  'text-info-tertiary'
+        };
+
+        $entry->type = match ( $entry->type ) {
+            'materialized'      =>  __( 'Materialized' ),
+            'dematerialized'    =>  __( 'Dematerialized' ),
+            'grouped'           =>  __( 'Grouped' )
+        };
+
+        $entry->type = '<strong class="' . $class . ' ">' . $entry->type . '</strong>';
+
+        $entry->stock_management = $entry->stock_management === 'enabled' ? __( 'Enabled' ) : __( 'Disabled' );
+        $entry->status = $entry->status === 'available' ? __( 'Available' ) : __( 'Hidden' );
+        $entry->category_name = $entry->category_name ?: __( 'Unassigned' );
         // you can make changes here
         $entry->addAction( 'edit', [
             'label'         =>      '<i class="mr-2 las la-edit"></i> ' . __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'ns.quantities', [
             'label'         =>      '<i class="mr-2 las la-eye"></i> ' . __( 'Preview' ),
             'namespace'     =>      'ns.quantities',
             'type'          =>      'POPUP',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id )
+            'url'           =>     ns()->url( '/dashboard/' . 'products' . '/edit/' . $entry->id ),
         ]);
-        
+
         $entry->addAction( 'units', [
             'label'         =>      '<i class="mr-2 las la-balance-scale-left"></i> ' . __( 'See Quantities' ),
             'namespace'     =>      'units',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' )
+            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/units' ),
         ]);
-        
+
         $entry->addAction( 'history', [
             'label'         =>      '<i class="mr-2 las la-history"></i> ' . __( 'See History' ),
             'namespace'     =>      'history',
             'type'          =>      'GOTO',
             'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' )
+            'url'           =>     ns()->url( '/dashboard/' . 'products/' . $entry->id . '/history' ),
         ]);
-        
+
         $entry->addAction( 'delete', [
             'label'     =>  '<i class="mr-2 las la-trash"></i> ' . __( 'Delete' ),
             'namespace' =>  'delete',
@@ -709,7 +774,7 @@ class ProductCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.products/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
@@ -720,13 +785,13 @@ class ProductCrud extends CrudService
         $query->orderBy( 'updated_at', 'desc' );
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             /**
@@ -735,16 +800,16 @@ class ProductCrud extends CrudService
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
-                throw new NotAllowedException();
+                throw new NotAllowedException;
             }
-            
-            $status     =   [
+
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Product ) {
                     $this->deleteProductAttachedRelation( $entity );
                     $entity->delete();
@@ -753,6 +818,7 @@ class ProductCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -761,21 +827,23 @@ class ProductCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
     {
         return  [
-            'list'      =>  'ns.products',
-            'create'    =>  'ns.products/create',
-            'edit'      =>  'ns.products/edit/#'
+            'list'      =>  ns()->url( 'dashboard/' . 'products' ),
+            'create'    =>  ns()->url( 'dashboard/' . 'products/create' ),
+            'edit'      =>  ns()->url( 'dashboard/' . 'products/edit/' ),
         ];
     }
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -784,16 +852,17 @@ class ProductCrud extends CrudService
                 'identifier'    =>  'delete_selected',
                 'confirm'       =>  __( 'Would you like to delete selected entries ?' ),
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

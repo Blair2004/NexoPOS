@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
@@ -22,24 +21,24 @@ class OptionSavingTest extends TestCase
 
         ns()->option->set( '_custom_option', 'Hello World' );
 
-        $this->assertTrue( 
+        $this->assertTrue(
             ns()->option->get( '_custom_option' ) === 'Hello World',
             'The option wasn\'t saved'
         );
 
-        $array      =   [ 'hello'   =>  'world' ];
+        $array = [ 'hello'   =>  'world' ];
         ns()->option->set( '_custom_array', $array );
 
-        $value      =   ns()->option->get( '_custom_array' );
+        $value = ns()->option->get( '_custom_array' );
 
-        $this->assertTrue( 
+        $this->assertTrue(
             $value[ 'hello' ] === 'world',
             'The option with array wasn\'t saved'
         );
 
         ns()->option->delete( '_custom_option' );
 
-        $this->assertTrue( 
+        $this->assertTrue(
             ns()->option->get( '_custom_option' ) === null,
             'The option wasn\'t deleted'
         );

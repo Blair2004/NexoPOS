@@ -15,8 +15,8 @@ return [
             'value'         =>  ns()->option->get( 'ns_customers_rewards_enabled', 'no' ),
             'options'       =>  Helper::kvToJsOptions([
                 'yes'       =>  __( 'Yes' ),
-                'no'        =>  __( 'No' )
-            ])
+                'no'        =>  __( 'No' ),
+            ]),
         ], [
             'type'  =>  'select',
             'label' =>  __( 'Require Valid Email' ),
@@ -25,8 +25,8 @@ return [
             'value'         =>  ns()->option->get( 'ns_customers_force_valid_email', 'no' ),
             'options'       =>  Helper::kvToJsOptions([
                 'yes'       =>  __( 'Yes' ),
-                'no'        =>  __( 'No' )
-            ])
+                'no'        =>  __( 'No' ),
+            ]),
         ], [
             'type'  =>  'select',
             'label' =>  __( 'Require Unique Phone' ),
@@ -35,22 +35,22 @@ return [
             'value'         =>  ns()->option->get( 'ns_customers_force_unique_phone', 'no' ),
             'options'       =>  Helper::kvToJsOptions([
                 'yes'       =>  __( 'Yes' ),
-                'no'        =>  __( 'No' )
-            ])
+                'no'        =>  __( 'No' ),
+            ]),
         ], [
             'type'  =>  'select',
             'label' =>  __( 'Default Customer Account' ),
             'description'   =>  __( 'You must create a customer to which each sales are attributed when the walking customer doesn\'t register.' ),
             'name'          =>  'ns_customers_default',
             'value'         =>  ns()->option->get( 'ns_customers_default', 'no' ),
-            'options'       =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ])
+            'options'       =>  Helper::toJsOptions( Customer::get(), [ 'id', 'name' ]),
         ], [
             'type'  =>  'select',
             'label' =>  __( 'Default Customer Group' ),
             'description'   =>  __( 'Select to which group each new created customers are assigned to.' ),
             'name'          =>  'ns_customers_default_group',
             'value'         =>  ns()->option->get( 'ns_customers_default_group', 'no' ),
-            'options'       =>  Helper::toJsOptions( CustomerGroup::get(), [ 'id', 'name' ])
+            'options'       =>  Helper::toJsOptions( CustomerGroup::get(), [ 'id', 'name' ]),
         ], [
             'type'  =>  'select',
             'label' =>  __( 'Enable Credit & Account' ),
@@ -59,8 +59,8 @@ return [
             'value'         =>  ns()->option->get( 'ns_customers_credit_enabled', 'no' ),
             'options'       =>  Helper::kvToJsOptions([
                 'yes'       =>  __( 'Yes' ),
-                'no'        =>  __( 'No' )
-            ])
-        ], 
-    ]
+                'no'        =>  __( 'No' ),
+            ]),
+        ],
+    ],
 ];

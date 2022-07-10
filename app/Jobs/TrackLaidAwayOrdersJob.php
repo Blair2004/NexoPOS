@@ -33,7 +33,7 @@ class TrackLaidAwayOrdersJob implements ShouldQueue
         /**
          * @var OrdersService
          */
-        $orderService       =   app()->make( OrdersService::class );
+        $orderService = app()->make( OrdersService::class );
 
         /**
          * for order thas has already expired

@@ -1,0 +1,7 @@
+#crud-table {
+    tr.ns-table-row td {
+        > a {
+            @apply border-dashed border-b border-info-tertiary text-info-tertiary;
+        }
+    }
+}

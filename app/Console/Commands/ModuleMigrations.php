@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\ModuleMigration;
+use App\Services\ModulesService;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Services\ModulesService;
-use Illuminate\Support\Facades\Artisan;
 
 class ModuleMigrations extends Command
 {
@@ -46,13 +46,14 @@ class ModuleMigrations extends Command
     }
 
     /**
-     * Get module 
+     * Get module
+     *
      * @return void
      */
     public function getModule()
     {
-        $modules   =   app()->make( ModulesService::class );
-        $this->module   =   $modules->get( $this->argument( 'namespace' ) );
+        $modules = app()->make( ModulesService::class );
+        $this->module = $modules->get( $this->argument( 'namespace' ) );
 
         if ( $this->module ) {
             if ( $this->passDeleteMigration() ) {
@@ -65,7 +66,8 @@ class ModuleMigrations extends Command
 
     /**
      * Pass Delete Migration
-     * @return boolean
+     *
+     * @return bool
      */
     public function passDeleteMigration()
     {
@@ -73,9 +75,10 @@ class ModuleMigrations extends Command
             /**
              * This will revert the migration
              * for a specific module.
+             *
              * @var ModulesService
              */
-            $moduleService  =   app()->make( ModulesService::class );
+            $moduleService = app()->make( ModulesService::class );
             $moduleService->revertMigrations( $this->module );
 
             /**
@@ -89,19 +92,19 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return false;
-        } else if ( ! empty( $this->option( 'forget' ) ) ) {
-            
-            $path   =   str_replace( 'modules/', '', $this->option( 'forget' ) );
+        } elseif ( ! empty( $this->option( 'forget' ) ) ) {
+            $path = str_replace( 'modules/', '', $this->option( 'forget' ) );
 
             /**
              * This will revert the migration
              * for a specific module.
+             *
              * @var ModulesService
              */
-            $moduleService  =   app()->make( ModulesService::class );
+            $moduleService = app()->make( ModulesService::class );
             $moduleService->revertMigrations( $this->module, [ $path ]);
 
             /**
@@ -118,7 +121,7 @@ class ModuleMigrations extends Command
              * because we use the cache to prevent the system for overusing the
              * database with too many requests.
              */
-            Artisan::call( 'cache:clear' );
+            Artisan::call( 'cache:clear', [ '--force' => true ] );
 
             return false;
         }
@@ -131,18 +134,19 @@ class ModuleMigrations extends Command
 
     /**
      * Scream Content
+     *
      * @return string content
      */
-    public function streamContent( $content ) 
+    public function streamContent( $content )
     {
         switch ( $content ) {
-            case 'migration'     :   
+            case 'migration':
             return view( 'generate.modules.migration', [
                 'module'    =>  $this->module,
                 'migration' =>  $this->migration,
                 'table'     =>  $this->table,
-                'schema'    =>  $this->schema
-            ]); 
+                'schema'    =>  $this->schema,
+            ]);
         }
     }
 
@@ -151,25 +155,25 @@ class ModuleMigrations extends Command
      */
     public function createMigration()
     {
-        $this->migration    =   $this->ask( 'Define the migration name. [Q] to finish, [T] for sample migration' );
+        $this->migration = $this->ask( 'Define the migration name. [Q] to finish, [T] for sample migration' );
 
         /**
          * Handle Exist
          */
         if ( $this->migration == 'Q' ) {
             return;
-        } else if( $this->migration == 'T' ) {
-            $this->migration    =   'test table --table=test --schema=foo|bar|noob:integer';
+        } elseif ( $this->migration == 'T' ) {
+            $this->migration = 'test table --table=test --schema=foo|bar|noob:integer';
         }
 
         /**
          * build right migration name by skipping arguments
          */
-        $this->table        =   $this->__getTableName( $this->migration );
-        $this->schema       =   $this->__getSchema( $this->migration );
-        $this->migration    =   $this->__getMigrationName( $this->migration );
+        $this->table = $this->__getTableName( $this->migration );
+        $this->schema = $this->__getSchema( $this->migration );
+        $this->migration = $this->__getMigrationName( $this->migration );
 
-        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::studly( $this->migration ) . '.php';
+        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . Str::studly( $this->migration ) . '.php';
 
         /**
          * Make sure the migration don't exist yet
@@ -181,9 +185,9 @@ class ModuleMigrations extends Command
         /**
          * Create Migration file
          */
-        Storage::disk( 'ns-modules' )->put( 
-            $fileName, 
-            $this->streamContent( 'migration' ) 
+        Storage::disk( 'ns-modules' )->put(
+            $fileName,
+            $this->streamContent( 'migration' )
         );
 
         /**
@@ -199,17 +203,18 @@ class ModuleMigrations extends Command
 
     /**
      * Get table Name
+     *
      * @param string
      * @return string
      */
     private function __getTableName( $migration )
     {
-        $pieces     =   explode( ' ', $migration );
-        $table      =   false;
+        $pieces = explode( ' ', $migration );
+        $table = false;
 
-        foreach( $pieces as $piece ) {
+        foreach ( $pieces as $piece ) {
             if ( substr( $piece, 0, 8 ) == '--table=' ) {
-                $table  =   Str::snake( substr( $piece, 8 ) );
+                $table = Str::snake( substr( $piece, 8 ) );
             }
         }
 
@@ -218,17 +223,18 @@ class ModuleMigrations extends Command
 
     /**
      * Get schema for a specific migration line
+     *
      * @param string migration
      * @return array of schema
      */
     private function __getSchema( string $migration )
     {
-        $pieces     =   explode( ' ', $migration );
-        $schema     =   [];
+        $pieces = explode( ' ', $migration );
+        $schema = [];
 
-        foreach( $pieces as $piece ) {
+        foreach ( $pieces as $piece ) {
             if ( substr( $piece, 0, 9 ) == '--schema=' ) {
-                $schema  =   $this->__parseSchema( Str::snake( substr( $piece, 9 ) ) );
+                $schema = $this->__parseSchema( Str::snake( substr( $piece, 9 ) ) );
             }
         }
 
@@ -237,20 +243,21 @@ class ModuleMigrations extends Command
 
     /**
      * Get table schema
+     *
      * @param string
      * @return array
      */
     private function __parseSchema( string $schema )
     {
-        $columns    =   explode( '|', $schema );
-        $schemas    =   [];
+        $columns = explode( '|', $schema );
+        $schemas = [];
 
         foreach ( $columns as $column ) {
-            $details    =   explode( ':', $column );
+            $details = explode( ':', $column );
             if ( count( $details ) == 1 ) {
-                $schemas[ $details[0] ]     =   'string';
+                $schemas[ $details[0] ] = 'string';
             } else {
-                $schemas[ $details[0] ]     =   $this->__checkColumnType( $details[1] );
+                $schemas[ $details[0] ] = $this->__checkColumnType( $details[1] );
             }
         }
 
@@ -259,47 +266,50 @@ class ModuleMigrations extends Command
 
     /**
      * check column type
+     *
      * @param string type
      * @return string type or default type
      */
-    private function __checkColumnType( $type ) 
+    private function __checkColumnType( $type )
     {
-        if ( ! in_array( $type, [ 
+        if ( ! in_array( $type, [
             'bigIncrements',
-            'bigInteger', 'binary', 'boolean', 'char', 'date', 'datetime', 'decimal', 
+            'bigInteger', 'binary', 'boolean', 'char', 'date', 'datetime', 'decimal',
             'double', 'enum', 'float', 'increments', 'integer', 'json',
             'jsonb', 'longText', 'mediumInteger', 'mediumText',
             'morphs', 'nullableTimestamps', 'smallInteger', 'tinyInteger',
             'softDeletes', 'string', 'text', 'time',
-            'timestamp', 'timestamps', 'rememberToken', 'unsigned'
+            'timestamp', 'timestamps', 'rememberToken', 'unsigned',
         ] ) ) {
             return 'string';
         }
+
         return $type;
     }
 
     /**
      * get Migration Name
+     *
      * @param string migration
      * @return string
      */
     private function __getMigrationName( $migration )
     {
-        $name           =   '';
-        $shouldIgnore   =   false;
-        $details        =   explode( ' ', $migration );
+        $name = '';
+        $shouldIgnore = false;
+        $details = explode( ' ', $migration );
         foreach ( $details as $detail ) {
 
             /**
-             * while we've not looped the option, we assume the string 
+             * while we've not looped the option, we assume the string
              * belong to the migration name
              */
             if ( substr( $detail, 0, 8 ) == '--table=' || substr( $detail, 0, 9 ) == '--schema=' ) {
-                $shouldIgnore   =   true;
+                $shouldIgnore = true;
             }
 
             if ( ! $shouldIgnore ) {
-                $name   .=  ' ' . ucwords( $detail );
+                $name .= ' ' . ucwords( $detail );
             }
         }
 

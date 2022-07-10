@@ -5,6 +5,7 @@ sudo apt install software-properties-common
 sudo add-apt-repository ppa:ondrej/php
 sudo apt update
 sudo apt install php7.4 php7.4-fpm php7.4-xml php7.4-gd php7.4-zip php7.4-mbstring php7.4-curl php7.4-mysql php7.4-bcmath
+sudo apt install php8.0 php8.0-fpm php8.0-xml php8.0-gd php8.0-zip php8.0-mbstring php8.0-curl php8.0-mysql php8.0-bcmath
 sudo a2enmod actions fcgid alias proxy_fcgi
 sudo a2enmod rewrite
 sudo systemctl restart apache2
@@ -16,7 +17,7 @@ php -r "unlink('composer-setup.php');"
 sudo mv composer.phar /usr/local/bin/composer
 # Maria DB
 sudo apt update
-sudo apt install mariadb-server
+sudo apt install mariadb-server -y
 sudo mysql_secure_installation
 # NVM
 sudo apt install curl
@@ -26,9 +27,9 @@ nvm install 14
 
 # Apache config
 <VirtualHost *:80>
-    ServerName pos.nexopos.com
-    ServerAlias pos.nexopos.com
-    DocumentRoot /var/www/html/pos.nexopos.com
+    ServerName summera.tk
+    ServerAlias summera.tk
+    DocumentRoot /var/www/html/summera.tk
  
     <Directory /var/www/html>
         Options -Indexes +FollowSymLinks +MultiViews
@@ -38,7 +39,7 @@ nvm install 14
  
     <FilesMatch \.php$>
         # 2.4.10+ can proxy to unix socket
-        SetHandler "proxy:unix:/var/run/php/php7.4-fpm.sock|fcgi://localhost"
+        SetHandler "proxy:unix:/var/run/php/php8.0-fpm.sock|fcgi://localhost"
     </FilesMatch>
  
     ErrorLog ${APACHE_LOG_DIR}/error.log
@@ -48,9 +49,9 @@ nvm install 14
 GRANT ALL ON *.* TO '*****'@'localhost' IDENTIFIED BY '**********' WITH GRANT OPTION;
 
 # Supervisor
-[program:app-worker]
+[program:summera-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/html/app/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+command=php /var/www/html/summera.tk/artisan queue:work --sleep=3 --tries=3 --max-time=3600
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -58,5 +59,5 @@ killasgroup=true
 user=root
 numprocs=8
 redirect_stderr=true
-stdout_logfile=/var/www/html/app/worker.log
+stdout_logfile=/var/www/html/summera.tk/worker.log
 stopwaitsecs=3600

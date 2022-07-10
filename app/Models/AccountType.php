@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -6,8 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class AccountType extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'expenses_categories';
+
+    protected $table = 'nexopos_' . 'expenses_categories';
 
     public function expenses()
     {

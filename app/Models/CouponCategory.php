@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CouponCategory extends NsModel
 {
     use HasFactory;
 
-    protected $table    =   'nexopos_' . 'coupons_categories';
-    public $timestamps  =   false;
+    protected $table = 'nexopos_' . 'coupons_categories';
+
+    public $timestamps = false;
 
     public function coupon()
     {

@@ -1,49 +1,43 @@
 <?php
+
 namespace App\Services;
-
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Permission;
-
-use App\Services\UserOptions;
-use App\Services\DateService;
 
 use App\Classes\Hook;
 use App\Exceptions\NotAllowedException;
-use App\Mail\ActivateAccountMail;
-
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use App\Models\UserAttribute;
 use App\Models\UserRoleRelation;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class Users
 {
-    private $roles  =   [];
-    private $users  =   [];
+    private $roles = [];
+
+    private $users = [];
 
     public function __construct(
         $roles,
         $user,
         Permission $permission
-    )
-    {
-        $this->roles        =   $roles;
-        $this->user         =   $user;
-        $this->permission   =   $permission;
+    ) {
+        $this->roles = $roles;
+        $this->user = $user;
+        $this->permission = $permission;
     }
 
     /**
      * get all user from a specific group
+     *
      * @param string
      * @return array of users
      */
-    public function all( $namespace = null ) 
+    public function all( $namespace = null )
     {
         if ( $namespace != null ) {
             return @$this->roles[ $namespace ][ 'users' ];
@@ -55,27 +49,28 @@ class Users
     /**
      * Will either create or update an existing user
      * that will check the attribute or the user
+     *
      * @param array $attributes
      * @param User $user
      * @return array $response
      */
     public function setUser( $attributes, $user = null )
     {
-        collect([ 
-            'username'  =>  fn() => User::where( 'username', $attributes[ 'username' ] ), 
-            'email'  =>  fn() => User::where( 'email', $attributes[ 'email' ] )
+        collect([
+            'username'  =>  fn() => User::where( 'username', $attributes[ 'username' ] ),
+            'email'  =>  fn() => User::where( 'email', $attributes[ 'email' ] ),
         ])->each( function( $callback, $key ) use ( $user ) {
-            $query  =   $callback();
+            $query = $callback();
 
             if ( $user instanceof User ) {
                 $query->where( 'id', '<>', $user->id );
             }
 
-            $user   =   $query->first();
+            $user = $query->first();
 
             if ( $user instanceof User ) {
-                throw new NotAllowedException( 
-                    sprintf( 
+                throw new NotAllowedException(
+                    sprintf(
                         __( 'The %s is already taken.' ),
                         $key
                     )
@@ -83,17 +78,17 @@ class Users
             }
         });
 
-        $user               =   new User;
-        $user->username     =   $attributes[ 'username' ];
-        $user->email        =   $attributes[ 'email' ];
-        $user->active       =   $attributes[ 'active' ] ;
-        $user->password     =   Hash::make( $attributes[ 'password' ] );
+        $user = new User;
+        $user->username = $attributes[ 'username' ];
+        $user->email = $attributes[ 'email' ];
+        $user->active = $attributes[ 'active' ];
+        $user->password = Hash::make( $attributes[ 'password' ] );
 
         /**
          * For additional parameters
          * we'll provide them.
          */
-        foreach( $attributes as $name => $value ) {
+        foreach ( $attributes as $name => $value ) {
             if ( ! in_array(
                 $name, [
                     'username',
@@ -104,7 +99,7 @@ class Users
                     'roles', // will be used elsewhere
                 ]
             )) {
-                $user->$name    =   $value;
+                $user->$name = $value;
             }
         }
 
@@ -117,7 +112,7 @@ class Users
         $this->setUserRole( $user, $attributes[ 'roles' ] ?? ns()->option->get( 'ns_registration_role' ) );
 
         /**
-         * Every new user comes with attributes that 
+         * Every new user comes with attributes that
          * should be explicitely defined.
          */
         $this->createAttribute( $user );
@@ -131,6 +126,7 @@ class Users
 
     /**
      * We'll define user role
+     *
      * @param User $user
      * @param array $roles
      */
@@ -138,33 +134,36 @@ class Users
     {
         UserRoleRelation::where( 'user_id', $user->id )->delete();
 
-        foreach( $roles as $roleId ) {
-            $relation           =   new UserRoleRelation;
-            $relation->user_id  =   $user->id;
-            $relation->role_id  =   $roleId;
+        $roles = collect( $roles )->unique()->toArray();
+
+        foreach ( $roles as $roleId ) {
+            $relation = new UserRoleRelation;
+            $relation->user_id = $user->id;
+            $relation->role_id = $roleId;
             $relation->save();
         }
     }
 
     /**
-     * Activate account using a 
+     * Activate account using a
      * code and the user id
+     *
      * @param string coe
      * @param int user id
      * @return AsyncResponse
      */
     public function activateAccount( $code, $user_id )
     {
-        $user               =   User::find( $user_id );
-        $date               =   app()->make( DateService::class );
+        $user = User::find( $user_id );
+        $date = app()->make( DateService::class );
 
         if ( ! $user instanceof User ) {
             throw new Exception( __( 'The activation process has failed.' ) );
         }
 
-        $userOptions        =   new UserOptions( $user->id );
-        $activationCode     =   $userOptions->get( 'activation-code' );
-        $expiration         =   $userOptions->get( 'activation-expiration' );
+        $userOptions = new UserOptions( $user->id );
+        $activationCode = $userOptions->get( 'activation-code' );
+        $expiration = $userOptions->get( 'activation-expiration' );
 
         if ( $activationCode !== $code ) {
             throw new Exception(
@@ -178,30 +177,30 @@ class Users
             );
         }
 
-        $user->active     =   true;
+        $user->active = true;
         $user->save();
 
         /**
          * we might need to send some
          * email ?
          */
-
         Hook::action( 'user.activated', $user );
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The account has been successfully activated.' )
+            'message'   =>  __( 'The account has been successfully activated.' ),
         ];
     }
 
     /**
      * Check if a user belongs to a group
+     *
      * @param mixed group of user
-     * @return boolean
+     * @return bool
      */
-    public function is( $group_name ) 
+    public function is( $group_name )
     {
-        $roles      =   Auth::user()
+        $roles = Auth::user()
             ->roles
             ->map( fn( $role ) => $role->namespace );
 
@@ -216,12 +215,13 @@ class Users
 
     /**
      * Clone a role assigning same permissions
+     *
      * @param Role $role
      * @return array
      */
     public function cloneRole( Role $role )
     {
-        $newRole    =   $role->toArray();
+        $newRole = $role->toArray();
 
         unset( $newRole[ 'id' ] );
         unset( $newRole[ 'created_at' ] );
@@ -231,26 +231,26 @@ class Users
          * We would however like
          * to provide a unique name and namespace
          */
-        $name       =   sprintf( 
+        $name = sprintf(
             __( 'Clone of "%s"' ),
             $newRole[ 'name' ]
         );
 
-        $namespace      =   Str::slug( $name );
+        $namespace = Str::slug( $name );
 
-        $newRole[ 'name' ]      =   $name;
-        $newRole[ 'namespace' ] =   $namespace;
-        $newRole[ 'locked' ]    =   0; // shouldn't be locked by default.
+        $newRole[ 'name' ] = $name;
+        $newRole[ 'namespace' ] = $namespace;
+        $newRole[ 'locked' ] = 0; // shouldn't be locked by default.
 
         /**
          * @var Role
          */
-        $newRole    =   Role::create( $newRole );
+        $newRole = Role::create( $newRole );
         $newRole->addPermissions( $role->permissions );
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The role has been cloned.' )
+            'message'   =>  __( 'The role has been cloned.' ),
         ];
     }
 
@@ -258,15 +258,16 @@ class Users
      * Will create the user attribute
      * for the provided user if that doesn't
      * exist yet.
+     *
      * @param User $user
      * @return void
      */
     public function createAttribute( User $user ): void
     {
         if ( ! $user->attribute instanceof UserAttribute ) {
-            $userAttribute              =   new UserAttribute;
-            $userAttribute->user_id     =   $user->id;
-            $userAttribute->language    =   ns()->option->get( 'ns_store_language' );
+            $userAttribute = new UserAttribute;
+            $userAttribute->user_id = $user->id;
+            $userAttribute->language = ns()->option->get( 'ns_store_language' );
             $userAttribute->save();
         }
     }

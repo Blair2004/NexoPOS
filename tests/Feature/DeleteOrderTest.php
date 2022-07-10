@@ -2,15 +2,17 @@
 
 namespace Tests\Feature;
 
+use Modules\NsGastro\Tests\TestCase;
 use Tests\Traits\WithAuthentication;
 use Tests\Traits\WithOrderTest;
 
-class DeleteOrderTest extends CreateOrderTest
+class DeleteOrderTest extends TestCase
 {
     use WithAuthentication, WithOrderTest;
 
-    protected $count                =   1;
-    protected $totalDaysInterval    =   1;
+    protected $count = 1;
+
+    protected $totalDaysInterval = 1;
 
     /**
      * A basic feature test example.
@@ -21,6 +23,5 @@ class DeleteOrderTest extends CreateOrderTest
     {
         $this->attemptAuthenticate();
         $this->attemptDeleteOrder();
-
     }
 }

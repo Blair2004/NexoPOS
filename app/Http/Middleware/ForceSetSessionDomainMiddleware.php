@@ -21,22 +21,22 @@ class ForceSetSessionDomainMiddleware
         /**
          * Set version to close setup
          */
-        $domain     =   Str::replaceFirst( 'http://', '', url( '/' ) );
-        $domain     =   Str::replaceFirst( 'https://', '', $domain );
-        $domain     =   explode( ':', $domain )[0];
+        $domain = Str::replaceFirst( 'http://', '', url( '/' ) );
+        $domain = Str::replaceFirst( 'https://', '', $domain );
+        $domain = explode( ':', $domain )[0];
 
         DotenvEditor::load();
-        
+
         if ( ! env( 'SESSION_DOMAIN', false ) ) {
             DotenvEditor::setKey( 'SESSION_DOMAIN', Str::replaceFirst( 'http://', '', explode( ':', $domain )[0] ) );
         }
 
-        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {         
+        if ( ! env( 'SANCTUM_STATEFUL_DOMAINS', false ) ) {
             DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', collect([ $domain, 'localhost', '127.0.0.1' ])->unique()->join(',') );
         }
 
         DotenvEditor::save();
-        
+
         return $next($request);
     }
 }

@@ -2,6 +2,12 @@
 
 use App\Classes\Hook;
 use App\Classes\Output;
+
+$beforeForm     =   new Output;
+$afterForm      =   new Output;
+
+Hook::action( 'ns.before-login-fields', $beforeForm );
+Hook::action( 'ns.after-login-fields', $afterForm );
 ?>
 @extends( 'layout.base' )
 
@@ -17,9 +23,9 @@ use App\Classes\Output;
                     @endif
                 </div>
                 <x-session-message></x-session-message>
-                {!! Hook::filter( 'ns.before-login-fields', new Output ) !!}
+                {!! $beforeForm !!}
                 @include( '/common/auth/sign-in-form' )
-                {!! Hook::filter( 'ns.after-login-fields', new Output ) !!}
+                {!! $afterForm !!}
             </div>
         </div>
     </div>

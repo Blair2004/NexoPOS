@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateOrdersTableOct8 extends Migration
 {
@@ -13,7 +13,7 @@ class UpdateOrdersTableOct8 extends Migration
      */
     public function up()
     {
-        Schema::table( 'nexopos_orders', function( Blueprint $table ){
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders', 'subtotal' ) ) {
                 $table->float( 'subtotal' )->default(0);
             }
@@ -27,7 +27,7 @@ class UpdateOrdersTableOct8 extends Migration
      */
     public function down()
     {
-        Schema::table( 'nexopos_orders', function( Blueprint $table ){
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
             if ( Schema::hasColumn( 'nexopos_orders', 'subtotal' ) ) {
                 $table->dropColumn( 'subtotal' );
             }

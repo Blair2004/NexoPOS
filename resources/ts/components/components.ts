@@ -27,6 +27,7 @@ import { default as nsDateRangePicker } from  './ns-date-range-picker.vue';
 import { default as nsNotice }          from  './ns-notice.vue';
 import { default as nsDatepicker }      from  './ns-datepicker.vue';
 import { default as nsPaginate }        from  './ns-paginate.vue';
+import { default as nsSearch }          from  './ns-search.vue';
 
 export { nsMenu };
 export { nsSubmenu };
@@ -57,3 +58,4 @@ export { nsAvatar };
 export { nsDateRangePicker };
 export { nsNotice };
 export { nsPaginate };
+export { nsSearch };

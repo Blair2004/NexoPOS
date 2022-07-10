@@ -203,7 +203,7 @@
             @apply bg-tab-inactive border-transparent text-secondary;
 
             .products-count {
-                @apply bg-success-primary text-typography;
+                @apply bg-success-tertiary text-white;
             }
         }
         .switch-grid {
@@ -310,7 +310,7 @@
 
 #ns-units-selector {
     .overlay {
-        background:rgb(0 0 0 / 73%);
+        background:rgb(250 250 250 / 73%);
     }
 }
 

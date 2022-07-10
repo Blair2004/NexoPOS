@@ -4,9 +4,9 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
+use App\Jobs\RefreshReportJob;
 use App\Models\Order;
 use App\Models\Permission;
-use App\Services\AuthService;
 use App\Services\BarcodeService;
 use App\Services\CashRegistersService;
 use App\Services\CoreService;
@@ -17,27 +17,25 @@ use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ExpenseService;
 use App\Services\MediaService;
-use App\Services\UpdateService;
 use App\Services\MenuService;
+use App\Services\NotificationService;
 use App\Services\Options;
 use App\Services\OrdersService;
 use App\Services\ProcurementService;
 use App\Services\ProductCategoryService;
 use App\Services\ProductService;
 use App\Services\ProviderService;
+use App\Services\ReportService;
+use App\Services\ResetService;
 use App\Services\TaxService;
 use App\Services\UnitService;
+use App\Services\UpdateService;
 use App\Services\UserOptions;
 use App\Services\Users;
 use App\Services\Validation;
-use App\Services\NotificationService;
-use App\Services\ReportService;
-use App\Services\ResetService;
-use App\Services\WebSocketService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -49,22 +47,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include_once( base_path() . '/app/Services/HelperFunctions.php' );
+        include_once base_path() . '/app/Services/HelperFunctions.php';
 
         // save Singleton for options
-        $this->app->singleton( Options::class, function(){
-            return new Options();
+        $this->app->singleton( Options::class, function() {
+            return new Options;
         });
 
-        $this->app->singleton( MenuService::class, function(){
-            return new MenuService();
+        $this->app->singleton( MenuService::class, function() {
+            return new MenuService;
         });
 
-        $this->app->singleton( UpdateService::class, function(){
-            return new UpdateService();
+        $this->app->singleton( UpdateService::class, function() {
+            return new UpdateService;
         });
 
-        $this->app->singleton( DemoService::class, function(){
+        $this->app->bind( DemoService::class, function() {
             return new DemoService(
                 app()->make( ProductCategoryService::class ),
                 app()->make( ProductService::class ),
@@ -74,37 +72,38 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // save Singleton for options
-        $this->app->singleton( DateService::class, function(){
-            $options    =   app()->make( Options::class );
-            $timeZone   =   $options->get( 'ns_datetime_timezone', 'Europe/London' );
+        $this->app->singleton( DateService::class, function() {
+            $options = app()->make( Options::class );
+            $timeZone = $options->get( 'ns_datetime_timezone', 'Europe/London' );
+
             return new DateService( 'now', $timeZone );
         });
-        
+
         // save Singleton for options
-        $this->app->singleton( UserOptions::class, function(){
+        $this->app->singleton( UserOptions::class, function() {
             return new UserOptions( Auth::id() );
         });
 
-        $this->app->singleton( CashRegistersService::class, function(){
-            return new CashRegistersService();
+        $this->app->singleton( CashRegistersService::class, function() {
+            return new CashRegistersService;
         });
 
         // save Singleton for options
-        $this->app->singleton( Users::class, function(){
-            return new Users( 
+        $this->app->singleton( Users::class, function() {
+            return new Users(
                 Auth::check() ? Auth::user()->roles : collect([]),
                 Auth::user(),
-                new Permission()
+                new Permission
             );
         });
 
         // provide media manager
         $this->app->singleton( MediaService::class, function() {
             return new MediaService([
-                'extensions'    =>  [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ]
+                'extensions'    =>  [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
             ]);
         });
-        
+
         $this->app->singleton( CrudService::class, function() {
             return new CrudService;
         });
@@ -117,7 +116,7 @@ class AppServiceProvider extends ServiceProvider
             return new ResetService;
         });
 
-        $this->app->singleton( ReportService::class, function() {
+        $this->app->bind( ReportService::class, function() {
             return new ReportService(
                 app()->make( DateService::class )
             );
@@ -135,19 +134,20 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( ProductCategoryService::class, function( $app ) {
+        $this->app->bind( ProductCategoryService::class, function( $app ) {
             return new ProductCategoryService;
         });
 
-        $this->app->singleton( TaxService::class, function( $app ) {
-            return new TaxService( 
+        $this->app->bind( TaxService::class, function( $app ) {
+            return new TaxService(
                 $app->make( CurrencyService::class )
             );
         });
 
-        $this->app->singleton( CurrencyService::class, function( $app ) {
-            $options    =   app()->make( Options::class );
-            return new CurrencyService( 
+        $this->app->bind( CurrencyService::class, function( $app ) {
+            $options = app()->make( Options::class );
+
+            return new CurrencyService(
                 0, [
                     'decimal_precision'     =>  $options->get( 'ns_currency_precision', 0 ),
                     'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
@@ -156,12 +156,12 @@ class AppServiceProvider extends ServiceProvider
                     'currency_symbol'       =>  $options->get( 'ns_currency_symbol' ),
                     'currency_iso'          =>  $options->get( 'ns_currency_iso' ),
                     'prefered_currency'     =>  $options->get( 'ns_currency_prefered' ),
-                ]                
+                ]
             );
         });
 
-        $this->app->singleton( ProductService::class, function( $app ) {
-            return new ProductService( 
+        $this->app->bind( ProductService::class, function( $app ) {
+            return new ProductService(
                 $app->make( ProductCategoryService::class ),
                 $app->make( TaxService::class ),
                 $app->make( CurrencyService::class ),
@@ -171,30 +171,30 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton( Validation::class, function( $app ) {
-            return new Validation();
+            return new Validation;
         });
 
-        $this->app->singleton( UnitService::class, function( $app ) {
+        $this->app->bind( UnitService::class, function( $app ) {
             return new UnitService(
                 $app->make( CurrencyService::class )
             );
         });
 
         $this->app->singleton( ProviderService::class, function( $app ) {
-            return new ProviderService();
+            return new ProviderService;
         });
 
         $this->app->singleton( CustomerService::class, function( $app ) {
-            return new CustomerService();
+            return new CustomerService;
         });
 
-        $this->app->singleton( ExpenseService::class, function( $app ) {
+        $this->app->bind( ExpenseService::class, function( $app ) {
             return new ExpenseService(
                 app()->make( DateService::class )
             );
         });
 
-        $this->app->singleton( OrdersService::class, function( $app ) {
+        $this->app->bind( OrdersService::class, function( $app ) {
             return new OrdersService(
                 $app->make( CustomerService::class ),
                 $app->make( ProductService::class ),
@@ -207,7 +207,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton( ProcurementService::class, function( $app ) {
+        $this->app->bind( ProcurementService::class, function( $app ) {
             return new ProcurementService(
                 $app->make( ProviderService::class ),
                 $app->make( UnitService::class ),
@@ -218,8 +218,10 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->bindMethod([ RefreshReportJob::class, 'handle' ], fn( $job, $app ) => $job->handle( $app->make( ReportService::class ) ) );
+
         /**
-         * When the module has started, 
+         * When the module has started,
          * we can load the configuration.
          */
         Event::listen( function( ModulesBootedEvent $event ) {
@@ -240,7 +242,7 @@ class AppServiceProvider extends ServiceProvider
          * let's create a default sqlite
          * database. This file is not tracked by Git.
          */
-        if( ! is_file( database_path( 'database.sqlite' ) ) ) {
+        if ( ! is_file( database_path( 'database.sqlite' ) ) ) {
             file_put_contents( database_path( 'database.sqlite' ), '' );
         }
     }
@@ -269,20 +271,20 @@ class AppServiceProvider extends ServiceProvider
                 'identifier'    =>  'takeaway',
                 'label'         =>  __( 'Take Away' ),
                 'icon'          =>  '/images/groceries.png',
-                'selected'      =>  false
-            ], 
+                'selected'      =>  false,
+            ],
             'delivery'          =>  [
                 'identifier'    =>  'delivery',
                 'label'         =>  __( 'Delivery' ),
                 'icon'          =>  '/images/delivery.png',
-                'selected'      =>  false
-            ]
+                'selected'      =>  false,
+            ],
         ])]);
 
-        config([ 
+        config([
             'nexopos.orders.types-labels' =>   collect( config( 'nexopos.orders.types' ) )
                 ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
-                ->toArray()
+                ->toArray(),
         ]);
     }
 }

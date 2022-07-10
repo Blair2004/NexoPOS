@@ -1,9 +1,8 @@
 <?php
 
-use App\Classes\Hook;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateCustomersAddresses extends Migration
 {

@@ -15,7 +15,7 @@ class CreateNexoposModulesMigrationsTable extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

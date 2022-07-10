@@ -37,23 +37,23 @@ return new class extends Migration
 
     protected function handleWalletHistory( $history )
     {
-        $beforeRecord   =   CustomerAccountHistory::where( 'id', '<', $history->id )
+        $beforeRecord = CustomerAccountHistory::where( 'id', '<', $history->id )
             ->where( 'customer_id', $history->customer_id )
             ->orderBy( 'id', 'desc' )
             ->first();
 
-        $previousNextAmount   =   $beforeRecord instanceof CustomerAccountHistory ? $beforeRecord->next_amount : 0;
+        $previousNextAmount = $beforeRecord instanceof CustomerAccountHistory ? $beforeRecord->next_amount : 0;
 
-        switch( $history->operation ) {
+        switch ( $history->operation ) {
             case CustomerAccountHistory::OPERATION_ADD:
             case CustomerAccountHistory::OPERATION_REFUND:
-                $history->previous_amount   =   $previousNextAmount;
-                $history->next_amount       =   $previousNextAmount + $history->amount;
+                $history->previous_amount = $previousNextAmount;
+                $history->next_amount = $previousNextAmount + $history->amount;
             break;
             case CustomerAccountHistory::OPERATION_PAYMENT:
             case CustomerAccountHistory::OPERATION_DEDUCT:
-                $history->previous_amount   =   $previousNextAmount;
-                $history->next_amount       =   $previousNextAmount - $history->amount;
+                $history->previous_amount = $previousNextAmount;
+                $history->next_amount = $previousNextAmount - $history->amount;
             break;
         }
 

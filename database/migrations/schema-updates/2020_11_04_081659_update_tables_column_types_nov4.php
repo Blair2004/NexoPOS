@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateTablesColumnTypesNov4 extends Migration
 {
@@ -44,7 +44,7 @@ class UpdateTablesColumnTypesNov4 extends Migration
                 }
             });
         }
-        
+
         if ( Schema::hasTable( 'nexopos_orders' ) ) {
             Schema::table( 'nexopos_orders', function( Blueprint $table ) {
                 if ( Schema::hasColumns( 'nexopos_orders', [

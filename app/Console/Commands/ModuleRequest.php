@@ -2,15 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\ModuleMigration;
+use App\Services\ModulesService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Services\Modules;
-use App\Services\Setup;
-use App\Services\Helper;
-use App\Services\ModulesService;
-use Illuminate\Support\Facades\Artisan;
 
 class ModuleRequest extends Command
 {
@@ -19,7 +14,7 @@ class ModuleRequest extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:request {namespace} {name}';
+    protected $signature = 'modules:request {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -49,13 +44,14 @@ class ModuleRequest extends Command
     }
 
     /**
-     * Get module 
+     * Get module
+     *
      * @return void
      */
     public function getModule()
     {
-        $modules   =   app()->make( ModulesService::class );
-        $this->module   =   $modules->get( $this->argument( 'namespace' ) );
+        $modules = app()->make( ModulesService::class );
+        $this->module = $modules->get( $this->argument( 'namespace' ) );
 
         if ( $this->module ) {
             $this->createRequest();
@@ -66,16 +62,17 @@ class ModuleRequest extends Command
 
     /**
      * Scream Content
+     *
      * @return string content
      */
-    public function streamContent( $content ) 
+    public function streamContent( $content )
     {
         switch ( $content ) {
-            case 'migration'     :   
+            case 'migration':
             return view( 'generate.modules.request', [
                 'module'    =>  $this->module,
-                'name'      =>  $this->argument( 'name' )
-            ]); 
+                'name'      =>  $this->argument( 'name' ),
+            ]);
         }
     }
 
@@ -84,21 +81,29 @@ class ModuleRequest extends Command
      */
     public function createRequest()
     {
-        $fileName           =   $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . Str::studly( $this->argument( 'name' ) ) . '.php';
+        $requestName = Str::studly( $this->argument( 'name' ) );
+        $fileName = $this->module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Requests' . DIRECTORY_SEPARATOR . $requestName . '.php';
 
         /**
          * Make sure the migration don't exist yet
          */
-        if ( Storage::disk( 'ns-modules' )->exists( $fileName ) ) {
-            return $this->info( 'A migration with the same name has been found !' );
+        $fileExists = Storage::disk( 'ns-modules' )->exists(
+            $fileName
+        );
+
+        if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+            return $this->info( sprintf(
+                __( 'A request with the same name has been found !' ),
+                $requestName
+            ) );
         }
 
         /**
          * Create Migration file
          */
-        Storage::disk( 'ns-modules' )->put( 
-            $fileName, 
-            $this->streamContent( 'migration' ) 
+        Storage::disk( 'ns-modules' )->put(
+            $fileName,
+            $this->streamContent( 'migration' )
         );
 
         /**

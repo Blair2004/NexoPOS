@@ -4,15 +4,12 @@
 <div class="h-full flex-auto flex flex-col">
     @include( Hook::filter( 'ns-dashboard-header', '../common/dashboard-header' ) )
     <div class="px-4 flex-auto flex flex-col" id="dashboard-content">
-        <div class="page-inner-header mb-4">
-            <h3 class="text-3xl text-gray-800 font-bold">{{ $title ?? __( 'Unamed Page' ) }}</h3>
-            <p class="text-gray-600">{{ $description ?? __( 'No Description Provided' ) }}</p>
-        </div>
+        @include( 'common.dashboard.title' )
         <ns-procurement-invoice></ns-procurement-invoice>
     </div>
 </div>
 <script type="text/x-template" id="ns-procurement-invoice">
-<div class="p-4 bg-white shadow">
+<div class="p-4 shadow ns-box">
     <div id="printable-container">
 
         <div class="my-4 flex justify-between">
@@ -23,7 +20,7 @@
                 {{ sprintf( __( 'Date : %s' ), $procurement->updated_at ) }}
             </div>
         </div>
-        <div class="flex flex-wrap -mx-3 text-gray-700">
+        <div class="flex flex-wrap -mx-3 text-primary">
             <div class="px-3 w-full print:w-1/2 md:w-1/2">
                 <h3 class="font-semibold text-xl border-b-2 border-blue-400 py-2 mb-2">Provider</h3>
                 <ul>
@@ -49,7 +46,7 @@
         </div>
         <div class="my-4">
             <table class="ns-table">
-                <thead>
+                <thead class="border">
                     <tr>
                         <th>{{ __( 'Product' ) }}</th>
                         <th>{{ __( 'Unit' ) }}</th>
@@ -58,27 +55,27 @@
                         <th>{{ __( 'Total' ) }}</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="border">
                     @foreach( $procurement->products as $product )
                     <tr>
-                        <td>
+                        <td class="border p-1">
                             <h3 class="font-semibold">{{ $product->name }}</h3>
-                            <p class="text-sm">{{ $product->barcode }}</p>
+                            <p class="text-xs">{{ __( 'Barcode' ) }}: {{ $product->barcode }}</p>
                         </td>
-                        <td>{{ $product->unit->name }}</td>
-                        <td class="text-right">{{ ( string ) ns()->currency->define( $product->purchase_price ) }}</td>
-                        <td class="text-right">{{ $product->quantity }}</td>
-                        <td class="text-right">{{ ( string ) ns()->currency->define( $product->total_purchase_price ) }}</td>
+                        <td class="border p-1">{{ $product->unit->name }}</td>
+                        <td class="text-right border p-1">{{ ( string ) ns()->currency->define( $product->purchase_price ) }}</td>
+                        <td class="text-right border p-1">{{ $product->quantity }}</td>
+                        <td class="text-right border p-1">{{ ( string ) ns()->currency->define( $product->total_purchase_price ) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
+                <tfoot class="border">
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>{{ __( 'Total' ) }}</td>
-                        <td class="text-right">{{ ns()->currency->define( 
+                        <td class="border p-1">{{ __( 'Total' ) }}</td>
+                        <td class="text-right border p-1">{{ ns()->currency->define( 
                             $procurement->products->map( fn( $product ) => $product->total_purchase_price )->sum()
                         ) }}</td>
                     </tr>
@@ -86,15 +83,15 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>{{ __( 'Delivery Status' ) }}</td>
-                        <td class="text-right">{{ ns()->procurement->getDeliveryLabel( $procurement->delivery_status ) }}</td>
+                        <td class="border p-1">{{ __( 'Delivery Status' ) }}</td>
+                        <td class="text-right border p-1">{{ ns()->procurement->getDeliveryLabel( $procurement->delivery_status ) }}</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td>{{ __( 'Payment Status' ) }}</td>
-                        <td class="text-right">{{ ns()->procurement->getPaymentLabel( $procurement->payment_status ) }}</td>
+                        <td class="border p-1">{{ __( 'Payment Status' ) }}</td>
+                        <td class="text-right border p-1">{{ ns()->procurement->getPaymentLabel( $procurement->payment_status ) }}</td>
                     </tr>
                 </tfoot>
             </table>

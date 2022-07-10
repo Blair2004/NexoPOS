@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateAddTaxtoOrderRefundsProductsAug12 extends Migration
 {
@@ -18,7 +18,7 @@ class UpdateAddTaxtoOrderRefundsProductsAug12 extends Migration
                 $table->float( 'tax_value' )->default(0);
             }
         });
-        
+
         Schema::table( 'nexopos_orders_refunds', function( Blueprint $table ) {
             if ( ! Schema::hasColumn( 'nexopos_orders_refunds', 'tax_value' ) ) {
                 $table->float( 'tax_value' )->default(0);

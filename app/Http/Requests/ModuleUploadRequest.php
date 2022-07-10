@@ -24,7 +24,7 @@ class ModuleUploadRequest extends FormRequest
     public function rules()
     {
         return [
-            'module'    =>  'required|mimes:zip'
+            'module'    =>  'required|mimes:zip',
         ];
     }
 }

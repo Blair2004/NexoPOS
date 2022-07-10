@@ -2,7 +2,7 @@
     .ns-table {
         thead {
             th {
-                @apply bg-tab-table-th text-primary border-tab-table-th-edge;
+                @apply text-primary border-tab-table-th-edge;
             }
         }
         tbody {

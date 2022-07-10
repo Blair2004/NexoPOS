@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Services\CrudService;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use stdClass;
@@ -21,12 +18,11 @@ class CrudAfterDeleteEvent
      *
      * @return void
      */
-    public function __construct( 
+    public function __construct(
         public CrudService $resource,
         public stdClass $model
-    )
-    { 
-        // ... 
+    ) {
+        // ...
     }
 
     /**

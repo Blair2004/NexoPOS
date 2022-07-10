@@ -9,10 +9,10 @@
                 <div class="flex justify-between items-center">
                     <label for="title" class="font-bold my-2 text-primary">{{ form.main.label }}</label>
                     <div for="title" class="text-sm my-2 text-primary">
-                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-primary  px-2 py-1">{{ __( 'Return' ) }}</a>
+                        <a v-if="returnUrl" :href="returnUrl" class="rounded-full border ns-inset-button error hover:bg-error-tertiary  px-2 py-1">{{ __( 'Return' ) }}</a>
                     </div>
                 </div>
-                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-primary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
+                <div :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'border-error-tertiary' : ''" class="input-group info flex border-2 rounded overflow-hidden">
                     <input v-model="form.main.value" 
                         @blur="formValidation.checkField( form.main )" 
                         @change="formValidation.checkField( form.main )" 
@@ -20,10 +20,10 @@
                         type="text" 
                         :class="form.main.disabled ? '' : ''"
                         class="flex-auto text-primary outline-none h-10 px-2">
-                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-primary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
+                    <button :disabled="form.main.disabled" :class="form.main.disabled ? '' : form.main.errors.length > 0 ? 'bg-error-tertiary' : ''" @click="submit()" class="outline-none px-4 h-10 rounded-none"><slot name="save">{{ __( 'Save' ) }}</slot></button>
                 </div>
                 <p class="text-xs text-primary py-1" v-if="form.main.description && form.main.errors.length === 0">{{ form.main.description }}</p>
-                <p class="text-xs py-1 text-error-primary" v-bind:key="index" v-for="(error, index) of form.main.errors">
+                <p class="text-xs py-1 text-error-tertiary" v-bind:key="index" v-for="(error, index) of form.main.errors">
                     <span><slot name="error-required">{{ error.identifier }}</slot></span>
                 </p>
             </div>
@@ -32,10 +32,12 @@
                     <div id="tabbed-card" class="mb-8" :key="variation_index" v-for="(variation, variation_index) of form.variations">
                         <div id="card-header" class="flex flex-wrap justify-between ns-tab">
                             <div class="flex flex-wrap">
-                                <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-for="( tab, index ) in variation.tabs" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
-                                    <span class="block mr-2">{{ tab.label }}</span>
-                                    <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-red-400 text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
-                                </div>
+                                <template v-for="( tab, index ) in variation.tabs">
+                                    <div @click="setTabActive( index, variation.tabs )" :class="tab.active ? 'active' : 'inactive'" v-if="tab.visible" v-bind:key="index" class="tab cursor-pointer text-primary px-4 py-2 rounded-tl-lg rounded-tr-lg flex justify-between">
+                                        <span class="block mr-2">{{ tab.label }}</span>
+                                        <span v-if="tab.errors && tab.errors.length > 0" class="rounded-full bg-error-secondary text-white h-6 w-6 flex font-semibold items-center justify-center">{{ tab.errors.length }}</span>
+                                    </div>
+                                </template>
                             </div>
                             <div class="flex items-center justify-center -mx-1">
                                 <!-- <div class="px-1" v-if="form.variations.length > 1 && variation_index > 0">
@@ -56,7 +58,7 @@
                             </div>
                         </div>
                         <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
-                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units' ].includes( getActiveTabKey( variation.tabs ) )">
+                            <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
                                 <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
                                     <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field :field="field"></ns-field>
@@ -85,6 +87,12 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="-mx-4 flex flex-wrap text-primary" v-if="getActiveTabKey( variation.tabs ) === 'groups'">
+                                <ns-product-group
+                                    @update="setProducts( $event, variation.tabs )"
+                                    @updateSalePrice="triggerRecompute( $event, variation.tabs )" 
+                                    :fields="getActiveTab( variation.tabs ).fields"></ns-product-group>
                             </div>
                             <div class="-mx-4 flex flex-wrap" v-if="getActiveTabKey( variation.tabs ) === 'units'">
                                 <div class="px-4 w-full md:w-1/2 lg:w-1/3">
@@ -136,7 +144,11 @@ import FormValidation from '@/libraries/form-validation'
 import { nsSnackBar, nsHttpClient } from '@/bootstrap';
 import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
 import { __ } from '@/libraries/lang';
+import nsProductGroup from './ns-product-group.vue';
 export default {
+    components: {
+        nsProductGroup
+    },
     data: () => {
         return {
             formValidation: new FormValidation,
@@ -144,6 +156,44 @@ export default {
             nsHttpClient,
             _sampleVariation: null,
             form: '',
+        }
+    },
+    watch: {
+        form: {
+            deep: true,
+            handler( value ) {
+                this.form.variations.forEach( variation => {
+                    const identification    =   this.formValidation.extractFields( variation.tabs.identification.fields );
+                    
+                    if ( identification.type === 'grouped' )  {
+                        for( let index in variation.tabs ) {
+                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
+                                this.$set( variation.tabs[ index ], 'visible', false );
+                            }
+                        }
+
+                        /**
+                         * explicitely enable the groups tab
+                         */
+                        if ( variation.tabs[ 'groups' ] ) {
+                            this.$set( variation.tabs[ 'groups' ], 'visible', true );
+                        }
+                    } else {
+                        for( let index in variation.tabs ) {
+                            if ( ! [ 'identification', 'groups', 'taxes', 'units' ].includes( index ) ) {
+                                this.$set( variation.tabs[ index ], 'visible', true );
+                            }
+                        }
+
+                        /**
+                         * explicitely disable the groups tab
+                         */
+                        if ( variation.tabs[ 'groups' ] ) {
+                            this.$set( variation.tabs[ 'groups' ], 'visible', false );
+                        }
+                    }
+                });
+            }
         }
     },
     computed: {
@@ -156,13 +206,17 @@ export default {
                 newVariation[ tabIndex ].active     =   this._sampleVariation.tabs[ tabIndex ].active;
                 newVariation[ tabIndex ].fields     =   this._sampleVariation.tabs[ tabIndex ].fields
                     .filter( field => {
-                        console.log( field );
-                        return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
-                    })
+                            return ! [ 'category_id', 'product_type', 'stock_management', 'expires' ].includes( field.name );
+                        })
                     .map( field => {
-                    field.value     =   '';
-                    return field;
-                });
+                        if ( 
+                            ( typeof field.value === 'string' && field.value.length === 0 ) ||
+                            ( field.value === null )
+                        ) {
+                            field.value     =   '';
+                        }
+                        return field;
+                    });
             }
 
             return {
@@ -174,7 +228,29 @@ export default {
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'units-url' ],
     methods: {
         __,
-        
+        getGroupProducts( tabs ) {
+            if ( tabs[ 'groups' ] ) {
+                const products  =   tabs.groups.fields.filter( field => field.name === 'products_subitems' );
+
+                console.log( products );
+
+                if ( products.length > 0 ) {
+                    return products[0].value;
+                }
+            }
+
+            return [];
+        },
+        setProducts( products, tabs ) {
+            tabs[ 'groups' ].fields.forEach( field => {
+                if ( field.name === 'product_subitems' ) {
+                    field.value     =   products;
+                }
+            });
+        },
+        triggerRecompute( value ) {
+            console.log( this.form );
+        },
         getUnitQuantity( fields ) {
             const quantity  =   fields.filter( f => f.name === 'quantity' ).map( f => f.value );
             return quantity.length > 0 ? quantity[0] : 0;
@@ -381,11 +457,15 @@ export default {
             this.formValidation.disableForm( this.form );
 
             nsHttpClient[ this.submitMethod ? this.submitMethod.toLowerCase() : 'post' ]( this.submitUrl, data )
-                .subscribe( data => {
-                    if ( data.status === 'success' ) {
-                        if ( this.returnUrl !== false ) {
-                            return document.location   =   this.returnUrl;
+                .subscribe( result => {
+                    if ( result.status === 'success' ) {
+                        
+                        if ( this.submitMethod === 'POST' && this.returnUrl !== false ) {
+                            return document.location   =   result.data.editUrl || this.returnUrl;
+                        } else {
+                            nsSnackBar.info( result.message, __( 'Okay' ), { duration: 3000 }).subscribe();
                         }
+
                         this.$emit( 'save' );
                     }
                     this.formValidation.enableForm( this.form );
@@ -462,7 +542,9 @@ export default {
                      */
                     if ( index === 0 && variation.tabs[ key ].active === undefined ) {
                         variation.tabs[ key ].active    =   true;
-                        this._sampleVariation           =   Object.assign({}, variation );
+
+                        this._sampleVariation           =   JSON.parse( JSON.stringify( variation ) );
+
                         if ( variation.tabs[ key ].fields ) {
                             variation.tabs[ key ].fields    =   this.formValidation.createFields( variation.tabs[ key ].fields.filter( f => f.name !== 'name' ) );
                         }
@@ -472,7 +554,8 @@ export default {
                         }
                     }
 
-                    variation.tabs[ key ].active    =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].active        =   variation.tabs[ key ].active === undefined ? false : variation.tabs[ key ].active;
+                    variation.tabs[ key ].visible       =   variation.tabs[ key ].visible === undefined ? true : variation.tabs[ key ].visible;
 
                     index++;
                 }

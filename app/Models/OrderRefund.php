@@ -1,15 +1,15 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderRefund extends NsModel
 {
     use HasFactory;
 
-    protected $table    =   'nexopos_' . 'orders_refunds';
-    
+    protected $table = 'nexopos_' . 'orders_refunds';
+
     public function refunded_products()
     {
         return $this->hasMany( OrderProductRefund::class, 'order_refund_id', 'id' );

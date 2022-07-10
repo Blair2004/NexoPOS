@@ -19,49 +19,46 @@ Route::middleware([ 'web' ])->group( function() {
     Route::get('/', [ HomeController::class, 'welcome' ])->name( 'ns.welcome' );
 });
 
-require( dirname( __FILE__ ) . '/intermediate.php' );
+require dirname( __FILE__ ) . '/intermediate.php';
 
-Route::middleware([ 
-    InstalledStateMiddleware::class, 
-    CheckMigrationStatus::class, 
-    SubstituteBindings::class 
+Route::middleware([
+    InstalledStateMiddleware::class,
+    CheckMigrationStatus::class,
+    SubstituteBindings::class,
 ])->group( function() {
     /**
      * We would like to isolate certain routes as it's registered
      * for authentication and are likely to be applicable to sub stores
      */
-    require( dirname( __FILE__ ) . '/authenticate.php' );
+    require dirname( __FILE__ ) . '/authenticate.php';
 
     Route::get( '/database-update', [ UpdateController::class, 'updateDatabase' ])
         ->withoutMiddleware([ CheckMigrationStatus::class ])
         ->name( 'ns.database-update' );
 
-    Route::middleware([ 
+    Route::middleware([
         Authenticate::class,
         CheckApplicationHealthMiddleware::class,
         ClearRequestCacheMiddleware::class,
     ])->group( function() {
-
         Route::prefix( 'dashboard' )->group( function() {
-
             event( new WebRoutesLoadedEvent( 'dashboard' ) );
 
             Route::middleware([
-                HandleCommonRoutesMiddleware::class
+                HandleCommonRoutesMiddleware::class,
             ])->group( function() {
-                require( dirname( __FILE__ ) . '/nexopos.php' );
+                require dirname( __FILE__ ) . '/nexopos.php';
             });
 
-            include( dirname( __FILE__ ) . '/web/modules.php' );
-            include( dirname( __FILE__ ) . '/web/users.php' );
+            include dirname( __FILE__ ) . '/web/modules.php';
+            include dirname( __FILE__ ) . '/web/users.php';
 
             Route::get( '/crud/download/{hash}', [ CrudController::class, 'downloadSavedFile' ])->name( 'ns.dashboard.crud-download' );
         });
-        
     });
 });
 
-Route::middleware([ 
+Route::middleware([
     NotInstalledStateMiddleware::class,
     ClearRequestCacheMiddleware::class,
 ])->group( function() {
@@ -70,4 +67,4 @@ Route::middleware([
     });
 });
 
-include( dirname( __FILE__ ) . '/debug.php' );
+include dirname( __FILE__ ) . '/debug.php';

@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -15,6 +12,7 @@ class OrderAfterProductStockCheckedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $items;
+
     public $session_identifier;
 
     /**
@@ -24,8 +22,8 @@ class OrderAfterProductStockCheckedEvent
      */
     public function __construct( $items, $session_identifier )
     {
-        $this->items                =   $items;
-        $this->session_identifier   =   $session_identifier;
+        $this->items = $items;
+        $this->session_identifier = $session_identifier;
     }
 
     /**

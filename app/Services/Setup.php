@@ -1,21 +1,22 @@
 <?php
 
 namespace App\Services;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Artisan;
-use Jackiedo\DotenvEditor\Facades\DotenvEditor;
-use App\Models\User;
+
 use App\Models\Migration;
 use App\Models\PaymentType;
-use App\Services\Options;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 class Setup
 {
     /**
      * Attempt database and save db informations
+     *
      * @return void
      */
     public function saveDatabaseSettings( Request $request )
@@ -36,51 +37,50 @@ class Setup
         ]]);
 
         try {
-            $DB     =   DB::connection( 'test' )->getPdo();
+            $DB = DB::connection( 'test' )->getPdo();
         } catch (\Exception $e) {
-
-            switch( $e->getCode() ) {
-                case 2002   :   
-                    $message =  [
+            switch ( $e->getCode() ) {
+                case 2002:
+                    $message = [
                         'name'              =>   'hostname',
                         'message'           =>  __( 'Unable to reach the host' ),
-                        'status'            =>  'failed'
-                    ]; 
+                        'status'            =>  'failed',
+                    ];
                 break;
-                case 1045   :   
-                    $message =  [
+                case 1045:
+                    $message = [
                         'name'      =>   'username',
                         'message'   =>  __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status'    =>  'failed'
+                        'status'    =>  'failed',
                     ];
                 break;
-                case 1049   :   
-                    $message =  [
+                case 1049:
+                    $message = [
                         'name'      => 'database_name',
                         'message'   =>  __( 'Unable to select the database.' ),
-                        'status'    =>  'failed'
+                        'status'    =>  'failed',
                     ];
                 break;
-                case 1044   :   
-                    $message =  [
+                case 1044:
+                    $message = [
                         'name'      => 'username',
                         'message'   =>  __( 'Access denied for this user.' ),
-                        'status'    =>  'failed'
+                        'status'    =>  'failed',
                     ];
                 break;
-                case 1698   :   
-                    $message =  [
+                case 1698:
+                    $message = [
                         'name'        => 'username',
                         'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status'       =>  'failed'
+                        'status'       =>  'failed',
                     ];
                 break;
-                default     :   
-                    $message =  [
+                default:
+                    $message = [
                         'name'      => 'hostname',
                         'message'   =>  $e->getMessage(),
-                        'status'    =>  'failed'
-                    ]; 
+                        'status'    =>  'failed',
+                    ];
                 break;
             }
 
@@ -102,16 +102,17 @@ class Setup
         /**
          * Link the resource storage
          */
-        Artisan::call( 'storage:link' );
+        Artisan::call( 'storage:link', [ '--force' => true ] );
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'The connexion with the database was successful' )
-        ];   
+            'message'   =>  __( 'The connexion with the database was successful' ),
+        ];
     }
 
     /**
      * Run migration
+     *
      * @param Http Request
      * @return void
      */
@@ -120,10 +121,24 @@ class Setup
         /**
          * Let's create the tables. The DB is supposed to be set
          */
-        Artisan::call( 'migrate --path=/database/migrations/default' );
-        Artisan::call( 'migrate --path=/database/migrations/create-tables' );
-        Artisan::call( 'vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"' );
-        Artisan::call( 'ns:translate --symlink' );
+        Artisan::call( 'migrate', [
+            '--force'   =>  true,
+            '--path'    =>  '/database/migrations/default',
+        ]);
+
+        Artisan::call( 'migrate', [
+            '--force'   => true,
+            '--path'    => '/database/migrations/create-tables',
+        ]);
+
+        Artisan::call( 'vendor:publish', [
+            '--force'       => true,
+            '--provider'    =>  'Laravel\Sanctum\SanctumServiceProvider',
+        ]);
+
+        Artisan::call( 'ns:translate', [
+            '--symlink' => true,
+        ]);
 
         /**
          * we'll register all "schema-updates" migration
@@ -133,64 +148,41 @@ class Setup
         ns()->update
             ->getMigrations()
             ->each( function( $file ) {
-                $migration 	=	Migration::where( 'migration', $file )->first();
+                $migration = Migration::where( 'migration', $file )->first();
                 if ( ! $migration instanceof Migration ) {
-                    $migration 	            =	new Migration;
-                    $migration->migration 	=	$file;
-                    $migration->batch 	    =	0;
+                    $migration = new Migration;
+                    $migration->migration = $file;
+                    $migration->batch = 0;
                     $migration->save();
                 }
             });
 
-        $userID             =   rand(1,99);
-        
-        $user               =   new User;
-        $user->id           =   $userID;
-        $user->username     =   $fields[ 'admin_username' ];
-        $user->password     =   Hash::make( $fields[ 'password' ] );
-        $user->email        =   $fields[ 'admin_email' ];
-        $user->author       =   $userID;
-        $user->active       =   true; // first user active by default;
+        $userID = rand(1, 99);
+
+        $user = new User;
+        $user->id = $userID;
+        $user->username = $fields[ 'admin_username' ];
+        $user->password = Hash::make( $fields[ 'password' ] );
+        $user->email = $fields[ 'admin_email' ];
+        $user->author = $userID;
+        $user->active = true; // first user active by default;
         $user->save();
 
         /**
          * The main user is the master
          */
         User::set( $user )->as( 'admin' );
-        
+
         /**
          * define default user language
          */
         $user->attribute()->create([
-            'language'  =>  'en'
+            'language'  =>  'en',
         ]);
 
-        /**
-         * let's create default payment
-         * for the system
-         */
-        $paymentType                =   new PaymentType();
-        $paymentType->label         =   __( 'Cash' );
-        $paymentType->identifier    =   'cash-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
+        $this->createDefaultPayment( $user );
 
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Bank Payment' );
-        $paymentType->identifier    =   'bank-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
-
-        $paymentType                =   new PaymentType;
-        $paymentType->label         =   __( 'Customer Account' );
-        $paymentType->identifier    =   'account-payment';
-        $paymentType->readonly      =   true;
-        $paymentType->author        =   $user->id;
-        $paymentType->save();
-
-        $domain     =   pathinfo( url()->to( '/' ) );
+        $domain = pathinfo( url()->to( '/' ) );
 
         DotenvEditor::load();
         DotenvEditor::setKey( 'NS_VERSION', config( 'nexopos.version' ) );
@@ -200,79 +192,102 @@ class Setup
         DotenvEditor::setKey( 'NS_SOCKET_DOMAIN', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'SANCTUM_STATEFUL_DOMAINS', $domain[ 'basename' ] );
         DotenvEditor::setKey( 'NS_SOCKET_ENABLED', 'false' );
-        DotenvEditor::setKey( 'NS_ENV', 'production' );        
+        DotenvEditor::setKey( 'NS_ENV', 'production' );
         DotenvEditor::save();
-        
 
         /**
          * We assume so far the application is installed
          * then we can launch option service
          */
-        $this->options      =   app()->make( Options::class );
-        $this->options->set( 'ns_store_name', $fields[ 'ns_store_name' ] );
-        $this->options->set( 'ns_registration_enabled', false );
-        $this->options->set( 'ns_pos_order_types', [ 'takeaway', 'delivery' ]);
+        $this->options = app()->make( Options::class );
+        $this->options->setDefault();
 
         return [
             'status'    =>  'success',
-            'message'   =>  __( 'NexoPOS has been successfuly installed.' )
+            'message'   =>  __( 'NexoPOS has been successfuly installed.' ),
         ];
+    }
+
+    public function createDefaultPayment( $user )
+    {
+        /**
+         * let's create default payment
+         * for the system
+         */
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Cash' );
+        $paymentType->identifier = 'cash-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $user->id;
+        $paymentType->save();
+
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Bank Payment' );
+        $paymentType->identifier = 'bank-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $user->id;
+        $paymentType->save();
+
+        $paymentType = new PaymentType;
+        $paymentType->label = __( 'Customer Account' );
+        $paymentType->identifier = 'account-payment';
+        $paymentType->readonly = true;
+        $paymentType->author = $user->id;
+        $paymentType->save();
     }
 
     public function testDBConnexion()
     {
         try {
-            $DB     =   DB::connection( env( 'DB_CONNECTION', 'mysql' ) )->getPdo();
+            $DB = DB::connection( env( 'DB_CONNECTION', 'mysql' ) )->getPdo();
 
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'Database connexion was successful' )
+                'message'   =>  __( 'Database connexion was successful' ),
             ];
-
         } catch (\Exception $e) {
-
-            switch( $e->getCode() ) {
-                case 2002   :   
-                    $message =  [
+            switch ( $e->getCode() ) {
+                case 2002:
+                    $message = [
                         'name'              =>   'hostname',
                         'message'           =>  __( 'Unable to reach the host' ),
-                        'status'            =>  'failed'
-                    ]; 
+                        'status'            =>  'failed',
+                    ];
                 break;
-                case 1045   :   
-                    $message =  [
+                case 1045:
+                    $message = [
                         'name'              =>   'username',
                         'message'           =>  __( 'Unable to connect to the database using the credentials provided.' ),
-                        'status'            =>  'failed'
+                        'status'            =>  'failed',
                     ];
                 break;
-                case 1049   :   
-                    $message =  [
-                         'name'             => 'database_name',
-                         'message'          =>  __( 'Unable to select the database.' ),
-                         'status'           =>  'failed'
+                case 1049:
+                    $message = [
+                        'name'             => 'database_name',
+                        'message'          =>  __( 'Unable to select the database.' ),
+                        'status'           =>  'failed',
                     ];
                 break;
-                case 1044   :   
-                    $message =  [
+                case 1044:
+                    $message = [
                         'name'        => 'username',
                         'message'      =>  __( 'Access denied for this user.' ),
-                        'status'       =>  'failed'
+                        'status'       =>  'failed',
                     ];
                 break;
-                case 1698   :   
-                    $message =  [
+                case 1698:
+                    $message = [
                         'name'        => 'username',
                         'message'      =>  __( 'Incorrect Authentication Plugin Provided.' ),
-                        'status'       =>  'failed'
+                        'status'       =>  'failed',
                     ];
                 break;
-                default     :   
-                    $message =  [
-                         'name'        => 'hostname',
-                         'message'      =>  $e->getMessage(),
-                         'status'       =>  'failed'
-                    ]; 
+                default:
+                    $message = [
+                        'name'        => 'hostname',
+                        'message'      =>  $e->getMessage(),
+                        'status'       =>  'failed',
+                    ];
                 break;
             }
 

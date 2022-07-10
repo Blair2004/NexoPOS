@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Models\Role;
@@ -8,7 +9,7 @@ trait WithAuthentication
 {
     protected function attemptAuthenticate( $user = null )
     {
-        $user   =   $user === null ? $this->attemptGetAnyUserFromRole() : $user;
+        $user = $user === null ? $this->attemptGetAnyUserFromRole() : $user;
 
         Sanctum::actingAs(
             $user,

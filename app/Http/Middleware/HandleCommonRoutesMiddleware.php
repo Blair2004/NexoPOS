@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use App\Classes\Hook;
+use Closure;
 use Illuminate\Http\Request;
 
 class HandleCommonRoutesMiddleware
@@ -19,7 +19,7 @@ class HandleCommonRoutesMiddleware
     {
         $resultRequest = Hook::filter( 'ns-common-routes', false, $request, $next );
 
-        if( $resultRequest === false ) {
+        if ( $resultRequest === false ) {
             return $next( $request );
         }
 

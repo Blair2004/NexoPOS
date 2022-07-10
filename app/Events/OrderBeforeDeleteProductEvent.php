@@ -1,9 +1,10 @@
-<?php 
+<?php
+
 namespace App\Events;
 
 use App\Models\Order;
-use Illuminate\Queue\SerializesModels;
 use App\Models\OrderProduct;
+use Illuminate\Queue\SerializesModels;
 
 class OrderBeforeDeleteProductEvent
 {
@@ -11,7 +12,7 @@ class OrderBeforeDeleteProductEvent
 
     public function __construct( Order $order, OrderProduct $orderProduct )
     {
-        $this->order            =   $order;
-        $this->orderProduct     =   $orderProduct;
+        $this->order = $order;
+        $this->orderProduct = $orderProduct;
     }
 }

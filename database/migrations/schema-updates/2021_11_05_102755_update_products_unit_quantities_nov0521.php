@@ -25,15 +25,15 @@ class UpdateProductsUnitQuantitiesNov0521 extends Migration
             }
         });
 
-        $permission                 =   Permission::where( 'namespace', 'nexopos.reports.low-stock' )->first();
+        $permission = Permission::where( 'namespace', 'nexopos.reports.low-stock' )->first();
 
         if ( ! $permission instanceof Permission ) {
-            $permission                 =   new Permission();
+            $permission = new Permission;
         }
 
-        $permission->name           =   __( 'Read Low Stock Report' );
-        $permission->namespace      =   'nexopos.reports.low-stock';
-        $permission->description    =   __( 'Let the user read the report that shows low stock.' );
+        $permission->name = __( 'Read Low Stock Report' );
+        $permission->namespace = 'nexopos.reports.low-stock';
+        $permission->description = __( 'Let the user read the report that shows low stock.' );
         $permission->save();
 
         Role::namespace( Role::ADMIN )->addPermissions( $permission );

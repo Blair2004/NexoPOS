@@ -1,49 +1,52 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Exceptions\NotAllowedException;
+use App\Models\Order;
+use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Exceptions\NotAllowedException;
-use App\Models\User;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\Order;
-use App\Models\OrderTax;
-use App\Services\CrudEntry;
 
 class HoldOrderCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_orders';
+    protected $table = 'nexopos_orders';
 
     /**
      * default identifier
+     *
      * @param  string
      */
-    protected $identifier   =   'ns.hold-orders';
+    protected $identifier = 'ns.hold-orders';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.hold-orders';
+    protected $namespace = 'ns.hold-orders';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   Order::class;
+    protected $model = Order::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  true,
         'read'      =>  true,
         'update'    =>  true,
@@ -52,9 +55,10 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Adding relation
+     *
      * @param  array
      */
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users', 'nexopos_orders.author', '=', 'nexopos_users.id' ],
         [ 'nexopos_customers', 'nexopos_customers.id', '=', 'nexopos_orders.customer_id' ],
     ];
@@ -63,46 +67,49 @@ class HoldOrderCrud extends CrudService
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
+    public $pick = [
         'nexopos_users'     =>  [ 'username' ],
         'nexopos_customers' =>  [ 'name' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [];
+    public $fillable = [];
 
-    protected $bulkActions       =   [];
+    protected $bulkActions = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -110,7 +117,7 @@ class HoldOrderCrud extends CrudService
 
         Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
 
-        $this->bulkActions  =   [];
+        $this->bulkActions = [];
     }
 
     public function hook( $query ): void
@@ -120,10 +127,11 @@ class HoldOrderCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -141,8 +149,9 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -150,17 +159,18 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -296,14 +306,15 @@ class HoldOrderCrud extends CrudService
                             'name'  =>  'uuid',
                             'label' =>  __( 'Uuid' ),
                             'value' =>  $entry->uuid ?? '',
-                        ],                     ]
-                ]
-            ]
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -314,6 +325,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -324,6 +336,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -340,6 +353,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Order $entry
      * @return  void
@@ -349,21 +363,22 @@ class HoldOrderCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -381,6 +396,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -392,9 +408,11 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.hold-orders' ) {
             /**
              *  Perform an action before deleting an entry
@@ -404,7 +422,7 @@ class HoldOrderCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -415,30 +433,32 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'code'  =>  [
                 'label'         =>  __( 'Code' ),
                 '$direction'    =>  '',
                 'width'         =>  '120px',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'nexopos_customers_name'  =>  [
                 'label'         =>  __( 'Customer' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'total'  =>  [
                 'label'  =>  __( 'Total' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -457,19 +477,18 @@ class HoldOrderCrud extends CrudService
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -481,13 +500,13 @@ class HoldOrderCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Order ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -495,6 +514,7 @@ class HoldOrderCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -503,6 +523,7 @@ class HoldOrderCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -518,8 +539,9 @@ class HoldOrderCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return [];
@@ -527,8 +549,9 @@ class HoldOrderCrud extends CrudService
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

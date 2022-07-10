@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Services\ModulesService;
 use Exception;
+use Illuminate\Console\Command;
 
 class ModuleDisableCommand extends Command
 {
@@ -24,7 +24,8 @@ class ModuleDisableCommand extends Command
 
     /**
      * Modules Service
-     * @var ModulesService $modulesService
+     *
+     * @var ModulesService
      */
     private $modulesService;
 
@@ -35,11 +36,10 @@ class ModuleDisableCommand extends Command
      */
     public function __construct(
         ModulesService $modulesService
-    )
-    {
+    ) {
         parent::__construct();
 
-        $this->modulesService   =   $modulesService;
+        $this->modulesService = $modulesService;
     }
 
     /**
@@ -50,8 +50,8 @@ class ModuleDisableCommand extends Command
     public function handle()
     {
         try {
-            $result     =   $this->modulesService->disable( $this->argument( 'identifier' ) );
-            
+            $result = $this->modulesService->disable( $this->argument( 'identifier' ) );
+
             /**
              * we'll configure the response
              * according to the result.
@@ -61,8 +61,7 @@ class ModuleDisableCommand extends Command
             } else {
                 $this->error( $result[ 'message' ] );
             }
-
-        } catch( Exception $exception ) {
+        } catch ( Exception $exception ) {
             $this->error( $exception->getMessage() );
         }
     }

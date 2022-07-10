@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Dashboard\CashRegistersController;
-use App\Http\Controllers\Dashboard\RegistersController;
 use Illuminate\Support\Facades\Route;
 
 Route::get( 'cash-registers/{id?}', [ CashRegistersController::class, 'getRegisters' ])->where([ 'id' => '[0-9]+' ]);

@@ -2,24 +2,22 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Auth;
-use Exception;
-use App\Http\Requests\UnitsGroupsRequest;
-use App\Http\Requests\UnitRequest;
-use App\Models\ProductUnitQuantity;
-use App\Models\Unit;
-use App\Models\UnitGroup;
 use App\Crud\UnitCrud;
 use App\Crud\UnitGroupCrud;
+use App\Http\Controllers\DashboardController;
+use App\Http\Requests\UnitRequest;
+use App\Http\Requests\UnitsGroupsRequest;
+use App\Models\Unit;
+use App\Models\UnitGroup;
 use App\Services\UnitService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class UnitsController extends DashboardController
 {
@@ -28,11 +26,11 @@ class UnitsController extends DashboardController
     public function __construct( UnitService $unit )
     {
         parent::__construct();
-        $this->unitService  =   $unit;
+        $this->unitService = $unit;
     }
 
     public function postGroup( UnitsGroupsRequest $request )
-    {   
+    {
         return $this->unitService->createGroup( $request->all() );
     }
 
@@ -43,6 +41,7 @@ class UnitsController extends DashboardController
 
     /**
      * Create a new unit
+     *
      * @param Request
      * @return AsyncResponse
      */
@@ -68,17 +67,18 @@ class UnitsController extends DashboardController
 
     /**
      * get all units assigned to a specified group
+     *
      * @param int group id
      * @return array
      */
-    public function getGroupUnits( $id ) 
+    public function getGroupUnits( $id )
     {
         return $this->unitService->getGroups( $id )->units;
     }
 
-    
     /**
      * Get group units using a specific id
+     *
      * @param int group id
      * @return array or units
      */
@@ -90,21 +90,23 @@ class UnitsController extends DashboardController
     /**
      * Edit a unit using provided
      * informations
+     *
      * @param Request
      * @param int unit id
      * @return json
      */
     public function putUnit( UnitRequest $request, $id )
     {
-        return $this->unitService->updateUnit( 
-            $id, 
-            $request->only([ 'name', 'description', 'group_id', 'value', 'base_unit' ]) 
+        return $this->unitService->updateUnit(
+            $id,
+            $request->only([ 'name', 'description', 'group_id', 'value', 'base_unit' ])
         );
     }
 
     /**
-     * retrieve a group of a 
+     * retrieve a group of a
      * specific unit using an id
+     *
      * @param int Parent Group
      * @return json
      */
@@ -136,6 +138,7 @@ class UnitsController extends DashboardController
 
     /**
      * Edit existing unit group
+     *
      * @param UnitGroup $group
      * @return View
      */
@@ -160,4 +163,3 @@ class UnitsController extends DashboardController
         return UnitCrud::form( $unit );
     }
 }
-

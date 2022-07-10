@@ -9,7 +9,9 @@ class Migration extends Model
 {
     use HasFactory;
 
-    public $timestamps  =   false;
-    protected $table    =   'migrations';
+    public $timestamps = false;
+
+    protected $table = 'migrations';
+
     protected $migration;
 }

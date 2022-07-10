@@ -41,15 +41,17 @@ class DoctorCommand extends Command
         /**
          * @var DoctorService
          */
-        $doctorService   =   app()->make( DoctorService::class );
+        $doctorService = app()->make( DoctorService::class );
 
-        if( $this->option( 'fix-roles' ) ) {
+        if ( $this->option( 'fix-roles' ) ) {
             $doctorService->restoreRoles();
+
             return $this->info( 'The roles where correctly restored.' );
         }
 
         if ( $this->option( 'fix-users-attributes' ) ) {
             $doctorService->createUserAttribute();
+
             return $this->info( 'The users attributes were fixed.' );
         }
     }

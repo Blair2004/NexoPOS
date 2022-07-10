@@ -13,7 +13,6 @@ Route::post( 'units-groups', [ UnitsController::class, 'postGroup' ]);
 Route::delete( 'units/{id}', [ UnitsController::class, 'deleteUnit' ]);
 Route::delete( 'units-groups/{id}', [ UnitsController::class, 'deleteUnitGroup' ]);
 
-
 Route::put( 'units-groups/{id}', [ UnitsController::class, 'putGroup' ]);
 Route::put( 'units/{id}', [ UnitsController::class, 'putUnit' ]);
 

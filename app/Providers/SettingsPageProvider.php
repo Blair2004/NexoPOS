@@ -9,12 +9,10 @@ use App\Settings\InvoiceSettings;
 use App\Settings\OrdersSettings;
 use App\Settings\PosSettings;
 use App\Settings\ReportsSettings;
-use App\Settings\StoresSettings;
 use App\Settings\SuppliesDeliveriesSettings;
 use App\Settings\WorkersSettings;
-use App\Settings\ServiceProvidersSettings;
-use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class SettingsPageProvider extends ServiceProvider
 {
@@ -36,7 +34,7 @@ class SettingsPageProvider extends ServiceProvider
     public function boot()
     {
         Hook::addFilter( 'ns.settings', function( $class, $identifier ) {
-            switch( $identifier ) {
+            switch ( $identifier ) {
                 case 'ns.general': return new GeneralSettings; break;
                 case 'ns.pos': return new PosSettings; break;
                 case 'ns.customers': return new CustomersSettings; break;
@@ -47,6 +45,7 @@ class SettingsPageProvider extends ServiceProvider
                 case 'ns.reports': return new ReportsSettings; break;
                 case 'ns.accounting': return new AccountingSettings; break;
             }
+
             return $class;
         }, 10, 2 );
     }

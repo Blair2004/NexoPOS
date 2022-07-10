@@ -17,10 +17,15 @@ class CreateUserCommand extends Command
      * @var string
      */
     protected $signature = 'make:user';
+
     protected $username;
+
     protected $email;
+
     protected $role;
+
     protected $password;
+
     protected $password_confirm;
 
     /**
@@ -52,55 +57,60 @@ class CreateUserCommand extends Command
          */
         if ( Role::namespace( 'admin' )->users->count() > 0 ) {
             $this->line( 'Administrator Authentication' );
-            $username   =   $this->ask( 'Provide your username' );
-            $password   =   $this->secret( 'Provide your password' );
+            $username = $this->ask( 'Provide your username' );
+            $password = $this->secret( 'Provide your password' );
 
             if ( ! Auth::attempt( compact( 'username', 'password' ) ) ) {
                 return $this->error( 'Incorrect username or password.' );
             }
-            
+
             $this->info( 'You\'re authenticated' );
         }
 
         /**
          * perform
-         * @return boolean
+         *
+         * @return bool
          */
         if ( $this->checkUsername() === false ) {
             return true;
-        };
+        }
 
         /**
          * perform
-         * @return boolean
+         *
+         * @return bool
          */
         if ( $this->checkEmail() === false ) {
             return true;
-        };
+        }
 
         /**
          * perform
-         * @return boolean
+         *
+         * @return bool
          */
         if ( $this->checkPassword() === false ) {
             return true;
-        };
+        }
 
         /**
          * perform
-         * @return boolean
+         *
+         * @return bool
          */
         if ( $this->checkPasswordConfirm() === false ) {
             return true;
-        };
+        }
 
         /**
          * perform
-         * @return boolean
+         *
+         * @return bool
          */
         if ( $this->checkRole() === false ) {
             return true;
-        };
+        }
 
         if ( User::whereUsername( $this->username )->first() ) {
             return $this->error( 'The username is already in use.' );
@@ -110,20 +120,20 @@ class CreateUserCommand extends Command
             return $this->error( 'The provided password is too short.' );
         }
 
-        $user           =   new User;
-        $user->username     =   $this->username;
-        $user->email        =   $this->email;
-        $user->password     =   Hash::make( $this->password );
-        $user->role_id      =   Role::namespace( $this->role )->firstOrFail()->id;
-        $user->save();  
+        $user = new User;
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->password = Hash::make( $this->password );
+        $user->role_id = Role::namespace( $this->role )->firstOrFail()->id;
+        $user->save();
 
         /**
          * If the request wasn't authenticated
          * then the author of this user
          * is himself.
          */
-        $user->author       =   Auth::user() instanceof User ? Auth::id() : $user->id;
-        $user->active       =   Auth::user() instanceof User ? 1 : 0;
+        $user->author = Auth::user() instanceof User ? Auth::id() : $user->id;
+        $user->active = Auth::user() instanceof User ? 1 : 0;
         $user->save();
 
         $this->info( 'A new account has been created' );
@@ -131,8 +141,8 @@ class CreateUserCommand extends Command
 
     public function checkRole()
     {
-        while( true ) {
-            $this->role         =   $this->anticipate( 'New Account Role. [Q] Quit', Role::get()->map( fn( $role ) => $role->namespace )->toArray() );
+        while ( true ) {
+            $this->role = $this->anticipate( 'New Account Role. [Q] Quit', Role::get()->map( fn( $role ) => $role->namespace )->toArray() );
 
             if ( $this->role === 'Q' ) {
                 return false;
@@ -148,8 +158,8 @@ class CreateUserCommand extends Command
 
     public function checkPasswordConfirm()
     {
-        while( true ) {
-            $this->password_confirm     =   $this->secret( 'New Account Password Confirmation. [Q] Quit' );
+        while ( true ) {
+            $this->password_confirm = $this->secret( 'New Account Password Confirmation. [Q] Quit' );
 
             if ( $this->password_confirm === 'Q' ) {
                 return false;
@@ -165,8 +175,8 @@ class CreateUserCommand extends Command
 
     public function checkPassword()
     {
-        while( true ) {
-            $this->password     =   $this->secret( 'New Account Password. [Q] Quit.' );
+        while ( true ) {
+            $this->password = $this->secret( 'New Account Password. [Q] Quit.' );
 
             if ( $this->password === 'Q' ) {
                 return false;
@@ -182,13 +192,13 @@ class CreateUserCommand extends Command
 
     public function checkEmail()
     {
-        while( true ) {
-            $this->email     =   $this->ask( 'New Account Email. [Q] Quit.' );
+        while ( true ) {
+            $this->email = $this->ask( 'New Account Email. [Q] Quit.' );
 
-            $validator      =   Validator::make([ 
+            $validator = Validator::make([
                 'email'     =>  $this->email,
             ], [
-                'email'     =>  'required|email'
+                'email'     =>  'required|email',
             ]);
 
             if ( $this->email === 'Q' ) {
@@ -209,13 +219,13 @@ class CreateUserCommand extends Command
 
     public function checkUsername()
     {
-        while( true ) {
-            $this->username     =   $this->ask( 'New Account Username. [Q] Quit.' );
+        while ( true ) {
+            $this->username = $this->ask( 'New Account Username. [Q] Quit.' );
 
-            $validator      =   Validator::make([ 
+            $validator = Validator::make([
                 'username'     =>  $this->username,
             ], [
-                'username'     =>  'required|min:5'
+                'username'     =>  'required|min:5',
             ]);
 
             if ( $this->username === 'Q' ) {

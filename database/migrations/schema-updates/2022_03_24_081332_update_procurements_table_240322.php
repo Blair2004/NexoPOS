@@ -21,7 +21,7 @@ class UpdateProcurementsTable240322 extends Migration
         });
 
         Procurement::get()->each( function( $procurement ) {
-            $procurement->invoice_date  =   $procurement->created_at;
+            $procurement->invoice_date = $procurement->created_at;
             $procurement->save();
         });
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Fields;
 
 use App\Classes\Hook;
@@ -6,11 +7,11 @@ use App\Services\FieldsService;
 
 class AuthRegisterFields extends FieldsService
 {
-    protected $identifier   =   'ns.register';
+    protected $identifier = 'ns.register';
 
     public function get()
     {
-        $fields     =   Hook::filter( 'ns-register-fields', [
+        $fields = Hook::filter( 'ns-register-fields', [
             [
                 'label'         =>  __( 'Username' ),
                 'description'   =>  __( 'Provide your username.' ),
@@ -35,9 +36,9 @@ class AuthRegisterFields extends FieldsService
                 'validation'    =>  'required|min:6',
                 'name'          =>  'password_confirm',
                 'type'          =>  'password',
-            ]
+            ],
         ]);
-        
+
         return $fields;
     }
 }

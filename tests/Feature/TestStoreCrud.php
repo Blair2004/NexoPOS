@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Role;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 use Modules\NsMultiStore\Models\Store;
@@ -24,19 +22,18 @@ class TestStoreCrud extends TestCase
             ['*']
         );
 
-        $store          =   Store::first();
+        $store = Store::first();
         ns()->store->setStore( $store );
 
-        $files  =   Storage::disk( 'ns' )->allFiles( 'app/Crud' );
+        $files = Storage::disk( 'ns' )->allFiles( 'app/Crud' );
 
-        foreach( $files as $file ) {
-            
-            $path       =   pathinfo( $file );
-            $class      =   'App\Crud\\' . $path[ 'filename' ];
-            $object     =   new $class;
-            $columns    =   $object->getColumns();
-            $entries    =   $object->getEntries();
-            $form       =   $object->getForm();
+        foreach ( $files as $file ) {
+            $path = pathinfo( $file );
+            $class = 'App\Crud\\' . $path[ 'filename' ];
+            $object = new $class;
+            $columns = $object->getColumns();
+            $entries = $object->getEntries();
+            $form = $object->getForm();
 
             $this->assertIsArray( $columns, 'Crud Columns' );
             $this->assertIsArray( $form, 'Crud Form' );

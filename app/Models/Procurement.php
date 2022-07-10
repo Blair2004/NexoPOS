@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Casts\DateCast;
@@ -8,60 +9,63 @@ use App\Events\ProcurementAfterUpdateEvent;
 use App\Events\ProcurementBeforeCreateEvent;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Events\ProcurementBeforeUpdateEvent;
-use App\Models\Provider;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Procurement extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'procurements';
-    public $casts       =   [
+
+    protected $table = 'nexopos_' . 'procurements';
+
+    public $casts = [
         'created_at'    =>  DateCast::class,
         'updated_at'    =>  DateCast::class,
     ];
 
     /**
      * this status mention when the procurement
-     * has been received 
+     * has been received
+     *
      * @param string
      */
-    const DELIVERED     =   'delivered';
+    const DELIVERED = 'delivered';
 
     /**
      * this status state when the procurement has
      * moved from the "draft" status to pending. Which
      * means it's ready to be processed or it's being proceesed.
+     *
      * @param string
      */
-    const PENDING       =   'pending';
+    const PENDING = 'pending';
 
     /**
      * The procurement is in draft mode. Means it's not yet ready
      * to be processed or send to the provider
+     *
      * @param string
      */
-    const DRAFT         =   'draft';
+    const DRAFT = 'draft';
 
     /**
      * The procurement has affected the actual products stock.
      * Here the procurement has been delivered and integrated to the stock.
+     *
      * @param string
      */
-    const STOCKED      =   'stocked';
+    const STOCKED = 'stocked';
 
     /**
      * The procurement hasn't been paid.
      */
-    const PAYMENT_UNPAID    =   'unpaid';
+    const PAYMENT_UNPAID = 'unpaid';
 
     /**
      * The procurement has been paid.
      */
-    const PAYMENT_PAID      =   'paid';
+    const PAYMENT_PAID = 'paid';
 
-    protected $dispatchesEvents     =   [
+    protected $dispatchesEvents = [
         'creating'      =>  ProcurementBeforeCreateEvent::class,
         'created'       =>  ProcurementAfterCreateEvent::class,
         'deleting'      =>  ProcurementBeforeDeleteEvent::class,

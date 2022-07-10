@@ -1,8 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
 
 class UpdateNexoposProductsTable extends Migration
 {
@@ -20,7 +20,7 @@ class UpdateNexoposProductsTable extends Migration
 
             if ( ! Schema::hasColumn( 'nexopos_products', 'sale_tax_value' ) ) {
                 $table->float( 'sale_tax_value' )->default(0);
-            }            
+            }
         });
     }
 
@@ -38,7 +38,7 @@ class UpdateNexoposProductsTable extends Migration
 
             if ( Schema::hasColumn( 'nexopos_products', 'sale_tax_value' ) ) {
                 $table->dropColumn( 'sale_tax_value' );
-            }            
+            }
         });
     }
 }

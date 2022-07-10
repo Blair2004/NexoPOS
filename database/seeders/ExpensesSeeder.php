@@ -16,29 +16,29 @@ class ExpensesSeeder extends Seeder
      */
     public function run()
     {
-        $author             =   User::get()->map( fn( $user ) => $user->id )
+        $author = User::get()->map( fn( $user ) => $user->id )
             ->shuffle()
             ->first();
 
-        $group          =   new ExpenseCategory;
-        $group->name    =   'Exploitation Expenses';
-        $group->account     =   '000010';
-        $group->operation   =   CashFlow::OPERATION_DEBIT;
-        $group->author  =   $author;
+        $group = new ExpenseCategory;
+        $group->name = 'Exploitation Expenses';
+        $group->account = '000010';
+        $group->operation = CashFlow::OPERATION_DEBIT;
+        $group->author = $author;
         $group->save();
 
-        $group          =   new ExpenseCategory;
-        $group->name    =   'Employee Salaries';
-        $group->account     =   '000011';
-        $group->operation   =   CashFlow::OPERATION_DEBIT;
-        $group->author  =   $author;
+        $group = new ExpenseCategory;
+        $group->name = 'Employee Salaries';
+        $group->account = '000011';
+        $group->operation = CashFlow::OPERATION_DEBIT;
+        $group->author = $author;
         $group->save();
 
-        $group          =   new ExpenseCategory;
-        $group->name    =   'Random Expenses';
-        $group->account     =   '000012';
-        $group->operation   =   CashFlow::OPERATION_DEBIT;
-        $group->author  =   $author;
+        $group = new ExpenseCategory;
+        $group->name = 'Random Expenses';
+        $group->account = '000012';
+        $group->operation = CashFlow::OPERATION_DEBIT;
+        $group->author = $author;
         $group->save();
     }
 }
