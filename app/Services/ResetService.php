@@ -118,18 +118,10 @@ class ResetService
         DotenvEditor::load();
         DotenvEditor::deleteKey( 'NS_VERSION' );
         DotenvEditor::deleteKey( 'NS_AUTHORIZATION' );
-
-        /**
-         * everytime the app is reinstalled
-         * we have to deal with a CSRF issue mostly.
-         * Wit this, we'll prevent having the same cookie after each installation.
-         */
-        DotenvEditor::deleteKey( 'SESSION_COOKIE', env( 'APP_NAME' ) . '_' . Str::random(5) );
         DotenvEditor::save();
 
-        // Migration::truncate();
-
         Artisan::call( 'key:generate', [ '--force' => true ] );
+        Artisan::call( 'ns:cookie generate' );
 
         exec( 'rm -rf public/storage' );
 
