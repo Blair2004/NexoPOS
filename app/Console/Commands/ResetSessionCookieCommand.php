@@ -29,7 +29,7 @@ class ResetSessionCookieCommand extends Command
      */
     public function handle()
     {
-        switch( $this->argument( 'action' ) ) {
+        switch ( $this->argument( 'action' ) ) {
             case 'generate':
                 DotenvEditor::load();
                 DotenvEditor::setKey( 'SESSION_COOKIE', strtolower( 'nexopos_' . Str::random(5) ) );
