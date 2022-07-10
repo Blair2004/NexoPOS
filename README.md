@@ -28,6 +28,7 @@ And for developpers, there are more technical tutorials that convers:
 - [Create a route](https://my.nexopos.com/en/documentation/developpers-guides/how-to-register-routes-for-modules)
 
 We've also create video tutorial that will help you performing those easilly.
+
 [
 ![image](https://user-images.githubusercontent.com/5265663/163531524-408757a8-d5a8-40b1-8e8f-c4e59e778e05.png)
 ](https://www.youtube.com/watch?v=V80-hOJCywY)
