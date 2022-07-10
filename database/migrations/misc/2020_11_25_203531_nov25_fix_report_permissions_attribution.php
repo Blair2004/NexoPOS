@@ -26,11 +26,11 @@ class Nov25FixReportPermissionsAttribution extends Migration
         Permission::where( 'namespace', 'like', '%.report.%' )
             ->get()
             ->each( function( $permission ) {
-                $permission->namespace      =    str_replace( '.report.', '.reports.', $permission->namespace );
+                $permission->namespace = str_replace( '.report.', '.reports.', $permission->namespace );
                 $permission->save();
-            });            
+            });
 
-        $permissions    =   Permission::where( 'namespace', 'like', '%.reports.%' )
+        $permissions = Permission::where( 'namespace', 'like', '%.reports.%' )
             ->get();
 
         if ( $permissions->count() > 0 ) {

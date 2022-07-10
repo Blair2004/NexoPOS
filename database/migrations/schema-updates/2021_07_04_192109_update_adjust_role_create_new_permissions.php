@@ -23,15 +23,15 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
      * @return void
      */
     public function up()
-    {        
-        $role           =   Role::namespace( 'nexopos.store.driver' );
-        
+    {
+        $role = Role::namespace( 'nexopos.store.driver' );
+
         if ( $role instanceof Role ) {
-            $permissions    =   Role::namespace( 'nexopos.store.driver' )
+            $permissions = Role::namespace( 'nexopos.store.driver' )
                 ->permissions;
 
-            $role->removePermissions( $permissions ); 
-                
+            $role->removePermissions( $permissions );
+
             $role->delete();
         }
 
@@ -46,12 +46,12 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
          * for the administrator
          */
         Role::whereIn( 'namespace', [
-                'admin',
-                'nexopos.store.administrator'
-            ])
+            'admin',
+            'nexopos.store.administrator',
+        ])
             ->get()
             ->each( function( $role ) {
-                $role->dashid   =   'store';
+                $role->dashid = 'store';
                 $role->save();
             });
 
@@ -60,11 +60,11 @@ class UpdateAdjustRoleCreateNewPermissions extends Migration
          * cashier
          */
         Role::whereIn( 'namespace', [
-                'nexopos.store.cashier'
-            ])
+            'nexopos.store.cashier',
+        ])
             ->get()
             ->each( function( $role ) {
-                $role->dashid   =   'cashier';
+                $role->dashid = 'cashier';
                 $role->save();
             });
     }

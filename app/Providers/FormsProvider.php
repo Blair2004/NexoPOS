@@ -6,13 +6,13 @@ use App\Fields\AuthLoginFields;
 use App\Fields\AuthRegisterFields;
 use App\Fields\CashRegisterCashingFields;
 use App\Fields\CashRegisterCashoutFields;
-use App\Fields\CashRegisterOpeningFields;
 use App\Fields\CashRegisterClosingFields;
-use App\Fields\PasswordLostFields;
-use App\Fields\NewPasswordFields;
+use App\Fields\CashRegisterOpeningFields;
 use App\Fields\CustomersAccountFields;
 use App\Fields\LayawayFields;
+use App\Fields\NewPasswordFields;
 use App\Fields\OrderPaymentFields;
+use App\Fields\PasswordLostFields;
 use App\Fields\PosOrderSettingsFields;
 use App\Fields\ProcurementFields;
 use App\Fields\RefundProductFields;
@@ -21,8 +21,8 @@ use App\Fields\UnitsFields;
 use App\Forms\POSAddressesForm;
 use App\Forms\ProcurementForm;
 use App\Forms\UserProfileForm;
-use TorMorten\Eventy\Facades\Events as Hook;
 use Illuminate\Support\ServiceProvider;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class FormsProvider extends ServiceProvider
 {
@@ -44,9 +44,9 @@ class FormsProvider extends ServiceProvider
     public function boot()
     {
         Hook::addFilter( 'ns.forms', function( $class, $identifier ) {
-            switch( $identifier ) {
-                case 'ns.user-profile': 
-                    return new UserProfileForm; 
+            switch ( $identifier ) {
+                case 'ns.user-profile':
+                    return new UserProfileForm;
                 break;
                 case 'ns.procurement':
                     return new ProcurementForm;
@@ -55,11 +55,12 @@ class FormsProvider extends ServiceProvider
                     return new POSAddressesForm;
                 break;
             }
+
             return $class;
         }, 10, 2 );
 
         Hook::addFilter( 'ns.fields', function( $class, $identifier ) {
-            switch( $class ) {
+            switch ( $class ) {
                 case 'ns.login' :
                     return new AuthLoginFields;
                 break;
@@ -80,28 +81,28 @@ class FormsProvider extends ServiceProvider
                 break;
                 case 'ns.refund-product':
                     return new RefundProductFields;
-                break;    
+                break;
                 case 'ns.cash-registers-opening':
                     return new CashRegisterOpeningFields;
-                break;            
+                break;
                 case 'ns.cash-registers-closing':
                     return new CashRegisterClosingFields;
-                break;            
+                break;
                 case 'ns.cash-registers-cashing':
                     return new CashRegisterCashingFields;
-                break;            
+                break;
                 case 'ns.cash-registers-cashout':
                     return new CashRegisterCashoutFields;
-                break;     
+                break;
                 case 'ns.pos-order-settings':
                     return new PosOrderSettingsFields;
-                break;     
+                break;
                 case 'ns.order-payments':
                     return new OrderPaymentFields;
-                break;     
+                break;
                 case 'ns.procurement-fields':
                     return new ProcurementFields;
-                break;     
+                break;
                 case 'ns.reset':
                     return new ResetFields;
                 break;
@@ -113,7 +114,7 @@ class FormsProvider extends ServiceProvider
                 break;
                 default:
                     return $class;
-                break;       
+                break;
             }
         }, 10, 2 );
     }

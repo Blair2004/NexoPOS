@@ -3,12 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Events\AfterMigrationStatusCheckedEvent;
-use App\Models\Migration;
 use App\Services\Helper;
 use App\Services\ModulesService;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CheckMigrationStatus
 {
@@ -23,14 +21,15 @@ class CheckMigrationStatus
     {
         if ( ns()->update->getMigrations()->count() > 0 ) {
             session([ 'after_update' => url()->current() ]);
+
             return redirect( ns()->route( 'ns.database-update' ) );
         }
 
         if ( Helper::installed() ) {
-            $module     =   app()->make( ModulesService::class );
-            $modules    =   collect( $module->getEnabled() );
-            $total      =   $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );
-            
+            $module = app()->make( ModulesService::class );
+            $modules = collect( $module->getEnabled() );
+            $total = $modules->filter( fn( $module ) => count( $module[ 'migrations' ] ) > 0 );
+
             if ( $total->count() > 0 ) {
                 return redirect( ns()->route( 'ns.database-update' ) );
             }

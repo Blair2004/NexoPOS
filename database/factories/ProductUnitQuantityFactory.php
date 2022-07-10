@@ -21,11 +21,11 @@ class ProductUnitQuantityFactory extends Factory
      */
     public function definition()
     {
-        $sale_price         =   $this->faker->numberBetween(20,30);
-        $wholesale_price    =   $this->faker->numberBetween(10,20);
+        $sale_price = $this->faker->numberBetween(20, 30);
+        $wholesale_price = $this->faker->numberBetween(10, 20);
 
         return [
-            'quantity'                  =>   $this->faker->numberBetween(50,400),
+            'quantity'                  =>   $this->faker->numberBetween(50, 400),
             'sale_price'                =>  $sale_price,
             'sale_price_edit'           =>  $sale_price,
             'excl_tax_sale_price'       =>  $sale_price,

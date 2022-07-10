@@ -4,9 +4,9 @@
  * @package : {{ $module[ 'namespace' ] }}
 **/
 namespace Modules\{{ $module[ 'namespace' ] }}\Providers;
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as CoreServiceProvider;
 
-class {{ $className }} extends ServiceProvider
+class {{ $className }} extends CoreServiceProvider
 {
     /**
      * register method

@@ -1,13 +1,11 @@
 <?php
 /**
  * Table Migration
- * @package  5.0
 **/
 
-use App\Classes\Hook;
-use App\Classes\Schema;;
-use Illuminate\Database\Schema\Blueprint;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateOrdersProductsTable extends Migration
 {
@@ -40,7 +38,9 @@ class CreateOrdersProductsTable extends Migration
                 $table->string( 'sale_tax_value' )->default(0);
                 $table->float( 'tax_value', 18, 5 )->default(0);
                 $table->float( 'net_price', 18, 5 )->default(0);
-                $table->string( 'mode' )->default( 'normal' ); // 
+                $table->string( 'mode' )->default( 'normal' ); //
+                $table->string( 'product_type' )->default( 'product' ); // group
+                $table->float( 'rate' )->default(0);
                 $table->string( 'unit_name' )->nullable();
                 $table->float( 'total_gross_price', 18, 5 )->default(0);
                 $table->float( 'total_price', 18, 5 )->default(0);
@@ -67,4 +67,3 @@ class CreateOrdersProductsTable extends Migration
         }
     }
 }
-

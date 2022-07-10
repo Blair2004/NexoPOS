@@ -1,14 +1,12 @@
 <?php
+
 namespace App\Services;
 
-use App\Services\Helpers\ArrayHelper;
 use App\Services\Helpers\App;
-use App\Services\Helpers\Routes;
-use App\Services\Helpers\Validation;
-use App\Services\Helpers\Modules;
+use App\Services\Helpers\ArrayHelper;
 
 class Helper
 {
-    use ArrayHelper, 
+    use ArrayHelper,
         App;
 }

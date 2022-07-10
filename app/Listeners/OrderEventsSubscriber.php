@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Listeners;
 
 use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterInstalmentPaidEvent;
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Events\OrderAfterProductRefundedEvent;
 use App\Events\OrderAfterRefundedEvent;
@@ -40,9 +40,9 @@ class OrderEventsSubscriber
         ProductService $productsService,
         CustomerService $customerService
     ) {
-        $this->ordersService    =   $ordersService;
-        $this->productsService  =   $productsService;
-        $this->customerService  =   $customerService;
+        $this->ordersService = $ordersService;
+        $this->productsService = $productsService;
+        $this->customerService = $customerService;
     }
 
     public function subscribe( $events )
@@ -94,6 +94,11 @@ class OrderEventsSubscriber
         );
 
         $events->listen(
+            OrderAfterCreatedEvent::class,
+            [ OrderEventsSubscriber::class, 'handleOrderAfterCreatedForCoupons' ]
+        );
+
+        $events->listen(
             OrderAfterUpdatedEvent::class,
             [ OrderEventsSubscriber::class, 'handleInstalmentPayment' ]
         );
@@ -116,9 +121,10 @@ class OrderEventsSubscriber
 
     /**
      * this will refresh an order
+     *
      * @param Event
      */
-    public function refreshOrder( OrderAfterProductRefundedEvent $event ) 
+    public function refreshOrder( OrderAfterProductRefundedEvent $event )
     {
         $this->ordersService->refreshOrder( $event->order );
     }
@@ -138,14 +144,14 @@ class OrderEventsSubscriber
 
     public function handleCustomerUpdates( $event )
     {
-        if ( 
+        if (
             $event instanceof OrderAfterCreatedEvent ||
-            $event instanceof OrderAfterUpdatedEvent || 
+            $event instanceof OrderAfterUpdatedEvent ||
             $event instanceof OrderBeforeDeleteEvent ||
             $event instanceof OrderAfterRefundedEvent
-            
+
         ) {
-            ComputeCustomerAccountJob::dispatch( 
+            ComputeCustomerAccountJob::dispatch(
                 $event,
                 app()->make( CustomerService::class )
             )
@@ -159,16 +165,16 @@ class OrderEventsSubscriber
      */
     public function afterOrderPaymentCreated( OrderAfterPaymentCreatedEvent $event )
     {
-        $this->customerService->increaseOrderPurchases( 
-            $event->order->customer, 
-            $event->orderPayment->value 
+        $this->customerService->increaseOrderPurchases(
+            $event->order->customer,
+            $event->orderPayment->value
         );
     }
 
     /**
-     * Will check if the payment can be made on 
+     * Will check if the payment can be made on
      * the customer account or will throw an error.
-     * 
+     *
      * @param OrderBeforePaymentCreatedEvent $event
      * @return void
      */
@@ -185,7 +191,7 @@ class OrderEventsSubscriber
         $this->handleOrderUpdate( $event );
     }
 
-    public function handleOrderAfterCreatedForCoupons( OrderAfterCreatedEvent $event ) 
+    public function handleOrderAfterCreatedForCoupons( OrderAfterCreatedEvent $event )
     {
         $this->ordersService->trackOrderCoupons( $event->order );
     }

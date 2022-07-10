@@ -2,12 +2,8 @@
 
 namespace App\Events;
 
-use App\Jobs\ComputeDashboardExpensesJob;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,6 +12,7 @@ class ExpenseAfterRefreshEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $event;
+
     public $date;
 
     /**
@@ -25,8 +22,8 @@ class ExpenseAfterRefreshEvent
      */
     public function __construct( $event, $date )
     {
-        $this->event    =   $event;
-        $this->date     =   $date;
+        $this->event = $event;
+        $this->date = $date;
     }
 
     /**

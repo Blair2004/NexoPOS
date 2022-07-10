@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
@@ -27,7 +24,7 @@ class ExpenseBeforeCreateEvent
      */
     public function __construct( array $inputs )
     {
-        $this->inputs  =   $inputs;
+        $this->inputs = $inputs;
     }
 
     /**

@@ -5,11 +5,8 @@ namespace App\Events;
 use App\Models\Customer;
 use App\Models\CustomerReward;
 use App\Models\RewardSystem;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -18,7 +15,9 @@ class CustomerRewardAfterCreatedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $reward;
+
     public $customer;
+
     public $customerReward;
 
     /**
@@ -28,9 +27,9 @@ class CustomerRewardAfterCreatedEvent
      */
     public function __construct( CustomerReward $customerReward, Customer $customer, RewardSystem $reward )
     {
-        $this->customerReward   =   $customerReward;
-        $this->customer         =   $customer;
-        $this->reward           =   $reward;
+        $this->customerReward = $customerReward;
+        $this->customer = $customer;
+        $this->reward = $reward;
     }
 
     /**

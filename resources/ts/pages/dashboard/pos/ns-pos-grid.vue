@@ -15,10 +15,10 @@
                     <button :title="__( 'Search for products.' )" @click="openSearchPopup()" class="w-10 h-10 border-r  outline-none">
                         <i class="las la-search"></i>
                     </button>
-                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle merging similar products.' )" @click="posToggleMerge()" :class="settings.ns_pos_items_merge ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-compress-arrows-alt"></i>
                     </button>
-                    <button :title="__( 'Toggle auto focus.' )" @click="autoFocus = ! autoFocus" :class="autoFocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
+                    <button :title="__( 'Toggle auto focus.' )" @click="options.ns_pos_force_autofocus = ! options.ns_pos_force_autofocus" :class="options.ns_pos_force_autofocus ? 'pos-button-clicked' : ''" class="outline-none w-10 h-10 border-r ">
                         <i class="las la-barcode"></i>
                     </button>
                     <input ref="search" v-model="barcode" type="text" class="flex-auto outline-none px-2 ">
@@ -68,8 +68,7 @@
                         :collection="products"
                         :height="gridItemsHeight"
                         :width="gridItemsWidth"
-                        v-if="! hasCategories"
-                    >
+                        v-if="! hasCategories">
                         <div slot="cell" class="w-full h-full" slot-scope="{ data }">
                             <div @click="addToTheCart( data )" :key="data.id" class="cell-item w-full h-full cursor-pointer border flex flex-col items-center justify-center overflow-hidden">
                                 <div class="h-full w-full flex items-center justify-center overflow-hidden">
@@ -79,7 +78,16 @@
                                 <div class="h-0 w-full">
                                     <div class="cell-item-label relative w-full flex flex-col items-center justify-center -top-10 h-20 p-2">
                                         <h3 class="text-sm text-center w-full">{{ data.name }}</h3>
-                                        <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">{{ data.unit_quantities[0].sale_price | currency }}</span>
+                                        <template v-if="options.ns_pos_gross_price_used === 'yes'">
+                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
+                                                {{ data.unit_quantities[0].gross_sale_price | currency }}
+                                            </span>
+                                        </template>
+                                        <template v-if="options.ns_pos_gross_price_used === 'no'">
+                                            <span class="text-sm" v-if="data.unit_quantities && data.unit_quantities.length === 1">
+                                                {{ data.unit_quantities[0].net_sale_price | currency }}
+                                            </span>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +112,6 @@ export default {
             products: [],
             categories: [],
             breadcrumbs: [],
-            autoFocus: false,
             barcode: '',
             previousCategory: null,
             order: null,
@@ -115,6 +122,8 @@ export default {
             currentCategory: null,
             settings: false,
             settingsSubscriber: null,
+            options: false,
+            optionsSubscriber: null,
             interval: null,
             searchTimeout: null,
             gridItemsWidth: 0,
@@ -131,12 +140,17 @@ export default {
         }
     },
     watch: {
-        barcode() {
-            clearTimeout( this.searchTimeout );
-            
-            this.searchTimeout  =   setTimeout( () => {
-                this.submitSearch( this.barcode );
-            }, 200 );
+        options: {
+            handler() {
+                if ( this.options.ns_pos_force_autofocus ) {
+                    clearTimeout( this.searchTimeout );
+                
+                    this.searchTimeout  =   setTimeout( () => {
+                        this.submitSearch( this.barcode );
+                    }, 200 );
+                }
+            },
+            deep: true            
         }
     },
     mounted() {
@@ -144,7 +158,10 @@ export default {
 
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
-            console.log( settings );
+        });
+
+        this.optionsSubscriber          =   POS.options.subscribe( options => {
+            this.options                =   options;
         });
 
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
@@ -218,6 +235,7 @@ export default {
         this.visibleSectionSubscriber.unsubscribe();
         this.screenSubscriber.unsubscribe();
         this.settingsSubscriber.unsubscribe();
+        this.optionsSubscriber.unsubscribe();
         
         clearInterval( this.interval );
 
@@ -230,7 +248,7 @@ export default {
         switchTo,
 
         posToggleMerge() {
-            POS.set( 'pos_items_merge', ! this.settings.pos_items_merge );
+            POS.set( 'ns_pos_items_merge', ! this.settings.ns_pos_items_merge );
         },
 
         computeGridWidth() {
@@ -288,19 +306,27 @@ export default {
         submitSearch( value ) {
             if ( value.length > 0 ) {
                 nsHttpClient.get( `/api/nexopos/v4/products/search/using-barcode/${value}` )
-                    .subscribe( result => {
-                        this.barcode     =   '';
-                        POS.addToCart( result.product );
-                    }, ( error ) => {
-                        this.barcode     =   '';
-                        nsSnackBar.error( error.message ).subscribe();
+                    .subscribe({
+                        next: result => {
+                            this.barcode     =   '';
+                            POS.addToCart( result.product );
+                        },
+                        error: ( error ) => {
+                            this.barcode     =   '';
+                            nsSnackBar.error( error.message ).subscribe();
+                        }
                     })
             }
         },
 
         checkFocus() {
-            if ( this.autoFocus ) {
+            if ( this.options.ns_pos_force_autofocus ) {
                 const popup     =   document.querySelectorAll( '.is-popup' );
+
+                /**
+                 * We don't force focus if 
+                 * any popup is visible.
+                 */
                 if ( popup.length === 0 ) {
                     this.$refs.search.focus();
                 }

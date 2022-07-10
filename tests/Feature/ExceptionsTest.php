@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ExceptionsTest extends TestCase
@@ -26,8 +24,8 @@ class ExceptionsTest extends TestCase
             \App\Exceptions\QueryException::class,
             \App\Exceptions\ValidationException::class,
         ])->each( function( $class ) {
-            $instance   =   new $class;
-            $response   =   $this->get( 'exceptions/' . $class );
+            $instance = new $class;
+            $response = $this->get( 'exceptions/' . $class );
             $response->assertSee( $instance->getMessage() );
         });
     }

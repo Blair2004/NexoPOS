@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Services\Modules;
-use App\Services\Setup;
-use App\Services\Helper;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ModuleJob extends Command
 {
@@ -17,7 +14,7 @@ class ModuleJob extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:job {namespace} {name}';
+    protected $signature = 'modules:job {namespace} {name} {--force}';
 
     /**
      * The console command description.
@@ -43,7 +40,7 @@ class ModuleJob extends Command
      */
     public function handle()
     {
-        $modules    =   app()->make( ModulesService::class );
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
@@ -52,21 +49,26 @@ class ModuleJob extends Command
             /**
              * Define Variables
              */
-            $jobsPath     =   $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR;
-            $name           =   ucwords( Str::camel( $this->argument( 'name' ) ) );
-            $fileName       =   $jobsPath . $name;
-            $namespace      =   $this->argument( 'namespace' );
+            $jobsPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Jobs' . DIRECTORY_SEPARATOR;
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
+            $fileName = $jobsPath . $name;
+            $namespace = $this->argument( 'namespace' );
 
-            if ( ! Storage::disk( 'ns-modules' )->exists( 
-                $fileName 
-            ) ) {
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
+
+            if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
                 Storage::disk( 'ns-modules' )->put( $fileName . '.php', view( 'generate.modules.job', compact(
                     'modules', 'module', 'name', 'namespace'
                 ) ) );
+
                 return $this->info( 'The job has been created !' );
-            }      
+            }
+
             return $this->error( 'The job already exists !' );
         }
+
         return $this->error( 'Unable to locate the module !' );
     }
 }

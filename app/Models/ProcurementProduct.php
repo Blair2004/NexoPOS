@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Events\ProcurementProductAfterCreateEvent;
@@ -8,19 +9,19 @@ use App\Events\ProcurementProductBeforeCreateEvent;
 use App\Events\ProcurementProductBeforeDeleteEvent;
 use App\Events\ProcurementProductBeforeUpdateEvent;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProcurementProduct extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'procurements_products';
 
-    const STOCK_INCREASE    =   'increase';
-    const STOCK_REDUCE      =   'reduce';
+    protected $table = 'nexopos_' . 'procurements_products';
 
-    protected $dispatchesEvents     =   [
+    const STOCK_INCREASE = 'increase';
+
+    const STOCK_REDUCE = 'reduce';
+
+    protected $dispatchesEvents = [
         'creating'      =>  ProcurementProductBeforeCreateEvent::class,
         'created'       =>  ProcurementProductAfterCreateEvent::class,
         'deleting'      =>  ProcurementProductBeforeDeleteEvent::class,
@@ -47,6 +48,7 @@ class ProcurementProduct extends NsModel
     /**
      * filter the procurement product
      * by using a procurement id as a pivot
+     *
      * @param Query
      * @param string
      * @return Query;
@@ -57,8 +59,9 @@ class ProcurementProduct extends NsModel
     }
 
     /**
-     * Fetch product from a procurement 
+     * Fetch product from a procurement
      * using as specific barcode
+     *
      * @param QueryBuilder $query
      * @param string $barcode
      * @return QueryBuilder

@@ -86,17 +86,17 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * Map module web defined route
-     * 
+     *
      * follow the same rules applied to self::mapWebRoutes();
-     * 
+     *
      * @return void
      */
     protected function mapModulesRoutes()
     {
         // make module class
-        $Modules    =   app()->make( ModulesService::class );
+        $Modules = app()->make( ModulesService::class );
 
-        foreach( $Modules->getEnabled() as $module ) {
+        foreach ( $Modules->getEnabled() as $module ) {
 
             /**
              * We might check if the module is active
@@ -106,16 +106,16 @@ class RouteServiceProvider extends ServiceProvider
             /**
              * @deprecated this inclusion seems useless now
              */
-            $controllers    =   Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
+            $controllers = Storage::disk( 'ns-modules' )->files( $module[ 'controllers-relativePath' ] );
 
-            foreach( $controllers as $controller ) {
-                $fileInfo   =   pathinfo(  $controller );
+            foreach ( $controllers as $controller ) {
+                $fileInfo = pathinfo(  $controller );
                 if ( $fileInfo[ 'extension' ] == 'php' ) {
-                    include_once( base_path( 'modules' ) . DIRECTORY_SEPARATOR . $controller );
+                    include_once base_path( 'modules' ) . DIRECTORY_SEPARATOR . $controller;
                 }
             }
 
-            $domain     =   pathinfo( env( 'APP_URL' ) );
+            $domain = pathinfo( env( 'APP_URL' ) );
 
             /**
              * will load all web.php file as dashboard routes.
@@ -126,7 +126,7 @@ class RouteServiceProvider extends ServiceProvider
                      * The defined route should only be applicable
                      * to the main domain.
                      */
-                    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+                    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
                     Route::domain( $domainString )->group( function() use ( $module ) {
                         $this->mapModuleWebRoutes( $module );
@@ -145,7 +145,7 @@ class RouteServiceProvider extends ServiceProvider
                      * The defined route should only be applicable
                      * to the main domain.
                      */
-                    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+                    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
                     Route::domain( $domainString )->group( function() use ( $module ) {
                         $this->mapModuleApiRoutes( $module );

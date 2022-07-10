@@ -1,6 +1,6 @@
 <script>
 import { Popup } from '@/libraries/popup';
-import NsPosPendingOrdersPopup from '@/popups/ns-pos-pending-orders-popup';
+import nsPosPendingOrdersPopup from '@/popups/ns-pos-pending-orders-popup';
 import { __ } from '@/libraries/lang';
 
 export default {
@@ -10,7 +10,7 @@ export default {
 
         openPendingOrdersPopup() {
             const popup     =   new Popup;
-            popup.open( NsPosPendingOrdersPopup );
+            popup.open( nsPosPendingOrdersPopup );
         }
     },
 }

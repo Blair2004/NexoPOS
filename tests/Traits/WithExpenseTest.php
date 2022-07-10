@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Traits;
 
 use App\Models\AccountType;
@@ -10,32 +11,32 @@ trait WithExpenseTest
 {
     protected function attemptCreateExpensesCategories()
     {
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
                 'name'          =>  __( 'Exploitation Expenses' ),
                 'author'        =>  Auth::id(),
                 'account'       =>  '000010',
-                'operation'     =>  CashFlow::OPERATION_DEBIT
+                'operation'     =>  CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
-            
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
                 'name'          =>  __( 'Employee Salaries' ),
                 'author'        =>  Auth::id(),
                 'account'       =>  '000011',
-                'operation'     =>  CashFlow::OPERATION_DEBIT
+                'operation'     =>  CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
                 'name'          =>  __( 'Random Expenses' ),
                 'author'        =>  Auth::id(),
                 'account'       =>  '000012',
-                'operation'     =>  CashFlow::OPERATION_DEBIT
+                'operation'     =>  CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
@@ -46,9 +47,9 @@ trait WithExpenseTest
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category          =   AccountType::find(1);
+        $category = AccountType::find(1);
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
                 'name'          =>  __( 'Store Rent' ),
                 'general'       =>  [
@@ -56,19 +57,19 @@ trait WithExpenseTest
                     'value'         =>  1500,
                     'recurring'     =>  false,
                     'category_id'   =>  $category->id,
-                ]
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category          =   AccountType::find(1);
+        $category = AccountType::find(1);
 
-        $response       =   $this->withSession( $this->app[ 'session' ]->all() )
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
                 'name'          =>  __( 'Material Delivery' ),
                 'general'       =>  [
@@ -76,20 +77,20 @@ trait WithExpenseTest
                     'value'         =>  300,
                     'recurring'     =>  false,
                     'category_id'   =>  $category->id,
-                ]
+                ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
         /**
          * Assuming expense category is "Exploitation Expenses"
          */
-        $category      =   AccountType::find(2);
+        $category = AccountType::find(2);
 
-        $role       =   Role::get()->shuffle()->first();
-        $response   =   $this->withSession( $this->app[ 'session' ]->all() )
+        $role = Role::get()->shuffle()->first();
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
                 'name'          =>  __( 'Store Rent' ),
                 'general'       =>  [
@@ -99,12 +100,11 @@ trait WithExpenseTest
                     'category_id'   =>  $category->id,
                     'occurence'     =>  'month_starts',
                     'group_id'      =>  $role->id,
-                ]
+                ],
             ]);
 
-        
         $response->assertJson([
-            'status'    =>  'success'
+            'status'    =>  'success',
         ]);
 
         $response->assertStatus(200);

@@ -143,7 +143,7 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     {
         parent::__construct();
 
-        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'setActions' ], 10, 2 );
+        Hook::addFilter( $this->namespace . '-crud-actions', [ $this, 'addActions' ], 10, 2 );
     }
 
     /**
@@ -335,19 +335,19 @@ class {{ ucwords( $Str::camel( $resource_name ) ) }}Crud extends CrudService
     /**
      * Define actions
      */
-    public function setActions( CrudEntry $entry, $namespace )
+    public function addActions( CrudEntry $entry, $namespace )
     {
         /**
          * Declaring entry actions
          */
-        $entry->setAction( 'edit', [
+        $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
             'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id )
         ]);
         
-        $entry->setAction( 'delete', [
+        $entry->addAction( 'delete', [
             'label'     =>  __( 'Delete' ),
             'namespace' =>  'delete',
             'type'      =>  'DELETE',

@@ -2,19 +2,20 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\GlobalProductHistoryCrud;
+use App\Crud\ProductCategoryCrud;
 use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Http\Request;
 use App\Models\ProductCategory;
-use App\Crud\ProductCategoryCrud;
 use App\Services\ProductCategoryService;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends DashboardController
@@ -26,18 +27,18 @@ class CategoryController extends DashboardController
 
     public function __construct(
         ProductCategoryService $categoryService
-    )
-    {
-        $this->categoryService      =   $categoryService;
+    ) {
+        $this->categoryService = $categoryService;
     }
 
     public function get( $id = null )
     {
         if ( ! empty( $id ) ) {
-            $category   =   ProductCategory::find( $id );
-            if( ! $category instanceof ProductCategory ) {
+            $category = ProductCategory::find( $id );
+            if ( ! $category instanceof ProductCategory ) {
                 throw new Exception( __( 'Unable to find the category using the provided identifier' ) );
             }
+
             return $category;
         }
 
@@ -51,12 +52,13 @@ class CategoryController extends DashboardController
     /**
      * try to delete a category using the provided
      * id
+     *
      * @param number id
      * @return json
      */
     public function delete( $id )
     {
-        $category   =   ProductCategory::find( $id );
+        $category = ProductCategory::find( $id );
 
         if ( $category instanceof ProductCategory ) {
 
@@ -68,12 +70,12 @@ class CategoryController extends DashboardController
             if ( $category->subCategories->count() > 0 ) {
                 throw new NotFoundException( __( 'Can\'t delete a category having sub categories linked to it.' ) );
             }
-            
+
             $category->delete();
 
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The category has been deleted.' )
+                'message'   =>  __( 'The category has been deleted.' ),
             ];
         }
 
@@ -83,6 +85,7 @@ class CategoryController extends DashboardController
     /**
      * create a category using the provided
      * form data
+     *
      * @param request
      * @return json
      */
@@ -91,35 +94,36 @@ class CategoryController extends DashboardController
         /**
          * let's retrieve if the parent exists
          */
-        $parentCategory   =   ProductCategory::find( $request->input( 'parent_id' ) );
+        $parentCategory = ProductCategory::find( $request->input( 'parent_id' ) );
         if ( ! $parentCategory instanceof ProductCategory && intval( $request->input( 'parent_id' ) ) !== 0 ) {
             throw new NotFoundException( __( 'Unable to find the attached category parent' ) );
         }
 
-        $fields         =   $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
+        $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
         if ( empty( $fields ) ) {
             throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
 
-        $category    =   new ProductCategory;
+        $category = new ProductCategory;
 
-        foreach( $fields as $name => $field ) {
-            $category->$name     =   $field;
+        foreach ( $fields as $name => $field ) {
+            $category->$name = $field;
         }
-        
-        $category->author    =   Auth::id();
+
+        $category->author = Auth::id();
         $category->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The category has been correctly saved' ),
-            'data'      =>  compact( 'category' )
+            'data'      =>  compact( 'category' ),
         ];
     }
 
     /**
      * edit existing category using
      * the provided ID
+     *
      * @param int category id
      * @return json
      */
@@ -130,38 +134,39 @@ class CategoryController extends DashboardController
          * is not similar to the current category
          * id. We could also check circular categories
          */
-        $category   =   ProductCategory::find( $id );
+        $category = ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory && $request->input( 'parent_id' ) !== 0 ) {
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
 
-        $fields         =   $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
+        $fields = $request->only([ 'name', 'parent_id', 'description', 'media_id' ]);
         if ( empty( $fields ) ) {
             throw new NotFoundException( __( 'Unable to proceed. The request doesn\'t provide enough data which could be handled' ) );
         }
 
-        foreach( $fields as $name => $field ) {
-            $category->$name     =   $field;
+        foreach ( $fields as $name => $field ) {
+            $category->$name = $field;
         }
 
-        $category->author   =   Auth::id();
+        $category->author = Auth::id();
         $category->save();
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The category has been updated' ),
-            'data'      =>  compact( 'category' )
+            'data'      =>  compact( 'category' ),
         ];
     }
 
     /**
      * get a specific category product
+     *
      * @param number category id
      * @return json
      */
     public function getCategoriesProducts( $id )
     {
-        $category   =   ProductCategory::find( $id );
+        $category = ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory ) {
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
@@ -174,12 +179,13 @@ class CategoryController extends DashboardController
 
     /**
      * get a specific category variations
+     *
      * @param number category id
      * @return json
      */
     public function getCategoriesVariations( $id )
     {
-        $category   =   ProductCategory::find( $id );
+        $category = ProductCategory::find( $id );
         if ( ! $category instanceof ProductCategory ) {
             throw new NotFoundException( __( 'Unable to find the category using the provided identifier' ) );
         }
@@ -194,6 +200,7 @@ class CategoryController extends DashboardController
      * Get Model Schema
      * which describe the field expected on post/put
      * requests
+     *
      * @return json
      */
     public function schema()
@@ -202,7 +209,7 @@ class CategoryController extends DashboardController
             'name'          =>  'string',
             'description'   =>  'string',
             'media_id'      =>  'number',
-            'parent_id'     =>  'number'
+            'parent_id'     =>  'number',
         ];
     }
 
@@ -235,7 +242,7 @@ class CategoryController extends DashboardController
     public function getCategories( $id = '0' )
     {
         if ( $id !== '0' ) {
-            $category       =   ProductCategory::where( 'id', $id )
+            $category = ProductCategory::where( 'id', $id )
                 ->displayOnPOS()
                 ->with( 'subCategories' )
                 ->first();
@@ -250,7 +257,7 @@ class CategoryController extends DashboardController
                         if ( $product->unit_quantities()->count() === 1 ) {
                             $product->load( 'unit_quantities.unit' );
                         }
-        
+
                         return $product;
                     }),
                 'categories'        =>  $category
@@ -267,9 +274,9 @@ class CategoryController extends DashboardController
             'previousCategory'  =>  false,
             'currentCategory'   =>  false,
             'categories'        =>  ProductCategory::where(function( $query ) {
-                    $query->where( 'parent_id', null )
+                $query->where( 'parent_id', null )
                         ->orWhere( 'parent_id', 0 );
-                })
+            })
                 ->displayOnPOS()
                 ->get(),
         ];
@@ -277,6 +284,7 @@ class CategoryController extends DashboardController
 
     /**
      * Will display the actual stock flow history
+     *
      * @return array crud table.
      */
     public function showStockFlowCrud()
@@ -284,4 +292,3 @@ class CategoryController extends DashboardController
         return GlobalProductHistoryCrud::table();
     }
 }
-

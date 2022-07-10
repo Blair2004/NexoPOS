@@ -1,10 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "./animations.scss";
-@import "./fonts.scss";
-@import "./typography.scss";
-@import "./grid.scss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html,
 body {

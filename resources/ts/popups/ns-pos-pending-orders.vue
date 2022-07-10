@@ -16,15 +16,10 @@
                     <div class="px-2">
                         <div class="flex flex-wrap -mx-4">
                             <div class="w-full md:w-1/2 px-2">
-                                <p class="text-sm text-primary"><strong>{{ __( 'Code' ) }}</strong> : {{ order.code }}</p>
-                                <p class="text-sm text-primary"><strong>{{ __( 'Cashier' ) }}</strong> : {{ order.nexopos_users_username }}</p>
-                                <p class="text-sm text-primary"><strong>{{ __( 'Total' ) }}</strong> : {{ order.total | currency }}</p>
-                                <p class="text-sm text-primary"><strong>{{ __( 'Tendered' ) }}</strong> : {{ order.tendered | currency }}</p>
+                                <p v-for="(line,key) of columns.leftColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                             <div class="w-full md:w-1/2 px-2">
-                                <p class="text-sm text-primary"><strong>{{ __( 'Customer' ) }}</strong> : {{ order.nexopos_customers_name }}</p>
-                                <p class="text-sm text-primary"><strong>{{ __( 'Date' ) }}</strong> : {{ order.created_at }}</p>
-                                <p class="text-sm text-primary"><strong>{{ __( 'Type' ) }}</strong> : {{ order.type }}</p>
+                                <p v-for="(line,key) of columns.rightColumn" :key="key" class="text-sm text-primary"><strong>{{ line.label }}</strong> : {{ line.value( order ) }}</p>
                             </div>
                         </div>
                     </div>
@@ -51,6 +46,10 @@ export default {
     data() {
         return {
             searchField: '',
+            columns: {
+                rightColumn: [],
+                leftColumn: []
+            }
         }
     },
     watch: {
@@ -59,7 +58,34 @@ export default {
         }
     },
     mounted() {
+        this.columns.leftColumn    =   nsHooks.applyFilters( 'ns-pending-orders-left-column', [
+            {
+                label: __( 'Code' ),
+                value: ( order ) => order.code
+            }, {
+                label: __( 'Cashier' ),
+                value: ( order ) => order.nexopos_users_username
+            }, {
+                label: __( 'Total' ),
+                value: ( order ) => order.total
+            }, {
+                label: __( 'Tendered' ),
+                value: ( order ) => order.tendered
+            },
+        ]);
 
+        this.columns.rightColumn    =   nsHooks.applyFilters( 'ns-pending-orders-right-column', [
+            {
+                label: __( 'Customer' ),
+                value: ( order ) => order.nexopos_customers_name
+            }, {
+                label: __( 'Date' ),
+                value: ( order ) => order.created_at
+            }, {
+                label: __( 'Type' ),
+                value: ( order ) => order.type
+            }, 
+        ]);
     },
     name: "ns-pos-pending-order",
     methods: {

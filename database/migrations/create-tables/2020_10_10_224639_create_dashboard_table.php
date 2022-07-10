@@ -1,9 +1,8 @@
 <?php
 
-use App\Classes\Hook;
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;;
 
 class CreateDashboardTable extends Migration
 {
@@ -15,7 +14,7 @@ class CreateDashboardTable extends Migration
     public function up()
     {
         if ( ! Schema::hasTable( 'nexopos_dashboard_days' ) ) {
-            Schema::createIfMissing( 'nexopos_dashboard_days' , function (Blueprint $table) {
+            Schema::createIfMissing( 'nexopos_dashboard_days', function (Blueprint $table) {
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'id' ) ) {
                     $table->bigIncrements( 'id' );
                 }
@@ -28,13 +27,13 @@ class CreateDashboardTable extends Migration
                     $table->bigIncrements( 'id' );
                 }
 
-                foreach([
+                foreach ([
                     'total_unpaid_orders',
                     'day_unpaid_orders',
-                    
+
                     'total_unpaid_orders_count',
                     'day_unpaid_orders_count',
-                    
+
                     'total_paid_orders',
                     'day_paid_orders',
 
@@ -61,7 +60,7 @@ class CreateDashboardTable extends Migration
 
                     'total_wasted_goods',
                     'day_wasted_goods',
-                    
+
                     'total_expenses',
                     'day_expenses',
                 ] as $column ) {
@@ -69,15 +68,15 @@ class CreateDashboardTable extends Migration
                         $table->float( $column, 18, 5 )->default(0);
                     }
                 }
-    
+
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'day_of_year' ) ) {
                     $table->integer( 'day_of_year' )->default(0);
                 }
-    
+
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_starts' ) ) {
-                    $table->datetime( 'range_starts' )->nullable();                    
+                    $table->datetime( 'range_starts' )->nullable();
                 }
-                
+
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_days', 'range_ends' ) ) {
                     $table->datetime( 'range_ends' )->nullable();
                 }
@@ -94,7 +93,7 @@ class CreateDashboardTable extends Migration
 
         if ( Schema::hasTable( 'nexopos_dashboard_weeks' ) ) {
             Schema::table( 'nexopos_dashboard_weeks', function( Blueprint $table ) {
-                foreach([
+                foreach ([
                     'total_gross_income',
                     'total_taxes',
                     'total_expenses',
@@ -104,7 +103,7 @@ class CreateDashboardTable extends Migration
                         $table->float( $column, 18, 5 )->default(0);
                     }
                 }
-    
+
                 if ( ! Schema::hasColumn( 'nexopos_dashboard_weeks', 'week_number' ) ) {
                     $table->integer( 'week_number' )->default(0);
                 }

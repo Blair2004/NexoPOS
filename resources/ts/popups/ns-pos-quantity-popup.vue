@@ -11,42 +11,43 @@
                 <ns-close-button @click="closePopup()"></ns-close-button>
             </div>
         </div>
-        <div id="screen" class="h-16 border-b primary ns-box-body flex items-center justify-center">
+        <div id="screen" class="h-24 border-b primary ns-box-body flex items-center justify-center">
             <h1 class="font-bold text-3xl">{{ finalValue }}</h1>
         </div>
-        <div id="numpad" class="ns-box-body grid grid-flow-row grid-cols-3 grid-rows-3">
-            <div 
-                @click="inputValue( key )"
-                :key="index" 
-                v-for="(key,index) of keys" 
-                class="ns-numpad-key info text-xl font-bold border h-24 flex items-center justify-center cursor-pointer">
-                <span v-if="key.value !== undefined">{{ key.value }}</span>
-                <i v-if="key.icon" class="las" :class="key.icon"></i>
-            </div>
-        </div>
+        <ns-numpad v-if="options.ns_pos_numpad === 'default'" :floating="options.ns_pos_allow_decimal_quantities" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad>
+        <ns-numpad-plus v-if="options.ns_pos_numpad === 'advanced'" @changed="updateQuantity( $event )" @next="defineQuantity( $event )" :value="finalValue"></ns-numpad-plus>
     </div>
 </template>
 <script>
 import { nsHttpClient, nsSnackBar } from '@/bootstrap';
 import { __ } from '@/libraries/lang';
 import popupCloser from '@/libraries/popup-closer';
+import nsNumpadVue from '@/components/ns-numpad.vue';
+import nsNumpadPlusVue from '@/components/ns-numpad-plus.vue';
 
 export default {
+    components: {
+        nsNumpad: nsNumpadVue,
+        nsNumpadPlus: nsNumpadPlusVue
+    },
     data() {
         return {
             finalValue: 1,
             virtualStock: null,
+            options: {},
+            optionsSubscription: null,
             allSelected: true,
             isLoading: false,
-            keys: [
-                ...([1,2,3].map( key => ({ identifier: key, value: key }))),
-                ...([4,5,6].map( key => ({ identifier: key, value: key }))),
-                ...([7,8,9].map( key => ({ identifier: key, value: key }))),
-                ...[{ identifier: 'backspace', icon : 'la-backspace' },{ identifier: 0, value: 0 }, { identifier: 'next', icon: 'la-share' }],
-            ]
         }
     },
+    beforeDestroy() {
+        this.optionsSubscription.unsubscribe();
+    },
     mounted() {
+        this.optionsSubscription    =   POS.options.subscribe( options => {
+            this.options    =   options;
+        });
+
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {
                 /**
@@ -74,30 +75,6 @@ export default {
         }
 
         this.popupCloser();
-
-        /**
-         * will bind keyboard event listening
-         */
-        const inputs    =   ( new Array(10) )
-            .fill( '' )
-            .map( ( v, i ) => i );
-            
-        nsHotPress
-            .create( 'pos-quantity-numpad')
-            .whenVisible([ '.is-popup' ])
-            .whenPressed( inputs, ( event, value ) => {
-                this.inputValue({ value });
-            })
-
-        nsHotPress
-            .create( 'pos-quantity-backspace' )
-            .whenVisible([ '.is-popup' ])
-            .whenPressed( 'backspace', () => this.inputValue({ identifier: 'backspace' }))
-
-        nsHotPress
-            .create( 'pos-quantity-enter')
-            .whenVisible([ '.is-popup' ])
-            .whenPressed( 'enter', () => this.inputValue({ identifier: 'next' }))
     },
     destroyed() {
         nsHotPress.destroy( 'pos-quantity-numpad');
@@ -113,77 +90,60 @@ export default {
             this.$popupParams.reject( false );
             this.$popup.close();
         },
-        
-        inputValue( key ) {
-            if ( key.identifier === 'next' ) {
-                /**
-                 * resolve is provided only on the addProductQueue
-                 */
-                const { product, data }         =   this.$popupParams;
-                const quantity                  =   parseFloat( this.finalValue );
 
-                if ( quantity === 0 ) {
-                    return nsSnackBar.error( __( 'Please provide a quantity' ) )
+        updateQuantity( quantity ) {
+            this.finalValue     =   quantity;
+        },
+
+        defineQuantity( quantity ) {
+            /**
+             * resolve is provided only on the addProductQueue
+             */
+            const { product, data }         =   this.$popupParams;
+
+            if ( quantity === 0 ) {
+                return nsSnackBar.error( __( 'Please provide a quantity' ) )
+                    .subscribe();
+            }
+
+            /**
+             * The stock should be handled differently
+             * according to wether the stock management
+             * is enabled or not.
+             */                
+            if ( product.$original().stock_management === 'enabled' && product.$original().type === 'materialized' ) {
+
+                /**
+                 * If the stock management is enabled,
+                 * we'll pull updated stock from the server.
+                 * When a product is added product.id has the real product id
+                 * when a product is already on the cart product.id is not set but
+                 * product.product_id is defined
+                 */
+                const holdQuantity  =   POS.getStockUsage( product.$original().id, data.unit_quantity_id ) - ( product.quantity || 0 );
+
+                /**
+                 * This checks if there is enough
+                 * quantity for product that has stock 
+                 * management enabled
+                 */
+                if ( 
+                    quantity > (
+                        parseFloat( data.$quantities().quantity ) -
+                        /**
+                         * We'll make sure to ignore the product quantity 
+                         * already added to the cart by substracting the 
+                         * provided quantity.
+                         */
+                        ( holdQuantity )
+                    )
+                ) {
+                    return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) )
                         .subscribe();
                 }
+            }
 
-                /**
-                 * The stock should be handled differently
-                 * according to wether the stock management
-                 * is enabled or not.
-                 */
-                if ( product.$original().stock_management === 'enabled' ) {
-
-                    /**
-                     * If the stock management is enabled,
-                     * we'll pull updated stock from the server.
-                     * When a product is added product.id has the real product id
-                     * when a product is already on the cart product.id is not set but
-                     * product.product_id is defined
-                     */
-                    const holdQuantity  =   POS.getStockUsage( product.$original().id, data.unit_quantity_id ) - ( product.quantity || 0 );
-
-                    /**
-                     * This checks if there is enough
-                     * quantity for product that has stock 
-                     * management enabled
-                     */
-                    if ( 
-                        quantity > (
-                            parseFloat( data.$quantities().quantity ) -
-                            /**
-                             * We'll make sure to ignore the product quantity 
-                             * already added to the cart by substracting the 
-                             * provided quantity.
-                             */
-                            ( holdQuantity )
-                        )
-                    ) {
-                        return nsSnackBar.error( __( 'Unable to add the product, there is not enough stock. Remaining %s' ).replace( '%s', ( data.$quantities().quantity - holdQuantity ) ) )
-                            .subscribe();
-                    }
-                }
-
-                this.resolve({ quantity });
-
-            } else if ( key.identifier === 'backspace' ) {
-                if ( this.allSelected ) {
-                    this.finalValue     =   0;
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     =   this.finalValue.toString();
-                    this.finalValue     =   this.finalValue.substr(0, this.finalValue.length - 1 ) || 0;
-                }
-            } else {
-                if ( this.allSelected ) {
-                    this.finalValue     =   key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
-                    this.allSelected    =   false;
-                } else {
-                    this.finalValue     +=  '' + key.value;
-                    this.finalValue     =   parseFloat( this.finalValue );
-                }
-            } 
+            this.resolve({ quantity });
         },
 
         resolve( params ) {

@@ -15,7 +15,7 @@ class Nov11CreateNexoposUsersAttributesTable extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

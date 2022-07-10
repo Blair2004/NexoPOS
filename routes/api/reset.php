@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Dashboard\ResetController;
 use Illuminate\Support\Facades\Route;
 

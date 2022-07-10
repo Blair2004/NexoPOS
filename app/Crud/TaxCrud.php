@@ -1,71 +1,75 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Tax;
 use App\Models\TaxGroup;
+use App\Models\User;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
 use App\Services\Helper;
+use App\Services\Users;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class TaxCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_taxes';
+    protected $table = 'nexopos_taxes';
 
     /**
      * default slug
+     *
      * @param  string
      */
-    protected $slug   =   'taxes';
+    protected $slug = 'taxes';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.taxes';
+    protected $namespace = 'ns.taxes';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   Tax::class;
+    protected $model = Tax::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  true,
         'read'      =>  true,
         'update'    =>  true,
         'delete'    =>  true,
     ];
 
-    public $relations   =  [
+    public $relations = [
         [ 'nexopos_users as user', 'nexopos_taxes.author', '=', 'user.id' ],
-        [ 'nexopos_taxes_groups as parent', 'nexopos_taxes.tax_group_id', '=', 'parent.id' ]
+        [ 'nexopos_taxes_groups as parent', 'nexopos_taxes.tax_group_id', '=', 'parent.id' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    protected $pick     =   [
+    protected $pick = [
         'user'      =>  [ 'username' ],
         'parent'    =>  [ 'name' ],
     ];
@@ -74,30 +78,33 @@ class TaxCrud extends CrudService
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -107,10 +114,11 @@ class TaxCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -128,8 +136,9 @@ class TaxCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -137,17 +146,19 @@ class TaxCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the tax.' )
+                'description'   =>  __( 'Provide a name to the tax.' ),
+                'validation'    => 'required',
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -160,27 +171,30 @@ class TaxCrud extends CrudService
                             'label'     =>  __( 'Parent' ),
                             'description'   =>  __( 'Assign the tax to a tax group.' ),
                             'value'     =>  $entry->tax_group_id ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'text',
                             'name'  =>  'rate',
                             'label' =>  __( 'Rate' ),
                             'description'   =>  __( 'Define the rate value for the tax.' ),
                             'value' =>  $entry->rate ?? '',
+                            'validation'    => 'required',
                         ], [
                             'type'  =>  'textarea',
                             'name'  =>  'description',
                             'description'   =>  __( 'Provide a description to the tax.' ),
                             'label' =>  __( 'Description' ),
                             'value' =>  $entry->description ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -191,6 +205,7 @@ class TaxCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -201,6 +216,7 @@ class TaxCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -217,6 +233,7 @@ class TaxCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Tax $entry
      * @return  void
@@ -226,21 +243,22 @@ class TaxCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -258,6 +276,7 @@ class TaxCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -269,9 +288,11 @@ class TaxCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.taxes' ) {
             /**
              *  Perform an action before deleting an entry
@@ -281,7 +302,7 @@ class TaxCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -292,34 +313,36 @@ class TaxCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'parent_name'  =>  [
                 'label'  =>  __( 'Parent' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'rate'  =>  [
                 'label'         =>  __( 'Rate' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'         =>  __( 'Author' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'         =>  __( 'Created At' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -329,14 +352,14 @@ class TaxCrud extends CrudService
      */
     public function setActions( CrudEntry $entry, $namespace )
     {
-        $entry->rate            =   sprintf( '%s%%', $entry->rate );
+        $entry->rate = sprintf( '%s%%', $entry->rate );
 
         // you can make changes here
         $entry->addAction( 'edit', [
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . 'taxes' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -346,25 +369,24 @@ class TaxCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.taxes/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -376,13 +398,13 @@ class TaxCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Tax ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -390,6 +412,7 @@ class TaxCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -398,6 +421,7 @@ class TaxCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -413,8 +437,9 @@ class TaxCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -422,16 +447,17 @@ class TaxCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

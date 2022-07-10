@@ -1,11 +1,9 @@
 <?php
 
-use App\Models\Customer;
-use App\Models\CustomerGroup;
 use App\Models\ExpenseCategory;
 use App\Services\Helper;
 
-$expenses   =   ExpenseCategory::get();
+$expenses = ExpenseCategory::get();
 
 return [
     'label'     =>  __( 'General' ),
@@ -66,6 +64,6 @@ return [
             'description'   =>  __( 'Cash Register cash-out will be added to the cash flow account' ),
             'options'       =>  Helper::toJsOptions( $expenses, [ 'id', 'name' ]),
             'type'          =>  'select',
-        ]
-    ]
+        ],
+    ],
 ];

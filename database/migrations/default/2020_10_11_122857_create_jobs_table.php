@@ -15,7 +15,7 @@ class CreateJobsTable extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Console\Kernel;
 use App\Http\Kernel as HttpKernel;
 use App\Services\DateService;
 use Illuminate\Console\Command;
@@ -41,44 +40,42 @@ class GenerateActivityCommand extends Command
      */
     public function handle()
     {
-        $date           =   app()->make( DateService::class );
-        $rangeStarts    =   $date->copy()->subMonths(5);
-        $totalDays      =   [];
+        $date = app()->make( DateService::class );
+        $rangeStarts = $date->copy()->subMonths(5);
+        $totalDays = [];
 
-        while( ! $rangeStarts->isSameDay( $date ) ) {
-            $totalDays[]    =   $rangeStarts->copy();
+        while ( ! $rangeStarts->isSameDay( $date ) ) {
+            $totalDays[] = $rangeStarts->copy();
             $rangeStarts->addDay(1);
         }
-        
+
         $bar = $this->output->createProgressBar(count($totalDays));
         $bar->start();
 
-        $files  =   Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
-        
-        $app    =   require base_path( 'bootstrap/app.php' );
+        $files = Storage::disk( 'ns' )->allFiles( 'tests/Feature' );
+
+        $app = require base_path( 'bootstrap/app.php' );
         $app->make( HttpKernel::class )->bootstrap();
 
-        dd( $app->session() );
-
-        foreach( $totalDays as $day ) {
+        foreach ( $totalDays as $day ) {
             /**
              * include test files
              */
-            foreach( $files as $file ) {
+            foreach ( $files as $file ) {
                 if ( ! in_array( $file, [
-                    'tests/Feature/ResetTest.php'
+                    'tests/Feature/ResetTest.php',
                 ])) {
-                    include_once( base_path( $file ) );
+                    include_once base_path( $file );
 
-                    $path   =   pathinfo( $file );
-                    $class  =   collect( explode( '/', $path[ 'dirname' ] ) )
+                    $path = pathinfo( $file );
+                    $class = collect( explode( '/', $path[ 'dirname' ] ) )
                         ->push( $path[ 'filename' ] )
                         ->map( fn( $dir ) => ucwords( $dir ) )
                         ->join( '\\' );
-                    
-                    $object             =   new $class;
-                    $methods            =   get_class_methods( $object );
-                    $method             =   $methods[0];
+
+                    $object = new $class;
+                    $methods = get_class_methods( $object );
+                    $method = $methods[0];
                     $object->defineApp( $app );
                     $object->$method();
                 }

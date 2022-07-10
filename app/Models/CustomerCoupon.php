@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerCoupon extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_' . 'customers_coupons';
 
-    public $casts    =   [
-        'active'    =>  'boolean'
+    protected $table = 'nexopos_' . 'customers_coupons';
+
+    public $casts = [
+        'active'    =>  'boolean',
     ];
 
     public function scopeActive( $query )
@@ -35,7 +34,8 @@ class CustomerCoupon extends NsModel
         return $query->where( 'customer_id', $customer_id );
     }
 
-    public function coupon() {
+    public function coupon()
+    {
         return $this->hasOne( Coupon::class, 'id', 'coupon_id' );
     }
 

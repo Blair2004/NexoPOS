@@ -15,7 +15,7 @@ class UpdateUsersAttributesMar18 extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

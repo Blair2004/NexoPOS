@@ -1,48 +1,52 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Exceptions\NotAllowedException;
+use App\Models\CustomerReward;
+use App\Models\User;
+use App\Services\CrudEntry;
 use App\Services\CrudService;
 use App\Services\Users;
-use App\Exceptions\NotAllowedException;
-use App\Models\User;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
-use App\Models\CustomerReward;
-use App\Services\CrudEntry;
 
 class CustomerRewardCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_customers_rewards';
+    protected $table = 'nexopos_customers_rewards';
 
     /**
      * default slug
+     *
      * @param  string
      */
-    protected $slug         =   'customers/{customer_id}/rewards';
+    protected $slug = 'customers/{customer_id}/rewards';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.customers-rewards';
+    protected $namespace = 'ns.customers-rewards';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   CustomerReward::class;
+    protected $model = CustomerReward::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  false,
         'read'      =>  true,
         'update'    =>  true,
@@ -52,53 +56,57 @@ class CustomerRewardCrud extends CrudService
     /**
      * Adding relation
      * Example : [ 'nexopos_users as user', 'user.id', '=', 'nexopos_orders.author' ]
+     *
      * @param  array
      */
-    public $relations   =  [
-        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ]
+    public $relations = [
+        [ 'nexopos_customers as customer', 'customer.id', '=', 'nexopos_customers_rewards.customer_id' ],
     ];
 
     /**
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [
-        'customer'      =>  [ 'name' ]
+    public $pick = [
+        'customer'      =>  [ 'name' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-    public $fillable    =   [ 'target', 'points' ];
+    public $fillable = [ 'target', 'points' ];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -108,10 +116,11 @@ class CustomerRewardCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -129,8 +138,9 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -138,17 +148,18 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -164,15 +175,16 @@ class CustomerRewardCrud extends CrudService
                             'name'  =>  'target',
                             'label' =>  __( 'Target' ),
                             'value' =>  $entry->target ?? '',
-                        ], 
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -183,6 +195,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -193,6 +206,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -209,6 +223,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  CustomerReward $entry
      * @return  void
@@ -218,21 +233,22 @@ class CustomerRewardCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -250,6 +266,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -261,9 +278,11 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.customers-rewards' ) {
             /**
              *  Perform an action before deleting an entry
@@ -273,7 +292,7 @@ class CustomerRewardCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -284,34 +303,36 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'customer_name'     =>  [
                 'label'         =>  __( 'Customer' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'reward_name'       =>  [
                 'label'         =>  __( 'Reward Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'points'            =>  [
                 'label'         =>  __( 'Points' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'target'            =>  [
                 'label'         =>  __( 'Target' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'updated_at'        =>  [
                 'label'         =>  __( 'Last Update' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -331,7 +352,7 @@ class CustomerRewardCrud extends CrudService
             'label'         =>      __( 'Edit' ),
             'namespace'     =>      'edit',
             'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->getSlug() . '/edit/' . $entry->id )
+            'url'           =>      ns()->url( '/dashboard/' . $this->getSlug() . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
@@ -341,8 +362,8 @@ class CustomerRewardCrud extends CrudService
             'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-rewards/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
-        ]);        
+            ],
+        ]);
 
         return $entry;
     }
@@ -352,19 +373,18 @@ class CustomerRewardCrud extends CrudService
         return str_replace( '{customer_id}', request()->query( 'customer_id' ), $this->slug );
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -376,13 +396,13 @@ class CustomerRewardCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof CustomerReward ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -390,6 +410,7 @@ class CustomerRewardCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -398,6 +419,7 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -413,8 +435,9 @@ class CustomerRewardCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -422,16 +445,17 @@ class CustomerRewardCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

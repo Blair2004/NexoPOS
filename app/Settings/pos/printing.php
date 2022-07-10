@@ -1,7 +1,7 @@
 <?php
 
-use App\Services\Helper;
 use App\Classes\Hook;
+use App\Services\Helper;
 
 return [
     'label' =>  __( 'Printing' ),
@@ -9,17 +9,17 @@ return [
         [
             'name'              =>  'ns_pos_printing_document',
             'value'             =>  ns()->option->get( 'ns_pos_printing_document' ),
-            'label'             =>  __( 'Printed Document' ), 
+            'label'             =>  __( 'Printed Document' ),
             'type'              =>  'select',
             'options'           =>  Helper::kvToJsOptions([
                 'invoice'       =>  __( 'Invoice' ),
-                'receipt'       =>  __( 'Receipt' )
+                'receipt'       =>  __( 'Receipt' ),
             ]),
             'description'       =>  __( 'Choose the document used for printing aster a sale.' ),
         ], [
             'name'              =>  'ns_pos_printing_enabled_for',
             'value'             =>  ns()->option->get( 'ns_pos_printing_enabled_for' ),
-            'label'             =>  __( 'Printing Enabled For' ), 
+            'label'             =>  __( 'Printing Enabled For' ),
             'type'              =>  'select',
             'options'           =>  Helper::kvToJsOptions([
                 'disabled'              =>  __( 'Disabled' ),
@@ -31,12 +31,12 @@ return [
         ], [
             'name'              =>  'ns_pos_printing_gateway',
             'value'             =>  ns()->option->get( 'ns_pos_printing_gateway' ),
-            'label'             =>  __( 'Printing Gateway' ), 
+            'label'             =>  __( 'Printing Gateway' ),
             'type'              =>  'select',
             'options'           =>  Helper::kvToJsOptions([
                 'default'           =>  __( 'Default Printing (web)' ),
             ]),
             'description'       =>  __( 'Determine what is the gateway used for printing.' ),
-        ], 
-    ])
+        ],
+    ]),
 ];

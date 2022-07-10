@@ -1,8 +1,8 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class FirstDemoSeeder extends Seeder
 {
@@ -12,7 +12,7 @@ class FirstDemoSeeder extends Seeder
      * @return void
      */
     public function run()
-    {       
+    {
         $this->call( RewardSystemSeeder::class );
         $this->call( CustomerGroupSeeder::class );
         $this->call( ExpensesSeeder::class );

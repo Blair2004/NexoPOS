@@ -2,7 +2,7 @@
 
 use App\Services\Helper;
 
-$audios     =   Helper::kvToJsOptions([
+$audios = Helper::kvToJsOptions([
     ''      =>  __( 'Disabled' ),
     url( '/audio/bubble.mp3' )  =>  __( 'Bubble' ),
     url( '/audio/ding.mp3' )  =>  __( 'Ding' ),
@@ -20,23 +20,23 @@ return [
                 'grocery_shop'      =>  __( 'Retail Layout' ),
                 'clothing_shop'     =>  __( 'Clothing Shop' ),
             ]),
-            'label'         =>  __( 'POS Layout' ), 
+            'label'         =>  __( 'POS Layout' ),
             'type'          =>  'select',
             'description'   =>  __( 'Change the layout of the POS.' ),
         ], [
             'name'              =>  'ns_pos_complete_sale_audio',
             'value'             =>  ns()->option->get( 'ns_pos_complete_sale_audio' ),
             'options'           =>  $audios,
-            'label'         =>  __( 'Sale Complete Sound' ), 
+            'label'         =>  __( 'Sale Complete Sound' ),
             'type'          =>  'select-audio',
             'description'   =>  __( 'Change the layout of the POS.' ),
         ], [
             'name'              =>  'ns_pos_new_item_audio',
             'value'             =>  ns()->option->get( 'ns_pos_new_item_audio' ),
             'options'           =>  $audios,
-            'label'         =>  __( 'New Item Audio' ), 
+            'label'         =>  __( 'New Item Audio' ),
             'type'          =>  'select-audio',
             'description'   =>  __( 'The sound that plays when an item is added to the cart.' ),
-        ], 
-    ]
+        ],
+    ],
 ];

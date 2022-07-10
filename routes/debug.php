@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 if ( env( 'APP_DEBUG' ) ) {
     Route::get( '/routes', function() {
-        $values     =   collect( array_values( ( array ) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
+        $values = collect( array_values( (array) app( 'router' )->getRoutes() )[1] )->map( function( RoutingRoute $route ) {
             return [
                 'domain'    =>  $route->getDomain(),
                 'uri'       =>  $route->uri(),
@@ -14,12 +14,12 @@ if ( env( 'APP_DEBUG' ) ) {
                 'name'      =>  $route->getName(),
             ];
         })->values();
-    
+
         return ( new ArrayToTextTable( $values->toArray() ) )->render();
     });
 
     Route::get( '/exceptions/{class}', function( $class ) {
-        $exceptions     =   [
+        $exceptions = [
             \App\Exceptions\CoreException::class,
             \App\Exceptions\CoreVersionMismatchException::class,
             \App\Exceptions\MethodNotAllowedHttpException::class,
@@ -32,7 +32,7 @@ if ( env( 'APP_DEBUG' ) ) {
         ];
 
         if ( in_array( $class, $exceptions ) ) {
-            throw new $class();
+            throw new $class;
         }
 
         return abort(404, 'Exception not found.' );

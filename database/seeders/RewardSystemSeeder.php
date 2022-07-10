@@ -1,12 +1,9 @@
 <?php
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
-use App\Models\User;
 use App\Models\RewardSystem;
-use App\Models\RewardSystemRule;
+use Illuminate\Database\Seeder;
 
 class RewardSystemSeeder extends Seeder
 {

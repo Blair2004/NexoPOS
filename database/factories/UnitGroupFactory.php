@@ -1,17 +1,16 @@
 <?php
+
 namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
 use App\Models\UnitGroup;
 use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UnitGroupFactory extends Factory
 {
-    protected $model    =   UnitGroup::class;
+    protected $model = UnitGroup::class;
 
     public function definition()
     {

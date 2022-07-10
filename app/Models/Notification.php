@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Notification extends NsModel
 {
     use HasFactory;
-    
-    protected $table    =   'nexopos_notifications';
+
+    protected $table = 'nexopos_notifications';
 
     public function user()
     {

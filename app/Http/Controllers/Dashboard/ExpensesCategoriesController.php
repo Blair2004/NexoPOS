@@ -2,15 +2,15 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\ExpenseCategoryCrud;
 use App\Http\Controllers\DashboardController;
 use App\Models\ExpenseCategory;
-use App\Services\CrudService;
 use App\Services\Options;
 use Illuminate\Support\Facades\View;
 
@@ -20,14 +20,16 @@ class ExpensesCategoriesController extends DashboardController
     {
         parent::__construct();
 
-        $this->options      =   $options;
+        $this->options = $options;
     }
 
     /**
      * Index Controller Page
+     *
      * @return  view
+     *
      * @since  1.0
-    **/
+     **/
     public function index()
     {
         return View::make( 'NexoPOS::index' );
@@ -36,6 +38,7 @@ class ExpensesCategoriesController extends DashboardController
     /**
      * Show expenses
      * categories
+     *
      * @return view
      */
     public function listExpensesCategories()
@@ -46,6 +49,7 @@ class ExpensesCategoriesController extends DashboardController
     /**
      * Show expenses
      * categories
+     *
      * @return view
      */
     public function createExpenseCategory()
@@ -58,4 +62,3 @@ class ExpensesCategoriesController extends DashboardController
         return ExpenseCategoryCrud::form( $category );
     }
 }
-

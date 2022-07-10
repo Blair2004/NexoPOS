@@ -3,18 +3,15 @@
 namespace App\Events;
 
 use App\Models\ProcurementProduct;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class ProcurementProductAfterDeleteEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     public $product;
 
     /**
@@ -24,7 +21,7 @@ class ProcurementProductAfterDeleteEvent
      */
     public function __construct( ProcurementProduct $product )
     {
-        $this->product  =   $product;
+        $this->product = $product;
     }
 
     /**

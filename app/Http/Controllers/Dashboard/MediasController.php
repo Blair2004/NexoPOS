@@ -12,65 +12,65 @@ class MediasController extends DashboardController
 
     public function __construct(
         MediaService $mediaService
-    )
-    {
+    ) {
         parent::__construct();
-        
-        $this->mediaService     =   $mediaService;
+
+        $this->mediaService = $mediaService;
     }
 
     public function showMedia()
     {
         return $this->view( 'pages.dashboard.medias.list', [
             'title'         =>  __( 'Manage Medias' ),
-            'description'   =>  __( 'Upload and manage medias (photos).' )
+            'description'   =>  __( 'Upload and manage medias (photos).' ),
         ]);
     }
 
     /**
      * perform
-     * @param 
+     *
+     * @param
      * @return json
      */
     public function getMedias()
     {
         return $this->mediaService->loadAjax();
-    }   
-    
-    /**
-     * perform
-     * @param 
-     * @return json
-     */
-    public function deleteMedia()
-    {
-
     }
 
     /**
      * perform
-     * @param 
+     *
+     * @param
+     * @return json
+     */
+    public function deleteMedia()
+    {
+    }
+
+    /**
+     * perform
+     *
+     * @param
      * @return json
      */
     public function updateMedia()
     {
-
-    }   
+    }
 
     public function bulkDeleteMedias( Request $request )
     {
         ns()->restrict( 'nexopos.delete.medias' );
 
-        $result         =   [];
+        $result = [];
 
-        foreach( $request->input( 'ids' ) as $id ) {
-            $result[]   =   $this->mediaService->deleteMedia( $id );
+        foreach ( $request->input( 'ids' ) as $id ) {
+            $result[] = $this->mediaService->deleteMedia( $id );
         }
 
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The operation was successful.' ),
-            'data'      =>  compact( 'result' )
+            'data'      =>  compact( 'result' ),
         ];
     }
 

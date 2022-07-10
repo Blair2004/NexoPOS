@@ -1,17 +1,16 @@
 <?php
+
 namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
 use App\Models\Tax;
 use App\Models\User;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaxFactory extends Factory
 {
-    protected $model    =   Tax::class;
+    protected $model = Tax::class;
 
     public function definition()
     {

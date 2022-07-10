@@ -1,45 +1,51 @@
 <?php
+
 namespace App\Crud;
 
 use App\Events\CashFlowHistoryBeforeDeleteEvent;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
 use App\Exceptions\NotAllowedException;
 use App\Models\CashFlow;
 use App\Services\CrudEntry;
+use App\Services\CrudService;
+use Illuminate\Http\Request;
 use TorMorten\Eventy\Facades\Events as Hook;
 
 class CashFlowHistoryCrud extends CrudService
 {
     /**
      * define the base table
+     *
      * @param  string
      */
-    protected $table      =   'nexopos_cash_flow';
+    protected $table = 'nexopos_cash_flow';
 
     /**
      * default identifier
+     *
      * @param  string
      */
-    protected $identifier   =   'cash-flow/history';
+    protected $identifier = 'cash-flow/history';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.cash-flow-history';
+    protected $namespace = 'ns.cash-flow-history';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   CashFlow::class;
+    protected $model = CashFlow::class;
 
     /**
      * Define permissions
+     *
      * @param  array
      */
-    protected $permissions  =   [
+    protected $permissions = [
         'create'    =>  false, // 'nexopos.create.cash-flow-history',
         'read'      =>  'nexopos.read.cash-flow-history',
         'update'    =>  false,
@@ -48,53 +54,57 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Adding relation
+     *
      * @param  array
      */
-    public $relations   =  [
-        [ 'nexopos_users as user', 'nexopos_cash_flow.author', '=', 'user.id' ]
+    public $relations = [
+        [ 'nexopos_users as user', 'nexopos_cash_flow.author', '=', 'user.id' ],
     ];
 
     /**
      * all tabs mentionned on the tabs relations
      * are ignored on the parent model.
      */
-    protected $tabsRelations    =   [
+    protected $tabsRelations = [
         // 'tab_name'      =>      [ YourRelatedModel::class, 'localkey_on_relatedmodel', 'foreignkey_on_crud_model' ],
     ];
 
     /**
      * Pick
      * Restrict columns you retreive from relation.
-     * Should be an array of associative keys, where 
+     * Should be an array of associative keys, where
      * keys are either the related table or alias name.
      * Example : [
      *      'user'  =>  [ 'username' ], // here the relation on the table nexopos_users is using "user" as an alias
      * ]
      */
-    public $pick        =   [ 
-        'user'  =>  [ 'username', 'id' ]
+    public $pick = [
+        'user'  =>  [ 'username', 'id' ],
     ];
 
     /**
      * Define where statement
+     *
      * @var  array
-    **/
-    protected $listWhere    =   [];
+     **/
+    protected $listWhere = [];
 
     /**
      * Define where in statement
+     *
      * @var  array
      */
-    protected $whereIn      =   [];
+    protected $whereIn = [];
 
     /**
      * Fields which will be filled during post/put
      */
-        public $fillable    =   [];
+    public $fillable = [];
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -104,10 +114,11 @@ class CashFlowHistoryCrud extends CrudService
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -125,8 +136,9 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -134,17 +146,18 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 'name'          =>  'name',
                 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -166,14 +179,15 @@ class CashFlowHistoryCrud extends CrudService
                             'label' =>  __( 'Value' ),
                             'value' =>  $entry->value ?? '',
                         ],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -184,6 +198,7 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -194,6 +209,7 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -215,6 +231,7 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  CashFlow $entry
      * @return  void
@@ -224,21 +241,22 @@ class CashFlowHistoryCrud extends CrudService
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -256,6 +274,7 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -267,9 +286,11 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.cash-flow-history' ) {
             /**
              *  Perform an action before deleting an entry
@@ -279,7 +300,7 @@ class CashFlowHistoryCrud extends CrudService
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -294,41 +315,43 @@ class CashFlowHistoryCrud extends CrudService
 
             return [
                 'status'    =>  'success',
-                'message'   =>  __( 'The expense history is about to be deleted.' )
+                'message'   =>  __( 'The expense history is about to be deleted.' ),
             ];
         }
     }
 
     /**
      * Define Columns
+     *
      * @return  array of columns configuration
      */
-    public function getColumns() {
+    public function getColumns()
+    {
         return [
             'name'  =>  [
                 'label'  =>  __( 'Name' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'value'  =>  [
                 'label'  =>  __( 'Value' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'operation'  =>  [
                 'label'  =>  __( 'Operation' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'user_username'  =>  [
                 'label'  =>  __( 'By' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
             'created_at'  =>  [
                 'label'  =>  __( 'Date' ),
                 '$direction'    =>  '',
-                '$sort'         =>  false
+                '$sort'         =>  false,
             ],
         ];
     }
@@ -339,28 +362,27 @@ class CashFlowHistoryCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         // Don't overwrite
-        $entry->{ '$checked' }  =   false;
-        $entry->{ '$toggled' }  =   false;
-        $entry->{ '$id' }       =   $entry->id;
+        $entry->{ '$checked' } = false;
+        $entry->{ '$toggled' } = false;
+        $entry->{ '$id' } = $entry->id;
 
-        $entry->value           =   ns()->currency->define( $entry->value )->format();
-        
+        $entry->value = ns()->currency->define( $entry->value )->format();
 
-        switch( $entry->operation ) {
-            case CashFlow::OPERATION_CREDIT : 
-                $entry->{ '$cssClass' }             =   'success border text-sm';
+        switch ( $entry->operation ) {
+            case CashFlow::OPERATION_CREDIT:
+                $entry->{ '$cssClass' } = 'success border text-sm';
             break;
-            case CashFlow::OPERATION_DEBIT : 
-                $entry->{ '$cssClass' }             =   'error border text-sm';
+            case CashFlow::OPERATION_DEBIT:
+                $entry->{ '$cssClass' } = 'error border text-sm';
             break;
         }
 
-        switch( $entry->operation ) {
-            case CashFlow::OPERATION_CREDIT : 
-                $entry->operation             =   "<span class='bg-green-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Credit' ) . '</span>';
+        switch ( $entry->operation ) {
+            case CashFlow::OPERATION_CREDIT:
+                $entry->operation = "<span class='bg-green-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Credit' ) . '</span>';
             break;
-            case CashFlow::OPERATION_DEBIT : 
-                $entry->operation             =   "<span class='bg-red-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Debit' ) . '</span>';
+            case CashFlow::OPERATION_DEBIT:
+                $entry->operation = "<span class='bg-red-400 text-white rounded-full px-2 py-1 text-sm'>" . __( 'Debit' ) . '</span>';
             break;
         }
 
@@ -372,25 +394,24 @@ class CashFlowHistoryCrud extends CrudService
             'url'       => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
             'confirm'   =>  [
                 'message'  =>  __( 'Would you like to delete this ?' ),
-            ]
+            ],
         ]);
 
         return $entry;
     }
 
-    
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -402,13 +423,13 @@ class CashFlowHistoryCrud extends CrudService
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof CashFlow ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -416,6 +437,7 @@ class CashFlowHistoryCrud extends CrudService
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -424,6 +446,7 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -439,8 +462,9 @@ class CashFlowHistoryCrud extends CrudService
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -448,16 +472,17 @@ class CashFlowHistoryCrud extends CrudService
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

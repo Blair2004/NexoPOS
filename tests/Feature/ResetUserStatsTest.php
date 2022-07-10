@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ResetUserStatsTest extends TestCase
@@ -17,8 +15,8 @@ class ResetUserStatsTest extends TestCase
     public function testResetUserStats()
     {
         User::get()->each( function( $user ) {
-            $user->total_sales_count    =   0;
-            $user->total_sales          =   0;
+            $user->total_sales_count = 0;
+            $user->total_sales = 0;
             $user->save();
         });
 

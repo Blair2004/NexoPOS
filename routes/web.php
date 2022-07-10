@@ -1,7 +1,6 @@
 <?php
 
 use App\Events\BeforeStartWebRouteEvent;
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$domain     =   pathinfo( env( 'APP_URL' ) );
+$domain = pathinfo( env( 'APP_URL' ) );
 
 /**
  * If something has to happen
@@ -34,12 +33,11 @@ if ( env( 'NS_WILDCARD_ENABLED' ) ) {
      * The defined route should only be applicable
      * to the main domain.
      */
-    $domainString   =   ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
+    $domainString = ( $domain[ 'filename' ] ?: 'localhost' ) . ( isset( $domain[ 'extension' ] ) ? '.' . $domain[ 'extension' ] : '' );
 
-    
     Route::domain( $domainString )->group( function() {
-        include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php' );
+        include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
     });
 } else {
-    include( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php' );
+    include dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'web-base.php';
 }

@@ -6,7 +6,6 @@ use App\Events\AfterMigrationExecutedEvent;
 use App\Exceptions\NotFoundException;
 use App\Services\ModulesService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class ModulesMigrateCommand extends Command
 {
@@ -15,7 +14,7 @@ class ModulesMigrateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:migrate {moduleNamespace}';
+    protected $signature = 'modules:migrate {moduleNamespace}';
 
     /**
      * The console command description.
@@ -30,17 +29,17 @@ class ModulesMigrateCommand extends Command
      * @return void
      */
 
-     /**
-      * @var ModulesService
-      */
+    /**
+     * @var ModulesService
+     */
     protected $modulesService;
-    
+
     public function __construct(
         ModulesService $modulesService
     ) {
         parent::__construct();
 
-        $this->modulesService   =   $modulesService;
+        $this->modulesService = $modulesService;
     }
 
     /**
@@ -50,19 +49,19 @@ class ModulesMigrateCommand extends Command
      */
     public function handle()
     {
-        $module     =   $this->modulesService->get( $this->argument( 'moduleNamespace' ) );
+        $module = $this->modulesService->get( $this->argument( 'moduleNamespace' ) );
 
         if ( empty( $module ) ) {
-            throw new NotFoundException( 
-                sprintf( 
+            throw new NotFoundException(
+                sprintf(
                     __( 'Unable to find a module having the identifier "%".' ),
                     $this->argument( 'moduleNamespace' )
                 )
             );
         }
 
-        $migratedFiles      =   $this->modulesService->getModuleAlreadyMigratedFiles( $module );
-        $unmigratedFiles    =   $this->modulesService->getModuleUnmigratedFiles( $module, $migratedFiles );
+        $migratedFiles = $this->modulesService->getModuleAlreadyMigratedFiles( $module );
+        $unmigratedFiles = $this->modulesService->getModuleUnmigratedFiles( $module, $migratedFiles );
 
         if ( count( $unmigratedFiles ) === 0 ) {
             return $this->info( sprintf(
@@ -72,7 +71,7 @@ class ModulesMigrateCommand extends Command
         }
 
         $this->withProgressBar( $unmigratedFiles, function( $file ) use ( $module ) {
-            $response   =   $this->modulesService->runMigration( $module[ 'namespace' ], $file );
+            $response = $this->modulesService->runMigration( $module[ 'namespace' ], $file );
             event( new AfterMigrationExecutedEvent( $module, $response, $file ) );
         });
 

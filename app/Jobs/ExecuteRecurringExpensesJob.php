@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ExecuteExpensesJob implements ShouldQueue
+class ExecuteRecurringExpensesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,7 +33,7 @@ class ExecuteExpensesJob implements ShouldQueue
         /**
          * @var ExpenseService
          */
-        $expenses       =   app()->make( ExpenseService::class );
+        $expenses = app()->make( ExpenseService::class );
         $expenses->handleRecurringExpenses();
     }
 }

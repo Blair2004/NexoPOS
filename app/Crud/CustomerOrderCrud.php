@@ -1,39 +1,40 @@
 <?php
+
 namespace App\Crud;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Services\CrudService;
-use App\Services\Users;
 use App\Exceptions\NotAllowedException;
-use App\Models\User;
-use TorMorten\Eventy\Facades\Events as Hook;
-use Exception;
 use App\Models\Order;
+use App\Models\User;
+use Illuminate\Http\Request;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CustomerOrderCrud extends OrderCrud
 {
     /**
      * default identifier
+     *
      * @param  string
      */
-    protected $identifier   =   'dashboard/customers/orders';
+    protected $identifier = 'dashboard/customers/orders';
 
     /**
      * Define namespace
+     *
      * @param  string
      */
-    protected $namespace  =   'ns.customers-orders';
+    protected $namespace = 'ns.customers-orders';
 
     /**
      * Model Used
+     *
      * @param  string
      */
-    protected $model      =   Order::class;
+    protected $model = Order::class;
 
     /**
      * Define Constructor
-     * @param  
+     *
+     * @param
      */
     public function __construct()
     {
@@ -41,10 +42,11 @@ class CustomerOrderCrud extends OrderCrud
     }
 
     /**
-     * Return the label used for the crud 
+     * Return the label used for the crud
      * instance
+     *
      * @return  array
-    **/
+     **/
     public function getLabels()
     {
         return [
@@ -62,8 +64,9 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Check whether a feature is enabled
-     * @return  boolean
-    **/
+     *
+     * @return  bool
+     **/
     public function isEnabled( $feature ): bool
     {
         return false; // by default
@@ -82,17 +85,18 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Fields
+     *
      * @param  object/null
      * @return  array of field
      */
-    public function getForm( $entry = null ) 
+    public function getForm( $entry = null )
     {
         return [
             'main' =>  [
                 'label'         =>  __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' )
+                'description'   =>  __( 'Provide a name to the resource.' ),
             ],
             'tabs'  =>  [
                 'general'   =>  [
@@ -243,14 +247,15 @@ class CustomerOrderCrud extends OrderCrud
                             'name'  =>  'voidance_reason',
                             'label' =>  __( 'Voidance Reason' ),
                             'value' =>  $entry->voidance_reason ?? '',
-                        ],                     ]
-                ]
-            ]
+                        ],                     ],
+                ],
+            ],
         ];
     }
 
     /**
      * Filter POST input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -261,6 +266,7 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Filter PUT input fields
+     *
      * @param  array of fields
      * @return  array of fields
      */
@@ -271,6 +277,7 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Before saving a record
+     *
      * @param  Request $request
      * @return  void
      */
@@ -287,6 +294,7 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * After saving a record
+     *
      * @param  Request $request
      * @param  Order $entry
      * @return  void
@@ -296,21 +304,22 @@ class CustomerOrderCrud extends OrderCrud
         return $request;
     }
 
-    
     /**
      * get
+     *
      * @param  string
      * @return  mixed
      */
     public function get( $param )
     {
-        switch( $param ) {
-            case 'model' : return $this->model ; break;
+        switch ( $param ) {
+            case 'model': return $this->model; break;
         }
     }
 
     /**
      * Before updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -328,6 +337,7 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * After updating a record
+     *
      * @param  Request $request
      * @param  object entry
      * @return  void
@@ -339,9 +349,11 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Before Delete
+     *
      * @return  void
      */
-    public function beforeDelete( $namespace, $id, $model ) {
+    public function beforeDelete( $namespace, $id, $model )
+    {
         if ( $namespace == 'ns.customers.orders' ) {
             /**
              *  Perform an action before deleting an entry
@@ -351,7 +363,7 @@ class CustomerOrderCrud extends OrderCrud
              *      'status'    =>  'danger',
              *      'message'   =>  __( 'You\re not allowed to do that.' )
              *  ], 403 );
-            **/
+             **/
             if ( $this->permissions[ 'delete' ] !== false ) {
                 ns()->restrict( $this->permissions[ 'delete' ] );
             } else {
@@ -359,19 +371,19 @@ class CustomerOrderCrud extends OrderCrud
             }
         }
     }
-    
+
     /**
      * Bulk Delete Action
+     *
      * @param    object Request with object
      * @return    false/array
      */
-    public function bulkAction( Request $request ) 
+    public function bulkAction( Request $request )
     {
         /**
          * Deleting licence is only allowed for admin
          * and supervisor.
          */
-
         if ( $request->input( 'action' ) == 'delete_selected' ) {
 
             /**
@@ -383,13 +395,13 @@ class CustomerOrderCrud extends OrderCrud
                 throw new NotAllowedException;
             }
 
-            $status     =   [
+            $status = [
                 'success'   =>  0,
-                'failed'    =>  0
+                'failed'    =>  0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
-                $entity     =   $this->model::find( $id );
+                $entity = $this->model::find( $id );
                 if ( $entity instanceof Order ) {
                     $entity->delete();
                     $status[ 'success' ]++;
@@ -397,6 +409,7 @@ class CustomerOrderCrud extends OrderCrud
                     $status[ 'failed' ]++;
                 }
             }
+
             return $status;
         }
 
@@ -405,6 +418,7 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * get Links
+     *
      * @return  array of links
      */
     public function getLinks(): array
@@ -420,8 +434,9 @@ class CustomerOrderCrud extends OrderCrud
 
     /**
      * Get Bulk actions
+     *
      * @return  array of actions
-    **/
+     **/
     public function getBulkActions(): array
     {
         return Hook::filter( $this->namespace . '-bulk', [
@@ -429,16 +444,17 @@ class CustomerOrderCrud extends OrderCrud
                 'label'         =>  __( 'Delete Selected Groups' ),
                 'identifier'    =>  'delete_selected',
                 'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace
-                ])
-            ]
+                    'namespace' =>  $this->namespace,
+                ]),
+            ],
         ]);
     }
 
     /**
      * get exports
+     *
      * @return  array of export formats
-    **/
+     **/
     public function getExports()
     {
         return [];

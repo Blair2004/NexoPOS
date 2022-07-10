@@ -15,7 +15,7 @@ class AddNewFieldsToNexoposUsersTableNov3 extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *

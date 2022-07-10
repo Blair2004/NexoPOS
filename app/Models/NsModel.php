@@ -14,7 +14,7 @@ abstract class NsModel extends NsRootModel
      * will perform a verification to check
      * if the actual model is a dependency before deleting that.
      */
-    protected $isDependencyFor     =   [
+    protected $isDependencyFor = [
         // ...
     ];
 
@@ -27,6 +27,6 @@ abstract class NsModel extends NsRootModel
     {
         parent::__construct( $attributes );
 
-        $this->table    =   Hook::filter( 'ns-model-table', $this->table );
+        $this->table = Hook::filter( 'ns-model-table', $this->table );
     }
 }

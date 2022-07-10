@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Services\DemoService;
 use App\Models\Role;
+use App\Services\DemoService;
 use App\Services\ResetService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class ResetCommand extends Command
@@ -27,12 +26,13 @@ class ResetCommand extends Command
 
     /**
      * Reset service
-     * @var ResetService $resetService
+     *
+     * @var ResetService
      */
     private $resetService;
 
     /**
-     * @var DemoService $demoService
+     * @var DemoService
      */
     private $demoService;
 
@@ -44,12 +44,11 @@ class ResetCommand extends Command
     public function __construct(
         ResetService $resetService,
         DemoService $demoService
-    )
-    {
+    ) {
         parent::__construct();
 
-        $this->resetService     =   $resetService;
-        $this->demoService      =   $demoService;
+        $this->resetService = $resetService;
+        $this->demoService = $demoService;
     }
 
     /**
@@ -58,8 +57,8 @@ class ResetCommand extends Command
      * @return mixed
      */
     public function handle()
-    {    
-        switch( $this->option( 'mode' ) ) {
+    {
+        switch ( $this->option( 'mode' ) ) {
             case 'soft':
                 return $this->softReset();
             break;
@@ -82,7 +81,7 @@ class ResetCommand extends Command
     private function initializeRole()
     {
         if ( $this->option( 'user' ) === 'default' ) {
-            $user   =   Role::namespace( 'admin' )->users->first();
+            $user = Role::namespace( 'admin' )->users->first();
             Auth::loginUsingId( $user->id );
         } else {
             Auth::loginUsingId( $this->option( 'user' ) );
@@ -91,22 +90,25 @@ class ResetCommand extends Command
 
     /**
      * Proceed hard reset
-     * @return void 
+     *
+     * @return void
      */
     private function hardReset()
     {
-        $result     =   $this->resetService->hardReset();
+        $result = $this->resetService->hardReset();
+
         $this->info( $result[ 'message' ] );
     }
 
     /**
      * Proceed soft reset
+     *
      * @return void
      */
     private function softReset()
     {
-        $result         =   $this->resetService->softReset();
-        
+        $result = $this->resetService->softReset();
+
         return $this->info( $result[ 'message' ] );
     }
 }

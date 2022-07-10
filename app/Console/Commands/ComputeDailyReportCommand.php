@@ -42,7 +42,7 @@ class ComputeDailyReportCommand extends Command
         if ( $this->option( 'compute' ) ) {
             if ( $this->option( 'type' ) === 'day' ) {
                 $this->computeDayReport();
-            } else if ( $this->option( 'type' ) === 'month' ) {
+            } elseif ( $this->option( 'type' ) === 'month' ) {
                 $this->computeMonthReport();
             }
         }
@@ -50,12 +50,12 @@ class ComputeDailyReportCommand extends Command
 
     public function computeMonthReport()
     {
-        $from           =   Carbon::parse( $this->option( 'from' ) );
-        $monthCursor    =   $from->copy();
-        $currentDate    =   ns()->date->getNow();
-        $dates          =   collect([]);
+        $from = Carbon::parse( $this->option( 'from' ) );
+        $monthCursor = $from->copy();
+        $currentDate = ns()->date->getNow();
+        $dates = collect([]);
 
-        while( ! $monthCursor->isSameMonth( $currentDate->copy()->addMonth() ) ) {
+        while ( ! $monthCursor->isSameMonth( $currentDate->copy()->addMonth() ) ) {
             $dates->push( $monthCursor->copy() );
             $monthCursor->addMonth();
         }
@@ -70,11 +70,11 @@ class ComputeDailyReportCommand extends Command
         ) );
 
         $this->newLine();
-        
+
         /**
          * @var ReportService
          */
-        $reportService  =   app()->make( ReportService::class );
+        $reportService = app()->make( ReportService::class );
 
         /**
          * let's show how it progresses
@@ -90,12 +90,12 @@ class ComputeDailyReportCommand extends Command
 
     public function computeDayReport()
     {
-        $from           =   Carbon::parse( $this->option( 'from' ) );
-        $dayCursor      =   $from->copy();
-        $currentDate    =   ns()->date->getNow();
-        $dates          =   collect([]);
+        $from = Carbon::parse( $this->option( 'from' ) );
+        $dayCursor = $from->copy();
+        $currentDate = ns()->date->getNow();
+        $dates = collect([]);
 
-        while( ! $dayCursor->isSameDay( $currentDate->copy()->addDay() ) ) {
+        while ( ! $dayCursor->isSameDay( $currentDate->copy()->addDay() ) ) {
             $dates->push( $dayCursor->copy() );
             $dayCursor->addDay();
         }
@@ -110,18 +110,18 @@ class ComputeDailyReportCommand extends Command
         ) );
 
         $this->newLine();
-        
+
         /**
          * @var ReportService
          */
-        $reportService  =   app()->make( ReportService::class );
+        $reportService = app()->make( ReportService::class );
 
         /**
          * let's show how it progresses
          */
         $this->withProgressBar( $dates, function( $date ) use ( $reportService ) {
-            $reportService->computeDayReport( 
-                $date->startOfDay()->toDateTimeString(), 
+            $reportService->computeDayReport(
+                $date->startOfDay()->toDateTimeString(),
                 $date->endOfDay()->toDateTimeString()
             );
         });

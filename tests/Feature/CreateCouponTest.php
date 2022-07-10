@@ -23,7 +23,7 @@ class CreateCouponTest extends TestCase
 
     /**
      * Let's now try to update the coupon.
-     * 
+     *
      * @return void
      */
     public function testUpdateCoupon()

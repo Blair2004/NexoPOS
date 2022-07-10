@@ -1,4 +1,5 @@
 <?php
+
 return [
     'label'     =>      __( 'Security' ),
     'fields'    =>      [
@@ -19,6 +20,6 @@ return [
             'type'          =>  'password',
             'description'   =>  __( 'Change your password with a better stronger password.' ),
             'validation'    =>  'min:6|same:security.password',
-        ], 
-    ]
+        ],
+    ],
 ];

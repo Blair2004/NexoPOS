@@ -1,23 +1,25 @@
 <?php
+
 namespace App\Events;
 
-use App\Fields\UnitsFields;
-use App\Services\Validation;
 use App\Fields\ProcurementFields;
+use App\Fields\UnitsFields;
 use App\Fields\UnitsGroupsFields;
+use App\Services\Validation;
 
-class ValidationEvent 
+class ValidationEvent
 {
     protected $validation;
 
     public function __construct( Validation $validation )
     {
-        $this->validation  =   $validation;
+        $this->validation = $validation;
     }
 
     /**
      * Extract the unit validation
      * fields
+     *
      * @param void
      * @return array of validation
      */
@@ -27,7 +29,7 @@ class ValidationEvent
             ->extract( 'get' );
     }
 
-    public function unitValidation() 
+    public function unitValidation()
     {
         return $this->validation->from( UnitsFields::class )
             ->extract( 'get' );

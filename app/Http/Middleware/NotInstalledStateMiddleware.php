@@ -2,9 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Exception;
 use App\Exceptions\NotAllowedException;
+use Closure;
 
 class NotInstalledStateMiddleware
 {
@@ -20,7 +19,7 @@ class NotInstalledStateMiddleware
         if ( ! ns()->installed() ) {
             return $next($request);
         }
-        
+
         throw new NotAllowedException( __( 'You\'re not allowed to see this page.' ) );
     }
 }

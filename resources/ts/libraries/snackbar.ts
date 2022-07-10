@@ -94,6 +94,7 @@ export class SnackBar {
         }
         
         textNode.textContent        =   message;
+        textNode.setAttribute( 'class', 'pr-2' );
 
         /**
          * if there is not label

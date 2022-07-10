@@ -20,6 +20,7 @@ export default Vue.extend({
     methods: {
         __
     },
+    name: 'ns-avatar',
     data() {
         return {
             svg: '',

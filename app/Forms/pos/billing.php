@@ -11,8 +11,8 @@ return [
             'name'          =>  '_use_customer_billing',
             'label'         =>  __( 'Use Customer Billing' ),
             'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
-            'description'   =>  __( 'Define wether the customer billing information should be used.' )
-        ], 
-        ... ( new CustomerCrud() )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ]
-    ]
+            'description'   =>  __( 'Define wether the customer billing information should be used.' ),
+        ],
+        ...( new CustomerCrud )->getForm()[ 'tabs' ][ 'billing' ][ 'fields' ],
+    ],
 ];

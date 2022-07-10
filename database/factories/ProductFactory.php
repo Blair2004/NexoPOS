@@ -1,34 +1,33 @@
 <?php
+
 namespace Database\Factories;
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Model;
 use App\Models\Product;
 use App\Models\TaxGroup;
 use App\Models\UnitGroup;
 use App\Models\User;
 use App\Services\TaxService;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductFactory extends Factory
 {
-    protected $model    =   Product::class;
+    protected $model = Product::class;
 
     public function definition()
     {
-        $unitGroup                  =   $this->faker->randomElement( UnitGroup::get() );
+        $unitGroup = $this->faker->randomElement( UnitGroup::get() );
 
         /**
          * @var TaxService
          */
-        $taxType                    =   $this->faker->randomElement([ 'inclusive', 'exclusive' ]);
-        $taxGroup                   =   TaxGroup::get()->first();
+        $taxType = $this->faker->randomElement([ 'inclusive', 'exclusive' ]);
+        $taxGroup = TaxGroup::get()->first();
 
         return [
             'name'                  =>  $this->faker->word,
-            'product_type'          =>  'product',    
+            'product_type'          =>  'product',
             'barcode'               =>  $this->faker->word,
             'tax_type'              =>  $taxType,
             'tax_group_id'          =>  $taxGroup->id, // assuming there is only one group

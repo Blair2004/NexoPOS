@@ -12,37 +12,37 @@ import {
  */
 import './shared/time';
 
-const NsRewardsSystem      =  () => import( './pages/dashboard/rewards-system.vue' );
-const NsCreateCoupons      =  () => import( './pages/dashboard/create-coupons.vue' );
-const NsSettings           =  () => import( './pages/dashboard/settings.vue' );
-const NsReset              =  () => import( './pages/dashboard/reset.vue' );
-const NsModules            =  () => import( './pages/dashboard/modules.vue' );
-const NsPermissions        =  () => import( './pages/dashboard/ns-permissions.vue' );
-const NsProcurement        =  () => import( './pages/dashboard/procurements/ns-procurement.vue' );
-const NsManageProducts     =  () => import( './pages/dashboard/procurements/manage-products.vue' );
-const NsProcurementInvoice =  () => import( './pages/dashboard/procurements/ns-procurement-invoice.vue' );
-const NsNotifications      =  () => import( './pages/dashboard/ns-notifications.vue' );
-const NsMedia              =  () => import( './pages/dashboard/ns-media.vue' );
-const NsLowStockReport     =  () => import( './pages/dashboard/reports/ns-low-stock-report.vue' );
-const NsSaleReport         =  () => import( './pages/dashboard/reports/ns-sale-report.vue' );
-const NsSoldStockReport    =  () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' );
-const NsProfitReport       =  () => import( './pages/dashboard/reports/ns-profit-report.vue' );
-const NsCashFlowReport     =  () => import( './pages/dashboard/reports/ns-cash-flow-report.vue' );
-const NsYearlyReport       =  () => import( './pages/dashboard/reports/ns-yearly-report.vue' );
-const NsBestProductsReport =  () => import( './pages/dashboard/reports/ns-best-products-report.vue' );
-const NsPaymentTypesReport =  () => import( './pages/dashboard/reports/ns-payment-types-report.vue' );
-const NsDashboardCards     =  () => import( './pages/dashboard/home/ns-dashboard-cards.vue' );
-const NsBestCustomers      =  () => import( './pages/dashboard/home/ns-best-customers.vue' );
-const NsBestCashiers       =  () => import( './pages/dashboard/home/ns-best-cashiers.vue' );
-const NsOrdersSummary      =  () => import( './pages/dashboard/home/ns-orders-summary.vue' );
-const NsOrdersChart        =  () => import( './pages/dashboard/home/ns-orders-chart.vue' );
-const NsCashierDashboard   =  () => import( './pages/dashboard/home/ns-cashier-dashboard.vue' );
-const NsStockAdjustment    =  () => import( './pages/dashboard/products/ns-stock-adjustment.vue' );
-const NsOrderInvoice       =  () => import( './pages/dashboard/orders/ns-order-invoice.vue' );
-const NsPromptPopup        =  () => import( './popups/ns-prompt-popup.vue' );
-const NsAlertPopup         =  () => import( './popups/ns-alert-popup.vue' );
-const NsConfirmPopup       =  () => import( './popups/ns-pos-confirm-popup.vue' );
-const NsPOSLoadingPopup    =  () => import( './popups/ns-pos-loading-popup.vue' );
+const nsRewardsSystem      =  () => import( './pages/dashboard/rewards-system.vue' );
+const nsCreateCoupons      =  () => import( './pages/dashboard/create-coupons.vue' );
+const nsSettings           =  () => import( './pages/dashboard/settings.vue' );
+const nsReset              =  () => import( './pages/dashboard/reset.vue' );
+const nsModules            =  () => import( './pages/dashboard/modules.vue' );
+const nsPermissions        =  () => import( './pages/dashboard/ns-permissions.vue' );
+const nsProcurement        =  () => import( './pages/dashboard/procurements/ns-procurement.vue' );
+const nsManageProducts     =  () => import( './pages/dashboard/procurements/manage-products.vue' );
+const nsProcurementInvoice =  () => import( './pages/dashboard/procurements/ns-procurement-invoice.vue' );
+const nsNotifications      =  () => import( './pages/dashboard/ns-notifications.vue' );
+const nsMedia              =  () => import( './pages/dashboard/ns-media.vue' );
+const nsLowStockReport     =  () => import( './pages/dashboard/reports/ns-low-stock-report.vue' );
+const nsSaleReport         =  () => import( './pages/dashboard/reports/ns-sale-report.vue' );
+const nsSoldStockReport    =  () => import( './pages/dashboard/reports/ns-sold-stock-report.vue' );
+const nsProfitReport       =  () => import( './pages/dashboard/reports/ns-profit-report.vue' );
+const nsCashFlowReport     =  () => import( './pages/dashboard/reports/ns-cash-flow-report.vue' );
+const nsYearlyReport       =  () => import( './pages/dashboard/reports/ns-yearly-report.vue' );
+const nsBestProductsReport =  () => import( './pages/dashboard/reports/ns-best-products-report.vue' );
+const nsPaymentTypesReport =  () => import( './pages/dashboard/reports/ns-payment-types-report.vue' );
+const nsDashboardCards     =  () => import( './pages/dashboard/home/ns-dashboard-cards.vue' );
+const nsBestCustomers      =  () => import( './pages/dashboard/home/ns-best-customers.vue' );
+const nsBestCashiers       =  () => import( './pages/dashboard/home/ns-best-cashiers.vue' );
+const nsOrdersSummary      =  () => import( './pages/dashboard/home/ns-orders-summary.vue' );
+const nsOrdersChart        =  () => import( './pages/dashboard/home/ns-orders-chart.vue' );
+const nsCashierDashboard   =  () => import( './pages/dashboard/home/ns-cashier-dashboard.vue' );
+const nsStockAdjustment    =  () => import( './pages/dashboard/products/ns-stock-adjustment.vue' );
+const nsOrderInvoice       =  () => import( './pages/dashboard/orders/ns-order-invoice.vue' );
+const nsPromptPopup        =  () => import( './popups/ns-prompt-popup.vue' );
+const nsAlertPopup         =  () => import( './popups/ns-alert-popup.vue' );
+const nsConfirmPopup       =  () => import( './popups/ns-pos-confirm-popup.vue' );
+const nsPOSLoadingPopup    =  () => import( './popups/ns-pos-loading-popup.vue' );
 
 import RawVueApexCharts     from 'vue-apexcharts';
 import VueHtmlToPaper       from 'vue-html-to-paper';
@@ -61,6 +61,7 @@ const VueHtmlToPaperOptions     =   {
     ],
     styles: [
       '/css/app.css',
+      '/css/light.css'
     ]
 };
 
@@ -69,50 +70,61 @@ const VueHtmlToPaperOptions     =   {
 Vue.use( VueHtmlToPaper, VueHtmlToPaperOptions );
 const VueApexCharts     =   Vue.component( 'vue-apex-charts', RawVueApexCharts );
 
-const components    =   Object.assign({
-    NsModules,
-    NsRewardsSystem,
-    NsCreateCoupons,
-    NsManageProducts,
-    NsSettings,
-    NsReset,
-    NsPermissions,
-    NsProcurement,
-    NsProcurementInvoice,
-    NsMedia,
-    NsDashboardCards,
-    NsCashierDashboard,
-    NsBestCustomers,
-    NsBestCashiers,
-    NsOrdersSummary,
-    NsOrdersChart,
-    NsNotifications,
+const allComponents    =   Object.assign({
+    nsModules,
+    nsRewardsSystem,
+    nsCreateCoupons,
+    nsManageProducts,
+    nsSettings,
+    nsReset,
+    nsPermissions,
+    nsProcurement,
+    nsProcurementInvoice,
+    nsMedia,
+    nsDashboardCards,
+    nsCashierDashboard,
+    nsBestCustomers,
+    nsBestCashiers,
+    nsOrdersSummary,
+    nsOrdersChart,
+    nsNotifications,
 
-    NsSaleReport,
-    NsSoldStockReport,
-    NsProfitReport,
-    NsCashFlowReport,
-    NsYearlyReport,
-    NsPaymentTypesReport,
-    NsBestProductsReport,
-    NsLowStockReport,
+    nsSaleReport,
+    nsSoldStockReport,
+    nsProfitReport,
+    nsCashFlowReport,
+    nsYearlyReport,
+    nsPaymentTypesReport,
+    nsBestProductsReport,
+    nsLowStockReport,
 
-    NsStockAdjustment,
-    NsPromptPopup,
-    NsAlertPopup,
-    NsConfirmPopup,
-    NsPOSLoadingPopup,
-    NsOrderInvoice,
+    nsStockAdjustment,
+
+    nsPromptPopup,
+    nsAlertPopup,
+    nsConfirmPopup,
+    nsPOSLoadingPopup,
+    nsOrderInvoice,
     VueApexCharts,
     ...baseComponents
 }, nsExtraComponents );
+
+/**
+ * let's register the component that has
+ * a valid name globally
+ */
+for( let index in allComponents ) {
+    if ( allComponents[ index ].name !== undefined && allComponents[ index ].name !== 'VueComponent' ) {
+        Vue.component( allComponents[ index ].name, allComponents[ index ] );
+    }   
+}
 
 const nsDashboardAside  =   new Vue({
     el: '#dashboard-aside',
     data: {
         sidebar: 'visible'
     },
-    components,
+    components: allComponents,
     mounted() {
         nsState.behaviorState.subscribe(({ object }:any) => {
             this.sidebar    =   object.sidebar;
@@ -127,7 +139,7 @@ const nsDashboardAside  =   new Vue({
     data: {
         sidebar: null
     },
-    components,
+    components: allComponents,
     mounted() {
         nsState.behaviorState.subscribe(({ object }) => {
             this.sidebar    =   object.sidebar;
@@ -152,7 +164,7 @@ const nsDashboardAside  =   new Vue({
         menuToggled: false,
         sidebar: 'visible',
     },
-    components,
+    components: allComponents,
     methods: {
         toggleMenu() {
             this.menuToggled    =   !this.menuToggled;
@@ -172,8 +184,9 @@ const nsDashboardAside  =   new Vue({
     }
 });
 
-(<any>window)[ 'nsComponents' ]          =   Object.assign( components, baseComponents );
+(<any>window)[ 'nsComponents' ]          =   Object.assign( allComponents, baseComponents );
+
 (<any>window)[ 'nsDashboardContent' ]    =   new Vue({
     el: '#dashboard-content',
-    components
+    components: allComponents,
 });

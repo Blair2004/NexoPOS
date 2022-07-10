@@ -47,16 +47,16 @@ export default {
 }
 </script>
 <template>
-    <div class="flex flex-col mb-2 ns-switch">
+    <div class="mb-2 ns-switch">
         <label :for="field.name" :class="hasError ? 'has-error' : 'is-pristine'" class="block leading-5 font-medium"><slot></slot></label>
-            <div class="rounded-lg flex overflow-hidden w-40 shadow my-2" :class="hasError ? 'has-error' : ''">
+            <div class="rounded-lg flex w-52 overflow-hidden shadow my-1" :class="hasError ? 'has-error' : ''">
                 <button 
                     :disabled="option.disabled" 
                     :key="key"
                     v-for="(option, key) of _options" 
                     @click="setSelected( option )" 
                     :class="option.selected ? 'selected ' + sizeClass : 'unselected' + ' ' + inputClass + ' ' + sizeClass" 
-                    class="px-3 py-2 flex-no-wrap outline-none rounded-none">{{ option.label }}</button>
+                    class="p-2 text-sm flex-no-wrap outline-none rounded-none">{{ option.label }}</button>
             </div>
             <p v-if="! field.errors || field.errors.length === 0" class="text-xs ns-description"><slot name="description"></slot></p>
             <p v-for="(error, index) of field.errors" :key="index" class="text-xs ns-error">

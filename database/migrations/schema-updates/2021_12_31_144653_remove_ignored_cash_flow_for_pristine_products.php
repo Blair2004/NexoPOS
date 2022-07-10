@@ -2,8 +2,6 @@
 
 use App\Models\CashFlow;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class RemoveIgnoredCashFlowForPristineProducts extends Migration
 {
@@ -14,7 +12,7 @@ class RemoveIgnoredCashFlowForPristineProducts extends Migration
      */
     public function up()
     {
-        $identifier    =   ns()->option->get( 'ns_stock_return_unspoiled_account' );
+        $identifier = ns()->option->get( 'ns_stock_return_unspoiled_account' );
 
         CashFlow::where( 'expense_category_id', $identifier )->delete();
 

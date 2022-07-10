@@ -2,12 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Event;
 use App\Services\CrudService;
-use Exception;
 use TorMorten\Eventy\Facades\Events as Hook;
-use Illuminate\Support\Arr;
 
 class CrudPutRequest extends BaseCrudRequest
 {
@@ -28,30 +24,30 @@ class CrudPutRequest extends BaseCrudRequest
      */
     public function rules()
     {
-        $service        =   new CrudService;
-        $resource       =   $service->getCrudInstance( $this->route( 'namespace' ) );
+        $service = new CrudService;
+        $resource = $service->getCrudInstance( $this->route( 'namespace' ) );
 
         /**
          * We do pass the model here as
          * it might be used to ignore record
          * during validation.
          */
-        $arrayRules     =   $service->extractCrudValidation( 
-            $resource, 
-            $resource->getModel()::find( $this->route( 'id' ) ) 
+        $arrayRules = $service->extractCrudValidation(
+            $resource,
+            $resource->getModel()::find( $this->route( 'id' ) )
         );
 
         /**
          * As validation might uses array with Rule class, we want to
          * properly exclude that, so that the array is not converted into dots.
          */
-        $isolatedRules  =   $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $service->isolateArrayRules( $arrayRules );
 
         /**
          * This will flat the rules to create a dot-like
          * validation rules array
          */
-        $flatRules      =   collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 

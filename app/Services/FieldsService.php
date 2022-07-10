@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Services;
 
-class FieldsService 
+class FieldsService
 {
     protected $identifier;
-    protected $fields   =   [];
-    
+
+    protected $fields = [];
+
     public function get()
     {
         return $this->fields;

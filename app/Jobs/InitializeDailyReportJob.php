@@ -20,7 +20,9 @@ class InitializeDailyReportJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Execute the job.
@@ -32,7 +34,7 @@ class InitializeDailyReportJob implements ShouldQueue
         /**
          * @var ReportService
          */
-        $reportService      =   app()->make( ReportService::class );
-        $reportService->initializeDailyReport();
+        $reportService = app()->make( ReportService::class );
+        $reportService->computeDayReport();
     }
 }

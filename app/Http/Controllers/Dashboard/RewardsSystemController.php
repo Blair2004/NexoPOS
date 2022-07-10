@@ -2,14 +2,14 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\DashboardController;
 use App\Models\RewardSystem;
-use Illuminate\Support\Facades\View;
 
 class RewardsSystemController extends DashboardController
 {
@@ -19,7 +19,7 @@ class RewardsSystemController extends DashboardController
             'title'         =>  __( 'Rewards System' ),
             'description'   =>  __( 'Manage all rewards program.' ),
             'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.rewards-system' ),
-            'createUrl'     =>  ns()->url( '/dashboard/customers/rewards-system/create' )
+            'createUrl'     =>  ns()->url( '/dashboard/customers/rewards-system/create' ),
         ]);
     }
 
@@ -30,7 +30,7 @@ class RewardsSystemController extends DashboardController
             'description'   =>  __( 'Add a new reward system.' ),
             'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/form-config' ),
             'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.rewards-system' ),
-            'returnUrl'     =>  ns()->url( '/dashboard/customers/rewards-system' )
+            'returnUrl'     =>  ns()->url( '/dashboard/customers/rewards-system' ),
         ]);
     }
 
@@ -43,8 +43,7 @@ class RewardsSystemController extends DashboardController
             'submitMethod'  =>  'PUT',
             'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.rewards-system/' . $reward->id ),
             'returnUrl'     =>  ns()->url( '/dashboard/customers/rewards-system' ),
-            'reward'        =>  $reward
+            'reward'        =>  $reward,
         ]);
     }
 }
-

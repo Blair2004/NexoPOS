@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Models\OrderProduct;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -16,6 +13,7 @@ class OrderProductBeforeSavedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $orderProduct;
+
     public $data;
 
     /**
@@ -25,8 +23,8 @@ class OrderProductBeforeSavedEvent
      */
     public function __construct( OrderProduct $orderProduct, $data )
     {
-        $this->orderProduct     =   $orderProduct;
-        $this->data             =   $data;
+        $this->orderProduct = $orderProduct;
+        $this->data = $data;
     }
 
     /**

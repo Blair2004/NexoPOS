@@ -1,27 +1,29 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
- * @property integer $order_id
+ * @property int $order_id
  * @property float $value
- * @property integer $author
+ * @property int $author
  * @property string $identifier
  * @property string $uuid
  */
 class OrderPayment extends NsModel
 {
     use HasFactory;
-    
-    protected $table        =   'nexopos_' . 'orders_payments';
 
-    const PAYMENT_CASH      =   'cash-payment';
-    const PAYMENT_ACCOUNT   =   'account-payment';
-    const PAYMENT_BANK      =   'bank-payment';
+    protected $table = 'nexopos_' . 'orders_payments';
+
+    const PAYMENT_CASH = 'cash-payment';
+
+    const PAYMENT_ACCOUNT = 'account-payment';
+
+    const PAYMENT_BANK = 'bank-payment';
 
     public function order()
     {
@@ -40,7 +42,7 @@ class OrderPayment extends NsModel
 
     public function getPaymentLabelAttribute()
     {
-        $paymentTypes   =   Cache::remember( 'nexopos.pos.payments-key', '3600', function() {
+        $paymentTypes = Cache::remember( 'nexopos.pos.payments-key', '3600', function() {
             return PaymentType::active()->get()->mapWithKeys( function( $paymentType ) {
                 return [ $paymentType->identifier => $paymentType->label ];
             });

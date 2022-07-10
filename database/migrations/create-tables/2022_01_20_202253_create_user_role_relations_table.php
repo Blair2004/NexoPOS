@@ -40,11 +40,11 @@ class CreateUserRoleRelationsTable extends Migration
                 User::where( 'role_id', $role->id )
                     ->get()
                     ->each( function( $user ) use ( $role ) {
-                        $relation           =   new UserRoleRelation;
-                        $relation->user_id  =   $user->id;
-                        $relation->role_id  =   $role->id;
+                        $relation = new UserRoleRelation;
+                        $relation->user_id = $user->id;
+                        $relation->role_id = $role->id;
                         $relation->save();
-                });
+                    });
             });
         }
     }

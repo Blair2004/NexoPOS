@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Fields;
 
 use App\Classes\Hook;
@@ -6,11 +7,11 @@ use App\Services\FieldsService;
 
 class AuthLoginFields extends FieldsService
 {
-    protected $identifier   =   'ns.login';
-    
+    protected $identifier = 'ns.login';
+
     public function get()
     {
-        $fields     =   Hook::filter( 'ns-login-fields', [
+        $fields = Hook::filter( 'ns-login-fields', [
             [
                 'label'         =>  __( 'Username' ),
                 'description'   =>  __( 'Provide your username.' ),
@@ -23,9 +24,9 @@ class AuthLoginFields extends FieldsService
                 'validation'    =>  'required',
                 'name'          =>  'password',
                 'type'          =>  'password',
-            ]
+            ],
         ]);
-        
+
         return $fields;
     }
 }

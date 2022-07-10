@@ -1,8 +1,9 @@
-<?php 
+<?php
+
 namespace App\Events;
 
-use Illuminate\Queue\SerializesModels;
 use App\Models\ProcurementProduct;
+use Illuminate\Queue\SerializesModels;
 
 class ProcurementProductSavedEvent
 {
@@ -12,6 +13,6 @@ class ProcurementProductSavedEvent
 
     public function __construct( ProcurementProduct $product )
     {
-        $this->product      =   $product;
+        $this->product = $product;
     }
 }

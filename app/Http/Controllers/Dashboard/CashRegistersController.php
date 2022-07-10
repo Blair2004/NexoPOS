@@ -2,24 +2,21 @@
 
 /**
  * NexoPOS Controller
+ *
  * @since  1.0
-**/
+ **/
 
 namespace App\Http\Controllers\Dashboard;
 
 use App\Crud\RegisterCrud;
 use App\Crud\RegisterHistoryCrud;
 use App\Exceptions\NotAllowedException;
-use App\Exceptions\NotFoundException;
 use App\Http\Controllers\DashboardController;
-use App\Models\Order;
-use Illuminate\Http\Request;
-use App\Models\ProductCategory;
 use App\Models\Register;
 use App\Models\RegisterHistory;
 use App\Services\CashRegistersService;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CashRegistersController extends DashboardController
@@ -31,10 +28,9 @@ class CashRegistersController extends DashboardController
 
     public function __construct(
         CashRegistersService $registersService
-    )
-    {
+    ) {
         parent::__construct();
-        $this->registersService     =   $registersService;
+        $this->registersService = $registersService;
     }
 
     public function listRegisters()
@@ -59,49 +55,52 @@ class CashRegistersController extends DashboardController
     public function getRegisters( $register_id = null )
     {
         if ( $register_id !== null ) {
-            $register   =   Register::findOrFail( $register_id );
+            $register = Register::findOrFail( $register_id );
             $this->registersService->getRegisterDetails( $register );
+
             return $register;
         }
 
         return Register::get()->map( function( $register ) {
             $this->registersService->getRegisterDetails( $register );
+
             return $register;
         });
     }
 
-    public function performAction( Request $request, $action, Register $register ) {
+    public function performAction( Request $request, $action, Register $register )
+    {
         if ( $action === 'open' ) {
             return $this->registersService->openRegister(
                 $register,
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } else if ( $action === RegisterHistory::ACTION_OPENING ) {
+        } elseif ( $action === RegisterHistory::ACTION_OPENING ) {
             return $this->registersService->openRegister(
                 $register,
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } else if( $action === 'close' ) {
+        } elseif ( $action === 'close' ) {
             return $this->registersService->closeRegister(
                 $register,
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } else if( $action === RegisterHistory::ACTION_CLOSING ) {
+        } elseif ( $action === RegisterHistory::ACTION_CLOSING ) {
             return $this->registersService->closeRegister(
                 $register,
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } else if( $action === RegisterHistory::ACTION_CASHING ) {
+        } elseif ( $action === RegisterHistory::ACTION_CASHING ) {
             return $this->registersService->cashIn(
                 $register,
                 $request->input( 'amount' ),
                 $request->input( 'description' )
             );
-        } else if( $action === RegisterHistory::ACTION_CASHOUT ) {
+        } elseif ( $action === RegisterHistory::ACTION_CASHOUT ) {
             return $this->registersService->cashOut(
                 $register,
                 $request->input( 'amount' ),
@@ -112,25 +111,25 @@ class CashRegistersController extends DashboardController
 
     public function getUsedRegister()
     {
-        $register   =   Register::opened()
+        $register = Register::opened()
             ->usedBy( Auth::id() )
             ->first();
 
         if ( ! $register instanceof Register ) {
             throw new NotAllowedException( __( 'No register has been opened by the logged user.' ) );
         }
-        
+
         return [
             'status'    =>  'success',
             'message'   =>  __( 'The register is opened.' ),
-            'data'      =>  compact( 'register' )
+            'data'      =>  compact( 'register' ),
         ];
     }
 
     public function getSessionHistory( Register $register )
     {
         if ( $register->status === Register::STATUS_OPENED ) {
-            $lastOpening    =   $register->history()
+            $lastOpening = $register->history()
                 ->where( 'action', RegisterHistory::ACTION_OPENING )
                 ->orderBy( 'id', 'desc' )
                 ->first();
@@ -139,33 +138,33 @@ class CashRegistersController extends DashboardController
                 /**
                  * @var Collection
                  */
-                $actions        =   $register->history()
+                $actions = $register->history()
                     ->where( 'id', '>=', $lastOpening->id )
                     ->get();
 
                 $actions->each( function( $session ) {
-                    switch( $session->action ) {
-                        case RegisterHistory::ACTION_CASHING : 
-                            $session->label     =   __( 'Cash In' );
+                    switch ( $session->action ) {
+                        case RegisterHistory::ACTION_CASHING:
+                            $session->label = __( 'Cash In' );
                         break;
-                        case RegisterHistory::ACTION_CASHOUT : 
-                            $session->label     =   __( 'Cash Out' );
+                        case RegisterHistory::ACTION_CASHOUT:
+                            $session->label = __( 'Cash Out' );
                         break;
-                        case RegisterHistory::ACTION_CLOSING : 
-                            $session->label     =   __( 'Closing' );
+                        case RegisterHistory::ACTION_CLOSING:
+                            $session->label = __( 'Closing' );
                         break;
-                        case RegisterHistory::ACTION_OPENING : 
-                            $session->label     =   __( 'Opening' );
+                        case RegisterHistory::ACTION_OPENING:
+                            $session->label = __( 'Opening' );
                         break;
-                        case RegisterHistory::ACTION_SALE : 
-                            $session->label     =   __( 'Sale' );
+                        case RegisterHistory::ACTION_SALE:
+                            $session->label = __( 'Sale' );
                         break;
-                        case RegisterHistory::ACTION_REFUND : 
-                            $session->label     =   __( 'Refund' );
+                        case RegisterHistory::ACTION_REFUND:
+                            $session->label = __( 'Refund' );
                         break;
                     }
                 });
-    
+
                 return $actions;
             }
 
@@ -177,6 +176,7 @@ class CashRegistersController extends DashboardController
 
     /**
      * returns the cahs register instance
+     *
      * @param Register $register
      * @return string
      */
@@ -185,9 +185,8 @@ class CashRegistersController extends DashboardController
         return RegisterHistoryCrud::table([
             'title'         =>  sprintf( __( 'Register History For : %s' ), $register->name ),
             'queryParams'   =>  [
-                'register_id'   =>  $register->id
-            ]
+                'register_id'   =>  $register->id,
+            ],
         ]);
     }
 }
-

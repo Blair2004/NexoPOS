@@ -2,14 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Event;
-use App\Services\Helper;
-use TorMorten\Eventy\Facades\Events as Hook;
-use App\Crud\Applications;
-use App\Exceptions\CoreException;
 use App\Services\CrudService;
-use Illuminate\Support\Arr;
+use TorMorten\Eventy\Facades\Events as Hook;
 
 class CrudPostRequest extends BaseCrudRequest
 {
@@ -30,29 +24,29 @@ class CrudPostRequest extends BaseCrudRequest
      */
     public function rules()
     {
-        $service        =   new CrudService;
+        $service = new CrudService;
 
         /**
          * Let's initialize the CRUD resource
          */
-        $resource       =   $service->getCrudInstance( $this->route( 'namespace' ) );
+        $resource = $service->getCrudInstance( $this->route( 'namespace' ) );
 
         /**
          * Now let's extract the validation rules
          * from the getForm method.
          */
-        $arrayRules     =   $service->extractCrudValidation( $resource );
+        $arrayRules = $service->extractCrudValidation( $resource );
 
         /**
          * As rules might contains complex array (with Rule class),
          * we don't want that array to be transformed using the dot key form.
          */
-        $isolatedRules  =   $service->isolateArrayRules( $arrayRules );
+        $isolatedRules = $service->isolateArrayRules( $arrayRules );
 
         /**
          * Let's properly flat everything.
          */
-        $flatRules      =   collect( $isolatedRules )->mapWithKeys( function( $rule ) {
+        $flatRules = collect( $isolatedRules )->mapWithKeys( function( $rule ) {
             return [ $rule[0] => $rule[1] ];
         })->toArray();
 

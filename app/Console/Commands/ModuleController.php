@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use App\Services\Setup;
-use App\Services\Helper;
 use App\Services\ModulesService;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ModuleController extends Command
 {
@@ -16,7 +14,7 @@ class ModuleController extends Command
      *
      * @var string
      */
-    protected $signature = 'modules:controller {namespace} {name?} {--resource=} {--delete=}';
+    protected $signature = 'modules:controller {namespace} {name?} {--resource=} {--delete=} {--force}';
 
     /**
      * The console command description.
@@ -42,14 +40,13 @@ class ModuleController extends Command
      */
     public function handle()
     {
-        $modules    =   app()->make( ModulesService::class );
+        $modules = app()->make( ModulesService::class );
 
         /**
          * Check if module is defined
          */
         if ( $module = $modules->get( $this->argument( 'namespace' ) ) ) {
-
-            $controllerPath     =   $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR;
+            $controllerPath = $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR;
 
             /**
              * delete all module controllers
@@ -58,6 +55,7 @@ class ModuleController extends Command
                 if ( $this->confirm( 'Do you want to delete all controllers ?' ) ) {
                     Storage::disk( 'ns-modules' )->deleteDirectory( $controllerPath );
                     Storage::disk( 'ns-modules' )->MakeDirectory( $controllerPath );
+
                     return $this->info( 'All controllers has been deleted !' );
                 }
             }
@@ -65,24 +63,32 @@ class ModuleController extends Command
             /**
              * Define the file name
              */
-            $name       =   ucwords( Str::camel( $this->argument( 'name' ) ) );
-            $fileName   =   $controllerPath . $name;
-            $namespace  =   $this->argument( 'namespace' );
+            $name = ucwords( Str::camel( $this->argument( 'name' ) ) );
+            $fileName = $controllerPath . $name;
+            $namespace = $this->argument( 'namespace' );
+            $fileExists = Storage::disk( 'ns-modules' )->exists(
+                $fileName . '.php'
+            );
 
             if ( ! empty( $name ) ) {
-                if ( ! Storage::disk( 'ns-modules' )->exists( 
-                    $fileName 
-                ) ) {
-                    Storage::disk( 'ns-modules' )->put( 
+                if ( ! $fileExists || ( $fileExists && $this->option( 'force' ) ) ) {
+                    Storage::disk( 'ns-modules' )->put(
                         $fileName . '.php', view( 'generate.modules.controller', compact(
                         'modules', 'module', 'name', 'namespace'
                     ) ) );
-                    return $this->info( 'The controller has been created !' );
-                }      
-                return $this->error( 'The controller already exists !' );          
+
+                    return $this->info( sprintf(
+                        __( 'The controller has been created for the module "%s"!' ),
+                        $module[ 'name' ]
+                    ) );
+                }
+
+                return $this->error( 'The controller already exists !' );
             }
-            return $this->error( 'The controller name cannot be empty.' );          
+
+            return $this->error( 'The controller name cannot be empty.' );
         }
+
         return $this->error( 'Unable to located the module !' );
     }
 }

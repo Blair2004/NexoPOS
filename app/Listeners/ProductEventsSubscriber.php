@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Listeners;
 
 use App\Events\ProductAfterCreatedEvent;
-use App\Services\ProductService;
 use App\Events\ProductAfterDeleteEvent;
 use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Events\ProductAfterUpdatedEvent;
@@ -10,6 +10,7 @@ use App\Events\ProductBeforeDeleteEvent;
 use App\Jobs\HandleStockAdjustmentJob;
 use App\Services\BarcodeService;
 use App\Services\ProcurementService;
+use App\Services\ProductService;
 use App\Services\ReportService;
 
 class ProductEventsSubscriber
@@ -32,10 +33,10 @@ class ProductEventsSubscriber
         ReportService $reportService,
         BarcodeService $barcodeService
     ) {
-        $this->productService       =   $productService;
-        $this->procurementService   =   $procurementService;
-        $this->reportService        =   $reportService;
-        $this->barcodeService       =   $barcodeService;
+        $this->productService = $productService;
+        $this->procurementService = $procurementService;
+        $this->reportService = $reportService;
+        $this->barcodeService = $barcodeService;
     }
 
     public function subscribe( $events )
@@ -44,7 +45,7 @@ class ProductEventsSubscriber
             ProductBeforeDeleteEvent::class,
             [ ProductEventsSubscriber::class,  'beforeDeleteProduct' ]
         );
-        
+
         $events->listen(
             ProductAfterDeleteEvent::class,
             [ ProductEventsSubscriber::class,  'afterDeleteProduct' ]
@@ -70,7 +71,7 @@ class ProductEventsSubscriber
             [ ProductEventsSubscriber::class, 'updateCategoryProduct' ]
         );
 
-        $events->listen( 
+        $events->listen(
             ProductBeforeDeleteEvent::class,
             [ ProductEventsSubscriber::class, 'deductCategoryProducts' ]
         );
@@ -91,10 +92,9 @@ class ProductEventsSubscriber
     public function beforeDeleteProduct( ProductBeforeDeleteEvent $event )
     {
         /**
-         * @todo check if the product is currently 
+         * @todo check if the product is currently
          * in use within a procurement or an unpaid order
          */
-
         $this->productService->resetProduct( $event->product );
 
         $this->productService->getProductVariations( $event->product )->each( function( $variation ) {

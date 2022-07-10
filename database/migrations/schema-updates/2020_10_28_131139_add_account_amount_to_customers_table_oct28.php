@@ -1,11 +1,8 @@
 <?php
 
+use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use App\Classes\Schema;
-use App\Models\Permission;
-use App\Models\Role;
-use App\Models\RolePermission;
 
 class AddAccountAmountToCustomersTableOct28 extends Migration
 {

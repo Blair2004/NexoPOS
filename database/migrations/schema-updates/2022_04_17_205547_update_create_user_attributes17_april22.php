@@ -3,9 +3,7 @@
 use App\Models\User;
 use App\Services\Users;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
 
 class UpdateCreateUserAttributes17April22 extends Migration
 {
@@ -29,8 +27,8 @@ class UpdateCreateUserAttributes17April22 extends Migration
         /**
          * @var Users
          */
-        $userService    =   app()->make( Users::class );
-        
+        $userService = app()->make( Users::class );
+
         User::get()->each( fn( $user ) => $userService->createAttribute( $user ) );
 
         Artisan::call( 'ns:translate --symlink' );

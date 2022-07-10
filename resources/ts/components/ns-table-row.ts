@@ -105,7 +105,17 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                 </div>
             </div>
         </td>
-        <td v-for="(column, identifier) of columns" class="font-sans p-2" v-html="sanitizeHTML( row[ identifier ] )"></td>
+        <td v-for="(column, identifier) of columns" class="font-sans p-2">
+            <template v-if="row[ identifier ] && row[ identifier ].type && row[ identifier ].type === 'link'">
+                <a target="_blank" :href="row[ identifier ].href" v-html="sanitizeHTML( row[ identifier ].label )"></a>
+            </template>
+            <template v-if="typeof row[ identifier ] === 'string' || typeof row[ identifier ] === 'number'">
+                <div v-html="sanitizeHTML( row[ identifier ] )"></div>
+            </template>
+            <template v-if="row[ identifier ] === null">
+                <div>{{ __( 'Undefined' ) }}</div>
+            </template>
+        </td>
         <td v-if="!prependOptions && showOptions" class="font-sans p-2 flex flex-col items-center justify-center">
             <div class=""> <!-- flex items-center justify-center -->
                 <button @click="toggleMenu( $event )" :class="row.$toggled ? 'active': ''" class="ns-inset-button outline-none rounded-full w-24 text-sm p-1 border"><i class="las la-ellipsis-h"></i> {{ __( 'Options' ) }}</button>

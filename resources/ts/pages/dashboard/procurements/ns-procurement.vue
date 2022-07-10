@@ -3,7 +3,7 @@ import FormValidation from '@/libraries/form-validation';
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
 import { nsSnackBar, nsHttpClient } from '@/bootstrap';
-import NsManageProducts from './manage-products';
+import nsManageProducts from './manage-products';
 import { Tax } from "@/libraries/tax";
 import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
 import { __ } from '@/libraries/lang';
@@ -118,7 +118,7 @@ export default {
         }
     },
     components: {
-        NsManageProducts
+        nsManageProducts
     },
     props: [ 'submit-method', 'submit-url', 'return-url', 'src', 'rules' ],
     methods: {

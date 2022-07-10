@@ -1,27 +1,27 @@
 <?php
+
 namespace App\Services;
 
 use App\Classes\Hook;
 use App\Exceptions\NotEnoughPermissionException;
 use App\Models\Migration;
-use App\Services\Helpers\App;
-use App\Services\UpdateService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CoreService
 {
     /**
-     * @var boolean
+     * @var bool
      */
-    public $isMultistore    =   false;
+    public $isMultistore = false;
+
     public $storeID;
 
     /**
-     * @var \Modules\NsMultiStore\Services\StoresService $store
+     * @var \Modules\NsMultiStore\Services\StoresService
      */
     public $store;
-    
+
     public function __construct(
         public CurrencyService $currency,
         public UpdateService $update,
@@ -30,8 +30,7 @@ class CoreService
         public NotificationService $notification,
         public ProcurementService $procurement,
         public Options $option
-    )
-    {
+    ) {
         // ...
     }
 
@@ -39,8 +38,8 @@ class CoreService
      * Returns a boolean if the system
      * is installed or not. returns "true" if the system is installed
      * and "false" if it's not.
-     * 
-     * @return boolean
+     *
+     * @return bool
      */
     public function installed()
     {
@@ -50,7 +49,7 @@ class CoreService
     /**
      * Returns a filtered route to which apply
      * the filter "ns-route".
-     * 
+     *
      * @param string $route
      * @param array $params
      * @return string
@@ -63,7 +62,7 @@ class CoreService
     /**
      * Returns a filtred route name to which apply
      * the filter "ns-route-name".
-     * 
+     *
      * @param string $name
      * @return string $name
      */
@@ -75,7 +74,7 @@ class CoreService
     /**
      * Returns a filtred URL to which
      * apply the filter "ns-url" hook.
-     * 
+     *
      * @param string $url
      * @return string $url
      */
@@ -87,7 +86,7 @@ class CoreService
     /**
      * Returns a filtred URL to which
      * apply the filter "ns-url" hook.
-     * 
+     *
      * @param string $url
      * @return string $url
      */
@@ -103,32 +102,33 @@ class CoreService
      */
     public function restrict( $permissions, $message = '' )
     {
-        $passed     =   $this->allowedTo( $permissions );
+        $passed = $this->allowedTo( $permissions );
 
         if ( ! $passed ) {
             throw new NotEnoughPermissionException( $message ?: __( 'Your don\'t have enough permission to see this page.' ) );
         }
-    }    
+    }
 
     /**
      * Will determine if a user is allowed
      * to perform a specific action (using a permission)
+     *
      * @param array $permissions
      * @return boolean;
      */
     public function allowedTo( $permissions ): bool
     {
-        $passed     =   false;
+        $passed = false;
 
         collect( $permissions )->each( function( $permission ) use ( &$passed ) {
-            $userPermissionsNamespaces    =   collect( Auth::user()->permissions() )
+            $userPermissionsNamespaces = collect( Auth::user()->permissions() )
                 ->toArray();
 
             /**
-             * if there is a match with the permission or the provided permission is "true" 
+             * if there is a match with the permission or the provided permission is "true"
              * that causes permission check bypass.
              */
-            $passed     =   in_array( $permission, $userPermissionsNamespaces ) || $permission === true;
+            $passed = in_array( $permission, $userPermissionsNamespaces ) || $permission === true;
         });
 
         return $passed;
@@ -136,8 +136,9 @@ class CoreService
 
     /**
      * check if the logged user has a specific role.
-     * @param string $role 
-     * @return boolean
+     *
+     * @param string $role
+     * @return bool
      */
     public function hasRole( $roleNamespace )
     {
@@ -150,41 +151,43 @@ class CoreService
     /**
      * clear missing migration files
      * from migrated files.
-     * 
+     *
      * @return void
      */
     public function purgeMissingMigrations()
     {
-        $migrations	=	collect( Migration::get() )
+        $migrations = collect( Migration::get() )
             ->map( function( $migration ) {
                 return $migration->migration;
             });
 
-        $rawFiles		=	collect( Storage::disk( 'ns' )
+        $rawFiles = collect( Storage::disk( 'ns' )
         ->allFiles( 'database/migrations' ) );
 
-        $files 			=	$rawFiles->map( function( $file ) {
-            $details 	=	pathinfo( $file );
+        $files = $rawFiles->map( function( $file ) {
+            $details = pathinfo( $file );
+
             return $details[ 'filename' ];
         });
 
-        $difference 	=	array_diff( 
-            $migrations->toArray(), 
-            $files->toArray() 
+        $difference = array_diff(
+            $migrations->toArray(),
+            $files->toArray()
         );
 
-        foreach( $difference as $diff ) {
+        foreach ( $difference as $diff ) {
             Migration::where( 'migration', $diff )->delete();
         }
     }
 
     /**
-     * Returns a boolean if the environment is 
+     * Returns a boolean if the environment is
      * on production mode
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isProduction() 
+    public function isProduction()
     {
-        return in_array( env( 'NS_ENV', 'prod' ), [ 'prod', 'production' ]);
+        return in_array( strtolower( env( 'NS_ENV', 'prod' ) ), [ 'prod', 'production' ]);
     }
 }

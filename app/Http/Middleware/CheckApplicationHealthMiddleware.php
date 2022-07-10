@@ -35,13 +35,12 @@ class CheckApplicationHealthMiddleware
              * to force check the tasks status.
              */
             TaskSchedulingPingJob::dispatch()->delay( now() );
-
         } else {
             /**
              * @var DateService
              */
-            $date               =   app()->make( DateService::class );
-            $lastUpdate         =   Carbon::parse( ns()->option->get( 'ns_cron_ping' ) );
+            $date = app()->make( DateService::class );
+            $lastUpdate = Carbon::parse( ns()->option->get( 'ns_cron_ping' ) );
 
             if ( $lastUpdate->diffInMinutes( $date->now() ) > 60 ) {
                 $this->emitMisconfigurationNotification();
@@ -51,15 +50,16 @@ class CheckApplicationHealthMiddleware
                  * to force check the tasks status.
                  */
                 TaskSchedulingPingJob::dispatch()->delay( now() );
-            } 
+            }
         }
 
         /**
-         * we'll check here is a module has a missing 
+         * we'll check here is a module has a missing
          * dependency to disable it
+         *
          * @var ModulesService
          */
-        $modules        =   app()->make( ModulesService::class );
+        $modules = app()->make( ModulesService::class );
         $modules->dependenciesCheck();
 
         event( new AfterAppHealthCheckedEvent );
@@ -69,11 +69,12 @@ class CheckApplicationHealthMiddleware
 
     /**
      * Will emit notification if it has to
+     *
      * @return void
      */
     public function emitMisconfigurationNotification()
     {
-        $notification       =   app()->make( NotificationService::class );
+        $notification = app()->make( NotificationService::class );
         $notification->create([
             'title'         =>      __( 'Workers Misconfiguration' ),
             'identifier'    =>      NotificationsEnum::NSCRONDISABLED,

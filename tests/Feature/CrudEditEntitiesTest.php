@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
@@ -23,15 +21,16 @@ class CrudEditEntitiesTest extends TestCase
 
         collect( Storage::disk( 'ns' )->files( 'app/Crud' ) )
             ->map( function( $fileName ) {
-                $fileName       =   collect( explode( '/', $fileName ) );
-                $file           =   pathinfo( $fileName->last() );
+                $fileName = collect( explode( '/', $fileName ) );
+                $file = pathinfo( $fileName->last() );
+
                 return 'App\\Crud\\' . $file[ 'filename' ];
             })
             ->each( function( $class ) {
-                $object     =   new $class;
-                
+                $object = new $class;
+
                 if ( ! empty( $object->getNamespace() ) ) {
-                    $response   =   $this
+                    $response = $this
                         ->withSession( $this->app[ 'session' ]->all() )
                         ->json( 'GET', '/api/nexopos/v4/crud/' . $object->getNamespace() . '/form-config' );
 

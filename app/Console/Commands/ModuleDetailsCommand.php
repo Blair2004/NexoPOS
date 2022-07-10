@@ -12,7 +12,7 @@ class ModuleDetailsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:module {identifier}';
+    protected $signature = 'modules {identifier?}';
 
     /**
      * The console command description.
@@ -31,6 +31,32 @@ class ModuleDetailsCommand extends Command
         parent::__construct();
     }
 
+    public function listAllModules()
+    {
+        $header = [
+            __( 'Name' ),
+            __( 'Namespace' ),
+            __( 'Version' ),
+            __( 'Author' ),
+            __( 'Enabled' ),
+        ];
+
+        $modulesList = $this->modules->get();
+        $modulesTable = [];
+
+        foreach ( $modulesList as $module ) {
+            $modulesTable[] = [
+                $module[ 'name' ],
+                $module[ 'namespace' ],
+                $module[ 'version' ],
+                $module[ 'author' ],
+                $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ),
+            ];
+        }
+
+        $this->table( $header, $modulesTable );
+    }
+
     /**
      * Execute the console command.
      *
@@ -38,10 +64,27 @@ class ModuleDetailsCommand extends Command
      */
     public function handle()
     {
-        $moduleService  =   app()->make( ModulesService::class );
-        $module         =   $moduleService->get( $this->argument( 'identifier' ) );
+        if ( empty( $this->argument( 'identifier' ) ) ) {
+            $this->listAllModules();
+        } else {
+            $this->listSingleModule();
+        }
+    }
 
-        $entries        =   [
+    private function listSingleModule()
+    {
+        /**
+         * @var ModulesService
+         */
+        $moduleService = app()->make( ModulesService::class );
+
+        $module = $moduleService->get( $this->argument( 'identifier' ) );
+
+        if ( empty( $module ) ) {
+            $this->error( __( 'Unable to find the requested module.' ) );
+        }
+
+        $entries = [
             [ __( 'Name' ), $module[ 'name' ] ],
             [ __( 'Version' ), $module[ 'version' ] ],
             [ __( 'Enabled' ), $module[ 'enabled' ] ? __( 'Yes' ) : __( 'No' ) ],
@@ -57,7 +100,7 @@ class ModuleDetailsCommand extends Command
 
         return $this->table([
             __( 'Attribute' ),
-            __( 'Value' )
+            __( 'Value' ),
         ], $entries );
     }
 }

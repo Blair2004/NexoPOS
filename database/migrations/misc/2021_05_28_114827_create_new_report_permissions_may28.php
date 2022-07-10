@@ -3,8 +3,6 @@
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class CreateNewReportPermissionsMay28 extends Migration
 {
@@ -17,7 +15,7 @@ class CreateNewReportPermissionsMay28 extends Migration
     {
         return false;
     }
-    
+
     /**
      * Run the migrations.
      *
@@ -25,13 +23,13 @@ class CreateNewReportPermissionsMay28 extends Migration
      */
     public function up()
     {
-        $permission     =   Permission::namespace( 'nexopos.reports.payment-types' );
+        $permission = Permission::namespace( 'nexopos.reports.payment-types' );
 
         if ( ! $permission instanceof Permission ) {
-            $permission                 =   new Permission;
-            $permission->name           =   __( 'Read Sales by Payment Types' );
-            $permission->namespace      =   'nexopos.reports.payment-types';
-            $permission->description    =   __( 'Let the user read the report that shows sales by payment types.' );
+            $permission = new Permission;
+            $permission->name = __( 'Read Sales by Payment Types' );
+            $permission->namespace = 'nexopos.reports.payment-types';
+            $permission->description = __( 'Let the user read the report that shows sales by payment types.' );
             $permission->save();
         }
 
@@ -46,6 +44,6 @@ class CreateNewReportPermissionsMay28 extends Migration
      */
     public function down()
     {
-        // 
+        //
     }
 }
