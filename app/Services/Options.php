@@ -247,10 +247,13 @@ class Options
      **/
     public function delete( $key ): void
     {
-        collect( $this->rawOptions )->each( function( Option $option ) use ( $key ) {
+        $this->rawOptions   =   collect( $this->rawOptions )->filter( function( Option $option ) use ( $key ) {
             if ( $option->key === $key ) {
                 $option->delete();
+                return false;
             }
+
+            return true;
         });
     }
 }

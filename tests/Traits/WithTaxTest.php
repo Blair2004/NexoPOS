@@ -177,7 +177,7 @@ trait WithTaxTest
 
         $json = json_decode( $response->getContent(), true );
         $order = $json[ 'data' ][ 'order' ];
-        $expectedTax = $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] );
+        $expectedTax = $taxService->getComputedTaxGroupValue( $order[ 'tax_type' ], $order[ 'tax_group_id' ], $order[ 'subtotal' ] - $order[ 'discount' ] );
 
         if ( $callback === null ) {
             $this->assertEquals( (float) $expectedTax, (float) $order[ 'tax_value' ], __( 'The computed taxes aren\'t correct.' ) );
