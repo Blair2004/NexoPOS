@@ -32,7 +32,9 @@ class CreatePermissions extends Migration
          * let's create a constant which will allow the creation,
          * since these files are included as migration file
          */
-        define( 'NEXO_CREATE_PERMISSIONS', true );
+        if ( ! defined( 'NEXO_CREATE_PERMISSIONS' ) ) {
+            define( 'NEXO_CREATE_PERMISSIONS', true );
+        }
 
         /**
          * All roles with basic permissions
