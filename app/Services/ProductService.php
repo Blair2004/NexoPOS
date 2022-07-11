@@ -554,13 +554,13 @@ class ProductService
             });
 
         /**
-         * if there are many primary images
+         * if there are many featured images
          * let's choose one for the user.
          *
          * @todo should be tested
          */
         $manyPrimary = collect( $groups )->map( function( $fields ) {
-            return isset( $fields[ 'primary' ] ) && (int) $fields[ 'primary' ] === 1;
+            return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
         })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
@@ -568,7 +568,7 @@ class ProductService
         if ( $manyPrimary ) {
             $groups = collect( $groups )->map( function( $fields, $index ) {
                 return collect( $fields )->map( function( $field, $fieldName ) use ( $index ) {
-                    if ( $fieldName === 'primary' ) {
+                    if ( $fieldName === 'featured' ) {
                         if ( $index === 0 ) {
                             $field = 1;
                         } else {

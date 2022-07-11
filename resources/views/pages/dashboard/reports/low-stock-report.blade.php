@@ -115,7 +115,7 @@
                                             <td class="p-2 border"></td>
                                             <td class="p-2 border"></td>
                                             <td class="p-2 border text-right">@{{ sum( stockReportResult, 'quantity' ) }}</td>
-                                            <td class="p-2 border text-right">@{{ sum( stockReportResult, 'sale_price' ) * sum( stockReportResult, 'quantity' ) | currency }}</td>
+                                            <td class="p-2 border text-right">@{{ totalSum( stockReportResult, 'sale_price', 'quantity' ) | currency }}</td>
                                         </tr>
                                     </tfoot>
                                 </table>
