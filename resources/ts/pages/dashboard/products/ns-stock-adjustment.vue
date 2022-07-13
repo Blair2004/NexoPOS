@@ -1,11 +1,13 @@
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { Popup } from '@/libraries/popup';
-import nsProcurementQuantityVue from '@/popups/ns-procurement-quantity.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import nsPromptPopupVue from '@/popups/ns-prompt-popup.vue';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { Popup } from '~/libraries/popup';
+import nsProcurementQuantityVue from '~/popups/ns-procurement-quantity.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import nsPromptPopupVue from '~/popups/ns-prompt-popup.vue';
+import { __ } from '~/libraries/lang';
 import { forkJoin } from 'rxjs';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-stock-adjustment',
     props: [ 'actions' ],
@@ -279,7 +281,7 @@ export default {
                             <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ product.adjust_quantity }}</span>
                         </td>
                         <td class="p-2">
-                            <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ product.adjust_value | currency }}</span>
+                            <span class="border-b border-dashed border-blue-400 py-2 px-4">{{ nsCurrency( product.adjust_value ) }}</span>
                         </td>
                         <td class="p-2">
                             <div class="-mx-1 flex justify-end">

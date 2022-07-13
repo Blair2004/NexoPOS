@@ -1,10 +1,9 @@
 <script>
-import { nsHooks, nsHttpClient, nsSnackBar } from '../../bootstrap';
-import popupCloser from "@/libraries/popup-closer";
-import { __ } from '@/libraries/lang';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-
-const VueUpload     =   require( 'vue-upload-component' );
+import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
+import popupCloser from "~/libraries/popup-closer";
+import { __ } from '~/libraries/lang';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import VueUpload from 'vue-upload-component';
 
 export default {
     name: 'ns-media',

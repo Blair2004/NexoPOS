@@ -37,7 +37,7 @@
                                 <small>{{ product.unit.name }}</small>
                             </div>
                             <div class="flex items-center justify-center">
-                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-info-primary">{{ product.unit_price * product.quantity | currency }}</span>
+                                <span class="py-1 flex items-center cursor-pointer border-b border-dashed border-info-primary">{{ nsCurrency( product.unit_price * product.quantity ) }}</span>
                             </div>
                         </div>
                         <div class="flex">
@@ -58,11 +58,11 @@
             <div class="py-2">
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Total' ) }}</span>
-                    <span>{{ total | currency }}</span>
+                    <span>{{ nsCurrency( total ) }}</span>
                 </div>
                 <div class="elevation-surface border success font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Paid' ) }}</span>
-                    <span>{{ order.tendered | currency }}</span>
+                    <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
                 <div @click="selectPaymentGateway()" class="elevation-surface border info font-semibold flex mb-2 p-2 justify-between cursor-pointer">
                     <span>{{ __( 'Payment Gateway' ) }}</span>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="elevation-surface border font-semibold flex mb-2 p-2 justify-between">
                     <span>{{ __( 'Screen' ) }}</span>
-                    <span>{{ screenValue | currency }}</span>
+                    <span>{{ nsCurrency( screenValue ) }}</span>
                 </div>
                 <div>
                     <ns-numpad :currency="true" @changed="updateScreen( $event )" :value="screen" @next="proceedPayment( $event )"></ns-numpad>
@@ -80,16 +80,16 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsOrdersRefundProducts from "@/popups/ns-orders-refund-product-popup";
-import nsOrdersProductQuantityVue from '@/popups/ns-orders-product-quantity.vue';
-import nsNumpad from "@/components/ns-numpad";
-import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { Popup } from '@/libraries/popup';
-import { __ } from '@/libraries/lang';
-import Print from '@/libraries/print';
+import FormValidation from '~/libraries/form-validation';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsOrdersRefundProducts from "~/popups/ns-orders-refund-product-popup.vue";
+import nsOrdersProductQuantityVue from '~/popups/ns-orders-product-quantity.vue';
+import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import Print from '~/libraries/print';
+import { nsNumpad } from '~/components/components';
 
 export default {
     components: {

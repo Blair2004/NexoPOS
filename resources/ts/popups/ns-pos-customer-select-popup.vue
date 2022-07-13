@@ -35,9 +35,9 @@
                     <li @click="selectCustomer( customer )" v-for="customer of customers" :key="customer.id" class="cursor-pointer p-2 border-b text-primary flex justify-between items-center">
                         <span>{{ customer.name }}</span>
                         <p class="flex items-center">
-                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ customer.owe_amount | currency }}</span>
+                            <span v-if="customer.owe_amount > 0" class="text-error-primary">-{{ nsCurrency( customer.owe_amount ) }}</span>
                             <span v-if="customer.owe_amount > 0">/</span>
-                            <span class="purchase-amount">{{ customer.purchases_amount | currency }}</span>
+                            <span class="purchase-amount">{{ nsCurrency( customer.purchases_amount ) }}</span>
                             <button @click="openCustomerHistory( customer, $event )" class="mx-2 rounded-full h-8 w-8 flex items-center justify-center border ns-inset-button info">
                                 <i class="las la-eye"></i>
                             </button>
@@ -52,11 +52,12 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import { Popup } from '@/libraries/popup';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import { Popup } from '~/libraries/popup';
 import nsPosCustomersVue from './ns-pos-customers.vue';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     data() {
@@ -102,6 +103,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         
         /**
          * if the popup is likely to be used

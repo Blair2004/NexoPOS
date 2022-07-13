@@ -16,10 +16,10 @@
     </div>
 </template>
 <script>
-import popupResolver from "@/libraries/popup-resolver";
-import nsNumpad from "@/components/ns-numpad";
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupResolver from "~/libraries/popup-resolver";
+import nsNumpad from "~/components/ns-numpad.vue";
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     components: {
         nsNumpad

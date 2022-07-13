@@ -11,7 +11,7 @@
         </div>
         <div id="screen" class="h-16 ns-box-body text-white flex items-center justify-center">
             <h1 class="font-bold text-3xl">
-                <span v-if="mode === 'flat'">{{ finalValue  | currency }}</span>
+                <span v-if="mode === 'flat'">{{ nsCurrency( finalValue ) }}</span>
                 <span v-if="mode === 'percentage'">{{ finalValue }}%</span>
             </h1>
         </div>
@@ -33,7 +33,9 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { __ } from '~/libraries/lang';
+
 export default {
     name: 'ns-pos-discount-popup',
     data() {
@@ -71,6 +73,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         
         setPercentageType( mode ) {
             this.mode       =   mode;

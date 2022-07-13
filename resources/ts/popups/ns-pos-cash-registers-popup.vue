@@ -1,10 +1,9 @@
 <script>
 import { nsHttpClient, nsSnackBar } from '../bootstrap';
-import { default as nsNumpad } from "@/components/ns-numpad";
-import FormValidation from '@/libraries/form-validation';
+import FormValidation from '~/libraries/form-validation';
 import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
-import popupResolver from '@/libraries/popup-resolver';
-import { __ } from '@/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import { __ } from '~/libraries/lang';
 
 export default {
     components: {

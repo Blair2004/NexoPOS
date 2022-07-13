@@ -8,11 +8,11 @@
             <div class="p-2">
                 <div v-if="register !== null" class="mb-2 p-3 elevation-surface font-bold border text-right flex justify-between">
                     <span>{{ __( 'Balance' ) }} </span>
-                    <span>{{ register.balance | currency }}</span>
+                    <span>{{ nsCurrency( register.balance ) }}</span>
                 </div>
                 <div class="mb-2 p-3 elevation-surface success border font-bold text-right flex justify-between">
                     <span>{{ __( 'Input' ) }}</span>
-                    <span>{{ amount | currency }}</span>
+                    <span>{{ nsCurrency( amount ) }}</span>
                 </div>
                 <div class="mb-2">
                     <ns-numpad :floating="true" @next="submit( $event )" :value="amount" @changed="definedValue( $event )"></ns-numpad>
@@ -26,15 +26,14 @@
     </div>
 </template>
 <script>
-import nsNumpadVue from '@/components/ns-numpad.vue';
-import FormValidation from '@/libraries/form-validation';
-import popupCloser from '@/libraries/popup-closer';
+import FormValidation from '~/libraries/form-validation';
+import popupCloser from '~/libraries/popup-closer';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 
 export default {
     components: {
-        nsNumpad: nsNumpadVue
+        // ...
     },
     data() {
         return {

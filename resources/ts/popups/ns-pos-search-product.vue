@@ -33,10 +33,10 @@
     </div>
 </template>
 <script>
-import popupCloser from "@/libraries/popup-closer";
-import popupResolver from '@/libraries/popup-resolver';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupCloser from "~/libraries/popup-closer";
+import popupResolver from '~/libraries/popup-resolver';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-pos-search-product',
     data() {

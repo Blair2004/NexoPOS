@@ -39,7 +39,7 @@
                                         </li>
                                         <li @click="togglePriceField( product )" class="flex justify-between p-1 hover:bg-box-elevation-hover">
                                             <span>{{ __( 'Price' ) }}:</span> 
-                                            <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ product.sale_price | currency }}</span>
+                                            <span v-if="! product._price_toggled" class="cursor-pointer border-b border-dashed border-info-secondary">{{ nsCurrency( product.sale_price ) }}</span>
                                             <input ref="priceField" type="text" v-model="product.sale_price" v-if="product._price_toggled">
                                         </li>
                                     </ul>
@@ -54,7 +54,7 @@
                         <tfoot v-if="products.length > 0">
                             <tr>
                                 <td class="w-1/2 border p-2 text-left">{{ __( 'Total' ) }}</td>
-                                <td class="w-1/2 border p-2 text-right">{{ totalProducts | currency }}</td>
+                                <td class="w-1/2 border p-2 text-right">{{ nsCurrency( totalProducts ) }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -64,11 +64,13 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { Popup } from '@/libraries/popup';
-import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { Popup } from '~/libraries/popup';
+import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-product-group',
     props: [ 'fields' ],

@@ -1,14 +1,14 @@
 declare const window;
 
-import Vue from 'vue';
-
-const nsDatabaseUpdate     =   require( './pages/update/ns-database-update' ).default;
+import Vue, { createApp } from 'vue';
+import nsDatabaseUpdate from '~/pages/update/ns-database-update.vue';
 
 console.log( nsDatabaseUpdate );
 
-(<any>window)[ 'nsUpdate' ]      =   new Vue({
-    el: '#main-container',
+window.nsUpdate     =   createApp({
     components: {
         nsDatabaseUpdate
     }
-})
+});
+
+window.nsUpdate.mount( '#main-container' );

@@ -1,9 +1,11 @@
 <script>
-import popupCloser from '@/libraries/popup-closer';
+import popupCloser from '~/libraries/popup-closer';
 import nsPosCashRegistersActionPopupVue from './ns-pos-cash-registers-action-popup.vue';
 import nsPosCashRegistersHistoryVue from './ns-pos-cash-registers-history-popup.vue';
-import popupResolver from '@/libraries/popup-resolver';
-import { __ } from '@/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     mounted() {
         this.settingsSubscriber     =   POS.settings.subscribe( settings => {
@@ -148,11 +150,11 @@ export default {
         <div v-if="register.total_sale_amount !== undefined && register.balance !== undefined">
             <div class="h-16 text-3xl elevation-surface info flex items-center justify-between px-3">
                 <span class="">{{ __( 'Sales' ) }}</span>
-                <span class="font-bold">{{ register.total_sale_amount | currency }}</span>
+                <span class="font-bold">{{ nsCurrency( register.total_sale_amount ) }}</span>
             </div>
             <div class="h-16 text-3xl elevation-surface success flex items-center justify-between px-3">
                 <span class="">{{ __( 'Balance' ) }}</span>
-                <span class="font-bold">{{ register.balance | currency }}</span>
+                <span class="font-bold">{{ nsCurrency( register.balance ) }}</span>
             </div>
         </div>
         <div class="h-32 ns-box-body border-b py-1 flex items-center justify-center" v-if="register.total_sale_amount === undefined && register.balance === undefined">

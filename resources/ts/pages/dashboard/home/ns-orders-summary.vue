@@ -47,8 +47,8 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-orders-summary',
     data() {

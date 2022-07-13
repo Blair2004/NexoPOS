@@ -11,12 +11,11 @@
     </div>
 </template>
 <script lang="ts">
-import { __ } from '@/libraries/lang';
-import Vue from 'vue';
+import { __ } from '~/libraries/lang';
 import { createAvatar } from '@dicebear/avatars';
 import * as style from '@dicebear/avatars-avataaars-sprites';
 
-export default Vue.extend({
+export default {
     methods: {
         __
     },
@@ -38,5 +37,5 @@ export default Vue.extend({
         }
     },
     props: [ 'url', 'display-name' ]
-})
+}
 </script>

@@ -19,11 +19,11 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import popupCloser from '@/libraries/popup-closer';
-import nsNumpadVue from '@/components/ns-numpad.vue';
-import nsNumpadPlusVue from '@/components/ns-numpad-plus.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import popupCloser from '~/libraries/popup-closer';
+import nsNumpadVue from '~/components/ns-numpad.vue';
+import nsNumpadPlusVue from '~/components/ns-numpad-plus.vue';
 
 export default {
     components: {

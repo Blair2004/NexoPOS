@@ -1,7 +1,7 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import { default as nsPosCustomers } from '@/popups/ns-pos-customers';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import { default as nsPosCustomers } from '~/popups/ns-pos-customers.vue';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-pos-customers-button',

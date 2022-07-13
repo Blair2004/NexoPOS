@@ -20,7 +20,7 @@
                     <div class="p-2" v-if="order">
                         <div v-for="tax of order.taxes" :key="tax.id" class="mb-2 border shadow p-2 w-full flex justify-between items-center elevation-surface">
                             <span>{{ tax.tax_name }}</span>
-                            <span>{{ tax.tax_value | currency  }}</span>
+                            <span>{{ nsCurrency( value ) }}</span>
                         </div>
                         <div class="p-2 text-center text-primary" v-if="order.taxes.length === 0">{{ __( 'No tax is active' ) }}</div>
                     </div>
@@ -30,11 +30,13 @@
     </div>
 </template>
 <script>
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-pos-tax-popup',
     data() {
@@ -108,6 +110,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         popupCloser,
         popupResolver,
 

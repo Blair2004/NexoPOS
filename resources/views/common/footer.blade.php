@@ -29,15 +29,10 @@ ns.base_url         =   '{{ url( "/" ) }}';
 </script>
 
 @if ( ns()->isProduction() )
-<script src="{{ mix( 'js/manifest.js' ) }}"></script>
-<script src="{{ mix( 'js/vendor.js' ) }}"></script>
-<script src="{{ mix( 'js/bootstrap.min/bootstrap.js' ) }}"></script>
-<script src="{{ mix( 'js/popups.min.js' ) }}"></script>
+    <!-- Something should be here -->
 @else
-<script src="{{ asset( 'js/manifest.js' ) }}"></script>
-<script src="{{ asset( 'js/vendor.js' ) }}"></script>
-<script src="{{ asset( 'js/bootstrap.js' ) }}"></script>
-<script src="{{ asset( 'js/popups.js' ) }}"></script>
+    @vite([ 'resources/ts/bootstrap.ts' ])
+    @vite([ 'resources/ts/libraries/popup.ts' ])
 @endif
 <?php 
     $output     =   new Output;

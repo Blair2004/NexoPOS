@@ -25,12 +25,12 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import FormValidation from '@/libraries/form-validation';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
+import { __ } from '~/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
 import { forkJoin } from 'rxjs';
-import { nsSnackBar } from '@/bootstrap';
+import { nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-pos-quick-product-popup',
     methods: {

@@ -23,10 +23,10 @@
     </div>
 </template>
 <script>
-import resolveIfQueued from '@/libraries/popup-resolver';
-import { __ } from '@/libraries/lang';
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
+import resolveIfQueued from '~/libraries/popup-resolver';
+import { __ } from '~/libraries/lang';
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
 
 export default {
     data() {

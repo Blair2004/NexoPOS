@@ -129,7 +129,7 @@
 </template>
 <script>
 import moment from "moment";
-import { __ } from "@/libraries/lang";
+import { __ } from "~/libraries/lang";
 export default {
     name: 'ns-date-time-picker',
     props: [ 'field', 'date' ],

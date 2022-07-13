@@ -58,10 +58,10 @@
     </div>
 </template>
 <script>
-import { Popup } from '@/libraries/popup';
-import nsPosDiscountPopupVue from '@/popups/ns-pos-discount-popup.vue';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosDiscountPopupVue from '~/popups/ns-pos-discount-popup.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'sample-payment',
     props: [ 'label', 'identifier' ],

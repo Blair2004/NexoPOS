@@ -1,7 +1,7 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import nsPosOrderTypePopupVue from '@/popups/ns-pos-order-type-popup.vue';
-import { __ } from '@/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosOrderTypePopupVue from '~/popups/ns-pos-order-type-popup.vue';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-pos-delivery-button',

@@ -44,8 +44,8 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '../../../ts/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-database-update',
     data() {

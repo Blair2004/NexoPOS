@@ -17,14 +17,14 @@
     </div>
 </template>
 <script>
-import popupResolver from '@/libraries/popup-resolver'
-import popupCloser from '@/libraries/popup-closer'
-import { __ } from '@/libraries/lang'
-import FormValidation from '@/libraries/form-validation'
-import { nsSnackBar } from '@/bootstrap';
-import Print from '@/libraries/print';
-import { nsNotice } from '@/components/components'
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue'
+import popupResolver from '~/libraries/popup-resolver'
+import popupCloser from '~/libraries/popup-closer'
+import { __ } from '~/libraries/lang'
+import FormValidation from '~/libraries/form-validation'
+import { nsSnackBar } from '~/bootstrap';
+import Print from '~/libraries/print';
+import { nsNotice } from '~/components/components'
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue'
 
 export default {
     name: 'ns-order-instalments-payment',

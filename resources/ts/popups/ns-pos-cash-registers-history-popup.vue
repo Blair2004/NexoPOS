@@ -8,36 +8,38 @@
         </div>
         <div class="flex w-full ns-box-body">
             <div class="flex flex-auto">
-                <div class="w-full md:w-1/2 text-right bg-success-primary text-white font-bold text-3xl p-3">{{ totalIn | currency }}</div>
-                <div class="w-full md:w-1/2 text-right bg-error-primary text-white font-bold text-3xl p-3">{{ totalOut | currency }}</div>
+                <div class="w-full md:w-1/2 text-right bg-success-primary text-white font-bold text-3xl p-3">{{ nsCurrency( totalIn ) }}</div>
+                <div class="w-full md:w-1/2 text-right bg-error-primary text-white font-bold text-3xl p-3">{{ nsCurrency( totalOut ) }}</div>
             </div>
         </div>
         <div class="flex flex-col overflow-y-auto h-120">
             <template v-for="history of histories">
                 <div :key="history.id" v-if="[ 'register-sale', 'register-cash-in' ].includes( history.action )"  class="flex border-b elevation-surface success">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
-                    <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
+                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-opening' ].includes( history.action )"  class="flex border-b elevation-surface">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
-                    <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
+                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-close' ].includes( history.action )"  class="flex border-b elevation-surface info">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
-                    <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
+                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
                 <div :key="history.id" v-if="[ 'register-refund', 'register-cash-out' ].includes( history.action )"  class="flex border-b elevation-surface error">
                     <div class="p-2 flex-auto">{{ history.label }}</div>
-                    <div class="flex-auto text-right p-2">{{ history.value | currency }}</div>
+                    <div class="flex-auto text-right p-2">{{ nsCurrency( history.value ) }}</div>
                 </div>
             </template>
         </div>
     </div>
 </template>
 <script>
-import popupResolver from '@/libraries/popup-resolver'
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver'
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     data() {
         return {
@@ -60,6 +62,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         popupResolver,
 
         closePopup() {

@@ -27,8 +27,8 @@
     </div>
 </template>
 <script>
-import popupCloser from "@/libraries/popup-closer";
-import { __ } from '@/libraries/lang';
+import popupCloser from "~/libraries/popup-closer";
+import { __ } from '~/libraries/lang';
 export default {
     data() {
         return {

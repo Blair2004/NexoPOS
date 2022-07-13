@@ -1,7 +1,7 @@
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import { Popup } from '@/libraries/popup';
-import { default as nsPosQuantityPopup } from '@/popups/ns-pos-quantity-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosQuantityPopup from '~/popups/ns-pos-quantity-popup.vue';
 
 declare const POS;
 

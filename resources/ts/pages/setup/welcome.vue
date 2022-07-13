@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { nsLink } from './../../components/components';
+import { nsLink } from '~/components/components';
 
 export default {
     components: {

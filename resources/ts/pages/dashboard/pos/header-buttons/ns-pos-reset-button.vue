@@ -1,8 +1,8 @@
 <script>
-import { Popup } from '@/libraries/popup';
-import { default as nsPosCustomers } from '@/popups/ns-pos-customers';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import popupCloser from "@/libraries/popup-closer";
+import { Popup } from '~/libraries/popup';
+import nsPosCustomers from '~/popups/ns-pos-customers.vue';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import popupCloser from "~/libraries/popup-closer";
 
 export default {
     name: 'ns-pos-customers-button',

@@ -1,6 +1,5 @@
 import { Subject } from "rxjs";
 
-declare const Vue;
 declare const document;
 
 export class Popup {

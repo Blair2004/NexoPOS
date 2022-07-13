@@ -39,8 +39,8 @@
     </div>
 </template>
 <script>
-import { nsHooks } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsHooks } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     props: [ 'orders' ],
     data() {

@@ -20,9 +20,9 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '../../bootstrap';
-import FormValidation from '../../libraries/form-validation';
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
 
 export default {
     name: 'ns-reset',

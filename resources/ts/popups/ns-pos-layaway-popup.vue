@@ -12,7 +12,7 @@
             </div>
             <div class="p-2 elevation-surface info mb-2 text-center text-2xl font-bold flex justify-between">
                 <span>{{ __( 'Minimum Payment' ) }}</span>
-                <span>{{ expectedPayment | currency }}</span>
+                <span>{{ nsCurrency( expectedPayment ) }}</span>
             </div>
             <div>
                 <ns-field v-for="( field, index ) of fields" :field="field" :key="index"></ns-field>
@@ -22,9 +22,9 @@
                     <h3 class="text-2xl flex justify-between py-2 text-primary">
                         <span>{{ __( 'Instalments & Payments' ) }}</span>
                         <p>
-                            <span class="text-sm">({{ totalPayments | currency }})</span>
+                            <span class="text-sm">({{ nsCurrency( totalPayments ) }})</span>
                             <span>
-                            {{ order.total | currency }}
+                            {{ nsCurrency( total ) }}
                             </span>
                         </p>
                     </h3>
@@ -72,9 +72,11 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+
 export default {
     name: 'ns-pos-layaway-popup',
     data() {
@@ -161,6 +163,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         refreshTotalPayments() {
             if ( this.order.instalments.length > 0 ) {
                 const totalInstalments      =   nsRawCurrency( this.order.instalments

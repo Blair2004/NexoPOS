@@ -5,9 +5,7 @@ declare const nsHotPress;
  * that has the $popup object defined.
  */
 export default function() {
-    const keys  =   Object.keys( this );
-    
-    if ( keys.includes( '$popup' ) ) {
+    if ( this.$popup !== undefined ) {
 
         this.$popup.event.subscribe( action => {
             if ( action.event === 'click-overlay' ) {

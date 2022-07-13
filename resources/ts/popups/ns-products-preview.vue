@@ -24,8 +24,8 @@
                             <tbody>
                                 <tr v-for="unitQuantity of unitQuantities" :key="unitQuantity.id">
                                     <td class="p-1 border text-left">{{ unitQuantity.unit.name }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.sale_price | currency }}</td>
-                                    <td class="p-1 border text-right">{{ unitQuantity.wholesale_price | currency }}</td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.sale_price  ) }}</td>
+                                    <td class="p-1 border text-right">{{ nsCurrency( unitQuantity.wholesale_price  ) }}</td>
                                     <td class="p-1 border text-right">{{ unitQuantity.quantity }}</td>
                                 </tr>
                             </tbody>
@@ -38,8 +38,10 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+
 export default {
     name: 'ns-products-preview',
     computed: {

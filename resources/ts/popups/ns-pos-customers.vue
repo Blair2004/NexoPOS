@@ -43,7 +43,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-success-secondary to-green-700 p-2 flex flex-col text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Purchases' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="font-bold">{{ customer.purchases_amount | currency }}</h2>
+                                            <h2 class="font-bold">{{ nsCurrency( amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-error-secondary to-red-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Total Owed' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.owed_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-blue-500 to-blue-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Wallet Amount' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.account_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -67,7 +67,7 @@
                                     <div class="rounded-lg shadow bg-transparent bg-gradient-to-br from-teal-500 to-teal-700 p-2 text-white">
                                         <h3 class="font-medium text-lg">{{ __( 'Credit Limit' ) }}</h3>
                                         <div class="w-full flex justify-end">
-                                            <h2 class="text-2xl font-bold">{{ customer.credit_limit_amount | currency }}</h2>
+                                            <h2 class="text-2xl font-bold">{{ nsCurrency( amount ) }}</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -101,7 +101,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Code' ) }}: {{ order.code }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
-                                                                                <small>{{ __( 'Total' ) }}: {{ order.total | currency }}</small>
+                                                                                <small>{{ __( 'Total' ) }}: {{ nsCurrency( total ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/4">
                                                                                 <small>{{ __( 'Status' ) }}: {{ order.human_status }}</small>
@@ -151,7 +151,7 @@
                                                                         <h3 class="font-bold">{{ __( 'Transaction' ) }}: {{ getWalletHistoryLabel( history.operation ) }}</h3>
                                                                         <div class="md:-mx-2 w-full flex flex-col md:flex-row">
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
-                                                                                <small>{{ __( 'Amount' ) }}: {{ history.amount | currency }}</small>
+                                                                                <small>{{ __( 'Amount' ) }}: {{ nsCurrency( amount ) }}</small>
                                                                             </div>
                                                                             <div class="md:px-2 flex items-start w-full md:w-1/3">
                                                                                 <small>{{ __( 'Date' ) }}: {{ history.created_at }}</small>
@@ -203,7 +203,7 @@
                                                                         ({{ coupon.coupon.discount_value }}%)
                                                                     </span>
                                                                     <span v-if="coupon.coupon.type === 'flat_discount'">
-                                                                        ({{ coupon.coupon.discount_value | currency }})
+                                                                        ({{ nsCurrency( value ) }})
                                                                     </span>
                                                                 </td>
                                                                 <td class="border p-2 text-right">
@@ -275,18 +275,19 @@
 </template>
 <script>
 
-import closeWithOverlayClicked from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { Popup } from '@/libraries/popup';
+import closeWithOverlayClicked from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { Popup } from '~/libraries/popup';
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
 import nsCustomersTransactionPopupVue from './ns-customers-transaction-popup.vue';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 import nsPosCouponsLoadPopupVue from './ns-pos-coupons-load-popup.vue';
 import nsPosConfirmPopupVue from './ns-pos-confirm-popup.vue';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import nsPaginate from '@/components/ns-paginate.vue';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import nsPaginate from '~/components/ns-paginate.vue';
 import nsOrderPreviewPopup from './ns-orders-preview-popup.vue';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-customers',
@@ -342,6 +343,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
 
         reload() {
             this.loadCustomerOrders();

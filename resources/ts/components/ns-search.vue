@@ -13,8 +13,8 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 export default {
     name: 'ns-search',
     props: [ 'url', 'placeholder', 'value', 'label', 'method', 'searchArgument' ],

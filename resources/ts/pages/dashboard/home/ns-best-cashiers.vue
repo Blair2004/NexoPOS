@@ -20,7 +20,7 @@
                                     </div>
                                 </div>
                             </th>
-                            <th class="flex justify-end p-2">{{ cashier.total_sales | currency( 'abbreviate' ) }}</th>
+                            <th class="flex justify-end p-2">{{ nsCurrency( cashier.total_sales, 'abbreviate' ) }}</th>
                         </tr>
                         <tr v-if="cashiers.length === 0">
                             <th colspan="2">{{ __( 'No result to display.' ) }}</th>
@@ -39,7 +39,8 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-best-customers',
     data() {
@@ -57,7 +58,8 @@ export default {
         });
     },
     methods: {
-        __
+        __,
+        nsCurrency,
     },
     destroyed() {
         this.subscription.unsubscribe();

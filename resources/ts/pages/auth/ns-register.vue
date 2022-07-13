@@ -24,10 +24,10 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { forkJoin } from 'rxjs';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-register',

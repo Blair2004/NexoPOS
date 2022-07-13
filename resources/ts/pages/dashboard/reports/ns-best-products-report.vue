@@ -1,8 +1,8 @@
 <script>
 import moment from "moment";
-import nsDatepicker from "@/components/ns-datepicker";
-import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
+import nsDatepicker from "~/components/ns-datepicker.vue";
+import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 
 
 export default {

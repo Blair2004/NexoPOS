@@ -3,10 +3,10 @@
 </template>
 <script>
 import moment from "moment";
-import nsDatepicker from "@/components/ns-datepicker";
-import nsDateTimePicker from "@/components/ns-date-time-picker";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import nsDatepicker from "~/components/ns-datepicker.vue";
+import nsDateTimePicker from "~/components/ns-date-time-picker.vue";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-profit-report',
     data() {

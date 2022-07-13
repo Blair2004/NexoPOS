@@ -1,10 +1,10 @@
 <script>
 import moment from "moment";
-import nsDatepicker from "@/components/ns-datepicker";
-import nsNotice from "@/components/ns-notice";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
+import nsDatepicker from "~/components/ns-datepicker.vue";
+import nsNotice from "~/components/ns-notice.vue";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
 
 export default {
     name : 'ns-yearly-report',

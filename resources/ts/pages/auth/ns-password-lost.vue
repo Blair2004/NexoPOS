@@ -25,10 +25,10 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 import { forkJoin } from 'rxjs';
-import FormValidation from '@/libraries/form-validation';
-import { nsHooks, nsHttpClient, nsSnackBar } from '@/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { nsHooks, nsHttpClient, nsSnackBar } from '~/bootstrap';
 
 export default {
     name: 'ns-login',

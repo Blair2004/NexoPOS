@@ -23,10 +23,10 @@
     </div>
 </template>
 <script>
-import popuCloser from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import { __ } from '@/libraries/lang';
+import popuCloser from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { __ } from '~/libraries/lang';
 export default {
     mounted() {
         this.popuCloser();

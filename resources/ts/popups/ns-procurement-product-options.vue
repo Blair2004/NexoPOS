@@ -12,9 +12,9 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-procurement-product-options',
     data() {

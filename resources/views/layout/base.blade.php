@@ -18,13 +18,16 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{!! $title ?? __( 'Unamed Page' ) !!}</title>
-    <link rel="stylesheet" href="{{ loadcss( 'grid.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'fonts.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'animations.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'typography.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( 'app.css' ) }}">
+    @vite([
+        'resources/css/grid.css',
+        'resources/css/fonts.css',
+        'resources/css/animations.css',
+        'resources/css/typography.css',
+        'resources/css/app.css',
+        'resources/css/' . $theme . '.css'
+    ])
     <link rel="stylesheet" href="{{ asset( 'css/line-awesome.css' ) }}">
-    <link rel="stylesheet" href="{{ loadcss( $theme . '.css' ) }}">
+
     @yield( 'layout.base.header' )
     <script>
         /**
@@ -55,12 +58,16 @@ if ( Auth::check() && Auth::user()->attribute instanceof UserAttribute ) {
          * define the current language selected by the user or
          * the language that applies to the system by default.
          */
-        window.ns.language     =   '{{ app()->getLocale() }}';
+        window.ns.language      =   '{{ app()->getLocale() }}';
         window.ns.langFiles     =   <?php echo json_encode( Hook::filter( 'ns.langFiles', [
             'NexoPOS'   =>  asset( "/lang/" . app()->getLocale() . ".json" ),
         ]));?>
     </script>
-    <script src="{{ asset( ns()->isProduction() ? 'js/lang-loader.min.js' : 'js/lang-loader.js' ) }}"></script>
+    @if ( ns()->isProduction() )
+    <!-- Something should be there -->
+    @else
+        @vite([ 'resources/ts/lang-loader.ts' ])
+    @endif
 @include( 'common.header-socket' )
 </head>
 <body>

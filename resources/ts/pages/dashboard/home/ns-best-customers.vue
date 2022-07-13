@@ -15,7 +15,7 @@
                 <table class="table w-full" v-if="customers.length > 0">
                     <thead>
                         <tr v-for="customer of customers" :key="customer.id" class="entry border-b text-sm">
-                            <th class="p-2">
+                            <th class="p-2"> 
                                 <div class="-mx-1 flex justify-start items-center">
                                     <div class="px-1">
                                         <div class="rounded-full">
@@ -27,7 +27,7 @@
                                     </div>
                                 </div>
                             </th>
-                            <th class="flex justify-end amount p-2">{{ customer.purchases_amount | currency }}</th>
+                            <th class="flex justify-end amount p-2">{{ nsCurrency( customer.purchases_amount ) }}</th>
                         </tr>
                     </thead>
                 </table>
@@ -36,10 +36,11 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+
 export default {
-    name: 'ns-best-customers' ,
     mounted() {
         this.hasLoaded      =   false;
         this.subscription   =   Dashboard.bestCustomers.subscribe( customers => {
@@ -48,7 +49,9 @@ export default {
         });
     },
     methods: {
-        __
+        __,
+        nsCurrency,
+        nsRawCurrency
     },
     data() {
         return {

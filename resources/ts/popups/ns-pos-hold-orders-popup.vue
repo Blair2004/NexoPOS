@@ -8,7 +8,7 @@
         </div>
         <div class="flex-auto ns-box-body">
             <div class="border-b h-16 flex items-center justify-center">
-                <span class="text-5xl text-primary">{{ order.total | currency }}</span>
+                <span class="text-5xl text-primary">{{ nsCurrency( total ) }}</span>
             </div>
             <div class="p-2">
                 <div class="input-group border-2 info">
@@ -32,8 +32,9 @@
     </div>
 </template>
 <script>
-import popupCloser from "@/libraries/popup-closer";
-import { __ } from '@/libraries/lang';
+import popupCloser from "~/libraries/popup-closer";
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-hold-orders',
@@ -65,6 +66,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
 
         popupCloser,
 

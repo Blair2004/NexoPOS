@@ -106,13 +106,13 @@
     </div>
 </template>
 <script>
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from "@/libraries/lang";
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from "~/libraries/lang";
 import nsPosCustomerSelectPopupVue from './ns-pos-customer-select-popup.vue';
-import { SnackBar } from '@/libraries/snackbar';
-import nsNotice from '@/components/ns-notice.vue';
+import { SnackBar } from '~/libraries/snackbar';
+import nsNotice from '~/components/ns-notice.vue';
 
 export default {
     name: 'ns-pos-coupons-load-popup',

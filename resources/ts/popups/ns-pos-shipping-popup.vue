@@ -33,9 +33,9 @@
     </div>
 </template>
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import FormValidation from '@/libraries/form-validation';
+import { nsHttpClient } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import FormValidation from '~/libraries/form-validation';
 export default {
     name: 'ns-pos-shipping-popup',
     computed: {

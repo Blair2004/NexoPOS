@@ -24,7 +24,11 @@ use App\Models\User;
 
 @section( 'layout.base.footer' )
     @parent
-    <script src="{{ asset( ns()->isProduction() ? 'js/pos-init.min.js' : 'js/pos-init.js' ) }}"></script>
+    @if ( ns()->isProduction() )
+        <!-- Something should be here -->
+    @else
+        @vite([ 'resources/ts/pos-init.ts' ])
+    @endif
     <script>
         const nsShortcuts   =   <?php echo json_encode([
             'ns_pos_keyboard_cancel_order'      =>  ns()->option->get( 'ns_pos_keyboard_cancel_order' ),
@@ -40,23 +44,25 @@ use App\Models\User;
         ]);?>
     </script>
     <script>
-    POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
-    POS.defineOptions( <?php echo json_encode( $options );?>);
-    POS.defineSettings({
-        barcode_search          :   true,
-        text_search             :   false,
-        edit_purchase_price     :   <?php echo User::allowedTo( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
-        edit_settings           :   <?php echo User::allowedTo( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
-        products_discount       :   <?php echo User::allowedTo( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
-        cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
-        breadcrumb              :   [],
-        products_queue          :   [],
-        ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
-        unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
-        urls                    :   <?php echo json_encode( $urls );?>
-    });
+    document.addEventListener( 'DOMContentLoaded', () => {
+        POS.defineTypes(<?php echo json_encode( $orderTypes );?>);
+        POS.defineOptions( <?php echo json_encode( $options );?>);
+        POS.defineSettings({
+            barcode_search          :   true,
+            text_search             :   false,
+            edit_purchase_price     :   <?php echo User::allowedTo( 'nexopos.pos.edit-purchase-price' ) ? 'true' : 'false';?>,
+            edit_settings           :   <?php echo User::allowedTo( 'nexopos.pos.edit-settings' ) ? 'true' : 'false';?>,
+            products_discount       :   <?php echo User::allowedTo( 'nexopos.pos.products-discount' ) ? 'true' : 'false';?>,
+            cart_discount           :   <?php echo User::allowedTo( 'nexopos.pos.cart-discount' ) ? 'true' : 'false';?>,
+            breadcrumb              :   [],
+            products_queue          :   [],
+            ns_pos_items_merge      :   <?php echo ns()->option->get( 'ns_pos_items_merge', 'no' ) === 'yes' ? 'true' : 'false';?>,
+            unit_price_editable     :   <?php echo ns()->option->get( 'ns_pos_unit_price_ediable', 'yes' ) === 'yes' ? 'true' : 'false';?>,
+            urls                    :   <?php echo json_encode( $urls );?>
+        });
 
-    POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+        POS.definedPaymentsType( <?php echo json_encode( $paymentTypes );?> );
+    });
 
     /**
      * At the moment of the execution, the POS script
@@ -64,5 +70,9 @@ use App\Models\User;
      * working only when those component are loaded.
      */
     </script>
-    <script src="{{ asset( ns()->isProduction() ? 'js/pos.min.js' : 'js/pos.js' ) }}"></script>
+    @if ( ns()->isProduction() )
+        <!-- Something should be here -->
+    @else
+        @vite([ 'resources/ts/pos.ts' ])
+    @endif
 @endsection

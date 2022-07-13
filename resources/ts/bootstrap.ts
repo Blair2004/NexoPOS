@@ -1,33 +1,31 @@
 import * as Lodash from "lodash";
 import * as Axios from "axios";
+import Echo from "laravel-echo";
+import Pusher from 'pusher-js';
 import * as ChartJS from "chart.js";
-import VueRouter from "vue-router";
-import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
 import { fromEvent } from "rxjs";
 import * as RxJS from 'rxjs';
 import * as moment from 'moment';
-import { Popup } from "./libraries/popup";
-import Vue from "vue";
+import { createApp } from "vue";
+
+import { Popup } from "~/libraries/popup";
+import { EventEmitter, HttpClient, SnackBar, State } from "./libraries/libraries";
 import FormValidation from "./libraries/form-validation";
 import Url from "./libraries/url";
-import { nsCurrency, nsAbbreviate, nsRawCurrency, nsTruncate } from "./filters/declarations";
 import CrudHandler from "./libraries/crud-handler";
 import { createHooks } from '@wordpress/hooks';
 import { __, __m } from "./libraries/lang";
 import popupResolver from "./libraries/popup-resolver";
 import popupCloser from "./libraries/popup-closer";
-import Echo from "laravel-echo";
-const Pusher    =   require('pusher-js');
 
 
 declare global {
     interface Window {
         _: Lodash,
         ChartJS: any,
-        Vue: any,
+        createApp: any,
         moment: moment.Moment,
         Axios: any,
-        VueRouter: VueRouter,
         nsHooks: any,
         SnackBar: SnackBar,
         __: any,
@@ -44,12 +42,11 @@ declare const ns;
 window._                =   Lodash;
 window.ChartJS          =   ChartJS;
 window.Pusher           =   Pusher;
-window.Vue              =   Vue;
+window.createApp        =   createApp;
 window.moment           =   <any>moment;
 window.Axios            =   Axios;
 window.__               =   __;
 window.__m              =   __m;
-window.VueRouter        =   <any>VueRouter;
 window.SnackBar         =   <any>SnackBar;
 window.nsHooks          =   createHooks();
 window.popupResolver    =   popupResolver,
@@ -126,10 +123,6 @@ nsHttpClient.defineClient( Axios );
 ( window as any ).nsEvent            =   nsEvent;
 ( window as any ).nsHttpClient       =   nsHttpClient;
 ( window as any ).nsSnackBar         =   nsSnackBar;
-( window as any ).nsCurrency         =   nsCurrency;
-( window as any ).nsTruncate         =   nsTruncate;
-( window as any ).nsRawCurrency      =   nsRawCurrency;
-( window as any ).nsAbbreviate       =   nsAbbreviate;
 ( window as any ).nsState            =   nsState;
 ( window as any ).nsUrl              =   nsUrl;
 ( window as any ).nsScreen           =   nsScreen;
@@ -140,4 +133,4 @@ nsHttpClient.defineClient( Axios );
 ( window as any ).FormValidation     =   FormValidation;
 ( window as any ).nsCrudHandler      =   nsCrudHandler;
 
-export { nsHttpClient, nsSnackBar, nsEvent, nsState, nsScreen, nsUrl, nsHooks };
+export { nsSnackBar, nsHttpClient, nsEvent, nsState, nsScreen, nsUrl, nsHooks };

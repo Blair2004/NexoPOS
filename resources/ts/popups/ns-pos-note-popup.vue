@@ -10,16 +10,16 @@
             <ns-field v-for="(field, index) of fields" :key="index" :field="field"></ns-field>
         </div>
         <div class="p-2 flex justify-end border-t ns-box-footer">
-            <ns-button type="info" @click="saveNote()">Save</ns-button>
+            <ns-button type="info" @click="saveNote()">{{ __( 'Save' ) }}</ns-button>
         </div>
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 export default {
     name: "ns-pos-note-popup",
     data() {
@@ -73,7 +73,6 @@ export default {
                 const errors    =   this.validation.validateFieldsErrors( this.fields );
                 this.validation.triggerFieldsErrors( this.fields, errors );
                 this.$forceUpdate();
-                console.log( this.fields );
                 return nsSnackBar.error( __( 'Unable to proceed the form is not valid.' ) ).subscribe();
             }
 

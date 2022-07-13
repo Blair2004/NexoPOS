@@ -5,7 +5,6 @@ import { Product } from "./interfaces/product";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
 import { POSVirtualStock } from "./interfaces/pos-virual-stock";
-import Vue from 'vue';
 import { Order } from "./interfaces/order";
 import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
 import { PaymentType } from "./interfaces/payment-type";
@@ -17,23 +16,25 @@ import { StatusResponse } from "./status-response";
 import { __ } from "./libraries/lang";
 import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
 import moment from "moment";
+import { defineAsyncComponent } from "vue";
+import { nsCurrency } from "./filters/currency";
 
 /**
  * these are dynamic component
  * that are loaded conditionally
  */
-const nsPosDashboardButton      = (<any>window).nsPosDashboardButton = require('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button').default;
-const nsPosPendingOrderButton   = (<any>window).nsPosPendingOrderButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button').default;
-const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button').default;
-const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button').default;
-const nsPosResetButton          = (<any>window).nsPosResetButton = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button').default;
-const nsPosCashRegister         = (<any>window).nsPosCashRegister = require('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button').default;
-const nsAlertPopup              = (<any>window).nsAlertPopup = require('./popups/ns-' + 'alert' + '-popup').default;
-const nsConfirmPopup            = (<any>window).nsConfirmPopup = require('./popups/ns-pos-' + 'confirm' + '-popup').default;
-const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = require('./popups/ns-pos-' + 'loading' + '-popup').default;
-const nsPromptPopup             = (<any>window).nsPromptPopup = require('./popups/ns-' + 'prompt' + '-popup').default;
-const nsLayawayPopup            = (<any>window).nsLayawayPopup = require('./popups/ns-pos-' + 'layaway' + '-popup').default;
-const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = require('./popups/ns-pos-' + 'shipping' + '-popup').default;
+const nsPosDashboardButton      = (<any>window).nsPosDashboardButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-dashboard-button.vue' ) );
+const nsPosPendingOrderButton   = (<any>window).nsPosPendingOrderButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'pending-orders' + '-button.vue' ) );
+const nsPosOrderTypeButton      = (<any>window).nsPosOrderTypeButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'order-type' + '-button.vue' ) );
+const nsPosCustomersButton      = (<any>window).nsPosCustomersButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'customers' + '-button.vue' ) );
+const nsPosResetButton          = (<any>window).nsPosResetButton = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'reset' + '-button.vue' ) );
+const nsPosCashRegister         = (<any>window).nsPosCashRegister = defineAsyncComponent( () => import('./pages/dashboard/pos/header-buttons/ns-pos-' + 'registers' + '-button.vue' ) );
+const nsAlertPopup              = (<any>window).nsAlertPopup = defineAsyncComponent( () => import('./popups/ns-' + 'alert' + '-popup.vue' ) );
+const nsConfirmPopup            = (<any>window).nsConfirmPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'confirm' + '-popup.vue' ) );
+const nsPOSLoadingPopup         = (<any>window).nsPOSLoadingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'loading' + '-popup.vue' ) );
+const nsPromptPopup             = (<any>window).nsPromptPopup = defineAsyncComponent( () => import('./popups/ns-' + 'prompt' + '-popup.vue' ) );
+const nsLayawayPopup            = (<any>window).nsLayawayPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'layaway' + '-popup.vue' ) );
+const nsPosShippingPopup        = (<any>window).nsPosShippingPopup = defineAsyncComponent( () => import('./popups/ns-pos-' + 'shipping' + '-popup.vue' ) );
 
 export class POS {
     private _products: BehaviorSubject<OrderProduct[]>;
@@ -688,7 +689,7 @@ export class POS {
                 });
 
                 if (result.order.instalments.length === 0 && result.order.tendered < expected) {
-                    const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', Vue.filter('currency')(expected));
+                    const message = __(`Before saving this order, a minimum payment of {amount} is required`).replace('{amount}', nsCurrency(expected));
                     Popup.show(nsAlertPopup, { title: __('Unable to proceed'), message });
                     return reject({ status: 'failed', message });
                 } else {
@@ -710,7 +711,7 @@ export class POS {
                         Popup.show(nsConfirmPopup, {
                             title: __(`Initial Payment`),
                             message: __(`In order to proceed, an initial payment of {amount} is required for the selected payment type "{paymentType}". Would you like to proceed ?`)
-                                .replace('{amount}', Vue.filter('currency')(firstSlice))
+                                .replace('{amount}', nsCurrency(firstSlice))
                                 .replace('{paymentType}', paymentType.label),
                             onAction: (action) => {
                                 if ( action ) {
@@ -1124,7 +1125,7 @@ export class POS {
     updateCart(current, update) {
         for (let key in update) {
             if (update[key] !== undefined) {
-                Vue.set(current, key, update[key]);
+                current[ key ]  =   update[ key ];
             }
         }
 
@@ -1540,7 +1541,7 @@ export class POS {
         /**
          * to ensure Vue updates accordingly.
          */
-        Vue.set(products, index, { ...product, ...data });
+        products[ index ]       =   { ...product, ...data };
 
         this.recomputeProducts(products);
         this.products.next(products);

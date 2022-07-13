@@ -1,4 +1,4 @@
-import { Tax } from "@/libraries/tax";
+import { Tax } from "~/libraries/tax";
 import { Address } from "cluster";
 import { Customer } from "./customer";
 import { OrderProduct } from "./order-product";

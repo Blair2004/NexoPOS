@@ -1,16 +1,16 @@
 <script>
-import { nsHttpClient, nsSnackBar } from "@/bootstrap";
-import { nsCurrency } from "@/filters/currency";
+import { nsHttpClient, nsSnackBar } from "~/bootstrap";
+import { nsCurrency } from "~/filters/currency";
 import { forkJoin } from "rxjs";
-import nsOrderRefund from "@/pages/dashboard/orders/ns-order-refund.vue";
+import nsOrderRefund from "~/pages/dashboard/orders/ns-order-refund.vue";
 import nsPromptPopupVue from "./ns-prompt-popup.vue";
 import nsPosConfirmPopupVue from "./ns-pos-confirm-popup.vue";
-import nsOrderPayment from "@/pages/dashboard/orders/ns-order-payment.vue";
-import nsOrderDetails from "@/pages/dashboard/orders/ns-order-details.vue";
-import nsOrderInstalments from "@/pages/dashboard/orders/ns-order-instalments.vue";
-import { __ } from "@/libraries/lang";
-import popupResolver from "@/libraries/popup-resolver";
-import popupCloser from "@/libraries/popup-closer";
+import nsOrderPayment from "~/pages/dashboard/orders/ns-order-payment.vue";
+import nsOrderDetails from "~/pages/dashboard/orders/ns-order-details.vue";
+import nsOrderInstalments from "~/pages/dashboard/orders/ns-order-instalments.vue";
+import { __ } from "~/libraries/lang";
+import popupResolver from "~/libraries/popup-resolver";
+import popupCloser from "~/libraries/popup-closer";
 
 /**
  * @var {ExtendedVue}

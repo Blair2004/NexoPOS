@@ -40,7 +40,11 @@ use Illuminate\Support\Facades\View;
 
 @section( 'layout.dashboard.footer.inject' )
     @if ( $dashid === 'store' )
-    <script src="{{ asset( ns()->isProduction() ? '/js/dashboard.min.js' : '/js/dashboard.js' ) }}"></script>
+        @if ( ns()->isProduction() )
+            <!-- Something should be here -->
+        @else
+            @vite([ 'resources/ts/dashboard.ts' ])
+        @endif
     @elseif ( $dashid === 'cashier' )
     <script src="{{ asset( ns()->isProduction() ? '/js/cashier.min.js' : '/js/cashier.js' ) }}"></script>
     @endif

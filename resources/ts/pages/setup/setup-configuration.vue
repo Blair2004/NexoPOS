@@ -16,9 +16,10 @@
 </template>
 
 <script>
-import FormValidation from './../../libraries/form-validation';
-import { nsHttpClient, nsSnackBar } from "./../../bootstrap";
-import { nsRouter } from './../../setup';
+import FormValidation from '~/libraries/form-validation';
+import { nsHttpClient, nsSnackBar } from "~/bootstrap";
+import { nsRouter } from '~/setup';
+import { __ } from '~/libraries/lang';
 
 export default {
     data: () => ({

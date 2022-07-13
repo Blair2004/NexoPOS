@@ -9,28 +9,30 @@
             <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2 lg:border-b lg:border-t xl:border-none lg:py-1 lg:my-1">
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Weekly Sales' ) }}</span>
-                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeeklySales | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeeklySales, 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-1/2 lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Week Taxes' ) }}</span>
-                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekTaxes | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekTaxes, 'abbreviate' ) }}</h2>
                 </div>
             </div>
             <div class="flex w-full md:w-1/2 lg:w-full xl:w-1/2">
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Net Income' ) }}</span>
-                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekIncome | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekIncome, 'abbreviate' ) }}</h2>
                 </div>
                 <div class="px-4 w-full lg:w-1/2 flex flex-col items-center justify-center">
                     <span class="text-xs">{{ __( 'Week Expenses' ) }}</span>
-                    <h2 class="text-lg xl:text-xl font-bold">{{ totalWeekExpenses | currency( 'abbreviate' ) }}</h2>
+                    <h2 class="text-lg xl:text-xl font-bold">{{ nsCurrency( totalWeekExpenses, 'abbreviate' ) }}</h2>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
+import { nsCurrency, nsRawCurrency } from '~/filters/currency';
+import VueApexCharts from 'vue3-apexcharts';
 export default {
     name: 'ns-orders-chart',
     data() {
@@ -70,8 +72,13 @@ export default {
             report: null
         }
     },
+    components: {
+        VueApexCharts
+    },
     methods: {
-        __
+        __,
+        nsCurrency, 
+        nsRawCurrency,
     },
     mounted() {
         this.reportSubscription     =   Dashboard.weeksSummary.subscribe( data => {

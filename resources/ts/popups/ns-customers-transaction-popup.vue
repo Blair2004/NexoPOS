@@ -33,10 +33,10 @@
     </div>
 </template>
 <script>
-import closeWithOverlayClicked from "@/libraries/popup-closer";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import FormValidation from '@/libraries/form-validation';
-import { __ } from '@/libraries/lang';
+import closeWithOverlayClicked from "~/libraries/popup-closer";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import FormValidation from '~/libraries/form-validation';
+import { __ } from '~/libraries/lang';
 
 export default {
     mounted() {

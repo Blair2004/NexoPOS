@@ -112,13 +112,13 @@
     </div>
 </template>
 <script lang="ts">
-import { nsSnackBar } from '@/bootstrap';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { Popup } from '@/libraries/popup';
-import { __ } from '@/libraries/lang';
-import { HttpStatusResponse } from '@/interfaces/http-status-response';
-import { HttpCrudResponse } from '@/interfaces/http-crud-response';
-import nsOrdersFilterPopupVue from '@/popups/ns-orders-filter-popup.vue';
+import { nsSnackBar } from '~/bootstrap';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import { HttpStatusResponse } from '~/interfaces/http-status-response';
+import { HttpCrudResponse } from '~/interfaces/http-crud-response';
+import nsOrdersFilterPopupVue from '~/popups/ns-orders-filter-popup.vue';
 
 declare const nsCrudHandler;
 

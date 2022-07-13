@@ -1,6 +1,8 @@
 <script>
-import { nsHttpClient } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { nsHttpClient } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+
 export default {
     data() {
         return {
@@ -18,6 +20,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         close() {
             this.$popupParams.reject( false );
             this.$popup.close();
@@ -58,7 +61,7 @@ export default {
                     <div class="flex-col border-b border-info-primary py-2">
                         <div class="title font-semibold text-primary flex justify-between">
                             <span>{{ product.name }} (x{{ product.quantity }})</span>
-                            <span>{{ product.total_price | currency }}</span>
+                            <span>{{ nsCurrency( price ) }}</span>
                         </div>
                         <div class="text-sm text-primary">
                             <ul>

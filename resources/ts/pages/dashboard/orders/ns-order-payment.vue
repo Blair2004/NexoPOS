@@ -4,26 +4,26 @@
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center elevation-surface info border text-xl font-bold">
                     <span>{{ __( 'Total' ) }}</span>
-                    <span>{{ order.total | currency }}</span>
+                    <span>{{ nsCurrency( order.total ) }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface success border text-xl font-bold">
                     <span>{{ __( 'Paid' ) }}</span>
-                    <span>{{ order.tendered | currency }}</span>
+                    <span>{{ nsCurrency( order.tendered ) }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface error border text-xl font-bold">
                     <span>{{ __( 'Unpaid' ) }}</span>
-                    <span v-if="order.total - order.tendered > 0">{{ order.total - order.tendered | currency }}</span>
-                    <span v-if="order.total - order.tendered <= 0">{{ 0 | currency }}</span>
+                    <span v-if="order.total - order.tendered > 0">{{ nsCurrency( order.total - order.tendered ) }}</span>
+                    <span v-if="order.total - order.tendered <= 0">{{ nsCurrency( 0 ) }}</span>
                 </div>
             </div>
             <div class="px-2 w-full md:w-1/2">
                 <div class="my-1 h-12 py-1 px-2 flex justify-between items-center  elevation-surface warning border text-xl font-bold">
                     <span>{{ __( 'Customer Account' ) }}</span>
-                    <span>{{ order.customer.account_amount | currency }}</span>
+                    <span>{{ nsCurrency( order.customer.account_amount ) }}</span>
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
                     <div class="py-2">
                         <ns-field v-for="(field, index) of fields" :field="field" :key="index"></ns-field>
                         <div class="my-2 px-2 h-12 flex justify-end items-center border elevation-surface">
-                            {{ inputValue | currency }}
+                            {{ nsCurrency( inputValue ) }}
                         </div>
                         <ns-numpad :floating="true" @next="submitPayment( $event )" @changed="updateValue( $event )" :value="inputValue"></ns-numpad>
                     </div>
@@ -52,7 +52,7 @@
                 <ul>
                     <li v-for="payment of order.payments" :key="payment.id" class="p-2 flex items-center justify-between text-shite border elevation-surface mb-2">
                         <span>{{ paymentsLabels[ payment.identifier ] || __( 'Unknown' ) }}</span>
-                        <span>{{ payment.value | currency }}</span>
+                        <span>{{ nsCurrency( payment.value ) }}</span>
                     </li>
                 </ul>
             </div>
@@ -60,12 +60,14 @@
     </div>
 </template>
 <script>
-import nsNumpad from "@/components/ns-numpad.vue";
-import Labels from '@/libraries/labels';
-import FormValidation from '@/libraries/form-validation';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import Labels from '~/libraries/labels';
+import FormValidation from '~/libraries/form-validation';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
+import { nsCurrency } from '~/filters/currency';
+import { nsNumpad } from '~/components/components';
+
 export default {
     props: [ 'order' ],
     data() {
@@ -90,6 +92,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
 
         updateValue( value ) {
             this.inputValue     =   value;

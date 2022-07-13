@@ -65,7 +65,7 @@
 <script>
 import { nsHttpClient, nsSnackBar } from "../../bootstrap";
 import { map } from "rxjs/operators";
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: 'ns-modules',

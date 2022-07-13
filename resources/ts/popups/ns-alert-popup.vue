@@ -10,7 +10,7 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang'
+import { __ } from '~/libraries/lang'
 export default {
     data() {
         return {

@@ -20,11 +20,10 @@
     </div>
 </template>
 <script lang="ts">
-import FormValidation from '@/libraries/form-validation'
-import { __ } from '@/libraries/lang';
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import Vue from 'vue';
+import FormValidation from '~/libraries/form-validation';
+import { __ } from '~/libraries/lang';
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
 
 export default {
     data() {

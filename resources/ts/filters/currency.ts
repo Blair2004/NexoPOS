@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import NumeralJS from "numeral";
 import currency from 'currency.js';
 
@@ -6,8 +5,7 @@ declare const ns;
 declare const window;
 
 const precision     =   ( new Array( parseInt( ns.currency.ns_currency_precision ) ) ).fill('').map( _ => 0 ).join('');
-
-const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', locale = 'en' ) => {
+const nsCurrency    =   ( value, format = 'full', locale = 'en' ) => {
     let numeralFormat, currencySymbol;
 
     switch( ns.currency.ns_currency_prefered ) {
@@ -36,7 +34,7 @@ const nsCurrency        =   Vue.filter( 'currency', ( value, format = 'full', lo
 
     return `${ns.currency.ns_currency_position === 'before' ? currencySymbol : '' }${ newValue }${ns.currency.ns_currency_position === 'after' ? currencySymbol : '' }`;
 
-});
+}
 
 const nsRawCurrency     =   ( value ) => {
     const numeralFormat = `0.${precision}`;

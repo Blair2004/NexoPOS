@@ -26,10 +26,10 @@
 /**
  * @deprecated
  */
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
+import { nsSnackBar } from '~/bootstrap';
+import { __ } from '~/libraries/lang';
 
 export default {
     name: "ns-pos-coupons-popup",

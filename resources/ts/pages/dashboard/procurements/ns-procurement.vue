@@ -1,12 +1,12 @@
 <script>
-import FormValidation from '@/libraries/form-validation';
+import FormValidation from '~/libraries/form-validation';
 import { Subject, BehaviorSubject, forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
-import { nsSnackBar, nsHttpClient } from '@/bootstrap';
-import nsManageProducts from './manage-products';
-import { Tax } from "@/libraries/tax";
-import nsProcurementProductOptionsVue from '@/popups/ns-procurement-product-options.vue';
-import { __ } from '@/libraries/lang';
+import { nsSnackBar, nsHttpClient } from '~/bootstrap';
+import nsManageProducts from '~/pages/dashboard/procurements/manage-products.vue';
+import { Tax } from "~/libraries/tax";
+import nsProcurementProductOptionsVue from '~/popups/ns-procurement-product-options.vue';
+import { __ } from '~/libraries/lang';
 export default {
     name: 'ns-procurement',
     mounted() {

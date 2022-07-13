@@ -12,9 +12,9 @@
     </div>
 </template>
 <script>
-import { __ } from '@/libraries/lang';
-import popupResolver from '@/libraries/popup-resolver';
-import popupCloser from '@/libraries/popup-closer';
+import { __ } from '~/libraries/lang';
+import popupResolver from '~/libraries/popup-resolver';
+import popupCloser from '~/libraries/popup-closer';
 
 export default {
     data() {

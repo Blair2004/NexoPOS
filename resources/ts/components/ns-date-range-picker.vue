@@ -1,13 +1,12 @@
 <script lang="ts">
-import Vue from 'vue';
 import moment from "moment";
 import DateRangePicker from 'vue2-daterange-picker';
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 
 declare const ns;
 
-export default Vue.extend({
+export default {
     name: 'ns-date-range-picker',
     data: () => {
         return {
@@ -68,7 +67,7 @@ export default Vue.extend({
         }
     },
     props: [ 'placeholder', 'leading', 'type', 'field' ],
-})
+}
 </script>
 <template>
     <div class="flex flex-auto flex-col mb-2 ns-date-range-picker">

@@ -10,7 +10,7 @@
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Sub Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold text-secondary">{{ order.subtotal | currency }}</div>
+                        <div class="font-semibold text-secondary">{{ nsCurrency( order.subtotal ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -22,7 +22,7 @@
                                 <span class="text-white ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ order.discount | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.discount ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -30,7 +30,7 @@
                         <div>
                             <h4 class="text-semibold text-primary">{{ __( 'Shipping' ) }}</h4>
                         </div>
-                        <div class="font-semibold text-secondary">{{ order.shipping | currency }}</div>
+                        <div class="font-semibold text-secondary">{{ nsCurrency( order.shipping ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -40,7 +40,7 @@
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ order.total_coupons | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.total_coupons ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -48,7 +48,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Total' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.total | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.total ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -56,7 +56,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Taxes' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.tax_value | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.tax_value ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -64,7 +64,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Change' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.change | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.change ) }}</div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -72,7 +72,7 @@
                         <div>
                             <h4 class="text-semibold">{{ __( 'Paid' ) }}</h4>
                         </div>
-                        <div class="font-semibold">{{ order.tendered | currency }}</div>
+                        <div class="font-semibold">{{ nsCurrency( order.tendered ) }}</div>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                     <h4 class="text-semibold text-primary">{{ product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }}</p>
                 </div>
-                <div class="font-semibold text-secondary">{{ product.total_price | currency }}</div>
+                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
             </div>
 
             <div class="mb-2">
@@ -183,18 +183,18 @@
                     <h4 class="text-semibold text-primary">{{ product.order_product.name }} (x{{ product.quantity }})</h4>
                     <p class="text-secondary text-sm">{{ product.unit.name || 'N/A' }} | <span class="rounded-full px-2" :class="product.condition === 'damaged' ? 'bg-error-primary text-white' : 'bg-info-primary text-white'">{{ product.condition }}</span></p>
                 </div>
-                <div class="font-semibold text-secondary">{{ product.total_price | currency }}</div>
+                <div class="font-semibold text-secondary">{{ nsCurrency( product.total_price ) }}</div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import Labels from "@/libraries/labels";
-import { __ } from '@/libraries/lang';
-import { Popup } from '@/libraries/popup';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import nsOrdersRefundPopupVue from '@/popups/ns-orders-refund-popup.vue';
+import Labels from "~/libraries/labels";
+import { __ } from '~/libraries/lang';
+import { Popup } from '~/libraries/popup';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import nsOrdersRefundPopupVue from '~/popups/ns-orders-refund-popup.vue';
 export default {
     props: [ 'order' ],
     data() {

@@ -1,12 +1,12 @@
 <script>
 import moment from "moment";
-import nsDatepicker from "@/components/ns-datepicker";
-import { nsHttpClient, nsSnackBar } from '@/bootstrap';
-import { default as nsDateTimePicker } from '@/components/ns-date-time-picker';
-import { __ } from '@/libraries/lang';
-import FormValidation from '@/libraries/form-validation';
-import nsSelectPopupVue from '@/popups/ns-select-popup.vue';
-import nsPaginate from '@/components/ns-paginate.vue';
+import nsDatepicker from "~/components/ns-datepicker.vue";
+import { nsHttpClient, nsSnackBar } from '~/bootstrap';
+import { default as nsDateTimePicker } from '~/components/ns-date-time-picker.vue';
+import { __ } from '~/libraries/lang';
+import FormValidation from '~/libraries/form-validation';
+import nsSelectPopupVue from '~/popups/ns-select-popup.vue';
+import nsPaginate from '~/components/ns-paginate.vue';
 
 export default {
     name : 'ns-low-stock-report',

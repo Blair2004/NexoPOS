@@ -21,7 +21,7 @@
                             <h3 class="font-semibold mb-1">{{ order.code }}</h3>
                             <div>
                                 <ul class="flex -mx-1 text-sm text-primary">
-                                    <li class="px-1">{{ __( 'Total' ) }} : {{ refund.total | currency }}</li>
+                                    <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( refund.total ) }}</li>
                                     <li class="px-1">{{ __( 'By' ) }} : {{ refund.author.username }}</li>
                                 </ul>
                             </div>
@@ -43,7 +43,7 @@
                             <ul class="flex -mx-1 text-sm text-primary">
                                 <li class="px-1">{{ __( 'Condition' ) }} : {{ product.condition }}</li>
                                 <li class="px-1">{{ __( 'Quantity' ) }} : {{ product.quantity }}</li>
-                                <li class="px-1">{{ __( 'Total' ) }} : {{ product.total_price | currency }}</li>
+                                <li class="px-1">{{ __( 'Total' ) }} : {{ nsCurrency( product.total_price ) }}</li>
                             </ul>
                         </div>
                     </div>
@@ -53,11 +53,12 @@
     </div>
 </template>
 <script>
-import { __ } from "@/libraries/lang";
-import popupCloser from '@/libraries/popup-closer';
-import popupResolver from '@/libraries/popup-resolver';
-import { nsSnackBar } from '@/bootstrap';
-import Print from '@/libraries/print';
+import { __ } from "~/libraries/lang";
+import popupCloser from '~/libraries/popup-closer';
+import popupResolver from '~/libraries/popup-resolver';
+import { nsSnackBar } from '~/bootstrap';
+import Print from '~/libraries/print';
+import { nsCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-orders-refund-popup',
@@ -75,6 +76,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
         popupCloser,
         popupResolver,
 

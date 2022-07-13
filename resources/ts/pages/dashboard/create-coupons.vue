@@ -1,7 +1,7 @@
 <script>
 import FormValidation from '../../libraries/form-validation';
 import { nsSnackBar, nsHttpClient } from '../../bootstrap';
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 export default { 
     name: 'ns-create-coupons',
     mounted() {

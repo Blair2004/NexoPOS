@@ -59,8 +59,8 @@
                         </div>
                         <div class="card-body ns-tab-item rounded-br-lg rounded-bl-lg shadow p-2">
                             <div class="-mx-4 flex flex-wrap" v-if="! [ 'images', 'units', 'groups' ].includes( getActiveTabKey( variation.tabs ) )">
-                                <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields">
-                                    <div :key="index" class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
+                                <template v-for="( field, index ) of getActiveTab( variation.tabs ).fields" :key="index">
+                                    <div class="flex flex-col px-4 w-full md:w-1/2 lg:w-1/3">
                                         <ns-field :field="field"></ns-field>
                                     </div>
                                 </template>
@@ -140,10 +140,10 @@
     </div>
 </template>
 <script>
-import FormValidation from '@/libraries/form-validation'
-import { nsSnackBar, nsHttpClient } from '@/bootstrap';
-import nsPosConfirmPopupVue from '@/popups/ns-pos-confirm-popup.vue';
-import { __ } from '@/libraries/lang';
+import FormValidation from '~/libraries/form-validation'
+import { nsSnackBar, nsHttpClient } from '~/bootstrap';
+import nsPosConfirmPopupVue from '~/popups/ns-pos-confirm-popup.vue';
+import { __ } from '~/libraries/lang';
 import nsProductGroup from './ns-product-group.vue';
 export default {
     components: {

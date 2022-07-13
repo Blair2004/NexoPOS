@@ -6,14 +6,14 @@
                     <ns-field v-for="( field, key ) of firstPartFields" v-bind:key="key" :field="field" 
                         @change="form.validateField( field )">
                         <span>{{ field.label }}</span>
-                        <template slot="description">{{ field.description }}</template>
+                        <slot name="description">{{ field.description }}</slot>
                     </ns-field>
                 </div>
                 <div class="md:px-4 md:w-1/2 w-full">
                     <ns-field v-for="( field, key ) of secondPartFields" v-bind:key="key" :field="field" 
                         @change="form.validateField( field )">
                         <span>{{ field.label }}</span>
-                        <template slot="description">{{ field.description }}</template>
+                        <slot name="description">{{ field.description }}</slot>
                     </ns-field>
                 </div>
             </div>
@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import FormValidation from './../../libraries/form-validation';
-import { nsRouter } from './../../setup';
+import FormValidation from '~/libraries/form-validation';
+import { nsRouter } from '~/setup';
 
 export default {
     data: () => ({

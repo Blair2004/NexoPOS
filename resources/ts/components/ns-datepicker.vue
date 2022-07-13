@@ -48,7 +48,7 @@
 </template>
 <script>
 import moment from "moment";
-import { __ } from '@/libraries/lang';
+import { __ } from '~/libraries/lang';
 export default {
     name: "ns-datepicker",
     props: [ 'label', 'date' ],

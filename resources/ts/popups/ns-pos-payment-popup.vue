@@ -1,16 +1,16 @@
 <script>
-import FormValidation from '@/libraries/form-validation';
-import resolveIfQueued from "@/libraries/popup-resolver";
-import { default as CashPayment } from "@/pages/dashboard/pos/payments/cash-payment";
-import { default as CreditCardPayment } from "@/pages/dashboard/pos/payments/creditcard-payment";
-import { default as BankPayment } from '@/pages/dashboard/pos/payments/bank-payment.vue';
-import { default as AccountPayment } from '@/pages/dashboard/pos/payments/account-payment.vue';
-import { Popup } from '@/libraries/popup';
+import { nsSnackBar } from '~/bootstrap';
+import resolveIfQueued from "~/libraries/popup-resolver";
+import { Popup } from '~/libraries/popup';
+import { __ } from '~/libraries/lang';
+import CashPayment from "~/pages/dashboard/pos/payments/cash-payment.vue";
+import CreditCardPayment from "~/pages/dashboard/pos/payments/creditcard-payment.vue";
+import BankPayment from '~/pages/dashboard/pos/payments/bank-payment.vue';
+import AccountPayment from '~/pages/dashboard/pos/payments/account-payment.vue';
 import nsPosLoadingPopupVue from './ns-pos-loading-popup.vue';
-import { nsSnackBar } from '@/bootstrap';
-import { __ } from '@/libraries/lang';
-import samplePaymentVue from '@/pages/dashboard/pos/payments/sample-payment.vue';
+import samplePaymentVue from '~/pages/dashboard/pos/payments/sample-payment.vue';
 import nsSelectPopupVue from './ns-select-popup.vue';
+import { nsCurrency, nsRawCurrency } from '~/filters/currency';
 
 export default {
     name: 'ns-pos-payment',
@@ -199,7 +199,7 @@ export default {
                             <li :key="index" v-for="(payment,index) of order.payments" class="p-2 flex justify-between mb-2 items-center">
                                 <span>{{ payment.label}}</span>
                                 <div class="flex items-center">
-                                    <span>{{ payment.value | currency }}</span>
+                                    <span>{{ nsCurrency( payment.value ) }}</span>
                                     <button @click="deletePayment( payment )" class="rounded-full  h-8 w-8 flex items-center justify-center ml-2">
                                         <i class="las la-trash-alt"></i>
                                     </button>
@@ -229,7 +229,7 @@ export default {
                             <span ><i class="las la-cash-register"></i> {{ __( 'Submit Payment' ) }}</span>
                         </ns-button>
                         <ns-button v-if="order.tendered < order.total" @click="submitOrder({ payment_status: 'unpaid' })" :type="order.tendered >= order.total ? 'success' : 'info'">
-                            <span><i class="las la-bookmark"></i> {{ __( 'Layaway' ) }} &mdash; {{ expectedPayment | currency }}</span>
+                            <span><i class="las la-bookmark"></i> {{ __( 'Layaway' ) }} &mdash; {{ nsCurrency( expectedPayment ) }}</span>
                         </ns-button>
                     </div>
                 </div>
