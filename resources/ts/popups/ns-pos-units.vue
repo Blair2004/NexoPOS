@@ -15,7 +15,7 @@
                     <div class="h-0 w-full">
                         <div class="relative w-full flex items-center justify-center -top-10 h-20 py-2 flex-col overlay">
                             <h3 class="font-bold text-primary py-2 text-center">{{ unitQuantity.unit.name }} ({{ unitQuantity .quantity }})</h3>
-                            <p class="text-sm font-medium text-primary">{{ displayRightPrice( unitQuantity ) | currency }}</p>
+                            <p class="text-sm font-medium text-primary">{{ nsCurrency( displayRightPrice( unitQuantity ) ) }}</p>
                         </div>
                     </div>
                 </div>
@@ -27,8 +27,10 @@
     </div>
 </template>
 <script>
+import { nsCurrency } from '~/filters/currency';
 import { nsHttpClient, nsSnackBar } from '~/bootstrap';
 import { __ } from '~/libraries/lang';
+
 export default {
     data() {
         return {
@@ -85,6 +87,7 @@ export default {
     },
     methods: {
         __,
+        nsCurrency,
 
         displayRightPrice( item ){
             return POS.getSalePrice( item, this.$popupParams.product.$original() );

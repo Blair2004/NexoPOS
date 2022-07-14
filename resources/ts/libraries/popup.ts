@@ -1,6 +1,9 @@
 import { Subject } from "rxjs";
+import { createApp, shallowRef } from "vue";
+import popupInjector from "./popup-injector";
 
 declare const document;
+declare const window;
 
 export class Popup {
     private config  =   {
@@ -74,15 +77,20 @@ export class Popup {
          */
         this.container.addEventListener( 'click', ( event ) => {
             /**
-             * this will emit an even
-             * when the overlay is clicked
+             * This means we've strictly clicked on the container
              */
-            this.event.next({
-                event: 'click-overlay',
-                value: true
-            });
-
-            event.stopPropagation();
+            if ( Object.values( event.target.classList ).includes( 'is-popup' ) ) {
+                /**
+                 * this will emit an even
+                 * when the overlay is clicked
+                 */
+                this.event.next({
+                    event: 'click-overlay',
+                    value: true
+                });
+    
+                event.stopPropagation();
+            }
         });
 
         /**
@@ -100,43 +108,36 @@ export class Popup {
 
         this.popupBody.setAttribute( 'class', 'zoom-out-entrance popup-body' );
         this.popupBody.setAttribute( 'data-index', actualLength );
-        this.popupBody.innerHTML            =   '<div class="vue-component"></div>';
+        this.popupBody.innerHTML            =   '<ns-popup-component></ns-popup-component>';
         this.container.appendChild( this.popupBody );  
 
         document.body.appendChild( this.container );
-
+        
         /**
          * We'll provide a reference of the
          * wrapper so that the component
          * can manipulate that.
          */
-        const componentClass        =   Vue.extend( component );
-        this.instance               =   new componentClass({
-            propsData:  {
-                popup   :   this, // @deprecated
-            }
-        });
+        this.instance        =   createApp({});
+
+        this.instance.use( popupInjector, { params, $popup : this, $popupParams: params });
 
         /**
-         * Let's intanciate the component
-         * and mount it
+         * Registering the custom components
          */
-        this.instance.template          =   component?.options?.template || undefined;
-        this.instance.render            =   component.render || undefined;
-        this.instance.methods           =   component?.options?.methods || component?.methods;
-        this.instance.data              =   component?.options?.data || component?.data;
-        this.instance.$popup            =   this;
-        this.instance.$popupParams      =   params;
-        this.instance.$mount( `#${this.container.id} .vue-component` );
+        for( let name in window.nsComponents ) {
+            this.instance.component( name, window.nsComponents[ name ] );
+        }
+
+        this.instance.component( 'ns-popup-component', component );
+
+        /**
+         * Mounting the final app.
+         */
+        this.instance.mount( `#${this.container.id}` );
     }
 
     close() {
-        /**
-         * Let's start by destorying the
-         * Vue component attached to the popup
-         */
-        this.instance.$destroy();
-        
         /**
          * The Subject we've initialized earlier
          * need to be closed
@@ -159,12 +160,18 @@ export class Popup {
         this.popupBody          =   document.querySelector( selector );
         this.popupBody.classList.remove( 'zoom-out-entrance' );
         this.popupBody.classList.add( 'zoom-in-exit' );
-
+ 
         this.container          =   document.querySelector( `${this.popupSelector}` );
         this.container.classList.remove( 'is-popup' );
 
+        /**
+         * Let's start by destorying the
+         * Vue component attached to the popup
+         */
+        
         setTimeout( () => {
+            this.instance.unmount();
             this.container.remove();
-        }, 300 ); // as by default the animation is set to 500ms
+        }, 250 ); // as by default the animation is set to 500ms
     }
 }

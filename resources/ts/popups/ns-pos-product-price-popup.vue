@@ -33,6 +33,7 @@ export default {
             product: {},
             optionsSubscription: null,
             options: {},
+            price: 0,
         }
     },
     mounted() {

@@ -131,7 +131,6 @@ if ( Auth::check() ) {
                     {!! Hook::filter( 'ns-footer-signature', sprintf( __( 'You\'re using <a tager="_blank" href="%s" class="hover:text-blue-400 mx-1 inline-block">NexoPOS %s</a>' ), 'https://my.nexopos.com/en', config( 'nexopos.version' ) ) ) !!}
                 </div>
             </div>
-            <div id="dashboard-popup"></div>
         </div>
     </div>
     @section( 'layout.dashboard.footer' )

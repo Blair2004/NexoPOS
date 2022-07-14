@@ -22,7 +22,7 @@ export default {
         return {
         }
     },
-    props: [ 'name', 'placeholder', 'field' ],
+    props: [ 'name', 'placeholder', 'field', 'leading' ],
     computed: {
         hasError() {
             if ( this.field.errors !== undefined && this.field.errors.length > 0 ) {

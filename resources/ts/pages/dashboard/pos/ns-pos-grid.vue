@@ -102,7 +102,7 @@ export default {
             orderSubscription: null,
             visibleSectionSubscriber: null,
             currentCategory: null,
-            settings: false,
+            settings: {},
             settingsSubscriber: null,
             options: false,
             optionsSubscriber: null,
@@ -110,9 +110,6 @@ export default {
             searchTimeout: null,
             gridItemsWidth: 0,
             gridItemsHeight:0,
-            screenSubscriber: null,
-            rebuildGridTimeout: null,
-            // rebuildGridComplete: false,
             isLoading: false,
         }
     },
@@ -140,35 +137,22 @@ export default {
 
         this.settingsSubscriber         =   POS.settings.subscribe( settings => {
             this.settings               =   settings;
+            this.$forceUpdate();
         });
 
         this.optionsSubscriber          =   POS.options.subscribe( options => {
             this.options                =   options;
+            this.$forceUpdate();
         });
 
         this.breadcrumbsSubsribe        =   POS.breadcrumbs.subscribe( ( breadcrumbs ) => {
             this.breadcrumbs            =   breadcrumbs;
+            this.$forceUpdate();
         });
         
         this.visibleSectionSubscriber   =   POS.visibleSection.subscribe( section => {
             this.visibleSection         =   section;
-        });
-
-        /**
-         * Screen subscriber, this ensure the POS
-         * can quickly detect the type of the viewport.
-         */
-        /**
-         * @deprecated
-         */
-        this.screenSubscriber       =   POS.screen.subscribe( screen => {
-            return;
-            clearTimeout( this.rebuildGridTimeout );
-            this.rebuildGridComplete    =   false;
-            this.rebuildGridTimeout     =   setTimeout( () => {
-                this.rebuildGridComplete     =   true;
-                this.computeGridWidth();
-            }, 500 );
+            this.$forceUpdate();
         });
 
         this.orderSubscription      =   POS.order.subscribe( order => this.order = order );
