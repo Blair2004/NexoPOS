@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca8d5c365b1cc9d41e4374d06b1d8d32",
+    "content-hash": "5bb1551092b055c8f508555100b4c435",
     "packages": [
         {
             "name": "beyondcode/laravel-websockets",
@@ -8837,16 +8837,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v0.2.0",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "84bfbf3c10e65ac55cea001d0032a9458b17db9d"
+                "reference": "df89c86ce4515f28b70feaf9ad59e8c3bdb888fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/84bfbf3c10e65ac55cea001d0032a9458b17db9d",
-                "reference": "84bfbf3c10e65ac55cea001d0032a9458b17db9d",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/df89c86ce4515f28b70feaf9ad59e8c3bdb888fd",
+                "reference": "df89c86ce4515f28b70feaf9ad59e8c3bdb888fd",
                 "shasum": ""
             },
             "require": {
@@ -8899,7 +8899,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2022-06-24T19:40:14+00:00"
+            "time": "2022-07-14T14:50:04+00:00"
         },
         {
             "name": "mockery/mockery",
