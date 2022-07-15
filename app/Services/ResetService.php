@@ -122,7 +122,14 @@ class ResetService
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
 
-        Migration::truncate();
+        /**
+         * It makes sense to truncate this
+         * only if that table exists. That will prevent
+         * unexpected error while testing.
+         */
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Migration::truncate();
+        }
 
         exec( 'rm -rf public/storage' );
 
