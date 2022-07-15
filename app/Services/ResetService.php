@@ -6,6 +6,7 @@ use App\Classes\Hook;
 use App\Classes\Schema;
 use App\Events\AfterHardResetEvent;
 use App\Events\BeforeHardResetEvent;
+use App\Models\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Jackiedo\DotenvEditor\Facades\DotenvEditor;
@@ -120,6 +121,15 @@ class ResetService
 
         Artisan::call( 'key:generate', [ '--force' => true ] );
         Artisan::call( 'ns:cookie generate' );
+
+        /**
+         * It makes sense to truncate this
+         * only if that table exists. 
+         * That will prevent unexpected error while testing.
+         */
+        if ( Schema::hasTable( 'migrations' ) ) {
+            Migration::truncate();
+        }
 
         exec( 'rm -rf public/storage' );
 

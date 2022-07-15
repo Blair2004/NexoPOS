@@ -147,7 +147,7 @@ class DemoService extends DemoCoreService
                         'tax_type'          =>  'inclusive',
                         'images'            =>  [
                             [
-                                'primary'       =>  true,
+                                'featured'      =>  true,
                                 'url'           =>  asset( $product->image ),
                             ],
                         ],
