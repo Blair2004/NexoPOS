@@ -124,8 +124,8 @@ class ResetService
 
         /**
          * It makes sense to truncate this
-         * only if that table exists. That will prevent
-         * unexpected error while testing.
+         * only if that table exists. 
+         * That will prevent unexpected error while testing.
          */
         if ( Schema::hasTable( 'migrations' ) ) {
             Migration::truncate();
