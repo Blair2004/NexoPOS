@@ -125,6 +125,10 @@ class ProcurementService
                 $procurement->$field = $value;
             }
 
+            if ( ! empty( $procurement->created_at ) || ! empty( $procurement->updated_at ) ) {
+                $procurement->timestamps    =   false;
+            }
+
             $procurement->author = Auth::id();
             $procurement->cost = 0;
             $procurement->save();
@@ -201,6 +205,10 @@ class ProcurementService
 
             foreach ( $data[ 'general' ] as $field => $value ) {
                 $procurement->$field = $value;
+            }
+
+            if ( ! empty( $procurement->created_at ) || ! empty( $procurement->updated_at ) ) {
+                $procurement->timestamps    =   false;
             }
 
             $procurement->author = Auth::id();

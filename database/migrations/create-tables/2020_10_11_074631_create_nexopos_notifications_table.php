@@ -4,6 +4,15 @@ use App\Classes\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
+/**
+ * @property int user_id
+ * @property string identifier
+ * @property int title
+ * @property string description
+ * @property string url
+ * @property int source
+ * @property bool dismissable
+ */
 class CreateNexoposNotificationsTable extends Migration
 {
     /**

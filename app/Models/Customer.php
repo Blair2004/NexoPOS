@@ -5,6 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int id
+ * @property string name
+ * @property string surname
+ * @property string description
+ * @property int author
+ * @property string gender
+ * @property string phone
+ * @property string email
+ * @property string pobox
+ * @property int group_id
+ * @property string birth_date
+ * @property float purchases_amount
+ * @property float owed_amount
+ * @property float credit_limit_amount
+ * @property float account_amount
+ */
 class Customer extends NsModel
 {
     use HasFactory;

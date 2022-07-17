@@ -149,6 +149,7 @@ class TestService
                 'delivery_status'       =>  Procurement::DELIVERED,
                 'author'                =>  Auth::id(), // @todo is that required
                 'automatic_approval'    =>  1,
+                'created_at'            =>  $date->toDateTimeString()
             ],
             'products'  =>  Product::withStockEnabled()
                 ->with( 'unitGroup' )
