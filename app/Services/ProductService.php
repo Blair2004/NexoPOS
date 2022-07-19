@@ -29,33 +29,14 @@ use Illuminate\Support\Str;
 
 class ProductService
 {
-    /** @param TaxService */
-    protected $taxService;
-
-    /** @param BarcodeService */
-    protected $barcodeService;
-
-    /** @param ProductCategoryService */
-    protected $categoryService;
-
-    /** @param CurrencyService */
-    protected $currency;
-
-    /** @param UnitService */
-    protected $unitService;
-
     public function __construct(
-        ProductCategoryService $category,
-        TaxService $tax,
-        CurrencyService $currency,
-        UnitService $unit,
-        BarcodeService $barcodeService
+        protected ProductCategoryService $categoryService,
+        protected TaxService $taxService,
+        protected CurrencyService $currency,
+        protected UnitService $unitService,
+        protected BarcodeService $barcodeService
     ) {
-        $this->categoryService = $category;
-        $this->taxService = $tax;
-        $this->unitService = $unit;
-        $this->currency = $currency;
-        $this->barcodeService = $barcodeService;
+        // ...
     }
 
     /**
@@ -1587,6 +1568,25 @@ class ProductService
             'message'   =>  sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
             'data'      =>  compact( 'result' ),
         ];
+    }
+
+    /**
+     * Will return the last purchase price
+     * defined for the provided product
+     * @param Product $product
+     * @return float
+     */
+    public function getLastPurchasePrice( Product $product )
+    {
+        $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
+            ->orderBy( 'id', 'desc' )
+            ->first();
+
+        if ( $procurementProduct instanceof ProcurementProduct ) {
+            return $procurementProduct->purchase_price;
+        }
+
+        return 0;
     }
 
     /**
