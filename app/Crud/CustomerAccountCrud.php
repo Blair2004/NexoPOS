@@ -212,6 +212,12 @@ class CustomerAccountCrud extends CrudService
         Event::listen( CrudBeforeExportEvent::class, [ $this, 'addFooterSummary' ]);
     }
 
+    public function hook( $query ): void
+    {
+        $query->orderBy( 'id', 'desc' );
+        $query->where( 'nexopos_customers_account_history.customer_id', request()->query( 'customer_id' ) );
+    }
+
     public function addFooterSummary( CrudBeforeExportEvent $event )
     {
         // total mention
