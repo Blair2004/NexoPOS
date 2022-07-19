@@ -5,6 +5,7 @@ const nsInput      =   Vue.component( 'ns-input', {
         }
     },
     mounted() {
+        // ...
     },
     computed: {
         hasError() {

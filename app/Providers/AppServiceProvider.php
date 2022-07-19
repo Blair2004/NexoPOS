@@ -49,7 +49,6 @@ class AppServiceProvider extends ServiceProvider
     {
         include_once base_path() . '/app/Services/HelperFunctions.php';
 
-        // save Singleton for options
         $this->app->singleton( Options::class, function() {
             return new Options;
         });

@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\ResponseReadyEvent;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class ClearRequestCacheMiddleware
 {
@@ -19,7 +19,11 @@ class ClearRequestCacheMiddleware
     {
         $response = $next($request);
 
-        Cache::forget( 'ns-core-installed' );
+        /**
+         * In case any opeartion should occurs
+         * once the response is about to bet sent.
+         */
+        ResponseReadyEvent::dispatch( $response );
 
         return $response;
     }

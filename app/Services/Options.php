@@ -78,7 +78,7 @@ class Options
     {
         $this->options = [];
 
-        if ( Helper::installed() ) {
+        if ( Helper::installed() && empty( $this->rawOptions ) ) {
             $this->rawOptions = $this->option()
                 ->get()
                 ->mapWithKeys( function( $option ) {

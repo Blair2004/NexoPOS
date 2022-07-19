@@ -302,22 +302,6 @@ class OrdersService
                     );
                 }
             }
-
-            $instalments->each( function( $instalment ) {
-                if ( ns()->date->copy()->startOfDay()->greaterThan( Carbon::parse( $instalment[ 'date' ] ) ) ) {
-                    throw new NotAllowedException(
-                        sprintf( __( 'An instalment has an invalid date of %s, which shouldn\'t be prior the current day.' ), $instalment[ 'date' ] )
-                    );
-                }
-            });
-
-            $paidToday = $instalments->map( function( $instalment ) {
-                if ( ns()->date->copy()->isSameDay( Carbon::parse( $instalment[ 'date' ] ) ) ) {
-                    return (float) $instalment[ 'amount' ];
-                }
-
-                return 0;
-            });
         }
     }
 

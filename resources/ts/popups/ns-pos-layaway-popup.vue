@@ -211,13 +211,27 @@ export default {
             this.$popup.close();
         },
         skipInstalments() {
-            this.order.instalments  =   [{
-                amount: this.expectedPayment,
-                date: ns.date.current
-            }];
+            /**
+             * instalments should be registered
+             * only if there is a valid minimal
+             * payment required.
+             */
+            if ( this.expectedPayment > 0 ) {
+                this.order.instalments  =   [{
+                    amount: this.expectedPayment,
+                    date: ns.date.current
+                }];
+                this.order.final_payment_date   =   this.order.instalments.reverse()[0].date;
+                this.order.total_instalments    =   this.order.instalments.length;
+            } else {
+                /**
+                 * the order should be 
+                 * due from this moment
+                 */
+                this.order.final_payment_date   =   ns.date.current;
+                this.order.total_instalments    =   0;
+            }
 
-            this.order.final_payment_date   =   this.order.instalments.reverse()[0].date;
-            this.order.total_instalments    =   this.order.instalments.length;
 
             this.$popup.close();
             
