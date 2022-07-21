@@ -164,6 +164,23 @@ class CrudService
     }
 
     /**
+     * Will submit a request to the current
+     * crud instance using the input provided
+     * 
+     * @param array $inputs
+     * @param int $id
+     * @return array $response
+     */
+    public function submit( $inputs, $id = null )
+    {
+        return $this->submitRequest(
+            namespace: $this->getNamespace(),
+            inputs: $inputs,
+            id: $id
+        );
+    }
+
+    /**
      * Submit a prepared request to a crud instance
      *
      * @param string $namespace
@@ -331,8 +348,9 @@ class CrudService
          */
         return [
             'status'    =>  'success',
-            'entry'     =>  $entry,
+            'entry'     =>  $entry, // deprecated
             'data'      =>  [
+                'entry'     =>  $entry, 
                 'editUrl'   =>  str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
             ],
             'message'   =>  $id === null ? __( 'A new entry has been successfully created.' ) : __( 'The entry has been successfully updated.' ),
