@@ -481,13 +481,13 @@ class ProductCrud extends CrudService
                                 return [
                                     [
                                         'type'          =>  'media',
-                                        'name'          =>  'image',
+                                        'name'          =>  'url',
                                         'label'         =>  __( 'Image' ),
                                         'value'         =>  $gallery->url,
                                         'description'   =>  __( 'Choose an image to add on the product gallery' ),
                                     ], [
                                         'type'          =>  'switch',
-                                        'name'          =>  'primary',
+                                        'name'          =>  'featured',
                                         'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
                                         'label'         =>  __( 'Is Primary' ),
                                         'value'         =>  (int) $gallery->featured,

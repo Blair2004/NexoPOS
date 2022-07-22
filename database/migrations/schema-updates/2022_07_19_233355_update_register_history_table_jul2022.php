@@ -21,6 +21,12 @@ return new class extends Migration
                 $table->float( 'balance_after', 18, 5 )->change();
             }
         });
+
+        Schema::table( 'nexopos_users', function( Blueprint $table ) {
+            if ( Schema::hasColumn( 'nexopos_users', 'total_sales' ) ) {
+                $table->float( 'total_sales', 18, 5 )->change();
+            }
+        });
     }
 
     /**

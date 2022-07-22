@@ -34,7 +34,7 @@ class CreateUsersTable extends Migration
                 $table->string( 'activation_token' )->nullable();
                 $table->datetime( 'activation_expiration' )->nullable();
                 $table->integer( 'total_sales_count' )->default(0);
-                $table->float( 'total_sales' )->default(0);
+                $table->float( 'total_sales', 18, 5 )->default(0);
                 $table->rememberToken();
                 $table->timestamps();
             });
