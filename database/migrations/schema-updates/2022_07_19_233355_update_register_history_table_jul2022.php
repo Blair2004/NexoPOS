@@ -27,6 +27,12 @@ return new class extends Migration
                 $table->float( 'total_sales', 18, 5 )->change();
             }
         });
+
+        Schema::table( 'nexopos_orders', function( Blueprint $table ) {
+            if ( ! Schema::hasColumn( 'nexopos_orders', 'support_instalments' ) ) {
+                $table->boolean( 'support_instalments' )->default(true);
+            }
+        });
     }
 
     /**

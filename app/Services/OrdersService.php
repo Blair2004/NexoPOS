@@ -1454,6 +1454,7 @@ class OrdersService
         $order->payment_status = $paymentStatus;
         $order->delivery_status = 'pending';
         $order->process_status = 'pending';
+        $order->support_instalments = $fields[ 'support_instalments' ] ?? true; // by default instalments are supported
         $order->author = $fields[ 'author' ] ?? Auth::id(); // the author can now be changed
         $order->title = $fields[ 'title' ] ?? null;
         $order->tax_value = $this->currencyService->getRaw( $fields[ 'tax_value' ] ?? 0 );

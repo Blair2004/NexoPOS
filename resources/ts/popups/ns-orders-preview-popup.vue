@@ -195,7 +195,7 @@ export default nsOrderPreviewPopup;
                 <!-- End Refund -->
 
                 <!-- Instalment -->
-                <ns-tabs-item v-if="[ 'partially_paid' ].includes( order.payment_status )" :label="__( 'Installments' )" identifier="instalments" class="flex overflow-y-auto">
+                <ns-tabs-item v-if="[ 'partially_paid' ].includes( order.payment_status ) && order.support_instalments" :label="__( 'Installments' )" identifier="instalments" class="flex overflow-y-auto">
                     <ns-order-instalments @changed="refresh()" :order="order"></ns-order-instalments>
                 </ns-tabs-item>
                 <!-- End Instalment -->

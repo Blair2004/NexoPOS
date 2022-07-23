@@ -230,6 +230,7 @@ export default {
                  */
                 this.order.final_payment_date   =   ns.date.current;
                 this.order.total_instalments    =   0;
+                this.order.support_instalments  =   false;
             }
 
 
