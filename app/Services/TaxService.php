@@ -422,7 +422,7 @@ class TaxService
             } else {
                 $gross_price = $this->getGrossPriceFromNetPriceUsingGroup( $orderProduct->unit_price - $discount, $taxGroup );
 
-                $orderProduct->net_price = $orderProduct->unit_price - $discount;
+                $orderProduct->net_price = ns()->currency->define( $orderProduct->unit_price )->subtractBy( $discount )->getRaw();
                 $orderProduct->gross_price = $gross_price;
                 $orderProduct->tax_value = ( $orderProduct->gross_price - $orderProduct->net_price ) * $orderProduct->quantity;
             }
@@ -459,6 +459,10 @@ class TaxService
      */
     public function getGrossPriceFromNetPrice( $net_price, $rate )
     {
+        if( ( int ) $net_price == 0 ) {
+            return 0;
+        }
+
         return $net_price * ( 100 + $rate ) / 100;
     }
 
