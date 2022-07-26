@@ -216,18 +216,20 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        return $this->bcround( ( $value === null ? $this->value : $value ), $this->decimal_precision );
+        $output     =   ( float ) $this->bcround( ( $value === null ? $this->value : $value ), 10 );
+        return $output === 0.0 ? 0 : $output;
     }
 
     /**
      * Will return the full raw without
      * rounding.
      *
+     * @deprecated
      * @return float $value
      */
-    public function getFullRaw()
+    public function getFullRaw( $value = null )
     {
-        return (float) $this->value;
+        return (float) ( $value === null ? $this->value : $value );
     }
 
     /**

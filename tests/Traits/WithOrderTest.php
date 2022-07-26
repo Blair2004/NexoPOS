@@ -34,6 +34,8 @@ use App\Services\UnitService;
 use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
+use stdClass;
 
 trait WithOrderTest
 {
@@ -461,7 +463,6 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
 
-        $response->dump();
         $response->assertStatus( 200 );
 
         return $response = json_decode( $response->getContent(), true );
@@ -505,7 +506,7 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  1,
+                'customer_id'           =>  Customer::first()->id,
                 'type'                  =>  [ 'identifier' => 'takeaway' ],
                 'discount_type'         =>  'percentage',
                 'discount_percentage'   =>  2.5,
@@ -544,6 +545,8 @@ trait WithOrderTest
         $response->assertJsonPath( 'data.order.payment_status', Order::PAYMENT_PAID );
         $response = json_decode( $response->getContent(), true );
         $this->assertTrue( $response[ 'data' ][ 'order' ][ 'payments' ][0][ 'identifier' ] === 'paypal-payment', 'Invalid payment identifier detected.' );
+
+        return $response;
     }
 
     protected function attemptCreateOrderPaidWithCustomerBalance()
@@ -874,9 +877,13 @@ trait WithOrderTest
                     ->additionateBy( $orderData[ 'shipping' ] )
                     ->getRaw();
 
-                $response->assertJsonPath( 'data.order.subtotal', $currency->getRaw( $orderData[ 'subtotal' ] ) );
+                $this->assertEquals( $currency->getRaw(
+                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.subtotal' )
+                ), $currency->getRaw( $orderData[ 'subtotal' ] ) );
 
-                $response->assertJsonPath( 'data.order.total', $currency->define( $netsubtotal )
+                $this->assertEquals( $currency->getRaw(
+                    Arr::get( $singleResponse[ 'order-creation' ], 'data.order.total' )
+                ), $currency->define( $netsubtotal )
                     ->additionateBy( $orderData[ 'shipping' ] )
                     ->getRaw()
                 );
@@ -898,10 +905,10 @@ trait WithOrderTest
                 $customerSecondPurchases = $customer->purchases_amount;
                 $customerSecondOwed = $customer->owed_amount;
 
-                if ( (float) trim( $customerFirstPurchases + ( $orderData[ 'payments' ][0][ 'value' ] ?? 0 ) ) != (float) trim( $customerSecondPurchases ) ) {
+                if ( (float) trim( $customerFirstPurchases + ( $total ?? 0 ) ) != (float) trim( $customerSecondPurchases ) ) {
                     throw new Exception(
                         sprintf(
-                            __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Sub total : %s' ),
+                            __( 'The customer purchase hasn\'t been updated. Expected %s Current Value %s. Total : %s' ),
                             $customerFirstPurchases + $total,
                             $customerSecondPurchases,
                             $total
@@ -1129,16 +1136,43 @@ trait WithOrderTest
     protected function attemptDeleteOrder()
     {
         /**
+         * @var TestService
+         */
+        $testService    =   app()->make( TestService::class );
+        $customer       =   Customer::get()->random();
+        
+        /**
+         * We would like to check easilly
+         * by reset the customer counter
+         */
+        $customer->purchases_amount     =   0;
+        $customer->save();
+
+        $data          =   $testService->prepareOrder(
+            orderDetails: [
+                'customer_id'   =>  $customer->id
+            ],
+            date: ns()->date->now()
+        );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+            ->json( 'POST', 'api/nexopos/v4/orders', $data );
+
+        $order          =   ( object ) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
+        $order          =   Order::with([ 'products', 'user' ])->find( $order->id );
+        $refreshed      =   $customer->fresh();
+
+        $this->assertTrue( $customer->purchases_amount < $refreshed->purchases_amount, 'The customer balance hasn\'t been updated.' );
+
+        /**
          * @var ProductService
          */
         $productService = app()->make( ProductService::class );
 
-        $order = Order::paid()->first();
         $products = $order->products
             ->filter( fn( $product ) => $product->product_id > 0 )
             ->map( function( $product ) use ( $productService ) {
                 $product->previous_quantity = $productService->getQuantity( $product->product_id, $product->unit_id );
-
                 return $product;
             });
 
@@ -1164,6 +1198,14 @@ trait WithOrderTest
                     $order->id
                 )
             );
+
+            /**
+             * let's check if the purchase amount 
+             * for the customer has been updated accordingly
+             */
+            $newCustomer    =   $customer->fresh();
+
+            $this->assertEquals( $newCustomer->purchases_amount, $customer->purchases_amount, 'The customer total purchase hasn\'t changed after deleting the order.' );
 
             /**
              * let's check if flow entry has been removed
@@ -1289,12 +1331,12 @@ trait WithOrderTest
         $secondFetchCustomer = $firstFetchCustomer->fresh();
 
         if ( $currency->define( $secondFetchCustomer->purchases_amount )
-            ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'tendered' ] )
+            ->subtractBy( $responseData[ 'data' ][ 'order' ][ 'total' ] )
             ->getRaw() != $currency->getRaw( $firstFetchCustomer->purchases_amount ) ) {
             throw new Exception(
                 sprintf(
                     __( 'The purchase amount hasn\'t been updated correctly. Expected %s, got %s' ),
-                    $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'tendered' ],
+                    $secondFetchCustomer->purchases_amount - (float) $responseData[ 'data' ][ 'order' ][ 'total' ],
                     $firstFetchCustomer->purchases_amount
                 )
             );

@@ -16,12 +16,7 @@ class Procurement extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'procurements';
-
-    public $casts = [
-        'created_at'    =>  DateCast::class,
-        'updated_at'    =>  DateCast::class,
-    ];
-
+    
     /**
      * this status mention when the procurement
      * has been received

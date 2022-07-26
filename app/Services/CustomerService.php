@@ -357,8 +357,8 @@ class CustomerService
 
         $history->customer->save();
     }
-
-    public function increaseOrderPurchases( Customer $customer, $value )
+    
+    public function increasePurchases( Customer $customer, $value )
     {
         $customer->purchases_amount += $value;
         $customer->save();
@@ -367,6 +367,17 @@ class CustomerService
 
         return $customer;
     }
+
+    public function decreasePurchases( Customer $customer, $value )
+    {
+        $customer->purchases_amount -= $value;
+        $customer->save();
+
+        event( new CustomerAfterUpdatedEvent( $customer ) );
+
+        return $customer;
+    }
+
 
     public function canReduceCustomerAccount( Customer $customer, $value )
     {

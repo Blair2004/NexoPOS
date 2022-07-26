@@ -280,7 +280,6 @@ class OrdersService
             ! in_array( $fields[ 'payment_status' ] ?? null, [ Order::PAYMENT_HOLD ] )
         ) {
             $instalments = collect( $fields[ 'instalments' ] );
-            $total = Currency::define( $instalments->sum( 'amount' ) )->getRaw();
             $customer = Customer::find( $fields[ 'customer_id' ] );
 
             if ( (float) $customer->group->minimal_credit_payment > 0 ) {
@@ -497,7 +496,7 @@ class OrdersService
              * adjustment accordingly. In that case we'll use adjustment-return & sale.
              */
             if ( $order->payment_status !== Order::PAYMENT_HOLD ) {
-                $adjustments = $order->products->map( function( OrderProduct $product ) use ( $products ) {
+                $order->products->map( function( OrderProduct $product ) use ( $products ) {
                     $products = collect( $products )
                             ->mapWithKeys( fn( $product ) => [ $product[ 'id' ] => $product ] )
                             ->toArray();
@@ -528,44 +527,44 @@ class OrdersService
                      */
                     return false;
                 })
-                    ->filter( fn( $adjustment ) => $adjustment !== false )
-                    ->each( function( $adjustment ) use ( $order ) {
-                        if ( $adjustment[ 'operation' ] === 'remove' ) {
-                            $adjustment[ 'orderProduct' ]->quantity -= $adjustment[ 'quantity' ];
+                ->filter( fn( $adjustment ) => $adjustment !== false )
+                ->each( function( $adjustment ) use ( $order ) {
+                    if ( $adjustment[ 'operation' ] === 'remove' ) {
+                        $adjustment[ 'orderProduct' ]->quantity -= $adjustment[ 'quantity' ];
 
-                            $this->productService->stockAdjustment(
-                                ProductHistory::ACTION_ADJUSTMENT_RETURN, [
-                                    'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
-                                    'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
-                                    'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
-                                    'quantity'      =>  $adjustment[ 'quantity' ],
-                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
-                                    'order_id'      =>  $order->id,
-                                ]
-                            );
-                        } else {
-                            $adjustment[ 'orderProduct' ]->quantity += $adjustment[ 'quantity' ];
+                        $this->productService->stockAdjustment(
+                            ProductHistory::ACTION_ADJUSTMENT_RETURN, [
+                                'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
+                                'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
+                                'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
+                                'quantity'      =>  $adjustment[ 'quantity' ],
+                                'orderProduct'  =>  $adjustment[ 'orderProduct' ],
+                                'order_id'      =>  $order->id,
+                            ]
+                        );
+                    } else {
+                        $adjustment[ 'orderProduct' ]->quantity += $adjustment[ 'quantity' ];
 
-                            $this->productService->stockAdjustment(
-                                ProductHistory::ACTION_ADJUSTMENT_SALE, [
-                                    'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
-                                    'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
-                                    'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
-                                    'orderProduct'  =>  $adjustment[ 'orderProduct' ],
-                                    'quantity'      =>  $adjustment[ 'quantity' ],
-                                    'order_id'      =>  $order->id,
-                                ]
-                            );
-                        }
+                        $this->productService->stockAdjustment(
+                            ProductHistory::ACTION_ADJUSTMENT_SALE, [
+                                'unit_id'       =>  $adjustment[ 'orderProduct' ]->unit_id,
+                                'unit_price'    =>  $adjustment[ 'orderProduct' ]->unit_price,
+                                'product_id'    =>  $adjustment[ 'orderProduct' ]->product_id,
+                                'orderProduct'  =>  $adjustment[ 'orderProduct' ],
+                                'quantity'      =>  $adjustment[ 'quantity' ],
+                                'order_id'      =>  $order->id,
+                            ]
+                        );
+                    }
 
-                        /**
-                         * for the product that was already tracked
-                         * we'll just update the price and quantity
-                         */
-                        $adjustment[ 'orderProduct' ]->unit_price = $adjustment[ 'unit_price' ];
-                        $adjustment[ 'orderProduct' ]->total_price = $adjustment[ 'total_price' ];
-                        $adjustment[ 'orderProduct' ]->save();
-                    });
+                    /**
+                     * for the product that was already tracked
+                     * we'll just update the price and quantity
+                     */
+                    $adjustment[ 'orderProduct' ]->unit_price = $adjustment[ 'unit_price' ];
+                    $adjustment[ 'orderProduct' ]->total_price = $adjustment[ 'total_price' ];
+                    $adjustment[ 'orderProduct' ]->save();
+                });
             }
 
             /**
@@ -1873,7 +1872,7 @@ class OrdersService
     public function computeDiscountValues( $rate, $value )
     {
         if ( $rate > 0 ) {
-            return Currency::fresh( ( $value * $rate ) / 100 )->getFullRaw();
+            return Currency::fresh( ( $value * $rate ) / 100 )->getRaw();
         }
 
         return 0;
@@ -2096,7 +2095,9 @@ class OrdersService
 
         $order->save();
 
-        OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
+        if( $previousPaymentStatus !== $order->payment_status ) {
+            OrderAfterPaymentStatusChangedEvent::dispatch( $order, $previousPaymentStatus, $order->payment_status );
+        }
 
         return [
             'status'    =>  'success',
@@ -2114,7 +2115,17 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        event( new OrderBeforeDeleteEvent( $order ) );
+        $cachedOrder  =   json_encode( $order->load([
+            'user', 
+            'products', 
+            'payments',
+            'customer',
+            'taxes',
+            'coupons',
+            'instalments',
+        ])->toArray() );
+
+        event( new OrderBeforeDeleteEvent( json_decode( $cachedOrder ) ) );
 
         $order
             ->products()
@@ -2749,7 +2760,7 @@ class OrdersService
         $order->process_status = $status;
         $order->save();
 
-        event( new OrderAfterUpdatedEvent( $order ) );
+        OrderAfterUpdatedProcessStatus::dispatch( $order );
 
         return [
             'status'    =>  'success',
@@ -2778,8 +2789,6 @@ class OrdersService
 
         $order->delivery_status = $status;
         $order->save();
-
-        event( new OrderAfterUpdatedEvent( $order ) );
 
         OrderAfterUpdatedDeliveryStatus::dispatch( $order );
 

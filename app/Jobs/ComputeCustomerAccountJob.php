@@ -3,9 +3,9 @@
 namespace App\Jobs;
 
 use App\Events\OrderAfterCreatedEvent;
-use App\Events\OrderAfterRefundedEvent;
 use App\Events\OrderAfterUpdatedEvent;
 use App\Events\OrderBeforeDeleteEvent;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Services\CustomerService;
 use Illuminate\Bus\Queueable;
@@ -19,23 +19,15 @@ class ComputeCustomerAccountJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var CustomerService
-     */
-    protected $customerService;
-
-    public $event;
-
-    /**
      * Create a new job instance.
      *
      * @return void
      */
     public function __construct(
-        $event,
-        CustomerService $customerService
+        public $event,
+        protected CustomerService $customerService
     ) {
-        $this->event = $event;
-        $this->customerService = $customerService;
+        // ...
     }
 
     /**
@@ -47,8 +39,6 @@ class ComputeCustomerAccountJob implements ShouldQueue
     {
         if ($this->event instanceof OrderBeforeDeleteEvent) {
             $this->handleDeletion($this->event);
-        } elseif ($this->event instanceof OrderAfterRefundedEvent) {
-            $this->reduceCustomerPurchases($this->event);
         } elseif (
             $this->event instanceof OrderAfterCreatedEvent ||
             $this->event instanceof OrderAfterUpdatedEvent
@@ -82,26 +72,22 @@ class ComputeCustomerAccountJob implements ShouldQueue
         }
     }
 
-    private function reduceCustomerPurchases(OrderAfterRefundedEvent $event)
-    {
-        $event->order->customer->purchases_amount = $event->order->customer->purchases_amount - $event->orderRefund->total;
-        $event->order->customer->save();
-    }
-
     private function handleDeletion(OrderBeforeDeleteEvent $event)
     {
+        $customer   =   Customer::find( $event->order->customer_id );
+        
         switch ($event->order->payment_status) {
             case 'paid':
-                $event->order->customer->purchases_amount -= $event->order->total;
+                $customer->purchases_amount -= $event->order->total;
                 break;
             case 'partially_paid':
-                $event->order->customer->purchases_amount -= $event->order->tendered;
+                $customer->purchases_amount -= $event->order->tendered;
                 break;
             default:
-                $event->order->customer->owed_amount -= $event->order->total;
+                $customer->owed_amount -= $event->order->total;
                 break;
         }
 
-        $event->order->customer->save();
+        $customer->save();
     }
 }

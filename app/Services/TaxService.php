@@ -439,7 +439,7 @@ class TaxService
             ->fresh( $orderProduct->unit_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $discount )
-            ->getFullRaw();
+            ->getRaw();
 
         $orderProduct->total_net_price = ns()->currency
             ->fresh( $orderProduct->net_price )
@@ -627,7 +627,7 @@ class TaxService
         return $this->currency->fresh( $value )
             ->multipliedBy( $rate )
             ->dividedBy( 100 )
-            ->getFullRaw();
+            ->getRaw();
     }
 
     /**
