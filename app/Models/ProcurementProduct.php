@@ -41,12 +41,12 @@ class ProcurementProduct extends NsModel
     const STOCK_REDUCE = 'reduce';
 
     protected $dispatchesEvents = [
-        'creating'      =>  ProcurementProductBeforeCreateEvent::class,
-        'created'       =>  ProcurementProductAfterCreateEvent::class,
-        'deleting'      =>  ProcurementProductBeforeDeleteEvent::class,
-        'updating'      =>  ProcurementProductBeforeUpdateEvent::class,
-        'updated'       =>  ProcurementProductAfterUpdateEvent::class,
-        'deleted'       =>  ProcurementProductAfterDeleteEvent::class,
+        'creating' => ProcurementProductBeforeCreateEvent::class,
+        'created' => ProcurementProductAfterCreateEvent::class,
+        'deleting' => ProcurementProductBeforeDeleteEvent::class,
+        'updating' => ProcurementProductBeforeUpdateEvent::class,
+        'updated' => ProcurementProductAfterUpdateEvent::class,
+        'deleted' => ProcurementProductAfterDeleteEvent::class,
     ];
 
     public function procurement()

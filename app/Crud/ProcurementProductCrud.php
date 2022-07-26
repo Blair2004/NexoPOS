@@ -45,10 +45,10 @@ class ProcurementProductCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  false, // cannot be deleted
+        'create' => false,
+        'read' => true,
+        'update' => true,
+        'delete' => false, // cannot be deleted
     ];
 
     /**
@@ -81,9 +81,9 @@ class ProcurementProductCrud extends CrudService
      * ]
      */
     public $pick = [
-        'procurement'   =>  [ 'name' ],
-        'unit'          =>  [ 'name' ],
-        'user'          =>  [ 'username' ],
+        'procurement' => [ 'name' ],
+        'unit' => [ 'name' ],
+        'user' => [ 'username' ],
     ];
 
     /**
@@ -126,15 +126,15 @@ class ProcurementProductCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Procurement Products List' ),
-            'list_description'      =>  __( 'Display all procurement products.' ),
-            'no_entry'              =>  __( 'No procurement products has been registered' ),
-            'create_new'            =>  __( 'Add a new procurement product' ),
-            'create_title'          =>  __( 'Create a new procurement product' ),
-            'create_description'    =>  __( 'Register a new procurement product and save it.' ),
-            'edit_title'            =>  __( 'Edit procurement product' ),
-            'edit_description'      =>  __( 'Modify  Procurement Product.' ),
-            'back_to_list'          =>  __( 'Return to Procurement Products' ),
+            'list_title' => __( 'Procurement Products List' ),
+            'list_description' => __( 'Display all procurement products.' ),
+            'no_entry' => __( 'No procurement products has been registered' ),
+            'create_new' => __( 'Add a new procurement product' ),
+            'create_title' => __( 'Create a new procurement product' ),
+            'create_description' => __( 'Register a new procurement product and save it.' ),
+            'edit_title' => __( 'Edit procurement product' ),
+            'edit_description' => __( 'Modify  Procurement Product.' ),
+            'back_to_list' => __( 'Return to Procurement Products' ),
         ];
     }
 
@@ -157,22 +157,22 @@ class ProcurementProductCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'          =>  'datetimepicker',
-                            'name'          =>  'expiration_date',
-                            'label'         =>  __( 'Expiration Date' ),
-                            'value'         =>  $entry->expiration_date ?? '',
-                            'description'   =>  __( 'Define what is the expiration date of the product.' ),
+                            'type' => 'datetimepicker',
+                            'name' => 'expiration_date',
+                            'label' => __( 'Expiration Date' ),
+                            'value' => $entry->expiration_date ?? '',
+                            'description' => __( 'Define what is the expiration date of the product.' ),
                         ],
                     ],
                 ],
@@ -307,50 +307,50 @@ class ProcurementProductCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'unit_name'  =>  [
-                'label'  =>  __( 'Unit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'unit_name' => [
+                'label' => __( 'Unit' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'procurement_name'   =>  [
-                'label'         =>  __( 'Procurement' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'procurement_name' => [
+                'label' => __( 'Procurement' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'quantity'  =>  [
-                'label'  =>  __( 'Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'quantity' => [
+                'label' => __( 'Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'total_purchase_price'  =>  [
-                'label'  =>  __( 'Total Price' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'total_purchase_price' => [
+                'label' => __( 'Total Price' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'barcode'  =>  [
-                'label'  =>  __( 'Barcode' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'barcode' => [
+                'label' => __( 'Barcode' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'expiration_date'  =>  [
-                'label'  =>  __( 'Expiration Date' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'expiration_date' => [
+                'label' => __( 'Expiration Date' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'On' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'On' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -366,19 +366,19 @@ class ProcurementProductCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.procurements-products/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements-products/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -409,8 +409,8 @@ class ProcurementProductCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -437,11 +437,11 @@ class ProcurementProductCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'procurements/products' ),
-            'create'    =>  'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'procurements/products/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'procurements/products' ),
+            'create' => 'javascript:void(0)', //ns()->url( 'dashboard/' . '/procurements/products/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'procurements/products/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.procurements-products/{id}' . '' ),
         ];
     }
 
@@ -454,10 +454,10 @@ class ProcurementProductCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

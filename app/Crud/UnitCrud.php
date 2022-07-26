@@ -91,15 +91,15 @@ class UnitCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Units List' ),
-            'list_description'      =>  __( 'Display all units.' ),
-            'no_entry'              =>  __( 'No units has been registered' ),
-            'create_new'            =>  __( 'Add a new unit' ),
-            'create_title'          =>  __( 'Create a new unit' ),
-            'create_description'    =>  __( 'Register a new unit and save it.' ),
-            'edit_title'            =>  __( 'Edit unit' ),
-            'edit_description'      =>  __( 'Modify  Unit.' ),
-            'back_to_list'          =>  __( 'Return to Units' ),
+            'list_title' => __( 'Units List' ),
+            'list_description' => __( 'Display all units.' ),
+            'no_entry' => __( 'No units has been registered' ),
+            'create_new' => __( 'Add a new unit' ),
+            'create_title' => __( 'Create a new unit' ),
+            'create_description' => __( 'Register a new unit and save it.' ),
+            'edit_title' => __( 'Edit unit' ),
+            'edit_description' => __( 'Modify  Unit.' ),
+            'back_to_list' => __( 'Return to Units' ),
         ];
     }
 
@@ -122,59 +122,59 @@ class UnitCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    =>  'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'          =>  'text',
-                            'name'          =>  'identifier',
-                            'label'         =>  __( 'Identifier' ),
-                            'description'   =>  __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
-                            'validation'    =>  'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
-                            'value' =>  $entry->identifier ?? '',
+                            'type' => 'text',
+                            'name' => 'identifier',
+                            'label' => __( 'Identifier' ),
+                            'description' => __( 'Provide a unique value for this unit. Might be composed from a name but shouldn\'t include space or special characters.' ),
+                            'validation' => 'required|unique:' . Hook::filter( 'ns-table-name', 'nexopos_units' ) . ',identifier' . ( $entry !== null ? ',' . $entry->id : '' ),
+                            'value' => $entry->identifier ?? '',
                         ], [
-                            'type'  =>  'media',
-                            'name'  =>  'preview_url',
-                            'label' =>  __( 'Preview URL' ),
-                            'description'   =>  __( 'Preview of the unit.' ),
-                            'value' =>  $entry->preview_url ?? '',
+                            'type' => 'media',
+                            'name' => 'preview_url',
+                            'label' => __( 'Preview URL' ),
+                            'description' => __( 'Preview of the unit.' ),
+                            'value' => $entry->preview_url ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'description'   =>  __( 'Define the value of the unit.' ),
-                            'validation'    =>  'required',
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'description' => __( 'Define the value of the unit.' ),
+                            'validation' => 'required',
+                            'value' => $entry->value ?? '',
                         ],  [
-                            'type'          =>  'select',
-                            'name'          =>  'group_id',
-                            'validation'    =>  'required',
-                            'options'       =>  Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
-                            'label'         =>  __( 'Group' ),
-                            'description'   =>  __( 'Define to which group the unit should be assigned.' ),
-                            'value' =>  $entry->group_id ?? '',
+                            'type' => 'select',
+                            'name' => 'group_id',
+                            'validation' => 'required',
+                            'options' => Helper::toJsOptions( UnitGroup::get(), [ 'id', 'name' ] ),
+                            'label' => __( 'Group' ),
+                            'description' => __( 'Define to which group the unit should be assigned.' ),
+                            'value' => $entry->group_id ?? '',
                         ], [
-                            'type'  =>  'switch',
-                            'name'  =>  'base_unit',
-                            'validation'    =>  'required',
-                            'options'       =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
-                            'label'         =>  __( 'Base Unit' ),
-                            'description'   =>  __( 'Determine if the unit is the base unit from the group.' ),
-                            'value'         =>  $entry ? ( $entry->base_unit ? 1 : 0 ) : 0,
+                            'type' => 'switch',
+                            'name' => 'base_unit',
+                            'validation' => 'required',
+                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'label' => __( 'Base Unit' ),
+                            'description' => __( 'Determine if the unit is the base unit from the group.' ),
+                            'value' => $entry ? ( $entry->base_unit ? 1 : 0 ) : 0,
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'description'   =>  __( 'Provide a short description about the unit.' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'description' => __( 'Provide a short description about the unit.' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -280,8 +280,8 @@ class UnitCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -309,35 +309,35 @@ class UnitCrud extends CrudService
     {
         return [
 
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'base_unit'  =>  [
-                'label'  =>  __( 'Base Unit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'base_unit' => [
+                'label' => __( 'Base Unit' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'group_name'  =>  [
-                'label'         =>  __( 'Group' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'group_name' => [
+                'label' => __( 'Group' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -350,20 +350,20 @@ class UnitCrud extends CrudService
         $entry->base_unit = (bool) $entry->base_unit ? __( 'Yes' ) : __( 'No' );
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'units' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'units' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.units/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.units/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -385,15 +385,15 @@ class UnitCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -420,11 +420,11 @@ class UnitCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'units' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'units/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'units/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'units' ),
+            'create' => ns()->url( 'dashboard/' . 'units/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'units/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units/{id}' . '' ),
         ];
     }
 
@@ -437,10 +437,10 @@ class UnitCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

@@ -99,7 +99,7 @@ class AppServiceProvider extends ServiceProvider
         // provide media manager
         $this->app->singleton( MediaService::class, function() {
             return new MediaService([
-                'extensions'    =>  [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
+                'extensions' => [ 'jpg', 'jpeg', 'png', 'gif', 'zip', 'docx', 'txt' ],
             ]);
         });
 
@@ -148,13 +148,13 @@ class AppServiceProvider extends ServiceProvider
 
             return new CurrencyService(
                 0, [
-                    'decimal_precision'     =>  $options->get( 'ns_currency_precision', 0 ),
-                    'decimal_separator'     =>  $options->get( 'ns_currency_decimal_separator', ',' ),
-                    'thousand_separator'    =>  $options->get( 'ns_currency_thousand_separator', '.' ),
-                    'currency_position'     =>  $options->get( 'ns_currency_position', 'before' ),
-                    'currency_symbol'       =>  $options->get( 'ns_currency_symbol' ),
-                    'currency_iso'          =>  $options->get( 'ns_currency_iso' ),
-                    'prefered_currency'     =>  $options->get( 'ns_currency_prefered' ),
+                    'decimal_precision' => $options->get( 'ns_currency_precision', 0 ),
+                    'decimal_separator' => $options->get( 'ns_currency_decimal_separator', ',' ),
+                    'thousand_separator' => $options->get( 'ns_currency_thousand_separator', '.' ),
+                    'currency_position' => $options->get( 'ns_currency_position', 'before' ),
+                    'currency_symbol' => $options->get( 'ns_currency_symbol' ),
+                    'currency_iso' => $options->get( 'ns_currency_iso' ),
+                    'prefered_currency' => $options->get( 'ns_currency_prefered' ),
                 ]
             );
         });
@@ -253,35 +253,35 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function loadConfiguration()
     {
-        config([ 'nexopos.orders.statuses'      => [
-            Order::PAYMENT_HOLD                 =>  __( 'Hold' ),
-            Order::PAYMENT_UNPAID               =>  __( 'Unpaid' ),
-            Order::PAYMENT_PARTIALLY            =>  __( 'Partially Paid' ),
-            Order::PAYMENT_PAID                 =>  __( 'Paid' ),
-            Order::PAYMENT_VOID                 =>  __( 'Voided' ),
-            Order::PAYMENT_REFUNDED             =>  __( 'Refunded' ),
-            Order::PAYMENT_PARTIALLY_REFUNDED   =>  __( 'Partially Refunded' ),
-            Order::PAYMENT_DUE                  =>  __( 'Due' ),
-            Order::PAYMENT_PARTIALLY_DUE        =>  __( 'Partially Due' ),
+        config([ 'nexopos.orders.statuses' => [
+            Order::PAYMENT_HOLD => __( 'Hold' ),
+            Order::PAYMENT_UNPAID => __( 'Unpaid' ),
+            Order::PAYMENT_PARTIALLY => __( 'Partially Paid' ),
+            Order::PAYMENT_PAID => __( 'Paid' ),
+            Order::PAYMENT_VOID => __( 'Voided' ),
+            Order::PAYMENT_REFUNDED => __( 'Refunded' ),
+            Order::PAYMENT_PARTIALLY_REFUNDED => __( 'Partially Refunded' ),
+            Order::PAYMENT_DUE => __( 'Due' ),
+            Order::PAYMENT_PARTIALLY_DUE => __( 'Partially Due' ),
         ]]);
 
-        config([ 'nexopos.orders.types'         =>  Hook::filter( 'ns-orders-types', [
-            'takeaway'          =>  [
-                'identifier'    =>  'takeaway',
-                'label'         =>  __( 'Take Away' ),
-                'icon'          =>  '/images/groceries.png',
-                'selected'      =>  false,
+        config([ 'nexopos.orders.types' => Hook::filter( 'ns-orders-types', [
+            'takeaway' => [
+                'identifier' => 'takeaway',
+                'label' => __( 'Take Away' ),
+                'icon' => '/images/groceries.png',
+                'selected' => false,
             ],
-            'delivery'          =>  [
-                'identifier'    =>  'delivery',
-                'label'         =>  __( 'Delivery' ),
-                'icon'          =>  '/images/delivery.png',
-                'selected'      =>  false,
+            'delivery' => [
+                'identifier' => 'delivery',
+                'label' => __( 'Delivery' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
             ],
         ])]);
 
         config([
-            'nexopos.orders.types-labels' =>   collect( config( 'nexopos.orders.types' ) )
+            'nexopos.orders.types-labels' => collect( config( 'nexopos.orders.types' ) )
                 ->mapWithKeys( fn( $type ) => [ $type[ 'identifier' ] => $type[ 'label' ] ])
                 ->toArray(),
         ]);

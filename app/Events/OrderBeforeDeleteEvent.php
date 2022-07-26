@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Order;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

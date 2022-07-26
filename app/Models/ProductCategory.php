@@ -14,17 +14,17 @@ class ProductCategory extends NsModel
     protected $table = 'nexopos_' . 'products_categories';
 
     protected $isDependencyFor = [
-        Product::class  =>  [
-            'local_index'   =>  'id',
-            'local_name'    =>  'name',
-            'foreign_index' =>  'category_id',
-            'foreign_name'  =>  'name',
+        Product::class => [
+            'local_index' => 'id',
+            'local_name' => 'name',
+            'foreign_index' => 'category_id',
+            'foreign_name' => 'name',
         ],
-        self::class     =>  [
-            'local_index'   =>  'id',
-            'local_name'    =>  'name',
-            'foreign_index' =>  'parent_id',
-            'foreign_name'  =>  'name',
+        self::class => [
+            'local_index' => 'id',
+            'local_name' => 'name',
+            'foreign_index' => 'parent_id',
+            'foreign_name' => 'name',
         ],
     ];
 

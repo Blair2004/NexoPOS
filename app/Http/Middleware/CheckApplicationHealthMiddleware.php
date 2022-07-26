@@ -76,11 +76,11 @@ class CheckApplicationHealthMiddleware
     {
         $notification = app()->make( NotificationService::class );
         $notification->create([
-            'title'         =>      __( 'Workers Misconfiguration' ),
-            'identifier'    =>      NotificationsEnum::NSCRONDISABLED,
-            'source'        =>      'system',
-            'url'           =>      'https://laravel.com/docs/8.x/scheduling#starting-the-scheduler',
-            'description'   =>      __( "NexoPOS is unable to run tasks correctly. This happens if Queues or Tasks Scheduling aren't configured correctly." ),
+            'title' => __( 'Workers Misconfiguration' ),
+            'identifier' => NotificationsEnum::NSCRONDISABLED,
+            'source' => 'system',
+            'url' => 'https://laravel.com/docs/8.x/scheduling#starting-the-scheduler',
+            'description' => __( "NexoPOS is unable to run tasks correctly. This happens if Queues or Tasks Scheduling aren't configured correctly." ),
         ])->dispatchForGroup( Role::namespace( 'admin' ) );
     }
 }

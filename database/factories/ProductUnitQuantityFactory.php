@@ -25,17 +25,17 @@ class ProductUnitQuantityFactory extends Factory
         $wholesale_price = $this->faker->numberBetween(10, 20);
 
         return [
-            'quantity'                  =>   $this->faker->numberBetween(50, 400),
-            'sale_price'                =>  $sale_price,
-            'sale_price_edit'           =>  $sale_price,
-            'excl_tax_sale_price'       =>  $sale_price,
-            'incl_tax_sale_price'       =>  $sale_price,
-            'sale_price_tax'            =>  0,
-            'wholesale_price'           =>  $wholesale_price,
-            'wholesale_price_edit'      =>  $wholesale_price,
-            'incl_tax_wholesale_price'  =>  $wholesale_price,
-            'excl_tax_wholesale_price'  =>  $wholesale_price,
-            'wholesale_price_tax'       =>  0,
+            'quantity' => $this->faker->numberBetween(50, 400),
+            'sale_price' => $sale_price,
+            'sale_price_edit' => $sale_price,
+            'excl_tax_sale_price' => $sale_price,
+            'incl_tax_sale_price' => $sale_price,
+            'sale_price_tax' => 0,
+            'wholesale_price' => $wholesale_price,
+            'wholesale_price_edit' => $wholesale_price,
+            'incl_tax_wholesale_price' => $wholesale_price,
+            'excl_tax_wholesale_price' => $wholesale_price,
+            'wholesale_price_tax' => 0,
         ];
     }
 }

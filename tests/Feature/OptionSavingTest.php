@@ -26,7 +26,7 @@ class OptionSavingTest extends TestCase
             'The option wasn\'t saved'
         );
 
-        $array = [ 'hello'   =>  'world' ];
+        $array = [ 'hello' => 'world' ];
         ns()->option->set( '_custom_array', $array );
 
         $value = ns()->option->get( '_custom_array' );

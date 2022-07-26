@@ -15,13 +15,13 @@ class NotEnoughPermissionException extends Exception
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-enough-permissions', [
-                'title'         =>  __( 'Not Enough Permissions' ),
-                'message'       =>  $this->getMessage() ?: __('You\'re not allowed to see that page.' ),
+                'title' => __( 'Not Enough Permissions' ),
+                'message' => $this->getMessage() ?: __('You\'re not allowed to see that page.' ),
             ]);
         }
 
         return response()->json([
-            'status'  =>  'failed',
+            'status' => 'failed',
             'message' => $this->getMessage() ?: __('You\'re not allowed to see that page.' ),
         ], 401);
     }

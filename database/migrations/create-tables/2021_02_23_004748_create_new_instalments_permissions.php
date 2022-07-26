@@ -24,25 +24,25 @@ class CreateNewInstalmentsPermissions extends Migration
      */
     public function up()
     {
-        $createInstalment = Permission::firstOrNew([ 'namespace'   =>  'nexopos.create.orders-instalments' ]);
+        $createInstalment = Permission::firstOrNew([ 'namespace' => 'nexopos.create.orders-instalments' ]);
         $createInstalment->namespace = 'nexopos.create.orders-instalments';
         $createInstalment->name = __( 'Create Instalment' );
         $createInstalment->description = __( 'Allow the user to create instalments.' );
         $createInstalment->save();
 
-        $updateInstalment = Permission::firstOrNew([ 'namespace'   =>  'nexopos.update.orders-instalments' ]);
+        $updateInstalment = Permission::firstOrNew([ 'namespace' => 'nexopos.update.orders-instalments' ]);
         $updateInstalment->namespace = 'nexopos.update.orders-instalments';
         $updateInstalment->name = __( 'Update Instalment' );
         $updateInstalment->description = __( 'Allow the user to update instalments.' );
         $updateInstalment->save();
 
-        $readInstalment = Permission::firstOrNew([ 'namespace'   =>  'nexopos.read.orders-instalments' ]);
+        $readInstalment = Permission::firstOrNew([ 'namespace' => 'nexopos.read.orders-instalments' ]);
         $readInstalment->namespace = 'nexopos.read.orders-instalments';
         $readInstalment->name = __( 'Read Instalment' );
         $readInstalment->description = __( 'Allow the user to read instalments.' );
         $readInstalment->save();
 
-        $deleteInstalments = Permission::firstOrNew([ 'namespace'   =>  'nexopos.delete.orders-instalments' ]);
+        $deleteInstalments = Permission::firstOrNew([ 'namespace' => 'nexopos.delete.orders-instalments' ]);
         $deleteInstalments->namespace = 'nexopos.delete.orders-instalments';
         $deleteInstalments->name = __( 'Delete Instalment' );
         $deleteInstalments->description = __( 'Allow the user to delete instalments.' );

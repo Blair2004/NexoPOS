@@ -69,8 +69,8 @@ class CustomerService
         CustomerAddress::where( 'customer_id', $id )->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been deleted.' ),
         ];
     }
 
@@ -135,9 +135,9 @@ class CustomerService
         $customer->addresses;
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been created.' ),
-            'data'      =>  compact( 'customer' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been created.' ),
+            'data' => compact( 'customer' ),
         ];
     }
 
@@ -211,9 +211,9 @@ class CustomerService
         $customer->addresses;
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been edited.' ),
-            'data'      =>  compact( 'customer' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been edited.' ),
+            'data' => compact( 'customer' ),
         ];
     }
 
@@ -249,8 +249,8 @@ class CustomerService
         $customer->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The customer has been deleted.' ),
         ];
     }
 
@@ -335,9 +335,9 @@ class CustomerService
         event( new AfterCustomerAccountHistoryCreatedEvent( $customerAccountHistory ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The customer account has been updated.' ),
-            'data'      =>  compact( 'customerAccountHistory' ),
+            'status' => 'success',
+            'message' => __( 'The customer account has been updated.' ),
+            'data' => compact( 'customerAccountHistory' ),
         ];
     }
 
@@ -357,7 +357,7 @@ class CustomerService
 
         $history->customer->save();
     }
-    
+
     public function increasePurchases( Customer $customer, $value )
     {
         $customer->purchases_amount += $value;
@@ -377,7 +377,6 @@ class CustomerService
 
         return $customer;
     }
-
 
     public function canReduceCustomerAccount( Customer $customer, $value )
     {
@@ -457,13 +456,13 @@ class CustomerService
                  */
                 $notify = app()->make( NotificationService::class );
                 $notify->create([
-                    'title'         =>  __( 'Issuing Coupon Failed' ),
-                    'description'   =>  sprintf(
+                    'title' => __( 'Issuing Coupon Failed' ),
+                    'description' => sprintf(
                         __( 'Unable to apply a coupon attached to the reward "%s". It looks like the coupon no more exists.' ),
                         $reward->name
                     ),
-                    'identifier'    =>  'coupon-issuing-issue-' . $reward->id,
-                    'url'           =>  ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ]),
+                    'identifier' => 'coupon-issuing-issue-' . $reward->id,
+                    'url' => ns()->route( 'ns.dashboard.rewards-edit', [ 'reward' => $reward->id ]),
                 ])->dispatchForGroupNamespaces([ 'admin', 'nexopos.store.administrator' ]);
             }
         }
@@ -508,7 +507,7 @@ class CustomerService
     public function setCoupon( $fields, Coupon $coupon )
     {
         $customerCoupon = CustomerCoupon::where([
-            'coupon_id'     =>      $coupon->id,
+            'coupon_id' => $coupon->id,
         ])->get();
 
         if ( $customerCoupon->count() === 0 ) {
@@ -538,8 +537,8 @@ class CustomerService
         }
 
         return [
-            'status'    =>  'sucess',
-            'message'   =>  __( 'The coupon has been updated.' ),
+            'status' => 'sucess',
+            'message' => __( 'The coupon has been updated.' ),
         ];
     }
 
@@ -615,9 +614,9 @@ class CustomerService
         $group->save();
 
         return [
-            'status'    =>  'sucecss',
-            'message'   =>  __( 'The group has been created.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'sucecss',
+            'message' => __( 'The group has been created.' ),
+            'data' => compact( 'group' ),
         ];
     }
 

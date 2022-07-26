@@ -124,13 +124,13 @@ class ModulesService
             $xmlContent = file_get_contents( base_path() . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $dir . DIRECTORY_SEPARATOR . 'config.xml' );
             $xml = $this->xmlParser->extract( $xmlContent );
             $config = $xml->parse([
-                'namespace'             =>  [ 'uses'    =>  'namespace' ],
-                'version'               =>  [ 'uses'    =>  'version' ],
-                'author'                =>  [ 'uses'    =>  'author' ],
-                'description'           =>  [ 'uses'    =>  'description' ],
-                'dependencies'          =>  [ 'uses'    =>  'dependencies' ],
-                'name'                  =>  [ 'uses'    =>  'name' ],
-                'core'                  =>  [ 'uses'    =>  'core' ],
+                'namespace' => [ 'uses' => 'namespace' ],
+                'version' => [ 'uses' => 'version' ],
+                'author' => [ 'uses' => 'author' ],
+                'description' => [ 'uses' => 'description' ],
+                'dependencies' => [ 'uses' => 'dependencies' ],
+                'name' => [ 'uses' => 'name' ],
+                'core' => [ 'uses' => 'core' ],
             ]);
 
             $xmlElement = new \SimpleXMLElement( $xmlContent );
@@ -141,8 +141,8 @@ class ModulesService
                 $maxVersion = 'max-version';
 
                 $config[ 'core' ] = [
-                    'min-version'   =>  ( (string) $attributes->$minVersion ) ?? null,
-                    'max-version'   =>  ( (string) $attributes->$maxVersion ) ?? null,
+                    'min-version' => ( (string) $attributes->$minVersion ) ?? null,
+                    'max-version' => ( (string) $attributes->$maxVersion ) ?? null,
                 ];
             }
 
@@ -150,10 +150,10 @@ class ModulesService
                 $module = (array) $module;
 
                 return [
-                    $module[ '@attributes' ][ 'namespace' ]     =>  [
-                        'min-version'   =>  $module[ '@attributes' ][ 'min-version' ] ?? null,
-                        'max-version'   =>  $module[ '@attributes' ][ 'max-version' ] ?? null,
-                        'name'          =>  $module[0],
+                    $module[ '@attributes' ][ 'namespace' ] => [
+                        'min-version' => $module[ '@attributes' ][ 'min-version' ] ?? null,
+                        'max-version' => $module[ '@attributes' ][ 'max-version' ] ?? null,
+                        'name' => $module[0],
                     ],
                 ];
             })->toArray() ?? [];
@@ -266,8 +266,8 @@ class ModulesService
             }
         } else {
             return [
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'No config.xml has been found on the directory : %s' ), $dir ),
+                'status' => 'failed',
+                'message' => sprintf( __( 'No config.xml has been found on the directory : %s' ), $dir ),
             ];
         }
     }
@@ -633,8 +633,8 @@ class ModulesService
             }
 
             return [
-                'path'      =>  $zipFile,
-                'module'    =>  $module,
+                'path' => $zipFile,
+                'module' => $module,
             ];
         }
     }
@@ -707,8 +707,8 @@ class ModulesService
                 $this->__clearTempFolder();
 
                 return [
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Invalid Module provided' ),
+                    'status' => 'failed',
+                    'message' => __( 'Invalid Module provided' ),
                 ];
             }
 
@@ -728,9 +728,9 @@ class ModulesService
                     $this->__clearTempFolder();
 
                     return [
-                        'status'    =>  'danger',
-                        'message'   =>  __( 'Unable to upload this module as it\'s older than the current on' ),
-                        'module'    =>  $module,
+                        'status' => 'danger',
+                        'message' => __( 'Unable to upload this module as it\'s older than the current on' ),
+                        'module' => $module,
                     ];
                 }
             }
@@ -783,8 +783,8 @@ class ModulesService
             $this->__clearTempFolder();
 
             return [
-                'status'    =>  'danger',
-                'message'   =>  __( 'The uploaded file is not a valid module.' ),
+                'status' => 'danger',
+                'message' => __( 'The uploaded file is not a valid module.' ),
             ];
         }
     }
@@ -880,9 +880,9 @@ class ModulesService
             $this->__clearTempFolder();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'A migration is required for this module' ),
-                'action'    =>  'migration',
+                'status' => 'success',
+                'message' => __( 'A migration is required for this module' ),
+                'action' => 'migration',
             ];
         } else {
 
@@ -922,8 +922,8 @@ class ModulesService
             $this->__clearTempFolder();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The module has been successfully installed.' ),
+                'status' => 'success',
+                'message' => __( 'The module has been successfully installed.' ),
             ];
         }
     }
@@ -1000,9 +1000,9 @@ class ModulesService
             unset( $this->modules[ $namespace ] );
 
             return [
-                'status'    =>  'success',
-                'code'      =>  'module_deleted',
-                'module'    =>  $module,
+                'status' => 'success',
+                'code' => 'module_deleted',
+                'module' => $module,
             ];
         }
 
@@ -1010,8 +1010,8 @@ class ModulesService
          * This module can't be found. then return an error
          */
         return [
-            'status'    =>  'danger',
-            'code'      =>  'unknow_module',
+            'status' => 'danger',
+            'code' => 'unknow_module',
         ];
     }
 
@@ -1095,24 +1095,24 @@ class ModulesService
                 $object->$method();
 
                 return [
-                    'status'    =>  'success',
-                    'message'   =>  __( 'The migration run successfully.' ),
-                    'data'      =>  [
-                        'object'    =>  $object,
-                        'className' =>  $className,
+                    'status' => 'success',
+                    'message' => __( 'The migration run successfully.' ),
+                    'data' => [
+                        'object' => $object,
+                        'className' => $className,
                     ],
                 ];
             }
 
             return [
-                'status'    =>  'failed',
-                'message'   =>  sprintf( __( 'The migration file doens\'t have a valid class name. Expected class : %s' ), $className ),
+                'status' => 'failed',
+                'message' => sprintf( __( 'The migration file doens\'t have a valid class name. Expected class : %s' ), $className ),
             ];
         }
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  sprintf( __( 'Unable to locate the following file : %s' ), $filePath ),
+            'status' => 'failed',
+            'message' => sprintf( __( 'Unable to locate the following file : %s' ), $filePath ),
         ];
     }
 
@@ -1161,9 +1161,9 @@ class ModulesService
                 $attempt = $parser->parse( $code );
             } catch ( Error $error ) {
                 return [
-                    'status'    =>  'failed',
-                    'message'   =>  $error->getMessage(),
-                    'module'    =>  $module,
+                    'status' => 'failed',
+                    'message' => $error->getMessage(),
+                    'module' => $module,
                 ];
             }
 
@@ -1182,20 +1182,20 @@ class ModulesService
             }
 
             return [
-                'status'            =>  'success',
-                'message'           =>  __( 'The module has correctly been enabled.' ),
-                'data'              =>  [
-                    'code'          =>  'module_enabled',
-                    'module'        =>  $module,
-                    'migrations'    =>  $this->getMigrations( $module[ 'namespace' ] ),
+                'status' => 'success',
+                'message' => __( 'The module has correctly been enabled.' ),
+                'data' => [
+                    'code' => 'module_enabled',
+                    'module' => $module,
+                    'migrations' => $this->getMigrations( $module[ 'namespace' ] ),
                 ],
             ];
         }
 
         return [
-            'status'    =>  'warning',
-            'code'      =>  'unknow_module',
-            'message'   =>  __( 'Unable to enable the module.' ),
+            'status' => 'warning',
+            'code' => 'unknow_module',
+            'message' => __( 'Unable to enable the module.' ),
         ];
     }
 
@@ -1223,17 +1223,17 @@ class ModulesService
             $this->options->set( 'enabled_modules', json_encode( $enabledModules ) );
 
             return [
-                'status'    =>  'success',
-                'code'      =>  'module_disabled',
-                'message'   =>  __( 'The Module has been disabled.' ),
-                'module'    =>  $module,
+                'status' => 'success',
+                'code' => 'module_disabled',
+                'message' => __( 'The Module has been disabled.' ),
+                'module' => $module,
             ];
         }
 
         return [
-            'status'        =>  'danger',
-            'code'          =>  'unknow_module',
-            'message'   =>  __( 'Unable to disable the module.' ),
+            'status' => 'danger',
+            'code' => 'unknow_module',
+            'message' => __( 'Unable to disable the module.' ),
         ];
     }
 
@@ -1389,8 +1389,8 @@ class ModulesService
          * if it's successful
          */
         $migration = ModuleMigration::where([
-            'file'          =>  $file,
-            'namespace'     =>  $namespace,
+            'file' => $file,
+            'namespace' => $namespace,
         ]);
 
         if ( $result[ 'status' ] === 'success' && ! $migration instanceof ModuleMigration ) {
@@ -1551,8 +1551,8 @@ class ModulesService
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  sprintf( 'Your new module "%s" has been created.', $config[ 'name' ] ),
+                'status' => 'success',
+                'message' => sprintf( 'Your new module "%s" has been created.', $config[ 'name' ] ),
             ];
         } else {
             throw new NotAllowedException( __( 'A similar module has been found' ) );
@@ -1569,18 +1569,18 @@ class ModulesService
         switch ( $content ) {
             case 'main':
             return view( 'generate.modules.main', [
-                'module'    =>  $config,
+                'module' => $config,
             ]);
             break;
             case 'config':
             return view( 'generate.modules.config', [
-                'module'    =>  $config,
+                'module' => $config,
             ]);
             break;
             case 'event':
             return view( 'generate.modules.event', [
-                'module'    =>  $config,
-                'name'      =>  $config[ 'namespace' ] . 'Event',
+                'module' => $config,
+                'name' => $config[ 'namespace' ] . 'Event',
             ]);
             break;
         }

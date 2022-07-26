@@ -50,10 +50,10 @@ class CustomerAccountCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  'nexopos.customers.manage-account-history',
-        'read'      =>  'nexopos.customers.manage-account-history',
-        'update'    =>  'nexopos.customers.manage-account-history',
-        'delete'    =>  'nexopos.customers.manage-account-history',
+        'create' => 'nexopos.customers.manage-account-history',
+        'read' => 'nexopos.customers.manage-account-history',
+        'update' => 'nexopos.customers.manage-account-history',
+        'delete' => 'nexopos.customers.manage-account-history',
     ];
 
     protected $queryFilters = [];
@@ -76,7 +76,7 @@ class CustomerAccountCrud extends CrudService
      */
     public $relations = [
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_customers_account_history.author' ],
-        'leftJoin'  =>  [
+        'leftJoin' => [
             [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_customers_account_history.order_id' ],
         ],
     ];
@@ -99,8 +99,8 @@ class CustomerAccountCrud extends CrudService
      * ]
      */
     public $pick = [
-        'order'     =>  [ 'code' ],
-        'user'      =>  [ 'username' ],
+        'order' => [ 'code' ],
+        'user' => [ 'username' ],
     ];
 
     /**
@@ -142,29 +142,29 @@ class CustomerAccountCrud extends CrudService
          * We'll define custom export columns
          */
         $this->exportColumns = [
-            'previous_amount'   =>  [
-                'label' =>  __( 'Previous Amount' ),
+            'previous_amount' => [
+                'label' => __( 'Previous Amount' ),
             ],
-            'amount'    =>  [
-                'label' =>  __( 'Amount' ),
+            'amount' => [
+                'label' => __( 'Amount' ),
             ],
-            'next_amount'   =>  [
-                'label' =>  __( 'Next Amount' ),
+            'next_amount' => [
+                'label' => __( 'Next Amount' ),
             ],
-            'operation' =>  [
-                'label' =>  __( 'Operation' ),
+            'operation' => [
+                'label' => __( 'Operation' ),
             ],
-            'description'   =>  [
-                'label' =>  __( 'Description' ),
+            'description' => [
+                'label' => __( 'Description' ),
             ],
-            'order_code'    =>  [
-                'label' =>  __( 'Order' ),
+            'order_code' => [
+                'label' => __( 'Order' ),
             ],
-            'user_username' =>  [
-                'label' =>  __( 'By' ),
+            'user_username' => [
+                'label' => __( 'By' ),
             ],
-            'created_at'    =>  [
-                'label' =>  __( 'Created At' ),
+            'created_at' => [
+                'label' => __( 'Created At' ),
             ],
         ];
 
@@ -176,27 +176,27 @@ class CustomerAccountCrud extends CrudService
 
         $this->queryFilters = [
             [
-                'type'  =>  'daterangepicker',
-                'name'  =>  'nexopos_customers_account_history.created_at',
-                'description'   =>  __( 'Restrict the records by the creation date.' ),
-                'label' =>  __( 'Created Between' ),
+                'type' => 'daterangepicker',
+                'name' => 'nexopos_customers_account_history.created_at',
+                'description' => __( 'Restrict the records by the creation date.' ),
+                'label' => __( 'Created Between' ),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Operation Type' ),
-                'name'      =>  'payment_status',
-                'description'   =>  __( 'Restrict the orders by the payment status.' ),
-                'options'   =>  Helper::kvToJsOptions([
-                    CustomerAccountHistory::OPERATION_ADD   =>  __( 'Crediting (Add)' ),
-                    CustomerAccountHistory::OPERATION_REFUND   =>  __( 'Refund (Add)' ),
-                    CustomerAccountHistory::OPERATION_DEDUCT   =>  __( 'Deducting (Remove)' ),
-                    CustomerAccountHistory::OPERATION_PAYMENT   =>  __( 'Payment (Remove)' ),
+                'type' => 'select',
+                'label' => __( 'Operation Type' ),
+                'name' => 'payment_status',
+                'description' => __( 'Restrict the orders by the payment status.' ),
+                'options' => Helper::kvToJsOptions([
+                    CustomerAccountHistory::OPERATION_ADD => __( 'Crediting (Add)' ),
+                    CustomerAccountHistory::OPERATION_REFUND => __( 'Refund (Add)' ),
+                    CustomerAccountHistory::OPERATION_DEDUCT => __( 'Deducting (Remove)' ),
+                    CustomerAccountHistory::OPERATION_PAYMENT => __( 'Payment (Remove)' ),
                 ]),
             ], [
-                'type'      =>  'select',
-                'label'     =>  __( 'Author' ),
-                'name'      =>  'nexopos_customers_account_history.author',
-                'description'   =>  __( 'Restrict the records by the author.' ),
-                'options'   =>  Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
+                'type' => 'select',
+                'label' => __( 'Author' ),
+                'name' => 'nexopos_customers_account_history.author',
+                'description' => __( 'Restrict the records by the author.' ),
+                'options' => Helper::toJsOptions( $UserClass::get(), [ 'id', 'username' ]),
             ],
         ];
 
@@ -260,15 +260,15 @@ class CustomerAccountCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Customer Accounts List' ),
-            'list_description'      =>  __( 'Display all customer accounts.' ),
-            'no_entry'              =>  __( 'No customer accounts has been registered' ),
-            'create_new'            =>  __( 'Add a new customer account' ),
-            'create_title'          =>  __( 'Create a new customer account' ),
-            'create_description'    =>  __( 'Register a new customer account and save it.' ),
-            'edit_title'            =>  __( 'Edit customer account' ),
-            'edit_description'      =>  __( 'Modify  Customer Account.' ),
-            'back_to_list'          =>  __( 'Return to Customer Accounts' ),
+            'list_title' => __( 'Customer Accounts List' ),
+            'list_description' => __( 'Display all customer accounts.' ),
+            'no_entry' => __( 'No customer accounts has been registered' ),
+            'create_new' => __( 'Add a new customer account' ),
+            'create_title' => __( 'Create a new customer account' ),
+            'create_description' => __( 'Register a new customer account and save it.' ),
+            'edit_title' => __( 'Edit customer account' ),
+            'edit_description' => __( 'Modify  Customer Account.' ),
+            'back_to_list' => __( 'Return to Customer Accounts' ),
         ];
     }
 
@@ -291,39 +291,39 @@ class CustomerAccountCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'This will be ignored.' ),
+                'description' => __( 'This will be ignored.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'amount',
-                            'label' =>  __( 'Amount' ),
-                            'validation'    =>  'required',
-                            'description'   =>  __( 'Define the amount of the transaction' ),
-                            'value' =>  $entry->amount ?? '',
+                            'type' => 'text',
+                            'name' => 'amount',
+                            'label' => __( 'Amount' ),
+                            'validation' => 'required',
+                            'description' => __( 'Define the amount of the transaction' ),
+                            'value' => $entry->amount ?? '',
                         ], [
-                            'type'  =>  'select',
-                            'options'   =>  Helper::kvToJsOptions([
-                                CustomerAccountHistory::OPERATION_DEDUCT    =>  __( 'Deduct' ),
-                                CustomerAccountHistory::OPERATION_ADD       =>  __( 'Add' ),
+                            'type' => 'select',
+                            'options' => Helper::kvToJsOptions([
+                                CustomerAccountHistory::OPERATION_DEDUCT => __( 'Deduct' ),
+                                CustomerAccountHistory::OPERATION_ADD => __( 'Add' ),
                             ]),
-                            'description'   =>  __( 'Define what operation will occurs on the customer account.' ),
-                            'name'  =>  'operation',
-                            'validation'    =>  'required',
-                            'label' =>  __( 'Operation' ),
-                            'value' =>  $entry->operation ?? '',
+                            'description' => __( 'Define what operation will occurs on the customer account.' ),
+                            'name' => 'operation',
+                            'validation' => 'required',
+                            'label' => __( 'Operation' ),
+                            'value' => $entry->operation ?? '',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -458,40 +458,40 @@ class CustomerAccountCrud extends CrudService
     public function getColumns()
     {
         return [
-            'previous_amount'  =>  [
-                'label'  =>  __( 'Previous Amount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'previous_amount' => [
+                'label' => __( 'Previous Amount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'amount'  =>  [
-                'label'  =>  __( 'Amount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'amount' => [
+                'label' => __( 'Amount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'next_amount'  =>  [
-                'label'  =>  __( 'Next Amount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'next_amount' => [
+                'label' => __( 'Next Amount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'operation'  =>  [
-                'label'  =>  __( 'Operation' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'operation' => [
+                'label' => __( 'Operation' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'order_code'  =>  [
-                'label'  =>  __( 'Order' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'order_code' => [
+                'label' => __( 'Order' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -509,19 +509,19 @@ class CustomerAccountCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers-account-history/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -552,8 +552,8 @@ class CustomerAccountCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -580,11 +580,11 @@ class CustomerAccountCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history/{id}' ),
+            'list' => ns()->url( 'dashboard/' . 'customers/' . '/account-history' ),
+            'create' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'customers/' . '/account-history/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-account-history/{id}' ),
         ];
     }
 
@@ -597,10 +597,10 @@ class CustomerAccountCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

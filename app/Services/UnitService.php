@@ -25,10 +25,10 @@ class UnitService
         $unitGroup->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The Unit Group has been created.' ),
-            'data'      =>  [
-                'group'  =>  $unitGroup,
+            'status' => 'success',
+            'message' => __( 'The Unit Group has been created.' ),
+            'data' => [
+                'group' => $unitGroup,
             ],
         ];
     }
@@ -42,10 +42,10 @@ class UnitService
         $unitGroup->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The unit group %s has been updated.' ), $unitGroup->name ),
-            'data'      =>  [
-                'group' =>  $unitGroup,
+            'status' => 'success',
+            'message' => sprintf( __( 'The unit group %s has been updated.' ), $unitGroup->name ),
+            'data' => [
+                'group' => $unitGroup,
             ],
         ];
     }
@@ -104,9 +104,9 @@ class UnitService
         $unit->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The unit has been saved.' ),
-            'data'      =>  compact( 'unit' ),
+            'status' => 'success',
+            'message' => __( 'The unit has been saved.' ),
+            'data' => compact( 'unit' ),
         ];
     }
 
@@ -121,8 +121,8 @@ class UnitService
             $unit = Unit::find( $id );
             if ( ! $unit instanceof Unit ) {
                 throw new NotFoundException([
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Unable to find the Unit using the provided id.' ),
+                    'status' => 'failed',
+                    'message' => __( 'Unable to find the Unit using the provided id.' ),
                 ]);
             }
 
@@ -160,8 +160,8 @@ class UnitService
             $group = $this->getGroups( $fields[ 'group_id' ]);
         } catch ( \Exception $exception ) {
             throw new NotFoundException([
-                'status'    =>  'failed',
-                'message'   =>  __( 'Unable to find the unit group to which this unit is attached.' ),
+                'status' => 'failed',
+                'message' => __( 'Unable to find the unit group to which this unit is attached.' ),
             ]);
         }
 
@@ -187,9 +187,9 @@ class UnitService
         $unit->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The unit has been updated.' ),
-            'data'      =>  compact( 'unit' ),
+            'status' => 'success',
+            'message' => __( 'The unit has been updated.' ),
+            'data' => compact( 'unit' ),
         ];
     }
 
@@ -263,8 +263,8 @@ class UnitService
         $unit->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The unit has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The unit has been deleted.' ),
         ];
     }
 }

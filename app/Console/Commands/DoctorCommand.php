@@ -58,15 +58,15 @@ class DoctorCommand extends Command
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {
-            $products           =   OrderProduct::where( 'total_purchase_price', 0 )->get();
+            $products = OrderProduct::where( 'total_purchase_price', 0 )->get();
 
             /**
              * @var ProductService
              */
-            $productService     =   app()->make( ProductService::class );
+            $productService = app()->make( ProductService::class );
 
             $this->withProgressBar( $products, function( OrderProduct $orderProduct ) use ( $productService ) {
-                $orderProduct->total_purchase_price     =   $productService->getLastPurchasePrice( $orderProduct->product ) * $orderProduct->quantity;
+                $orderProduct->total_purchase_price = $productService->getLastPurchasePrice( $orderProduct->product ) * $orderProduct->quantity;
                 $orderProduct->save();
             });
 

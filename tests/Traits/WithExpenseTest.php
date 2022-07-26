@@ -13,30 +13,30 @@ trait WithExpenseTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
-                'name'          =>  __( 'Exploitation Expenses' ),
-                'author'        =>  Auth::id(),
-                'account'       =>  '000010',
-                'operation'     =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Exploitation Expenses' ),
+                'author' => Auth::id(),
+                'account' => '000010',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
-                'name'          =>  __( 'Employee Salaries' ),
-                'author'        =>  Auth::id(),
-                'account'       =>  '000011',
-                'operation'     =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Employee Salaries' ),
+                'author' => Auth::id(),
+                'account' => '000011',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/expenses-categories', [
-                'name'          =>  __( 'Random Expenses' ),
-                'author'        =>  Auth::id(),
-                'account'       =>  '000012',
-                'operation'     =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Random Expenses' ),
+                'author' => Auth::id(),
+                'account' => '000012',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ]);
 
         $response->assertStatus(200);
@@ -51,17 +51,17 @@ trait WithExpenseTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
-                'name'          =>  __( 'Store Rent' ),
-                'general'       =>  [
-                    'active'        =>  true,
-                    'value'         =>  1500,
-                    'recurring'     =>  false,
-                    'category_id'   =>  $category->id,
+                'name' => __( 'Store Rent' ),
+                'general' => [
+                    'active' => true,
+                    'value' => 1500,
+                    'recurring' => false,
+                    'category_id' => $category->id,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         /**
@@ -71,17 +71,17 @@ trait WithExpenseTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
-                'name'          =>  __( 'Material Delivery' ),
-                'general'       =>  [
-                    'active'        =>  true,
-                    'value'         =>  300,
-                    'recurring'     =>  false,
-                    'category_id'   =>  $category->id,
+                'name' => __( 'Material Delivery' ),
+                'general' => [
+                    'active' => true,
+                    'value' => 300,
+                    'recurring' => false,
+                    'category_id' => $category->id,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         /**
@@ -92,19 +92,19 @@ trait WithExpenseTest
         $role = Role::get()->shuffle()->first();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.expenses', [
-                'name'          =>  __( 'Store Rent' ),
-                'general'       =>  [
-                    'active'        =>  true,
-                    'value'         =>  1500,
-                    'recurring'     =>  false,
-                    'category_id'   =>  $category->id,
-                    'occurence'     =>  'month_starts',
-                    'group_id'      =>  $role->id,
+                'name' => __( 'Store Rent' ),
+                'general' => [
+                    'active' => true,
+                    'value' => 1500,
+                    'recurring' => false,
+                    'category_id' => $category->id,
+                    'occurence' => 'month_starts',
+                    'group_id' => $role->id,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $response->assertStatus(200);

@@ -70,8 +70,8 @@ class ModuleRequest extends Command
         switch ( $content ) {
             case 'migration':
             return view( 'generate.modules.request', [
-                'module'    =>  $this->module,
-                'name'      =>  $this->argument( 'name' ),
+                'module' => $this->module,
+                'name' => $this->argument( 'name' ),
             ]);
         }
     }

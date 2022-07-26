@@ -138,9 +138,9 @@ class TaxService
         $group->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax group has been correctly saved.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'success',
+            'message' => __( 'The tax group has been correctly saved.' ),
+            'data' => compact( 'group' ),
         ];
     }
 
@@ -158,9 +158,9 @@ class TaxService
         $tax->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax has been correctly created.' ),
-            'data'      =>  compact( 'tax' ),
+            'status' => 'success',
+            'message' => __( 'The tax has been correctly created.' ),
+            'data' => compact( 'tax' ),
         ];
     }
 
@@ -656,8 +656,8 @@ class TaxService
          * tax_id & product_id combinaison
          */
         $productTax = ProductTax::findMatch([
-            'product_id'    =>  $product->id,
-            'tax_id'        =>  $tax->id,
+            'product_id' => $product->id,
+            'tax_id' => $tax->id,
         ])->first();
 
         if ( $productTax instanceof ProductTax ) {
@@ -678,10 +678,10 @@ class TaxService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product tax has been saved.' ),
-            'data'      =>  [
-                'tax'   =>  $productTax,
+            'status' => 'success',
+            'message' => __( 'The product tax has been saved.' ),
+            'data' => [
+                'tax' => $productTax,
             ],
         ];
     }
@@ -699,8 +699,8 @@ class TaxService
         $tax->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax has been successfully deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The tax has been successfully deleted.' ),
         ];
     }
 }

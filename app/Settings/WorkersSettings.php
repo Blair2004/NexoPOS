@@ -14,8 +14,8 @@ class WorkersSettings extends SettingsPage
         $options = app()->make( Options::class );
 
         $this->form = [
-            'tabs'  =>  [
-                'general'    =>  include( dirname( __FILE__ ) . '/workers/general.php' ),
+            'tabs' => [
+                'general' => include( dirname( __FILE__ ) . '/workers/general.php' ),
             ],
         ];
     }

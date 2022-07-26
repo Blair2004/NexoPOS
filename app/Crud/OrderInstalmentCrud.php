@@ -47,10 +47,10 @@ class OrderInstalmentCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => true,
+        'update' => true,
+        'delete' => false,
     ];
 
     /**
@@ -88,7 +88,7 @@ class OrderInstalmentCrud extends CrudService
      * ]
      */
     public $pick = [
-        'customer'      =>  [ 'name' ],
+        'customer' => [ 'name' ],
     ];
 
     /**
@@ -131,15 +131,15 @@ class OrderInstalmentCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Order Instalments List' ),
-            'list_description'      =>  __( 'Display all Order Instalments.' ),
-            'no_entry'              =>  __( 'No Order Instalment has been registered' ),
-            'create_new'            =>  __( 'Add a new Order Instalment' ),
-            'create_title'          =>  __( 'Create a new Order Instalment' ),
-            'create_description'    =>  __( 'Register a new Order Instalment and save it.' ),
-            'edit_title'            =>  __( 'Edit Order Instalment' ),
-            'edit_description'      =>  __( 'Modify  Order Instalment.' ),
-            'back_to_list'          =>  __( 'Return to Order Instalment' ),
+            'list_title' => __( 'Order Instalments List' ),
+            'list_description' => __( 'Display all Order Instalments.' ),
+            'no_entry' => __( 'No Order Instalment has been registered' ),
+            'create_new' => __( 'Add a new Order Instalment' ),
+            'create_title' => __( 'Create a new Order Instalment' ),
+            'create_description' => __( 'Register a new Order Instalment and save it.' ),
+            'edit_title' => __( 'Edit Order Instalment' ),
+            'edit_description' => __( 'Modify  Order Instalment.' ),
+            'back_to_list' => __( 'Return to Order Instalment' ),
         ];
     }
 
@@ -162,41 +162,41 @@ class OrderInstalmentCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'amount',
-                            'label' =>  __( 'Amount' ),
-                            'value' =>  $entry->amount ?? '',
+                            'type' => 'text',
+                            'name' => 'amount',
+                            'label' => __( 'Amount' ),
+                            'value' => $entry->amount ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'date',
-                            'label' =>  __( 'Date' ),
-                            'value' =>  $entry->date ?? '',
+                            'type' => 'text',
+                            'name' => 'date',
+                            'label' => __( 'Date' ),
+                            'value' => $entry->date ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'order_id',
-                            'label' =>  __( 'Order Id' ),
-                            'value' =>  $entry->order_id ?? '',
+                            'type' => 'text',
+                            'name' => 'order_id',
+                            'label' => __( 'Order Id' ),
+                            'value' => $entry->order_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'paid',
-                            'label' =>  __( 'Paid' ),
-                            'value' =>  $entry->paid ?? '',
+                            'type' => 'text',
+                            'name' => 'paid',
+                            'label' => __( 'Paid' ),
+                            'value' => $entry->paid ?? '',
                         ],                     ],
                 ],
             ],
@@ -330,30 +330,30 @@ class OrderInstalmentCrud extends CrudService
     public function getColumns()
     {
         return [
-            'customer_name'  =>  [
-                'label'  =>  __( 'Customer' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'customer_name' => [
+                'label' => __( 'Customer' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'order_code'  =>  [
-                'label'  =>  __( 'Order' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'order_code' => [
+                'label' => __( 'Order' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'amount'  =>  [
-                'label'  =>  __( 'Amount' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'amount' => [
+                'label' => __( 'Amount' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'date'  =>  [
-                'label'  =>  __( 'Date' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'date' => [
+                'label' => __( 'Date' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'paid'  =>  [
-                'label'  =>  __( 'Paid' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'paid' => [
+                'label' => __( 'Paid' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -369,19 +369,19 @@ class OrderInstalmentCrud extends CrudService
         $entry->date = ns()->date->getFormatted( $entry->date );
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.orders-instalments/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -412,8 +412,8 @@ class OrderInstalmentCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -440,11 +440,11 @@ class OrderInstalmentCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'orders/instalments' ),
-            'create'    =>  false,
-            'edit'      =>  ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'orders/instalments' ),
+            'create' => false,
+            'edit' => ns()->url( 'dashboard/' . 'orders/instalments/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.orders-instalments/{id}' . '' ),
         ];
     }
 
@@ -457,10 +457,10 @@ class OrderInstalmentCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

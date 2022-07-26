@@ -23,7 +23,6 @@ use App\Services\ProductService;
 
 class OrderEventsSubscriber
 {
-
     public function __construct(
         protected OrdersService $ordersService,
         protected ProductService $productsService,
@@ -173,7 +172,7 @@ class OrderEventsSubscriber
     public function orderAfterRefundEvent( OrderAfterRefundedEvent $event )
     {
         if ( in_array( $event->order->payment_status, [
-            Order::PAYMENT_PAID
+            Order::PAYMENT_PAID,
         ]) ) {
             $this->customerService->decreasePurchases(
                 $event->order->customer,
@@ -189,7 +188,7 @@ class OrderEventsSubscriber
     public function orderAfterVoidedEvent( OrderVoidedEvent $event )
     {
         if ( in_array( $event->order->payment_status, [
-            Order::PAYMENT_PAID
+            Order::PAYMENT_PAID,
         ]) ) {
             $this->customerService->decreasePurchases(
                 $event->order->customer,
@@ -205,7 +204,7 @@ class OrderEventsSubscriber
     public function orderAfterPaymentStatusChangedEvent( OrderAfterPaymentStatusChangedEvent $event )
     {
         if ( in_array( $event->new, [
-            Order::PAYMENT_PAID
+            Order::PAYMENT_PAID,
         ]) ) {
             $this->customerService->increasePurchases(
                 $event->order->customer,
@@ -221,7 +220,7 @@ class OrderEventsSubscriber
     public function orderAfterCreatedEvent( $event )
     {
         if ( in_array( $event->order->payment_status, [
-            Order::PAYMENT_PAID
+            Order::PAYMENT_PAID,
         ]) ) {
             $this->customerService->increasePurchases(
                 $event->order->customer,

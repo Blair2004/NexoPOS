@@ -8,11 +8,11 @@ trait WithProviderTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.providers', [
-                'name'                  =>  __( 'Computers' ),
+                'name' => __( 'Computers' ),
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 }

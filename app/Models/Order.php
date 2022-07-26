@@ -103,7 +103,7 @@ class Order extends NsModel
     const DELIVERY_DELIVERED = 'delivered';
 
     public $casts = [
-        'final_payment_date'        =>  DateCast::class,
+        'final_payment_date' => DateCast::class,
     ];
 
     public function products()

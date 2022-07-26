@@ -224,9 +224,9 @@ class ProductService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The variable product has been created.' ),
-            'data'      =>  compact( 'parent' ),
+            'status' => 'success',
+            'message' => __( 'The variable product has been created.' ),
+            'data' => compact( 'parent' ),
         ];
     }
 
@@ -307,9 +307,9 @@ class ProductService
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
         return [
-            'status'    =>      'success',
-            'message'   =>      __( 'The product has been saved.' ),
-            'data'      =>      compact( 'product', 'editUrl' ),
+            'status' => 'success',
+            'message' => __( 'The product has been saved.' ),
+            'data' => compact( 'product', 'editUrl' ),
         ];
     }
 
@@ -462,9 +462,9 @@ class ProductService
         $editUrl = ns()->route( 'ns.products-edit', [ 'product' => $product->id ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product has been udpated' ),
-            'data'      =>  compact( 'product', 'editUrl' ),
+            'status' => 'success',
+            'message' => __( 'The product has been udpated' ),
+            'data' => compact( 'product', 'editUrl' ),
         ];
     }
 
@@ -521,8 +521,8 @@ class ProductService
             ->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The subitem has been saved.' ),
+            'status' => 'success',
+            'message' => __( 'The subitem has been saved.' ),
         ];
     }
 
@@ -644,9 +644,9 @@ class ProductService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The variable product has been updated.' ),
-            'data'      =>  compact( 'parent' ),
+            'status' => 'success',
+            'message' => __( 'The variable product has been updated.' ),
+            'data' => compact( 'parent' ),
         ];
     }
 
@@ -847,9 +847,9 @@ class ProductService
         $unitQuantity->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product\'s unit quantity has been updated.' ),
-            'data'      =>  compact( 'unitQuantity' ),
+            'status' => 'success',
+            'message' => __( 'The product\'s unit quantity has been updated.' ),
+            'data' => compact( 'unitQuantity' ),
         ];
     }
 
@@ -883,15 +883,15 @@ class ProductService
 
             if ( count( $result ) === 0 ) {
                 return [
-                    'status'    =>  'info',
-                    'message'   =>  sprintf( __( 'Unable to reset this variable product "%s", since it doens\'t seems to have any variations' ), $product->name ),
+                    'status' => 'info',
+                    'message' => sprintf( __( 'Unable to reset this variable product "%s", since it doens\'t seems to have any variations' ), $product->name ),
                 ];
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The product variations has been reset' ),
-                'data'      =>  compact( 'result' ),
+                'status' => 'success',
+                'message' => __( 'The product variations has been reset' ),
+                'data' => compact( 'result' ),
             ];
         } else {
             return $this->__resetProductRelatives( $product );
@@ -915,9 +915,9 @@ class ProductService
         event( new ProductResetEvent( $product ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product has been resetted.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product has been resetted.' ),
+            'data' => compact( 'product' ),
         ];
     }
 
@@ -952,8 +952,8 @@ class ProductService
         event( new ProductAfterDeleteEvent( $product ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The product "%s" has been successfully deleted' ), $name ),
+            'status' => 'success',
+            'message' => sprintf( __( 'The product "%s" has been successfully deleted' ), $name ),
         ];
     }
 
@@ -1053,20 +1053,20 @@ class ProductService
     public function procurementStockOuting( ProcurementProduct $oldProduct, $fields )
     {
         $history = $this->stockAdjustment( ProductHistory::ACTION_REMOVED, [
-            'unit_id'                   =>      $oldProduct->unit_id,
-            'product_id'                =>      $oldProduct->product_id,
-            'unit_price'                =>      $oldProduct->purchase_price,
-            'total_price'               =>      $oldProduct->total_price,
-            'procurement_id'            =>      $oldProduct->procurement_id,
-            'procurementProduct'        =>      $oldProduct,
-            'procurement_product_id'    =>      $oldProduct->id,
-            'quantity'                  =>      $fields[ 'quantity' ],
+            'unit_id' => $oldProduct->unit_id,
+            'product_id' => $oldProduct->product_id,
+            'unit_price' => $oldProduct->purchase_price,
+            'total_price' => $oldProduct->total_price,
+            'procurement_id' => $oldProduct->procurement_id,
+            'procurementProduct' => $oldProduct,
+            'procurement_product_id' => $oldProduct->id,
+            'quantity' => $fields[ 'quantity' ],
         ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product stock has been updated.' ),
-            'compac'    =>  compact( 'history' ),
+            'status' => 'success',
+            'message' => __( 'The product stock has been updated.' ),
+            'compac' => compact( 'history' ),
         ];
     }
 
@@ -1432,9 +1432,9 @@ class ProductService
         );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product quantity has been updated.' ),
-            'data'      =>  compact( 'newQuantity', 'oldQuantity', 'quantity' ),
+            'status' => 'success',
+            'message' => __( 'The product quantity has been updated.' ),
+            'data' => compact( 'newQuantity', 'oldQuantity', 'quantity' ),
         ];
     }
 
@@ -1471,9 +1471,9 @@ class ProductService
         );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product quantity has been updated.' ),
-            'data'      =>  compact( 'newQuantity', 'oldQuantity', 'quantity' ),
+            'status' => 'success',
+            'message' => __( 'The product quantity has been updated.' ),
+            'data' => compact( 'newQuantity', 'oldQuantity', 'quantity' ),
         ];
     }
 
@@ -1487,20 +1487,20 @@ class ProductService
     public function procurementStockEntry( ProcurementProduct $product, $fields )
     {
         $history = $this->stockAdjustment( ProductHistory::ACTION_ADDED, [
-            'unit_id'                   =>      $product->unit_id,
-            'product_id'                =>      $product->product_id,
-            'unit_price'                =>      $product->purchase_price,
-            'total_price'               =>      $product->total_price,
-            'procurement_id'            =>      $product->procurement_id,
-            'procurementProduct'        =>      $product,
-            'procurement_product_id'    =>      $product->id,
-            'quantity'                  =>      $fields[ 'quantity' ],
+            'unit_id' => $product->unit_id,
+            'product_id' => $product->product_id,
+            'unit_price' => $product->purchase_price,
+            'total_price' => $product->total_price,
+            'procurement_id' => $product->procurement_id,
+            'procurementProduct' => $product,
+            'procurement_product_id' => $product->id,
+            'quantity' => $fields[ 'quantity' ],
         ]);
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product stock has been updated.' ),
-            'data'      =>  compact( 'history' ),
+            'status' => 'success',
+            'message' => __( 'The product stock has been updated.' ),
+            'data' => compact( 'history' ),
         ];
     }
 
@@ -1534,14 +1534,14 @@ class ProductService
 
         if ( $count === 0 ) {
             return [
-                'status'    =>  'info',
-                'message'   =>  __( 'There is no variations to delete.' ),
+                'status' => 'info',
+                'message' => __( 'There is no variations to delete.' ),
             ];
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( '%s product(s) has been deleted.' ), $count ),
+            'status' => 'success',
+            'message' => sprintf( __( '%s product(s) has been deleted.' ), $count ),
         ];
     }
 
@@ -1558,31 +1558,32 @@ class ProductService
 
         if ( ! $result ) {
             return [
-                'status'    =>  'info',
-                'message'   =>  __( 'There is no products to delete.' ),
+                'status' => 'info',
+                'message' => __( 'There is no products to delete.' ),
             ];
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
-            'data'      =>  compact( 'result' ),
+            'status' => 'success',
+            'message' => sprintf( __( '%s products(s) has been deleted.' ), count( $result ) ),
+            'data' => compact( 'result' ),
         ];
     }
 
     /**
      * Will return the last purchase price
      * defined for the provided product
+     *
      * @param Product $product
      * @return float
      */
     public function getLastPurchasePrice( $product )
     {
-        if( $product instanceof Product ) {
-            $procurementProduct     =   ProcurementProduct::where( 'product_id', $product->id )
+        if ( $product instanceof Product ) {
+            $procurementProduct = ProcurementProduct::where( 'product_id', $product->id )
                 ->orderBy( 'id', 'desc' )
                 ->first();
-    
+
             if ( $procurementProduct instanceof ProcurementProduct ) {
                 return $procurementProduct->purchase_price;
             }
@@ -1649,9 +1650,9 @@ class ProductService
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product variation has been succesfully created.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product variation has been succesfully created.' ),
+            'data' => compact( 'product' ),
         ];
     }
 
@@ -1691,9 +1692,9 @@ class ProductService
         $this->taxService->computeTax( $product, $fields[ 'tax_group_id' ] ?? null );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product variation has been updated.' ),
-            'data'      =>  compact( 'product' ),
+            'status' => 'success',
+            'message' => __( 'The product variation has been updated.' ),
+            'data' => compact( 'product' ),
         ];
     }
 

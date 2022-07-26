@@ -46,10 +46,10 @@ class CashFlowHistoryCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false, // 'nexopos.create.cash-flow-history',
-        'read'      =>  'nexopos.read.cash-flow-history',
-        'update'    =>  false,
-        'delete'    =>  'nexopos.delete.cash-flow-history',
+        'create' => false, // 'nexopos.create.cash-flow-history',
+        'read' => 'nexopos.read.cash-flow-history',
+        'update' => false,
+        'delete' => 'nexopos.delete.cash-flow-history',
     ];
 
     /**
@@ -79,7 +79,7 @@ class CashFlowHistoryCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'  =>  [ 'username', 'id' ],
+        'user' => [ 'username', 'id' ],
     ];
 
     /**
@@ -122,15 +122,15 @@ class CashFlowHistoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Cash Flow List' ),
-            'list_description'      =>  __( 'Display all Cash Flow.' ),
-            'no_entry'              =>  __( 'No Cash Flow has been registered' ),
-            'create_new'            =>  __( 'Add a new Cash Flow' ),
-            'create_title'          =>  __( 'Create a new Cash Flow' ),
-            'create_description'    =>  __( 'Register a new Cash Flow and save it.' ),
-            'edit_title'            =>  __( 'Edit Cash Flow' ),
-            'edit_description'      =>  __( 'Modify  Cash Flow.' ),
-            'back_to_list'          =>  __( 'Return to Expenses Histories' ),
+            'list_title' => __( 'Cash Flow List' ),
+            'list_description' => __( 'Display all Cash Flow.' ),
+            'no_entry' => __( 'No Cash Flow has been registered' ),
+            'create_new' => __( 'Add a new Cash Flow' ),
+            'create_title' => __( 'Create a new Cash Flow' ),
+            'create_description' => __( 'Register a new Cash Flow and save it.' ),
+            'edit_title' => __( 'Edit Cash Flow' ),
+            'edit_description' => __( 'Modify  Cash Flow.' ),
+            'back_to_list' => __( 'Return to Expenses Histories' ),
         ];
     }
 
@@ -153,31 +153,31 @@ class CashFlowHistoryCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'expense_id',
-                            'label' =>  __( 'Expense ID' ),
-                            'value' =>  $entry->expense_id ?? '',
+                            'type' => 'text',
+                            'name' => 'expense_id',
+                            'label' => __( 'Expense ID' ),
+                            'value' => $entry->expense_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'expense_name',
-                            'label' =>  __( 'Expense Name' ),
-                            'value' =>  $entry->expense_name ?? '',
+                            'type' => 'text',
+                            'name' => 'expense_name',
+                            'label' => __( 'Expense Name' ),
+                            'value' => $entry->expense_name ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
                         ],
                     ],
                 ],
@@ -314,8 +314,8 @@ class CashFlowHistoryCrud extends CrudService
             event( new CashFlowHistoryBeforeDeleteEvent( CashFlow::find( $model->id ) ) );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The expense history is about to be deleted.' ),
+                'status' => 'success',
+                'message' => __( 'The expense history is about to be deleted.' ),
             ];
         }
     }
@@ -328,30 +328,30 @@ class CashFlowHistoryCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'operation'  =>  [
-                'label'  =>  __( 'Operation' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'operation' => [
+                'label' => __( 'Operation' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'By' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'By' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Date' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Date' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -388,12 +388,12 @@ class CashFlowHistoryCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.cash-flow-history/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -424,8 +424,8 @@ class CashFlowHistoryCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -452,11 +452,11 @@ class CashFlowHistoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'cash-flow/history' ),
-            'create'    => ns()->url( 'dashboard/' . 'cash-flow/history/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'cash-flow/history/edit/' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'cash-flow/history' ),
+            'create' => ns()->url( 'dashboard/' . 'cash-flow/history/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'cash-flow/history/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.cash-flow-history/{id}' . '' ),
         ];
     }
 
@@ -469,10 +469,10 @@ class CashFlowHistoryCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

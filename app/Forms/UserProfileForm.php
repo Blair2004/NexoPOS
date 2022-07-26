@@ -21,9 +21,9 @@ class UserProfileForm extends SettingsPage
         $options = app()->make( UserOptions::class );
 
         $this->form = [
-            'tabs'  =>  Hook::filter( 'ns-user-profile-form', [
-                'attribute'     =>  include( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
-                'security'      =>  include( dirname( __FILE__ ) . '/user-profile/security.php' ),
+            'tabs' => Hook::filter( 'ns-user-profile-form', [
+                'attribute' => include( dirname( __FILE__ ) . '/user-profile/attribute.php' ),
+                'security' => include( dirname( __FILE__ ) . '/user-profile/security.php' ),
             ]),
         ];
     }
@@ -41,9 +41,9 @@ class UserProfileForm extends SettingsPage
         $results = collect( $results )->filter( fn( $result ) => ! empty( $result ) )->values();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The profile has been successfully saved.' ),
-            'data'      =>  compact( 'results', 'validator' ),
+            'status' => 'success',
+            'message' => __( 'The profile has been successfully saved.' ),
+            'data' => compact( 'results', 'validator' ),
         ];
     }
 
@@ -56,7 +56,7 @@ class UserProfileForm extends SettingsPage
         if ( ! empty( $allowedInputs ) ) {
             $user = UserAttribute::where( 'user_id', Auth::user()->id )
                 ->firstOrNew([
-                    'user_id'   =>  Auth::id(),
+                    'user_id' => Auth::id(),
                 ]);
 
             foreach ( $request->input( 'attribute' ) as $key => $value ) {
@@ -68,8 +68,8 @@ class UserProfileForm extends SettingsPage
             $user->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The user attribute has been saved.' ),
+                'status' => 'success',
+                'message' => __( 'The user attribute has been saved.' ),
             ];
         }
 
@@ -95,8 +95,8 @@ class UserProfileForm extends SettingsPage
             }
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The options has been successfully updated.' ),
+                'status' => 'success',
+                'message' => __( 'The options has been successfully updated.' ),
             ];
         }
 
@@ -110,8 +110,8 @@ class UserProfileForm extends SettingsPage
                 $validator->errors()->add( 'security.old_password', __( 'Wrong password provided' ) );
 
                 return  [
-                    'status'    =>  'failed',
-                    'message'   =>  __( 'Wrong old password provided' ),
+                    'status' => 'failed',
+                    'message' => __( 'Wrong old password provided' ),
                 ];
             } else {
                 $user = User::find( Auth::id() );
@@ -119,8 +119,8 @@ class UserProfileForm extends SettingsPage
                 $user->save();
 
                 return [
-                    'status'    =>  'success',
-                    'message'   =>  __( 'Password Successfully updated.' ),
+                    'status' => 'success',
+                    'message' => __( 'Password Successfully updated.' ),
                 ];
             }
         }

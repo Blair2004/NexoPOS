@@ -25,9 +25,9 @@ class CrudService
      * @param bool
      */
     protected $features = [
-        'bulk-actions'      =>  true, // enable bulk action
-        'single-action'     =>  true, // enable single action
-        'checkboxes'        =>  true, // enable checkboxes
+        'bulk-actions' => true, // enable bulk action
+        'single-action' => true, // enable single action
+        'checkboxes' => true, // enable checkboxes
     ];
 
     /**
@@ -53,9 +53,9 @@ class CrudService
      * @return array
      */
     protected $links = [
-        'list'      =>  [],
-        'edit'      =>  [],
-        'create'    =>  [],
+        'list' => [],
+        'edit' => [],
+        'create' => [],
     ];
 
     /**
@@ -136,7 +136,7 @@ class CrudService
          * @todo provide more build in actions
          */
         $this->bulkActions = [
-            'delete_selected'   =>  __( 'Delete Selected entries' ),
+            'delete_selected' => __( 'Delete Selected entries' ),
         ];
 
         /**
@@ -166,7 +166,7 @@ class CrudService
     /**
      * Will submit a request to the current
      * crud instance using the input provided
-     * 
+     *
      * @param array $inputs
      * @param int $id
      * @return array $response
@@ -347,13 +347,13 @@ class CrudService
          * @todo adding a link to edit the new entry
          */
         return [
-            'status'    =>  'success',
-            'entry'     =>  $entry, // deprecated
-            'data'      =>  [
-                'entry'     =>  $entry, 
-                'editUrl'   =>  str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
+            'status' => 'success',
+            'entry' => $entry, // deprecated
+            'data' => [
+                'entry' => $entry,
+                'editUrl' => str_contains( $resource->getLinks()[ 'edit' ], '{id}' ) ? Str::replace( '{id}', $entry->id, $resource->getLinks()[ 'edit' ] ) : false,
             ],
-            'message'   =>  $id === null ? __( 'A new entry has been successfully created.' ) : __( 'The entry has been successfully updated.' ),
+            'message' => $id === null ? __( 'A new entry has been successfully created.' ) : __( 'The entry has been successfully updated.' ),
         ];
     }
 
@@ -1178,35 +1178,35 @@ class CrudService
              * that displays the title on the page.
              * It fetches the value from the labels
              */
-            'title'         =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_title' ],
+            'title' => Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_title' ],
 
             /**
              * That displays the page description. This allow pull the value
              * from the labels.
              */
-            'description'   =>  Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_description' ],
+            'description' => Hook::filter( $instance::method( 'getLabels' ), $instance->getLabels() )[ 'list_description' ],
 
             /**
              * This create the src URL using the "namespace".
              */
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace ),
+            'src' => ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace ),
 
             /**
              * This pull the creation link. That link should takes the user
              * to the creation form.
              */
-            'createUrl'     =>  Hook::filter( $instance::method( 'getLinks' ), $instance->getLinks() )[ 'create' ] ?? '#',
+            'createUrl' => Hook::filter( $instance::method( 'getLinks' ), $instance->getLinks() )[ 'create' ] ?? '#',
 
             /**
              * Provided to render the side menu.
              */
-            'menus'         =>  app()->make( MenuService::class ),
+            'menus' => app()->make( MenuService::class ),
 
             /**
              * to provide custom query params
              * to every outgoing request on the table
              */
-            'queryParams'   =>  [],
+            'queryParams' => [],
         ], $config ) );
     }
 
@@ -1241,47 +1241,47 @@ class CrudService
              * this pull the title either
              * the form is made to create or edit a resource.
              */
-            'title'         =>  $config[ 'title' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_title' ] : $instance->getLabels()[ 'edit_title' ] ),
+            'title' => $config[ 'title' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_title' ] : $instance->getLabels()[ 'edit_title' ] ),
 
             /**
              * this pull the description either the form is made to
              * create or edit a resource.
              */
-            'description'   =>  $config[ 'description' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_description' ] : $instance->getLabels()[ 'edit_description' ] ),
+            'description' => $config[ 'description' ] ?? ( $entry === null ? $instance->getLabels()[ 'create_description' ] : $instance->getLabels()[ 'edit_description' ] ),
 
             /**
              * this automatically build a source URL based on the identifier
              * provided. But can be overwritten with the config.
              */
-            'src'           =>  $config[ 'src' ] ?? ( ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
+            'src' => $config[ 'src' ] ?? ( ns()->url( '/api/nexopos/v4/crud/' . $instance->namespace . '/' . ( ! empty( $entry ) ? 'form-config/' . $entry->id : 'form-config' ) ) ),
 
             /**
              * this use the built in links to create a return URL.
              * It can also be overwritten by the configuration.
              */
-            'returnUrl'     =>  $config[ 'returnUrl' ] ?? ( $instance->getLinks()[ 'list' ] ?? '#' ),
+            'returnUrl' => $config[ 'returnUrl' ] ?? ( $instance->getLinks()[ 'list' ] ?? '#' ),
 
             /**
              * This will pull the submitURL that might be different wether the $entry is
              * provided or not. can be overwritten on the configuration ($config).
              */
-            'submitUrl'     =>  $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
+            'submitUrl' => $config[ 'submitUrl' ] ?? ( $entry === null ? $instance->getLinks()[ 'post' ] : str_replace( '{id}', $entry->id, $instance->getLinks()[ 'put' ] ) ),
 
             /**
              * By default the method used is "post" but might change to "put" according to
              * wether the entry is provided (Model). Can be changed from the $config.
              */
-            'submitMethod'  =>  $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
+            'submitMethod' => $config[ 'submitMethod' ] ?? ( $entry === null ? 'post' : 'put' ),
 
             /**
              * This will pass an instance of the MenuService.
              */
-            'menus'         =>  app()->make( MenuService::class ),
+            'menus' => app()->make( MenuService::class ),
 
             /**
              * provide the current crud namespace
              */
-            'namespace'     =>  $instance->getNamespace(),
+            'namespace' => $instance->getNamespace(),
         ]);
     }
 

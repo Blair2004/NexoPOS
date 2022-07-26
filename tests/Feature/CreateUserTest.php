@@ -47,13 +47,13 @@ class CreateUserTest extends TestCase
             $password = Hash::make( Str::random(20) );
 
             $configuration = [
-                'username'  =>  $this->faker->username(),
-                'general'   =>  [
-                    'email'     =>  $this->faker->email(),
-                    'password'  =>  $password,
-                    'password_confirm'  =>  $password,
-                    'roles'     =>  [ $role->id ],
-                    'active'    =>  1, // true
+                'username' => $this->faker->username(),
+                'general' => [
+                    'email' => $this->faker->email(),
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'roles' => [ $role->id ],
+                    'active' => 1, // true
                 ],
             ];
 
@@ -69,10 +69,10 @@ class CreateUserTest extends TestCase
              */
             try {
                 $this->users->setUser([
-                    'username'  =>  $configuration[ 'username' ],
-                    'email'     =>  $this->faker->email(),
-                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
-                    'active'    =>  true,
+                    'username' => $configuration[ 'username' ],
+                    'email' => $this->faker->email(),
+                    'roles' => $configuration[ 'general' ][ 'roles' ],
+                    'active' => true,
                 ]);
             } catch ( Exception $exception ) {
                 $this->assertTrue( strstr( $exception->getMessage(), 'username' ) !== false );
@@ -84,10 +84,10 @@ class CreateUserTest extends TestCase
              */
             try {
                 $this->users->setUser([
-                    'username'  =>  $this->faker->userName(),
-                    'email'     =>  $configuration[ 'general' ][ 'email' ],
-                    'roles'     =>  $configuration[ 'general' ][ 'roles' ],
-                    'active'    =>  true,
+                    'username' => $this->faker->userName(),
+                    'email' => $configuration[ 'general' ][ 'email' ],
+                    'roles' => $configuration[ 'general' ][ 'roles' ],
+                    'active' => true,
                 ]);
             } catch ( Exception $exception ) {
                 $this->assertTrue( strstr( $exception->getMessage(), 'email' ) !== false );
@@ -97,13 +97,13 @@ class CreateUserTest extends TestCase
              * Step 3: Update user from Crud component
              */
             $configuration = [
-                'username'  =>  $this->faker->username(),
-                'general'   =>  [
-                    'email'     =>  $this->faker->email(),
-                    'password'  =>  $password,
-                    'password_confirm'  =>  $password,
-                    'roles'     =>  [ $role->id ],
-                    'active'    =>  1, // true
+                'username' => $this->faker->username(),
+                'general' => [
+                    'email' => $this->faker->email(),
+                    'password' => $password,
+                    'password_confirm' => $password,
+                    'roles' => [ $role->id ],
+                    'active' => 1, // true
                 ],
             ];
 
@@ -131,25 +131,25 @@ class CreateUserTest extends TestCase
         $user = User::findOrFail( $user->id );
 
         $paramsModelBinding = [
-            '/\{product\}/'                                 =>  Product::class,
-            '/\{provider\}/'                                =>  Provider::class,
-            '/\{procurement\}/'                             =>  Procurement::class,
-            '/\{expense\}/'                                 =>  Expense::class,
-            '/\{category\}/'                                =>  ProductCategory::class,
-            '/\{group\}/'                                   =>  UnitGroup::class,
-            '/\{unit\}/'                                    =>  Unit::class,
-            '/\{reward\}/'                                  =>  RewardSystem::class,
-            '/\{customer\}|\{customerAccountHistory\}/' =>  function() {
+            '/\{product\}/' => Product::class,
+            '/\{provider\}/' => Provider::class,
+            '/\{procurement\}/' => Procurement::class,
+            '/\{expense\}/' => Expense::class,
+            '/\{category\}/' => ProductCategory::class,
+            '/\{group\}/' => UnitGroup::class,
+            '/\{unit\}/' => Unit::class,
+            '/\{reward\}/' => RewardSystem::class,
+            '/\{customer\}|\{customerAccountHistory\}/' => function() {
                 $customerAccountHistory = CustomerAccountHistory::first()->id;
                 $customer = $customerAccountHistory->customer->id;
 
                 return compact( 'customerAccountHistory', 'customer' );
             },
-            '/\{paymentType\}/'                             =>  PaymentType::class,
-            '/\{user\}/'                                    =>  User::class,
-            '/\{order\}/'                                   =>  Order::class,
-            '/\{tax\}/'                                     =>  Tax::class,
-            '/\{cashFlow\}/'                                =>  CashFlow::class,
+            '/\{paymentType\}/' => PaymentType::class,
+            '/\{user\}/' => User::class,
+            '/\{order\}/' => Order::class,
+            '/\{tax\}/' => Tax::class,
+            '/\{cashFlow\}/' => CashFlow::class,
         ];
 
         /**

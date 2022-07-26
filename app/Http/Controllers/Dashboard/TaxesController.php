@@ -95,8 +95,8 @@ class TaxesController extends DashboardController
         $this->taxService->create( $fields );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product tax has been created.' ),
+            'status' => 'success',
+            'message' => __( 'The product tax has been created.' ),
         ];
     }
 
@@ -120,9 +120,9 @@ class TaxesController extends DashboardController
          * mentionning the edited tax
          */
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product tax has been updated' ),
-            'data'      =>  compact( 'tax' ),
+            'status' => 'success',
+            'message' => __( 'The product tax has been updated' ),
+            'data' => compact( 'tax' ),
         ];
     }
 

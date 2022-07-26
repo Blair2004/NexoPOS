@@ -76,10 +76,10 @@ class ProvidersController extends DashboardController
     public function listProvidersProcurements( Provider $provider )
     {
         return ProviderProcurementsCrud::table([
-            'queryParams'   =>  [
-                'provider_id'   =>  $provider->id,
+            'queryParams' => [
+                'provider_id' => $provider->id,
             ],
-            'title'     =>  sprintf(
+            'title' => sprintf(
                 __( 'Procurements by "%s"' ),
                 $provider->name
             ),
@@ -102,9 +102,9 @@ class ProvidersController extends DashboardController
             ->toArray();
 
         return ProviderProductsCrud::table([
-            'title'         =>  sprintf( __( '%s\'s Products' ), $provider->name ),
-            'queryParams'   =>  [
-                'procurements'  =>  $procurements,
+            'title' => sprintf( __( '%s\'s Products' ), $provider->name ),
+            'queryParams' => [
+                'procurements' => $procurements,
             ],
         ]);
     }

@@ -34,7 +34,7 @@ class User extends Authenticatable
     protected $table = 'nexopos_users';
 
     protected $casts = [
-        'active'    =>  'boolean',
+        'active' => 'boolean',
     ];
 
     /**
@@ -79,7 +79,7 @@ class User extends Authenticatable
      */
     protected static $permissions = [];
 
-    private $storedPermissions  =   [];
+    private $storedPermissions = [];
 
     public function __construct( $attributes = [])
     {
@@ -148,8 +148,8 @@ class User extends Authenticatable
         }
 
         return collect( self::$permissions )->filter( function( $permission, $key ) use ( $roles_id ) {
-                return in_array( $key, $roles_id );
-            })
+            return in_array( $key, $roles_id );
+        })
             ->flatten()
             ->unique()
             ->toArray();
@@ -166,7 +166,7 @@ class User extends Authenticatable
              * to the user property, otherwise we'll get them.
              */
             if ( empty( Auth::user()->storedPermissions ) ) {
-                Auth::user()->storedPermissions     =   self::permissions();
+                Auth::user()->storedPermissions = self::permissions();
             }
 
             return in_array( $action, Auth::user()->storedPermissions );

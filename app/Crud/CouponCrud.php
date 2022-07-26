@@ -53,10 +53,10 @@ class CouponCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  true,
-        'read'      =>  true,
-        'update'    =>  true,
-        'delete'    =>  true,
+        'create' => true,
+        'read' => true,
+        'update' => true,
+        'delete' => true,
     ];
 
     /**
@@ -130,15 +130,15 @@ class CouponCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Coupons List' ),
-            'list_description'      =>  __( 'Display all coupons.' ),
-            'no_entry'              =>  __( 'No coupons has been registered' ),
-            'create_new'            =>  __( 'Add a new coupon' ),
-            'create_title'          =>  __( 'Create a new coupon' ),
-            'create_description'    =>  __( 'Register a new coupon and save it.' ),
-            'edit_title'            =>  __( 'Edit coupon' ),
-            'edit_description'      =>  __( 'Modify  Coupon.' ),
-            'back_to_list'          =>  __( 'Return to Coupons' ),
+            'list_title' => __( 'Coupons List' ),
+            'list_description' => __( 'Display all coupons.' ),
+            'no_entry' => __( 'No coupons has been registered' ),
+            'create_new' => __( 'Add a new coupon' ),
+            'create_title' => __( 'Create a new coupon' ),
+            'create_description' => __( 'Register a new coupon and save it.' ),
+            'edit_title' => __( 'Edit coupon' ),
+            'edit_description' => __( 'Modify  Coupon.' ),
+            'back_to_list' => __( 'Return to Coupons' ),
         ];
     }
 
@@ -161,106 +161,106 @@ class CouponCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'validation'    =>  'required',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'validation' => 'required',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'active'    =>  false,
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'active' => false,
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'code',
-                            'label' =>  __( 'Coupon Code' ),
-                            'validation'    =>  'required',
-                            'description'   =>  __( 'Might be used while printing the coupon.' ),
-                            'value' =>  $entry->code ?? '',
+                            'type' => 'text',
+                            'name' => 'code',
+                            'label' => __( 'Coupon Code' ),
+                            'validation' => 'required',
+                            'description' => __( 'Might be used while printing the coupon.' ),
+                            'value' => $entry->code ?? '',
                         ], [
-                            'type'  =>  'select',
-                            'name'  =>  'type',
-                            'validation'    =>  'required',
-                            'options'   =>  Helper::kvToJsOptions([
-                                'percentage_discount'   =>  __( 'Percentage Discount' ),
-                                'flat_discount'         =>  __( 'Flat Discount' ),
+                            'type' => 'select',
+                            'name' => 'type',
+                            'validation' => 'required',
+                            'options' => Helper::kvToJsOptions([
+                                'percentage_discount' => __( 'Percentage Discount' ),
+                                'flat_discount' => __( 'Flat Discount' ),
                             ]),
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
-                            'description'   =>  __( 'Define which type of discount apply to the current coupon.' ),
+                            'label' => __( 'Type' ),
+                            'value' => $entry->type ?? '',
+                            'description' => __( 'Define which type of discount apply to the current coupon.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'discount_value',
-                            'label' =>  __( 'Discount Value' ),
-                            'description'   =>  __( 'Define the percentage or flat value.' ),
-                            'value' =>  $entry->discount_value ?? '',
+                            'type' => 'text',
+                            'name' => 'discount_value',
+                            'label' => __( 'Discount Value' ),
+                            'description' => __( 'Define the percentage or flat value.' ),
+                            'value' => $entry->discount_value ?? '',
                         ], [
-                            'type'  =>  'datetime',
-                            'name'  =>  'valid_until',
-                            'label' =>  __( 'Valid Until' ),
-                            'description'   =>  __( 'Determin Until When the coupon is valid.' ),
-                            'value' =>  $entry->valid_until ?? '',
+                            'type' => 'datetime',
+                            'name' => 'valid_until',
+                            'label' => __( 'Valid Until' ),
+                            'description' => __( 'Determin Until When the coupon is valid.' ),
+                            'value' => $entry->valid_until ?? '',
                         ], [
-                            'type'  =>  'number',
-                            'name'  =>  'minimum_cart_value',
-                            'label' =>  __( 'Minimum Cart Value' ),
-                            'description'   =>  __( 'What is the minimum value of the cart to make this coupon eligible.' ),
-                            'value' =>  $entry->minimum_cart_value ?? '',
+                            'type' => 'number',
+                            'name' => 'minimum_cart_value',
+                            'label' => __( 'Minimum Cart Value' ),
+                            'description' => __( 'What is the minimum value of the cart to make this coupon eligible.' ),
+                            'value' => $entry->minimum_cart_value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'maximum_cart_value',
-                            'label' =>  __( 'Maximum Cart Value' ),
-                            'description'   =>  __( 'The value above which the current coupon can\'t apply.' ),
-                            'value' =>  $entry->maximum_cart_value ?? '',
+                            'type' => 'text',
+                            'name' => 'maximum_cart_value',
+                            'label' => __( 'Maximum Cart Value' ),
+                            'description' => __( 'The value above which the current coupon can\'t apply.' ),
+                            'value' => $entry->maximum_cart_value ?? '',
                         ], [
-                            'type'  =>  'datetimepicker',
-                            'name'  =>  'valid_hours_start',
-                            'label' =>  __( 'Valid Hours Start' ),
-                            'description'   =>  __( 'Define form which hour during the day the coupons is valid.' ),
-                            'value' =>  $entry->valid_hours_start ?? '',
+                            'type' => 'datetimepicker',
+                            'name' => 'valid_hours_start',
+                            'label' => __( 'Valid Hours Start' ),
+                            'description' => __( 'Define form which hour during the day the coupons is valid.' ),
+                            'value' => $entry->valid_hours_start ?? '',
                         ], [
-                            'type'  =>  'datetimepicker',
-                            'name'  =>  'valid_hours_end',
-                            'label' =>  __( 'Valid Hours End' ),
-                            'description'   =>  __( 'Define to which hour during the day the coupons end stop valid.' ),
-                            'value' =>  $entry->valid_hours_end ?? '',
+                            'type' => 'datetimepicker',
+                            'name' => 'valid_hours_end',
+                            'label' => __( 'Valid Hours End' ),
+                            'description' => __( 'Define to which hour during the day the coupons end stop valid.' ),
+                            'value' => $entry->valid_hours_end ?? '',
                         ], [
-                            'type'  =>  'number',
-                            'name'  =>  'limit_usage',
-                            'label' =>  __( 'Limit Usage' ),
-                            'description'   =>  __( 'Define how many time a coupons can be redeemed.' ),
-                            'value' =>  $entry->limit_usage ?? '',
+                            'type' => 'number',
+                            'name' => 'limit_usage',
+                            'label' => __( 'Limit Usage' ),
+                            'description' => __( 'Define how many time a coupons can be redeemed.' ),
+                            'value' => $entry->limit_usage ?? '',
                         ],
                     ],
                 ],
-                'selected_products'  =>  [
-                    'label' =>  __( 'Products' ),
-                    'active'    =>  true,
-                    'fields'    =>  [
+                'selected_products' => [
+                    'label' => __( 'Products' ),
+                    'active' => true,
+                    'fields' => [
                         [
-                            'type'  =>  'multiselect',
-                            'name'  =>  'products',
-                            'options'   =>  Helper::toJsOptions( Product::get(), [ 'id', 'name' ]),
-                            'label'     =>  __( 'Select Products' ),
-                            'value'     =>  $entry instanceof Coupon ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
-                            'description'   =>  __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' ),
+                            'type' => 'multiselect',
+                            'name' => 'products',
+                            'options' => Helper::toJsOptions( Product::get(), [ 'id', 'name' ]),
+                            'label' => __( 'Select Products' ),
+                            'value' => $entry instanceof Coupon ? $entry->products->map( fn( $product ) => $product->product_id )->toArray() : [],
+                            'description' => __( 'The following products will be required to be present on the cart, in order for this coupon to be valid.' ),
                         ],
                     ],
                 ],
-                'selected_categories'  =>  [
-                    'label' =>  __( 'Categories' ),
-                    'active'    =>  false,
-                    'fields'    =>  [
+                'selected_categories' => [
+                    'label' => __( 'Categories' ),
+                    'active' => false,
+                    'fields' => [
                         [
-                            'type'  =>  'multiselect',
-                            'name'  =>  'categories',
-                            'options'   =>  Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
-                            'label'     =>  __( 'Select Categories' ),
-                            'value'         =>  $entry instanceof Coupon ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
-                            'description'   =>  __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' ),
+                            'type' => 'multiselect',
+                            'name' => 'categories',
+                            'options' => Helper::toJsOptions( ProductCategory::get(), [ 'id', 'name' ]),
+                            'label' => __( 'Select Categories' ),
+                            'value' => $entry instanceof Coupon ? $entry->categories->map( fn( $category ) => $category->category_id )->toArray() : [],
+                            'description' => __( 'The products assigned to one of these categories should be on the cart, in order for this coupon to be valid.' ),
                         ],
                     ],
                 ],
@@ -561,40 +561,40 @@ class CouponCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'         =>  __('Name'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __('Name'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'type'              =>  [
-                'label'         =>  __('Type'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'type' => [
+                'label' => __('Type'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'discount_value'  =>  [
-                'label'         =>  __('Discount Value'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'discount_value' => [
+                'label' => __('Discount Value'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'valid_hours_start'  =>  [
-                'label'         =>  __('Valid From'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'valid_hours_start' => [
+                'label' => __('Valid From'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'valid_hours_end'  =>  [
-                'label'         =>  __('Valid Till'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'valid_hours_end' => [
+                'label' => __('Valid Till'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'nexopos_users_username'        =>  [
-                'label'         =>  __('Author'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'nexopos_users_username' => [
+                'label' => __('Author'),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'    =>  [
-                'label'         =>  __('Created At'),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __('Created At'),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -627,22 +627,22 @@ class CouponCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit.license', [
-            'label'         =>      __('Edit'),
-            'namespace'     =>      'edit.licence',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url('/dashboard/customers/coupons/edit/' . $entry->id),
+            'label' => __('Edit'),
+            'namespace' => 'edit.licence',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url('/dashboard/customers/coupons/edit/' . $entry->id),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __('Delete'),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'index'     =>  'id',
-            'url'       => ns()->url('/api/nexopos/v4/crud/ns.coupons/' . $entry->id),
-            'confirm'   =>  [
-                'message'  =>  __('Would you like to delete this ?'),
-                'title'     =>  __('Delete a licence'),
+            'label' => __('Delete'),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'index' => 'id',
+            'url' => ns()->url('/api/nexopos/v4/crud/ns.coupons/' . $entry->id),
+            'confirm' => [
+                'message' => __('Would you like to delete this ?'),
+                'title' => __('Delete a licence'),
             ],
         ]);
 
@@ -673,8 +673,8 @@ class CouponCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -702,11 +702,11 @@ class CouponCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'customers/coupons' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'customers/coupons/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'customers/coupons/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'customers/coupons' ),
+            'create' => ns()->url( 'dashboard/' . 'customers/coupons/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'customers/coupons/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.customers-coupons/{id}' . '' ),
         ];
     }
 
@@ -719,10 +719,10 @@ class CouponCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

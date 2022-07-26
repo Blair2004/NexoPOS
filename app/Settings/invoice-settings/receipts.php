@@ -4,45 +4,45 @@ use App\Classes\Hook;
 use App\Services\Helper;
 
 return [
-    'label'     =>      __( 'Receipts' ),
-    'fields'    =>      [
+    'label' => __( 'Receipts' ),
+    'fields' => [
         [
-            'label'     =>  __( 'Receipt Template' ),
-            'type'      =>  'select',
-            'options'   =>  Helper::kvToJsOptions([
-                'default'   =>  __( 'Default' ),
+            'label' => __( 'Receipt Template' ),
+            'type' => 'select',
+            'options' => Helper::kvToJsOptions([
+                'default' => __( 'Default' ),
             ]),
-            'name'      =>  'ns_invoice_receipt_template',
-            'value'     =>  ns()->option->get( 'ns_invoice_receipt_template' ),
-            'description'   =>  __( 'Choose the template that applies to receipts' ),
+            'name' => 'ns_invoice_receipt_template',
+            'value' => ns()->option->get( 'ns_invoice_receipt_template' ),
+            'description' => __( 'Choose the template that applies to receipts' ),
         ], [
-            'label'     =>  __( 'Receipt Logo' ),
-            'type'      =>  'media',
-            'name'      =>  'ns_invoice_receipt_logo',
-            'value'     =>  ns()->option->get( 'ns_invoice_receipt_logo' ),
-            'description'   =>  __( 'Provide a URL to the logo.' ),
+            'label' => __( 'Receipt Logo' ),
+            'type' => 'media',
+            'name' => 'ns_invoice_receipt_logo',
+            'value' => ns()->option->get( 'ns_invoice_receipt_logo' ),
+            'description' => __( 'Provide a URL to the logo.' ),
         ], [
-            'label'     =>  __( 'Merge Products On Receipt/Invoice' ),
-            'type'      =>  'switch',
-            'options'   =>  Helper::kvToJsOptions([
-                'no'    =>  __( 'No' ),
-                'yes'   =>  __( 'Yes' ),
+            'label' => __( 'Merge Products On Receipt/Invoice' ),
+            'type' => 'switch',
+            'options' => Helper::kvToJsOptions([
+                'no' => __( 'No' ),
+                'yes' => __( 'Yes' ),
             ]),
-            'name'      =>  'ns_invoice_merge_similar_products',
-            'value'     =>  ns()->option->get( 'ns_invoice_merge_similar_products' ),
-            'description'   =>  __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' ),
+            'name' => 'ns_invoice_merge_similar_products',
+            'value' => ns()->option->get( 'ns_invoice_merge_similar_products' ),
+            'description' => __( 'All similar products will be merged to avoid a paper waste for the receipt/invoice.' ),
         ], [
-            'label'     =>  __( 'Receipt Footer' ),
-            'type'      =>  'textarea',
-            'name'      =>  'ns_invoice_receipt_footer',
-            'value'     =>  ns()->option->get( 'ns_invoice_receipt_footer' ),
-            'description'   =>  __( 'If you would like to add some disclosure at the bottom of the receipt.' ),
+            'label' => __( 'Receipt Footer' ),
+            'type' => 'textarea',
+            'name' => 'ns_invoice_receipt_footer',
+            'value' => ns()->option->get( 'ns_invoice_receipt_footer' ),
+            'description' => __( 'If you would like to add some disclosure at the bottom of the receipt.' ),
         ], [
-            'label'         =>  __( 'Column A' ),
-            'type'          =>  'textarea',
-            'name'          =>  'ns_invoice_receipt_column_a',
-            'value'         =>  ns()->option->get( 'ns_invoice_receipt_column_a' ),
-            'description'   => Hook::filter( 'ns-receipts-settings-tags', [
+            'label' => __( 'Column A' ),
+            'type' => 'textarea',
+            'name' => 'ns_invoice_receipt_column_a',
+            'value' => ns()->option->get( 'ns_invoice_receipt_column_a' ),
+            'description' => Hook::filter( 'ns-receipts-settings-tags', [
                 __( 'Available tags : ' ) . '<br>' .
                 __( '{store_name}: displays the store name.' ) . '<br>',
                 __( '{store_email}: displays the store email.' ), '<br>',
@@ -75,11 +75,11 @@ return [
                 __( '{billing_email}: displays the billing email.' ) . '<br>',
             ]),
         ], [
-            'label'         =>  __( 'Column B' ),
-            'type'          =>  'textarea',
-            'name'          =>  'ns_invoice_receipt_column_b',
-            'value'         =>  ns()->option->get( 'ns_invoice_receipt_column_b' ),
-            'description'   => Hook::filter( 'ns-receipts-settings-tags', [
+            'label' => __( 'Column B' ),
+            'type' => 'textarea',
+            'name' => 'ns_invoice_receipt_column_b',
+            'value' => ns()->option->get( 'ns_invoice_receipt_column_b' ),
+            'description' => Hook::filter( 'ns-receipts-settings-tags', [
                 __( 'Available tags :' ) . '<br>',
                 __( '{store_name}: displays the store name.' ) . '<br>',
                 __( '{store_email}: displays the store email.' ) . '<br>',

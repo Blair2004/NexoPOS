@@ -26,48 +26,48 @@ class ReportsController extends DashboardController
     public function salesReport()
     {
         return $this->view( 'pages.dashboard.reports.sales-report', [
-            'title'         =>  __( 'Sales Report' ),
-            'description'   =>  __( 'Provides an overview over the sales during a specific period' ),
+            'title' => __( 'Sales Report' ),
+            'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
     }
 
     public function salesProgress()
     {
         return $this->view( 'pages.dashboard.reports.best-products-report', [
-            'title'         =>  __( 'Sales Progress' ),
-            'description'   =>  __( 'Provides an overview over the best products sold during a specific period.' ),
+            'title' => __( 'Sales Progress' ),
+            'description' => __( 'Provides an overview over the best products sold during a specific period.' ),
         ]);
     }
 
     public function soldStock()
     {
         return $this->view( 'pages.dashboard.reports.sold-stock-report', [
-            'title'         =>  __( 'Sold Stock' ),
-            'description'   =>  __( 'Provides an overview over the sold stock during a specific period.' ),
+            'title' => __( 'Sold Stock' ),
+            'description' => __( 'Provides an overview over the sold stock during a specific period.' ),
         ]);
     }
 
     public function stockReport()
     {
         return $this->view( 'pages.dashboard.reports.low-stock-report', [
-            'title'         =>  __( 'Stock Report' ),
-            'description'   =>  __( 'Provides an overview of the products stock.' ),
+            'title' => __( 'Stock Report' ),
+            'description' => __( 'Provides an overview of the products stock.' ),
         ]);
     }
 
     public function profit()
     {
         return $this->view( 'pages.dashboard.reports.profit-report', [
-            'title'         =>  __( 'Profit Report' ),
-            'description'   =>  __( 'Provides an overview of the provide of the products sold.' ),
+            'title' => __( 'Profit Report' ),
+            'description' => __( 'Provides an overview of the provide of the products sold.' ),
         ]);
     }
 
     public function cashFlow()
     {
         return $this->view( 'pages.dashboard.reports.cash-flow', [
-            'title'         =>  __( 'Cash Flow Report' ),
-            'description'   =>  __( 'Provides an overview on the activity for a specific period.' ),
+            'title' => __( 'Cash Flow Report' ),
+            'description' => __( 'Provides an overview on the activity for a specific period.' ),
         ]);
     }
 
@@ -104,17 +104,17 @@ class ReportsController extends DashboardController
 
         return collect( $orders )->mapToGroups( function( $product ) {
             return [
-                $product->product_id . '-' . $product->unit_id  =>  $product,
+                $product->product_id . '-' . $product->unit_id => $product,
             ];
         })->map( function( $groups ) {
             return [
-                'name'          =>  $groups->first()->name,
-                'unit_name'     =>  $groups->first()->unit_name,
-                'mode'          =>  $groups->first()->mode,
-                'unit_price'    =>  $groups->sum( 'unit_price' ),
-                'quantity'      =>  $groups->sum( 'quantity' ),
-                'total_price'   =>  $groups->sum( 'total_price' ),
-                'tax_value'     =>  $groups->sum( 'tax_value' ),
+                'name' => $groups->first()->name,
+                'unit_name' => $groups->first()->unit_name,
+                'mode' => $groups->first()->mode,
+                'unit_price' => $groups->sum( 'unit_price' ),
+                'quantity' => $groups->sum( 'quantity' ),
+                'total_price' => $groups->sum( 'total_price' ),
+                'tax_value' => $groups->sum( 'tax_value' ),
             ];
         })->values();
     }
@@ -156,7 +156,7 @@ class ReportsController extends DashboardController
         });
 
         return [
-            'summary'   =>  collect( $total )->mapWithKeys( function( $value, $key ) use ( $entries ) {
+            'summary' => collect( $total )->mapWithKeys( function( $value, $key ) use ( $entries ) {
                 if ( ! in_array( $key, [ 'range_starts', 'range_ends', 'day_of_year' ] ) ) {
                     return [ $key => $entries->sum( $key ) ];
                 }
@@ -164,15 +164,15 @@ class ReportsController extends DashboardController
                 return [ $key => $value ];
             }),
 
-            'total_debit'   =>  collect([
+            'total_debit' => collect([
                 $debitCashFlow->sum( 'total' ),
             ])->sum(),
-            'total_credit'  =>  collect([
+            'total_credit' => collect([
                 $creditCashFlow->sum( 'total' ),
             ])->sum(),
 
-            'creditCashFlow'    =>  $creditCashFlow,
-            'debitCashFlow'     =>  $debitCashFlow,
+            'creditCashFlow' => $creditCashFlow,
+            'debitCashFlow' => $debitCashFlow,
         ];
     }
 
@@ -197,18 +197,18 @@ class ReportsController extends DashboardController
 
         return collect( $orders )->mapToGroups( function( $product ) {
             return [
-                $product->product_id . '-' . $product->unit_id  =>  $product,
+                $product->product_id . '-' . $product->unit_id => $product,
             ];
         })->map( function( $groups ) {
             return [
-                'name'                      =>  $groups->first()->name,
-                'unit_name'                 =>  $groups->first()->unit_name,
-                'mode'                      =>  $groups->first()->mode,
-                'unit_price'                =>  $groups->sum( 'unit_price' ),
-                'total_purchase_price'      =>  $groups->sum( 'total_purchase_price' ),
-                'quantity'                  =>  $groups->sum( 'quantity' ),
-                'total_price'               =>  $groups->sum( 'total_price' ),
-                'tax_value'                 =>  $groups->sum( 'tax_value' ),
+                'name' => $groups->first()->name,
+                'unit_name' => $groups->first()->unit_name,
+                'mode' => $groups->first()->mode,
+                'unit_price' => $groups->sum( 'unit_price' ),
+                'total_purchase_price' => $groups->sum( 'total_purchase_price' ),
+                'quantity' => $groups->sum( 'quantity' ),
+                'total_price' => $groups->sum( 'total_price' ),
+                'tax_value' => $groups->sum( 'tax_value' ),
             ];
         })->values();
     }
@@ -221,16 +221,16 @@ class ReportsController extends DashboardController
     public function annualReport( Request $request )
     {
         return $this->view( 'pages.dashboard.reports.annual-report', [
-            'title'         =>  __( 'Annual Report' ),
-            'description'   =>  __( 'Provides an overview over the sales during a specific period' ),
+            'title' => __( 'Annual Report' ),
+            'description' => __( 'Provides an overview over the sales during a specific period' ),
         ]);
     }
 
     public function salesByPaymentTypes( Request $request )
     {
         return $this->view( 'pages.dashboard.reports.payment-types', [
-            'title'         =>  __( 'Sales By Payment Types' ),
-            'description'   =>  __( 'Provide a report of the sales by payment types, for a specific period.' ),
+            'title' => __( 'Sales By Payment Types' ),
+            'description' => __( 'Provide a report of the sales by payment types, for a specific period.' ),
         ]);
     }
 
@@ -248,8 +248,8 @@ class ReportsController extends DashboardController
             ComputeYearlyReportJob::dispatch( $request->input( 'year' ) );
 
             return [
-                'stauts'    =>  'success',
-                'message'   =>  __( 'The report will be computed for the current year.' ),
+                'stauts' => 'success',
+                'message' => __( 'The report will be computed for the current year.' ),
             ];
         }
 
@@ -283,8 +283,8 @@ class ReportsController extends DashboardController
     public function showCustomerStatement()
     {
         return $this->view( 'pages.dashboard.reports.customers-statement', [
-            'title'         =>  __( 'Customers Statement' ),
-            'description'   =>  __( 'Display the complete customer statement.' ),
+            'title' => __( 'Customers Statement' ),
+            'description' => __( 'Display the complete customer statement.' ),
         ]);
     }
 

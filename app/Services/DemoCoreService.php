@@ -89,49 +89,49 @@ class DemoCoreService
         $expenseService = app()->make( ExpenseService::class );
 
         $expenseService->createAccount([
-            'name'      =>  __( 'Sales Account' ),
-            'operation' =>  'credit',
-            'account'   =>  '001',
+            'name' => __( 'Sales Account' ),
+            'operation' => 'credit',
+            'account' => '001',
         ]);
 
         ns()->option->set( 'ns_sales_cashflow_account', AccountType::account( '001' )->first()->id );
 
         $expenseService->createAccount([
-            'name'  =>  __( 'Procurements Account' ),
-            'operation' =>  'debit',
-            'account'   =>  '002',
+            'name' => __( 'Procurements Account' ),
+            'operation' => 'debit',
+            'account' => '002',
         ]);
 
         ns()->option->set( 'ns_procurement_cashflow_account', AccountType::account( '002' )->first()->id );
 
         $expenseService->createAccount([
-            'name'  =>  __( 'Sale Refunds Account' ),
-            'operation' =>  'debit',
-            'account'   =>  '003',
+            'name' => __( 'Sale Refunds Account' ),
+            'operation' => 'debit',
+            'account' => '003',
         ]);
 
         ns()->option->set( 'ns_sales_refunds_account', AccountType::account( '003' )->first()->id );
 
         $expenseService->createAccount([
-            'name'  =>  __( 'Spoiled Goods Account' ),
-            'operation' =>  'debit',
-            'account'   =>  '006',
+            'name' => __( 'Spoiled Goods Account' ),
+            'operation' => 'debit',
+            'account' => '006',
         ]);
 
         ns()->option->set( 'ns_stock_return_spoiled_account', AccountType::account( '006' )->first()->id );
 
         $expenseService->createAccount([
-            'name'  =>  __( 'Customer Crediting Account' ),
-            'operation' =>  'credit',
-            'account'   =>  '007',
+            'name' => __( 'Customer Crediting Account' ),
+            'operation' => 'credit',
+            'account' => '007',
         ]);
 
         ns()->option->set( 'ns_customer_crediting_cashflow_account', AccountType::account( '007' )->first()->id );
 
         $expenseService->createAccount([
-            'name'  =>  __( 'Customer Debiting Account' ),
-            'operation' =>  'credit',
-            'account'   =>  '008',
+            'name' => __( 'Customer Debiting Account' ),
+            'operation' => 'credit',
+            'account' => '008',
         ]);
 
         ns()->option->set( 'ns_customer_debitting_cashflow_account', AccountType::account( '007' )->first()->id );
@@ -206,14 +206,14 @@ class DemoCoreService
         $margin = 25;
 
         $this->procurementService->create([
-            'name'                  =>  sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
-            'general'   =>  [
-                'provider_id'           =>  Provider::get()->random()->id,
-                'payment_status'        =>  Procurement::PAYMENT_PAID,
-                'delivery_status'       =>  Procurement::DELIVERED,
-                'automatic_approval'    =>  1,
+            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+            'general' => [
+                'provider_id' => Provider::get()->random()->id,
+                'payment_status' => Procurement::PAYMENT_PAID,
+                'delivery_status' => Procurement::DELIVERED,
+                'automatic_approval' => 1,
             ],
-            'products'  =>  Product::withStockEnabled()
+            'products' => Product::withStockEnabled()
                 ->with( 'unitGroup' )
                 ->get()
                 ->map( function( $product ) {
@@ -221,17 +221,17 @@ class DemoCoreService
                         $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
                         return (object) [
-                            'unit'      =>  $unit,
-                            'unitQuantity'  =>  $unitQuantity,
-                            'product'   =>  $product,
+                            'unit' => $unit,
+                            'unitQuantity' => $unitQuantity,
+                            'product' => $product,
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
                     return [
-                        'product_id'            =>  $data->product->id,
-                        'gross_purchase_price'  =>  15,
-                        'net_purchase_price'    =>  16,
-                        'purchase_price'        =>  $taxService->getTaxGroupComputedValue(
+                        'product_id' => $data->product->id,
+                        'gross_purchase_price' => 15,
+                        'net_purchase_price' => 16,
+                        'purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -239,10 +239,10 @@ class DemoCoreService
                                 $margin
                             )
                         ),
-                        'quantity'              =>  $faker->numberBetween(500, 1000),
-                        'tax_group_id'          =>  $taxGroup->id,
-                        'tax_type'              =>  $taxType,
-                        'tax_value'             =>  $taxService->getTaxGroupVatValue(
+                        'quantity' => $faker->numberBetween(500, 1000),
+                        'tax_group_id' => $taxGroup->id,
+                        'tax_type' => $taxType,
+                        'tax_value' => $taxService->getTaxGroupVatValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -250,7 +250,7 @@ class DemoCoreService
                                 $margin
                             )
                         ),
-                        'total_purchase_price'  =>  $taxService->getTaxGroupComputedValue(
+                        'total_purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -258,7 +258,7 @@ class DemoCoreService
                                 $margin
                             )
                         ) * 250,
-                        'unit_id'               =>  $data->unit->id,
+                        'unit_id' => $data->unit->id,
                     ];
                 }),
         ]);
@@ -294,10 +294,10 @@ class DemoCoreService
                 $unitElement = $faker->randomElement( $product->unit_quantities );
 
                 return array_merge([
-                    'product_id'            =>  $product->id,
-                    'quantity'              =>  $faker->numberBetween(1, 10),
-                    'unit_price'            =>  $unitElement->sale_price,
-                    'unit_quantity_id'      =>  $unitElement->id,
+                    'product_id' => $product->id,
+                    'quantity' => $faker->numberBetween(1, 10),
+                    'unit_price' => $unitElement->sale_price,
+                    'unit_quantity_id' => $unitElement->id,
                 ], $this->customProductParams );
             });
 
@@ -320,19 +320,19 @@ class DemoCoreService
             if ( $customerCoupon instanceof CustomerCoupon ) {
                 $allCoupons = [
                     [
-                        'customer_coupon_id'    =>  $customerCoupon->id,
-                        'coupon_id'             =>  $customerCoupon->coupon_id,
-                        'name'                  =>  $customerCoupon->name,
-                        'type'                  =>  'percentage_discount',
-                        'code'                  =>  $customerCoupon->code,
-                        'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
-                        'value'                 =>  $currency->define( $customerCoupon->coupon->discount_value )
+                        'customer_coupon_id' => $customerCoupon->id,
+                        'coupon_id' => $customerCoupon->coupon_id,
+                        'name' => $customerCoupon->name,
+                        'type' => 'percentage_discount',
+                        'code' => $customerCoupon->code,
+                        'limit_usage' => $customerCoupon->coupon->limit_usage,
+                        'value' => $currency->define( $customerCoupon->coupon->discount_value )
                             ->multiplyBy( $subtotal )
                             ->divideBy( 100 )
                             ->getRaw(),
-                        'discount_value'        =>  $customerCoupon->coupon->discount_value,
-                        'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
-                        'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                        'discount_value' => $customerCoupon->coupon->discount_value,
+                        'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
+                        'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
                     ],
                 ];
 
@@ -356,31 +356,31 @@ class DemoCoreService
             )->format( 'Y-m-d H:m:s' );
 
             $orderData = array_merge([
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'created_at'            =>  $this->customDate ? $dateString : null,
-                'discount_percentage'   =>  $discountRate,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'created_at' => $this->customDate ? $dateString : null,
+                'discount_percentage' => $discountRate,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'coupons'               =>  $allCoupons,
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products->toArray(),
-                'payments'              =>  $this->shouldMakePayment ? [
+                'coupons' => $allCoupons,
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $products->toArray(),
+                'payments' => $this->shouldMakePayment ? [
                     [
-                        'identifier'    =>  'cash-payment',
-                        'value'         =>  $currency->define( $subtotal )
+                        'identifier' => 'cash-payment',
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->subtractBy(
                                 $discountCoupons

@@ -44,7 +44,7 @@ class ComputeCashierSalesJob implements ShouldQueue
             }
         } elseif ( $this->event instanceof OrderBeforeDeleteEvent ) {
             if ( $order->payment_status === Order::PAYMENT_PAID ) {
-                $user   =   User::find( $order->author );
+                $user = User::find( $order->author );
                 $user->total_sales = $user->total_sales - $order->total;
                 $user->total_sales_count = $user->total_sales_count - 1;
                 $user->save();

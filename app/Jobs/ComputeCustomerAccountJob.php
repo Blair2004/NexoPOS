@@ -74,8 +74,8 @@ class ComputeCustomerAccountJob implements ShouldQueue
 
     private function handleDeletion(OrderBeforeDeleteEvent $event)
     {
-        $customer   =   Customer::find( $event->order->customer_id );
-        
+        $customer = Customer::find( $event->order->customer_id );
+
         switch ($event->order->payment_status) {
             case 'paid':
                 $customer->purchases_amount -= $event->order->total;

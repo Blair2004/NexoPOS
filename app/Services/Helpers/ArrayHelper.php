@@ -18,8 +18,8 @@ trait ArrayHelper
     {
         if ( $array ) {
             $result = [
-                'odd'   =>  [],
-                'even'  =>  [],
+                'odd' => [],
+                'even' => [],
             ];
 
             foreach ($array as $k => $v) {
@@ -90,8 +90,8 @@ trait ArrayHelper
                     $name = $config[1];
 
                     $result[] = [
-                        'label'     =>  $collection->$name,
-                        'value'     =>  $collection->$id,
+                        'label' => $collection->$name,
+                        'value' => $collection->$id,
                     ];
                 } else {
                     $name = '';
@@ -105,8 +105,8 @@ trait ArrayHelper
                     }
 
                     $result[] = [
-                        'label'     =>  $name,
-                        'value'     =>  $collection->$id,
+                        'label' => $name,
+                        'value' => $collection->$id,
                     ];
                 }
             }

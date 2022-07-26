@@ -73,10 +73,10 @@ class TaxesGroupCrud extends CrudService
     }
 
     protected $permissions = [
-        'create'    => 'nexopos.create.taxes',
-        'read'      => 'nexopos.read.taxes',
-        'update'    => 'nexopos.update.taxes',
-        'delete'    => 'nexopos.delete.taxes',
+        'create' => 'nexopos.create.taxes',
+        'read' => 'nexopos.read.taxes',
+        'update' => 'nexopos.update.taxes',
+        'delete' => 'nexopos.delete.taxes',
     ];
 
     /**
@@ -88,15 +88,15 @@ class TaxesGroupCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Taxes Groups List' ),
-            'list_description'      =>  __( 'Display all taxes groups.' ),
-            'no_entry'              =>  __( 'No taxes groups has been registered' ),
-            'create_new'            =>  __( 'Add a new tax group' ),
-            'create_title'          =>  __( 'Create a new tax group' ),
-            'create_description'    =>  __( 'Register a new tax group and save it.' ),
-            'edit_title'            =>  __( 'Edit tax group' ),
-            'edit_description'      =>  __( 'Modify  Tax Group.' ),
-            'back_to_list'          =>  __( 'Return to Taxes Groups' ),
+            'list_title' => __( 'Taxes Groups List' ),
+            'list_description' => __( 'Display all taxes groups.' ),
+            'no_entry' => __( 'No taxes groups has been registered' ),
+            'create_new' => __( 'Add a new tax group' ),
+            'create_title' => __( 'Create a new tax group' ),
+            'create_description' => __( 'Register a new tax group and save it.' ),
+            'edit_title' => __( 'Edit tax group' ),
+            'edit_description' => __( 'Modify  Tax Group.' ),
+            'back_to_list' => __( 'Return to Taxes Groups' ),
         ];
     }
 
@@ -119,23 +119,23 @@ class TaxesGroupCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'validation'    =>  'required',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'validation' => 'required',
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'name'  =>  'description',
-                            'type'  =>  'textarea',
-                            'value' =>  $entry->description ?? '',
-                            'label' =>  __( 'Description' ),
-                            'description'   =>  __( 'Provide a short description to the tax group.' ),
+                            'name' => 'description',
+                            'type' => 'textarea',
+                            'value' => $entry->description ?? '',
+                            'label' => __( 'Description' ),
+                            'description' => __( 'Provide a short description to the tax group.' ),
                         ],
                     ],
                 ],
@@ -241,8 +241,8 @@ class TaxesGroupCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -269,20 +269,20 @@ class TaxesGroupCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -294,20 +294,20 @@ class TaxesGroupCrud extends CrudService
     {
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>     ns()->url( '/dashboard/' . 'taxes/groups' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'taxes/groups' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       => ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.taxes-groups/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -329,15 +329,15 @@ class TaxesGroupCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -364,11 +364,11 @@ class TaxesGroupCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => ns()->url( 'dashboard/' . 'taxes/groups' ),
-            'create'    => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
-            'edit'      => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),
-            'post'      => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups' ),
-            'put'       => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups/' . '{id}' ),
+            'list' => ns()->url( 'dashboard/' . 'taxes/groups' ),
+            'create' => ns()->url( 'dashboard/' . 'taxes/groups/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'taxes/groups/edit/{id}' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.taxes-groups/' . '{id}' ),
         ];
     }
 
@@ -381,10 +381,10 @@ class TaxesGroupCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

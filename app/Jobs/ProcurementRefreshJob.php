@@ -51,13 +51,13 @@ class ProcurementRefreshJob implements ShouldQueue
         $procurementService->refresh( $this->procurement );
 
         $notificationService->create([
-            'title'         =>      __( 'Procurement Refreshed' ),
-            'description'   =>  sprintf(
+            'title' => __( 'Procurement Refreshed' ),
+            'description' => sprintf(
                 __( 'The procurement "%s" has been successfully refreshed.' ),
                 $this->procurement->name
             ),
-            'identifier'    =>  'ns.procurement-refresh' . $this->procurement->id,
-            'url'           =>  ns()->route( 'ns.procurement-invoice', [ 'procurement' => $this->procurement->id ]),
+            'identifier' => 'ns.procurement-refresh' . $this->procurement->id,
+            'url' => ns()->route( 'ns.procurement-invoice', [ 'procurement' => $this->procurement->id ]),
         ])->dispatchForGroup([
             Role::ADMIN,
             Role::STOREADMIN,

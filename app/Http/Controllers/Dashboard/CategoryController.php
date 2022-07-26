@@ -74,8 +74,8 @@ class CategoryController extends DashboardController
             $category->delete();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The category has been deleted.' ),
+                'status' => 'success',
+                'message' => __( 'The category has been deleted.' ),
             ];
         }
 
@@ -114,9 +114,9 @@ class CategoryController extends DashboardController
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The category has been correctly saved' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The category has been correctly saved' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -152,9 +152,9 @@ class CategoryController extends DashboardController
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The category has been updated' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The category has been updated' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -206,10 +206,10 @@ class CategoryController extends DashboardController
     public function schema()
     {
         return [
-            'name'          =>  'string',
-            'description'   =>  'string',
-            'media_id'      =>  'number',
-            'parent_id'     =>  'number',
+            'name' => 'string',
+            'description' => 'string',
+            'media_id' => 'number',
+            'parent_id' => 'number',
         ];
     }
 
@@ -248,7 +248,7 @@ class CategoryController extends DashboardController
                 ->first();
 
             return [
-                'products'          =>  $category->products()
+                'products' => $category->products()
                     ->with( 'galleries', 'tax_group.taxes' )
                     ->searchable()
                     ->trackingDisabled()
@@ -260,20 +260,20 @@ class CategoryController extends DashboardController
 
                         return $product;
                     }),
-                'categories'        =>  $category
+                'categories' => $category
                     ->subCategories()
                     ->displayOnPOS()
                     ->get(),
-                'previousCategory'  =>  ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
-                'currentCategory'   =>  $category, // means should return to the root
+                'previousCategory' => ProductCategory::find( $category->parent_id ) ?? null, // means should return to the root
+                'currentCategory' => $category, // means should return to the root
             ];
         }
 
         return [
-            'products'          =>  [],
-            'previousCategory'  =>  false,
-            'currentCategory'   =>  false,
-            'categories'        =>  ProductCategory::where(function( $query ) {
+            'products' => [],
+            'previousCategory' => false,
+            'currentCategory' => false,
+            'categories' => ProductCategory::where(function( $query ) {
                 $query->where( 'parent_id', null )
                         ->orWhere( 'parent_id', 0 );
             })

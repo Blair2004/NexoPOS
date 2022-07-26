@@ -48,10 +48,10 @@ class ProviderProcurementsCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  true,
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => true,
     ];
 
     /**
@@ -82,7 +82,7 @@ class ProviderProcurementsCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'  =>  [ 'username' ],
+        'user' => [ 'username' ],
     ];
 
     /**
@@ -132,15 +132,15 @@ class ProviderProcurementsCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Provider Procurements List' ),
-            'list_description'      =>  __( 'Display all provider procurements.' ),
-            'no_entry'              =>  __( 'No provider procurements has been registered' ),
-            'create_new'            =>  __( 'Add a new provider procurement' ),
-            'create_title'          =>  __( 'Create a new provider procurement' ),
-            'create_description'    =>  __( 'Register a new provider procurement and save it.' ),
-            'edit_title'            =>  __( 'Edit provider procurement' ),
-            'edit_description'      =>  __( 'Modify  Provider Procurement.' ),
-            'back_to_list'          =>  __( 'Return to Provider Procurements' ),
+            'list_title' => __( 'Provider Procurements List' ),
+            'list_description' => __( 'Display all provider procurements.' ),
+            'no_entry' => __( 'No provider procurements has been registered' ),
+            'create_new' => __( 'Add a new provider procurement' ),
+            'create_title' => __( 'Create a new provider procurement' ),
+            'create_description' => __( 'Register a new provider procurement and save it.' ),
+            'edit_title' => __( 'Edit provider procurement' ),
+            'edit_description' => __( 'Modify  Provider Procurement.' ),
+            'back_to_list' => __( 'Return to Provider Procurements' ),
         ];
     }
 
@@ -163,61 +163,61 @@ class ProviderProcurementsCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'label' =>  __( 'Name' ),
-                            'value' =>  $entry->name ?? '',
+                            'type' => 'text',
+                            'name' => 'name',
+                            'label' => __( 'Name' ),
+                            'value' => $entry->name ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'delivery_status',
-                            'label' =>  __( 'Delivery Status' ),
-                            'value' =>  $entry->delivery_status ?? '',
+                            'type' => 'text',
+                            'name' => 'delivery_status',
+                            'label' => __( 'Delivery Status' ),
+                            'value' => $entry->delivery_status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'delivery_time',
-                            'label' =>  __( 'Delivered On' ),
-                            'value' =>  $entry->delivery_time ?? '',
+                            'type' => 'text',
+                            'name' => 'delivery_time',
+                            'label' => __( 'Delivered On' ),
+                            'value' => $entry->delivery_time ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'invoice_reference',
-                            'label' =>  __( 'Invoice' ),
-                            'value' =>  $entry->invoice_reference ?? '',
+                            'type' => 'text',
+                            'name' => 'invoice_reference',
+                            'label' => __( 'Invoice' ),
+                            'value' => $entry->invoice_reference ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'payment_status',
-                            'label' =>  __( 'Payment Status' ),
-                            'value' =>  $entry->payment_status ?? '',
+                            'type' => 'text',
+                            'name' => 'payment_status',
+                            'label' => __( 'Payment Status' ),
+                            'value' => $entry->payment_status ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'tax_value',
-                            'label' =>  __( 'Tax' ),
-                            'value' =>  $entry->tax_value ?? '',
+                            'type' => 'text',
+                            'name' => 'tax_value',
+                            'label' => __( 'Tax' ),
+                            'value' => $entry->tax_value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'total_items',
-                            'label' =>  __( 'Total Items' ),
-                            'value' =>  $entry->total_items ?? '',
+                            'type' => 'text',
+                            'name' => 'total_items',
+                            'label' => __( 'Total Items' ),
+                            'value' => $entry->total_items ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'value',
-                            'label' =>  __( 'Value' ),
-                            'value' =>  $entry->value ?? '',
+                            'type' => 'text',
+                            'name' => 'value',
+                            'label' => __( 'Value' ),
+                            'value' => $entry->value ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created_at' ),
+                            'value' => $entry->created_at ?? '',
                         ],
                     ],
                 ],
@@ -352,50 +352,50 @@ class ProviderProcurementsCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
-                '$direction'    =>  '',
-                'width'         =>  '200px',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                'width' => '200px',
+                '$sort' => false,
             ],
-            'delivery_status'  =>  [
-                'label'  =>  __( 'Delivery' ),
-                '$direction'    =>  '',
-                'width'         =>  '120px',
-                '$sort'         =>  false,
+            'delivery_status' => [
+                'label' => __( 'Delivery' ),
+                '$direction' => '',
+                'width' => '120px',
+                '$sort' => false,
             ],
-            'payment_status'  =>  [
-                'label'  =>  __( 'Payment' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'payment_status' => [
+                'label' => __( 'Payment' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'tax_value'  =>  [
-                'label'  =>  __( 'Tax' ),
-                '$direction'    =>  '',
-                'width'         =>  '100px',
-                '$sort'         =>  false,
+            'tax_value' => [
+                'label' => __( 'Tax' ),
+                '$direction' => '',
+                'width' => '100px',
+                '$sort' => false,
             ],
-            'total_items'  =>  [
-                'label'  =>  __( 'Items' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'total_items' => [
+                'label' => __( 'Items' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'value'  =>  [
-                'label'  =>  __( 'Value' ),
-                '$direction'    =>  '',
-                'width'         =>  '150px',
-                '$sort'         =>  false,
+            'value' => [
+                'label' => __( 'Value' ),
+                '$direction' => '',
+                'width' => '150px',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'By' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'By' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                'width'         =>  '200px',
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                'width' => '200px',
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -413,12 +413,12 @@ class ProviderProcurementsCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.procurements/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -449,8 +449,8 @@ class ProviderProcurementsCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -477,11 +477,11 @@ class ProviderProcurementsCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . '/providers/procurements' ),
-            'create'    =>  'javascript:void(0)',
-            'edit'      =>  ns()->url( 'dashboard/' . '/providers/procurements/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . '/providers/procurements' ),
+            'create' => 'javascript:void(0)',
+            'edit' => ns()->url( 'dashboard/' . '/providers/procurements/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements/{id}' . '' ),
         ];
     }
 
@@ -494,10 +494,10 @@ class ProviderProcurementsCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

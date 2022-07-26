@@ -14,8 +14,8 @@ class OrdersSettings extends SettingsPage
         $options = app()->make( Options::class );
 
         $this->form = [
-            'tabs'  =>  [
-                'layout'    =>  include( dirname( __FILE__ ) . '/orders/general.php' ),
+            'tabs' => [
+                'layout' => include( dirname( __FILE__ ) . '/orders/general.php' ),
             ],
         ];
     }

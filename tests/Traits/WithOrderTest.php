@@ -35,7 +35,6 @@ use Exception;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
-use stdClass;
 
 trait WithOrderTest
 {
@@ -86,7 +85,7 @@ trait WithOrderTest
         RegisterHistory::truncate();
 
         Register::where( 'id', '>', 0 )->update([
-            'balance'   =>  0,
+            'balance' => 0,
         ]);
 
         $cashRegister = Register::first();
@@ -245,14 +244,14 @@ trait WithOrderTest
             $baseUnit = $unitService->getBaseUnit( $group );
 
             return [ $value->product_id . '-' . $value->unit_id => [
-                'currentQuantity'   =>  $productService->getQuantity(
+                'currentQuantity' => $productService->getQuantity(
                     product_id: $value->product_id,
                     unit_id: $value->unit_id
                 ),
-                'unit'              =>  $unit,
-                'unitGroup'         =>  $group,
-                'baseUnit'          =>  $baseUnit,
-                'quantity'          =>  $value->quantity,
+                'unit' => $unit,
+                'unitGroup' => $group,
+                'baseUnit' => $baseUnit,
+                'quantity' => $value->quantity,
             ] ];
         })->toArray();
 
@@ -262,8 +261,8 @@ trait WithOrderTest
         $orderDetails = $testService->prepareOrder(
             date: ns()->date->now(),
             config: [
-                'allow_quick_products'  =>  false,
-                'products'  =>  fn() => collect([$product]),
+                'allow_quick_products' => false,
+                'products' => fn() => collect([$product]),
             ]
         );
 
@@ -343,15 +342,15 @@ trait WithOrderTest
                 $baseUnit = $unitService->getBaseUnit( $unitGroup );
 
                 return [
-                    $subItem->product_id . '-' . $subItem->unit_id  =>  [
-                        'currentQuantity'   =>  $productService->getQuantity(
+                    $subItem->product_id . '-' . $subItem->unit_id => [
+                        'currentQuantity' => $productService->getQuantity(
                             product_id: $subItem->product_id,
                             unit_id: $subItem->unit_id
                         ),
-                        'unit'              =>  $unit,
-                        'baseUnit'          =>  $baseUnit,
-                        'unitGroup'         =>  $unitGroup,
-                        'quantity'          =>  $subItem->quantity,
+                        'unit' => $unit,
+                        'baseUnit' => $baseUnit,
+                        'unitGroup' => $unitGroup,
+                        'quantity' => $subItem->quantity,
                     ],
                 ];
             });
@@ -364,16 +363,16 @@ trait WithOrderTest
         $orderService->refundOrder(
             order: $lastOrder,
             fields: [
-                'payment'  =>  [
-                    'identifier'    =>  OrderPayment::PAYMENT_CASH,
+                'payment' => [
+                    'identifier' => OrderPayment::PAYMENT_CASH,
                 ],
-                'products'  =>  $lastOrder->products->map( function( OrderProduct $product ) {
+                'products' => $lastOrder->products->map( function( OrderProduct $product ) {
                     return [
-                        'id'            =>  $product->id,
-                        'condition'     =>  OrderProductRefund::CONDITION_UNSPOILED,
-                        'description'   =>  'Returned from tests',
-                        'quantity'      =>  $product->quantity,
-                        'unit_price'    =>  $product->unit_price,
+                        'id' => $product->id,
+                        'condition' => OrderProductRefund::CONDITION_UNSPOILED,
+                        'description' => 'Returned from tests',
+                        'quantity' => $product->quantity,
+                        'unit_price' => $product->unit_price,
                     ];
                 })->toArray(),
             ]
@@ -422,8 +421,8 @@ trait WithOrderTest
         $orderService = app()->make( OrdersService::class );
 
         $result = $this->attemptCreateOrderOnRegister([
-            'orderData' =>  [
-                'payments'  =>  [], // we'll disable payments.
+            'orderData' => [
+                'payments' => [], // we'll disable payments.
             ],
         ]);
 
@@ -434,8 +433,8 @@ trait WithOrderTest
          */
         $order = Order::find( $response[ 'data' ][ 'order' ][ 'id' ] );
         $orderService->makeOrderSinglePayment([
-            'identifier'    =>  OrderPayment::PAYMENT_CASH,
-            'value'         =>  $response[ 'data' ][ 'order' ][ 'total' ],
+            'identifier' => OrderPayment::PAYMENT_CASH,
+            'value' => $response[ 'data' ][ 'order' ][ 'total' ],
         ], $order );
 
         /**
@@ -457,7 +456,7 @@ trait WithOrderTest
         $testService = app()->make( TestService::class );
 
         $orderDetails = $testService->prepareOrder( ns()->date->now(), array_merge([
-            'register_id'   =>  $cashRegister->id,
+            'register_id' => $cashRegister->id,
         ], $data ) );
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
@@ -506,36 +505,36 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  Customer::first()->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  2.5,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => Customer::first()->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => 2.5,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
-                    ],
-                ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  [
-                    [
-                        'product_id'            =>  $product->id,
-                        'quantity'              =>  1,
-                        'unit_price'            =>  12,
-                        'unit_quantity_id'      =>  $unit->id,
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'payments'              =>  [
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => [
                     [
-                        'identifier'    =>  'paypal-payment',
-                        'value'         =>  $currency->define( $subtotal )
+                        'product_id' => $product->id,
+                        'quantity' => 1,
+                        'unit_price' => 12,
+                        'unit_quantity_id' => $unit->id,
+                    ],
+                ],
+                'payments' => [
+                    [
+                        'identifier' => 'paypal-payment',
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->getRaw(),
                     ],
@@ -584,36 +583,36 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  2.5,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => 2.5,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
-                    ],
-                ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  [
-                    [
-                        'product_id'            =>  $product->id,
-                        'quantity'              =>  1,
-                        'unit_price'            =>  12,
-                        'unit_quantity_id'      =>  $unit->id,
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'payments'              =>  [
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => [
                     [
-                        'identifier'    =>  OrderPayment::PAYMENT_ACCOUNT,
-                        'value'         =>  $currency->define( $subtotal )
+                        'product_id' => $product->id,
+                        'quantity' => 1,
+                        'unit_price' => 12,
+                        'unit_quantity_id' => $unit->id,
+                    ],
+                ],
+                'payments' => [
+                    [
+                        'identifier' => OrderPayment::PAYMENT_ACCOUNT,
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->getRaw(),
                     ],
@@ -667,16 +666,16 @@ trait WithOrderTest
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.payments-types', [
-                'label'         =>  __( 'PayPal' ),
-                'general'       =>  [
-                    'identifier'    =>  'paypal-payment',
-                    'active'        =>  true,
-                    'priority'      =>  0,
+                'label' => __( 'PayPal' ),
+                'general' => [
+                    'identifier' => 'paypal-payment',
+                    'active' => true,
+                    'priority' => 0,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 
@@ -714,15 +713,15 @@ trait WithOrderTest
                 $discountRate = 10;
                 $quantity = $faker->numberBetween(1, 10);
                 $data = array_merge([
-                    'name'                  =>  $product->name,
-                    'discount'              =>  $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ) * $quantity,
-                    'discount_percentage'   =>  $discountRate,
-                    'discount_type'         =>  $faker->randomElement([ 'flat', 'percentage' ]),
-                    'quantity'              =>  $quantity,
-                    'unit_price'            =>  $unitElement->sale_price,
-                    'tax_type'              =>  'inclusive',
-                    'tax_group_id'          =>  1,
-                    'unit_id'               =>  $unitElement->unit_id,
+                    'name' => $product->name,
+                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ) * $quantity,
+                    'discount_percentage' => $discountRate,
+                    'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
+                    'quantity' => $quantity,
+                    'unit_price' => $unitElement->sale_price,
+                    'tax_type' => 'inclusive',
+                    'tax_group_id' => 1,
+                    'unit_id' => $unitElement->unit_id,
                 ], $this->customProductParams );
 
                 if ( ! $this->allowQuickProducts ) {
@@ -758,19 +757,19 @@ trait WithOrderTest
             if ( $customerCoupon instanceof CustomerCoupon && $this->processCoupon && $customerCoupon->usage < $customerCoupon->limit_usage ) {
                 $allCoupons = [
                     [
-                        'customer_coupon_id'    =>  $customerCoupon->id,
-                        'coupon_id'             =>  $customerCoupon->coupon_id,
-                        'name'                  =>  $customerCoupon->name,
-                        'type'                  =>  'percentage_discount',
-                        'code'                  =>  $customerCoupon->code,
-                        'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
-                        'value'                 =>  $currency->define( $customerCoupon->coupon->discount_value )
+                        'customer_coupon_id' => $customerCoupon->id,
+                        'coupon_id' => $customerCoupon->coupon_id,
+                        'name' => $customerCoupon->name,
+                        'type' => 'percentage_discount',
+                        'code' => $customerCoupon->code,
+                        'limit_usage' => $customerCoupon->coupon->limit_usage,
+                        'value' => $currency->define( $customerCoupon->coupon->discount_value )
                             ->multiplyBy( $subtotal )
                             ->divideBy( 100 )
                             ->getRaw(),
-                        'discount_value'        =>  $customerCoupon->coupon->discount_value,
-                        'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
-                        'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                        'discount_value' => $customerCoupon->coupon->discount_value,
+                        'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
+                        'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
                     ],
                 ];
 
@@ -781,8 +780,8 @@ trait WithOrderTest
             }
 
             $discount = [
-                'type'      =>  $faker->randomElement([ 'percentage' ]),
-                'rate'      =>  5,
+                'type' => $faker->randomElement([ 'percentage' ]),
+                'rate' => 5,
             ];
 
             $discountCoupons = 0;
@@ -815,35 +814,35 @@ trait WithOrderTest
             )->format( 'Y-m-d H:m:s' );
 
             $orderData = array_merge([
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  $discount[ 'type' ],
-                'created_at'            =>  $this->customDate ? $dateString : null,
-                'discount_percentage'   =>  $discount[ 'rate' ] ?? 0,
-                'discount'              =>  $discount[ 'value' ] ?? 0,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => $discount[ 'type' ],
+                'created_at' => $this->customDate ? $dateString : null,
+                'discount_percentage' => $discount[ 'rate' ] ?? 0,
+                'discount' => $discount[ 'value' ] ?? 0,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'author'                =>  ! empty( $this->users ) // we want to randomise the users
+                'author' => ! empty( $this->users ) // we want to randomise the users
                     ? collect( $this->users )->suffle()->first()
                     : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
-                'coupons'               =>  $allCoupons,
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products->toArray(),
-                'payments'              =>  $this->shouldMakePayment ? [
+                'coupons' => $allCoupons,
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $products->toArray(),
+                'payments' => $this->shouldMakePayment ? [
                     [
-                        'identifier'    =>  'cash-payment',
-                        'value'         =>  $currency->define( $subtotal )
+                        'identifier' => 'cash-payment',
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->subtractBy(
                                 $discountCoupons
@@ -861,7 +860,7 @@ trait WithOrderTest
                 ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
 
             $response->assertJson([
-                'status'    =>  'success',
+                'status' => 'success',
             ]);
 
             $singleResponse[ 'order-creation' ] = json_decode( $response->getContent(), true );
@@ -893,7 +892,8 @@ trait WithOrderTest
                 $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - (float) $orderData[ 'discount' ] - $couponValue );
                 $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
 
-                $response->assertJsonPath( 'data.order.change', $change );
+                $changeFromOrder    =   ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
+                $this->assertEquals( $changeFromOrder, $change );
 
                 $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );
 
@@ -951,9 +951,9 @@ trait WithOrderTest
 
                 $products = collect( $responseData[ 'data' ][ 'order' ][ 'products' ] )->map( function( $product ) use ( $faker, $productCondition ) {
                     return array_merge( $product, [
-                        'condition'     =>  $productCondition,
-                        'description'   =>  __( 'A random description from the refund test' ),
-                        'quantity'      =>  $faker->randomElement([
+                        'condition' => $productCondition,
+                        'description' => __( 'A random description from the refund test' ),
+                        'quantity' => $faker->randomElement([
                             $product[ 'quantity' ],
                             // floor( $product[ 'quantity' ] / 2 )
                         ]),
@@ -962,24 +962,24 @@ trait WithOrderTest
 
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
-                        'payment'   =>  [
-                            'identifier'    =>  $faker->randomElement([
+                        'payment' => [
+                            'identifier' => $faker->randomElement([
                                 OrderPayment::PAYMENT_ACCOUNT,
                                 OrderPayment::PAYMENT_CASH,
                             ]),
                         ],
-                        'refund_shipping'   =>  $faker->randomElement([ true, false ]),
-                        'total'             =>  collect( $products )
+                        'refund_shipping' => $faker->randomElement([ true, false ]),
+                        'total' => collect( $products )
                             ->map( fn( $product ) => $currency
                                     ->define( $product[ 'quantity' ] )
                                     ->multiplyBy( $product[ 'unit_price' ] )
                                     ->getRaw()
                             )->sum(),
-                        'products'  =>  $products,
+                        'products' => $products,
                     ]);
 
                 $response->assertJson([
-                    'status'    =>  'success',
+                    'status' => 'success',
                 ]);
 
                 /**
@@ -1037,43 +1037,43 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  1,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  2.5,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => 1,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => 2.5,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  [
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => [
                     [
-                        'product_id'            =>  $product->id,
-                        'quantity'              =>  1,
-                        'unit_price'            =>  8.5,
-                        'unit_quantity_id'      =>  $unit->id,
-                        'mode'                  =>  'retail',
+                        'product_id' => $product->id,
+                        'quantity' => 1,
+                        'unit_price' => 8.5,
+                        'unit_quantity_id' => $unit->id,
+                        'mode' => 'retail',
                     ], [
-                        'product_id'            =>  $product->id,
-                        'quantity'              =>  1,
-                        'unit_price'            =>  8.5,
-                        'unit_quantity_id'      =>  $unit->id,
-                        'mode'                  =>  'normal',
+                        'product_id' => $product->id,
+                        'quantity' => 1,
+                        'unit_price' => 8.5,
+                        'unit_quantity_id' => $unit->id,
+                        'mode' => 'normal',
                     ],
                 ],
-                'payments'              =>  [
+                'payments' => [
                     [
-                        'identifier'    =>  'paypal-payment',
-                        'value'         =>  $currency->define( $subtotal )
+                        'identifier' => 'paypal-payment',
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->getRaw(),
                     ],
@@ -1099,31 +1099,31 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  1,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  2.5,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => 1,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => 2.5,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'payment_status'        =>  'hold',
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  150,
-                'products'              =>  [
+                'payment_status' => 'hold',
+                'subtotal' => $subtotal,
+                'shipping' => 150,
+                'products' => [
                     [
-                        'product_id'            =>  $unitQuantity->product->id,
-                        'quantity'              =>  5,
-                        'unit_price'            =>  12,
-                        'unit_quantity_id'      =>  $unitQuantity->id,
+                        'product_id' => $unitQuantity->product->id,
+                        'quantity' => 5,
+                        'unit_price' => 12,
+                        'unit_quantity_id' => $unitQuantity->id,
                     ],
                 ],
             ]);
@@ -1138,19 +1138,19 @@ trait WithOrderTest
         /**
          * @var TestService
          */
-        $testService    =   app()->make( TestService::class );
-        $customer       =   Customer::get()->random();
-        
+        $testService = app()->make( TestService::class );
+        $customer = Customer::get()->random();
+
         /**
          * We would like to check easilly
          * by reset the customer counter
          */
-        $customer->purchases_amount     =   0;
+        $customer->purchases_amount = 0;
         $customer->save();
 
-        $data          =   $testService->prepareOrder(
+        $data = $testService->prepareOrder(
             orderDetails: [
-                'customer_id'   =>  $customer->id
+                'customer_id' => $customer->id,
             ],
             date: ns()->date->now()
         );
@@ -1158,9 +1158,9 @@ trait WithOrderTest
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', $data );
 
-        $order          =   ( object ) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
-        $order          =   Order::with([ 'products', 'user' ])->find( $order->id );
-        $refreshed      =   $customer->fresh();
+        $order = (object) json_decode( $response->getContent(), true )[ 'data' ][ 'order' ];
+        $order = Order::with([ 'products', 'user' ])->find( $order->id );
+        $refreshed = $customer->fresh();
 
         $this->assertTrue( $customer->purchases_amount < $refreshed->purchases_amount, 'The customer balance hasn\'t been updated.' );
 
@@ -1173,6 +1173,7 @@ trait WithOrderTest
             ->filter( fn( $product ) => $product->product_id > 0 )
             ->map( function( $product ) use ( $productService ) {
                 $product->previous_quantity = $productService->getQuantity( $product->product_id, $product->unit_id );
+
                 return $product;
             });
 
@@ -1200,10 +1201,10 @@ trait WithOrderTest
             );
 
             /**
-             * let's check if the purchase amount 
+             * let's check if the purchase amount
              * for the customer has been updated accordingly
              */
-            $newCustomer    =   $customer->fresh();
+            $newCustomer = $customer->fresh();
 
             $this->assertEquals( $newCustomer->purchases_amount, $customer->purchases_amount, 'The customer total purchase hasn\'t changed after deleting the order.' );
 
@@ -1253,21 +1254,21 @@ trait WithOrderTest
              * this is a sample product/service
              */
             [
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
-                'unit_id'               =>  $product->unit_quantities[0]->unit_id,
+                'quantity' => 5,
+                'unit_price' => $product->unit_quantities[0]->sale_price,
+                'unit_quantity_id' => $product->unit_quantities[0]->id,
+                'unit_id' => $product->unit_quantities[0]->unit_id,
             ],
 
             /**
              * An existing product
              */
             [
-                'product_id'            =>  $product->id,
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
-                'unit_id'               =>  $product->unit_quantities[0]->unit_id,
+                'product_id' => $product->id,
+                'quantity' => 5,
+                'unit_price' => $product->unit_quantities[0]->sale_price,
+                'unit_quantity_id' => $product->unit_quantities[0]->id,
+                'unit_id' => $product->unit_quantities[0]->unit_id,
             ],
         ];
 
@@ -1283,47 +1284,47 @@ trait WithOrderTest
         if ( $taxGroup instanceof TaxGroup ) {
             $taxes = $taxGroup->taxes->map( function( $tax ) {
                 return [
-                    'tax_name'  =>  $tax->name,
-                    'tax_id'    =>  $tax->id,
-                    'rate'      =>  $tax->rate,
+                    'tax_name' => $tax->name,
+                    'tax_id' => $tax->id,
+                    'rate' => $tax->rate,
                 ];
             });
         }
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  $firstFetchCustomer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  $discountRate,
-                'taxes'                 =>  $taxes,
-                'tax_group_id'          =>  $taxGroup->id,
-                'tax_type'              =>  'inclusive',
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $firstFetchCustomer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => $discountRate,
+                'taxes' => $taxes,
+                'tax_group_id' => $taxGroup->id,
+                'tax_type' => 'inclusive',
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products,
-                'payments'              =>  [
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $products,
+                'payments' => [
                     [
-                        'identifier'    =>  OrderPayment::PAYMENT_CASH,
-                        'value'         =>  $netTotal,
+                        'identifier' => OrderPayment::PAYMENT_CASH,
+                        'value' => $netTotal,
                     ],
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $responseData = json_decode( $response->getContent(), true );
@@ -1356,11 +1357,11 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ] . '/refund', [
-                'payment'   =>  [
-                    'identifier'    =>  'account-payment',
+                'payment' => [
+                    'identifier' => 'account-payment',
                 ],
-                'total'     =>  $responseData[ 'data' ][ 'order' ][ 'total' ],
-                'products'  =>  $responseData[ 'data' ][ 'order' ][ 'products' ],
+                'total' => $responseData[ 'data' ][ 'order' ][ 'total' ],
+                'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
             ]);
 
         $response->assertStatus(200);
@@ -1400,7 +1401,7 @@ trait WithOrderTest
         }
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 
@@ -1424,10 +1425,10 @@ trait WithOrderTest
             $unitElement = $faker->randomElement( $product->unit_quantities );
 
             return [
-                'product_id'            =>  $product->id,
-                'quantity'              =>  $faker->numberBetween(1, 10), // 2,
-                'unit_price'            =>  $unitElement->sale_price, // 110.8402,
-                'unit_quantity_id'      =>  $unitElement->id,
+                'product_id' => $product->id,
+                'quantity' => $faker->numberBetween(1, 10), // 2,
+                'unit_price' => $unitElement->sale_price, // 110.8402,
+                'unit_quantity_id' => $unitElement->id,
             ];
         });
 
@@ -1451,51 +1452,51 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
                 // 'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  $discountRate,
-                'discount_type'         =>  'flat',
-                'discount'              =>  $discountValue,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'discount_percentage' => $discountRate,
+                'discount_type' => 'flat',
+                'discount' => $discountValue,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'coupons'               =>  [],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'total'                 =>  $total,
-                'tendered'              =>  ns()->currency
+                'coupons' => [],
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'total' => $total,
+                'tendered' => ns()->currency
                     ->getRaw( $total / 2 ),
-                'total_instalments'     =>  $initialTotalInstallment,
-                'instalments'           =>  [
+                'total_instalments' => $initialTotalInstallment,
+                'instalments' => [
                     [
-                        'date'          =>  ns()->date->getNowFormatted(),
-                        'amount'        =>  $instalmentPayment,
+                        'date' => ns()->date->getNowFormatted(),
+                        'amount' => $instalmentPayment,
                     ], [
-                        'date'          =>  ns()->date->copy()->addDays(2)->toDateTimeString(),
-                        'amount'        =>  $instalmentPayment,
+                        'date' => ns()->date->copy()->addDays(2)->toDateTimeString(),
+                        'amount' => $instalmentPayment,
                     ],
                 ],
-                'products'              =>  $products->toArray(),
-                'payments'              =>  [
+                'products' => $products->toArray(),
+                'payments' => [
                     [
-                        'identifier'    =>  'cash-payment',
-                        'value'         =>  $paymentAmount,
+                        'identifier' => 'cash-payment',
+                        'value' => $paymentAmount,
                     ],
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $responseData = json_decode( $response->getContent(), true );
@@ -1509,14 +1510,14 @@ trait WithOrderTest
         $instalmentAmount = ns()->currency->getRaw( $instalment->amount / 2 );
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments/' . $instalment->id, [
-                'instalment'    =>  [
-                    'date'      =>  $today,
-                    'amount'    =>  $instalmentAmount,
+                'instalment' => [
+                    'date' => $today,
+                    'amount' => $instalmentAmount,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $instalment->refresh();
@@ -1532,14 +1533,14 @@ trait WithOrderTest
         $oldInstlaments = $order->total_instalments;
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments', [
-                'instalment'    =>  [
-                    'date'      =>  $today,
-                    'amount'    =>  $instalmentAmount,
+                'instalment' => [
+                    'date' => $today,
+                    'amount' => $instalmentAmount,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $order->refresh();
@@ -1563,7 +1564,7 @@ trait WithOrderTest
             ->json( 'DELETE', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments/' . $responseData[ 'data' ][ 'instalment' ][ 'id' ] );
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $order->refresh();
@@ -1579,14 +1580,14 @@ trait WithOrderTest
         $oldInstlaments = $order->total_instalments;
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders/' . $order[ 'id' ] . '/instalments', [
-                'instalment'    =>  [
-                    'date'      =>  $today,
-                    'amount'    =>  $instalmentAmount,
+                'instalment' => [
+                    'date' => $today,
+                    'amount' => $instalmentAmount,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $order->refresh();
@@ -1606,11 +1607,11 @@ trait WithOrderTest
             ->each( function( $instalment ) use ( $order ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'POST', 'api/nexopos/v4/orders/' . $order->id . '/instalments/' . $instalment->id . '/pay', [
-                        'payment_type'  =>  OrderPayment::PAYMENT_CASH,
+                        'payment_type' => OrderPayment::PAYMENT_CASH,
                     ]);
 
                 $response->assertJson([
-                    'status'    =>  'success',
+                    'status' => 'success',
                 ]);
 
                 $instalment->refresh();
@@ -1632,10 +1633,10 @@ trait WithOrderTest
         $discountRate = 3.5;
         $products = [
             [
-                'product_id'            =>  $product->id,
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
+                'product_id' => $product->id,
+                'quantity' => 5,
+                'unit_price' => $product->unit_quantities[0]->sale_price,
+                'unit_quantity_id' => $product->unit_quantities[0]->id,
             ],
         ];
 
@@ -1643,31 +1644,31 @@ trait WithOrderTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/orders', [
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  $discountRate,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => $discountRate,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products,
-                'payments'              =>  [],
-                'payment_status'        =>  Order::PAYMENT_UNPAID,
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $products,
+                'payments' => [],
+                'payment_status' => Order::PAYMENT_UNPAID,
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $responseData = json_decode( $response->getContent(), true );
@@ -1684,40 +1685,40 @@ trait WithOrderTest
         $discountRate = 3.5;
         $products = [
             [
-                'product_id'            =>  $product->id,
-                'quantity'              =>  5,
-                'unit_price'            =>  $product->unit_quantities[0]->sale_price,
-                'unit_quantity_id'      =>  $product->unit_quantities[0]->id,
+                'product_id' => $product->id,
+                'quantity' => 5,
+                'unit_price' => $product->unit_quantities[0]->sale_price,
+                'unit_quantity_id' => $product->unit_quantities[0]->id,
             ],
         ];
 
         $subtotal = collect( $products )->map( fn( $product ) => $product[ 'unit_price' ] * $product[ 'quantity' ] )->sum();
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', 'api/nexopos/v4/orders/' . $responseData[ 'data' ][ 'order' ][ 'id' ], [
-                'customer_id'           =>  1,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  'percentage',
-                'discount_percentage'   =>  $discountRate,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => 1,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => 'percentage',
+                'discount_percentage' => $discountRate,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $responseData[ 'data' ][ 'order' ][ 'products' ],
-                'payments'              =>  [],
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $responseData[ 'data' ][ 'order' ][ 'products' ],
+                'payments' => [],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $response->assertStatus(200);
@@ -1747,37 +1748,37 @@ trait WithOrderTest
         for ( $i = 0; $i < $timesForOrders; $i++ ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/orders', [
-                    'customer_id'           =>  $customer->id,
-                    'type'                  =>  [ 'identifier' => 'takeaway' ],
+                    'customer_id' => $customer->id,
+                    'type' => [ 'identifier' => 'takeaway' ],
                     // 'discount_type'         =>  'percentage',
                     // 'discount_percentage'   =>  2.5,
-                    'addresses'             =>  [
-                        'shipping'          =>  [
-                            'name'          =>  'First Name Delivery',
-                            'surname'       =>  'Surname',
-                            'country'       =>  'Cameroon',
+                    'addresses' => [
+                        'shipping' => [
+                            'name' => 'First Name Delivery',
+                            'surname' => 'Surname',
+                            'country' => 'Cameroon',
                         ],
-                        'billing'          =>  [
-                            'name'          =>  'EBENE Voundi',
-                            'surname'       =>  'Antony Hervé',
-                            'country'       =>  'United State Seattle',
-                        ],
-                    ],
-                    'subtotal'              =>  $subtotal,
-                    'shipping'              =>  $shippingFees,
-                    'products'              =>  [
-                        [
-                            'product_id'            =>  $product->id,
-                            'quantity'              =>  1,
-                            'unit_price'            =>  $product_price,
-                            'unit_quantity_id'      =>  $unit->id,
-                            'custom'                =>  'retail',
+                        'billing' => [
+                            'name' => 'EBENE Voundi',
+                            'surname' => 'Antony Hervé',
+                            'country' => 'United State Seattle',
                         ],
                     ],
-                    'payments'              =>  [
+                    'subtotal' => $subtotal,
+                    'shipping' => $shippingFees,
+                    'products' => [
                         [
-                            'identifier'    =>  'paypal-payment',
-                            'value'         =>  ns()->currency->define( $subtotal )
+                            'product_id' => $product->id,
+                            'quantity' => 1,
+                            'unit_price' => $product_price,
+                            'unit_quantity_id' => $unit->id,
+                            'custom' => 'retail',
+                        ],
+                    ],
+                    'payments' => [
+                        [
+                            'identifier' => 'paypal-payment',
+                            'value' => ns()->currency->define( $subtotal )
                                 ->additionateBy( $shippingFees )
                                 ->getRaw(),
                         ],
@@ -1810,19 +1811,19 @@ trait WithOrderTest
         if ( $customerCoupon instanceof CustomerCoupon ) {
             $allCoupons = [
                 [
-                    'customer_coupon_id'    =>  $customerCoupon->id,
-                    'coupon_id'             =>  $customerCoupon->coupon_id,
-                    'name'                  =>  $customerCoupon->name,
-                    'type'                  =>  'percentage_discount',
-                    'code'                  =>  $customerCoupon->code,
-                    'limit_usage'           =>  $customerCoupon->coupon->limit_usage,
-                    'value'                 =>  ns()->currency->define( $customerCoupon->coupon->discount_value )
+                    'customer_coupon_id' => $customerCoupon->id,
+                    'coupon_id' => $customerCoupon->coupon_id,
+                    'name' => $customerCoupon->name,
+                    'type' => 'percentage_discount',
+                    'code' => $customerCoupon->code,
+                    'limit_usage' => $customerCoupon->coupon->limit_usage,
+                    'value' => ns()->currency->define( $customerCoupon->coupon->discount_value )
                         ->multiplyBy( $subtotal )
                         ->divideBy( 100 )
                         ->getRaw(),
-                    'discount_value'        =>  $customerCoupon->coupon->discount_value,
-                    'minimum_cart_value'    =>  $customerCoupon->coupon->minimum_cart_value,
-                    'maximum_cart_value'    =>  $customerCoupon->coupon->maximum_cart_value,
+                    'discount_value' => $customerCoupon->coupon->discount_value,
+                    'minimum_cart_value' => $customerCoupon->coupon->minimum_cart_value,
+                    'maximum_cart_value' => $customerCoupon->coupon->maximum_cart_value,
                 ],
             ];
 
@@ -1833,7 +1834,7 @@ trait WithOrderTest
         }
 
         $discount = [
-            'type'      =>      $faker->randomElement([ 'percentage', 'flat' ]),
+            'type' => $faker->randomElement([ 'percentage', 'flat' ]),
         ];
 
         $dateString = ns()->date->startOfDay()->addHours(
@@ -1841,34 +1842,34 @@ trait WithOrderTest
         )->format( 'Y-m-d H:m:s' );
 
         $orderData = [
-            'customer_id'           =>  $customer->id,
-            'type'                  =>  [ 'identifier' => 'takeaway' ],
-            'discount_type'         =>  $discount[ 'type' ],
-            'discount_percentage'   =>  $discount[ 'rate' ] ?? 0,
-            'discount'              =>  $discount[ 'value' ] ?? 0,
-            'addresses'             =>  [
-                'shipping'          =>  [
-                    'name'          =>  'First Name Delivery',
-                    'surname'       =>  'Surname',
-                    'country'       =>  'Cameroon',
+            'customer_id' => $customer->id,
+            'type' => [ 'identifier' => 'takeaway' ],
+            'discount_type' => $discount[ 'type' ],
+            'discount_percentage' => $discount[ 'rate' ] ?? 0,
+            'discount' => $discount[ 'value' ] ?? 0,
+            'addresses' => [
+                'shipping' => [
+                    'name' => 'First Name Delivery',
+                    'surname' => 'Surname',
+                    'country' => 'Cameroon',
                 ],
-                'billing'          =>  [
-                    'name'          =>  'EBENE Voundi',
-                    'surname'       =>  'Antony Hervé',
-                    'country'       =>  'United State Seattle',
+                'billing' => [
+                    'name' => 'EBENE Voundi',
+                    'surname' => 'Antony Hervé',
+                    'country' => 'United State Seattle',
                 ],
             ],
-            'author'                =>  ! empty( $this->users ) // we want to randomise the users
+            'author' => ! empty( $this->users ) // we want to randomise the users
                 ? collect( $this->users )->suffle()->first()
                 : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
-            'coupons'               =>  $allCoupons,
-            'subtotal'              =>  $subtotal,
-            'shipping'              =>  $shippingFees,
-            'products'              =>  $products->toArray(),
-            'payments'              =>  [
+            'coupons' => $allCoupons,
+            'subtotal' => $subtotal,
+            'shipping' => $shippingFees,
+            'products' => $products->toArray(),
+            'payments' => [
                 [
-                    'identifier'    =>  'cash-payment',
-                    'value'         =>  ns()->currency->define( ( $subtotal + $shippingFees ) - $totalCoupons )
+                    'identifier' => 'cash-payment',
+                    'value' => ns()->currency->define( ( $subtotal + $shippingFees ) - $totalCoupons )
                         ->getRaw(),
                 ],
             ],
@@ -1878,7 +1879,7 @@ trait WithOrderTest
             ->json( 'POST', 'api/nexopos/v4/orders', $orderData );
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         /**
@@ -1898,12 +1899,12 @@ trait WithOrderTest
             $unitElement = $this->faker->randomElement( $product->unit_quantities );
 
             $data = [
-                'name'                  =>  'Fees',
-                'quantity'              =>  $this->faker->numberBetween(1, 10),
-                'unit_price'            =>  $unitElement->sale_price,
-                'tax_type'              =>  'inclusive',
-                'tax_group_id'          =>  1,
-                'unit_id'               =>  $unitElement->unit_id,
+                'name' => 'Fees',
+                'quantity' => $this->faker->numberBetween(1, 10),
+                'unit_price' => $unitElement->sale_price,
+                'tax_type' => 'inclusive',
+                'tax_group_id' => 1,
+                'unit_id' => $unitElement->unit_id,
             ];
 
             if ( $this->faker->randomElement([ false, true ]) ) {

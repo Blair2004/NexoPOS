@@ -110,8 +110,8 @@ class CrudController extends DashboardController
         CrudAfterDeleteEvent::dispatch( $resource, (object) $model->toArray() );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The entry has been successfully deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The entry has been successfully deleted.' ),
         ];
     }
 
@@ -208,13 +208,13 @@ class CrudController extends DashboardController
         $response = Hook::filter( get_class( $resource ) . '@bulkAction', $resource->bulkAction( $request ), $request );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf(
+            'status' => 'success',
+            'message' => sprintf(
                 $response[ 'message' ] ?? __( '%s has been processed, %s has not been processed.' ),
                 $response[ 'success' ] ?? 0,
                 $response[ 'failed' ] ?? 0
             ),
-            'data'      =>  $response,
+            'data' => $response,
         ];
     }
 
@@ -261,8 +261,8 @@ class CrudController extends DashboardController
         }
 
         return response()->json([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+            'status' => 'failed',
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }
 
@@ -286,23 +286,23 @@ class CrudController extends DashboardController
 
         if ( method_exists( $resource, 'getEntries' ) ) {
             return [
-                'columns'               =>  Hook::filter(
+                'columns' => Hook::filter(
                     get_class( $resource ) . '@getColumns',
                     $resource->getColumns()
                 ),
-                'queryFilters'          =>  Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
-                'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
-                'links'                 =>  Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ?? [] ),
-                'bulkActions'           =>  Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
-                'prependOptions'        =>  Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
-                'showOptions'           =>  Hook::filter( get_class( $resource ) . '@getShowOptions', $resource->getShowOptions() ),
-                'namespace'             =>  $namespace,
+                'queryFilters' => Hook::filter( get_class( $resource ) . '@getQueryFilters', $resource->getQueryFilters() ),
+                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
+                'links' => Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ?? [] ),
+                'bulkActions' => Hook::filter( get_class( $resource ) . '@getBulkActions', $resource->getBulkActions() ),
+                'prependOptions' => Hook::filter( get_class( $resource ) . '@getPrependOptions', $resource->getPrependOptions() ),
+                'showOptions' => Hook::filter( get_class( $resource ) . '@getShowOptions', $resource->getShowOptions() ),
+                'namespace' => $namespace,
             ];
         }
 
         return response()->json([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+            'status' => 'failed',
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }
 
@@ -332,18 +332,18 @@ class CrudController extends DashboardController
              */
             $form = Hook::filter( get_class( $resource )::method( 'getForm' ), $form, compact( 'model' ) );
             $config = [
-                'form'                  =>  $form,
-                'labels'                =>  Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
-                'links'                 =>  Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ),
-                'namespace'             =>  $namespace,
+                'form' => $form,
+                'labels' => Hook::filter( get_class( $resource ) . '@getLabels', $resource->getLabels() ),
+                'links' => Hook::filter( get_class( $resource ) . '@getLinks', $resource->getLinks() ),
+                'namespace' => $namespace,
             ];
 
             return $config;
         }
 
         return response()->json([
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to proceed. No matching CRUD resource has been found.' ),
+            'status' => 'failed',
+            'message' => __( 'Unable to proceed. No matching CRUD resource has been found.' ),
         ], 403 );
     }
 
@@ -438,7 +438,7 @@ class CrudController extends DashboardController
         Cache::put( $hash, $relativePath, now()->addMinutes(5) );
 
         return [
-            'url'   =>  route( 'ns.dashboard.crud-download', compact( 'hash' ) ),
+            'url' => route( 'ns.dashboard.crud-download', compact( 'hash' ) ),
         ];
     }
 
@@ -456,25 +456,25 @@ class CrudController extends DashboardController
 
         if ( method_exists( $resource, 'canAccess' ) ) {
             if ( $resource->canAccess([
-                'type'          =>  $request->input( 'type' ),
-                'namespace'     =>  $request->input( 'namespace' ),
-                'id'            =>  $request->input( 'id' ),
+                'type' => $request->input( 'type' ),
+                'namespace' => $request->input( 'namespace' ),
+                'id' => $request->input( 'id' ),
             ]) ) {
                 return response()->json([
-                    'status'    =>  'success',
-                    'message'   =>  __( 'You\'re allowed to access to that page' ),
+                    'status' => 'success',
+                    'message' => __( 'You\'re allowed to access to that page' ),
                 ]);
             }
 
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You don\'t have the right to access to the requested page.' ),
+                'status' => 'failed',
+                'message' => __( 'You don\'t have the right to access to the requested page.' ),
             ], 403 );
         }
 
         return response()->json([
-            'status'    =>  'success',
-            'message'   =>  __( 'This resource is not protected. The access is granted.' ),
+            'status' => 'success',
+            'message' => __( 'This resource is not protected. The access is granted.' ),
         ]);
     }
 

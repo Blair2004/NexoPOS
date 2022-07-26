@@ -142,10 +142,10 @@ class ModuleMigrations extends Command
         switch ( $content ) {
             case 'migration':
             return view( 'generate.modules.migration', [
-                'module'    =>  $this->module,
-                'migration' =>  $this->migration,
-                'table'     =>  $this->table,
-                'schema'    =>  $this->schema,
+                'module' => $this->module,
+                'migration' => $this->migration,
+                'table' => $this->table,
+                'schema' => $this->schema,
             ]);
         }
     }

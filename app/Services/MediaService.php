@@ -18,7 +18,7 @@ class MediaService
      * @var array
      */
     private $sizes = [
-        'thumb'     =>  [ 280, 181 ],
+        'thumb' => [ 280, 181 ],
     ];
 
     /**
@@ -196,14 +196,14 @@ class MediaService
             $media->delete();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The media has been deleted' ),
+                'status' => 'success',
+                'message' => __( 'The media has been deleted' ),
             ];
         }
 
         return [
-            'status'    =>  'failed',
-            'message'   =>  __( 'Unable to find the media.' ),
+            'status' => 'failed',
+            'message' => __( 'Unable to find the media.' ),
         ];
     }
 

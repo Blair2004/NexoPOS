@@ -51,11 +51,11 @@ class CreateOrderTest extends TestCase
             $this->useDiscount = false;
             $this->shouldMakePayment = false;
             $this->customOrderParams = [
-                'shipping'  =>  0,
+                'shipping' => 0,
             ];
             $this->customProductParams = [
-                'unit_price'    =>  0,
-                'discount'      =>  0,
+                'unit_price' => 0,
+                'discount' => 0,
             ];
 
             $responses = $this->attemptPostOrder( $callback );

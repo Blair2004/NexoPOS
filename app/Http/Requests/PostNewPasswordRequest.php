@@ -24,8 +24,8 @@ class PostNewPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password'          =>  'required|min:6',
-            'password_confirm'  =>  'required|same:password',
+            'password' => 'required|min:6',
+            'password_confirm' => 'required|same:password',
         ];
     }
 }

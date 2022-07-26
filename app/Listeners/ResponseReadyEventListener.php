@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\ResponseReadyEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Cache;
 
 class ResponseReadyEventListener
