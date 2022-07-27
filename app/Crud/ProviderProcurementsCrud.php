@@ -478,10 +478,10 @@ class ProviderProcurementsCrud extends CrudService
     {
         return  [
             'list' => ns()->url( 'dashboard/' . '/providers/procurements' ),
-            'create' => 'javascript:void(0)',
-            'edit' => ns()->url( 'dashboard/' . '/providers/procurements/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-procurements/{id}' . '' ),
+            'create' => false,
+            'edit' => false,
+            'post' => false,
+            'put' => false,
         ];
     }
 

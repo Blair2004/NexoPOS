@@ -442,10 +442,10 @@ class ProviderProductsCrud extends CrudService
     {
         return  [
             'list' => ns()->url( 'dashboard/' . '/dashboard/providers' ),
-            'create' => ns()->url( 'dashboard/' . '/dashboard/providers/create' ),
-            'edit' => ns()->url( 'dashboard/' . '/dashboard/providers/edit/' ),
-            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-products' ),
-            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.providers-products/{id}' . '' ),
+            'create' => false,
+            'edit' => false,
+            'post' => false,
+            'put' => false,
         ];
     }
 
