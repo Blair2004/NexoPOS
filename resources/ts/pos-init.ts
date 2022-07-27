@@ -911,8 +911,16 @@ export class POS {
             nsHttpClient.get(`/api/nexopos/v4/orders/${order_id}/pos`)
                 .subscribe({
                     next: async (order: any) => {
-
-                        nsHooks.doAction( 'ns-before-load-order', { order });
+                        /**
+                         * an error might occurs while
+                         * dealing with custom action. We should 
+                         * catch that and reject the exception.
+                         */
+                        try {
+                            nsHooks.doAction( 'ns-before-load-order', { order });
+                        } catch( exception ) {
+                            return reject( exception );
+                        }
 
                         const options   =   this.options.getValue();
 
