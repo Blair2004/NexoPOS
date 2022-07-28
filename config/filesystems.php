@@ -48,9 +48,9 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'snapshots' =>  [
-            'driver'    =>  'local',
-            'root'      =>  storage_path( 'snapshots' ),
+        'snapshots' => [
+            'driver' => 'local',
+            'root' => storage_path( 'snapshots' ),
         ],
 
         'public' => [
@@ -58,7 +58,7 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
-            'throw' =>  true,
+            'throw' => true,
         ],
 
         's3' => [
@@ -72,18 +72,18 @@ return [
         ],
 
         'ns' => [
-            'driver'    =>  'local',
-            'root'      =>  base_path(),
+            'driver' => 'local',
+            'root' => base_path(),
         ],
 
-        'ns-public'     =>  [
-            'driver'    =>  'local',
-            'root'      =>  base_path( 'public' ),
+        'ns-public' => [
+            'driver' => 'local',
+            'root' => base_path( 'public' ),
         ],
 
         'ns-modules' => [
-            'driver'    =>  'local',
-            'root'      =>  base_path( 'modules' ),
+            'driver' => 'local',
+            'root' => base_path( 'modules' ),
         ],
     ],
 

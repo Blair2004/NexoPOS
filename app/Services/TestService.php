@@ -36,12 +36,12 @@ class TestService
             $unitElement = $faker->randomElement( $product->unit_quantities );
 
             $data = array_merge([
-                'name'                  =>  $product->name,
-                'quantity'              =>  $faker->numberBetween(1, 10),
-                'unit_price'            =>  $unitElement->sale_price,
-                'tax_type'              =>  'inclusive',
-                'tax_group_id'          =>  1,
-                'unit_id'               =>  $unitElement->unit_id,
+                'name' => $product->name,
+                'quantity' => $faker->numberBetween(1, 10),
+                'unit_price' => $unitElement->sale_price,
+                'tax_type' => 'inclusive',
+                'tax_group_id' => 1,
+                'unit_id' => $unitElement->unit_id,
             ], $productDetails );
 
             if ( $faker->randomElement([ false, true ]) || ! ( $config[ 'allow_quick_products' ] ?? true ) ) {
@@ -67,7 +67,7 @@ class TestService
         })->sum() );
 
         $discount = [
-            'type'      =>      $faker->randomElement([ 'percentage', 'flat' ]),
+            'type' => $faker->randomElement([ 'percentage', 'flat' ]),
         ];
 
         /**
@@ -89,33 +89,33 @@ class TestService
         )->format( 'Y-m-d H:m:s' );
 
         return array_merge([
-            'customer_id'           =>  $customer->id,
-            'type'                  =>  [ 'identifier' => 'takeaway' ],
-            'discount_type'         =>  $discount[ 'type' ],
-            'created_at'            =>  $dateString,
-            'discount_percentage'   =>  $discount[ 'rate' ] ?? 0,
-            'discount'              =>  $discount[ 'value' ] ?? 0,
-            'addresses'             =>  [
-                'shipping'          =>  [
-                    'name'          =>  'First Name Delivery',
-                    'surname'       =>  'Surname',
-                    'country'       =>  'Cameroon',
+            'customer_id' => $customer->id,
+            'type' => [ 'identifier' => 'takeaway' ],
+            'discount_type' => $discount[ 'type' ],
+            'created_at' => $dateString,
+            'discount_percentage' => $discount[ 'rate' ] ?? 0,
+            'discount' => $discount[ 'value' ] ?? 0,
+            'addresses' => [
+                'shipping' => [
+                    'name' => 'First Name Delivery',
+                    'surname' => 'Surname',
+                    'country' => 'Cameroon',
                 ],
-                'billing'          =>  [
-                    'name'          =>  'EBENE Voundi',
-                    'surname'       =>  'Antony Hervé',
-                    'country'       =>  'United State Seattle',
+                'billing' => [
+                    'name' => 'EBENE Voundi',
+                    'surname' => 'Antony Hervé',
+                    'country' => 'United State Seattle',
                 ],
             ],
-            'author'                =>  User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
-            'coupons'               =>  [],
-            'subtotal'              =>  $subtotal,
-            'shipping'              =>  $shippingFees,
-            'products'              =>  $products->toArray(),
-            'payments'              =>  [
+            'author' => User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
+            'coupons' => [],
+            'subtotal' => $subtotal,
+            'shipping' => $shippingFees,
+            'products' => $products->toArray(),
+            'payments' => [
                 [
-                    'identifier'    =>  'cash-payment',
-                    'value'         =>  $currency->define( $subtotal )
+                    'identifier' => 'cash-payment',
+                    'value' => $currency->define( $subtotal )
                         ->additionateBy( $shippingFees )
                         ->getRaw(),
                 ],
@@ -142,15 +142,16 @@ class TestService
         $margin = 25;
 
         return array_merge([
-            'name'                  =>  sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
-            'general'   =>  [
-                'provider_id'           =>  Provider::get()->random()->id,
-                'payment_status'        =>  Procurement::PAYMENT_PAID,
-                'delivery_status'       =>  Procurement::DELIVERED,
-                'author'                =>  Auth::id(), // @todo is that required
-                'automatic_approval'    =>  1,
+            'name' => sprintf( __( 'Sample Procurement %s' ), Str::random(5) ),
+            'general' => [
+                'provider_id' => Provider::get()->random()->id,
+                'payment_status' => Procurement::PAYMENT_PAID,
+                'delivery_status' => Procurement::DELIVERED,
+                'author' => Auth::id(), // @todo is that required
+                'automatic_approval' => 1,
+                'created_at' => $date->toDateTimeString(),
             ],
-            'products'  =>  Product::withStockEnabled()
+            'products' => Product::withStockEnabled()
                 ->with( 'unitGroup' )
                 ->get()
                 ->map( function( $product ) {
@@ -158,19 +159,19 @@ class TestService
                         $unitQuantity = $product->unit_quantities->filter( fn( $q ) => (int) $q->unit_id === (int) $unit->id )->first();
 
                         return (object) [
-                            'unit'      =>  $unit,
-                            'unitQuantity'  =>  $unitQuantity,
-                            'product'   =>  $product,
+                            'unit' => $unit,
+                            'unitQuantity' => $unitQuantity,
+                            'product' => $product,
                         ];
                     });
                 })->flatten()->map( function( $data ) use ( $taxService, $taxType, $taxGroup, $margin, $faker ) {
                     $quantity = $faker->numberBetween(50000, 90000);
 
                     return [
-                        'product_id'            =>  $data->product->id,
-                        'gross_purchase_price'  =>  15,
-                        'net_purchase_price'    =>  16,
-                        'purchase_price'        =>  $taxService->getTaxGroupComputedValue(
+                        'product_id' => $data->product->id,
+                        'gross_purchase_price' => 15,
+                        'net_purchase_price' => 16,
+                        'purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -178,10 +179,10 @@ class TestService
                                 $margin
                             )
                         ),
-                        'quantity'              =>  $quantity,
-                        'tax_group_id'          =>  $taxGroup->id,
-                        'tax_type'              =>  $taxType,
-                        'tax_value'             =>  $taxService->getTaxGroupVatValue(
+                        'quantity' => $quantity,
+                        'tax_group_id' => $taxGroup->id,
+                        'tax_type' => $taxType,
+                        'tax_value' => $taxService->getTaxGroupVatValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -189,7 +190,7 @@ class TestService
                                 $margin
                             )
                         ),
-                        'total_purchase_price'  =>  $taxService->getTaxGroupComputedValue(
+                        'total_purchase_price' => $taxService->getTaxGroupComputedValue(
                             $taxType,
                             $taxGroup,
                             $data->unitQuantity->sale_price - $taxService->getPercentageOf(
@@ -197,7 +198,7 @@ class TestService
                                 $margin
                             )
                         ) * $quantity,
-                        'unit_id'               =>  $data->unit->id,
+                        'unit_id' => $data->unit->id,
                     ];
                 }),
         ], $details );

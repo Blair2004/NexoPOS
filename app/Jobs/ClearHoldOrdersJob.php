@@ -79,9 +79,9 @@ class ClearHoldOrdersJob implements ShouldQueue
              * to let admins know it has been cleared.
              */
             $notification->create([
-                'title'         =>  __( 'Hold Order Cleared' ),
-                'identifier'    =>  self::class,
-                'description'   =>  sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() ),
+                'title' => __( 'Hold Order Cleared' ),
+                'identifier' => self::class,
+                'description' => sprintf( __( '%s order(s) has recently been deleted as they has expired.' ), $deleted->count() ),
             ])->dispatchForGroup([
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),

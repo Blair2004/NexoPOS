@@ -20,14 +20,14 @@ trait WithCustomerTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.customers-groups', [
-                'name'  =>  __( 'Base Customers' ),
-                'general'   =>  [
-                    'reward_system_id'  =>  $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
+                'name' => __( 'Base Customers' ),
+                'general' => [
+                    'reward_system_id' => $this->faker->randomElement( RewardSystem::get()->map( fn( $reward ) => $reward->id )->toArray() ),
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 
@@ -40,9 +40,9 @@ trait WithCustomerTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
-                    'amount'        =>  500,
-                    'description'   =>  __( 'Test credit account' ),
-                    'operation'     =>  CustomerAccountHistory::OPERATION_DEDUCT,
+                    'amount' => 500,
+                    'description' => __( 'Test credit account' ),
+                    'operation' => CustomerAccountHistory::OPERATION_DEDUCT,
                 ]);
 
             return $response->assertJson([ 'status' => 'failed' ]);
@@ -60,12 +60,12 @@ trait WithCustomerTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/customers/' . $customer->id . '/account-history', [
-                    'amount'        =>  500,
-                    'description'   =>  __( 'Test credit account' ),
-                    'operation'     =>  CustomerAccountHistory::OPERATION_ADD,
+                    'amount' => 500,
+                    'description' => __( 'Test credit account' ),
+                    'operation' => CustomerAccountHistory::OPERATION_ADD,
                 ]);
 
-            return $response->assertJson([ 'status'    =>  'success' ]);
+            return $response->assertJson([ 'status' => 'success' ]);
         }
 
         throw new Exception( __( 'No customer with empty account to proceed the test.' ) );
@@ -87,20 +87,20 @@ trait WithCustomerTest
              */
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
-                    'name'  =>  $faker->firstName,
-                    'general'   =>  [
-                        'group_id'  =>  $group->id,
-                        'surname'   =>  $faker->lastName,
-                        'email'     =>  $faker->email,
+                    'name' => $faker->firstName,
+                    'general' => [
+                        'group_id' => $group->id,
+                        'surname' => $faker->lastName,
+                        'email' => $faker->email,
                     ],
-                    'shipping'  =>  [
-                        'name'  =>  $faker->firstName,
-                        'email' =>  $faker->email,
+                    'shipping' => [
+                        'name' => $faker->firstName,
+                        'email' => $faker->email,
                     ],
                 ]);
 
             $response->assertJson([
-                'status'    =>  'success',
+                'status' => 'success',
             ]);
 
             $lastCustomer = Customer::orderBy( 'id', 'desc' )->first();
@@ -159,24 +159,24 @@ trait WithCustomerTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'post', 'api/nexopos/v4/crud/ns.rewards-system', [
-                'name'          =>  __( 'Sample Reward System' ),
-                'general'       =>  [
-                    'coupon_id'         =>  $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
-                    'target'            =>  $this->faker->randomElement([ 10, 20, 30 ]),
+                'name' => __( 'Sample Reward System' ),
+                'general' => [
+                    'coupon_id' => $this->faker->randomElement( Coupon::get()->map( fn( $coupon ) => $coupon->id )->toArray() ),
+                    'target' => $this->faker->randomElement([ 10, 20, 30 ]),
                 ],
-                'rules'         =>  [
+                'rules' => [
                     [
-                        'from'      =>  0,
-                        'to'        =>  10,
-                        'reward'    =>  1,
+                        'from' => 0,
+                        'to' => 10,
+                        'reward' => 1,
                     ], [
-                        'from'      =>  10,
-                        'to'        =>  50,
-                        'reward'    =>  3,
+                        'from' => 10,
+                        'to' => 50,
+                        'reward' => 3,
                     ], [
-                        'from'      =>  50,
-                        'to'        =>  100,
-                        'reward'    =>  5,
+                        'from' => 50,
+                        'to' => 100,
+                        'reward' => 5,
                     ],
                 ],
             ]);

@@ -40,10 +40,10 @@ class ProductUnitQuantitiesCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  'nexopos.read.products',
-        'update'    =>  false,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => 'nexopos.read.products',
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -105,15 +105,15 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Product Unit Quantities List' ),
-            'list_description'      =>  __( 'Display all product unit quantities.' ),
-            'no_entry'              =>  __( 'No product unit quantities has been registered' ),
-            'create_new'            =>  __( 'Add a new product unit quantity' ),
-            'create_title'          =>  __( 'Create a new product unit quantity' ),
-            'create_description'    =>  __( 'Register a new product unit quantity and save it.' ),
-            'edit_title'            =>  __( 'Edit product unit quantity' ),
-            'edit_description'      =>  __( 'Modify  Product Unit Quantity.' ),
-            'back_to_list'          =>  __( 'Return to Product Unit Quantities' ),
+            'list_title' => __( 'Product Unit Quantities List' ),
+            'list_description' => __( 'Display all product unit quantities.' ),
+            'no_entry' => __( 'No product unit quantities has been registered' ),
+            'create_new' => __( 'Add a new product unit quantity' ),
+            'create_title' => __( 'Create a new product unit quantity' ),
+            'create_description' => __( 'Register a new product unit quantity and save it.' ),
+            'edit_title' => __( 'Edit product unit quantity' ),
+            'edit_description' => __( 'Modify  Product Unit Quantity.' ),
+            'back_to_list' => __( 'Return to Product Unit Quantities' ),
         ];
     }
 
@@ -143,56 +143,56 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
+            'main' => [
+                'label' => __( 'Name' ),
                 // 'name'          =>  'name',
                 // 'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
+                'description' => __( 'Provide a name to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'created_at',
-                            'label' =>  __( 'Created_at' ),
-                            'value' =>  $entry->created_at ?? '',
+                            'type' => 'text',
+                            'name' => 'created_at',
+                            'label' => __( 'Created_at' ),
+                            'value' => $entry->created_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'id',
-                            'label' =>  __( 'Id' ),
-                            'value' =>  $entry->id ?? '',
+                            'type' => 'text',
+                            'name' => 'id',
+                            'label' => __( 'Id' ),
+                            'value' => $entry->id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'product_id',
-                            'label' =>  __( 'Product id' ),
-                            'value' =>  $entry->product_id ?? '',
+                            'type' => 'text',
+                            'name' => 'product_id',
+                            'label' => __( 'Product id' ),
+                            'value' => $entry->product_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'quantity',
-                            'label' =>  __( 'Quantity' ),
-                            'value' =>  $entry->quantity ?? '',
+                            'type' => 'text',
+                            'name' => 'quantity',
+                            'label' => __( 'Quantity' ),
+                            'value' => $entry->quantity ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'type',
-                            'label' =>  __( 'Type' ),
-                            'value' =>  $entry->type ?? '',
+                            'type' => 'text',
+                            'name' => 'type',
+                            'label' => __( 'Type' ),
+                            'value' => $entry->type ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'unit_id',
-                            'label' =>  __( 'Unit Id' ),
-                            'value' =>  $entry->unit_id ?? '',
+                            'type' => 'text',
+                            'name' => 'unit_id',
+                            'label' => __( 'Unit Id' ),
+                            'value' => $entry->unit_id ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'updated_at',
-                            'label' =>  __( 'Updated_at' ),
-                            'value' =>  $entry->updated_at ?? '',
+                            'type' => 'text',
+                            'name' => 'updated_at',
+                            'label' => __( 'Updated_at' ),
+                            'value' => $entry->updated_at ?? '',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'uuid',
-                            'label' =>  __( 'Uuid' ),
-                            'value' =>  $entry->uuid ?? '',
+                            'type' => 'text',
+                            'name' => 'uuid',
+                            'label' => __( 'Uuid' ),
+                            'value' => $entry->uuid ?? '',
                         ],                     ],
                 ],
             ],
@@ -324,25 +324,25 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function getColumns()
     {
         return [
-            'products_name'  =>  [
-                'label'  =>  __( 'Product' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'products_name' => [
+                'label' => __( 'Product' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'units_name'  =>  [
-                'label'  =>  __( 'Unit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'units_name' => [
+                'label' => __( 'Unit' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'quantity'  =>  [
-                'label'  =>  __( 'Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'quantity' => [
+                'label' => __( 'Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'updated_at'  =>  [
-                'label'         =>  __( 'Updated At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'updated_at' => [
+                'label' => __( 'Updated At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -379,8 +379,8 @@ class ProductUnitQuantitiesCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -407,11 +407,11 @@ class ProductUnitQuantitiesCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
-            'create'    => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/create' ),
-            'edit'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/edit/' ),
-            'post'      => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
-            'put'       => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/' . '' ),
+            'list' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
+            'create' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/create' ),
+            'edit' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/edit/' ),
+            'post' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units' ),
+            'put' => 'javascript:void(0)', // ns()->url( 'dashboard/' . 'products/units/' . '' ),
         ];
     }
 
@@ -424,10 +424,10 @@ class ProductUnitQuantitiesCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

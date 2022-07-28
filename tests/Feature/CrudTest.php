@@ -29,17 +29,17 @@ class CrudTest extends TestCase
 
             $apiRoutes = [
                 [
-                    'slug'  =>  'crud/{namespace}',
-                    'verb'  =>  'get',
+                    'slug' => 'crud/{namespace}',
+                    'verb' => 'get',
                 ], [
-                    'slug'  =>  'crud/{namespace}/columns',
-                    'verb'  =>  'get',
+                    'slug' => 'crud/{namespace}/columns',
+                    'verb' => 'get',
                 ], [
-                    'slug'  =>  'crud/{namespace}/config/{id?}',
-                    'verb'  =>  'get',
+                    'slug' => 'crud/{namespace}/config/{id?}',
+                    'verb' => 'get',
                 ], [
-                    'slug'  =>  'crud/{namespace}/form-config/{id?}',
-                    'verb'  =>  'get',
+                    'slug' => 'crud/{namespace}/form-config/{id?}',
+                    'verb' => 'get',
                 ], [
                     // 'slug'  =>  'crud/{namespace}/{id}',
                     // 'verb'  =>  'put',
@@ -47,17 +47,17 @@ class CrudTest extends TestCase
                     // 'slug'  =>  'crud/{namespace}',
                     // 'verb'  =>  'post',
                 ], [
-                    'slug'  =>  'crud/{namespace}/export',
-                    'verb'  =>  'post',
+                    'slug' => 'crud/{namespace}/export',
+                    'verb' => 'post',
                 ], [
-                    'slug'  =>  'crud/{namespace}/bulk-actions',
-                    'verb'  =>  'post',
+                    'slug' => 'crud/{namespace}/bulk-actions',
+                    'verb' => 'post',
                 ], [
-                    'slug'  =>  'crud/{namespace}/can-access',
-                    'verb'  =>  'post',
+                    'slug' => 'crud/{namespace}/can-access',
+                    'verb' => 'post',
                 ], [
-                    'slug'  =>  'crud/{namespace}/{id}',
-                    'verb'  =>  'delete',
+                    'slug' => 'crud/{namespace}/{id}',
+                    'verb' => 'delete',
                 ],
             ];
 
@@ -82,8 +82,8 @@ class CrudTest extends TestCase
                         $response = $this
                             ->withSession( $this->app[ 'session' ]->all() )
                             ->json( strtoupper( $config[ 'verb' ] ), '/api/nexopos/v4/' . $slug, [
-                                'entries'   =>  [ 1 ],
-                                'action'    =>  'unknown',
+                                'entries' => [ 1 ],
+                                'action' => 'unknown',
                             ]);
 
                         $response->assertOk();

@@ -34,9 +34,9 @@ class ProviderService
         $provider->save();
 
         return [
-            'status'    =>      'success',
-            'message'   =>      __( 'The provider has been created.' ),
-            'data'      =>      compact( 'provider' ),
+            'status' => 'success',
+            'message' => __( 'The provider has been created.' ),
+            'data' => compact( 'provider' ),
         ];
     }
 
@@ -61,9 +61,9 @@ class ProviderService
             $provider->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The provider has been updated.' ),
-                'data'      =>  compact( 'provider' ),
+                'status' => 'success',
+                'message' => __( 'The provider has been updated.' ),
+                'data' => compact( 'provider' ),
             ];
         }
 
@@ -83,8 +83,8 @@ class ProviderService
         $provider->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The provider has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The provider has been deleted.' ),
         ];
     }
 
@@ -123,8 +123,8 @@ class ProviderService
             $provider->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The provider account has been updated.' ),
+                'status' => 'success',
+                'message' => __( 'The provider account has been updated.' ),
             ];
         } catch ( Exception $exception ) {
             throw new Exception( sprintf( __( 'An error occurred: %s.' ), $exception->getMessage() ) );
@@ -198,8 +198,8 @@ class ProviderService
         $provider->save();
 
         return [
-            'status'    =>  'succecss',
-            'message'   =>  __( 'The procurement payment has been deducted.' ),
+            'status' => 'succecss',
+            'message' => __( 'The procurement payment has been deducted.' ),
         ];
     }
 }

@@ -28,7 +28,7 @@ class CustomerEventSubscriber
     {
         $event->listen(
             AfterCustomerAccountHistoryCreatedEvent::class,
-            fn( $event ) =>  $this->customerService->updateCustomerAccount( $event->customerAccount )
+            fn( $event ) => $this->customerService->updateCustomerAccount( $event->customerAccount )
         );
 
         $event->listen(

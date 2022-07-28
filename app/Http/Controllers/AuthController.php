@@ -41,14 +41,14 @@ class AuthController extends Controller
     public function signIn()
     {
         return view( Hook::filter( 'ns-views:pages.sign-in', 'pages.auth.sign-in' ), [
-            'title'     =>  __( 'Sign In &mdash; NexoPOS' ),
+            'title' => __( 'Sign In &mdash; NexoPOS' ),
         ]);
     }
 
     public function signUp()
     {
         return view( Hook::filter( 'ns-views:pages.sign-up', 'pages.auth.sign-up' ), [
-            'title'     =>      __( 'Sign Up &mdash; NexoPOS' ),
+            'title' => __( 'Sign Up &mdash; NexoPOS' ),
         ]);
     }
 
@@ -95,7 +95,7 @@ class AuthController extends Controller
     public function passwordLost()
     {
         return view( 'pages.auth.password-lost', [
-            'title'     =>      __( 'Password Lost' ),
+            'title' => __( 'Password Lost' ),
         ]);
     }
 
@@ -116,9 +116,9 @@ class AuthController extends Controller
         }
 
         return view( 'pages.auth.new-password', [
-            'title'     =>      __( 'Set New Password' ),
-            'user'      =>      $userId,
-            'token'     =>      $token,
+            'title' => __( 'Set New Password' ),
+            'user' => $userId,
+            'token' => $token,
         ]);
     }
 
@@ -135,7 +135,7 @@ class AuthController extends Controller
     public function updateDatabase()
     {
         return view( 'pages.database-update', [
-            'title'     =>  __( 'Database Update' ),
+            'title' => __( 'Database Update' ),
         ]);
     }
 
@@ -144,8 +144,8 @@ class AuthController extends Controller
         Hook::action( 'ns-login-form', $request );
 
         $attempt = Auth::attempt([
-            'username'  =>  $request->input( 'username' ),
-            'password'  =>  $request->input( 'password' ),
+            'username' => $request->input( 'username' ),
+            'password' => $request->input( 'password' ),
         ]);
 
         if ( $request->expectsJson() ) {
@@ -197,10 +197,10 @@ class AuthController extends Controller
         AfterSuccessfulLoginEvent::dispatch( Auth::user() );
 
         $data = [
-            'status'    =>  'success',
-            'message'   =>  __( 'You have been successfully connected.' ),
-            'data'      =>  [
-                'redirectTo'    =>  Hook::filter( 'ns-login-redirect',
+            'status' => 'success',
+            'message' => __( 'You have been successfully connected.' ),
+            'data' => [
+                'redirectTo' => Hook::filter( 'ns-login-redirect',
                     ( $intended ) === url('/') ? ns()->route( 'ns.dashboard.home' ) : $intended,
                     redirect()->intended()->getTargetUrl() ? true : false
                 ),
@@ -223,12 +223,12 @@ class AuthController extends Controller
                 ->queue( new ResetPasswordMail( $user ) );
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The recovery email has been send to your inbox.' ),
-                'data'      =>  [
-                    'redirectTo'    =>  route( 'ns.intermediate', [
-                        'route'     =>  'ns.login',
-                        'from'      =>  'ns.password-lost',
+                'status' => 'success',
+                'message' => __( 'The recovery email has been send to your inbox.' ),
+                'data' => [
+                    'redirectTo' => route( 'ns.intermediate', [
+                        'route' => 'ns.login',
+                        'from' => 'ns.password-lost',
                     ]),
                 ],
             ];
@@ -325,18 +325,18 @@ class AuthController extends Controller
 
         if ( $request->expectsJson() ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  $registration_validated === 'no' ?
+                'status' => 'success',
+                'message' => $registration_validated === 'no' ?
                     __( 'Your Account has been successfully creaetd.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
-                'data'      =>  [
-                    'redirectTo'    =>  ns()->route( 'ns.login' ),
+                'data' => [
+                    'redirectTo' => ns()->route( 'ns.login' ),
                 ],
             ];
         } else {
             return redirect()->route( 'ns.login', [
-                'status'    =>  'success',
-                'message'   =>  $registration_validated === 'no' ?
+                'status' => 'success',
+                'message' => $registration_validated === 'no' ?
                     __( 'Your Account has been successfully creaetd.' ) :
                     __( 'Your Account has been created but requires email validation.' ),
             ]);
@@ -371,12 +371,12 @@ class AuthController extends Controller
         event( new PasswordAfterRecoveredEvent( $user ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'Your password has been updated.' ),
-            'data'      =>  [
-                'redirectTo'    =>  route( 'ns.intermediate', [
-                    'route'     =>  'ns.login',
-                    'from'      =>  'ns.password-updated',
+            'status' => 'success',
+            'message' => __( 'Your password has been updated.' ),
+            'data' => [
+                'redirectTo' => route( 'ns.intermediate', [
+                    'route' => 'ns.login',
+                    'from' => 'ns.password-updated',
                 ]),
             ],
         ];

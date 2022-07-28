@@ -152,18 +152,18 @@ class UpdateColumnsLengthSept3021 extends Migration
             $table->float( 'quantity', 18, 5 )->change();
             $table->float( 'sale_price', 18, 5 )->change();
             $table->float( 'sale_price_edit', 18, 5 )->change();
-            $table->float( 'excl_tax_sale_price', 18, 5 )->change();
-            $table->float( 'incl_tax_sale_price', 18, 5 )->change();
+            $table->float( 'net_sale_price', 18, 5 )->change();
+            $table->float( 'gross_sale_price', 18, 5 )->change();
             $table->float( 'sale_price_tax', 18, 5 )->change();
             $table->float( 'wholesale_price', 18, 5 )->change();
             $table->float( 'wholesale_price_edit', 18, 5 )->change();
-            $table->float( 'incl_tax_wholesale_price', 18, 5 )->change();
-            $table->float( 'excl_tax_wholesale_price', 18, 5 )->change();
+            $table->float( 'net_wholesale_price', 18, 5 )->change();
+            $table->float( 'gross_wholesale_price', 18, 5 )->change();
             $table->float( 'wholesale_price_tax', 18, 5 )->change();
             $table->float( 'custom_price', 18, 5 )->change();
             $table->float( 'custom_price_edit', 18, 5 )->change();
-            $table->float( 'incl_tax_custom_price', 18, 5 )->change();
-            $table->float( 'excl_tax_custom_price', 18, 5 )->change();
+            $table->float( 'net_custom_price', 18, 5 )->change();
+            $table->float( 'gross_custom_price', 18, 5 )->change();
         });
 
         Schema::table( 'nexopos_procurements_products', function( Blueprint $table ) {

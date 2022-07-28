@@ -46,12 +46,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             $unitElement = $faker->randomElement( $product->unit_quantities );
 
             $data = array_merge([
-                'name'                  =>  $product->name,
-                'quantity'              =>  $faker->numberBetween(1, 10),
-                'unit_price'            =>  $unitElement->sale_price,
-                'tax_type'              =>  'inclusive',
-                'tax_group_id'          =>  1,
-                'unit_id'               =>  $unitElement->unit_id,
+                'name' => $product->name,
+                'quantity' => $faker->numberBetween(1, 10),
+                'unit_price' => $unitElement->sale_price,
+                'tax_type' => 'inclusive',
+                'tax_group_id' => 1,
+                'unit_id' => $unitElement->unit_id,
             ], $this->customProductParams );
 
             if ( $faker->randomElement([ true ]) ) {
@@ -73,10 +73,10 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
         })->sum() );
 
         $this->customOrderParams = [
-            'customer_id'           =>  $customer->id,
-            'products'              =>  $products->toArray(),
-            'payment_status'        =>  Order::PAYMENT_UNPAID,
-            'payments'              =>  [], // no payment
+            'customer_id' => $customer->id,
+            'products' => $products->toArray(),
+            'payment_status' => Order::PAYMENT_UNPAID,
+            'payments' => [], // no payment
         ];
 
         /**
@@ -112,12 +112,12 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
                 $unitElement = $faker->randomElement( $product->unit_quantities );
 
                 $data = array_merge([
-                    'name'                  =>  'Fees',
-                    'quantity'              =>  $faker->numberBetween(1, 10),
-                    'unit_price'            =>  $unitElement->sale_price,
-                    'tax_type'              =>  'inclusive',
-                    'tax_group_id'          =>  1,
-                    'unit_id'               =>  $unitElement->unit_id,
+                    'name' => 'Fees',
+                    'quantity' => $faker->numberBetween(1, 10),
+                    'unit_price' => $unitElement->sale_price,
+                    'tax_type' => 'inclusive',
+                    'tax_group_id' => 1,
+                    'unit_id' => $unitElement->unit_id,
                 ], $this->customProductParams );
 
                 if ( $faker->randomElement([ false, true ]) ) {
@@ -141,9 +141,9 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             $totalCoupons = 0;
 
             $discount = [
-                'type'      =>  $faker->randomElement([ 'percentage', 'flat' ]),
-                'value'     =>  0,
-                'rate'      =>  0,
+                'type' => $faker->randomElement([ 'percentage', 'flat' ]),
+                'value' => 0,
+                'rate' => 0,
             ];
 
             $discountCoupons = $currency->define( $discount[ 'value' ] )
@@ -157,35 +157,35 @@ class CreateOrderPaidWithCustomerCredit extends TestCase
             $customer = Customer::get()->random();
 
             $orderData = array_merge([
-                'customer_id'           =>  $customer->id,
-                'type'                  =>  [ 'identifier' => 'takeaway' ],
-                'discount_type'         =>  $discount[ 'type' ],
-                'created_at'            =>  $this->customDate ? $dateString : null,
-                'discount_percentage'   =>  $discount[ 'rate' ] ?? 0,
-                'discount'              =>  $discount[ 'value' ] ?? 0,
-                'addresses'             =>  [
-                    'shipping'          =>  [
-                        'name'          =>  'First Name Delivery',
-                        'surname'       =>  'Surname',
-                        'country'       =>  'Cameroon',
+                'customer_id' => $customer->id,
+                'type' => [ 'identifier' => 'takeaway' ],
+                'discount_type' => $discount[ 'type' ],
+                'created_at' => $this->customDate ? $dateString : null,
+                'discount_percentage' => $discount[ 'rate' ] ?? 0,
+                'discount' => $discount[ 'value' ] ?? 0,
+                'addresses' => [
+                    'shipping' => [
+                        'name' => 'First Name Delivery',
+                        'surname' => 'Surname',
+                        'country' => 'Cameroon',
                     ],
-                    'billing'          =>  [
-                        'name'          =>  'EBENE Voundi',
-                        'surname'       =>  'Antony Hervé',
-                        'country'       =>  'United State Seattle',
+                    'billing' => [
+                        'name' => 'EBENE Voundi',
+                        'surname' => 'Antony Hervé',
+                        'country' => 'United State Seattle',
                     ],
                 ],
-                'author'                =>  ! empty( $this->users ) // we want to randomise the users
+                'author' => ! empty( $this->users ) // we want to randomise the users
                     ? collect( $this->users )->suffle()->first()
                     : User::get( 'id' )->pluck( 'id' )->shuffle()->first(),
-                'coupons'               =>  $allCoupons,
-                'subtotal'              =>  $subtotal,
-                'shipping'              =>  $shippingFees,
-                'products'              =>  $products->toArray(),
-                'payments'              =>  $this->shouldMakePayment ? [
+                'coupons' => $allCoupons,
+                'subtotal' => $subtotal,
+                'shipping' => $shippingFees,
+                'products' => $products->toArray(),
+                'payments' => $this->shouldMakePayment ? [
                     [
-                        'identifier'    =>  'cash-payment',
-                        'value'         =>  $currency->define( $subtotal )
+                        'identifier' => 'cash-payment',
+                        'value' => $currency->define( $subtotal )
                             ->additionateBy( $shippingFees )
                             ->subtractBy(
                                 $discountCoupons

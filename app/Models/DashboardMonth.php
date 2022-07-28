@@ -13,8 +13,8 @@ class DashboardMonth extends NsModel
     protected $table = 'nexopos_' . 'dashboard_months';
 
     protected $dispatchEvents = [
-        'created'   =>  DashboardMonthAfterCreatedEvent::class,
-        'updated'   =>  DashboardMonthAfterCreatedEvent::class,
+        'created' => DashboardMonthAfterCreatedEvent::class,
+        'updated' => DashboardMonthAfterCreatedEvent::class,
     ];
 
     public function scopeFrom( $query, $param )

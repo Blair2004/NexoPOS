@@ -49,10 +49,10 @@ class PaymentTypeCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  'nexopos.manage-payments-types',
-        'read'      =>  'nexopos.manage-payments-types',
-        'update'    =>  'nexopos.manage-payments-types',
-        'delete'    =>  'nexopos.manage-payments-types',
+        'create' => 'nexopos.manage-payments-types',
+        'read' => 'nexopos.manage-payments-types',
+        'update' => 'nexopos.manage-payments-types',
+        'delete' => 'nexopos.manage-payments-types',
     ];
 
     /**
@@ -83,7 +83,7 @@ class PaymentTypeCrud extends CrudService
      * ]
      */
     public $pick = [
-        'user'  =>  [ 'username' ],
+        'user' => [ 'username' ],
     ];
 
     /**
@@ -126,15 +126,15 @@ class PaymentTypeCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Payment Types List' ),
-            'list_description'      =>  __( 'Display all payment types.' ),
-            'no_entry'              =>  __( 'No payment types has been registered' ),
-            'create_new'            =>  __( 'Add a new payment type' ),
-            'create_title'          =>  __( 'Create a new payment type' ),
-            'create_description'    =>  __( 'Register a new payment type and save it.' ),
-            'edit_title'            =>  __( 'Edit payment type' ),
-            'edit_description'      =>  __( 'Modify  Payment Type.' ),
-            'back_to_list'          =>  __( 'Return to Payment Types' ),
+            'list_title' => __( 'Payment Types List' ),
+            'list_description' => __( 'Display all payment types.' ),
+            'no_entry' => __( 'No payment types has been registered' ),
+            'create_new' => __( 'Add a new payment type' ),
+            'create_title' => __( 'Create a new payment type' ),
+            'create_description' => __( 'Register a new payment type and save it.' ),
+            'edit_title' => __( 'Edit payment type' ),
+            'edit_description' => __( 'Modify  Payment Type.' ),
+            'back_to_list' => __( 'Return to Payment Types' ),
         ];
     }
 
@@ -157,42 +157,42 @@ class PaymentTypeCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Label' ),
-                'name'          =>  'label',
-                'value'         =>  $entry->label ?? '',
-                'validation'    =>  'required',
-                'description'   =>  __( 'Provide a label to the resource.' ),
+            'main' => [
+                'label' => __( 'Label' ),
+                'name' => 'label',
+                'value' => $entry->label ?? '',
+                'validation' => 'required',
+                'description' => __( 'Provide a label to the resource.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'switch',
-                            'options'   =>  Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
-                            'name'  =>  'active',
-                            'label' =>  __( 'Active' ),
-                            'validation'    =>  'required',
-                            'value' =>  $entry->active ?? '',
+                            'type' => 'switch',
+                            'options' => Helper::kvToJsOptions([ __( 'No' ), __( 'Yes' ) ]),
+                            'name' => 'active',
+                            'label' => __( 'Active' ),
+                            'validation' => 'required',
+                            'value' => $entry->active ?? '',
                         ], [
-                            'type'  =>  'number',
-                            'name'  =>  'priority',
-                            'label' =>  __( 'Priority' ),
-                            'value' =>  $entry->priority ?? '',
-                            'description'   =>  __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
-                            'validation'    =>  'required',
+                            'type' => 'number',
+                            'name' => 'priority',
+                            'label' => __( 'Priority' ),
+                            'value' => $entry->priority ?? '',
+                            'description' => __( 'Define the order for the payment. The lower the number is, the first it will display on the payment popup. Must start from "0".' ),
+                            'validation' => 'required',
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'identifier',
-                            'label' =>  __( 'Identifier' ),
-                            'validation'    =>  'required',
-                            'value' =>  $entry->identifier ?? '',
+                            'type' => 'text',
+                            'name' => 'identifier',
+                            'label' => __( 'Identifier' ),
+                            'validation' => 'required',
+                            'value' => $entry->identifier ?? '',
                         ], [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'label' =>  __( 'Description' ),
-                            'value' =>  $entry->description ?? '',
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'label' => __( 'Description' ),
+                            'value' => $entry->description ?? '',
                         ],
                     ],
                 ],
@@ -358,40 +358,40 @@ class PaymentTypeCrud extends CrudService
     public function getColumns()
     {
         return [
-            'identifier'  =>  [
-                'label'  =>  __( 'Identifier' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'identifier' => [
+                'label' => __( 'Identifier' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'label'  =>  [
-                'label'  =>  __( 'Label' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'label' => [
+                'label' => __( 'Label' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'active'  =>  [
-                'label'  =>  __( 'Active' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'active' => [
+                'label' => __( 'Active' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'priority'  =>  [
-                'label'  =>  __( 'Priority' ),
-                '$direction'    =>  '',
-                '$sort'         =>  true,
+            'priority' => [
+                'label' => __( 'Priority' ),
+                '$direction' => '',
+                '$sort' => true,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created On' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created On' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'readonly'  =>  [
-                'label'  =>  __( 'Readonly' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'readonly' => [
+                'label' => __( 'Readonly' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -406,19 +406,19 @@ class PaymentTypeCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'url' => ns()->url( '/dashboard/' . $this->slug . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.payments-types/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.payments-types/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -449,8 +449,8 @@ class PaymentTypeCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -486,11 +486,11 @@ class PaymentTypeCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'orders/payments-types' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'orders/payments-types' ),
+            'create' => ns()->url( 'dashboard/' . 'orders/payments-types/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'orders/payments-types/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.payments-types/{id}' . '' ),
         ];
     }
 
@@ -503,10 +503,10 @@ class PaymentTypeCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

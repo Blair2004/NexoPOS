@@ -32,10 +32,10 @@ class SignUpRequest extends FormRequest
     public function rules()
     {
         return [
-            'username'          =>  'required|min:6',
-            'email'             =>  'email',
-            'password'          =>  'required',
-            'password_confirm'  => 'same:password',
+            'username' => 'required|min:6',
+            'email' => 'email',
+            'password' => 'required',
+            'password_confirm' => 'same:password',
         ];
     }
 }

@@ -63,24 +63,24 @@ class SettingsPage
         $form = new $className;
 
         return View::make( 'pages.dashboard.settings.form', [
-            'title'         =>      $form->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
+            'title' => $form->getLabels()[ 'title' ] ?? __( 'Untitled Settings Page' ),
 
             /**
              * retrive the description provided on the SettingsPage instance.
              * Otherwhise a default settings is used .
              */
-            'description'   =>      $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
+            'description' => $form->getLabels()[ 'description' ] ?? __( 'No description provided for this settings page.' ),
 
             /**
              * retreive the identifier of the form if it's defined.
              * this is used to load the form asynchronously.
              */
-            'identifier'    =>      $form->getIdentifier(),
+            'identifier' => $form->getIdentifier(),
 
             /**
              * Provided to render the side menu.
              */
-            'menus'         =>  app()->make( MenuService::class ),
+            'menus' => app()->make( MenuService::class ),
         ]);
     }
 
@@ -153,8 +153,8 @@ class SettingsPage
         SettingsSavedEvent::dispatch( $options->get(), $request->all(), get_class( $this ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The form has been successfully saved.' ),
+            'status' => 'success',
+            'message' => __( 'The form has been successfully saved.' ),
         ];
     }
 }

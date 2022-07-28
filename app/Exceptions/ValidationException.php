@@ -17,16 +17,16 @@ class ValidationException extends MainValidationException
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
-                'title'         =>  __( 'An error has occured' ),
-                'message'       =>  __( 'Unable to proceed, the submitted form is not valid.' ),
+                'title' => __( 'An error has occured' ),
+                'message' => __( 'Unable to proceed, the submitted form is not valid.' ),
             ]);
         }
 
         return response()->json([
-            'status'  =>    'failed',
-            'message' =>    __( 'Unable to proceed the form is not valid' ),
-            'data'    =>    [
-                'errors'    =>  $this->toHumanError(),
+            'status' => 'failed',
+            'message' => __( 'Unable to proceed the form is not valid' ),
+            'data' => [
+                'errors' => $this->toHumanError(),
             ],
         ], 422 );
     }

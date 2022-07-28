@@ -21,8 +21,8 @@ class DoctorService
         });
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The user attributes has been updated.' ),
+            'status' => 'success',
+            'message' => __( 'The user attributes has been updated.' ),
         ];
     }
 
@@ -32,21 +32,21 @@ class DoctorService
     public function restoreRoles()
     {
         $rolesLabels = [
-            Role::ADMIN         =>  [
-                'name'      =>  __( 'Administrator' ),
-                'dashid'    =>  Role::DASHID_STORE,
+            Role::ADMIN => [
+                'name' => __( 'Administrator' ),
+                'dashid' => Role::DASHID_STORE,
             ],
-            Role::STOREADMIN    =>  [
-                'name'      =>  __( 'Store Administrator' ),
-                'dashid'    =>  Role::DASHID_STORE,
+            Role::STOREADMIN => [
+                'name' => __( 'Store Administrator' ),
+                'dashid' => Role::DASHID_STORE,
             ],
-            Role::STORECASHIER  =>  [
-                'name'      =>  __( 'Store Cashier' ),
-                'dashid'    =>  Role::DASHID_CASHIER,
+            Role::STORECASHIER => [
+                'name' => __( 'Store Cashier' ),
+                'dashid' => Role::DASHID_CASHIER,
             ],
-            Role::USER          =>  [
-                'name'      =>  __( 'User' ),
-                'dashid'    =>  Role::DASHID_DEFAULT,
+            Role::USER => [
+                'name' => __( 'User' ),
+                'dashid' => Role::DASHID_DEFAULT,
             ],
         ];
 

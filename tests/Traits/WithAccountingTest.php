@@ -16,41 +16,41 @@ trait WithAccountingTest
     {
         $accounts = [
             [
-                'name'  =>  __( 'Stock Procurement' ),
-                'account'   =>  '000001',
-                'operation' =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Stock Procurement' ),
+                'account' => '000001',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ], [
-                'name'  =>  __( 'Sales' ),
-                'account'   =>  '000002',
-                'operation' =>  CashFlow::OPERATION_CREDIT,
+                'name' => __( 'Sales' ),
+                'account' => '000002',
+                'operation' => CashFlow::OPERATION_CREDIT,
             ], [
-                'name'  =>  __( 'Customer Credit (cash-in)' ),
-                'account'   =>  '000003',
-                'operation' =>  CashFlow::OPERATION_CREDIT,
+                'name' => __( 'Customer Credit (cash-in)' ),
+                'account' => '000003',
+                'operation' => CashFlow::OPERATION_CREDIT,
             ], [
-                'name'  =>  __( 'Customer Credit (cash-out)' ),
-                'account'   =>  '000004',
-                'operation' =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Customer Credit (cash-out)' ),
+                'account' => '000004',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ], [
-                'name'  =>  __( 'Sale Refunds' ),
-                'account'   =>  '000005',
-                'operation' =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Sale Refunds' ),
+                'account' => '000005',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ], [
-                'name'  =>  __( 'Stock Return (spoiled items)' ),
-                'account'   =>  '000006',
-                'operation' =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Stock Return (spoiled items)' ),
+                'account' => '000006',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ], [
-                'name'  =>  __( 'Stock Return (unspoiled items)' ),
-                'account'   =>  '000007',
-                'operation' =>  CashFlow::OPERATION_CREDIT,
+                'name' => __( 'Stock Return (unspoiled items)' ),
+                'account' => '000007',
+                'operation' => CashFlow::OPERATION_CREDIT,
             ], [
-                'name'  =>  __( 'Cash Register (cash-in)' ),
-                'account'   =>  '000008',
-                'operation' =>  CashFlow::OPERATION_CREDIT,
+                'name' => __( 'Cash Register (cash-in)' ),
+                'account' => '000008',
+                'operation' => CashFlow::OPERATION_CREDIT,
             ], [
-                'name'  =>  __( 'Cash Register (cash-out)' ),
-                'account'   =>  '000009',
-                'operation' =>  CashFlow::OPERATION_DEBIT,
+                'name' => __( 'Cash Register (cash-out)' ),
+                'account' => '000009',
+                'operation' => CashFlow::OPERATION_DEBIT,
             ],
         ];
 
@@ -65,11 +65,11 @@ trait WithAccountingTest
             if ( ! $AccountType instanceof AccountType ) {
                 $response = $this->withSession( $this->app[ 'session' ]->all() )
                     ->json( 'POST', 'api/nexopos/v4/crud/ns.accounting-accounts', [
-                        'name'          =>  $account[ 'name' ],
-                        'general'       =>  [
-                            'operation'     =>  $account[ 'operation' ],
-                            'author'        =>  Auth::id(),
-                            'account'       =>  $account[ 'account' ],
+                        'name' => $account[ 'name' ],
+                        'general' => [
+                            'operation' => $account[ 'operation' ],
+                            'author' => Auth::id(),
+                            'account' => $account[ 'account' ],
                         ],
                     ]);
 

@@ -29,14 +29,14 @@ class ExpenseService
     protected $dateService;
 
     protected $accountTypes = [
-        CashFlow::ACCOUNT_SALES             =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
-        CashFlow::ACCOUNT_REFUNDS           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
-        CashFlow::ACCOUNT_SPOILED           =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
-        CashFlow::ACCOUNT_PROCUREMENTS      =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
-        CashFlow::ACCOUNT_REGISTER_CASHIN   =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_cashregister_cashin_cashflow_account' ],
-        CashFlow::ACCOUNT_REGISTER_CASHOUT  =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_cashregister_cashout_cashflow_account' ],
-        CashFlow::ACCOUNT_CUSTOMER_CREDIT   =>  [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
-        CashFlow::ACCOUNT_CUSTOMER_DEBIT    =>  [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
+        CashFlow::ACCOUNT_SALES => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_sales_cashflow_account' ],
+        CashFlow::ACCOUNT_REFUNDS => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_sales_refunds_account' ],
+        CashFlow::ACCOUNT_SPOILED => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_stock_return_spoiled_account' ],
+        CashFlow::ACCOUNT_PROCUREMENTS => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_procurement_cashflow_account' ],
+        CashFlow::ACCOUNT_REGISTER_CASHIN => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_cashregister_cashin_cashflow_account' ],
+        CashFlow::ACCOUNT_REGISTER_CASHOUT => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_cashregister_cashout_cashflow_account' ],
+        CashFlow::ACCOUNT_CUSTOMER_CREDIT => [ 'operation' => CashFlow::OPERATION_CREDIT, 'option' => 'ns_customer_crediting_cashflow_account' ],
+        CashFlow::ACCOUNT_CUSTOMER_DEBIT => [ 'operation' => CashFlow::OPERATION_DEBIT, 'option' => 'ns_customer_debitting_cashflow_account' ],
     ];
 
     public function __construct( DateService $dateService )
@@ -58,9 +58,9 @@ class ExpenseService
         event( new ExpenseAfterCreateEvent( $expense, request() ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense has been successfully saved.' ),
-            'data'      =>  compact( 'expense' ),
+            'status' => 'success',
+            'message' => __( 'The expense has been successfully saved.' ),
+            'data' => compact( 'expense' ),
         ];
     }
 
@@ -77,9 +77,9 @@ class ExpenseService
             $expense->save();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The expense has been successfully updated.' ),
-                'data'      =>  compact( 'expense' ),
+                'status' => 'success',
+                'message' => __( 'The expense has been successfully updated.' ),
+                'data' => compact( 'expense' ),
             ];
         }
 
@@ -121,8 +121,8 @@ class ExpenseService
         $expense->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense has been correctly deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The expense has been correctly deleted.' ),
         ];
     }
 
@@ -186,8 +186,8 @@ class ExpenseService
         $accountType->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The account type has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The account type has been deleted.' ),
         ];
     }
 
@@ -218,8 +218,8 @@ class ExpenseService
         $accountType->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been deleted.' ),
         ];
     }
 
@@ -262,9 +262,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been saved' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been saved' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -286,9 +286,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The account has been created.' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The account has been created.' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -312,9 +312,9 @@ class ExpenseService
         $category->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The expense category has been updated.' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The expense category has been updated.' ),
+            'data' => compact( 'category' ),
         ];
     }
 
@@ -449,29 +449,29 @@ class ExpenseService
                         $this->recordCashFlowHistory( $expense );
 
                         return [
-                            'status'    =>  'success',
-                            'message'   =>  sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
+                            'status' => 'success',
+                            'message' => sprintf( __( 'The expense "%s" has been processed.' ), $expense->name ),
                         ];
                     }
 
                     return [
-                        'status'    =>  'failed',
-                        'message'   =>  sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
+                        'status' => 'failed',
+                        'message' => sprintf( __( 'The expense "%s" has already been processed.' ), $expense->name ),
                     ];
                 }
 
                 return [
-                    'status'    =>  'failed',
-                    'message'   =>  sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
+                    'status' => 'failed',
+                    'message' => sprintf( __( 'The expenses "%s" hasn\'t been proceesed it\'s out of date.' ), $expense->name ),
                 ];
             });
 
         $successFulProcesses = collect( $processStatus )->filter( fn( $process ) => $process[ 'status' ] === 'success' );
 
         return [
-            'status'    =>  'success',
-            'data'      =>  $processStatus->toArray(),
-            'message'   =>  $successFulProcesses->count() === $processStatus->count() ?
+            'status' => 'success',
+            'data' => $processStatus->toArray(),
+            'message' => $successFulProcesses->count() === $processStatus->count() ?
                 __( 'The process has been correctly executed and all expenses has been processed.' ) :
                     sprintf( __( 'The process has been executed with some failures. %s/%s process(es) has successed.' ), $successFulProcesses->count(), $processStatus->count() ),
         ];
@@ -708,9 +708,9 @@ class ExpenseService
             }
 
             return $this->getDefinedAccountType( $account[ 'option' ], [
-                'name'      =>  $label,
-                'operation' =>  $account[ 'operation' ],
-                'account'   =>  $type,
+                'name' => $label,
+                'operation' => $account[ 'operation' ],
+                'account' => $type,
             ]);
         }
 

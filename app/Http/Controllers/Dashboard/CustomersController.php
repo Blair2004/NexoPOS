@@ -205,24 +205,24 @@ class CustomersController extends DashboardController
     public function createCoupon()
     {
         return $this->view( 'pages.dashboard.coupons.create', [
-            'title'         =>  __( 'Create Coupon' ),
-            'description'   =>  __( 'helps you creating a coupon.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
-            'returnUrl'    =>  ns()->url( '/dashboard/customers/coupons' ),
-            'submitMethod'  =>  'POST',
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons' ),
+            'title' => __( 'Create Coupon' ),
+            'description' => __( 'helps you creating a coupon.' ),
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config' ),
+            'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
+            'submitMethod' => 'POST',
+            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons' ),
         ]);
     }
 
     public function editCoupon( Coupon $coupon )
     {
         return $this->view( 'pages.dashboard.coupons.create', [
-            'title'         =>  __( 'Edit Coupon' ),
-            'description'   =>  __( 'Editing an existing coupon.' ),
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
-            'returnUrl'     =>  ns()->url( '/dashboard/customers/coupons' ),
-            'submitMethod'  =>  'PUT',
-            'submitUrl'     =>  ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
+            'title' => __( 'Edit Coupon' ),
+            'description' => __( 'Editing an existing coupon.' ),
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/form-config/' . $coupon->id ),
+            'returnUrl' => ns()->url( '/dashboard/customers/coupons' ),
+            'submitMethod' => 'PUT',
+            'submitUrl' => ns()->url( '/api/nexopos/v4/crud/ns.coupons/' . $coupon->id ),
         ]);
     }
 
@@ -242,8 +242,8 @@ class CustomersController extends DashboardController
     public function accountTransaction( Customer $customer, Request $request )
     {
         $validation = Validator::make( $request->all(), [
-            'operation'     =>  'required',
-            'amount'        =>  'required|integer',
+            'operation' => 'required',
+            'amount' => 'required|integer',
         ]);
 
         if ( $validation->fails() ) {
@@ -266,9 +266,9 @@ class CustomersController extends DashboardController
     public function getCustomersOrders( Customer $customer )
     {
         return CustomerOrderCrud::table([
-            'src'           =>  ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
-            'queryParams'   =>  [
-                'customer_id'   =>  $customer->id,
+            'src' => ns()->url( '/api/nexopos/v4/crud/ns.customers-orders' ),
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
         ]);
     }
@@ -283,8 +283,8 @@ class CustomersController extends DashboardController
     public function getCustomersRewards( Customer $customer )
     {
         return CustomerRewardCrud::table([
-            'queryParams'    =>  [
-                'customer_id'   =>  $customer->id,
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
         ]);
     }
@@ -300,9 +300,9 @@ class CustomersController extends DashboardController
     public function editCustomerReward( Customer $customer, CustomerReward $reward )
     {
         return CustomerRewardCrud::form( $reward, [
-            'returnUrl'     =>  ns()->route( 'ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
-            'queryParams'   =>  [
-                'customer_id'   =>  $customer->id,
+            'returnUrl' => ns()->route( 'ns.dashboard.customers-rewards-list', [ 'customer' => $customer->id ]),
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
         ]);
     }
@@ -316,8 +316,8 @@ class CustomersController extends DashboardController
     public function getCustomersCoupons( Customer $customer )
     {
         return CustomerCouponCrud::table([
-            'queryParams'   =>  [
-                'customer_id'   =>  $customer->id,
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
         ]);
     }
@@ -355,15 +355,15 @@ class CustomersController extends DashboardController
     public function getCustomerAccountHistory( Customer $customer )
     {
         return CustomerAccountCrud::table([
-            'queryParams'       =>  [
-                'customer_id'   =>  $customer->id,
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
-            'createUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
-            'description'       =>  sprintf(
+            'createUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history/create' ),
+            'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
                 $customer->name
             ),
-            'title'             =>  sprintf(
+            'title' => sprintf(
                 __( 'Account History : %s' ),
                 $customer->name
             ),
@@ -379,16 +379,16 @@ class CustomersController extends DashboardController
     public function createCustomerAccountHistory( Customer $customer )
     {
         return CustomerAccountCrud::form( null, [
-            'queryParams'       =>  [
-                'customer_id'   =>  $customer->id,
+            'queryParams' => [
+                'customer_id' => $customer->id,
             ],
-            'returnUrl'         =>  ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
-            'submitUrl'         =>  ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
-            'description'       =>  sprintf(
+            'returnUrl' => ns()->url( '/dashboard/customers/' . $customer->id . '/account-history' ),
+            'submitUrl' => ns()->url( '/api/nexopos/v4/customers/' . $customer->id . '/crud/account-history' ),
+            'description' => sprintf(
                 __( 'Displays the customer account history for %s' ),
                 $customer->name
             ),
-            'title'             =>  sprintf(
+            'title' => sprintf(
                 __( 'Account History : %s' ),
                 $customer->name
             ),

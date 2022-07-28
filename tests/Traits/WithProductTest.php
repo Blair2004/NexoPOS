@@ -41,40 +41,40 @@ trait WithProductTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
-                    'name'          =>  $faker->word,
-                    'variations'    =>  [
+                    'name' => $faker->word,
+                    'variations' => [
                         [
-                            '$primary'  =>  true,
-                            'expiracy'  =>  [
-                                'expires'       =>  0,
-                                'on_expiration' =>  'prevent_sales',
+                            '$primary' => true,
+                            'expiracy' => [
+                                'expires' => 0,
+                                'on_expiration' => 'prevent_sales',
                             ],
-                            'identification'    =>  [
-                                'barcode'           =>  $faker->ean13(),
-                                'barcode_type'      =>  'ean13',
-                                'searchable'        =>  $faker->randomElement([ true, false ]),
-                                'category_id'       =>  $faker->randomElement( $categories ),
-                                'description'       =>  __( 'Created via tests' ),
-                                'product_type'      =>  'product',
-                                'type'              =>  $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
-                                'sku'               =>  Str::random(15) . '-sku',
-                                'status'            =>  'available',
-                                'stock_management'  =>  'enabled',
+                            'identification' => [
+                                'barcode' => $faker->ean13(),
+                                'barcode_type' => 'ean13',
+                                'searchable' => $faker->randomElement([ true, false ]),
+                                'category_id' => $faker->randomElement( $categories ),
+                                'description' => __( 'Created via tests' ),
+                                'product_type' => 'product',
+                                'type' => $faker->randomElement([ Product::TYPE_MATERIALIZED, Product::TYPE_DEMATERIALIZED ]),
+                                'sku' => Str::random(15) . '-sku',
+                                'status' => 'available',
+                                'stock_management' => 'enabled',
                             ],
-                            'images'            =>  [],
-                            'taxes'             =>  [
-                                'tax_group_id'  =>  1,
-                                'tax_type'      =>  $taxType,
+                            'images' => [],
+                            'taxes' => [
+                                'tax_group_id' => 1,
+                                'tax_type' => $taxType,
                             ],
-                            'units'             =>  [
-                                'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                            'units' => [
+                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
                                     return [
-                                        'sale_price_edit'       =>  $sale_price,
-                                        'wholesale_price_edit'  =>  $faker->numberBetween(20, 25),
-                                        'unit_id'               =>  $unit->id,
+                                        'sale_price_edit' => $sale_price,
+                                        'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                        'unit_id' => $unit->id,
                                     ];
                                 }),
-                                'unit_group'    =>  $unitGroup->id,
+                                'unit_group' => $unitGroup->id,
                             ],
                         ],
                     ],
@@ -130,11 +130,11 @@ trait WithProductTest
                     $unitQuantityID = $unitQuantity->id;
 
                     return [
-                        'unit_quantity_id'  =>  $unitQuantityID,
-                        'product_id'        =>  $product->id,
-                        'unit_id'           =>  $unitQuantity->unit->id,
-                        'quantity'          =>  $faker->randomNumber(1),
-                        'sale_price'        =>  $unitQuantity->sale_price,
+                        'unit_quantity_id' => $unitQuantityID,
+                        'product_id' => $product->id,
+                        'unit_id' => $unitQuantity->unit->id,
+                        'quantity' => $faker->randomNumber(1),
+                        'sale_price' => $unitQuantity->sale_price,
                     ];
                 })
                 ->toArray();
@@ -142,43 +142,43 @@ trait WithProductTest
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', '/api/nexopos/v4/products/', [
-                    'name'          =>  $faker->word,
-                    'variations'    =>  [
+                    'name' => $faker->word,
+                    'variations' => [
                         [
-                            '$primary'  =>  true,
-                            'expiracy'  =>  [
-                                'expires'       =>  0,
-                                'on_expiration' =>  'prevent_sales',
+                            '$primary' => true,
+                            'expiracy' => [
+                                'expires' => 0,
+                                'on_expiration' => 'prevent_sales',
                             ],
-                            'identification'    =>  [
-                                'barcode'           =>  $faker->ean13(),
-                                'barcode_type'      =>  'ean13',
-                                'searchable'        =>  $faker->randomElement([ true, false ]),
-                                'category_id'       =>  $faker->randomElement( $categories ),
-                                'description'       =>  __( 'Created via tests' ),
-                                'product_type'      =>  'product',
-                                'type'              =>  Product::TYPE_GROUPED,
-                                'sku'               =>  Str::random(15) . '-sku',
-                                'status'            =>  'available',
-                                'stock_management'  =>  'enabled',
+                            'identification' => [
+                                'barcode' => $faker->ean13(),
+                                'barcode_type' => 'ean13',
+                                'searchable' => $faker->randomElement([ true, false ]),
+                                'category_id' => $faker->randomElement( $categories ),
+                                'description' => __( 'Created via tests' ),
+                                'product_type' => 'product',
+                                'type' => Product::TYPE_GROUPED,
+                                'sku' => Str::random(15) . '-sku',
+                                'status' => 'available',
+                                'stock_management' => 'enabled',
                             ],
-                            'groups'            =>  [
-                                'product_subitems'  =>  $products,
+                            'groups' => [
+                                'product_subitems' => $products,
                             ],
-                            'images'            =>  [],
-                            'taxes'             =>  [
-                                'tax_group_id'  =>  1,
-                                'tax_type'      =>  $taxType,
+                            'images' => [],
+                            'taxes' => [
+                                'tax_group_id' => 1,
+                                'tax_type' => $taxType,
                             ],
-                            'units'             =>  [
-                                'selling_group' =>  $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
+                            'units' => [
+                                'selling_group' => $unitGroup->units->map( function( $unit ) use ( $faker, $sale_price ) {
                                     return [
-                                        'sale_price_edit'       =>  $sale_price,
-                                        'wholesale_price_edit'  =>  $faker->numberBetween(20, 25),
-                                        'unit_id'               =>  $unit->id,
+                                        'sale_price_edit' => $sale_price,
+                                        'wholesale_price_edit' => $faker->numberBetween(20, 25),
+                                        'unit_id' => $unit->id,
                                     ];
                                 }),
-                                'unit_group'    =>  $unitGroup->id,
+                                'unit_group' => $unitGroup->id,
                             ],
                         ],
                     ],
@@ -229,14 +229,14 @@ trait WithProductTest
         $unitQuantity = $product->unit_quantities[0];
 
         $response = $this->json( 'POST', '/api/nexopos/v4/products/adjustments', [
-            'products'              =>  [
+            'products' => [
                 [
-                    'id'                =>  $product->id,
-                    'adjust_action'     =>  'deleted',
-                    'name'              =>  $product->name,
-                    'adjust_unit'       =>  $unitQuantity,
-                    'adjust_reason'     =>  __( 'Performing a test adjustment' ),
-                    'adjust_quantity'   =>  1,
+                    'id' => $product->id,
+                    'adjust_action' => 'deleted',
+                    'name' => $product->name,
+                    'adjust_unit' => $unitQuantity,
+                    'adjust_reason' => __( 'Performing a test adjustment' ),
+                    'adjust_quantity' => 1,
                 ],
             ],
         ]);
@@ -297,15 +297,15 @@ trait WithProductTest
         foreach ( ProductHistory::STOCK_REDUCE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
-                    'products'  =>  [
+                    'products' => [
                         [
-                            'adjust_action'     =>  $action,
-                            'adjust_unit'       =>  [
-                                'sale_price'    =>  $productQuantity->sale_price,
-                                'unit_id'       =>  $productQuantity->unit_id,
+                            'adjust_action' => $action,
+                            'adjust_unit' => [
+                                'sale_price' => $productQuantity->sale_price,
+                                'unit_id' => $productQuantity->unit_id,
                             ],
-                            'id'                =>  $product->id,
-                            'adjust_quantity'   =>  1,
+                            'id' => $product->id,
+                            'adjust_quantity' => 1,
                         ],
                     ],
                 ]);
@@ -338,15 +338,15 @@ trait WithProductTest
         foreach ( ProductHistory::STOCK_INCREASE as $action ) {
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/products/adjustments', [
-                    'products'  =>  [
+                    'products' => [
                         [
-                            'adjust_action'     =>  $action,
-                            'adjust_unit'       =>  [
-                                'sale_price'    =>  $productQuantity->sale_price,
-                                'unit_id'       =>  $productQuantity->unit_id,
+                            'adjust_action' => $action,
+                            'adjust_unit' => [
+                                'sale_price' => $productQuantity->sale_price,
+                                'unit_id' => $productQuantity->unit_id,
                             ],
-                            'id'                =>  $product->id,
-                            'adjust_quantity'   =>  10,
+                            'id' => $product->id,
+                            'adjust_quantity' => 10,
                         ],
                     ],
                 ]);

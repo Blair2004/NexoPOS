@@ -157,16 +157,16 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
             '/auth/sign-up', [
-                'username'          =>  $this->faker->userName(),
-                'password'          =>  $password,
-                'password_confirm'  =>  $password,
-                'email'             =>  $this->faker->email(),
+                'username' => $this->faker->userName(),
+                'password' => $password,
+                'password_confirm' => $password,
+                'email' => $this->faker->email(),
             ]
         );
 
         $response->assertRedirect( route( 'ns.login', [
-            'status'    =>  'success',
-            'message'   =>  $registration_validated === 'no' ?
+            'status' => 'success',
+            'message' => $registration_validated === 'no' ?
                 __( 'Your Account has been successfully creaetd.' ) :
                 __( 'Your Account has been created but requires email validation.' ),
         ]) );
@@ -182,10 +182,10 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
             '/auth/sign-up', [
-                'username'          =>  $this->faker->userName(),
-                'password'          =>  $password,
-                'password_confirm'  =>  $password . '122',
-                'email'             =>  'not-a-valid-email',
+                'username' => $this->faker->userName(),
+                'password' => $password,
+                'password_confirm' => $password . '122',
+                'email' => 'not-a-valid-email',
             ]
         );
 
@@ -206,12 +206,12 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/password-lost', [
-                'email'     =>  $user->email,
+                'email' => $user->email,
             ]);
 
         $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
-            'route'     =>  'ns.login',
-            'from'      =>  'ns.password-lost',
+            'route' => 'ns.login',
+            'from' => 'ns.password-lost',
         ]) );
 
         /**
@@ -226,7 +226,7 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/password-lost', [
-                'email'     =>  $user->email,
+                'email' => $user->email,
             ]);
 
         $response->assertSee( 'The recovery has been explicitely disabled' );
@@ -245,9 +245,9 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/sign-in', [
-                'username'  =>  $user->username,
-                'password'  =>  123456,
-                '_token'    =>  csrf_token(),
+                'username' => $user->username,
+                'password' => 123456,
+                '_token' => csrf_token(),
             ]);
 
         $response->assertRedirect( ns()->route( 'ns.welcome' ) );
@@ -263,9 +263,9 @@ class AuthenticationTest extends TestCase
             ->withSession([])
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post( '/auth/sign-in', [
-                'username'  =>  $user->username,
-                'password'  =>  654321,
-                '_token'    =>  csrf_token(),
+                'username' => $user->username,
+                'password' => 654321,
+                '_token' => csrf_token(),
             ]);
 
         $response->assertRedirect( ns()->route( 'ns.login' ) );
@@ -292,14 +292,14 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
             'auth/new-password/' . $user->id . '/' . $user->activation_token, [
-                'password'          =>  $password,
-                'password_confirm'  =>  $password,
+                'password' => $password,
+                'password_confirm' => $password,
             ]
         );
 
         $response->assertJsonPath( 'data.redirectTo', route( 'ns.intermediate', [
-            'route'     =>  'ns.login',
-            'from'      =>  'ns.password-updated',
+            'route' => 'ns.login',
+            'from' => 'ns.password-updated',
         ]) );
 
         /**
@@ -320,8 +320,8 @@ class AuthenticationTest extends TestCase
             ->withHeader( 'X-CSRF-TOKEN', csrf_token() )
             ->post(
             'auth/new-password/' . $user->id . '/' . $user->activation_token, [
-                'password'          =>  $password,
-                'password_confirm'  =>  $password,
+                'password' => $password,
+                'password_confirm' => $password,
             ]
         );
 

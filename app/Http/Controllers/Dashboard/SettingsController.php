@@ -60,28 +60,28 @@ class SettingsController extends DashboardController
     public function aboutSettings()
     {
         return view( 'pages.dashboard.about', [
-            'menus' =>  $this->menuService,
-            'title' =>  __( 'About' ),
-            'description'   =>  __( 'Details about the environment.' ),
-            'details'  =>  [
-                __( 'Core Version'  )           =>  config( 'nexopos.version' ),
-                __( 'Laravel Version' )         =>  app()->version(),
-                __( 'PHP Version' )             =>  phpversion(),
+            'menus' => $this->menuService,
+            'title' => __( 'About' ),
+            'description' => __( 'Details about the environment.' ),
+            'details' => [
+                __( 'Core Version'  ) => config( 'nexopos.version' ),
+                __( 'Laravel Version' ) => app()->version(),
+                __( 'PHP Version' ) => phpversion(),
             ],
-            'extensions'      =>  [
-                __( 'Mb String Enabled' )   =>  extension_loaded( 'mbstring' ),
-                __( 'Zip Enabled' )         =>  extension_loaded( 'zip' ),
-                __( 'Curl Enabled' )        =>  extension_loaded( 'curl' ),
-                __( 'Math Enabled' )        =>  extension_loaded( 'bcmath' ),
-                __( 'XML Enabled' )         =>  extension_loaded( 'xml' ),
-                __( 'XDebug Enabled' )         =>  extension_loaded( 'xdebug' ),
+            'extensions' => [
+                __( 'Mb String Enabled' ) => extension_loaded( 'mbstring' ),
+                __( 'Zip Enabled' ) => extension_loaded( 'zip' ),
+                __( 'Curl Enabled' ) => extension_loaded( 'curl' ),
+                __( 'Math Enabled' ) => extension_loaded( 'bcmath' ),
+                __( 'XML Enabled' ) => extension_loaded( 'xml' ),
+                __( 'XDebug Enabled' ) => extension_loaded( 'xdebug' ),
             ],
-            'configurations'     =>      [
-                __( 'File Upload Enabled' )     =>  ((bool) ini_get( 'file_uploads' )) ? __( 'Yes' ) : __( 'No' ),
-                __( 'File Upload Size' )        =>  ini_get( 'upload_max_filesize' ),
-                __( 'Post Max Size' )           =>  ini_get( 'post_max_size' ),
-                __( 'Max Execution Time' )      =>  sprintf( __( '%s Second(s)' ), ini_get( 'max_execution_time' ) ),
-                __( 'Memory Limit' )            =>  ini_get( 'memory_limit' ),
+            'configurations' => [
+                __( 'File Upload Enabled' ) => ((bool) ini_get( 'file_uploads' )) ? __( 'Yes' ) : __( 'No' ),
+                __( 'File Upload Size' ) => ini_get( 'upload_max_filesize' ),
+                __( 'Post Max Size' ) => ini_get( 'post_max_size' ),
+                __( 'Max Execution Time' ) => sprintf( __( '%s Second(s)' ), ini_get( 'max_execution_time' ) ),
+                __( 'Memory Limit' ) => ini_get( 'memory_limit' ),
             ],
         ]);
     }
@@ -117,64 +117,64 @@ class SettingsController extends DashboardController
     public function customersSettings()
     {
         return $this->view( 'pages.dashboard.settings.customers', [
-            'title'     =>      __( 'Customers Settings' ),
-            'description'   =>  __( 'Configure the customers settings of the application.' ),
+            'title' => __( 'Customers Settings' ),
+            'description' => __( 'Configure the customers settings of the application.' ),
         ]);
     }
 
     public function generalSettings()
     {
         return $this->view( 'pages.dashboard.settings.general', [
-            'title'     =>      __( 'General Settings' ),
-            'description'   =>  __( 'Configure the general settings of the application.' ),
+            'title' => __( 'General Settings' ),
+            'description' => __( 'Configure the general settings of the application.' ),
         ]);
     }
 
     public function expenseSettings()
     {
         return $this->view( 'pages.dashboard.settings.expenses', [
-            'title'     =>      __( 'Expenses Settings' ),
-            'description'   =>  __( 'Configure the expenses settings of the application.' ),
+            'title' => __( 'Expenses Settings' ),
+            'description' => __( 'Configure the expenses settings of the application.' ),
         ]);
     }
 
     public function accountingSettings()
     {
         return $this->view( 'pages.dashboard.settings.accounting', [
-            'title'     =>      __( 'Accounting Settings' ),
-            'description'   =>  __( 'Configure the accounting settings of the application.' ),
+            'title' => __( 'Accounting Settings' ),
+            'description' => __( 'Configure the accounting settings of the application.' ),
         ]);
     }
 
     public function invoiceSettings()
     {
         return $this->view( 'pages.dashboard.settings.invoices', [
-            'title'     =>      __( 'Invoices Settings' ),
-            'description'   =>  __( 'Configure the invoice settings.' ),
+            'title' => __( 'Invoices Settings' ),
+            'description' => __( 'Configure the invoice settings.' ),
         ]);
     }
 
     public function ordersSettings()
     {
         return $this->view( 'pages.dashboard.settings.orders', [
-            'title'     =>      __( 'Orders Settings' ),
-            'description'   =>  __( 'Configure the orders settings.' ),
+            'title' => __( 'Orders Settings' ),
+            'description' => __( 'Configure the orders settings.' ),
         ]);
     }
 
     public function posSettings()
     {
         return $this->view( 'pages.dashboard.settings.pos', [
-            'title'     =>      __( 'POS Settings' ),
-            'description'   =>  __( 'Configure the pos settings.' ),
+            'title' => __( 'POS Settings' ),
+            'description' => __( 'Configure the pos settings.' ),
         ]);
     }
 
     public function reportsSettings()
     {
         return $this->view( 'pages.dashboard.settings.reports', [
-            'title'     =>      __( 'Reports Settings' ),
-            'description'   =>  __( 'Configure the reports.' ),
+            'title' => __( 'Reports Settings' ),
+            'description' => __( 'Configure the reports.' ),
         ]);
     }
 
@@ -189,16 +189,16 @@ class SettingsController extends DashboardController
         }
 
         return $this->view( 'pages.dashboard.settings.reset', [
-            'title'     =>      __( 'Reset Settings' ),
-            'description'   =>  __( 'Reset the data and enable demo.' ),
+            'title' => __( 'Reset Settings' ),
+            'description' => __( 'Reset the data and enable demo.' ),
         ]);
     }
 
     public function workersSettings()
     {
         return $this->view( 'pages.dashboard.settings.workers', [
-            'title'     =>      __( 'Workers Settings' ),
-            'description'   =>  __( 'Configure the workers settings.' ),
+            'title' => __( 'Workers Settings' ),
+            'description' => __( 'Configure the workers settings.' ),
         ]);
     }
 

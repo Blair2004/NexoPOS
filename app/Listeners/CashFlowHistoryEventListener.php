@@ -21,9 +21,9 @@ class CashFlowHistoryEventListener
     public function subscribe( $event )
     {
         match ( get_class( $event ) ) {
-            CashFlowHistoryAfterCreatedEvent::class     =>  RefreshReportJob::dispatch( $event ),
-            CashFlowHistoryAfterDeletedEvent::class     =>  RefreshReportJob::dispatch( $event ),
-            CashFlowHistoryAfterUpdatedEvent::class     =>  RefreshReportJob::dispatch( $event )
+            CashFlowHistoryAfterCreatedEvent::class => RefreshReportJob::dispatch( $event ),
+            CashFlowHistoryAfterDeletedEvent::class => RefreshReportJob::dispatch( $event ),
+            CashFlowHistoryAfterUpdatedEvent::class => RefreshReportJob::dispatch( $event )
         };
     }
 }

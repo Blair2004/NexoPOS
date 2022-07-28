@@ -125,6 +125,10 @@ class ProcurementService
                 $procurement->$field = $value;
             }
 
+            if ( ! empty( $procurement->created_at ) || ! empty( $procurement->updated_at ) ) {
+                $procurement->timestamps = false;
+            }
+
             $procurement->author = Auth::id();
             $procurement->cost = 0;
             $procurement->save();
@@ -145,11 +149,11 @@ class ProcurementService
         event( new ProcurementAfterCreateEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement has been created.' ),
-            'data'      =>  [
-                'products'      =>  $procurement->products,
-                'procurement'   =>  $procurement,
+            'status' => 'success',
+            'message' => __( 'The procurement has been created.' ),
+            'data' => [
+                'products' => $procurement->products,
+                'procurement' => $procurement,
             ],
         ];
     }
@@ -192,7 +196,7 @@ class ProcurementService
          * We won't dispatch the even while savin the procurement
          * however we'll do that once the product has been stored.
          */
-        Procurement::withoutEvents( function() use ( $data , $procurement ) {
+        Procurement::withoutEvents( function() use ( $data, $procurement ) {
             if ( $procurement->delivery_status === 'stocked' ) {
                 throw new Exception( __( 'Unable to edit a procurement that has already been stocked. Please consider performing and stock adjustment.' ) );
             }
@@ -201,6 +205,10 @@ class ProcurementService
 
             foreach ( $data[ 'general' ] as $field => $value ) {
                 $procurement->$field = $value;
+            }
+
+            if ( ! empty( $procurement->created_at ) || ! empty( $procurement->updated_at ) ) {
+                $procurement->timestamps = false;
             }
 
             $procurement->author = Auth::id();
@@ -223,9 +231,9 @@ class ProcurementService
         event( new ProcurementAfterUpdateEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The provider has been edited.' ),
-            'data'      =>  compact( 'procurement' ),
+            'status' => 'success',
+            'message' => __( 'The provider has been edited.' ),
+            'data' => compact( 'procurement' ),
         ];
     }
 
@@ -255,8 +263,8 @@ class ProcurementService
         event( new ProcurementAfterDeleteEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions ),
+            'status' => 'success',
+            'message' => sprintf( __( 'The procurement has been deleted. %s included stock record(s) has been deleted as well.' ), $totalDeletions ),
         ];
     }
 
@@ -340,8 +348,8 @@ class ProcurementService
                 }
 
                 $errors[] = [
-                    'status'        =>  'failed',
-                    'message'       =>  sprintf( __( 'Unable to have a unit group id for the product using the reference "%s" as "%s"' ), $identifier, $argument ),
+                    'status' => 'failed',
+                    'message' => sprintf( __( 'Unable to have a unit group id for the product using the reference "%s" as "%s"' ), $identifier, $argument ),
                 ];
             }
 
@@ -349,10 +357,10 @@ class ProcurementService
                 extract( $this->__procureForUnitGroup( compact( 'procurementProduct', 'storedunitReference', 'itemsToSave', 'item' ) ) );
             } catch ( Exception $exception ) {
                 $errors[] = [
-                    'status'    =>  'failed',
-                    'message'   =>  $exception->getMessage(),
-                    'data'      =>  [
-                        'product'       =>  collect( $item )->only([ 'id', 'name', 'sku', 'barcode' ]),
+                    'status' => 'failed',
+                    'message' => $exception->getMessage(),
+                    'data' => [
+                        'product' => collect( $item )->only([ 'id', 'name', 'sku', 'barcode' ]),
                     ],
                 ];
             }
@@ -451,14 +459,14 @@ class ProcurementService
         }
 
         $itemData = [
-            'product_id'                =>  $item->id,
-            'unit_id'                   =>  $procurementProduct->unit_id,
-            'base_quantity'             =>  $base_quantity,
-            'quantity'                  =>  $procurementProduct->quantity,
-            'purchase_price'            =>  $this->currency->value( $procurementProduct->purchase_price )->get(),
-            'total_purchase_price'      =>  $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
-            'author'                    =>  Auth::id(),
-            'name'                      =>  $item->name,
+            'product_id' => $item->id,
+            'unit_id' => $procurementProduct->unit_id,
+            'base_quantity' => $base_quantity,
+            'quantity' => $procurementProduct->quantity,
+            'purchase_price' => $this->currency->value( $procurementProduct->purchase_price )->get(),
+            'total_purchase_price' => $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
+            'author' => Auth::id(),
+            'name' => $item->name,
         ];
 
         $itemsToSave[] = $itemData;
@@ -486,14 +494,14 @@ class ProcurementService
         }
 
         $itemData = [
-            'product_id'        =>  $item->id,
-            'unit_id'           =>  $item->purchase_unit_id,
-            'base_quantity'     =>  $base_quantity,
-            'quantity'          =>  $procurementProduct->quantity,
-            'purchase_price'    =>  $this->currency->value( $procurementProduct->purchase_price )->get(),
-            'total_price'       =>  $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
-            'author'            =>  Auth::id(),
-            'name'              =>  $item->name,
+            'product_id' => $item->id,
+            'unit_id' => $item->purchase_unit_id,
+            'base_quantity' => $base_quantity,
+            'quantity' => $procurementProduct->quantity,
+            'purchase_price' => $this->currency->value( $procurementProduct->purchase_price )->get(),
+            'total_price' => $this->currency->value( $procurementProduct->purchase_price )->multiplyBy( $procurementProduct->quantity )->get(),
+            'author' => Auth::id(),
+            'name' => $item->name,
         ];
 
         $itemsToSave[] = $itemData;
@@ -527,10 +535,10 @@ class ProcurementService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The operation has completed.' ),
-            'data'      =>      [
-                'success'     =>      $procuredItems,
+            'status' => 'success',
+            'message' => __( 'The operation has completed.' ),
+            'data' => [
+                'success' => $procuredItems,
             ],
         ];
     }
@@ -571,9 +579,9 @@ class ProcurementService
                      * price to update the procurement total fees.
                      */
                     return [
-                        'total_purchase_price'  =>  $procurementProduct->total_purchase_price,
-                        'tax_value'             =>  $procurementProduct->tax_value,
-                        'total_price'           =>  $unitPrice,
+                        'total_purchase_price' => $procurementProduct->total_purchase_price,
+                        'tax_value' => $procurementProduct->tax_value,
+                        'total_price' => $unitPrice,
                     ];
                 });
 
@@ -585,9 +593,9 @@ class ProcurementService
         });
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement has been refreshed.' ),
-            'data'      =>  compact( 'procurement' ),
+            'status' => 'success',
+            'message' => __( 'The procurement has been refreshed.' ),
+            'data' => compact( 'procurement' ),
         ];
     }
 
@@ -612,8 +620,8 @@ class ProcurementService
         event( new ProcurementCancelationEvent( $procurement ) );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement has been reset.' ),
+            'status' => 'success',
+            'message' => __( 'The procurement has been reset.' ),
         ];
     }
 
@@ -631,8 +639,8 @@ class ProcurementService
         });
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement products has been deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The procurement products has been deleted.' ),
         ];
     }
 
@@ -690,10 +698,10 @@ class ProcurementService
         $procurementProduct->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement product has been updated.' ),
-            'data'      =>  [
-                'product'   =>  $procurementProduct,
+            'status' => 'success',
+            'message' => __( 'The procurement product has been updated.' ),
+            'data' => [
+                'product' => $procurementProduct,
             ],
         ];
     }
@@ -733,12 +741,12 @@ class ProcurementService
              * history
              */
             $this->productService->stockAdjustment( 'deleted', [
-                'total_price'           =>  $procurementProduct->total_purchase_price,
-                'unit_price'            =>  $procurementProduct->purchase_price,
-                'unit_id'               =>  $procurementProduct->unit_id,
-                'product_id'            =>  $procurementProduct->product_id,
-                'quantity'              =>  $procurementProduct->quantity,
-                'procurementProduct'    =>  $procurementProduct,
+                'total_price' => $procurementProduct->total_purchase_price,
+                'unit_price' => $procurementProduct->purchase_price,
+                'unit_id' => $procurementProduct->unit_id,
+                'product_id' => $procurementProduct->product_id,
+                'quantity' => $procurementProduct->quantity,
+                'procurementProduct' => $procurementProduct,
             ]);
         }
 
@@ -751,8 +759,8 @@ class ProcurementService
         event( new ProcurementAfterDeleteProductEvent( $procurementProduct->id, $procurement ) );
 
         return [
-            'status'    =>  'sucecss',
-            'message'   =>  sprintf(
+            'status' => 'sucecss',
+            'message' => sprintf(
                 __( 'The product %s has been deleted from the procurement %s' ),
                 $procurementProduct->name,
                 $procurement->name,
@@ -794,9 +802,9 @@ class ProcurementService
             });
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The procurement products has been updated.' ),
-            'data'      =>  compact( 'result' ),
+            'status' => 'success',
+            'message' => __( 'The procurement products has been updated.' ),
+            'data' => compact( 'result' ),
         ];
     }
 
@@ -840,14 +848,14 @@ class ProcurementService
                  * in order to monitor how the stock evolve.
                  */
                 $this->productService->saveHistory( ProductHistory::ACTION_STOCKED, [
-                    'procurement_id'            =>  $product->procurement_id,
-                    'product_id'                =>  $product->product_id,
-                    'procurement_product_id'    =>  $product->id,
-                    'operation_type'            =>  ProductHistory::ACTION_STOCKED,
-                    'quantity'                  =>  $product->quantity,
-                    'unit_price'                =>  $product->purchase_price,
-                    'total_price'               =>  $product->total_purchase_price,
-                    'unit_id'                   =>  $product->unit_id,
+                    'procurement_id' => $product->procurement_id,
+                    'product_id' => $product->product_id,
+                    'procurement_product_id' => $product->id,
+                    'operation_type' => ProductHistory::ACTION_STOCKED,
+                    'quantity' => $product->quantity,
+                    'unit_price' => $product->purchase_price,
+                    'total_price' => $product->total_purchase_price,
+                    'unit_id' => $product->unit_id,
                 ]);
 
                 $currentQuantity = $this->productService->getQuantity(
@@ -904,10 +912,10 @@ class ProcurementService
 
         if ( $procurements->count() ) {
             ns()->notification->create([
-                'title'         =>  __( 'Procurement Automatically Stocked' ),
-                'identifier'    =>  'ns-warn-auto-procurement',
-                'url'           =>  url( '/dashboard/procurements' ),
-                'description'   =>  sprintf( __( '%s procurement(s) has recently been automatically procured.' ), $procurements->count() ),
+                'title' => __( 'Procurement Automatically Stocked' ),
+                'identifier' => 'ns-warn-auto-procurement',
+                'url' => url( '/dashboard/procurements' ),
+                'description' => sprintf( __( '%s procurement(s) has recently been automatically procured.' ), $procurements->count() ),
             ])->dispatchForGroup([
                 Role::namespace( 'admin' ),
                 Role::namespace( 'nexopos.store.administrator' ),

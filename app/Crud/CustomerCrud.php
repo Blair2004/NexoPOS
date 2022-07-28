@@ -64,8 +64,8 @@ class CustomerCrud extends CrudService
      * are ignored on the parent model.
      */
     protected $tabsRelations = [
-        'shipping'      =>      [ CustomerShippingAddress::class, 'customer_id', 'id' ],
-        'billing'       =>      [ CustomerBillingAddress::class, 'customer_id', 'id' ],
+        'shipping' => [ CustomerShippingAddress::class, 'customer_id', 'id' ],
+        'billing' => [ CustomerBillingAddress::class, 'customer_id', 'id' ],
     ];
 
     /**
@@ -117,15 +117,15 @@ class CustomerCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Customers List' ),
-            'list_description'      =>  __( 'Display all customers.' ),
-            'no_entry'              =>  __( 'No customers has been registered' ),
-            'create_new'            =>  __( 'Add a new customer' ),
-            'create_title'          =>  __( 'Create a new customer' ),
-            'create_description'    =>  __( 'Register a new customer and save it.' ),
-            'edit_title'            =>  __( 'Edit customer' ),
-            'edit_description'      =>  __( 'Modify  Customer.' ),
-            'back_to_list'          =>  __( 'Return to Customers' ),
+            'list_title' => __( 'Customers List' ),
+            'list_description' => __( 'Display all customers.' ),
+            'no_entry' => __( 'No customers has been registered' ),
+            'create_new' => __( 'Add a new customer' ),
+            'create_title' => __( 'Create a new customer' ),
+            'create_description' => __( 'Register a new customer and save it.' ),
+            'edit_title' => __( 'Edit customer' ),
+            'edit_description' => __( 'Modify  Customer.' ),
+            'back_to_list' => __( 'Return to Customers' ),
         ];
     }
 
@@ -153,214 +153,214 @@ class CustomerCrud extends CrudService
     public function getForm( Customer $entry = null )
     {
         return [
-            'main'  =>  [
-                'label' =>  __( 'Customer Name' ),
-                'name'          =>  'name',
-                'validation'    =>  'required',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a unique name for the customer.' ),
+            'main' => [
+                'label' => __( 'Customer Name' ),
+                'name' => 'name',
+                'validation' => 'required',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a unique name for the customer.' ),
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'          =>  'text',
-                            'label'         =>  __( 'Surname' ),
-                            'name'          =>  'surname',
-                            'value'         =>  $entry->surname ?? '',
-                            'description'   =>  __( 'Provide the customer surname' ),
+                            'type' => 'text',
+                            'label' => __( 'Surname' ),
+                            'name' => 'surname',
+                            'value' => $entry->surname ?? '',
+                            'description' => __( 'Provide the customer surname' ),
                         ], [
-                            'type'          =>  'number',
-                            'label'         =>  __( 'Credit Limit' ),
-                            'name'          =>  'credit_limit_amount',
-                            'value'         =>  $entry->credit_limit_amount ?? '',
-                            'description'   =>  __( 'Set what should be the limit of the purchase on credit.' ),
+                            'type' => 'number',
+                            'label' => __( 'Credit Limit' ),
+                            'name' => 'credit_limit_amount',
+                            'value' => $entry->credit_limit_amount ?? '',
+                            'description' => __( 'Set what should be the limit of the purchase on credit.' ),
                         ], [
-                            'type'          =>  'select',
-                            'label'         =>  __( 'Group' ),
-                            'name'          =>  'group_id',
-                            'value'         =>  $entry->group_id ?? '',
-                            'options'       =>  Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
-                            'description'   =>  __( 'Assign the customer to a group' ),
+                            'type' => 'select',
+                            'label' => __( 'Group' ),
+                            'name' => 'group_id',
+                            'value' => $entry->group_id ?? '',
+                            'options' => Helper::toJsOptions( CustomerGroup::all(), [ 'id', 'name' ]),
+                            'description' => __( 'Assign the customer to a group' ),
                         ], [
-                            'type'          =>  'datetimepicker',
-                            'label'         =>  __( 'Birth Date' ),
-                            'name'          =>  'birth_date',
-                            'value'         =>  $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null,
-                            'description'   =>  __( 'Displays the customer birth date' ),
+                            'type' => 'datetimepicker',
+                            'label' => __( 'Birth Date' ),
+                            'name' => 'birth_date',
+                            'value' => $entry instanceof Customer && $entry->birth_date !== null ? Carbon::parse( $entry->birth_date )->format( 'Y-m-d H:i:s' ) : null,
+                            'description' => __( 'Displays the customer birth date' ),
                         ], [
-                            'type'          =>  'email',
-                            'label'         =>  __( 'Email' ),
-                            'name'          =>  'email',
-                            'value'         =>  $entry->email ?? '',
-                            'validation'    =>  collect([
+                            'type' => 'email',
+                            'label' => __( 'Email' ),
+                            'name' => 'email',
+                            'value' => $entry->email ?? '',
+                            'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? 'email' : '',
                                 ns()->option->get( 'ns_customers_force_valid_email', 'no' ) === 'yes' ? (
                                     $entry instanceof Customer && ! empty( $entry->email ) ? Rule::unique( 'nexopos_customers', 'email' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'email' )
                                 ) : '',
                             ])->filter()->toArray(),
-                            'description'   =>  __( 'Provide the customer email.' ),
+                            'description' => __( 'Provide the customer email.' ),
                         ], [
-                            'type'          =>  'text',
-                            'label'         =>  __( 'Phone Number' ),
-                            'name'          =>  'phone',
-                            'value'         =>  $entry->phone ?? '',
-                            'validation'    =>  collect([
+                            'type' => 'text',
+                            'label' => __( 'Phone Number' ),
+                            'name' => 'phone',
+                            'value' => $entry->phone ?? '',
+                            'validation' => collect([
                                 ns()->option->get( 'ns_customers_force_unique_phone', 'no' ) === 'yes' ? (
                                     $entry instanceof Customer && ! empty( $entry->phone ) ? Rule::unique( 'nexopos_customers', 'phone' )->ignore( $entry->id ) : Rule::unique( 'nexopos_customers', 'phone' )
                                 ) : '',
                             ])->toArray(),
-                            'description'   =>  __( 'Provide the customer phone number' ),
+                            'description' => __( 'Provide the customer phone number' ),
                         ], [
-                            'type'          =>  'text',
-                            'label'         =>  __( 'PO Box' ),
-                            'name'          =>  'pobox',
-                            'value'         =>  $entry->pobox ?? '',
-                            'description'   =>  __( 'Provide the customer PO.Box' ),
+                            'type' => 'text',
+                            'label' => __( 'PO Box' ),
+                            'name' => 'pobox',
+                            'value' => $entry->pobox ?? '',
+                            'description' => __( 'Provide the customer PO.Box' ),
                         ], [
-                            'type'          =>  'select',
-                            'options'       =>  Helper::kvToJsOptions([
-                                ''          =>  __( 'Not Defined' ),
-                                'male'      =>  __( 'Male' ),
-                                'female'    =>  __( 'Female' ),
+                            'type' => 'select',
+                            'options' => Helper::kvToJsOptions([
+                                '' => __( 'Not Defined' ),
+                                'male' => __( 'Male' ),
+                                'female' => __( 'Female' ),
                             ]),
-                            'label'         =>  __( 'Gender' ),
-                            'name'          =>  'gender',
-                            'value'         =>  $entry->gender ?? '',
-                            'description'   =>  __( 'Provide the customer PO.Box' ),
+                            'label' => __( 'Gender' ),
+                            'name' => 'gender',
+                            'value' => $entry->gender ?? '',
+                            'description' => __( 'Provide the customer PO.Box' ),
                         ],
                     ],
                 ],
-                'billing'  =>  [
-                    'label'     =>  __( 'Billing Address' ),
-                    'fields'    =>  [
+                'billing' => [
+                    'label' => __( 'Billing Address' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'value' =>  $entry->billing->name ?? '',
-                            'label' =>  __( 'Name' ),
-                            'description'   =>  __( 'Provide the billing name.' ),
+                            'type' => 'text',
+                            'name' => 'name',
+                            'value' => $entry->billing->name ?? '',
+                            'label' => __( 'Name' ),
+                            'description' => __( 'Provide the billing name.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'surname',
-                            'value' =>  $entry->billing->surname ?? '',
-                            'label' =>  __( 'Surname' ),
-                            'description'   =>  __( 'Provide the billing surname.' ),
+                            'type' => 'text',
+                            'name' => 'surname',
+                            'value' => $entry->billing->surname ?? '',
+                            'label' => __( 'Surname' ),
+                            'description' => __( 'Provide the billing surname.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'phone',
-                            'value' =>  $entry->billing->phone ?? '',
-                            'label' =>  __( 'Phone' ),
-                            'description'   =>  __( 'Billing phone number.' ),
+                            'type' => 'text',
+                            'name' => 'phone',
+                            'value' => $entry->billing->phone ?? '',
+                            'label' => __( 'Phone' ),
+                            'description' => __( 'Billing phone number.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_1',
-                            'value' =>  $entry->billing->address_1 ?? '',
-                            'label' =>  __( 'Address 1' ),
-                            'description'   =>  __( 'Billing First Address.' ),
+                            'type' => 'text',
+                            'name' => 'address_1',
+                            'value' => $entry->billing->address_1 ?? '',
+                            'label' => __( 'Address 1' ),
+                            'description' => __( 'Billing First Address.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_2',
-                            'value' =>  $entry->billing->address_2 ?? '',
-                            'label' =>  __( 'Address 2' ),
-                            'description'   =>  __( 'Billing Second Address.' ),
+                            'type' => 'text',
+                            'name' => 'address_2',
+                            'value' => $entry->billing->address_2 ?? '',
+                            'label' => __( 'Address 2' ),
+                            'description' => __( 'Billing Second Address.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'country',
-                            'value' =>  $entry->billing->country ?? '',
-                            'label' =>  __( 'Country' ),
-                            'description'   =>  __( 'Billing Country.' ),
+                            'type' => 'text',
+                            'name' => 'country',
+                            'value' => $entry->billing->country ?? '',
+                            'label' => __( 'Country' ),
+                            'description' => __( 'Billing Country.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'city',
-                            'value' =>  $entry->billing->city ?? '',
-                            'label' =>  __( 'City' ),
-                            'description'   =>  __( 'City' ),
+                            'type' => 'text',
+                            'name' => 'city',
+                            'value' => $entry->billing->city ?? '',
+                            'label' => __( 'City' ),
+                            'description' => __( 'City' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'pobox',
-                            'value' =>  $entry->billing->pobox ?? '',
-                            'label' =>  __( 'PO.Box' ),
-                            'description'   =>  __( 'Postal Address' ),
+                            'type' => 'text',
+                            'name' => 'pobox',
+                            'value' => $entry->billing->pobox ?? '',
+                            'label' => __( 'PO.Box' ),
+                            'description' => __( 'Postal Address' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'company',
-                            'value' =>  $entry->billing->company ?? '',
-                            'label' =>  __( 'Company' ),
-                            'description'   =>  __( 'Company' ),
+                            'type' => 'text',
+                            'name' => 'company',
+                            'value' => $entry->billing->company ?? '',
+                            'label' => __( 'Company' ),
+                            'description' => __( 'Company' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'email',
-                            'value' =>  $entry->billing->email ?? '',
-                            'label' =>  __( 'Email' ),
-                            'description'   =>  __( 'Email' ),
+                            'type' => 'text',
+                            'name' => 'email',
+                            'value' => $entry->billing->email ?? '',
+                            'label' => __( 'Email' ),
+                            'description' => __( 'Email' ),
                         ],
                     ],
                 ],
-                'shipping'  =>  [
-                    'label'     =>  __( 'Shipping Address' ),
-                    'fields'    =>  [
+                'shipping' => [
+                    'label' => __( 'Shipping Address' ),
+                    'fields' => [
                         [
-                            'type'  =>  'text',
-                            'name'  =>  'name',
-                            'value' =>  $entry->shipping->name ?? '',
-                            'label' =>  __( 'Name' ),
-                            'description'   =>  __( 'Provide the shipping name.' ),
+                            'type' => 'text',
+                            'name' => 'name',
+                            'value' => $entry->shipping->name ?? '',
+                            'label' => __( 'Name' ),
+                            'description' => __( 'Provide the shipping name.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'surname',
-                            'value' =>  $entry->shipping->surname ?? '',
-                            'label' =>  __( 'Surname' ),
-                            'description'   =>  __( 'Provide the shipping surname.' ),
+                            'type' => 'text',
+                            'name' => 'surname',
+                            'value' => $entry->shipping->surname ?? '',
+                            'label' => __( 'Surname' ),
+                            'description' => __( 'Provide the shipping surname.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'phone',
-                            'value' =>  $entry->shipping->phone ?? '',
-                            'label' =>  __( 'Phone' ),
-                            'description'   =>  __( 'Shipping phone number.' ),
+                            'type' => 'text',
+                            'name' => 'phone',
+                            'value' => $entry->shipping->phone ?? '',
+                            'label' => __( 'Phone' ),
+                            'description' => __( 'Shipping phone number.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_1',
-                            'value' =>  $entry->shipping->address_1 ?? '',
-                            'label' =>  __( 'Address 1' ),
-                            'description'   =>  __( 'Shipping First Address.' ),
+                            'type' => 'text',
+                            'name' => 'address_1',
+                            'value' => $entry->shipping->address_1 ?? '',
+                            'label' => __( 'Address 1' ),
+                            'description' => __( 'Shipping First Address.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'address_2',
-                            'value' =>  $entry->shipping->address_2 ?? '',
-                            'label' =>  __( 'Address 2' ),
-                            'description'   =>  __( 'Shipping Second Address.' ),
+                            'type' => 'text',
+                            'name' => 'address_2',
+                            'value' => $entry->shipping->address_2 ?? '',
+                            'label' => __( 'Address 2' ),
+                            'description' => __( 'Shipping Second Address.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'country',
-                            'value' =>  $entry->shipping->country ?? '',
-                            'label' =>  __( 'Country' ),
-                            'description'   =>  __( 'Shipping Country.' ),
+                            'type' => 'text',
+                            'name' => 'country',
+                            'value' => $entry->shipping->country ?? '',
+                            'label' => __( 'Country' ),
+                            'description' => __( 'Shipping Country.' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'city',
-                            'value' =>  $entry->shipping->city ?? '',
-                            'label' =>  __( 'City' ),
-                            'description'   =>  __( 'City' ),
+                            'type' => 'text',
+                            'name' => 'city',
+                            'value' => $entry->shipping->city ?? '',
+                            'label' => __( 'City' ),
+                            'description' => __( 'City' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'pobox',
-                            'value' =>  $entry->shipping->pobox ?? '',
-                            'label' =>  __( 'PO.Box' ),
-                            'description'   =>  __( 'Postal Address' ),
+                            'type' => 'text',
+                            'name' => 'pobox',
+                            'value' => $entry->shipping->pobox ?? '',
+                            'label' => __( 'PO.Box' ),
+                            'description' => __( 'Postal Address' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'company',
-                            'value' =>  $entry->shipping->company ?? '',
-                            'label' =>  __( 'Company' ),
-                            'description'   =>  __( 'Company' ),
+                            'type' => 'text',
+                            'name' => 'company',
+                            'value' => $entry->shipping->company ?? '',
+                            'label' => __( 'Company' ),
+                            'description' => __( 'Company' ),
                         ], [
-                            'type'  =>  'text',
-                            'name'  =>  'email',
-                            'value' =>  $entry->shipping->email ?? '',
-                            'label' =>  __( 'Email' ),
-                            'description'   =>  __( 'Email' ),
+                            'type' => 'text',
+                            'name' => 'email',
+                            'value' => $entry->shipping->email ?? '',
+                            'label' => __( 'Email' ),
+                            'description' => __( 'Email' ),
                         ],
                     ],
                 ],
@@ -464,8 +464,8 @@ class CustomerCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -514,38 +514,38 @@ class CustomerCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'  =>  [
-                'label'  =>  __( 'Name' ),
+            'name' => [
+                'label' => __( 'Name' ),
             ],
-            'surname'  =>  [
-                'label'  =>  __( 'Surname' ),
+            'surname' => [
+                'label' => __( 'Surname' ),
             ],
-            'phone'  =>  [
-                'label'  =>  __( 'Phone' ),
+            'phone' => [
+                'label' => __( 'Phone' ),
             ],
-            'nexopos_customers_groups_name'  =>  [
-                'label'  =>  __( 'Group' ),
+            'nexopos_customers_groups_name' => [
+                'label' => __( 'Group' ),
             ],
-            'email'  =>  [
-                'label'  =>  __( 'Email' ),
+            'email' => [
+                'label' => __( 'Email' ),
             ],
-            'account_amount'  =>  [
-                'label'  =>  __( 'Account Credit' ),
+            'account_amount' => [
+                'label' => __( 'Account Credit' ),
             ],
-            'owed_amount'  =>  [
-                'label'  =>  __( 'Owed Amount' ),
+            'owed_amount' => [
+                'label' => __( 'Owed Amount' ),
             ],
-            'purchases_amount'  =>  [
-                'label'  =>  __( 'Purchase Amount' ),
+            'purchases_amount' => [
+                'label' => __( 'Purchase Amount' ),
             ],
-            'gender'  =>  [
-                'label'  =>  __( 'Gender' ),
+            'gender' => [
+                'label' => __( 'Gender' ),
             ],
-            'nexopos_users_username'  =>  [
-                'label'  =>  __( 'Author' ),
+            'nexopos_users_username' => [
+                'label' => __( 'Author' ),
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
+            'created_at' => [
+                'label' => __( 'Created At' ),
             ],
         ];
     }
@@ -561,48 +561,48 @@ class CustomerCrud extends CrudService
         $entry->phone = empty( $entry->phone ) ? __( 'Not Defined' ) : $entry->phone;
 
         $entry->addAction( 'edit_customers_group', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit_customers_group',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( 'dashboard/customers/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit_customers_group',
+            'type' => 'GOTO',
+            'url' => ns()->url( 'dashboard/customers/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'customers_orders', [
-            'label'         =>      __( 'Orders' ),
-            'namespace'     =>      'customers_orders',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
+            'label' => __( 'Orders' ),
+            'namespace' => 'customers_orders',
+            'type' => 'GOTO',
+            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/orders' ),
         ]);
 
         $entry->addAction( 'customers_rewards', [
-            'label'         =>      __( 'Rewards' ),
-            'namespace'     =>      'customers_rewards',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
+            'label' => __( 'Rewards' ),
+            'namespace' => 'customers_rewards',
+            'type' => 'GOTO',
+            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/rewards' ),
         ]);
 
         $entry->addAction( 'customers_coupons', [
-            'label'         =>      __( 'Coupons' ),
-            'namespace'     =>      'customers_coupons',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
+            'label' => __( 'Coupons' ),
+            'namespace' => 'customers_coupons',
+            'type' => 'GOTO',
+            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/coupons' ),
         ]);
 
         $entry->addAction( 'customers_history', [
-            'label'         =>      __( 'Wallet History' ),
-            'namespace'     =>      'customers_history',
-            'type'          =>      'GOTO',
-            'url'           =>      ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
+            'label' => __( 'Wallet History' ),
+            'namespace' => 'customers_history',
+            'type' => 'GOTO',
+            'url' => ns()->url( 'dashboard/customers/' . $entry->id . '/account-history' ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>      __( 'Delete' ),
-            'namespace' =>      'delete',
-            'type'      =>      'DELETE',
-            'url'       =>      ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
-            'confirm'   =>  [
-                'message'   =>  __( 'Would you like to delete this ?' ),
-                'title'     =>  __( 'Delete a customers' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.customers/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
+                'title' => __( 'Delete a customers' ),
             ],
         ]);
 
@@ -639,8 +639,8 @@ class CustomerCrud extends CrudService
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries_id' ) as $id ) {
@@ -667,11 +667,11 @@ class CustomerCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( '/dashboard/customers' ),
-            'create'    =>  ns()->url( '/dashboard/customers/create' ),
-            'edit'      =>  ns()->url( '/dashboard/customers/edit/{id}' ),
-            'post'      =>  ns()->url( '/api/nexopos/v4/crud/ns.customers' ),
-            'put'       =>  ns()->url( '/api/nexopos/v4/crud/ns.customers/{id}' ),
+            'list' => ns()->url( '/dashboard/customers' ),
+            'create' => ns()->url( '/dashboard/customers/create' ),
+            'edit' => ns()->url( '/dashboard/customers/edit/{id}' ),
+            'post' => ns()->url( '/api/nexopos/v4/crud/ns.customers' ),
+            'put' => ns()->url( '/api/nexopos/v4/crud/ns.customers/{id}' ),
         ];
     }
 
@@ -684,10 +684,10 @@ class CustomerCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Customers' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Customers' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

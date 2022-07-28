@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'version'       =>  '4.8.0',
-    'languages'     =>  [
-        'en'        =>  'English',
-        'fr'        =>  'Français',
-        'es'        =>  'Espanol',
-        'it'        =>  'Italian',
-        'ar'        =>  'Arabic',
-        'pt'        =>  'Portuguese',
-        'tr'        =>  'Türkçe',
-        'vi'        =>  'Vietnamese',
+    'version' => '4.8.1',
+    'languages' => [
+        'en' => 'English',
+        'fr' => 'Français',
+        'es' => 'Espanol',
+        'it' => 'Italian',
+        'ar' => 'Arabic',
+        'pt' => 'Portuguese',
+        'tr' => 'Türkçe',
+        'vi' => 'Vietnamese',
     ],
-    'rtl-languages' =>  [ 'ar' ],
-    'timezones'      =>  [
+    'rtl-languages' => [ 'ar' ],
+    'timezones' => [
         'America/Adak' => '(GMT-10:00) America/Adak (Hawaii-Aleutian Standard Time)',
         'America/Atka' => '(GMT-10:00) America/Atka (Hawaii-Aleutian Standard Time)',
         'America/Anchorage' => '(GMT-9:00) America/Anchorage (Alaska Standard Time)',

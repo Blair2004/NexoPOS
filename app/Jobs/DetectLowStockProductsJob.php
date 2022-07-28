@@ -45,13 +45,13 @@ class DetectLowStockProductsJob implements ShouldQueue
              */
             $notificationService = app()->make( NotificationService::class );
             $notificationService->create([
-                'title'         =>  __( 'Low Stock Alert' ),
-                'description'   =>  sprintf(
+                'title' => __( 'Low Stock Alert' ),
+                'description' => sprintf(
                     __( '%s product(s) has low stock. Check those products to reorder them before the stock reach zero.' ),
                     $products
                 ),
-                'identifier'    =>  'ns.low-stock-products',
-                'url'           =>  ns()->route( 'ns.dashboard.reports-low-stock' ),
+                'identifier' => 'ns.low-stock-products',
+                'url' => ns()->route( 'ns.dashboard.reports-low-stock' ),
             ])->dispatchForGroupNamespaces([
                 Role::ADMIN,
                 Role::STOREADMIN,

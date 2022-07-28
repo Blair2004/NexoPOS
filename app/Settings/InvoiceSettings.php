@@ -11,8 +11,8 @@ class InvoiceSettings extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'tabs'  =>  [
-                'receipts'    =>  include( dirname( __FILE__ ) . '/invoice-settings/receipts.php' ),
+            'tabs' => [
+                'receipts' => include( dirname( __FILE__ ) . '/invoice-settings/receipts.php' ),
             ],
         ];
     }

@@ -162,8 +162,8 @@ class ProcurementController extends DashboardController
         ProcurementRefreshJob::dispatch( $id );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The refresh process has started. You\'ll get informed once it\'s complete.' ),
+            'status' => 'success',
+            'message' => __( 'The refresh process has started. You\'ll get informed once it\'s complete.' ),
         ];
     }
 
@@ -218,8 +218,8 @@ class ProcurementController extends DashboardController
         ns()->restrict([ 'nexopos.create.procurements' ]);
 
         return $this->view( 'pages.dashboard.procurements.create', Hook::filter( 'ns-create-procurement-labels', [
-            'title'         =>  __( 'New Procurement' ),
-            'description'   =>  __( 'Make a new procurement.' ),
+            'title' => __( 'New Procurement' ),
+            'description' => __( 'Make a new procurement.' ),
         ] ) );
     }
 
@@ -232,9 +232,9 @@ class ProcurementController extends DashboardController
         }
 
         return $this->view( 'pages.dashboard.procurements.edit', Hook::filter( 'ns-update-procurement-labels', [
-            'title'         =>  __( 'Edit Procurement' ),
-            'description'   =>  __( 'Perform adjustment on existing procurement.' ),
-            'procurement'   =>  $procurement,
+            'title' => __( 'Edit Procurement' ),
+            'description' => __( 'Perform adjustment on existing procurement.' ),
+            'procurement' => $procurement,
         ] ) );
     }
 
@@ -243,10 +243,10 @@ class ProcurementController extends DashboardController
         ns()->restrict([ 'nexopos.read.procurements' ]);
 
         return $this->view( 'pages.dashboard.procurements.invoice', [
-            'title'         =>  sprintf( __( '%s - Invoice' ), $procurement->name ),
-            'description'   =>  __( 'list of product procured.' ),
-            'procurement'   =>  $procurement,
-            'options'       =>  $this->options,
+            'title' => sprintf( __( '%s - Invoice' ), $procurement->name ),
+            'description' => __( 'list of product procured.' ),
+            'procurement' => $procurement,
+            'options' => $this->options,
         ]);
     }
 
@@ -282,14 +282,14 @@ class ProcurementController extends DashboardController
 
         if ( ! $products->isEmpty() ) {
             return [
-                'from'      =>  'products',
-                'products'  =>  $products,
+                'from' => 'products',
+                'products' => $products,
             ];
         }
 
         return [
-            'from'      =>  'procurements',
-            'product'   =>  $this->procurementService->searchProcurementProduct( $request->input( 'search' ) ),
+            'from' => 'procurements',
+            'product' => $this->procurementService->searchProcurementProduct( $request->input( 'search' ) ),
         ];
     }
 

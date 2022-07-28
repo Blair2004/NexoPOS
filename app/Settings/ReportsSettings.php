@@ -11,8 +11,8 @@ class ReportsSettings extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'tabs'  =>  [
-                'general'    =>  include( dirname( __FILE__ ) . '/reports/general.php' ),
+            'tabs' => [
+                'general' => include( dirname( __FILE__ ) . '/reports/general.php' ),
             ],
         ];
     }

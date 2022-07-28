@@ -15,13 +15,13 @@ class MissingDependencyException extends Exception
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.missing-dependency', [
-                'title'         =>  __( 'Missing Dependency' ),
-                'message'       =>  $this->getMessage(),
+                'title' => __( 'Missing Dependency' ),
+                'message' => $this->getMessage(),
             ]);
         }
 
         return response()->json([
-            'status'  =>  'failed',
+            'status' => 'failed',
             'message' => $this->getMessage(),
         ], 401);
     }

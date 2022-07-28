@@ -34,10 +34,10 @@ class UsersController extends DashboardController
     public function listUsers()
     {
         return $this->view( 'pages.dashboard.crud.table', [
-            'title'         =>      __( 'Users List' ),
-            'createUrl'     =>  url( '/dashboard/users/create' ),
-            'description'   =>  __( 'Manage all users available.' ),
-            'src'           =>  url( '/api/nexopos/v4/crud/ns.users' ),
+            'title' => __( 'Users List' ),
+            'createUrl' => url( '/dashboard/users/create' ),
+            'description' => __( 'Manage all users available.' ),
+            'src' => url( '/api/nexopos/v4/crud/ns.users' ),
         ]);
     }
 
@@ -79,8 +79,8 @@ class UsersController extends DashboardController
         ns()->restrict([ 'update.roles' ]);
 
         return $this->view( 'pages.dashboard.users.permission-manager', [
-            'title'         =>  __( 'Permission Manager' ),
-            'description'   =>  __( 'Manage all permissions and roles' ),
+            'title' => __( 'Permission Manager' ),
+            'description' => __( 'Manage all permissions and roles' ),
         ]);
     }
 
@@ -94,10 +94,10 @@ class UsersController extends DashboardController
         ns()->restrict([ 'manage.profile' ]);
 
         return $this->view( 'pages.dashboard.users.profile', [
-            'title'         =>  __( 'My Profile' ),
-            'description'   =>  __( 'Change your personal settings' ),
-            'src'           =>  url( '/api/nexopos/v4/forms/ns.user-profile' ),
-            'submitUrl'     =>  url( '/api/nexopos/v4/users/profile'),
+            'title' => __( 'My Profile' ),
+            'description' => __( 'Change your personal settings' ),
+            'src' => url( '/api/nexopos/v4/forms/ns.user-profile' ),
+            'submitUrl' => url( '/api/nexopos/v4/users/profile'),
         ]);
     }
 
@@ -146,8 +146,8 @@ class UsersController extends DashboardController
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The permissions has been updated.' ),
+            'status' => 'success',
+            'message' => __( 'The permissions has been updated.' ),
         ];
     }
 

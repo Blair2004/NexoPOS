@@ -14,8 +14,8 @@ class CustomersSettings extends SettingsPage
         $options = app()->make( Options::class );
 
         $this->form = [
-            'tabs'  =>  [
-                'general'    =>  include( dirname( __FILE__ ) . '/customers/general.php' ),
+            'tabs' => [
+                'general' => include( dirname( __FILE__ ) . '/customers/general.php' ),
             ],
         ];
     }

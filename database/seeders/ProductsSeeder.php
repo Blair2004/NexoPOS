@@ -29,8 +29,8 @@ class ProductsSeeder extends Seeder
                             ProductUnitQuantity::factory()
                                 ->count(1)
                                 ->create([
-                                    'product_id'    =>  $product->id,
-                                    'unit_id'       =>  $unit->id,
+                                    'product_id' => $product->id,
+                                    'unit_id' => $unit->id,
                                 ]);
                         });
                     });

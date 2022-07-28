@@ -27,38 +27,38 @@ class UpdateProductTest extends TestCase
         $response = $this
             ->withSession( $this->app[ 'session' ]->all() )
             ->json( 'PUT', '/api/nexopos/v4/products/' . $product->id, [
-                'name'          =>  'Sample Product',
-                'variations'    =>  [
+                'name' => 'Sample Product',
+                'variations' => [
                     [
-                        '$primary'  =>  true,
-                        'expiracy'  =>  [
-                            'expires'       =>  0,
-                            'on_expiration' =>  'prevent_sales',
+                        '$primary' => true,
+                        'expiracy' => [
+                            'expires' => 0,
+                            'on_expiration' => 'prevent_sales',
                         ],
-                        'identification'    =>  [
-                            'barcode'           =>  'quassas',
-                            'barcode_type'      =>  'ean13',
-                            'category_id'       =>  1,
-                            'description'       =>  __( 'Created via tests' ),
-                            'product_type'      =>  'product',
-                            'sku'               =>  'sample-sku',
-                            'status'            =>  'available',
-                            'stock_management'  =>  'enabled',
+                        'identification' => [
+                            'barcode' => 'quassas',
+                            'barcode_type' => 'ean13',
+                            'category_id' => 1,
+                            'description' => __( 'Created via tests' ),
+                            'product_type' => 'product',
+                            'sku' => 'sample-sku',
+                            'status' => 'available',
+                            'stock_management' => 'enabled',
                         ],
-                        'images'            =>  [],
-                        'taxes'             =>  [
-                            'tax_group_id'  =>  1,
-                            'tax_type'      =>  'exclusive',
+                        'images' => [],
+                        'taxes' => [
+                            'tax_group_id' => 1,
+                            'tax_type' => 'exclusive',
                         ],
-                        'units'             =>  [
-                            'selling_group' =>  [
+                        'units' => [
+                            'selling_group' => [
                                 [
-                                    'sale_price'        =>  10,
-                                    'wholesale_price'   =>  9.55,
-                                    'unit_id'           =>  UnitGroup::find(2)->units->random()->first()->id,
+                                    'sale_price' => 10,
+                                    'wholesale_price' => 9.55,
+                                    'unit_id' => UnitGroup::find(2)->units->random()->first()->id,
                                 ],
                             ],
-                            'unit_group'    =>  2,
+                            'unit_group' => 2,
                         ],
                     ],
                 ],

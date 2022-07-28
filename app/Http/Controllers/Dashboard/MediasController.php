@@ -21,8 +21,8 @@ class MediasController extends DashboardController
     public function showMedia()
     {
         return $this->view( 'pages.dashboard.medias.list', [
-            'title'         =>  __( 'Manage Medias' ),
-            'description'   =>  __( 'Upload and manage medias (photos).' ),
+            'title' => __( 'Manage Medias' ),
+            'description' => __( 'Upload and manage medias (photos).' ),
         ]);
     }
 
@@ -68,9 +68,9 @@ class MediasController extends DashboardController
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The operation was successful.' ),
-            'data'      =>  compact( 'result' ),
+            'status' => 'success',
+            'message' => __( 'The operation was successful.' ),
+            'data' => compact( 'result' ),
         ];
     }
 

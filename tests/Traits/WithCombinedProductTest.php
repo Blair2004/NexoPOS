@@ -14,12 +14,12 @@ trait WithCombinedProductTest
 
         $testService = new TestService;
         $orderDetails = $testService->prepareOrder( ns()->date->now(), [], [], [
-            'products'  =>  function() {
+            'products' => function() {
                 $product = Product::where( 'tax_group_id', '>', 0 )->with( 'unit_quantities' )->first();
 
                 return collect([ $product, $product ]);
             },
-            'allow_quick_products'  =>  false,
+            'allow_quick_products' => false,
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
