@@ -892,7 +892,7 @@ trait WithOrderTest
                 $sum = (  (float) $orderData[ 'subtotal' ] + (float) $orderData[ 'shipping' ] - (float) $orderData[ 'discount' ] - $couponValue );
                 $change = ns()->currency->fresh( $totalPayments )->subtractBy( $sum )->getRaw();
 
-                $changeFromOrder    =   ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
+                $changeFromOrder = ns()->currency->getRaw( Arr::get( $singleResponse[ 'order-creation' ], 'data.order.change' ) );
                 $this->assertEquals( $changeFromOrder, $change );
 
                 $singleResponse[ 'order-payment' ] = json_decode( $response->getContent() );

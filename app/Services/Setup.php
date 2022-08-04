@@ -242,8 +242,8 @@ class Setup
             $DB = DB::connection( env( 'DB_CONNECTION', 'mysql' ) )->getPdo();
 
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'Database connection was successful.' )
+                'status' => 'success',
+                'message' => __( 'Database connection was successful.' ),
             ];
         } catch (\Exception $e) {
             switch ( $e->getCode() ) {
