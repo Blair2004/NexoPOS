@@ -105,7 +105,7 @@ class Options
          * the option object.
          */
         $foundOption = collect( $this->rawOptions )->map( function( $option, $index ) use ( $value, $key, $expiration ) {
-            if ( $key === $option->key ) {
+            if ( $key === $index ) {
                 $this->hasFound = true;
 
                 switch ( $value ) {
@@ -142,7 +142,7 @@ class Options
          * it will create a new Option model
          * and store with, then save it on the option model
          */
-        if ( $foundOption->empty() ) {
+        if ( $foundOption->isEmpty() ) {
             $option = new Option;
             $option->key = trim( strtolower( $key ) );
             $option->array = false;

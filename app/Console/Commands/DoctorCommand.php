@@ -14,7 +14,7 @@ class DoctorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:doctor {--fix-roles} {--fix-users-attributes} {--fix-orders-products}';
+    protected $signature = 'ns:doctor {--fix-roles} {--fix-users-attributes} {--fix-orders-products} {--fix-duplicate-options}';
 
     /**
      * The console command description.
@@ -55,6 +55,12 @@ class DoctorCommand extends Command
             $doctorService->createUserAttribute();
 
             return $this->info( 'The users attributes were fixed.' );
+        }
+
+        if ( $this->option( 'fix-duplicate-options' ) ) {
+            $doctorService->fixDuplicateOptions();
+
+            return $this->info( 'The duplicated options where cleared.' );
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {

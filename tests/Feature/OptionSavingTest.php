@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Option;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Tests\Traits\WithAuthentication;
@@ -20,6 +21,9 @@ class OptionSavingTest extends TestCase
         $this->attemptAuthenticate();
 
         ns()->option->set( '_custom_option', 'Hello World' );
+        ns()->option->set( '_custom_option', 'Hello World' );
+
+        $this->assertEquals( 1, Option::where( 'key', '_custom_option' )->count(), 'The options saved twice' );
 
         $this->assertTrue(
             ns()->option->get( '_custom_option' ) === 'Hello World',
