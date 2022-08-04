@@ -45,7 +45,7 @@ class RegisterHistory extends NsModel
     ];
 
     protected $dispatchesEvents = [
-        'created'     =>      CashRegisterHistoryAfterCreatedEvent::class,
+        'created' => CashRegisterHistoryAfterCreatedEvent::class,
     ];
 
     public function scopeRegister( $query, Register $register )

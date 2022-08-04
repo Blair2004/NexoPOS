@@ -19,10 +19,10 @@ trait WithRoleTest
         ])->first();
 
         $response = $this->submitRequest( ( new RolesCrud )->getNamespace(), [
-            'name'  =>  $role->name,
-            'general'   =>  [
-                'namespace'     =>  $role->namespace,
-                'dashid'        =>  $role->dashid,
+            'name' => $role->name,
+            'general' => [
+                'namespace' => $role->namespace,
+                'dashid' => $role->dashid,
             ],
         ]);
 
@@ -42,10 +42,10 @@ trait WithRoleTest
         ])->first();
 
         $this->submitRequest( ( new RolesCrud )->getNamespace() . '/' . $role->id, [
-            'name'  =>  $role->name,
-            'general'   =>  [
-                'namespace'     =>  $role->namespace,
-                'dashid'        =>  $role->dashid,
+            'name' => $role->name,
+            'general' => [
+                'namespace' => $role->namespace,
+                'dashid' => $role->dashid,
             ],
         ], 'PUT' );
 

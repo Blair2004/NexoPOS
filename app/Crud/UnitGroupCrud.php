@@ -42,14 +42,14 @@ class UnitGroupCrud extends CrudService
     ];
 
     public $pick = [
-        'user'  =>  [ 'username' ],
+        'user' => [ 'username' ],
     ];
 
     public $permissions = [
-        'create'    =>  'nexopos.create.products-units',
-        'read'      =>  'nexopos.read.products-units',
-        'update'    =>  'nexopos.update.products-units',
-        'delete'    =>  'nexopos.delete.products-units',
+        'create' => 'nexopos.create.products-units',
+        'read' => 'nexopos.read.products-units',
+        'update' => 'nexopos.update.products-units',
+        'delete' => 'nexopos.delete.products-units',
     ];
 
     /**
@@ -92,15 +92,15 @@ class UnitGroupCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Unit Groups List' ),
-            'list_description'      =>  __( 'Display all unit groups.' ),
-            'no_entry'              =>  __( 'No unit groups has been registered' ),
-            'create_new'            =>  __( 'Add a new unit group' ),
-            'create_title'          =>  __( 'Create a new unit group' ),
-            'create_description'    =>  __( 'Register a new unit group and save it.' ),
-            'edit_title'            =>  __( 'Edit unit group' ),
-            'edit_description'      =>  __( 'Modify  Unit Group.' ),
-            'back_to_list'          =>  __( 'Return to Unit Groups' ),
+            'list_title' => __( 'Unit Groups List' ),
+            'list_description' => __( 'Display all unit groups.' ),
+            'no_entry' => __( 'No unit groups has been registered' ),
+            'create_new' => __( 'Add a new unit group' ),
+            'create_title' => __( 'Create a new unit group' ),
+            'create_description' => __( 'Register a new unit group and save it.' ),
+            'edit_title' => __( 'Edit unit group' ),
+            'edit_description' => __( 'Modify  Unit Group.' ),
+            'back_to_list' => __( 'Return to Unit Groups' ),
         ];
     }
 
@@ -123,22 +123,22 @@ class UnitGroupCrud extends CrudService
     public function getForm( $entry = null )
     {
         return [
-            'main' =>  [
-                'label'         =>  __( 'Name' ),
-                'name'          =>  'name',
-                'value'         =>  $entry->name ?? '',
-                'description'   =>  __( 'Provide a name to the resource.' ),
-                'validation'    =>  'required',
+            'main' => [
+                'label' => __( 'Name' ),
+                'name' => 'name',
+                'value' => $entry->name ?? '',
+                'description' => __( 'Provide a name to the resource.' ),
+                'validation' => 'required',
             ],
-            'tabs'  =>  [
-                'general'   =>  [
-                    'label'     =>  __( 'General' ),
-                    'fields'    =>  [
+            'tabs' => [
+                'general' => [
+                    'label' => __( 'General' ),
+                    'fields' => [
                         [
-                            'type'  =>  'textarea',
-                            'name'  =>  'description',
-                            'value' =>  $entry->description ?? '',
-                            'label' =>  __( 'Description' ),
+                            'type' => 'textarea',
+                            'name' => 'description',
+                            'value' => $entry->description ?? '',
+                            'label' => __( 'Description' ),
                         ],
                     ],
                 ],
@@ -244,8 +244,8 @@ class UnitGroupCrud extends CrudService
 
         if ( $users->is([ 'admin' ]) ) {
             return [
-                'status'    =>  'success',
-                'message'   =>  __( 'The access is granted.' ),
+                'status' => 'success',
+                'message' => __( 'The access is granted.' ),
             ];
         }
 
@@ -272,20 +272,20 @@ class UnitGroupCrud extends CrudService
     public function getColumns()
     {
         return [
-            'name'              =>  [
-                'label'         =>  __( 'Name' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'name' => [
+                'label' => __( 'Name' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'         =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'         =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -296,20 +296,20 @@ class UnitGroupCrud extends CrudService
     public function setActions( CrudEntry $entry, $namespace )
     {
         $entry->addAction( 'edit', [
-            'label'         =>      __( 'Edit' ),
-            'namespace'     =>      'edit',
-            'type'          =>      'GOTO',
-            'index'         =>      'id',
-            'url'           =>      ns()->url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id ),
+            'label' => __( 'Edit' ),
+            'namespace' => 'edit',
+            'type' => 'GOTO',
+            'index' => 'id',
+            'url' => ns()->url( '/dashboard/' . 'units/groups' . '/edit/' . $entry->id ),
         ]);
 
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.units-groups/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.units-groups/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -331,15 +331,15 @@ class UnitGroupCrud extends CrudService
         $user = app()->make( Users::class );
         if ( ! $user->is([ 'admin', 'supervisor' ]) ) {
             return response()->json([
-                'status'    =>  'failed',
-                'message'   =>  __( 'You\'re not allowed to do this operation' ),
+                'status' => 'failed',
+                'message' => __( 'You\'re not allowed to do this operation' ),
             ], 403 );
         }
 
         if ( $request->input( 'action' ) == 'delete_selected' ) {
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -366,11 +366,11 @@ class UnitGroupCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . 'units/groups' ),
-            'create'    =>  ns()->url( 'dashboard/' . 'units/groups/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . 'units/groups/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . 'units/groups' ),
+            'create' => ns()->url( 'dashboard/' . 'units/groups/create' ),
+            'edit' => ns()->url( 'dashboard/' . 'units/groups/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.units-groups/{id}' . '' ),
         ];
     }
 
@@ -383,10 +383,10 @@ class UnitGroupCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);

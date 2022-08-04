@@ -51,7 +51,7 @@ class Product extends NsModel
     protected $table = 'nexopos_' . 'products';
 
     protected $cats = [
-        'accurate_tracking'     =>  'boolean',
+        'accurate_tracking' => 'boolean',
     ];
 
     /**
@@ -59,11 +59,11 @@ class Product extends NsModel
      * it's a dependency for specified models.
      */
     protected $isDependencyFor = [
-        OrderProduct::class     =>  [
-            'local_index'       =>  'id',
-            'local_name'        =>  'name',
-            'foreign_index'     =>  'product_id',
-            'foreign_name'      =>  'name',
+        OrderProduct::class => [
+            'local_index' => 'id',
+            'local_name' => 'name',
+            'foreign_index' => 'product_id',
+            'foreign_name' => 'name',
         ],
     ];
 

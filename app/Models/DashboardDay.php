@@ -19,8 +19,8 @@ class DashboardDay extends NsModel
     protected $table = 'nexopos_' . 'dashboard_days';
 
     protected $dispatchEvents = [
-        'created'   =>  DashboardDayAfterCreatedEvent::class,
-        'updated'   =>  DashboardDayAfterUpdatedEvent::class,
+        'created' => DashboardDayAfterCreatedEvent::class,
+        'updated' => DashboardDayAfterUpdatedEvent::class,
     ];
 
     public function scopeFrom( $query, $param )
@@ -38,9 +38,9 @@ class DashboardDay extends NsModel
         $date = app()->make( DateService::class );
 
         return DashboardDay::firstOrCreate([
-            'range_starts'  =>  $date->copy()->startOfDay()->toDateTimeString(),
-            'range_ends'    =>  $date->copy()->endOfDay()->toDateTimeString(),
-            'day_of_year'   =>  $date->dayOfYear,
+            'range_starts' => $date->copy()->startOfDay()->toDateTimeString(),
+            'range_ends' => $date->copy()->endOfDay()->toDateTimeString(),
+            'day_of_year' => $date->dayOfYear,
         ]);
     }
 
@@ -68,9 +68,9 @@ class DashboardDay extends NsModel
         $date = Carbon::parse( $day->range_starts )->subDay();
 
         return DashboardDay::firstOrCreate([
-            'range_starts'  =>  $date->startOfDay()->toDateTimeString(),
-            'range_ends'    =>  $date->endOfDay()->toDateTimeString(),
-            'day_of_year'  =>  $date->dayOfYear,
+            'range_starts' => $date->startOfDay()->toDateTimeString(),
+            'range_ends' => $date->endOfDay()->toDateTimeString(),
+            'day_of_year' => $date->dayOfYear,
         ]);
     }
 }

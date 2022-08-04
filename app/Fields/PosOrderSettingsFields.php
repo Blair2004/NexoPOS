@@ -12,16 +12,16 @@ class PosOrderSettingsFields extends FieldsService
     {
         $fields = [
             [
-                'label'         =>  __( 'Name' ),
-                'description'   =>  __( 'Define the order name.' ),
-                'validation'    =>  'required',
-                'name'          =>  'title',
-                'type'          =>  'text',
+                'label' => __( 'Name' ),
+                'description' => __( 'Define the order name.' ),
+                'validation' => 'required',
+                'name' => 'title',
+                'type' => 'text',
             ], [
-                'label'         =>  __( 'Created At' ),
-                'description'   =>  __( 'Define the date of creation of the order.' ),
-                'name'          =>  'created_at',
-                'type'          =>  'date',
+                'label' => __( 'Created At' ),
+                'description' => __( 'Define the date of creation of the order.' ),
+                'name' => 'created_at',
+                'type' => 'date',
             ],
         ];
 

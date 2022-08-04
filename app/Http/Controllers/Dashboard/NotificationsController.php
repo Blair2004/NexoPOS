@@ -39,8 +39,8 @@ class NotificationsController extends DashboardController
         $this->notificationService->deleteSingleNotification( $id );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The notification has been successfully deleted' ),
+            'status' => 'success',
+            'message' => __( 'The notification has been successfully deleted' ),
         ];
     }
 
@@ -52,8 +52,8 @@ class NotificationsController extends DashboardController
         $this->notificationService->deleteNotificationsFor( Auth::user() );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'All the notificataions has been cleared.' ),
+            'status' => 'success',
+            'message' => __( 'All the notificataions has been cleared.' ),
         ];
     }
 }

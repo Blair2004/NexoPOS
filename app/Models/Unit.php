@@ -11,7 +11,7 @@ class Unit extends NsModel
     protected $table = 'nexopos_units';
 
     protected $casts = [
-        'base_unit'     =>  'boolean',
+        'base_unit' => 'boolean',
     ];
 
     protected $guarded = [];

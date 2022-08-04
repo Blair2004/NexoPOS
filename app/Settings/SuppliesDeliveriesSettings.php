@@ -11,8 +11,8 @@ class SuppliesDeliveriesSettings extends SettingsPage
     public function __construct()
     {
         $this->form = [
-            'tabs'  =>  [
-                'layout'    =>  include( dirname( __FILE__ ) . '/supplies-deliveries/general.php' ),
+            'tabs' => [
+                'layout' => include( dirname( __FILE__ ) . '/supplies-deliveries/general.php' ),
             ],
         ];
     }

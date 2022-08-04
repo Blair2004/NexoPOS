@@ -246,7 +246,7 @@ class CrudGeneratorCommand extends Command
                     $fileName,
                     view( 'generate.crud', array_merge(
                         $this->crudDetails, [
-                            'module'    =>  $module,
+                            'module' => $module,
                         ]
                     ) )
                 );

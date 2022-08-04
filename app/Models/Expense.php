@@ -11,8 +11,8 @@ class Expense extends NsModel
     protected $table = 'nexopos_' . 'expenses';
 
     protected $casts = [
-        'recurring'     =>  'boolean',
-        'active'        =>  'boolean',
+        'recurring' => 'boolean',
+        'active' => 'boolean',
     ];
 
     public function category()

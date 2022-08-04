@@ -151,6 +151,15 @@ export default {
                 }
             },
             deep: true            
+        },
+        barcode() {
+            if ( this.options.ns_pos_force_autofocus ) {
+                clearTimeout( this.searchTimeout );
+            
+                this.searchTimeout  =   setTimeout( () => {
+                    this.submitSearch( this.barcode );
+                }, 200 );
+            }
         }
     },
     mounted() {

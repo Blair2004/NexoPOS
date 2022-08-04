@@ -91,10 +91,10 @@ class SetupCommand extends Command
              */
             $service = app()->make( Setup::class );
             $service->runMigration([
-                'admin_username'    =>  $this->admin_username,
-                'admin_email'       =>  $this->admin_email,
-                'password'          =>  $this->admin_password,
-                'ns_store_name'     =>  $this->ns_store_name,
+                'admin_username' => $this->admin_username,
+                'admin_email' => $this->admin_email,
+                'password' => $this->admin_password,
+                'ns_store_name' => $this->ns_store_name,
             ]);
 
             return $this->info( 'Thank you, NexoPOS 4.x has been successfully installed.' );

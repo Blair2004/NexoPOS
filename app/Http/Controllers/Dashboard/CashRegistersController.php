@@ -120,9 +120,9 @@ class CashRegistersController extends DashboardController
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The register is opened.' ),
-            'data'      =>  compact( 'register' ),
+            'status' => 'success',
+            'message' => __( 'The register is opened.' ),
+            'data' => compact( 'register' ),
         ];
     }
 
@@ -183,9 +183,9 @@ class CashRegistersController extends DashboardController
     public function getRegisterHistory( Register $register )
     {
         return RegisterHistoryCrud::table([
-            'title'         =>  sprintf( __( 'Register History For : %s' ), $register->name ),
-            'queryParams'   =>  [
-                'register_id'   =>  $register->id,
+            'title' => sprintf( __( 'Register History For : %s' ), $register->name ),
+            'queryParams' => [
+                'register_id' => $register->id,
             ],
         ]);
     }

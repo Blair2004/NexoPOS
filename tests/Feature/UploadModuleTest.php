@@ -31,11 +31,11 @@ class UploadModuleTest extends TestCase
 
         $name = str_replace( '.', '', $this->faker->text(10) );
         $config = [
-            'namespace'     =>  ucwords( Str::camel( $name ) ),
-            'name'          =>  $name,
-            'author'        =>  'NexoPOS',
-            'description'   =>  'Generated from a test',
-            'version'       =>  '1.0',
+            'namespace' => ucwords( Str::camel( $name ) ),
+            'name' => $name,
+            'author' => 'NexoPOS',
+            'description' => 'Generated from a test',
+            'version' => '1.0',
         ];
 
         $moduleService->generateModule( $config );
@@ -83,7 +83,7 @@ class UploadModuleTest extends TestCase
          */
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', '/api/nexopos/v4/modules', [
-                'module'    =>  UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $result[ 'path' ] ) ),
+                'module' => UploadedFile::fake()->createWithContent( 'module.zip', file_get_contents( $result[ 'path' ] ) ),
             ]);
 
         $response->assertRedirect( ns()->route( 'ns.dashboard.modules-list' ) );

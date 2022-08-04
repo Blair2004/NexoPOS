@@ -15,13 +15,13 @@ class NotFoundException extends Exception
     {
         if ( ! $request->expectsJson() ) {
             return response()->view( 'pages.errors.not-allowed', [
-                'title'         =>  __( 'Not Found Exception' ),
-                'message'       =>  $this->getMessage(),
+                'title' => __( 'Not Found Exception' ),
+                'message' => $this->getMessage(),
             ]);
         }
 
         return response()->json([
-            'status'  =>  'failed',
+            'status' => 'failed',
             'message' => $this->getMessage(),
         ], 401);
     }

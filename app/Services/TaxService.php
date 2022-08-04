@@ -138,9 +138,9 @@ class TaxService
         $group->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax group has been correctly saved.' ),
-            'data'      =>  compact( 'group' ),
+            'status' => 'success',
+            'message' => __( 'The tax group has been correctly saved.' ),
+            'data' => compact( 'group' ),
         ];
     }
 
@@ -158,9 +158,9 @@ class TaxService
         $tax->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax has been correctly created.' ),
-            'data'      =>  compact( 'tax' ),
+            'status' => 'success',
+            'message' => __( 'The tax has been correctly created.' ),
+            'data' => compact( 'tax' ),
         ];
     }
 
@@ -422,7 +422,7 @@ class TaxService
             } else {
                 $gross_price = $this->getGrossPriceFromNetPriceUsingGroup( $orderProduct->unit_price - $discount, $taxGroup );
 
-                $orderProduct->net_price = $orderProduct->unit_price - $discount;
+                $orderProduct->net_price = ns()->currency->define( $orderProduct->unit_price )->subtractBy( $discount )->getRaw();
                 $orderProduct->gross_price = $gross_price;
                 $orderProduct->tax_value = ( $orderProduct->gross_price - $orderProduct->net_price ) * $orderProduct->quantity;
             }
@@ -439,7 +439,7 @@ class TaxService
             ->fresh( $orderProduct->unit_price )
             ->multiplyBy( $orderProduct->quantity )
             ->subtractBy( $discount )
-            ->getFullRaw();
+            ->getRaw();
 
         $orderProduct->total_net_price = ns()->currency
             ->fresh( $orderProduct->net_price )
@@ -459,6 +459,10 @@ class TaxService
      */
     public function getGrossPriceFromNetPrice( $net_price, $rate )
     {
+        if( ( int ) $net_price == 0 ) {
+            return 0;
+        }
+
         return $net_price * ( 100 + $rate ) / 100;
     }
 
@@ -627,7 +631,7 @@ class TaxService
         return $this->currency->fresh( $value )
             ->multipliedBy( $rate )
             ->dividedBy( 100 )
-            ->getFullRaw();
+            ->getRaw();
     }
 
     /**
@@ -656,8 +660,8 @@ class TaxService
          * tax_id & product_id combinaison
          */
         $productTax = ProductTax::findMatch([
-            'product_id'    =>  $product->id,
-            'tax_id'        =>  $tax->id,
+            'product_id' => $product->id,
+            'tax_id' => $tax->id,
         ])->first();
 
         if ( $productTax instanceof ProductTax ) {
@@ -678,10 +682,10 @@ class TaxService
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The product tax has been saved.' ),
-            'data'      =>  [
-                'tax'   =>  $productTax,
+            'status' => 'success',
+            'message' => __( 'The product tax has been saved.' ),
+            'data' => [
+                'tax' => $productTax,
             ],
         ];
     }
@@ -699,8 +703,8 @@ class TaxService
         $tax->delete();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The tax has been successfully deleted.' ),
+            'status' => 'success',
+            'message' => __( 'The tax has been successfully deleted.' ),
         ];
     }
 }

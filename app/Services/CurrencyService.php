@@ -59,13 +59,13 @@ class CurrencyService
     public function fresh( $value )
     {
         return new CurrencyService( $value, [
-            'currency_iso'          =>  $this->currency_iso,
-            'currency_symbol'       =>  $this->currency_symbol,
-            'currency_position'     =>  $this->currency_position,
-            'decimal_precision'     =>  $this->decimal_precision,
-            'decimal_separator'     =>  $this->decimal_separator,
-            'prefered_currency'     =>  $this->prefered_currency,
-            'thousand_separator'    =>  $this->thousand_separator,
+            'currency_iso' => $this->currency_iso,
+            'currency_symbol' => $this->currency_symbol,
+            'currency_position' => $this->currency_position,
+            'decimal_precision' => $this->decimal_precision,
+            'decimal_separator' => $this->decimal_separator,
+            'prefered_currency' => $this->prefered_currency,
+            'thousand_separator' => $this->thousand_separator,
         ]);
     }
 
@@ -216,18 +216,20 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        return $this->bcround( ( $value === null ? $this->value : $value ), $this->decimal_precision );
+        return (float) $this->bcround( ( $value === null ? $this->value : $value ), 10 );
     }
 
     /**
      * Will return the full raw without
      * rounding.
      *
+     * @deprecated
+     *
      * @return float $value
      */
-    public function getFullRaw()
+    public function getFullRaw( $value = null )
     {
-        return (float) $this->value;
+        return (float) ( $value === null ? $this->value : $value );
     }
 
     /**

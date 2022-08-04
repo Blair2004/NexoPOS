@@ -59,9 +59,9 @@ class ProductCategoryService
         ProductCategoryAfterCreatedEvent::dispatch( $category );
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The category has been created' ),
-            'data'      =>  compact( 'category' ),
+            'status' => 'success',
+            'message' => __( 'The category has been created' ),
+            'data' => compact( 'category' ),
         ];
     }
 

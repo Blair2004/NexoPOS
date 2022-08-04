@@ -91,6 +91,27 @@ export default {
                     }
                 })
         },
+        totalSum( result, firstKey, secondKey ) {
+            if ( result.data !== undefined ) {
+                const unitQuantities    =   result.data.map( product => product.unit_quantities );
+
+                const values            =   unitQuantities.map( unitQuantities => {
+                    const result    =   unitQuantities.map( unitQuantity => unitQuantity[ firstKey ] * unitQuantity[ secondKey ] );
+                    
+                    if ( result.length > 0 ) {
+                        return result.reduce( ( a, b ) => parseFloat( a ) + parseFloat( b ) );
+                    }
+
+                    return 0;
+                });
+
+                if ( values.length > 0 ) {
+                    return values.reduce( ( a, b ) => parseFloat( a ) + parseFloat( b ) );
+                }
+            }
+
+            return 0;
+        },
         sum( result, type ) {
             if ( result.data !== undefined ) {
                 const unitQuantities    =   result.data.map( product => product.unit_quantities );

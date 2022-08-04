@@ -31,15 +31,15 @@ class DashboardController extends Controller
     public function home()
     {
         return view( 'pages.dashboard.home', [
-            'menus' =>  $this->menuService,
-            'title' =>  __( 'Dashboard' ),
+            'menus' => $this->menuService,
+            'title' => __( 'Dashboard' ),
         ]);
     }
 
     protected function view( $path, $data = [])
     {
         return view( $path, array_merge([
-            'menus'     =>   $this->menuService,
+            'menus' => $this->menuService,
         ], $data ));
     }
 
@@ -76,32 +76,32 @@ class DashboardController extends Controller
     {
         $weekMap = [
             0 => [
-                'label' =>  __( 'Sunday' ),
-                'value' =>  'SU',
+                'label' => __( 'Sunday' ),
+                'value' => 'SU',
             ],
             1 => [
-                'label' =>  __( 'Monday' ),
-                'value' =>  'MO',
+                'label' => __( 'Monday' ),
+                'value' => 'MO',
             ],
             2 => [
-                'label' =>  __( 'Tuesday' ),
-                'value' =>  'TU',
+                'label' => __( 'Tuesday' ),
+                'value' => 'TU',
             ],
             3 => [
-                'label' =>  __( 'Wednesday' ),
-                'value' =>  'WE',
+                'label' => __( 'Wednesday' ),
+                'value' => 'WE',
             ],
             4 => [
-                'label' =>  __( 'Thursday' ),
-                'value' =>  'TH',
+                'label' => __( 'Thursday' ),
+                'value' => 'TH',
             ],
             5 => [
-                'label' =>  __( 'Friday' ),
-                'value' =>  'FR',
+                'label' => __( 'Friday' ),
+                'value' => 'FR',
             ],
             6 => [
-                'label' =>  __( 'Saturday' ),
-                'value' =>  'SA',
+                'label' => __( 'Saturday' ),
+                'value' => 'SA',
             ],
         ];
 
@@ -133,9 +133,9 @@ class DashboardController extends Controller
             });
 
         return [
-            'range_starts'  =>  $lastWeekStarts->toDateTimeString(),
-            'range_ends'    =>  $currentWeekEnds->toDateTimeString(),
-            'result'        =>  $weekMap,
+            'range_starts' => $lastWeekStarts->toDateTimeString(),
+            'range_ends' => $currentWeekEnds->toDateTimeString(),
+            'result' => $weekMap,
         ];
     }
 }

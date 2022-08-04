@@ -73,8 +73,8 @@ class ResetController extends DashboardController
         }
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The database has been successfully seeded.' ),
+            'status' => 'success',
+            'message' => __( 'The database has been successfully seeded.' ),
         ];
     }
 }

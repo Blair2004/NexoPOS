@@ -15,10 +15,10 @@ class ProductCategoryFactory extends Factory
     public function definition()
     {
         return [
-            'name'              =>  $this->faker->name,
-            'description'       =>  $this->faker->sentence,
-            'displays_on_pos'   =>  $this->faker->randomElement([ true, false ]),
-            'author'            =>  $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
+            'name' => $this->faker->name,
+            'description' => $this->faker->sentence,
+            'displays_on_pos' => $this->faker->randomElement([ true, false ]),
+            'author' => $this->faker->randomElement( User::get()->map( fn( $user ) => $user->id ) ),
         ];
     }
 }

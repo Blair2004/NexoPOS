@@ -29,9 +29,9 @@ trait WithTaxTest
 
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'exclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'exclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -62,9 +62,9 @@ trait WithTaxTest
 
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'exclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'exclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -91,9 +91,9 @@ trait WithTaxTest
 
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'exclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'exclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -109,9 +109,9 @@ trait WithTaxTest
         $taxGroup = TaxGroup::with( 'taxes' )->first();
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'inclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'inclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -127,9 +127,9 @@ trait WithTaxTest
         $taxGroup = TaxGroup::with( 'taxes' )->first();
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'exclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'exclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -150,9 +150,9 @@ trait WithTaxTest
 
         $testService = new TestService;
         $details = $testService->prepareOrder( ns()->date->now(), [
-            'tax_group_id'  =>  $taxGroup->id,
-            'tax_type'      =>  'exclusive',
-            'taxes'         =>  $taxGroup->taxes->map( function( $tax ) {
+            'tax_group_id' => $taxGroup->id,
+            'tax_type' => 'exclusive',
+            'taxes' => $taxGroup->taxes->map( function( $tax ) {
                 $tax->tax_name = $tax->name;
                 $tax->tax_id = $tax->id;
 
@@ -190,11 +190,11 @@ trait WithTaxTest
     {
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', '/api/nexopos/v4/crud/ns.taxes-groups', [
-                'name'          =>  __( 'GST' ),
+                'name' => __( 'GST' ),
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 
@@ -204,28 +204,28 @@ trait WithTaxTest
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
-                'name'          =>  __( 'SGST' ),
-                'general'       =>  [
-                    'rate'      =>  5.5,
-                    'tax_group_id'  =>  $group->id,
+                'name' => __( 'SGST' ),
+                'general' => [
+                    'rate' => 5.5,
+                    'tax_group_id' => $group->id,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
 
         $response = $this->withSession( $this->app[ 'session' ]->all() )
             ->json( 'POST', 'api/nexopos/v4/crud/ns.taxes', [
-                'name'          =>  __( 'CGST' ),
-                'general'       =>  [
-                    'rate'      =>  6.5,
-                    'tax_group_id'  =>  $group->id,
+                'name' => __( 'CGST' ),
+                'general' => [
+                    'rate' => 6.5,
+                    'tax_group_id' => $group->id,
                 ],
             ]);
 
         $response->assertJson([
-            'status'    =>  'success',
+            'status' => 'success',
         ]);
     }
 }

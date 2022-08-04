@@ -18,7 +18,7 @@ class CreateOrderTest extends TestCase
      */
     public function testPostingOrder( $callback = null )
     {
-        $this->count = 10;
+        $this->count = 5;
         $this->totalDaysInterval = 14;
 
         if ( $this->defaultProcessing ) {
@@ -34,13 +34,13 @@ class CreateOrderTest extends TestCase
      * Will only make order using
      * the customer balance
      */
-    public function testOrderCreatedForCustomer()
+    private function testOrderCreatedForCustomer()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderPaidWithCustomerBalance();
     }
 
-    public function testCreateOrderWithNoPayment( $callback = null )
+    private function testCreateOrderWithNoPayment( $callback = null )
     {
         if ( $this->defaultProcessing ) {
             $this->attemptAuthenticate();
@@ -51,11 +51,11 @@ class CreateOrderTest extends TestCase
             $this->useDiscount = false;
             $this->shouldMakePayment = false;
             $this->customOrderParams = [
-                'shipping'  =>  0,
+                'shipping' => 0,
             ];
             $this->customProductParams = [
-                'unit_price'    =>  0,
-                'discount'      =>  0,
+                'unit_price' => 0,
+                'discount' => 0,
             ];
 
             $responses = $this->attemptPostOrder( $callback );
@@ -66,7 +66,7 @@ class CreateOrderTest extends TestCase
         }
     }
 
-    public function testCreateOrderWithGroupedProducts()
+    private function testCreateOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptCreateOrderWithGroupedProducts();
@@ -75,7 +75,7 @@ class CreateOrderTest extends TestCase
     /**
      * @depends testCreateOrderWithGroupedProducts
      */
-    public function testRefundOrderWithGroupedProducts()
+    private function testRefundOrderWithGroupedProducts()
     {
         $this->attemptAuthenticate();
         $this->attemptRefundOrderWithGroupedProducts();

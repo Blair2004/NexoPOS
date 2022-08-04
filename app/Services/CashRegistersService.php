@@ -43,11 +43,11 @@ class CashRegistersService
         $register->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The register has been successfully opened' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The register has been successfully opened' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -86,11 +86,11 @@ class CashRegistersService
         $register->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The register has been successfully closed' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The register has been successfully closed' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -121,11 +121,11 @@ class CashRegistersService
         $registerHistory->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The cash has successfully been stored' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been stored' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }
@@ -165,11 +165,11 @@ class CashRegistersService
         $registerHistory->save();
 
         return [
-            'status'    =>  'success',
-            'message'   =>  __( 'The cash has successfully been disbursed.' ),
-            'data'      =>  [
-                'register'  =>  $register,
-                'history'   =>  $registerHistory,
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been disbursed.' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
             ],
         ];
     }

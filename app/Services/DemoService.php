@@ -120,8 +120,8 @@ class DemoService extends DemoCoreService
 
         foreach ( $categories as $category ) {
             $result = $this->categoryService->create([
-                'name'          =>  $category->name,
-                'preview_url'   =>  $category->image,
+                'name' => $category->name,
+                'preview_url' => $category->image,
             ]);
 
             $createdCategory = $result[ 'data' ][ 'category' ];
@@ -132,36 +132,36 @@ class DemoService extends DemoCoreService
 
                 try {
                     $result = $this->productService->create([
-                        'product_type'      => 'product',
-                        'name'              =>  $product->name,
-                        'sku'               =>  $random,
-                        'barcode'           =>  $random,
-                        'barcode_type'      =>  'code128',
-                        'category_id'       =>  $createdCategory[ 'id' ],
-                        'description'       =>  __( 'generated' ),
-                        'product_type'      =>  'product',
-                        'type'              =>  'dematerialized',
-                        'status'            =>  'available',
-                        'stock_management'  =>  'enabled', // Arr::random([ 'disabled', 'enabled' ]),
-                        'tax_group_id'      =>  1,
-                        'tax_type'          =>  'inclusive',
-                        'images'            =>  [
+                        'product_type' => 'product',
+                        'name' => $product->name,
+                        'sku' => $random,
+                        'barcode' => $random,
+                        'barcode_type' => 'code128',
+                        'category_id' => $createdCategory[ 'id' ],
+                        'description' => __( 'generated' ),
+                        'product_type' => 'product',
+                        'type' => 'dematerialized',
+                        'status' => 'available',
+                        'stock_management' => 'enabled', // Arr::random([ 'disabled', 'enabled' ]),
+                        'tax_group_id' => 1,
+                        'tax_type' => 'inclusive',
+                        'images' => [
                             [
-                                'primary'       =>  true,
-                                'url'           =>  asset( $product->image ),
+                                'featured' => true,
+                                'url' => asset( $product->image ),
                             ],
                         ],
-                        'units' =>  [
-                            'selling_group' =>  $unitGroup
+                        'units' => [
+                            'selling_group' => $unitGroup
                                 ->units->map( function( $unit ) use ( $product ) {
                                     return [
-                                        'sale_price_edit'       =>  $product->price,
-                                        'wholesale_price_edit'  =>  ns()->currency->getPercentageValue( $product->price, 10, 'substract' ),
-                                        'unit_id'               =>  $unit->id,
-                                        'preview_url'           =>  asset( $product->image ),
+                                        'sale_price_edit' => $product->price,
+                                        'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ),
+                                        'unit_id' => $unit->id,
+                                        'preview_url' => asset( $product->image ),
                                     ];
                                 }),
-                            'unit_group'    =>  $unitGroup->id,
+                            'unit_group' => $unitGroup->id,
                         ],
                     ]);
                 } catch ( Exception $exception ) {

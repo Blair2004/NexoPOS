@@ -12,16 +12,14 @@ class OrderVoidedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order )
+    public function __construct( public Order $order )
     {
-        $this->order = $order;
+        // ...
     }
 
     /**

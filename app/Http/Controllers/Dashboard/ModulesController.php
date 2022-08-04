@@ -41,8 +41,8 @@ class ModulesController extends DashboardController
     public function listModules( $page = '' )
     {
         return $this->view( 'pages.dashboard.modules.list', [
-            'title'         =>      __( 'Modules List' ),
-            'description'   =>  __( 'List all available modules.' ),
+            'title' => __( 'Modules List' ),
+            'description' => __( 'List all available modules.' ),
         ]);
     }
 
@@ -78,9 +78,9 @@ class ModulesController extends DashboardController
         }
 
         return [
-            'modules'           =>  $list,
-            'total_enabled'     =>  count( $this->modules->getEnabled() ),
-            'total_disabled'    =>  count( $this->modules->getDisabled() ),
+            'modules' => $list,
+            'total_enabled' => count( $this->modules->getEnabled() ),
+            'total_disabled' => count( $this->modules->getDisabled() ),
         ];
     }
 
@@ -135,8 +135,8 @@ class ModulesController extends DashboardController
     public function showUploadModule()
     {
         return $this->view( 'pages.dashboard.modules.upload', [
-            'title'     =>      __( 'Upload A Module' ),
-            'description'   =>  __( 'Extends NexoPOS features with some new modules.' ),
+            'title' => __( 'Upload A Module' ),
+            'description' => __( 'Extends NexoPOS features with some new modules.' ),
         ]);
     }
 

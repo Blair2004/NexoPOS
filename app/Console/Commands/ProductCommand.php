@@ -54,8 +54,8 @@ class ProductCommand extends Command
         $this->productService = app()->make( ProductService::class );
 
         match ( $this->argument( 'action' ) ) {
-            'update'            =>  $this->updateProducts(),
-            'refresh-barcode'   =>  $this->refreshBarcodes()
+            'update' => $this->updateProducts(),
+            'refresh-barcode' => $this->refreshBarcodes()
         };
     }
 
@@ -89,14 +89,14 @@ class ProductCommand extends Command
             $subItems = ProductSubItem::where( 'product_id', $product->id )->get();
 
             $this->productService->update( $product, array_merge( $product->toArray(), [
-                'units'     =>  [
-                    'unit_group'        =>  $product->unit_group,
-                    'accurate_tracking' =>  $product->accurate_tracking,
-                    'selling_group'     =>  $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() )->toArray(),
+                'units' => [
+                    'unit_group' => $product->unit_group,
+                    'accurate_tracking' => $product->accurate_tracking,
+                    'selling_group' => $units->map( fn( $unitQuantity ) => $unitQuantity->toArray() )->toArray(),
                 ],
-                'images'                =>  $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
-                'groups'                =>  [
-                    'product_subitems'      =>  $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
+                'images' => $gallery->map( fn( $gallery ) => $gallery->toArray() )->toArray(),
+                'groups' => [
+                    'product_subitems' => $subItems->map( fn( $subItem ) => $subItem->toArray() )->toArray(),
                 ],
             ]) );
         });

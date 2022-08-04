@@ -47,10 +47,10 @@ class GlobalProductHistoryCrud extends CrudService
      * @param  array
      */
     protected $permissions = [
-        'create'    =>  false,
-        'read'      =>  true,
-        'update'    =>  false,
-        'delete'    =>  false,
+        'create' => false,
+        'read' => true,
+        'update' => false,
+        'delete' => false,
     ];
 
     /**
@@ -63,7 +63,7 @@ class GlobalProductHistoryCrud extends CrudService
         [ 'nexopos_users as user', 'user.id', '=', 'nexopos_products_histories.author' ],
         [ 'nexopos_products as product', 'product.id', '=', 'nexopos_products_histories.product_id' ],
         [ 'nexopos_units as unit', 'unit.id', '=', 'nexopos_products_histories.unit_id' ],
-        'leftJoin'  =>  [
+        'leftJoin' => [
             [ 'nexopos_procurements as procurement', 'procurement.id', '=', 'nexopos_products_histories.procurement_id' ],
             [ 'nexopos_orders as order', 'order.id', '=', 'nexopos_products_histories.order_id' ],
         ],
@@ -145,15 +145,15 @@ class GlobalProductHistoryCrud extends CrudService
     public function getLabels()
     {
         return [
-            'list_title'            =>  __( 'Product Histories' ),
-            'list_description'      =>  __( 'Display all product stock flow.' ),
-            'no_entry'              =>  __( 'No products stock flow has been registered' ),
-            'create_new'            =>  __( 'Add a new products stock flow' ),
-            'create_title'          =>  __( 'Create a new products stock flow' ),
-            'create_description'    =>  __( 'Register a new products stock flow and save it.' ),
-            'edit_title'            =>  __( 'Edit products stock flow' ),
-            'edit_description'      =>  __( 'Modify  Globalproducthistorycrud.' ),
-            'back_to_list'          =>  __( 'Return to Product Histories' ),
+            'list_title' => __( 'Product Histories' ),
+            'list_description' => __( 'Display all product stock flow.' ),
+            'no_entry' => __( 'No products stock flow has been registered' ),
+            'create_new' => __( 'Add a new products stock flow' ),
+            'create_title' => __( 'Create a new products stock flow' ),
+            'create_description' => __( 'Register a new products stock flow and save it.' ),
+            'edit_title' => __( 'Edit products stock flow' ),
+            'edit_description' => __( 'Modify  Globalproducthistorycrud.' ),
+            'back_to_list' => __( 'Return to Product Histories' ),
         ];
     }
 
@@ -307,62 +307,62 @@ class GlobalProductHistoryCrud extends CrudService
     public function getColumns()
     {
         return [
-            'product_name'  =>  [
-                'label'  =>  __( 'Product' ),
-                '$direction'    =>  '',
-                'width'         =>  '300px',
-                '$sort'         =>  false,
+            'product_name' => [
+                'label' => __( 'Product' ),
+                '$direction' => '',
+                'width' => '300px',
+                '$sort' => false,
             ],
-            'procurement_name'  =>  [
-                'label'  =>  __( 'Procurement' ),
-                '$direction'    =>  '',
-                'width'         =>  '200px',
-                '$sort'         =>  false,
+            'procurement_name' => [
+                'label' => __( 'Procurement' ),
+                '$direction' => '',
+                'width' => '200px',
+                '$sort' => false,
             ],
-            'order_code'  =>  [
-                'label'  =>  __( 'Order' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'order_code' => [
+                'label' => __( 'Order' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'operation_type'  =>  [
-                'label'  =>  __( 'Operation Type' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'operation_type' => [
+                'label' => __( 'Operation Type' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'unit_name'  =>  [
-                'label'  =>  __( 'Unit' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'unit_name' => [
+                'label' => __( 'Unit' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'before_quantity'  =>  [
-                'label'  =>  __( 'Initial Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'before_quantity' => [
+                'label' => __( 'Initial Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'quantity'  =>  [
-                'label'  =>  __( 'Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'quantity' => [
+                'label' => __( 'Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'after_quantity'  =>  [
-                'label'  =>  __( 'New Quantity' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'after_quantity' => [
+                'label' => __( 'New Quantity' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'total_price'  =>  [
-                'label'  =>  __( 'Total Price' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'total_price' => [
+                'label' => __( 'Total Price' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'user_username'  =>  [
-                'label'  =>  __( 'Author' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'user_username' => [
+                'label' => __( 'Author' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
-            'created_at'  =>  [
-                'label'  =>  __( 'Created At' ),
-                '$direction'    =>  '',
-                '$sort'         =>  false,
+            'created_at' => [
+                'label' => __( 'Created At' ),
+                '$direction' => '',
+                '$sort' => false,
             ],
         ];
     }
@@ -410,12 +410,12 @@ class GlobalProductHistoryCrud extends CrudService
 
         // you can make changes here
         $entry->addAction( 'delete', [
-            'label'     =>  __( 'Delete' ),
-            'namespace' =>  'delete',
-            'type'      =>  'DELETE',
-            'url'       =>  ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
-            'confirm'   =>  [
-                'message'  =>  __( 'Would you like to delete this ?' ),
+            'label' => __( 'Delete' ),
+            'namespace' => 'delete',
+            'type' => 'DELETE',
+            'url' => ns()->url( '/api/nexopos/v4/crud/ns.global-products-history/' . $entry->id ),
+            'confirm' => [
+                'message' => __( 'Would you like to delete this ?' ),
             ],
         ]);
 
@@ -451,8 +451,8 @@ class GlobalProductHistoryCrud extends CrudService
             }
 
             $status = [
-                'success'   =>  0,
-                'failed'    =>  0,
+                'success' => 0,
+                'failed' => 0,
             ];
 
             foreach ( $request->input( 'entries' ) as $id ) {
@@ -479,11 +479,11 @@ class GlobalProductHistoryCrud extends CrudService
     public function getLinks(): array
     {
         return  [
-            'list'      =>  ns()->url( 'dashboard/' . '/products/history' ),
-            'create'    =>  ns()->url( 'dashboard/' . '/products/history/create' ),
-            'edit'      =>  ns()->url( 'dashboard/' . '/products/history/edit/' ),
-            'post'      =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
-            'put'       =>  ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
+            'list' => ns()->url( 'dashboard/' . '/products/history' ),
+            'create' => ns()->url( 'dashboard/' . '/products/history/create' ),
+            'edit' => ns()->url( 'dashboard/' . '/products/history/edit/' ),
+            'post' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history' ),
+            'put' => ns()->url( 'api/nexopos/v4/crud/' . 'ns.global-products-history/{id}' . '' ),
         ];
     }
 
@@ -496,10 +496,10 @@ class GlobalProductHistoryCrud extends CrudService
     {
         return Hook::filter( $this->namespace . '-bulk', [
             [
-                'label'         =>  __( 'Delete Selected Groups' ),
-                'identifier'    =>  'delete_selected',
-                'url'           =>  ns()->route( 'ns.api.crud-bulk-actions', [
-                    'namespace' =>  $this->namespace,
+                'label' => __( 'Delete Selected Groups' ),
+                'identifier' => 'delete_selected',
+                'url' => ns()->route( 'ns.api.crud-bulk-actions', [
+                    'namespace' => $this->namespace,
                 ]),
             ],
         ]);
