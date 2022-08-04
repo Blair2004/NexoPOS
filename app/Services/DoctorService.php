@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Option;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserAttribute;
+use Exception;
 
 class DoctorService
 {
@@ -65,5 +67,22 @@ class DoctorService
                 $role->save();
             }
         }
+    }
+
+    public function fixDuplicateOptions()
+    {
+        $options    =   Option::get();
+        $options->each( function( $option ) {
+            try {
+                $option->refresh();
+                if ( $option instanceof Option ) {
+                    Option::where( 'key', $option->key )
+                        ->where( 'id', '<>', $option->id )
+                        ->delete();
+                }
+            } catch( Exception $exception ) {
+                // the option might be deleted, let's skip that.
+            }
+        });        
     }
 }
