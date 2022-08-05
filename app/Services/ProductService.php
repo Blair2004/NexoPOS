@@ -541,8 +541,8 @@ class ProductService
          * @todo should be tested
          */
         $manyPrimary = collect( $groups )->map( function( $fields ) {
-                return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
-            })
+            return isset( $fields[ 'featured' ] ) && (int) $fields[ 'featured' ] === 1;
+        })
             ->filter( fn( $result ) => $result === true )
             ->count() > 1;
 

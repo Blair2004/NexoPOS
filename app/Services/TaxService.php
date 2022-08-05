@@ -459,7 +459,7 @@ class TaxService
      */
     public function getGrossPriceFromNetPrice( $net_price, $rate )
     {
-        if( ( int ) $net_price == 0 ) {
+        if ( (int) $net_price == 0 ) {
             return 0;
         }
 

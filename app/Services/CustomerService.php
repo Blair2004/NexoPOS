@@ -74,6 +74,29 @@ class CustomerService
         ];
     }
 
+    public function precheckCustomers( $fields, $id = null )
+    {
+        if ( $id = null ) {
+            /**
+             * Let's find if a similar customer exist with
+             * the provided email
+             */
+            $customer = Customer::byEmail( $fields[ 'email' ] )->first();
+        } else {
+            /**
+             * Let's find if a similar customer exist with
+             * the provided  and which is not the actula customer.
+             */
+            $customer = Customer::byEmail( $fields[ 'email' ] )
+                ->where( 'id', '<>', $id )
+                ->first();
+        }
+        
+        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) ) { 
+            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
+        }
+    }
+
     /**
      * Create customer fields
      *
@@ -82,15 +105,7 @@ class CustomerService
      */
     public function create( $fields )
     {
-        /**
-         * Let's find if a similar customer exist with
-         * the provided email
-         */
-        $customer = Customer::byEmail( $fields[ 'email' ] )->first();
-
-        if ( $customer instanceof Customer ) {
-            throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
-        }
+        $this->precheckCustomers( $fields );        
 
         /**
          * saving a customer
@@ -156,6 +171,8 @@ class CustomerService
         if ( ! $customer instanceof Customer ) {
             throw new NotFoundException( __( 'Unable to find the customer using the provided ID.' ) );
         }
+
+        $this->precheckCustomers( $fields, $id );  
 
         foreach ( $fields as $field => $value ) {
             if ( $field !== 'address' ) {

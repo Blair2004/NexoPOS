@@ -71,7 +71,7 @@ class DoctorService
 
     public function fixDuplicateOptions()
     {
-        $options    =   Option::get();
+        $options = Option::get();
         $options->each( function( $option ) {
             try {
                 $option->refresh();
@@ -80,9 +80,9 @@ class DoctorService
                         ->where( 'id', '<>', $option->id )
                         ->delete();
                 }
-            } catch( Exception $exception ) {
+            } catch ( Exception $exception ) {
                 // the option might be deleted, let's skip that.
             }
-        });        
+        });
     }
 }
