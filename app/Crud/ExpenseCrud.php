@@ -290,7 +290,7 @@ class ExpenseCrud extends CrudService
      */
     public function afterPost( $inputs, Expense $entry )
     {
-        event( new ExpenseAfterCreateEvent( $entry, $inputs ) );
+        ExpenseAfterCreateEvent::dispatch( $entry, $inputs );
 
         return $inputs;
     }
@@ -338,8 +338,8 @@ class ExpenseCrud extends CrudService
      */
     public function afterPut( $request, $entry )
     {
-        event( new ExpenseAfterUpdateEvent( $entry, $request ) );
-
+        ExpenseAfterUpdateEvent::dispatch( $entry, $request );
+        
         return $request;
     }
 

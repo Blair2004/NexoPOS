@@ -2,14 +2,15 @@
 
 namespace App\Events;
 
-use App\Models\Expense;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 
-class ExpenseAfterUpdateEvent
+class JobAfterUnserializeEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,11 +19,9 @@ class ExpenseAfterUpdateEvent
      *
      * @return void
      */
-    public function __construct( 
-        public Expense $expense, 
-        public $inputs
-    ) {
-        // ...
+    public function __construct( public $job )
+    {
+        //
     }
 
     /**
@@ -32,6 +31,6 @@ class ExpenseAfterUpdateEvent
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('ns.private-channel');
+        return new PrivateChannel('channel-name');
     }
 }
