@@ -12,16 +12,14 @@ class PasswordAfterRecoveredEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( User $user )
+    public function __construct( public User $user )
     {
-        $this->user = $user;
+        // ...
     }
 
     /**

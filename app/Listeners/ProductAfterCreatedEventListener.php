@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ProductAfterCreatedEvent;
+use App\Jobs\ComputeCategoryProductsJob;
 use App\Services\BarcodeService;
+use App\Services\ProductCategoryService;
 use App\Services\ProductService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,7 +19,8 @@ class ProductAfterCreatedEventListener
      */
     public function __construct(
         public ProductService $productService,
-        public BarcodeService $barcodeService
+        public BarcodeService $barcodeService,
+        public ProductCategoryService $productCategoryService
     )
     {
         //
@@ -33,8 +36,6 @@ class ProductAfterCreatedEventListener
     {
         $this->productService->generateProductBarcode( $event->product );
 
-        /**
-         * create jobs that count product categories.
-         */        
+        ComputeCategoryProductsJob::dispatch( $event->product->category );
     }
 }

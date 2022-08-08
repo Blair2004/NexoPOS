@@ -12,25 +12,13 @@ class OrderProductAfterComputedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $orderProduct;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( OrderProduct $orderProduct )
+    public function __construct( public OrderProduct $orderProduct )
     {
-        $this->orderProduct = $orderProduct;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
+        // ...
     }
 }

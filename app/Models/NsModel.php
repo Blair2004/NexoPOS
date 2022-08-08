@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Classes\Hook;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 
 abstract class NsModel extends NsRootModel
 {

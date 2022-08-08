@@ -12,19 +12,14 @@ class ProductAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $product;
-
-    public $fields;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Product $product, $fields )
+    public function __construct( public Product $product, public $fields )
     {
-        $this->product = $product;
-        $this->fields = $fields;
+        // ...
     }
 
     /**

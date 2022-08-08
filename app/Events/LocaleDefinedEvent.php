@@ -11,25 +11,13 @@ class LocaleDefinedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $locale;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $locale )
+    public function __construct( public $locale )
     {
-        $this->locale = $locale;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
+        // ...
     }
 }

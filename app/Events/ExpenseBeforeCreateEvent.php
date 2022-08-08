@@ -13,18 +13,13 @@ class ExpenseBeforeCreateEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @param Request
-     */
-    public $inputs;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( array $inputs )
+    public function __construct( public array $inputs )
     {
-        $this->inputs = $inputs;
+        // ...
     }
 
     /**

@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ProductBeforeDeleteEvent;
 use App\Services\ProductService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProductBeforeDeleteEventListener
 {
@@ -29,6 +27,12 @@ class ProductBeforeDeleteEventListener
      */
     public function handle(ProductBeforeDeleteEvent $event)
     {
+        /**
+         * This will be useful after deleting the product
+         * to recount all the items linked to that category.
+         */
+        $event->product->load( 'category' );
+
         /**
          * @todo check if the product is currently
          * in use within a procurement or an unpaid order

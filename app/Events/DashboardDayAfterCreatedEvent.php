@@ -11,17 +11,15 @@ use Illuminate\Queue\SerializesModels;
 class DashboardDayAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $dashboardDay;
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( DashboardDay $dashboardDay )
+    public function __construct( public DashboardDay $dashboardDay )
     {
-        $this->dashboardDay = $dashboardDay;
+        // ...
     }
 
     /**

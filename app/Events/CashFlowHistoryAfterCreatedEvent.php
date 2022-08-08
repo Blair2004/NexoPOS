@@ -10,16 +10,14 @@ use Illuminate\Queue\SerializesModels;
 class CashFlowHistoryAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $cashFlow;
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( CashFlow $cashFlow )
+    public function __construct( public CashFlow $cashFlow )
     {
-        $this->cashFlow = $cashFlow;
+        // ...
     }
 }

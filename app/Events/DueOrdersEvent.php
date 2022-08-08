@@ -13,18 +13,13 @@ class DueOrdersEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @param Collection
-     */
-    public $orders;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Collection $orders )
+    public function __construct( public Collection $orders )
     {
-        $this->orders = $orders;
+        // ...
     }
 
     /**

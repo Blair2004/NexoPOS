@@ -9,10 +9,8 @@ class ProcurementDeletionEvent
 {
     use SerializesModels;
 
-    public $procurement;
-
-    public function __construct( Procurement $procurement )
+    public function __construct( public Procurement $procurement )
     {
-        $this->procurement = $procurement;
+        // ...
     }
 }

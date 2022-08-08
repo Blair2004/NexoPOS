@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ProductAfterDeleteEvent;
+use App\Services\ProductCategoryService;
 use App\Services\ProductService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,7 +16,8 @@ class ProductAfterDeleteEventListener
      * @return void
      */
     public function __construct(
-        public ProductService $productService
+        public ProductService $productService,
+        public ProductCategoryService $productCategoryService,
     )
     {
         //
@@ -29,6 +31,6 @@ class ProductAfterDeleteEventListener
      */
     public function handle(ProductAfterDeleteEvent $event)
     {
-        //
+        $this->productCategoryService->computeProducts( $event->product->category );
     }
 }

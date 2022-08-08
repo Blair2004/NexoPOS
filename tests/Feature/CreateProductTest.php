@@ -21,6 +21,15 @@ class CreateProductTest extends TestCase
     }
 
     /**
+     * @depends testCreateGroupedProducts
+     */
+    public function testDeleteProducts()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptDeleteProducts();
+    }
+
+    /**
      * A basic feature test example.
      *
      * @return void

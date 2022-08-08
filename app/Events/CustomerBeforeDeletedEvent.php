@@ -17,18 +17,8 @@ class CustomerBeforeDeletedEvent
      *
      * @return void
      */
-    public function __construct( Customer $customer )
+    public function __construct( public Customer $customer )
     {
-        $this->customer = $customer;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
+        // ...
     }
 }

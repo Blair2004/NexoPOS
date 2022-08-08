@@ -12,23 +12,15 @@ use Illuminate\Queue\SerializesModels;
 class ProcurementAfterSaveProductEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $procurement;
-
-    public $product;
-
-    public $data;
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Procurement $procurement, ProcurementProduct $product, array $data )
+    public function __construct( public Procurement $procurement, public ProcurementProduct $product, public array $data )
     {
-        $this->procurement = $procurement;
-        $this->product = $product;
-        $this->data = $data;
+        // ...
     }
 
     /**

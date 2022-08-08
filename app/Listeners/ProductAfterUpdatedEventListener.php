@@ -3,9 +3,8 @@
 namespace App\Listeners;
 
 use App\Events\ProductAfterUpdatedEvent;
+use App\Jobs\ComputeCategoryProductsJob;
 use App\Services\ProductService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProductAfterUpdatedEventListener
 {
@@ -15,7 +14,7 @@ class ProductAfterUpdatedEventListener
      * @return void
      */
     public function __construct(
-        public ProductService $productService
+        public ProductService $productService,
     )
     {
         //
@@ -30,5 +29,7 @@ class ProductAfterUpdatedEventListener
     public function handle(ProductAfterUpdatedEvent $event)
     {
         $this->productService->generateProductBarcode( $event->product );
+
+        ComputeCategoryProductsJob::dispatch( $event->product->category );
     }
 }
