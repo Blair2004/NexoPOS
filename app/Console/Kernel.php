@@ -33,6 +33,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        /**
+         * @todo ensures some jobs can also be executed on multistore.
+         * This could be made through events that are dispatched within
+         * the jobs
+         */
+        
         $schedule->call( function() {
             if ( env( 'TELESCOPE_ENABLED', false ) ) {
                 Artisan::call( 'telescope:prune', [ 'hours' => 12 ]);

@@ -217,8 +217,6 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->bindMethod([ RefreshReportJob::class, 'handle' ], fn( $job, $app ) => $job->handle( $app->make( ReportService::class ) ) );
-
         /**
          * When the module has started,
          * we can load the configuration.

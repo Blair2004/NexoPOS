@@ -5,7 +5,7 @@ use App\Events\JobBeforeSerializeEvent;
 use App\Jobs\Middleware\UnserializeMiddleware;
 use Modules\NsMultiStore\Models\Store;
 
-trait NsDispatchable 
+trait NsSerialize 
 {
     public $attributes;
     public Store $store;

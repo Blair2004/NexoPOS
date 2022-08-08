@@ -12,16 +12,14 @@ class CashRegisterHistoryAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $registerHistory;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( RegisterHistory $registerHistory )
+    public function __construct( public RegisterHistory $registerHistory )
     {
-        $this->registerHistory = $registerHistory;
+        // ...
     }
 
     /**

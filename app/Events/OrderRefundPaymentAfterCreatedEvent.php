@@ -13,18 +13,13 @@ class OrderRefundPaymentAfterCreatedEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var OrderRefund
-     */
-    public $orderRefund;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( OrderRefund $refund )
+    public function __construct( public OrderRefund $refund )
     {
-        $this->orderRefund = $refund;
+        // ...
     }
 
     /**

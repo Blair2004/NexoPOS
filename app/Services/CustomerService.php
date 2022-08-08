@@ -380,7 +380,7 @@ class CustomerService
         $customer->purchases_amount += $value;
         $customer->save();
 
-        event( new CustomerAfterUpdatedEvent( $customer ) );
+        CustomerAfterUpdatedEvent::dispatch( $customer );
 
         return $customer;
     }
@@ -390,7 +390,7 @@ class CustomerService
         $customer->purchases_amount -= $value;
         $customer->save();
 
-        event( new CustomerAfterUpdatedEvent( $customer ) );
+        CustomerAfterUpdatedEvent::dispatch( $customer );
 
         return $customer;
     }
@@ -407,12 +407,11 @@ class CustomerService
      * and issue a coupon if necessary
      *
      * @param Order $order
-     * @param Customer $customer
      * @return void
      */
-    public function computeReward( Order $order, Customer $customer )
+    public function computeReward( Order $order )
     {
-        $reward = $customer->group->reward;
+        $reward = $order->customer->group->reward;
 
         if ( $reward instanceof RewardSystem ) {
             $points = 0;
@@ -423,12 +422,12 @@ class CustomerService
             });
 
             $currentReward = CustomerReward::where( 'reward_id', $reward->id )
-                ->where( 'customer_id', $customer->id )
+                ->where( 'customer_id', $order->customer->id )
                 ->first();
 
             if ( ! $currentReward instanceof CustomerReward ) {
                 $currentReward = new CustomerReward;
-                $currentReward->customer_id = $customer->id;
+                $currentReward->customer_id = $order->customer->id;
                 $currentReward->reward_id = $reward->id;
                 $currentReward->points = 0;
                 $currentReward->target = $reward->target;
@@ -438,7 +437,7 @@ class CustomerService
             $currentReward->points += $points;
             $currentReward->save();
 
-            event( new CustomerRewardAfterCreatedEvent( $currentReward, $customer, $reward ) );
+            CustomerRewardAfterCreatedEvent::dispatch( $currentReward, $order->customer, $reward );
         }
     }
 
@@ -466,7 +465,7 @@ class CustomerService
                 $customerReward->points = abs( $customerReward->points - $customerReward->target );
                 $customerReward->save();
 
-                event( new CustomerRewardAfterCouponIssuedEvent( $customerCoupon ) );
+                CustomerRewardAfterCouponIssuedEvent::dispatch( $customerCoupon );
             } else {
                 /**
                  * @var NotificationService
@@ -651,6 +650,22 @@ class CustomerService
             case CustomerAccountHistory::OPERATION_PAYMENT: return __( 'Order Payment' ); break;
             case CustomerAccountHistory::OPERATION_REFUND: return __( 'Order Refund' ); break;
             default: return __( 'Unknown Operation' ); break;
+        }
+    }
+
+    /**
+     * Will increase the customer purchase 
+     * when an order is flagged as paid
+     */
+    public function increaseCustomerPurchase( Order $order )
+    {
+        if ( in_array( $order->payment_status, [
+            Order::PAYMENT_PAID,
+        ]) ) {
+            $this->increasePurchases(
+                $order->customer,
+                $order->total
+            );
         }
     }
 }

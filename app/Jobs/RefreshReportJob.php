@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\CashFlow;
 use App\Services\ReportService;
+use App\Traits\NsSerialize;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,18 +14,16 @@ use Illuminate\Queue\SerializesModels;
 
 class RefreshReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $event;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( $event )
+    public function __construct( public CashFlow $cashFlow )
     {
-        $this->event = $event;
+        $this->prepareSerialization();
     }
 
     /**

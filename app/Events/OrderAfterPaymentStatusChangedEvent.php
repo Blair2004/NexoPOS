@@ -12,31 +12,13 @@ class OrderAfterPaymentStatusChangedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
-    public $previous;
-
-    public $new;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order, $previous, $new )
+    public function __construct( public Order $order, public $previous, public $new )
     {
-        $this->order = $order;
-        $this->previous = $previous;
-        $this->new = $new;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
+        // ...
     }
 }

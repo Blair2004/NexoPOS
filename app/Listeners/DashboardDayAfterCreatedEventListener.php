@@ -25,7 +25,6 @@ class DashboardDayAfterCreatedEventListener
      */
     public function handle( DashboardDayAfterCreatedEvent $event )
     {
-        ComputeDashboardMonthReportJob::dispatch()
-            ->delay( now()->addSeconds(10) );
+        ComputeDashboardMonthReportJob::dispatch();
     }
 }

@@ -815,7 +815,7 @@ class OrdersService
         $orderPayment->author = $order->author ?? Auth::id();
         $orderPayment->save();
 
-        event( new OrderAfterPaymentCreatedEvent( $orderPayment, $order ) );
+        OrderAfterPaymentCreatedEvent::dispatch( $orderPayment, $order );
 
         return $orderPayment;
     }
@@ -1730,7 +1730,7 @@ class OrdersService
             );
         }
 
-        event( new OrderAfterRefundedEvent( $order, $orderRefund ) );
+        OrderAfterRefundedEvent::dispatch( $order, $orderRefund );
 
         return [
             'status' => 'success',
@@ -1801,7 +1801,7 @@ class OrdersService
 
         $productRefund->save();
 
-        event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
+        OrderAfterProductRefundedEvent::dispatch( $order, $orderProduct, $productRefund );
 
         /**
          * We should adjust the stock only if a valid product
@@ -2125,7 +2125,7 @@ class OrdersService
             'instalments',
         ])->toArray() );
 
-        event( new OrderBeforeDeleteEvent( json_decode( $cachedOrder ) ) );
+        OrderBeforeDeleteEvent::dispatch( json_decode( $cachedOrder ) );
 
         $order
             ->products()
@@ -2163,7 +2163,7 @@ class OrdersService
 
         $order->delete();
 
-        event( new OrderAfterDeletedEvent( (object) $orderArray ) );
+        OrderAfterDeletedEvent::dispatch( (object) $orderArray );
 
         return [
             'status' => 'success',
@@ -2185,7 +2185,7 @@ class OrdersService
 
         $order->products->map(function ($product) use ( $product_id, &$hasDeleted, $order ) {
             if ($product->id === intval($product_id)) {
-                event( new OrderBeforeDeleteProductEvent( $order, $product));
+                event( new OrderBeforeDeleteProductEvent( $order, $product ) );
 
                 $product->delete();
                 $hasDeleted = true;
@@ -2461,7 +2461,7 @@ class OrdersService
                 Role::namespace( 'nexopos.store.administrator' ),
             ]);
 
-            event( new DueOrdersEvent( $orders ) );
+            DueOrdersEvent::dispatch( $orders );
 
             return [
                 'status' => 'success',

@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Services\DateService;
 use App\Services\NotificationService;
 use App\Services\Options;
+use App\Traits\NsSerialize;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -16,7 +17,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ClearHoldOrdersJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
 
     /**
      * Create a new job instance.
@@ -25,7 +26,7 @@ class ClearHoldOrdersJob implements ShouldQueue
      */
     public function __construct()
     {
-        //
+        $this->prepareSerialization();
     }
 
     /**

@@ -66,7 +66,7 @@ class ModulesServiceProvider extends ServiceProvider
                 $this->modules->triggerServiceProviders( $module, 'register', ServiceProvider::class );
             });
 
-            event( new ModulesLoadedEvent( $this->modules->get() ) );
+            ModulesLoadedEvent::dispatch( $this->modules->get() );
 
             return $this->modules;
         });

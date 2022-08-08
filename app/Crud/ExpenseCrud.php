@@ -276,7 +276,7 @@ class ExpenseCrud extends CrudService
     {
         $this->allowedTo( 'create' );
 
-        event( new ExpenseBeforeCreateEvent( $inputs ) );
+        ExpenseBeforeCreateEvent::dispatch( $inputs );
 
         return $inputs;
     }
@@ -324,7 +324,7 @@ class ExpenseCrud extends CrudService
     {
         $this->allowedTo( 'update' );
 
-        event( new ExpenseBeforeUpdateEvent( $entry, $request ) );
+        ExpenseBeforeUpdateEvent::dispatch( $entry, $request );
 
         return $request;
     }
@@ -373,7 +373,7 @@ class ExpenseCrud extends CrudService
         if ( $namespace == 'ns.expenses' ) {
             $this->allowedTo( 'delete' );
 
-            event( new ExpenseBeforeDeleteEvent( $model ) );
+            ExpenseBeforeDeleteEvent::dispatch( $model );
         }
     }
 

@@ -2,27 +2,29 @@
 
 namespace App\Jobs;
 
-use App\Events\CashFlowHistoryBeforeDeleteEvent;
+use App\Models\CashFlow;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * @todo check where it's called
+ */
 class AfterExpenseComputedJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $event;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( $event )
+    public function __construct( public CashFlow $cashFlow )
     {
-        $this->event = $event;
+        $this->prepareSerialization();
     }
 
     /**
@@ -32,8 +34,6 @@ class AfterExpenseComputedJob implements ShouldQueue
      */
     public function handle()
     {
-        if ( $this->event instanceof CashFlowHistoryBeforeDeleteEvent ) {
-            $this->event->cashFlow->delete();
-        }
+        $this->cashFlow->delete();
     }
 }

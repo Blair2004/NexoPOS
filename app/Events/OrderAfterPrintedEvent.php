@@ -12,20 +12,15 @@ use Illuminate\Queue\SerializesModels;
 class OrderAfterPrintedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $order;
-
-    public $doc;
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Order $order, $doc )
+    public function __construct( public Order $order, public $doc )
     {
-        $this->order = $order;
-        $this->doc = $doc;
+        // ...
     }
 
     /**

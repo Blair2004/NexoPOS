@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Events\CashFlowHistoryAfterCreatedEvent;
 use App\Events\ExpenseAfterCreateEvent;
 use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Exceptions\NotAllowedException;
@@ -55,7 +54,7 @@ class ExpenseService
         $expense->author = Auth::id();
         $expense->save();
 
-        event( new ExpenseAfterCreateEvent( $expense, request() ) );
+        ExpenseAfterCreateEvent::dispatch( $expense, request()->all() );
 
         return [
             'status' => 'success',
@@ -372,8 +371,6 @@ class ExpenseService
                     }
 
                     $history->save();
-
-                    event( new CashFlowHistoryAfterCreatedEvent( $history ) );
                 }
             });
         } else {
@@ -404,8 +401,6 @@ class ExpenseService
             }
 
             $history->save();
-
-            CashFlowHistoryAfterCreatedEvent::dispatch( $history );
         }
     }
 
@@ -633,33 +628,30 @@ class ExpenseService
     /**
      * Will compare order payment status
      * and if the previous and the new payment status are supported
-     * the transaction will be record to the cash flow
-     *
-     * @param OrderAfterPaymentStatusChangedEvent $event
-     * @return void
+     * the transaction will be record to the cash flow.
      */
-    public function handlePaymentStatus( OrderAfterPaymentStatusChangedEvent $event )
+    public function handlePaymentStatus( string $previous, string $new, Order $order )
     {
-        if ( in_array( $event->previous, [
+        if ( in_array( $previous, [
             Order::PAYMENT_HOLD,
             Order::PAYMENT_DUE,
             Order::PAYMENT_PARTIALLY,
             Order::PAYMENT_PARTIALLY_DUE,
             Order::PAYMENT_UNPAID,
         ]) && in_array(
-            $event->new, [
+            $new, [
                 Order::PAYMENT_PAID,
             ]
         )) {
             $expenseCategory = $this->getAccountTypeByCode( CashFlow::ACCOUNT_SALES );
 
             $expense = new Expense;
-            $expense->value = $event->order->total;
+            $expense->value = $order->total;
             $expense->active = true;
             $expense->operation = CashFlow::OPERATION_CREDIT;
             $expense->author = Auth::id();
-            $expense->order_id = $event->order->id;
-            $expense->name = sprintf( __( 'Sale : %s' ), $event->order->code );
+            $expense->order_id = $order->id;
+            $expense->name = sprintf( __( 'Sale : %s' ), $order->code );
             $expense->id = 0; // this is not assigned to an existing expense
             $expense->category = $expenseCategory;
 
@@ -827,7 +819,7 @@ class ExpenseService
     }
 
     /**
-     * Will trigger not recurring expense
+     * Will trigger not recurring expenses
      *
      * @return void
      */

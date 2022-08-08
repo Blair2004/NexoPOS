@@ -10,20 +10,14 @@ use Illuminate\Queue\SerializesModels;
 class OrderAfterCheckPerformedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $fields;
-
-    public $order;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $fields, $order )
+    public function __construct( public $fields, public $order )
     {
-        $this->order = $order;
-        $this->fields = $fields;
+        // ... 
     }
 
     /**

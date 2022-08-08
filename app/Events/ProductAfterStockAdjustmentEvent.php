@@ -12,17 +12,12 @@ class ProductAfterStockAdjustmentEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var ProductHistory
-     */
-    public $history;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( ProductHistory $history )
+    public function __construct( public ProductHistory $history )
     {
-        $this->history = $history;
+        // ...
     }
 }

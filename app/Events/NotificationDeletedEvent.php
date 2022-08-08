@@ -12,17 +12,15 @@ use Illuminate\Queue\SerializesModels;
 class NotificationDeletedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    public $notification;
-
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( Notification $notification )
+    public function __construct( public Notification $notification )
     {
-        $this->notification = $notification;
+        // ...
     }
 
     /**
