@@ -125,12 +125,44 @@ class CashRegistersService
         ];
     }
 
+    public function saleDelete( Register $register, $amount, $description )
+    {
+        if ( $register->balance - $amount < 0 ) {
+            throw new NotAllowedException(
+                sprintf(
+                    __( 'Not enough fund to delete a sale from "%s". If funds were cashed-out or disbursed, consider adding some cash (%s) to the register.' ),
+                    $register->name,
+                    trim( ( string ) ns()->currency->define( $amount ) )
+                )
+            );
+        }
+
+        $registerHistory = new RegisterHistory;
+        $registerHistory->register_id = $register->id;
+        $registerHistory->action = RegisterHistory::ACTION_DELETE;
+        $registerHistory->author = Auth::id();
+        $registerHistory->description = $description;
+        $registerHistory->balance_before = $register->balance;
+        $registerHistory->value = $amount;
+        $registerHistory->balance_after = $register->balance - $amount;
+        $registerHistory->save();
+
+        return [
+            'status' => 'success',
+            'message' => __( 'The cash has successfully been stored' ),
+            'data' => [
+                'register' => $register,
+                'history' => $registerHistory,
+            ],
+        ];
+    }
+
     public function cashOut( Register $register, $amount, $description )
     {
         if ( $register->status !== Register::STATUS_OPENED ) {
             throw new NotAllowedException(
                 sprintf(
-                    __( 'Unable to cashout on "%s" *, as it\'s not opened.' ),
+                    __( 'Unable to cashout on "%s", as it\'s not opened.' ),
                     $register->name
                 )
             );

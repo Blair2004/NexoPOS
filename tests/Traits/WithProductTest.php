@@ -16,13 +16,8 @@ use Illuminate\Support\Str;
 
 trait WithProductTest
 {
-    protected function attemptCreateProduct()
+    protected function attemptCreateProduct( $count = 5 )
     {
-        /**
-         * @var CurrencyService
-         */
-        $currency = app()->make( CurrencyService::class );
-
         $faker = \Faker\Factory::create();
 
         /**
@@ -36,7 +31,7 @@ trait WithProductTest
             ->orWhere( 'parent_id', null )
             ->get();
 
-        for ( $i = 0; $i < 5; $i++ ) {
+        for ( $i = 0; $i < $count; $i++ ) {
             
             $category   =   $faker->randomElement( $categories );
             $categoryProductCount   =   $category->products()->count();
@@ -101,10 +96,15 @@ trait WithProductTest
 
             $response->assertStatus(200);
         }
+
+        return $response;
     }
 
     protected function attemptDeleteProducts()
     {
+        $response       =   $this->attemptCreateProduct(1);
+        $result         =   json_decode( $response->getContent(), true );
+
         /**
          * We'll delete the last product and see
          * if the unit quantities are deleted as well.
@@ -112,7 +112,7 @@ trait WithProductTest
          */
         $productService     =   app()->make( ProductService::class );
 
-        $product    =   Product::first();
+        $product        =   Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
         $category       =   $product->category;
         $totalItems     =   $category->total_items;
 

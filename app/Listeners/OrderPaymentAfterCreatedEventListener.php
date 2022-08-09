@@ -4,10 +4,7 @@ namespace App\Listeners;
 
 use App\Events\OrderAfterPaymentCreatedEvent;
 use App\Jobs\ComputeDayReportJob;
-use App\Jobs\ExpenseHandlePaymentStatusJob;
 use App\Jobs\ProcessCashRegisterHistoryFromPaymentJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderPaymentAfterCreatedEventListener
 {

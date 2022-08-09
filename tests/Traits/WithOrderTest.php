@@ -107,7 +107,9 @@ trait WithOrderTest
         }
 
         $result = $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
+
         $previousValue = (float) $result[ 'data' ][ 'history' ]->value;
+        $specificMoment     =   ns()->date->now()->toDateTimeString();
 
         /**
          * Step 1 : let's prepare the order
@@ -122,11 +124,17 @@ trait WithOrderTest
         $cashRegister->refresh();
 
         /**
+         * let's fetch all order that was created on that cash register
+         * from a specific moment
+         */
+        $totalValue     =   RegisterHistory::where( 'register_id', $cashRegister->id )->where( 'created_at', '>', $specificMoment )->sum( 'value' );
+
+        /**
          * only if the order total is greater than 0
          */
         if ( (float) $response[ 'data' ][ 'order' ][ 'tendered' ] > 0 ) {
             $this->assertNotEquals( $cashRegister->balance, $previousValue, __( 'There hasn\'t been any change during the transaction on the cash register balance.' ) );
-            $this->assertEquals( (float) $cashRegister->balance, (float) ( $previousValue + $response[ 'data' ][ 'order' ][ 'total' ] ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
+            $this->assertEquals( (float) $cashRegister->balance, (float) ( $totalValue ), __( 'The cash register balance hasn\'t been updated correctly.' ) );
         }
 
         /**
@@ -134,9 +142,27 @@ trait WithOrderTest
          * accurate comparisons.
          */
         $previousValue = (float) $cashRegister->balance;
+        
+        /**
+         * Step 2: We'll try here to delete order
+         * from the register and see if the balance is updated
+         */
+        $this->createAndDeleteOrderFromRegister( $cashRegister, $data[ 'orderData' ] ?? [] );
 
         /**
-         * Step 2 : disburse (cash-out) some cash
+         * between each operation
+         * we need to refresh the cash register
+         */
+        $cashRegister->refresh();
+
+        /**
+         * let's update tha value for making
+         * accurate comparisons.
+         */
+        $previousValue = (float) $cashRegister->balance;
+                
+        /**
+         * Step 3 : disburse (cash-out) some cash
          * from the provided register
          */
         $this->disburseCashFromRegister( $cashRegister, $cashRegisterService );
@@ -156,7 +182,7 @@ trait WithOrderTest
         $previousValue = (float) $cashRegister->balance;
 
         /**
-         * Step 3 : cash in some cash
+         * Step 4 : cash in some cash
          */
         $this->cashInOnRegister( $cashRegister, $cashRegisterService );
 
@@ -203,7 +229,11 @@ trait WithOrderTest
             ->from( $opening->created_at )
             ->action( RegisterHistory::ACTION_REFUND )->sum( 'value' );
 
-        $totalTransactions = ( $openingBalance + $totalCashing + $totalSales ) - ( $totalClosing + $totalRefunds + $totalCashOut );
+        $totalDelete = RegisterHistory::register( $cashRegister )
+            ->from( $opening->created_at )
+            ->action( RegisterHistory::ACTION_DELETE )->sum( 'value' );
+
+        $totalTransactions = ( $openingBalance + $totalCashing + $totalSales ) - ( $totalClosing + $totalRefunds + $totalCashOut + $totalDelete );
 
         $this->assertEquals(
             ns()->currency->getRaw( $cashRegister->balance ),
@@ -465,6 +495,52 @@ trait WithOrderTest
         $response->assertStatus( 200 );
 
         return $response = json_decode( $response->getContent(), true );
+    }
+
+    private function createAndDeleteOrderFromRegister( Register $cashRegister, $data )
+    {
+        /**
+         * This test can't proceed without payments.
+         */
+        if ( isset( $data[ 'payments' ] ) && count( $data[ 'payments' ] ) === 0 ) {
+            return false;
+        }
+        
+        /**
+         * @var TestService
+         */
+        $testService = app()->make( TestService::class );
+
+        /**
+         * @var OrdersService
+         */
+        $ordersService = app()->make( OrdersService::class );   
+
+        $orderDetails = $testService->prepareOrder( ns()->date->now(), array_merge([
+            'register_id' => $cashRegister->id,
+        ], $data ) );
+
+        $response = $this->withSession( $this->app[ 'session' ]->all() )
+                ->json( 'POST', 'api/nexopos/v4/orders', $orderDetails );
+
+        $response->assertStatus( 200 );
+
+        $response = json_decode( $response->getContent(), true );
+
+        $cashRegister->refresh();
+        $previousValue      =   $cashRegister->balance;
+
+        /**
+         * Step 2: We'll attempt to delete the product
+         * We should check if the register balance has changed.
+         */
+        $ordersService->deleteOrder( Order::find( $response[ 'data' ][ 'order' ][ 'id' ] ) );
+
+        $cashRegister->refresh();
+
+        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue - $response[ 'data' ][ 'order' ][ 'total' ] ), 'The balance wasn\'t updated after deleting the order.' );
+
+        return $response;
     }
 
     /**

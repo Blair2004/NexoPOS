@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Order;
+use App\Models\OrderRefund;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -20,7 +21,7 @@ class ReduceCashierStatsFromRefundJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public Order $order )
+    public function __construct( public Order $order, public OrderRefund $orderRefund )
     {
         $this->prepareSerialization();
     }
@@ -32,7 +33,7 @@ class ReduceCashierStatsFromRefundJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->order->user->total_sales -= $this->event->orderRefund->total;
+        $this->order->user->total_sales -= $this->orderRefund->total;
         $this->order->user->save();
     }
 }

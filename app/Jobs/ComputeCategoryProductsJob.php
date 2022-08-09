@@ -6,7 +6,6 @@ use App\Models\ProductCategory;
 use App\Services\ProductCategoryService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;

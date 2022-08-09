@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterCreateEvent;
+use App\Services\ExpenseService;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,7 +18,8 @@ class ProcurementAfterCreateEventListener
      */
     public function __construct(
         public ProcurementService $procurementService,
-        public ProviderService $providerService
+        public ProviderService $providerService,
+        public ExpenseService $expenseService,
     )
     {
         //

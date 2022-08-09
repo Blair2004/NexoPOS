@@ -22,7 +22,7 @@ class ExpenseHandlePaymentStatusJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public string $previous, public string $new, public Order $order )
+    public function __construct( public Order $order, public string $previous, public string $new )
     {
         $this->prepareSerialization();
     }

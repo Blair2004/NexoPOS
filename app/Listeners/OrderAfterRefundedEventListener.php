@@ -30,7 +30,7 @@ class OrderAfterRefundedEventListener
     {
         Bus::chain([
             new RefreshOrderJob( $event->order ),
-            new ReduceCashierStatsFromRefundJob( $event->order ),
+            new ReduceCashierStatsFromRefundJob( $event->order, $event->orderRefund ),
             new DecreaseCustomerPurchasesJob( $event->order->customer, $event->orderRefund->total ),
         ])->dispatch();
     }

@@ -33,7 +33,7 @@ class RefreshReportJob implements ShouldQueue
      */
     public function handle( ReportService $reportService )
     {
-        $date = Carbon::parse( $this->event->cashFlow->created_at );
+        $date = Carbon::parse( $this->cashFlow->created_at );
 
         $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),

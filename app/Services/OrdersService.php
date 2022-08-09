@@ -1801,7 +1801,7 @@ class OrdersService
 
         $productRefund->save();
 
-        OrderAfterProductRefundedEvent::dispatch( $order, $orderProduct, $productRefund );
+        event( new OrderAfterProductRefundedEvent( $order, $orderProduct, $productRefund ) );
 
         /**
          * We should adjust the stock only if a valid product
@@ -2115,7 +2115,7 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        $cachedOrder = json_encode( $order->load([
+        $cachedOrder    =   ( object ) $order->load([
             'user',
             'products',
             'payments',
@@ -2123,9 +2123,9 @@ class OrdersService
             'taxes',
             'coupons',
             'instalments',
-        ])->toArray() );
+        ])->toArray();
 
-        OrderBeforeDeleteEvent::dispatch( json_decode( $cachedOrder ) );
+        event( new OrderBeforeDeleteEvent( $cachedOrder ) );
 
         $order
             ->products()
@@ -2150,9 +2150,7 @@ class OrdersService
                 $product->delete();
             });
 
-        $order->payments->each( function( $payment ) {
-            $payment->delete();
-        });
+        OrderPayment::where( 'order_id', $order->id )->delete();
 
         /**
          * delete cash flow entries

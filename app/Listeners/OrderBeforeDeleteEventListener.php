@@ -27,8 +27,6 @@ class OrderBeforeDeleteEventListener
      */
     public function handle(OrderBeforeDeleteEvent $event)
     {
-        UncountDeletedOrderForCustomerJob::dispatch( $event->order );
-        UncountDeletedOrderForCashierJob::dispatch( $event->order );
-        ComputeDayReportJob::dispatch();
+        // ...
     }
 }

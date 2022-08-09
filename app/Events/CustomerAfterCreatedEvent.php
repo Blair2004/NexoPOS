@@ -17,8 +17,8 @@ class CustomerAfterCreatedEvent
      *
      * @return void
      */
-    public function __construct( Customer $customer )
+    public function __construct( public Customer $customer )
     {
-        $this->customer = $customer;
+        // ...
     }
 }

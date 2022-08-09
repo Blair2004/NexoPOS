@@ -21,7 +21,7 @@ class UncountDeletedOrderForCashierJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct( public Order $order )
+    public function __construct( public $order )
     {
         $this->prepareSerialization();
     }
