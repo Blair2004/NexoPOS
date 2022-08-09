@@ -16,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ApplyCustomerRewardJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.

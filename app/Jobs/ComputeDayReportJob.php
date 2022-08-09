@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ComputeDayReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
