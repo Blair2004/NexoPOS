@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderAfterDeletedEvent;
+use App\Jobs\RefreshReportJob;
 use App\Jobs\UncountDeletedOrderForCashierJob;
 use App\Jobs\UncountDeletedOrderForCustomerJob;
 use App\Models\Order;
@@ -47,5 +48,7 @@ class OrderAfterDeletedEventListener
                 $this->cashRegistersService->saleDelete( $register, $event->order->tendered, __( 'The transaction was deleted.' ) );
             }
         }
+
+        RefreshReportJob::dispatch( $event->order->updated_at );
     }
 }

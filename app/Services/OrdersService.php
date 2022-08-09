@@ -203,8 +203,8 @@ class OrdersService
          * new order has been placed
          */
         $isNew ?
-            OrderAfterCreatedEvent::dispatch( $order, $fields ) :
-            OrderAfterUpdatedEvent::dispatch( $order, $fields );
+            event( new OrderAfterCreatedEvent( $order, $fields ) ):
+            event( new OrderAfterUpdatedEvent( $order, $fields ) );
 
         return [
             'status' => 'success',
@@ -2161,7 +2161,7 @@ class OrdersService
 
         $order->delete();
 
-        OrderAfterDeletedEvent::dispatch( (object) $orderArray );
+        event( new OrderAfterDeletedEvent( (object) $orderArray ) );
 
         return [
             'status' => 'success',

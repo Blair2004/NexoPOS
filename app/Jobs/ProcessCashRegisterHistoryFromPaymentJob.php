@@ -15,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 
 class ProcessCashRegisterHistoryFromPaymentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.

@@ -10,18 +10,17 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class RefreshReportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( public CashFlow $cashFlow )
+    public function __construct( public $date )
     {
         $this->prepareSerialization();
     }
@@ -33,7 +32,7 @@ class RefreshReportJob implements ShouldQueue
      */
     public function handle( ReportService $reportService )
     {
-        $date = Carbon::parse( $this->cashFlow->created_at );
+        $date = Carbon::parse( $this->date );
 
         $reportService->computeDayReport(
             dateStart: $date->startOfDay()->toDateTimeString(),

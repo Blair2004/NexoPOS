@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Customer;
 use App\Models\OrderPayment;
 use App\Services\CustomerService;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 
 class CheckCustomerAccountJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, NsSerialize;
 
     /**
      * Create a new job instance.
@@ -23,7 +24,7 @@ class CheckCustomerAccountJob implements ShouldQueue
      */
     public function __construct( public Customer $customer, public $payment )
     {
-        //
+        $this->prepareSerialization();
     }
 
     /**

@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 
 class CashFlowHistoryAfterDeletedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets;
 
     /**
      * Create a new event instance.
@@ -17,7 +17,7 @@ class CashFlowHistoryAfterDeletedEvent
      * @return void
      */
     public function __construct(
-        public CashFlow $cashFlow
+        public $cashFlow
     ) {
         // ...
     }

@@ -310,13 +310,6 @@ class CashFlowHistoryCrud extends CrudService
             if ( $model->status !== CashFlow::STATUS_ACTIVE ) {
                 throw new NotAllowedException( __( 'This expense history does\'nt have a status that allow deletion.' ) );
             }
-
-            CashFlowHistoryBeforeDeleteEvent::dispatch( CashFlow::find( $model->id ) );
-
-            return [
-                'status' => 'success',
-                'message' => __( 'The expense history is about to be deleted.' ),
-            ];
         }
     }
 

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Events\ModulesBootedEvent;
-use App\Jobs\RefreshReportJob;
 use App\Models\Order;
 use App\Models\Permission;
 use App\Services\BarcodeService;

@@ -21,13 +21,12 @@ class CashFlowHistoryAfterDeletedEventListener
 
     /**
      * Handle the event.
+     *
+     * @param  \App\Events\CashFlowHistoryAfterDeletedEvent  $event
+     * @return void
      */
-    public function handle( CashFlowHistoryAfterDeletedEvent $event )
+    public function handle(CashFlowHistoryAfterDeletedEvent $event)
     {
-        /**
-         * @todo needs to check if
-         * the even has the cashFlow instance
-         */
-        RefreshReportJob::dispatch( $event->cashFlow );
+        RefreshReportJob::dispatch( $event->cashFlow->created_at );
     }
 }

@@ -22,6 +22,6 @@ class CashFlowHistoryAfterCreatedEventListener
      */
     public function handle( CashFlowHistoryAfterCreatedEvent $event )
     {
-        RefreshReportJob::dispatch( $event->cashFlow );
+        RefreshReportJob::dispatch( $event->cashFlow->created_at );
     }
 }
