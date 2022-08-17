@@ -76,7 +76,7 @@ class CustomerService
 
     public function precheckCustomers( $fields, $id = null )
     {
-        if ( $id = null ) {
+        if ( $id === null ) {
             /**
              * Let's find if a similar customer exist with
              * the provided email
