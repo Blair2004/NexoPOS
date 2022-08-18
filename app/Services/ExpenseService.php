@@ -546,7 +546,7 @@ class ExpenseService
 
         $this->recordCashFlowHistory( $expense );
 
-        if ( OrderProductRefund::CONDITION_DAMAGED ) {
+        if ( $orderProductRefund->condition === OrderProductRefund::CONDITION_DAMAGED ) {
             /**
              * Only if the product is damaged we should
              * consider saving that as a waste.
