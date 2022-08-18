@@ -14,8 +14,7 @@ class ProductBeforeDeleteEventListener
      */
     public function __construct(
         public ProductService $productService
-    )
-    {
+    ) {
         //
     }
 

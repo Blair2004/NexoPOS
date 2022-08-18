@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\CashFlowHistoryAfterDeletedEvent;
 use App\Jobs\RefreshReportJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CashFlowHistoryAfterDeletedEventListener
 {

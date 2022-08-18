@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 class ProcurementProductAfterUpdateEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
      * Create a new event instance.
      *

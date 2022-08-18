@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\AfterCustomerAccountHistoryCreatedEvent;
 use App\Services\CustomerService;
 use App\Services\ExpenseService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class AfterCustomerAccountHistoryCreatedEventListener
 {
@@ -18,8 +16,7 @@ class AfterCustomerAccountHistoryCreatedEventListener
     public function __construct(
         public CustomerService $customerService,
         public ExpenseService $expenseService
-    )
-    {
+    ) {
         //
     }
 

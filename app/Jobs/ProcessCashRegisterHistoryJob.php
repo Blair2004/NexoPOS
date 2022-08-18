@@ -39,7 +39,7 @@ class ProcessCashRegisterHistoryJob implements ShouldQueue
         if ( $this->order->register_id !== null && $this->order->payment_status === Order::PAYMENT_PAID ) {
             $register = Register::find( $this->order->register_id );
 
-            $registerHistory = new RegisterHistory();
+            $registerHistory = new RegisterHistory;
             $registerHistory->balance_before = $register->balance;
             $registerHistory->value = $this->order->total;
             $registerHistory->balance_after = $register->balance + $this->order->total;

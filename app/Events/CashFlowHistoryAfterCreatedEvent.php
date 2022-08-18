@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class CashFlowHistoryAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
      * Create a new event instance.
      *

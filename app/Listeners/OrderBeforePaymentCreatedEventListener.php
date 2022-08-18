@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\OrderBeforePaymentCreatedEvent;
 use App\Jobs\CheckCustomerAccountJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderBeforePaymentCreatedEventListener
 {
@@ -21,6 +19,7 @@ class OrderBeforePaymentCreatedEventListener
 
     /**
      * Handle the event.
+     *
      * @return void
      */
     public function handle( OrderBeforePaymentCreatedEvent $event)

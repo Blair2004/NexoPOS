@@ -7,7 +7,6 @@ use App\Models\OrderProduct;
 use App\Models\OrderProductRefund;
 use App\Services\ExpenseService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,10 +33,10 @@ class CreateExpenseFromRefundJob implements ShouldQueue
      */
     public function handle( ExpenseService $expenseService)
     {
-        $expenseService->createExpenseFromRefund( 
-            order: $this->order, 
-            orderProductRefund: $this->orderProductRefund, 
-            orderProduct: $this->orderProduct 
+        $expenseService->createExpenseFromRefund(
+            order: $this->order,
+            orderProductRefund: $this->orderProductRefund,
+            orderProduct: $this->orderProduct
         );
     }
 }

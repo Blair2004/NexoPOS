@@ -15,8 +15,7 @@ class ProductAfterUpdatedEventListener
      */
     public function __construct(
         public ProductService $productService,
-    )
-    {
+    ) {
         //
     }
 

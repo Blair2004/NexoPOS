@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Traits;
 
 use App\Events\JobBeforeSerializeEvent;
 use App\Jobs\Middleware\UnserializeMiddleware;
 use Modules\NsMultiStore\Models\Store;
 
-trait NsSerialize 
+trait NsSerialize
 {
     public $attributes;
+
     public Store $store;
 
     protected function prepareSerialization()
@@ -17,8 +19,8 @@ trait NsSerialize
 
     public function middleware()
     {
-        return [ 
-            UnserializeMiddleware::class
+        return [
+            UnserializeMiddleware::class,
         ];
     }
 }

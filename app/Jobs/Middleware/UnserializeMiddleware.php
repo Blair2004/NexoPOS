@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs\Middleware;
 
 use App\Events\JobAfterUnserializeEvent;

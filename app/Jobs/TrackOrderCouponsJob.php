@@ -9,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class TrackOrderCouponsJob implements ShouldQueue
 {
@@ -35,8 +34,8 @@ class TrackOrderCouponsJob implements ShouldQueue
         /**
          * @var OrdersService
          */
-        $orderService   =   app()->make( OrdersService::class );
-        
+        $orderService = app()->make( OrdersService::class );
+
         $orderService->trackOrderCoupons( $this->order );
     }
 }

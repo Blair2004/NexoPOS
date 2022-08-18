@@ -6,8 +6,6 @@ use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Jobs\ExpenseHandlePaymentStatusJob;
 use App\Jobs\ProcessCustomerOwedAndRewardsJob;
 use App\Jobs\RecordRegisterHistoryUsingPaymentStatusJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderAfterPaymentStatusChangedEventListener
 {

@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Models\Order;
 use App\Services\OrdersService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -35,7 +34,7 @@ class ResolveInstalmentJob implements ShouldQueue
         /**
          * @var OrdersService
          */
-        $ordersService   =   app()->make( OrdersService::class );
+        $ordersService = app()->make( OrdersService::class );
         $ordersService->resolveInstalments( $this->order );
     }
 }

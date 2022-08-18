@@ -6,7 +6,6 @@ use App\Models\Expense;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 
 class ExpenseAfterUpdateEvent
@@ -18,8 +17,8 @@ class ExpenseAfterUpdateEvent
      *
      * @return void
      */
-    public function __construct( 
-        public Expense $expense, 
+    public function __construct(
+        public Expense $expense,
         public $inputs
     ) {
         // ...

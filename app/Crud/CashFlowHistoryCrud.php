@@ -2,7 +2,6 @@
 
 namespace App\Crud;
 
-use App\Events\CashFlowHistoryBeforeDeleteEvent;
 use App\Exceptions\NotAllowedException;
 use App\Models\CashFlow;
 use App\Services\CrudEntry;

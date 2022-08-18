@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\CustomerRewardAfterCreatedEvent;
 use App\Jobs\ApplyCustomerRewardJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class CustomerRewardAfterCreatedEventListener
 {

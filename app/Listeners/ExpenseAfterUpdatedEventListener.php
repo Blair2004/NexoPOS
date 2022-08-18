@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ExpenseAfterUpdateEvent;
 use App\Jobs\ProcessExpenseJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ExpenseAfterUpdatedEventListener
 {

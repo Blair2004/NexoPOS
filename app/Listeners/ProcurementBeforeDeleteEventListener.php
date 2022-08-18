@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\ProcurementBeforeDeleteEvent;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcurementBeforeDeleteEventListener
 {
@@ -18,8 +16,7 @@ class ProcurementBeforeDeleteEventListener
     public function __construct(
         public ProcurementService $procurementService,
         public ProviderService $providerService
-    )
-    {
+    ) {
         //
     }
 

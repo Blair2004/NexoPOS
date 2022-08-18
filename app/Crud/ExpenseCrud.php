@@ -339,7 +339,7 @@ class ExpenseCrud extends CrudService
     public function afterPut( $request, $entry )
     {
         ExpenseAfterUpdateEvent::dispatch( $entry, $request );
-        
+
         return $request;
     }
 

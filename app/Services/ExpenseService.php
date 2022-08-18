@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Events\ExpenseAfterCreateEvent;
-use App\Events\OrderAfterPaymentStatusChangedEvent;
 use App\Exceptions\NotAllowedException;
 use App\Exceptions\NotFoundException;
 use App\Models\AccountType;

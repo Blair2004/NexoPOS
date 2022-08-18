@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\OrderVoidedEvent;
 use App\Jobs\UncountDeletedOrderForCashierJob;
 use App\Jobs\UncountDeletedOrderForCustomerJob;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderVoidedEventListener
 {

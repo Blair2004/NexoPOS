@@ -6,8 +6,6 @@ use App\Events\ProcurementAfterDeleteEvent;
 use App\Models\Provider;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcurementAfterDeleteEventListener
 {
@@ -19,8 +17,7 @@ class ProcurementAfterDeleteEventListener
     public function __construct(
         public ProcurementService $procurementService,
         public ProviderService $providerService
-    )
-    {
+    ) {
         //
     }
 

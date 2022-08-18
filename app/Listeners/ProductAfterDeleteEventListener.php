@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\ProductAfterDeleteEvent;
 use App\Services\ProductCategoryService;
 use App\Services\ProductService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProductAfterDeleteEventListener
 {
@@ -18,8 +16,7 @@ class ProductAfterDeleteEventListener
     public function __construct(
         public ProductService $productService,
         public ProductCategoryService $productCategoryService,
-    )
-    {
+    ) {
         //
     }
 

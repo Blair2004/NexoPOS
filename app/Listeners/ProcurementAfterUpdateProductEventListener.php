@@ -5,8 +5,6 @@ namespace App\Listeners;
 use App\Events\ProcurementAfterUpdateProductEvent;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcurementAfterUpdateProductEventListener
 {
@@ -18,8 +16,7 @@ class ProcurementAfterUpdateProductEventListener
     public function __construct(
         public ProcurementService $procurementService,
         public ProviderService $providerService
-    )
-    {
+    ) {
         //
     }
 

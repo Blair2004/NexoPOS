@@ -3,16 +3,12 @@
 namespace App\Jobs;
 
 use App\Models\Customer;
-use App\Models\Order;
-use App\Models\OrderRefund;
 use App\Services\CustomerService;
 use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class DecreaseCustomerPurchasesJob implements ShouldQueue
 {
@@ -35,9 +31,9 @@ class DecreaseCustomerPurchasesJob implements ShouldQueue
      */
     public function handle( CustomerService $customerService )
     {
-        $customerService->decreasePurchases( 
-            customer: $this->customer, 
-            value: $this->total 
+        $customerService->decreasePurchases(
+            customer: $this->customer,
+            value: $this->total
         );
     }
 }

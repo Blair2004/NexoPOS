@@ -32,9 +32,8 @@ trait WithProductTest
             ->get();
 
         for ( $i = 0; $i < $count; $i++ ) {
-            
-            $category   =   $faker->randomElement( $categories );
-            $categoryProductCount   =   $category->products()->count();
+            $category = $faker->randomElement( $categories );
+            $categoryProductCount = $category->products()->count();
 
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
@@ -102,19 +101,20 @@ trait WithProductTest
 
     protected function attemptDeleteProducts()
     {
-        $response       =   $this->attemptCreateProduct(1);
-        $result         =   json_decode( $response->getContent(), true );
+        $response = $this->attemptCreateProduct(1);
+        $result = json_decode( $response->getContent(), true );
 
         /**
          * We'll delete the last product and see
          * if the unit quantities are deleted as well.
+         *
          * @var ProductService
          */
-        $productService     =   app()->make( ProductService::class );
+        $productService = app()->make( ProductService::class );
 
-        $product        =   Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
-        $category       =   $product->category;
-        $totalItems     =   $category->total_items;
+        $product = Product::find( $result[ 'data' ][ 'product' ][ 'id' ] );
+        $category = $product->category;
+        $totalItems = $category->total_items;
 
         $this->assertTrue( $product->unit_quantities()->count() > 0, 'The created product is missing unit quantities.' );
 

@@ -15,6 +15,7 @@ use App\Services\CustomerService;
 use App\Services\DateService;
 use App\Services\DemoService;
 use App\Services\ExpenseService;
+use App\Services\Helper;
 use App\Services\MediaService;
 use App\Services\MenuService;
 use App\Services\NotificationService;
@@ -232,14 +233,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
-
         /**
          * let's create a default sqlite
          * database. This file is not tracked by Git.
          */
         if ( ! is_file( database_path( 'database.sqlite' ) ) ) {
             file_put_contents( database_path( 'database.sqlite' ), '' );
+        }
+
+        if ( Helper::installed() ) {
+            Schema::defaultStringLength(191);
         }
     }
 

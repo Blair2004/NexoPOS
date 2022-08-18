@@ -132,7 +132,7 @@ class CashRegistersService
                 sprintf(
                     __( 'Not enough fund to delete a sale from "%s". If funds were cashed-out or disbursed, consider adding some cash (%s) to the register.' ),
                     $register->name,
-                    trim( ( string ) ns()->currency->define( $amount ) )
+                    trim( (string) ns()->currency->define( $amount ) )
                 )
             );
         }
@@ -202,7 +202,7 @@ class CashRegistersService
     }
 
     /**
-     * Will update the cash register balance using the 
+     * Will update the cash register balance using the
      * register history model.
      */
     public function updateRegisterBalance( RegisterHistory $registerHistory )
@@ -221,8 +221,9 @@ class CashRegistersService
     }
 
     /**
-     * Will increase the register balance if it's assigned 
+     * Will increase the register balance if it's assigned
      * to the right store
+     *
      * @param Order $order
      * @param OrderPayment $orderPayment.
      */
@@ -246,6 +247,7 @@ class CashRegistersService
      * Listen for payment status changes
      * that only occurs if the order is updated
      * and will update the register history accordingly.
+     *
      * @return void
      */
     public function createRegisterHistoryUsingPaymentStatus( Order $order, string $previous, string $new  )

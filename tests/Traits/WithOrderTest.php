@@ -109,7 +109,7 @@ trait WithOrderTest
         $result = $cashRegisterService->openRegister( $cashRegister, 100, __( 'Opening the cash register' ) );
 
         $previousValue = (float) $result[ 'data' ][ 'history' ]->value;
-        $specificMoment     =   ns()->date->now()->toDateTimeString();
+        $specificMoment = ns()->date->now()->toDateTimeString();
 
         /**
          * Step 1 : let's prepare the order
@@ -127,7 +127,7 @@ trait WithOrderTest
          * let's fetch all order that was created on that cash register
          * from a specific moment
          */
-        $totalValue     =   RegisterHistory::where( 'register_id', $cashRegister->id )->where( 'created_at', '>', $specificMoment )->sum( 'value' );
+        $totalValue = RegisterHistory::where( 'register_id', $cashRegister->id )->where( 'created_at', '>', $specificMoment )->sum( 'value' );
 
         /**
          * only if the order total is greater than 0
@@ -142,7 +142,7 @@ trait WithOrderTest
          * accurate comparisons.
          */
         $previousValue = (float) $cashRegister->balance;
-        
+
         /**
          * Step 2: We'll try here to delete order
          * from the register and see if the balance is updated
@@ -160,7 +160,7 @@ trait WithOrderTest
          * accurate comparisons.
          */
         $previousValue = (float) $cashRegister->balance;
-                
+
         /**
          * Step 3 : disburse (cash-out) some cash
          * from the provided register
@@ -505,7 +505,7 @@ trait WithOrderTest
         if ( isset( $data[ 'payments' ] ) && count( $data[ 'payments' ] ) === 0 ) {
             return false;
         }
-        
+
         /**
          * @var TestService
          */
@@ -514,7 +514,7 @@ trait WithOrderTest
         /**
          * @var OrdersService
          */
-        $ordersService = app()->make( OrdersService::class );   
+        $ordersService = app()->make( OrdersService::class );
 
         $orderDetails = $testService->prepareOrder( ns()->date->now(), array_merge([
             'register_id' => $cashRegister->id,
@@ -528,7 +528,7 @@ trait WithOrderTest
         $response = json_decode( $response->getContent(), true );
 
         $cashRegister->refresh();
-        $previousValue      =   $cashRegister->balance;
+        $previousValue = $cashRegister->balance;
 
         /**
          * Step 2: We'll attempt to delete the product
@@ -538,7 +538,7 @@ trait WithOrderTest
 
         $cashRegister->refresh();
 
-        $this->assertEquals( ( float ) $cashRegister->balance, ( float ) ( $previousValue - $response[ 'data' ][ 'order' ][ 'total' ] ), 'The balance wasn\'t updated after deleting the order.' );
+        $this->assertEquals( (float) $cashRegister->balance, (float) ( $previousValue - $response[ 'data' ][ 'order' ][ 'total' ] ), 'The balance wasn\'t updated after deleting the order.' );
 
         return $response;
     }

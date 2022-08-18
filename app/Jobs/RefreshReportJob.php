@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\CashFlow;
 use App\Services\ReportService;
 use App\Traits\NsSerialize;
 use Carbon\Carbon;

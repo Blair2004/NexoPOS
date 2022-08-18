@@ -498,7 +498,7 @@ class CustomerCrud extends CrudService
         /**
          * @var CustomerService
          */
-        $customerService    =   app()->make( CustomerService::class );
+        $customerService = app()->make( CustomerService::class );
         $customerService->precheckCustomers( $inputs );
     }
 
@@ -514,7 +514,7 @@ class CustomerCrud extends CrudService
         /**
          * @var CustomerService
          */
-        $customerService    =   app()->make( CustomerService::class );
+        $customerService = app()->make( CustomerService::class );
         $customerService->precheckCustomers( $inputs, $customer->id );
     }
 

@@ -38,7 +38,7 @@ class OrderAfterUpdatedEventListener
             new TrackOrderCouponsJob( $event->order ),
             new ResolveInstalmentJob( $event->order ),
             new ProcessAccountingRecordFromSale( $event->order ),
-            new ComputeDayReportJob(),
+            new ComputeDayReportJob,
         ])->dispatch();
     }
 }

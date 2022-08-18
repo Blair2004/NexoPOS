@@ -122,7 +122,7 @@ class OrdersService
          * check delivery informations before
          * proceeding
          */
-        $this->__checkAddressesInformations( $fields );
+        $fields = $this->__checkAddressesInformations( $fields );
 
         /**
          * Check if instalments are provided and if they are all
@@ -203,7 +203,7 @@ class OrdersService
          * new order has been placed
          */
         $isNew ?
-            event( new OrderAfterCreatedEvent( $order, $fields ) ):
+            event( new OrderAfterCreatedEvent( $order, $fields ) ) :
             event( new OrderAfterUpdatedEvent( $order, $fields ) );
 
         return [
@@ -649,7 +649,7 @@ class OrdersService
      * and throw an error if a fields is not supported
      *
      * @param array fields
-     * @return void
+     * @return array $fields
      */
     private function __checkAddressesInformations($fields)
     {
@@ -673,14 +673,18 @@ class OrdersService
          */
         if ( ! empty( $fields[ 'addresses' ] ) ) {
             foreach (['shipping', 'billing'] as $type) {
-                $keys = array_keys($fields['addresses'][$type]);
-                foreach ($keys as $key) {
-                    if (! in_array($key, $allowedKeys)) {
-                        unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                if ( isset( $fields['addresses'][$type] ) ) {
+                    $keys = array_keys($fields['addresses'][$type]);
+                    foreach ($keys as $key) {
+                        if (! in_array($key, $allowedKeys)) {
+                            unset( $fields[ 'addresses' ][ $type ][ $key ] );
+                        }
                     }
                 }
             }
         }
+
+        return $fields;
     }
 
     /**
@@ -2115,7 +2119,7 @@ class OrdersService
      */
     public function deleteOrder(Order $order)
     {
-        $cachedOrder    =   ( object ) $order->load([
+        $cachedOrder = (object) $order->load([
             'user',
             'products',
             'payments',

@@ -9,8 +9,6 @@ use App\Jobs\UncountDeletedOrderForCustomerJob;
 use App\Models\Order;
 use App\Models\Register;
 use App\Services\CashRegistersService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class OrderAfterDeletedEventListener
 {
@@ -21,8 +19,7 @@ class OrderAfterDeletedEventListener
      */
     public function __construct(
         public CashRegistersService $cashRegistersService
-    )
-    {
+    ) {
         //
     }
 
@@ -37,7 +34,7 @@ class OrderAfterDeletedEventListener
         UncountDeletedOrderForCashierJob::dispatch( $event->order );
         UncountDeletedOrderForCustomerJob::dispatch( $event->order );
 
-        $register   =   Register::find( $event->order->register_id );
+        $register = Register::find( $event->order->register_id );
 
         if ( $register instanceof Register ) {
             if ( in_array( $event->order->payment_status, [ Order::PAYMENT_PAID, Order::PAYMENT_PARTIALLY ] ) ) {

@@ -38,7 +38,6 @@ class Kernel extends ConsoleKernel
          * This could be made through events that are dispatched within
          * the jobs
          */
-        
         $schedule->call( function() {
             if ( env( 'TELESCOPE_ENABLED', false ) ) {
                 Artisan::call( 'telescope:prune', [ 'hours' => 12 ]);

@@ -91,8 +91,8 @@ class CustomerService
                 ->where( 'id', '<>', $id )
                 ->first();
         }
-        
-        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) ) { 
+
+        if ( $customer instanceof Customer && ! empty( $fields[ 'email' ] ) ) {
             throw new NotAllowedException( sprintf( __( 'The email "%s" is already stored on another customer informations.' ), $fields[ 'email' ] ) );
         }
     }
@@ -105,7 +105,7 @@ class CustomerService
      */
     public function create( $fields )
     {
-        $this->precheckCustomers( $fields );        
+        $this->precheckCustomers( $fields );
 
         /**
          * saving a customer
@@ -172,7 +172,7 @@ class CustomerService
             throw new NotFoundException( __( 'Unable to find the customer using the provided ID.' ) );
         }
 
-        $this->precheckCustomers( $fields, $id );  
+        $this->precheckCustomers( $fields, $id );
 
         foreach ( $fields as $field => $value ) {
             if ( $field !== 'address' ) {
@@ -654,7 +654,7 @@ class CustomerService
     }
 
     /**
-     * Will increase the customer purchase 
+     * Will increase the customer purchase
      * when an order is flagged as paid
      */
     public function increaseCustomerPurchase( Order $order )

@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\CashFlowHistoryBeforeDeleteEvent;
-use App\Jobs\RefreshReportJob;
 
 class CashFlowHistoryBeforeDeletedEventListener
 {

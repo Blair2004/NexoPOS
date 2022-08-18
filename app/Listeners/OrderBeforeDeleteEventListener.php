@@ -3,9 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\OrderBeforeDeleteEvent;
-use App\Jobs\ComputeDayReportJob;
-use App\Jobs\UncountDeletedOrderForCashierJob;
-use App\Jobs\UncountDeletedOrderForCustomerJob;
 
 class OrderBeforeDeleteEventListener
 {

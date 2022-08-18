@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class ProcurementAfterSaveProductEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
      * Create a new event instance.
      *

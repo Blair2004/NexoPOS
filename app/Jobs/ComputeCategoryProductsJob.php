@@ -9,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class ComputeCategoryProductsJob implements ShouldQueue
 {
@@ -22,8 +21,7 @@ class ComputeCategoryProductsJob implements ShouldQueue
      */
     public function __construct(
         public ProductCategory $productCategory
-    )
-    {
+    ) {
         $this->prepareSerialization();
     }
 
@@ -34,8 +32,7 @@ class ComputeCategoryProductsJob implements ShouldQueue
      */
     public function handle(
         ProductCategoryService $productCategoryService
-    )
-    {
+    ) {
         $productCategoryService->computeProducts( $this->productCategory );
     }
 }

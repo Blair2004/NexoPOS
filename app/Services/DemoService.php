@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Models\UnitGroup;
-use Exception;
 use Faker\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

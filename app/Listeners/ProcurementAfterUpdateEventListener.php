@@ -16,8 +16,7 @@ class ProcurementAfterUpdateEventListener
     public function __construct(
         public ProcurementService $procurementService,
         public ProviderService $providerService
-    )
-    {
+    ) {
         //
     }
 

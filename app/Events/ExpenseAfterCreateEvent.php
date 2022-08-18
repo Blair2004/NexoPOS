@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 class ExpenseAfterCreateEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
      * Create a new event instance.
      *

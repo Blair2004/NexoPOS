@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 class DashboardDayAfterCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    
+
     /**
      * Create a new event instance.
      *

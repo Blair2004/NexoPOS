@@ -7,8 +7,6 @@ use App\Jobs\ComputeCategoryProductsJob;
 use App\Services\BarcodeService;
 use App\Services\ProductCategoryService;
 use App\Services\ProductService;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProductAfterCreatedEventListener
 {
@@ -21,8 +19,7 @@ class ProductAfterCreatedEventListener
         public ProductService $productService,
         public BarcodeService $barcodeService,
         public ProductCategoryService $productCategoryService
-    )
-    {
+    ) {
         //
     }
 

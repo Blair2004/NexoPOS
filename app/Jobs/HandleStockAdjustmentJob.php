@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\ProductAfterStockAdjustmentEvent;
 use App\Models\ProductHistory;
 use App\Services\ReportService;
 use App\Traits\NsSerialize;
@@ -10,7 +9,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class HandleStockAdjustmentJob implements ShouldQueue
 {

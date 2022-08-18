@@ -98,7 +98,7 @@ trait WithCustomerTest
     {
         $faker = Factory::create();
         $group = CustomerGroup::first();
-        $email  =   $faker->email;
+        $email = $faker->email;
 
         /**
          * The first attempt should
@@ -110,7 +110,7 @@ trait WithCustomerTest
                 'general' => [
                     'group_id' => $group->id,
                     'surname' => $faker->lastName,
-                    'email' =>  $email
+                    'email' => $email,
                 ],
                 'shipping' => [
                     'name' => $faker->firstName,
@@ -132,7 +132,7 @@ trait WithCustomerTest
                 'general' => [
                     'group_id' => $group->id,
                     'surname' => $faker->lastName,
-                    'email' =>  $email
+                    'email' => $email,
                 ],
                 'shipping' => [
                     'name' => $faker->firstName,
