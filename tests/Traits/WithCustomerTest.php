@@ -159,17 +159,27 @@ trait WithCustomerTest
             /**
              * Creating a first customer
              */
+            $email  =   $faker->email;
+            $firstName =   $faker->firstName;
+            $lastName =   $faker->lastName;
+
             $response = $this->withSession( $this->app[ 'session' ]->all() )
                 ->json( 'POST', 'api/nexopos/v4/crud/ns.customers', [
-                    'name' => $faker->firstName,
+                    'name' => $firstName,
                     'general' => [
                         'group_id' => $group->id,
                         'surname' => $faker->lastName,
-                        'email' => $faker->email,
+                        'email' => $email,
                     ],
                     'shipping' => [
-                        'name' => $faker->firstName,
-                        'email' => $faker->email,
+                        'name' => $firstName,
+                        'surname' => $lastName,
+                        'email' => $email,
+                    ],
+                    'billing' => [
+                        'name' => $firstName,
+                        'surname' => $lastName,
+                        'email' => $email,
                     ],
                 ]);
 
