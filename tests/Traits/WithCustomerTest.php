@@ -96,6 +96,8 @@ trait WithCustomerTest
 
     protected function attemptCreateCustomersWithSimilarEmail()
     {
+        ns()->option->set( 'ns_customers_force_valid_email', 'yes' );
+        
         $faker = Factory::create();
         $group = CustomerGroup::first();
         $email = $faker->email;
