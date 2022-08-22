@@ -1181,6 +1181,12 @@ class ModulesService
                 $this->options->set( 'enabled_modules', $enabledModules );
             }
 
+            /**
+             * we might recreate the symlink directory
+             * for the module that is about to be enabled
+             */
+            $this->createSymLink( $namespace );
+
             return [
                 'status' => 'success',
                 'message' => __( 'The module has correctly been enabled.' ),
