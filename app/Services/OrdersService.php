@@ -881,12 +881,10 @@ class OrdersService
             ->subtractBy( $this->__computeOrderCoupons( $fields, $subtotal ) )
             ->getRaw();
 
-        $allowedPaymentsGateways = Cache::remember( 'nexopos.pos.payments', 3600, function() {
-            return PaymentType::active()
-                ->get()
-                ->map( fn( $paymentType ) => $paymentType->identifier )
-                ->toArray();
-        });
+        $allowedPaymentsGateways = PaymentType::active()
+            ->get()
+            ->map( fn( $paymentType ) => $paymentType->identifier )
+            ->toArray();
 
         if ( ! empty( $fields[ 'payments' ] ) ) {
             foreach ( $fields[ 'payments' ] as $payment) {

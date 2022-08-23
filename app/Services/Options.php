@@ -25,9 +25,8 @@ class Options
     public string $tableName;
 
     /**
-     * the option class can be constructed with the user id. If the user is not connected we
-     * would like to avoid getting general option. So even if the user is not connected
-     * we should treat null (when user is not connected) as if the
+     * the option class can be constructed with the user id. 
+     * If the user is not provided, the general options are loaded instead. 
      */
     public function __construct()
     {
