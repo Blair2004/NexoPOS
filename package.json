@@ -73,7 +73,7 @@
     "numeral": "^2.0.6",
     "postcss-sass": "^0.5.0",
     "rx": "^4.1.0",
-    "rxjs": "^7.5.5",
+    "rxjs": "^7.5.6",
     "tailwindcss": "^3.1.7",
     "twitter_cldr": "^2.2.0",
     "vue": "^2.6.12",
