@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Classes\Hook;
 use App\Models\UnitGroup;
-use Exception;
 use Faker\Factory;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -130,43 +129,39 @@ class DemoService extends DemoCoreService
                 $random = Str::random(8);
                 $unitGroup = UnitGroup::with( 'units' )->where( 'name', __( 'Countable' ) )->first();
 
-                try {
-                    $result = $this->productService->create([
-                        'product_type' => 'product',
-                        'name' => $product->name,
-                        'sku' => $random,
-                        'barcode' => $random,
-                        'barcode_type' => 'code128',
-                        'category_id' => $createdCategory[ 'id' ],
-                        'description' => __( 'generated' ),
-                        'product_type' => 'product',
-                        'type' => 'dematerialized',
-                        'status' => 'available',
-                        'stock_management' => 'enabled', // Arr::random([ 'disabled', 'enabled' ]),
-                        'tax_group_id' => 1,
-                        'tax_type' => 'inclusive',
-                        'images' => [
-                            [
-                                'featured' => true,
-                                'url' => asset( $product->image ),
-                            ],
+                $result = $this->productService->create([
+                    'product_type' => 'product',
+                    'name' => $product->name,
+                    'sku' => $random,
+                    'barcode' => $random,
+                    'barcode_type' => 'code128',
+                    'category_id' => $createdCategory[ 'id' ],
+                    'description' => __( 'generated' ),
+                    'product_type' => 'product',
+                    'type' => 'dematerialized',
+                    'status' => 'available',
+                    'stock_management' => 'enabled', // Arr::random([ 'disabled', 'enabled' ]),
+                    'tax_group_id' => 1,
+                    'tax_type' => 'inclusive',
+                    'images' => [
+                        [
+                            'featured' => true,
+                            'url' => asset( $product->image ),
                         ],
-                        'units' => [
-                            'selling_group' => $unitGroup
-                                ->units->map( function( $unit ) use ( $product ) {
-                                    return [
-                                        'sale_price_edit' => $product->price,
-                                        'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ),
-                                        'unit_id' => $unit->id,
-                                        'preview_url' => asset( $product->image ),
-                                    ];
-                                }),
-                            'unit_group' => $unitGroup->id,
-                        ],
-                    ]);
-                } catch ( Exception $exception ) {
-                    dump( $exception->getMessage() );
-                }
+                    ],
+                    'units' => [
+                        'selling_group' => $unitGroup
+                            ->units->map( function( $unit ) use ( $product ) {
+                                return [
+                                    'sale_price_edit' => $product->price,
+                                    'wholesale_price_edit' => ns()->currency->getPercentageValue( $product->price, 10, 'substract' ),
+                                    'unit_id' => $unit->id,
+                                    'preview_url' => asset( $product->image ),
+                                ];
+                            }),
+                        'unit_group' => $unitGroup->id,
+                    ],
+                ]);
             }
         }
     }

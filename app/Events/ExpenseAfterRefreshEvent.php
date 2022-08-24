@@ -11,19 +11,14 @@ class ExpenseAfterRefreshEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $event;
-
-    public $date;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $event, $date )
+    public function __construct( public $event, public $date )
     {
-        $this->event = $event;
-        $this->date = $date;
+        // ...
     }
 
     /**

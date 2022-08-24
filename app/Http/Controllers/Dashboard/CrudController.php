@@ -107,7 +107,7 @@ class CrudController extends DashboardController
         /**
          * That will trigger everytime an instance is deleted.
          */
-        CrudAfterDeleteEvent::dispatch( $resource, (object) $model->toArray() );
+        event( new CrudAfterDeleteEvent( $resource, (object) $model->toArray() ) );
 
         return [
             'status' => 'success',

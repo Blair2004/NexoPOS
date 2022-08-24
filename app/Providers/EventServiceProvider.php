@@ -4,17 +4,10 @@ namespace App\Providers;
 
 use App\Classes\Hook;
 use App\Filters\MenusFilter;
-use App\Listeners\CashRegisterEventsSubscriber;
-use App\Listeners\CustomerEventSubscriber;
-use App\Listeners\ExpensesEventSubscriber;
-use App\Listeners\OrderEventsSubscriber;
-use App\Listeners\ProcurementEventsSubscriber;
-use App\Listeners\ProductEventsSubscriber;
 use App\Services\ModulesService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -50,7 +43,10 @@ class EventServiceProvider extends ServiceProvider
 
         $paths = collect( $modulesServices->getEnabled() )->map( function( $module ) {
             return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
-        })->values()->toArray();
+        })
+            ->values()
+            ->push( $this->app->path('Listeners') )
+            ->toArray();
 
         return $paths;
     }
@@ -62,13 +58,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::subscribe( ProcurementEventsSubscriber::class );
-        Event::subscribe( ProductEventsSubscriber::class );
-        Event::subscribe( OrderEventsSubscriber::class );
-        Event::subscribe( ExpensesEventSubscriber::class );
-        Event::subscribe( CustomerEventSubscriber::class );
-        Event::subscribe( CashRegisterEventsSubscriber::class );
-
         Hook::addFilter( 'ns-dashboard-menus', [ MenusFilter::class, 'injectRegisterMenus' ]);
     }
 

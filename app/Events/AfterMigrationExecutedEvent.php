@@ -11,22 +11,14 @@ class AfterMigrationExecutedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $module;
-
-    public $response;
-
-    public $file;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $module, $response, $file )
+    public function __construct( public $module, public $response, public $file )
     {
-        $this->module = $module;
-        $this->response = $response;
-        $this->file = $file;
+        // ...
     }
 
     /**

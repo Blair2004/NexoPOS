@@ -13,25 +13,8 @@ class OrderAfterProductRefundedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * @var Order
-     */
-    public $order;
-
-    /**
-     * @var OrderProduct
-     */
-    public $orderProduct;
-
-    /**
-     * @var OrderProductRefund
-     */
-    public $orderProductRefund;
-
-    public function __construct( Order $order, OrderProduct $orderProduct, OrderProductRefund $orderProductRefund )
+    public function __construct( public Order $order, public OrderProduct $orderProduct, public OrderProductRefund $orderProductRefund )
     {
-        $this->order = $order;
-        $this->orderProduct = $orderProduct;
-        $this->orderProductRefund = $orderProductRefund;
+        // ...
     }
 }

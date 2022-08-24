@@ -10,8 +10,8 @@ use App\Models\Customer;
 use App\Models\CustomerBillingAddress;
 use App\Models\CustomerGroup;
 use App\Models\CustomerShippingAddress;
-use App\Models\User;
 use App\Services\CrudService;
+use App\Services\CustomerService;
 use App\Services\Helper;
 use App\Services\Options;
 use App\Services\Users;
@@ -494,6 +494,12 @@ class CustomerCrud extends CrudService
     public function beforePost( $inputs )
     {
         $this->allowedTo( 'create' );
+
+        /**
+         * @var CustomerService
+         */
+        $customerService = app()->make( CustomerService::class );
+        $customerService->precheckCustomers( $inputs );
     }
 
     /**
@@ -504,6 +510,12 @@ class CustomerCrud extends CrudService
     public function beforePut( $inputs, $customer )
     {
         $this->allowedTo( 'update' );
+
+        /**
+         * @var CustomerService
+         */
+        $customerService = app()->make( CustomerService::class );
+        $customerService->precheckCustomers( $inputs, $customer->id );
     }
 
     /**

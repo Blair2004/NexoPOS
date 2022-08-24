@@ -314,7 +314,7 @@ class OrdersController extends DashboardController
 
     public function printOrder( Order $order, $doc = 'receipt' )
     {
-        event( new OrderAfterPrintedEvent( $order, $doc ) );
+        OrderAfterPrintedEvent::dispatch( $order, $doc );
 
         return [
             'status' => 'success',

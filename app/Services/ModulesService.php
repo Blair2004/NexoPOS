@@ -739,7 +739,7 @@ class ModulesService
              * @step 1 : creating host folder
              * No errors has been found, We\'ll install the module then
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace );
+            Storage::disk( 'ns-modules' )->makeDirectory( $moduleNamespace, 0755, true );
 
             /**
              * @step 2 : move files
@@ -801,7 +801,7 @@ class ModulesService
         $this->checkManagementStatus();
 
         if ( ! is_dir( base_path( 'public/modules' ) ) ) {
-            Storage::disk( 'public' )->makeDirectory( 'modules' );
+            Storage::disk( 'public' )->makeDirectory( 'modules', 0755, true );
         }
 
         /**
@@ -1181,6 +1181,12 @@ class ModulesService
                 $this->options->set( 'enabled_modules', $enabledModules );
             }
 
+            /**
+             * we might recreate the symlink directory
+             * for the module that is about to be enabled
+             */
+            $this->createSymLink( $namespace );
+
             return [
                 'status' => 'success',
                 'message' => __( 'The module has correctly been enabled.' ),
@@ -1505,21 +1511,21 @@ class ModulesService
                 Storage::disk( 'ns-modules' )->deleteDirectory( $config[ 'namespace' ] );
             }
 
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ], 0755, true );
 
             /**
              * Geneate Internal Directories
              */
             foreach ([ 'Config', 'Crud', 'Events', 'Mails', 'Fields', 'Facades', 'Http', 'Migrations', 'Resources', 'Routes', 'Models', 'Providers', 'Services', 'Public' ] as $folder ) {
-                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder );
+                Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . $folder, 0755, true );
             }
 
             /**
              * Generate Sub Folders
              */
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations' );
-            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views' );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Http' . DIRECTORY_SEPARATOR . 'Controllers', 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Migrations', 0755, true );
+            Storage::disk( 'ns-modules' )->makeDirectory( $config[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Resources' . DIRECTORY_SEPARATOR . 'Views', 0755, true );
 
             /**
              * Generate Files
@@ -1536,7 +1542,7 @@ class ModulesService
             $target = base_path( 'modules/' . $config[ 'namespace' ] . '/Public' );
 
             if ( ! \windows_os() ) {
-                Storage::disk( 'public' )->makeDirectory( 'modules/' . $config[ 'namespace' ] );
+                Storage::disk( 'public' )->makeDirectory( 'modules/' . $config[ 'namespace' ], 0755, true );
 
                 $linkPath = public_path( '/modules/' . strtolower( $config[ 'namespace' ] ) );
 

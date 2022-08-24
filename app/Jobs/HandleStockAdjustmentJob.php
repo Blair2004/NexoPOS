@@ -2,28 +2,26 @@
 
 namespace App\Jobs;
 
-use App\Events\ProductAfterStockAdjustmentEvent;
+use App\Models\ProductHistory;
 use App\Services\ReportService;
+use App\Traits\NsSerialize;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class HandleStockAdjustmentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $history;
+    use Dispatchable, InteractsWithQueue, Queueable, NsSerialize;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct( ProductAfterStockAdjustmentEvent $event )
+    public function __construct( public ProductHistory $history )
     {
-        $this->history = $event->history;
+        $this->prepareSerialization();
     }
 
     /**
@@ -31,12 +29,8 @@ class HandleStockAdjustmentJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle( ReportService $reportService )
     {
-        /**
-         * @var ReportService
-         */
-        $reportService = app()->make( ReportService::class );
         $reportService->handleStockAdjustment( $this->history );
     }
 }

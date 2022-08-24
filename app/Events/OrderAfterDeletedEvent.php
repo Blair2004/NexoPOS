@@ -12,16 +12,14 @@ class OrderAfterDeletedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( $order )
+    public function __construct( public $order )
     {
-        $this->order = $order;
+        // ...
     }
 
     /**

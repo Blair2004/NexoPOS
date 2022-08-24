@@ -5,7 +5,6 @@ namespace App\Events;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Http\Request;
 use Illuminate\Queue\SerializesModels;
 
 class ExpenseBeforeCreateEvent
@@ -13,18 +12,13 @@ class ExpenseBeforeCreateEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @param Request
-     */
-    public $inputs;
-
-    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( array $inputs )
+    public function __construct( public array $inputs )
     {
-        $this->inputs = $inputs;
+        // ...
     }
 
     /**

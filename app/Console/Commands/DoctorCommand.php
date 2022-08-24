@@ -14,7 +14,12 @@ class DoctorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ns:doctor {--fix-roles} {--fix-users-attributes} {--fix-orders-products} {--fix-duplicate-options}';
+    protected $signature = 'ns:doctor 
+        {--fix-roles} 
+        {--fix-users-attributes} 
+        {--fix-orders-products} 
+        {--fix-customers}
+        {--fix-duplicate-options}';
 
     /**
      * The console command description.
@@ -40,10 +45,7 @@ class DoctorCommand extends Command
      */
     public function handle()
     {
-        /**
-         * @var DoctorService
-         */
-        $doctorService = app()->make( DoctorService::class );
+        $doctorService = new DoctorService( $this );
 
         if ( $this->option( 'fix-roles' ) ) {
             $doctorService->restoreRoles();
@@ -61,6 +63,12 @@ class DoctorCommand extends Command
             $doctorService->fixDuplicateOptions();
 
             return $this->info( 'The duplicated options where cleared.' );
+        }
+
+        if ( $this->option( 'fix-customers' ) ) {
+            $doctorService->fixCustomers();
+
+            return $this->info( 'The customers were fixed.' );
         }
 
         if ( $this->option( 'fix-orders-products' ) ) {

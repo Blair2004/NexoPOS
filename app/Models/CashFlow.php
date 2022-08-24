@@ -61,7 +61,7 @@ class CashFlow extends NsModel
      */
     const ACCOUNT_CUSTOMER_DEBIT = '008';
 
-    protected $dispatchEvents = [
+    protected $dispatchesEvents = [
         'created' => CashFlowHistoryAfterCreatedEvent::class,
         'updated' => CashFlowHistoryAfterUpdatedEvent::class,
         'deleted' => CashFlowHistoryAfterDeletedEvent::class,

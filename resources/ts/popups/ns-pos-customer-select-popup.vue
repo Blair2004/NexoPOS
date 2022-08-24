@@ -132,6 +132,7 @@ export default {
              * POS object;
              */
             this.isLoading      =   true;
+            
             POS.selectCustomer( customer ).then( resolve => {
                 this.isLoading  =   false;
                 this.resolveIfQueued( customer );

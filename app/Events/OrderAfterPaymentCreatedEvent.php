@@ -13,19 +13,14 @@ class OrderAfterPaymentCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $orderPayment;
-
-    public $order;
-
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct( OrderPayment $orderPayment, Order $order )
+    public function __construct( public OrderPayment $orderPayment, public Order $order )
     {
-        $this->orderPayment = $orderPayment;
-        $this->order = $order;
+        // ...
     }
 
     /**

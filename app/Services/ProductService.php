@@ -900,13 +900,8 @@ class ProductService
 
     private function __resetProductRelatives( Product $product )
     {
-        $this->getProductHistory( $product->id )->each( function( $history ) {
-            $history->delete();
-        });
-
-        $this->getUnitQuantities( $product->id )->each( function( $unitQuantity ) {
-            $unitQuantity->delete();
-        });
+        ProductHistory::where( 'product_id', $product->id )->delete();
+        ProductUnitQuantity::where( 'product_id', $product->id )->delete();
 
         /**
          * dispatch an event to let everyone knows

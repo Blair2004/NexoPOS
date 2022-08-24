@@ -59,7 +59,7 @@ class UpdateController extends Controller
             $module = $request->input( 'module' );
             foreach ( $module[ 'migrations' ] as $file ) {
                 $response = $this->moduleService->runMigration( $module[ 'namespace' ], $file );
-                event( new AfterMigrationExecutedEvent( $module, $response, $file ) );
+                AfterMigrationExecutedEvent::dispatch( $module, $response, $file );
             }
         }
 

@@ -129,6 +129,7 @@ trait WithAccountingTest
         $totalExpenses = CashFlow::where( 'created_at', '>=', $dashboardDay->range_starts )
             ->where( 'created_at', '<=', $dashboardDay->range_ends )
             ->where( 'expense_category_id', $expenseCategoryID )
+            ->where( 'procurement_id', $procurement[ 'id' ] )
             ->sum( 'value' );
 
         $this->assertEquals(
