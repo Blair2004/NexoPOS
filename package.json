@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.6.3",
-    "autoprefixer": "^10.4.7",
+    "autoprefixer": "^10.4.8",
     "axios": "^0.27.2",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.2",
