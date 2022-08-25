@@ -171,7 +171,7 @@ export default {
                     description: __( 'Define what is the sale price of the item.' ),
                     validation: '',
                     show( form ) {
-                        return form.product_type === 'product';
+                        return form.product_type === 'regular';
                     }
                 }, {
                     label: __( 'Quantity' ),
@@ -181,7 +181,7 @@ export default {
                     description: __( 'Set the quantity of the product.' ),
                     validation: '',
                     show( form ) {
-                        return form.product_type === 'product';
+                        return form.product_type === 'regular';
                     }
                 }, {
                     label: __( 'Unit' ),
@@ -193,7 +193,7 @@ export default {
                     description: __( 'Assign a unit to the product.' ),
                     validation: '',  
                     show( form ) {
-                        return form.product_type === 'product';
+                        return form.product_type === 'regular';
                     }                  
                 }, {
                     label: __( 'Tax Type' ),
@@ -213,7 +213,7 @@ export default {
                     ],
                     description: __( 'Define what is tax type of the item.' ),  
                     show( form ) {
-                        return form.product_type === 'product';
+                        return form.product_type === 'regular';
                     }             
                 }, {
                     label: __( 'Tax Group' ),
@@ -224,7 +224,7 @@ export default {
                     ],
                     description: __( 'Choose the tax group that should apply to the item.' ),  
                     show( form ) {
-                        return form.product_type === 'product';
+                        return form.product_type === 'regular';
                     }                 
                 }
             ]
