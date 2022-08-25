@@ -136,30 +136,36 @@ export default {
         enableModule( object ) {
             const url   =   `${this.url}/${object.namespace}/enable`;
             nsHttpClient.put( url )
-                .subscribe( async result => {
-                    nsSnackBar.success( result.message ).subscribe();
+                .subscribe({
+                    next: async result => {
+                        nsSnackBar.success( result.message ).subscribe();
 
-                    this.loadModules().subscribe( result => {
-                        document.location.reload();
-                    }, ( error ) => {
+                        this.loadModules().subscribe( result => {
+                            document.location.reload();
+                        }, ( error ) => {
+                            nsSnackBar.error( error.message ).subscribe();
+                        });
+                    },
+                    error: ( error ) => {
                         nsSnackBar.error( error.message ).subscribe();
-                    });
-                }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    }
                 });
         },
         disableModule( object ) {
             const url   =   `${this.url}/${object.namespace}/disable`;
             nsHttpClient.put( url )
-                .subscribe( result => {
-                    nsSnackBar.success( result.message ).subscribe();
-                    this.loadModules().subscribe( result => {
-                        document.location.reload();
-                    }, ( error ) => {
+                .subscribe({
+                    next: result => {
+                        nsSnackBar.success( result.message ).subscribe();
+                        this.loadModules().subscribe( result => {
+                            document.location.reload();
+                        }, ( error ) => {
+                            nsSnackBar.error( error.message ).subscribe();
+                        })
+                    },
+                    error: ( error ) => {
                         nsSnackBar.error( error.message ).subscribe();
-                    })
-                }, ( error ) => {
-                    nsSnackBar.error( error.message ).subscribe();
+                    }
                 });
         },
         loadModules() {
@@ -177,12 +183,15 @@ export default {
             if ( confirm( this.$slots[ 'confirm-delete-module' ] ? this.$slots[ 'confirm-delete-module' ][0].text : 'No text was provided for "confirm-delete-module" message.' ) ) {
                 const url   =   `${this.url}/${module.namespace}/delete`;
                 nsHttpClient.delete( url )
-                    .subscribe( result => {
-                        this.loadModules().subscribe( result => {
-                            document.location.reload();
-                        })
-                    }, ( error ) => {
-                        nsSnackBar.error( error.message, null, { duration: 5000 }).subscribe();
+                    .subscribe({
+                        next: result => {
+                            this.loadModules().subscribe( result => {
+                                document.location.reload();
+                            })
+                        },
+                        error: ( error ) => {
+                            nsSnackBar.error( error.message, null, { duration: 5000 }).subscribe();
+                        }
                     })
             }
         }
