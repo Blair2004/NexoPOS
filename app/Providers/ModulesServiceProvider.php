@@ -21,6 +21,14 @@ class ModulesServiceProvider extends ServiceProvider
     public function boot( ModulesService $modules )
     {
         /**
+         * we might sometime needs to
+         * ignore all module.
+         */
+        if ( ! env( 'NS_LOAD_MODULES', true ) ) {
+            return;
+        }
+        
+        /**
          * trigger boot method only for enabled modules
          * service providers that extends ModulesServiceProvider.
          */
@@ -44,6 +52,14 @@ class ModulesServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        /**
+         * we might sometime needs to
+         * ignore all module.
+         */
+        if ( ! env( 'NS_LOAD_MODULES', true ) ) {
+            return;
+        }
+
         $this->app->singleton( ModulesService::class, function( $app ) {
             $this->modules = new ModulesService;
             $this->modules->load();
