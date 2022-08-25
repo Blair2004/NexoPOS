@@ -733,6 +733,13 @@ class ModulesService
                         'module' => $module,
                     ];
                 }
+
+                /**
+                 * we need to delete the previous
+                 * folder if that folder exists
+                 * to avoid keeping unused files
+                 */
+                Storage::disk( 'ns-modules' )->deleteDirectory( $moduleNamespace );
             }
 
             /**
