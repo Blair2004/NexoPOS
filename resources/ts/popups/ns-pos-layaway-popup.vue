@@ -223,6 +223,7 @@ export default {
                 }];
                 this.order.final_payment_date   =   this.order.instalments.reverse()[0].date;
                 this.order.total_instalments    =   this.order.instalments.length;
+                this.order.support_instalments  =   false;
             } else {
                 /**
                  * the order should be 

@@ -179,7 +179,10 @@ class OrdersController extends DashboardController
         );
 
         return $this->view( 'pages.dashboard.orders.pos', [
-            'title' => __( 'POS &mdash; NexoPOS' ),
+            'title' => sprintf(
+                __( 'POS &mdash; %s' ),
+                ns()->option->get( 'ns_store_name', 'NexoPOS' )
+            ),
             'orderTypes' => collect( config( 'nexopos.orders.types' ) )->filter( function( $type, $label ) {
                 return in_array( $label, ns()->option->get( 'ns_pos_order_types' ) ?: [] );
             }),

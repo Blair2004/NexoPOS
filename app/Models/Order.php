@@ -104,6 +104,7 @@ class Order extends NsModel
 
     public $casts = [
         'final_payment_date' => DateCast::class,
+        'support_instalments' => 'boolean'
     ];
 
     public function products()

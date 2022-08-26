@@ -751,7 +751,10 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
-        if ( $order->instalments->count() > 0 ) {
+        /**
+         * We should check if the order allow instalments.
+         */
+        if ( $order->instalments->count() > 0 && $order->support_instalments ) {
             $paymentToday = $order->instalments()
                 ->where( 'paid', false )
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
@@ -1933,7 +1936,7 @@ class OrdersService
                 ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
-                ->with( 'customer' )
+                ->with( 'customer.billing', 'customer.shipping' )
                 ->first();
 
             if ( ! $order instanceof Order ) {
