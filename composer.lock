@@ -8943,16 +8943,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "118a55fc3a870f20ae111b7439f18bd20298d388"
+                "reference": "ebfe95b446e4395eba1eefb8615214fb55163165"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/118a55fc3a870f20ae111b7439f18bd20298d388",
-                "reference": "118a55fc3a870f20ae111b7439f18bd20298d388",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/ebfe95b446e4395eba1eefb8615214fb55163165",
+                "reference": "ebfe95b446e4395eba1eefb8615214fb55163165",
                 "shasum": ""
             },
             "require": {
@@ -8963,13 +8963,13 @@
                 "php": "^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.9.5",
-                "illuminate/view": "^9.22.1",
-                "laravel-zero/framework": "^9.1.2",
+                "friendsofphp/php-cs-fixer": "^3.10.0",
+                "illuminate/view": "^9.26.0",
+                "laravel-zero/framework": "^9.1.3",
                 "mockery/mockery": "^1.5.0",
                 "nunomaduro/larastan": "^2.1.12",
-                "nunomaduro/termwind": "^1.13.0",
-                "pestphp/pest": "^1.21.3"
+                "nunomaduro/termwind": "^1.14.0",
+                "pestphp/pest": "^1.22.0"
             },
             "bin": [
                 "builds/pint"
@@ -9005,7 +9005,7 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2022-08-02T15:02:55+00:00"
+            "time": "2022-08-30T15:28:20+00:00"
         },
         {
             "name": "mockery/mockery",
