@@ -42,8 +42,8 @@ class EventServiceProvider extends ServiceProvider
         $modulesServices = app()->make( ModulesService::class );
 
         $paths = collect( $modulesServices->getEnabled() )->map( function( $module ) {
-            return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
-        })
+                return base_path( 'modules' . DIRECTORY_SEPARATOR . $module[ 'namespace' ] . DIRECTORY_SEPARATOR . 'Listeners' );
+            })
             ->values()
             ->push( $this->app->path('Listeners') )
             ->toArray();
