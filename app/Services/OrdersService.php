@@ -2311,10 +2311,30 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        return Hook::filter( 'ns-order-types', [
-            'delivery' => __( 'Delivery' ),
-            'takeaway' => __( 'Take Away' ),
-            'not-available' => __( 'Not Available' ),
+        $types  =   Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+            return [
+                $option[ 'identifier' ] => $option[ 'label' ]
+            ];
+        })->toArray() );
+
+        return $types;
+    }
+
+    public function getTypeOptions()
+    {
+        return Hook::filter( 'ns-orders-types', [
+            'takeaway' => [
+                'identifier' => 'takeaway',
+                'label' => __( 'Take Away' ),
+                'icon' => '/images/groceries.png',
+                'selected' => false,
+            ],
+            'delivery' => [
+                'identifier' => 'delivery',
+                'label' => __( 'Delivery' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
         ]);
     }
 
