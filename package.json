@@ -62,7 +62,7 @@
     "@wordpress/hooks": "^3.14.0",
     "acorn": "^8.7.1",
     "apexcharts": "^3.35.5",
-    "chart.js": "^3.8.0",
+    "chart.js": "^3.9.1",
     "css-loader": "^6.5.1",
     "currency.js": "^2.0.4",
     "dayjs": "^1.11.5",
