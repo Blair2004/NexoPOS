@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ProductUnitQuantityAfterCreatedEvent;
+use App\Events\ProductUnitQuantityAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -36,6 +38,11 @@ class ProductUnitQuantity extends NsModel
     use HasFactory;
 
     protected $table = 'nexopos_' . 'products_unit_quantities';
+
+    protected $dispatchesEvents     =   [
+        'created'   =>  ProductUnitQuantityAfterCreatedEvent::class,
+        'updated'   =>  ProductUnitQuantityAfterUpdatedEvent::class
+    ];
 
     /**
      * Fetch products unique a barcode filter

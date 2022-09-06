@@ -1080,7 +1080,6 @@ class ProductService
          * @param int $product_id
          * @param float $unit_price
          * @param id $unit_id
-         * @param float $unit_price
          * @param float $total_price
          * @param int $procurement_product_id
          * @param OrderProduct $orderProduct
