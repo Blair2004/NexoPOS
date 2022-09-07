@@ -34,7 +34,7 @@
     "postcss-custom-properties": "^12.1.8",
     "postcss-hash": "^3.0.0",
     "postcss-import": "^14.1.0",
-    "postcss-mixins": "^9.0.3",
+    "postcss-mixins": "^9.0.4",
     "postcss-nested": "^5.0.6",
     "postcss-nesting": "^10.1.10",
     "postcss-scss": "^4.0.4",
