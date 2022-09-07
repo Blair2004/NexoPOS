@@ -7,12 +7,12 @@ Route::get( 'orders/{id?}', [ OrdersController::class, 'getOrders' ])->where( 'i
 Route::get( 'orders/payments', [ OrdersController::class, 'getSupportedPayments' ]);
 Route::get( 'orders/{id}/pos', [ OrdersController::class, 'getPosOrder' ])->where( 'id', '[0-9]+');
 Route::get( 'orders/{id}/products', [ OrdersController::class, 'getOrderProducts' ])->where( 'id', '[0-9]+');
-Route::get( 'orders/{order}/products/refunded', [ OrdersController::class, 'getOrderProductsRefunded' ])->where( 'id', '[0-9]+');
-Route::get( 'orders/{order}/refunds', [ OrdersController::class, 'getOrderRefunds' ])->where( 'id', '[0-9]+');
+Route::get( 'orders/{order}/products/refunded', [ OrdersController::class, 'getOrderProductsRefunded' ])->where( 'order', '[0-9]+');
+Route::get( 'orders/{order}/refunds', [ OrdersController::class, 'getOrderRefunds' ])->where( 'order', '[0-9]+');
 Route::get( 'orders/{id}/payments', [ OrdersController::class, 'getOrderPayments' ])->where( 'id', '[0-9]+');
-Route::get( 'orders/{order}/instalments', [ OrdersController::class, 'getOrderInstalments' ])->where( 'id', '[0-9]+')->middleware( 'ns.restrict:nexopos.read.orders-instalments' );
-Route::get( 'orders/{order}/print/{doc?}', [ OrdersController::class, 'printOrder' ])->where( 'id', '[0-9]+');
-Route::post( 'orders/{order}/instalments/{instalment}/pay', [ OrdersController::class, 'payInstalment' ])->where( 'id', '[0-9]+')->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
+Route::get( 'orders/{order}/instalments', [ OrdersController::class, 'getOrderInstalments' ])->where( 'order', '[0-9]+')->middleware( 'ns.restrict:nexopos.read.orders-instalments' );
+Route::get( 'orders/{order}/print/{doc?}', [ OrdersController::class, 'printOrder' ])->where( 'order', '[0-9]+');
+Route::post( 'orders/{order}/instalments/{instalment}/pay', [ OrdersController::class, 'payInstalment' ])->where( 'order', '[0-9]+')->middleware( 'ns.restrict:nexopos.update.orders-instalments' );
 Route::post( 'orders/{order}/void', [ OrdersController::class, 'voidOrder' ])->middleware( 'ns.restrict:nexopos.void.orders' );
 Route::post( 'orders', [ OrdersController::class, 'create' ]);
 Route::post( 'orders/{id}/products', [ OrdersController::class, 'addProductToOrder' ]);

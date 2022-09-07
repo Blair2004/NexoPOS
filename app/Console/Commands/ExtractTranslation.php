@@ -127,8 +127,8 @@ class ExtractTranslation extends Command
             }
         } else {
             $files = array_merge(
+                Storage::disk( 'ns' )->allFiles( 'app' ),
                 Storage::disk( 'ns' )->allFiles( 'resources' ),
-                Storage::disk( 'ns' )->allFiles( 'app' )
             );
 
             if ( $this->option( 'lang' ) === 'all' ) {

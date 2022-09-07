@@ -48,6 +48,10 @@ class Product extends NsModel
 
     const TYPE_GROUPED = 'grouped';
 
+    const STATUS_AVAILABLE = 'available';
+
+    CONST STATUS_UNAVAILABLE = 'unavailable';
+
     protected $table = 'nexopos_' . 'products';
 
     protected $cats = [
@@ -139,6 +143,28 @@ class Product extends NsModel
     public function scopeSku( $query, $sku )
     {
         return $this->scopeFindUsingSKU( $query, $sku );
+    }
+
+    /**
+     * get products that are on sale.
+     * 
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeOnSale( $query )
+    {
+        return $query->where( 'status', self::STATUS_AVAILABLE );
+    }
+
+    /**
+     * get products that aren't on sale.
+     * 
+     * @param QueryBuilder
+     * @return QueryBuilder
+     */
+    public function scopeHidden( $query )
+    {
+        return $query->where( 'status', self::STATUS_UNAVAILABLE );
     }
 
     /**

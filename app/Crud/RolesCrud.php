@@ -222,22 +222,18 @@ class RolesCrud extends CrudService
     public function filterPutInputs( $inputs, Role $entry )
     {
         /**
-         * the namespace can be automatted
+         * if the role is a locked role
+         * we should forbid editing the namespace.
          */
-        if ( empty( $inputs[ 'namespace' ] ) ) {
-            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
+        if ( $entry->locked ) {
+            unset( $inputs[ 'namespace' ] );
         }
 
         /**
-         * the default role namespace can't be changed.
+         * the namespace can be automatted
          */
-        if ( ! in_array( $inputs[ 'namespace' ], [
-            Role::ADMIN,
-            Role::STOREADMIN,
-            Role::STORECASHIER,
-            Role::USER,
-        ] )) {
-            $inputs[ 'namespace' ] = Str::replace( ' ', '-', $inputs[ 'namespace' ] );
+        if ( empty( $inputs[ 'namespace' ] ) && ! $entry->locked ) {
+            $inputs[ 'namespace' ] = Str::slug( $inputs[ 'name' ] );
         }
 
         return $inputs;

@@ -751,7 +751,10 @@ class OrdersService
      */
     public function makeOrderSinglePayment( $payment, Order $order )
     {
-        if ( $order->instalments->count() > 0 ) {
+        /**
+         * We should check if the order allow instalments.
+         */
+        if ( $order->instalments->count() > 0 && $order->support_instalments ) {
             $paymentToday = $order->instalments()
                 ->where( 'paid', false )
                 ->where( 'date', '>=', ns()->date->copy()->startOfDay()->toDateTimeString() )
@@ -1933,7 +1936,7 @@ class OrdersService
                 ->with( 'coupons' )
                 ->with( 'products.unit' )
                 ->with( 'products.product.unit_quantities' )
-                ->with( 'customer' )
+                ->with( 'customer.billing', 'customer.shipping' )
                 ->first();
 
             if ( ! $order instanceof Order ) {
@@ -2308,10 +2311,30 @@ class OrdersService
      */
     public function getTypeLabels()
     {
-        return Hook::filter( 'ns-order-types', [
-            'delivery' => __( 'Delivery' ),
-            'takeaway' => __( 'Take Away' ),
-            'not-available' => __( 'Not Available' ),
+        $types  =   Hook::filter( 'ns-order-types-labels', collect( $this->getTypeOptions() )->mapWithKeys( function( $option ) {
+            return [
+                $option[ 'identifier' ] => $option[ 'label' ]
+            ];
+        })->toArray() );
+
+        return $types;
+    }
+
+    public function getTypeOptions()
+    {
+        return Hook::filter( 'ns-orders-types', [
+            'takeaway' => [
+                'identifier' => 'takeaway',
+                'label' => __( 'Take Away' ),
+                'icon' => '/images/groceries.png',
+                'selected' => false,
+            ],
+            'delivery' => [
+                'identifier' => 'delivery',
+                'label' => __( 'Delivery' ),
+                'icon' => '/images/delivery.png',
+                'selected' => false,
+            ],
         ]);
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Services\Helper;
+use App\Services\OrdersService;
 
 return [
     'label' => __( 'Features' ),
@@ -90,7 +91,7 @@ return [
             'value' => ns()->option->get( 'ns_pos_order_types' ),
             'label' => __( 'Order Types' ),
             'type' => 'multiselect',
-            'options' => Helper::kvToJsOptions( config( 'nexopos.orders.types-labels' ) ),
+            'options' => Helper::kvToJsOptions( app()->make( OrdersService::class )->getTypeLabels() ),
             'description' => __( 'Control the order type enabled.' ),
         ], [
             'name' => 'ns_pos_numpad',

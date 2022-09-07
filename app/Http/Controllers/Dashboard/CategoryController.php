@@ -251,6 +251,7 @@ class CategoryController extends DashboardController
                 'products' => $category->products()
                     ->with( 'galleries', 'tax_group.taxes' )
                     ->searchable()
+                    ->onSale()
                     ->trackingDisabled()
                     ->get()
                     ->map( function( $product ) {

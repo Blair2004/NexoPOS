@@ -152,8 +152,8 @@ Vue.component( 'label-printing', {
             }
             // 
             window.labelPrintPopup     =   window.open( '', 'printPopup', windowFeatures );
-            const style     =   document.querySelector( 'link' );
-            const paper     =   document.getElementById( 'label-printing-paper' );
+            const styleOutput   =   Array.from( document.querySelectorAll( 'link' ) ).map( link => link.outerHTML ).join( "\n" )
+            const paper         =   document.getElementById( 'label-printing-paper' );
             window.labelPrintPopup.document.writeln( `
             <!DOCTYPE html>
             <html lang="en">
@@ -161,7 +161,7 @@ Vue.component( 'label-printing', {
                 <meta charset="UTF-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                ${style.outerHTML}
+                ${styleOutput}
                 <title>Printing Labels</title>
             </head>
             <body>
