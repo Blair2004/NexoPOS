@@ -46,6 +46,7 @@ class SaveSettingsTest extends TestCase
                                         'ns_currency_thousand_separator' => '.',
                                         'ns_currency_decimal_separator' => ',',
                                         'ns_date_format' => 'Y-m-d',
+                                        'ns_datetime_timezone' => 'Europe/London',
                                         'ns_datetime_format' => 'Y-m-d H:i',
                                         default => (
                                             match ( $field[ 'type' ] ) {

@@ -43,7 +43,7 @@ class RenderCrudFormTest extends TestCase
         ];
 
         foreach ( $cruds as $crud ) {
-            dump( 'Testing : ' . $crud );
+            print( "* Testing :  $crud\n" );
 
             $response = $this
                 ->withSession( $this->app[ 'session' ]->all() )
