@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -22,10 +23,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $tax_group_id
  * @property string $tax_type
  * @property int $wholesale_tax_value
+ * @property string $mode
  * @property float $sale_tax_value
  * @property float $tax_value
  * @property float $net_price
- * @property string $mode
  * @property string $unit_name
  * @property float $total_gross_price
  * @property float $total_price
@@ -48,6 +49,29 @@ class OrderProduct extends NsModel
     const CONDITION_UNSPOILED = 'unspoiled';
 
     protected $table = 'nexopos_' . 'orders_products';
+
+    protected $casts    =   [
+        'id' => 'integer',
+        'product_id' => 'integer',
+        'product_category_id' => 'integer',
+        'procurement_product_id' => 'integer',
+        'unit_id' => 'integer',
+        'unit_quantity_id' => 'integer',
+        'order_id' => 'integer',
+        'tax_group_id' => 'integer',
+        'quantity' => FloatConvertCasting::class,
+        'discount' => FloatConvertCasting::class,
+        'discount_percentage' => FloatConvertCasting::class,
+        'gross_price' => FloatConvertCasting::class,
+        'unit_price' => FloatConvertCasting::class,
+        'sale_tax_value' => FloatConvertCasting::class,
+        'tax_value' => FloatConvertCasting::class,
+        'net_price' => FloatConvertCasting::class,
+        'total_gross_price' => FloatConvertCasting::class,
+        'total_price' => FloatConvertCasting::class,
+        'total_net_price' => FloatConvertCasting::class,
+        'total_purchase_price' => FloatConvertCasting::class,
+    ];
 
     public function unit()
     {

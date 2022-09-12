@@ -5,11 +5,13 @@ namespace Tests\Feature;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
+use Tests\Traits\WithAuthentication;
+use Tests\Traits\WithOrderTest;
 use Tests\Traits\WithReportTest;
 
 class CanSeeReportsTest extends TestCase
 {
-    use WithReportTest;
+    use WithReportTest, WithAuthentication;
 
     /**
      * A basic feature test example.
@@ -23,5 +25,11 @@ class CanSeeReportsTest extends TestCase
         );
 
         $this->attemptSeeReports();
+    }
+
+    public function test_sale_report()
+    {
+        $this->attemptAuthenticate();
+        $this->attemptTestSaleReport();
     }
 }

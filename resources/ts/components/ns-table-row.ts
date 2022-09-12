@@ -2,6 +2,7 @@ import Vue from 'vue';
 
 import { nsEvent, nsHttpClient, nsSnackBar } from "@/bootstrap";
 import { __ } from '@/libraries/lang';
+import { Popup } from '@/libraries/popup';
 
 const nsTableRow    =   Vue.component( 'ns-table-row', {
     props: [
@@ -80,6 +81,31 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                 });
                 this.toggleMenu();
             }
+        },
+
+        /**
+         * Will catch custom popup opening that define a component.
+         * @param action an object that defined the action
+         * @param row the object that has the actual row
+         * @returns {mixed}
+         */
+        triggerPopup( action, row ) {
+            const component     =   (<any>window).nsExtraComponents[ action.component ];
+
+            /**
+             * it might be relaying on manual popups.
+             */
+            if ( action.component ) {
+                if ( component ) {
+                    return new Promise( ( resolve, reject ) => {
+                        Popup.show( component, { resolve, reject, row, action });
+                    });
+                } else {
+                    return nsSnackBar.error( __( `Unable to load the component "${action.component}". Make sure the component is registered to "nsExtraComponents".` ) ).subscribe();
+                }
+            } else {
+                this.triggerAction( action );
+            }
         }
     },
     template: `
@@ -97,7 +123,8 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template v-for="action of row.$actions">
                                     <a :href="action.url" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
-                                    <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a href="javascript:void(0)" @click="triggerPopup( action, row )" v-if="[ 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
                             </div>
                         </div>
@@ -126,7 +153,8 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <template v-for="action of row.$actions">
                                     <a :href="action.url" :target="action.target || ''" v-if="action.type === 'GOTO'" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
-                                    <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE', 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a href="javascript:void(0)" @click="triggerAsync( action )" v-if="[ 'GET', 'DELETE' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
+                                    <a href="javascript:void(0)" @click="triggerPopup( action, row )" v-if="[ 'POPUP' ].includes( action.type )" class="ns-action-button block px-4 py-2 text-sm leading-5" role="menuitem" v-html="sanitizeHTML( action.label )"></a>
                                 </template>
                             </div>
                         </div>

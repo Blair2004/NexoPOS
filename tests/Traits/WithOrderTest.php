@@ -790,7 +790,7 @@ trait WithOrderTest
                 $quantity = $faker->numberBetween(1, 10);
                 $data = array_merge([
                     'name' => $product->name,
-                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price, $discountRate ) * $quantity,
+                    'discount' => $taxService->getPercentageOf( $unitElement->sale_price * $quantity, $discountRate ),
                     'discount_percentage' => $discountRate,
                     'discount_type' => $faker->randomElement([ 'flat', 'percentage' ]),
                     'quantity' => $quantity,
@@ -856,8 +856,8 @@ trait WithOrderTest
             }
 
             $discount = [
-                'type' => $faker->randomElement([ 'percentage' ]),
-                'rate' => 5,
+                'type' => '',
+                'rate' => 0,
             ];
 
             $discountCoupons = 0;

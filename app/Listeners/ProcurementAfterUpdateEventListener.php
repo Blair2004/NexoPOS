@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ProcurementAfterUpdateEvent;
+use App\Services\ExpenseService;
 use App\Services\ProcurementService;
 use App\Services\ProviderService;
 
@@ -15,7 +16,8 @@ class ProcurementAfterUpdateEventListener
      */
     public function __construct(
         public ProcurementService $procurementService,
-        public ProviderService $providerService
+        public ProviderService $providerService,
+        public ExpenseService $expenseService
     ) {
         //
     }

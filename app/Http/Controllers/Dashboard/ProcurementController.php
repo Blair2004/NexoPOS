@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Classes\Hook;
 use App\Crud\ProcurementCrud;
 use App\Crud\ProcurementProductCrud;
+use App\Events\ProcurementAfterUpdateEvent;
 use App\Exceptions\NotAllowedException;
 use App\Http\Controllers\DashboardController;
 use App\Http\Requests\ProcurementRequest;
@@ -23,6 +24,7 @@ use App\Services\Options;
 use App\Services\ProcurementService;
 use App\Services\ProductService;
 use App\Services\Validation;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class ProcurementController extends DashboardController
@@ -116,7 +118,7 @@ class ProcurementController extends DashboardController
      * returns a procurement's products list
      *
      * @param int procurement_id
-     * @return array<ProcurementProduct>
+     * @return Collection
      */
     public function procurementProducts( $procurement_id )
     {
@@ -125,6 +127,51 @@ class ProcurementController extends DashboardController
 
             return $product;
         });
+    }
+
+    /**
+     * Will change the payment status
+     * for a procurement.
+     */
+    public function changePaymentStatus( Procurement $procurement, Request $request )
+    {
+        if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+            throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
+        }
+
+        $procurement->payment_status    =   $request->input( 'payment_status' );
+        $procurement->save();
+
+        event( new ProcurementAfterUpdateEvent( $procurement ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The procurement payment status has been changed successfully.' )
+        ];
+    }
+
+    /**
+     * Will change the payment status to
+     * paid for a provided procurement.
+     * 
+     * @param Procurement $procurement
+     * @return array
+     */
+    public function setAsPaid( Procurement $procurement )
+    {
+        if ( $procurement->payment_status === Procurement::PAYMENT_PAID ) {
+            throw new NotAllowedException( __( 'You cannot change the status of an already paid procurement.' ) );
+        }
+
+        $procurement->payment_status    =   Procurement::PAYMENT_PAID;
+        $procurement->save();
+
+        event( new ProcurementAfterUpdateEvent( $procurement ) );
+
+        return [
+            'status'    =>  'success',
+            'message'   =>  __( 'The procurement has been marked as paid.' )
+        ];
     }
 
     /**

@@ -1,10 +1,8 @@
 import { ProductQuantityPromise } from "./pages/dashboard/pos/queues/products/product-quantity";
 import { ProductUnitPromise } from "./pages/dashboard/pos/queues/products/product-unit";
-import { Subject, BehaviorSubject, forkJoin } from "rxjs";
-import { Product } from "./interfaces/product";
+import { BehaviorSubject } from "rxjs";
 import { Customer } from "./interfaces/customer";
 import { OrderType } from "./interfaces/order-type";
-import { POSVirtualStock } from "./interfaces/pos-virual-stock";
 import Vue from 'vue';
 import { Order } from "./interfaces/order";
 import { nsEvent, nsHooks, nsHttpClient, nsSnackBar } from "./bootstrap";
@@ -16,7 +14,9 @@ import { OrderProduct } from "./interfaces/order-product";
 import { StatusResponse } from "./status-response";
 import { __ } from "./libraries/lang";
 import { ProductUnitQuantity } from "./interfaces/product-unit-quantity";
+import { nsRawCurrency } from "./filters/currency";
 import moment from "moment";
+
 
 /**
  * these are dynamic component
@@ -322,25 +322,25 @@ export class POS {
 
     public getSalePrice(item, original) {
         if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return item.net_sale_price;
+            return nsRawCurrency( item.net_sale_price );
         } else {
-            return item.gross_sale_price;
+            return nsRawCurrency( item.gross_sale_price );
         }
     }
 
     public getCustomPrice(item, original) {
         if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return item.net_custom_price;
+            return nsRawCurrency( item.net_custom_price );
         } else {
-            return item.gross_custom_price;
+            return nsRawCurrency( item.gross_custom_price );
         }
     }
 
     public getWholesalePrice(item, original) {
         if ( this.options.getValue().ns_pos_gross_price_used === 'no' ) {
-            return item.net_wholesale_price;
+            return nsRawCurrency( item.net_wholesale_price );
         } else {
-            return item.gross_wholesale_price;
+            return nsRawCurrency( item.gross_wholesale_price );
         }
     }
 

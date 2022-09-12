@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\FloatConvertCasting;
 use App\Events\ProductUnitQuantityAfterCreatedEvent;
 use App\Events\ProductUnitQuantityAfterUpdatedEvent;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,6 +43,30 @@ class ProductUnitQuantity extends NsModel
     protected $dispatchesEvents     =   [
         'created'   =>  ProductUnitQuantityAfterCreatedEvent::class,
         'updated'   =>  ProductUnitQuantityAfterUpdatedEvent::class
+    ];
+
+    /**
+     * We want to enforce the property type
+     * might be useful to solve a common bug when the
+     * database doesn't return the right type.
+     */
+    protected $casts    =   [
+        'sale_price' => FloatConvertCasting::class,
+        'sale_price_edit' => FloatConvertCasting::class,
+        'gross_sale_price' => FloatConvertCasting::class,
+        'net_sale_price' => FloatConvertCasting::class,
+        'sale_price_tax' => FloatConvertCasting::class,
+        'wholesale_price' => FloatConvertCasting::class,
+        'wholesale_price_edit' => FloatConvertCasting::class,
+        'net_wholesale_price' => FloatConvertCasting::class,
+        'gross_wholesale_price' => FloatConvertCasting::class,
+        'wholesale_price_tax' => FloatConvertCasting::class,
+        'custom_price' => FloatConvertCasting::class,
+        'custom_price_edit' => FloatConvertCasting::class,
+        'net_custom_price' => FloatConvertCasting::class,
+        'gross_custom_price' => FloatConvertCasting::class,
+        'quantity' => 'float',
+        'low_quantity' => 'float'
     ];
 
     /**

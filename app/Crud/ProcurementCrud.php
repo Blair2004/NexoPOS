@@ -437,6 +437,21 @@ class ProcurementCrud extends CrudService
             'url' => ns()->url( '/dashboard/' . 'procurements' . '/edit/' . $entry->id . '/invoice' ),
         ]);
 
+        /**
+         * if the procurement payment status
+         * is not paid, we can display new option for making a payment
+         */
+        if ( $entry->payment_status !== Procurement::PAYMENT_PAID ) {
+            $entry->addAction( 'set_paid', [
+                'label' => __( 'Set Paid' ),
+                'type' => 'GET',
+                'url'   =>  ns()->url( '/api/nexopos/v4/procurements/' . $entry->id . '/set-as-paid' ),
+                'confirm'   =>  [
+                    'message'   =>  __( 'Would you like to mark this procurement as paid?' )
+                ]
+            ]);
+        }
+
         $entry->addAction( 'refresh', [
             'label' => __( 'Refresh' ),
             'namespace' => 'refresh',

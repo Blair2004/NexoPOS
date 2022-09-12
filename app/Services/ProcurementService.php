@@ -23,6 +23,7 @@ use App\Models\Provider;
 use App\Models\Role;
 use App\Models\Unit;
 use Exception;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -812,9 +813,8 @@ class ProcurementService
      * Get the procurements product
      *
      * @param int procurement id
-     * @return array
      */
-    public function getProducts( $procurement_id )
+    public function getProducts( $procurement_id ): EloquentCollection
     {
         $procurement = $this->get( $procurement_id );
 

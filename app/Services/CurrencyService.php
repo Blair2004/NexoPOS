@@ -216,7 +216,7 @@ class CurrencyService
 
     public function getRaw( $value = null )
     {
-        return (float) $this->bcround( ( $value === null ? $this->value : $value ), 10 );
+        return (float) $this->bcround( ( $value === null ? $this->value : $value ), $this->decimal_precision );
     }
 
     /**
