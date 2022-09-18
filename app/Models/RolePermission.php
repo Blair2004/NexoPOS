@@ -10,5 +10,6 @@ class RolePermission extends NsRootModel
 
     protected $table = 'nexopos_role_permission';
 
+    public $incrementing = false;
     public $timestamps = false;
 }

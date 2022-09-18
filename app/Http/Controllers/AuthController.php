@@ -283,6 +283,10 @@ class AuthController extends Controller
             $user->active = true;
         }
 
+        $user->attribute()->create([
+            'language' => 'en',
+        ]);
+
         $user->save();
 
         /**
