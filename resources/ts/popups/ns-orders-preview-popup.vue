@@ -69,7 +69,6 @@ const nsOrderPreviewPopup   =   {
             this.loadOrderDetails( this.order.id );
         },
         printOrder() {
-            console.log( this.options.ns_pos_printing_gateway );
             switch (this.options.ns_pos_printing_gateway) {
                 case 'default': this.processRegularPrinting( this.order.id ); break;
                 default: this.processCustomPrinting( this.order.id, this.options.ns_pos_printing_gateway, false ); break;
