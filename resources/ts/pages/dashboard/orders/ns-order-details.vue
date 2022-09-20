@@ -22,7 +22,9 @@
                                 <span class="text-white ml-1" v-if="order.discount_type === 'flat'">(Flat)</span>
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ order.discount | currency }}</div>
+                        <div class="font-semibold">
+                            <span>{{ order.discount | currency }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">
@@ -40,7 +42,9 @@
                                 {{ __( 'Coupons' ) }}
                             </h4>
                         </div>
-                        <div class="font-semibold">{{ order.total_coupons | currency }}</div>
+                        <div class="font-semibold">
+                            <span>{{ order.total_coupons | currency }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-2 w-full md:w-1/2 px-4">

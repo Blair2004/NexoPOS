@@ -104,7 +104,7 @@ const nsTableRow    =   Vue.component( 'ns-table-row', {
                     return nsSnackBar.error( __( `Unable to load the component "${action.component}". Make sure the component is registered to "nsExtraComponents".` ) ).subscribe();
                 }
             } else {
-                this.triggerAction( action );
+                this.triggerAsync( action );
             }
         }
     },

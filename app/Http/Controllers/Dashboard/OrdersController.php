@@ -164,10 +164,6 @@ class OrdersController extends DashboardController
 
     public function showPOS()
     {
-        Hook::addAction( 'ns-dashboard-footer', function( Output $output ) {
-            Hook::action( 'ns-dashboard-pos-footer', $output );
-        }, 15 );
-
         /**
          * let's inject the necessary dependency
          * for being able to manage orders.
@@ -198,7 +194,7 @@ class OrdersController extends DashboardController
                 'ns_pos_quick_product' => ns()->option->get( 'ns_pos_quick_product', 'no'),
                 'ns_pos_gross_price_used' => ns()->option->get( 'ns_pos_gross_price_used', 'no'),
                 'ns_pos_unit_price_ediable' => ns()->option->get( 'ns_pos_unit_price_ediable', 'no'),
-                'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_ordes' ),
+                'ns_pos_printing_enabled_for' => ns()->option->get( 'ns_pos_printing_enabled_for', 'only_paid_orders' ),
                 'ns_pos_registers_enabled' => ns()->option->get( 'ns_pos_registers_enabled', 'no' ),
                 'ns_pos_idle_counter' => ns()->option->get( 'ns_pos_idle_counter', 0 ),
                 'ns_pos_disbursement' => ns()->option->get( 'ns_pos_disbursement', 'no' ),

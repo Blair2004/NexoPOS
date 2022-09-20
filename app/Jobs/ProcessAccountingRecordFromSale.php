@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Auth;
 
 class ProcessAccountingRecordFromSale implements ShouldQueue
 {
@@ -31,6 +32,8 @@ class ProcessAccountingRecordFromSale implements ShouldQueue
      */
     public function handle( ExpenseService $expenseService )
     {
+        Auth::loginUsingId( $this->order->author );
+
         $expenseService->handleCreatedOrder( $this->order );
     }
 }

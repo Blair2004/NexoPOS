@@ -30,13 +30,16 @@ class OptionSavingTest extends TestCase
             'The option wasn\'t saved'
         );
 
+        /**
+         * Step 1: Saving associative array
+         */
         $array = [ 'hello' => 'world' ];
         ns()->option->set( '_custom_array', $array );
 
         $value = ns()->option->get( '_custom_array' );
 
         $this->assertTrue(
-            $value[ 'hello' ] === 'world',
+            $value[ 'hello' ] === $array[ 'hello' ],
             'The option with array wasn\'t saved'
         );
 
@@ -46,5 +49,16 @@ class OptionSavingTest extends TestCase
             ns()->option->get( '_custom_option' ) === null,
             'The option wasn\'t deleted'
         );
+
+        /**
+         * Step: 2 Saving simple array
+         */
+        $array  =   [ 'Hello', 'World', 'GoodMorning' ];
+        ns()->option->set( 'new_array', $array );
+
+        $retreived  =   ns()->option->get( 'new_array', []);
+
+        $this->assertTrue( is_array( $retreived ), 'Saved option is not an array.' );
+        $this->assertTrue( $retreived[0] === $array[0], 'Wrong saved value index.' );
     }
 }

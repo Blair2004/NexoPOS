@@ -2393,7 +2393,7 @@ class OrdersService
      */
     public function orderTemplateMapping( $option, Order $order )
     {
-        $template = ns()->option->get( $option );
+        $template = ns()->option->get( $option, '' );
         $availableTags = [
             'store_name' => ns()->option->get( 'ns_store_name' ),
             'store_email' => ns()->option->get( 'ns_store_email' ),
@@ -2429,7 +2429,7 @@ class OrdersService
         $availableTags = Hook::filter( 'ns-orders-template-mapping', $availableTags, $order );
 
         foreach ( $availableTags as $tag => $value ) {
-            $template = ( str_replace( '{' . $tag . '}', $value, $template ) );
+            $template = ( str_replace( '{' . $tag . '}', $value ?: '', $template ) );
         }
 
         return $template;

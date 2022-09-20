@@ -1033,7 +1033,7 @@ export class POS {
         }
     }
 
-    printOrder(order_id) {
+    printOrder( order_id, silent = true ) {
         const options = this.options.getValue();
 
         if (options.ns_pos_printing_enabled_for === 'disabled') {
@@ -1042,14 +1042,14 @@ export class POS {
 
         switch (options.ns_pos_printing_gateway) {
             case 'default': this.processRegularPrinting(order_id); break;
-            default: this.processCustomPrinting(order_id, options.ns_pos_printing_gateway); break;
+            default: this.processCustomPrinting(order_id, options.ns_pos_printing_gateway, silent ); break;
         }
     }
 
-    processCustomPrinting(order_id, gateway) {
-        const result = nsHooks.applyFilters('ns-order-custom-print', { printed: false, order_id, gateway });
+    async processCustomPrinting(order_id, gateway, silent = true ) {
+        const result = nsHooks.applyFilters( silent ? 'ns-order-custom-print' : 'ns-order-custom-print-aloud', { printed: false, order_id, gateway });
 
-        if (!result.printed) {
+        if ( result.printed === false ) {
             nsSnackBar.error(__(`Unsupported print gateway.`)).subscribe();
         }
     }
