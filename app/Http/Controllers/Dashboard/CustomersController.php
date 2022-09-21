@@ -73,7 +73,11 @@ class CustomersController extends DashboardController
      */
     public function get( $customer_id = null )
     {
-        $customer = Customer::with( 'group' )->find( $customer_id );
+        $customer = Customer::with([
+            'group',
+            'billing',
+            'shipping'
+        ])->find( $customer_id );
 
         if ( $customer_id !== null ) {
             if ( $customer instanceof Customer ) {
