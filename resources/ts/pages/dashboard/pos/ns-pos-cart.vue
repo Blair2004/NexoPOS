@@ -60,7 +60,7 @@
                     <div class="hidden lg:flex lg:w-1/6 p-2 border border-r-0 border-t-0">{{ __( 'Total' ) }}</div>
                 </div>
                 <div id="cart-products-table" class="flex flex-auto flex-col overflow-auto">
-                    
+
                     <!-- Loop Procuts On Cart -->
 
                     <div class="text-primary flex" v-if="products.length === 0">
@@ -76,12 +76,12 @@
                                     {{ product.name }} &mdash; {{ product.unit_name }}
                                 </h3>
                                 <div class="-mx-1 flex product-options">
-                                    <div class="px-1"> 
+                                    <div class="px-1">
                                         <a @click="remove( product )" class="hover:text-error-secondary cursor-pointer outline-none border-dashed py-1 border-b border-error-secondary text-sm">
                                             <i class="las la-trash text-xl"></i>
                                         </a>
                                     </div>
-                                    <div class="px-1" v-if="options.ns_pos_allow_wholesale_price && allowQuantityModification( product )"> 
+                                    <div class="px-1" v-if="options.ns_pos_allow_wholesale_price && allowQuantityModification( product )">
                                         <a :class="product.mode === 'wholesale' ? 'text-success-secondary border-success-secondary' : 'border-info-primary'" @click="toggleMode( product )" class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm">
                                             <i class="las la-award text-xl"></i>
                                         </a>
@@ -97,13 +97,13 @@
                                             class="cursor-pointer outline-none border-dashed py-1 border-b  text-sm"
                                         >{{ __( 'Price' ) }} : {{ product.unit_price | currency }}</a>
                                     </div>
-                                    <div class="px-1 w-1/2 md:w-auto mb-1"> 
+                                    <div class="px-1 w-1/2 md:w-auto mb-1">
                                         <a v-if="allowQuantityModification( product )" @click="openDiscountPopup( product, 'product' )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Discount' ) }} <span v-if="product.discount_type === 'percentage'">{{ product.discount_percentage }}%</span> : {{ product.discount | currency }}</a>
                                     </div>
-                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden">
                                         <a v-if="allowQuantityModification( product )" @click="changeQuantity( product )" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Quantity' ) }}: {{ product.quantity }}</a>
                                     </div>
-                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden"> 
+                                    <div class="px-1 w-1/2 md:w-auto mb-1 lg:hidden">
                                         <span class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Total' ) }}: {{ product.total_price | currency }}</span>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                         </div>
                         <div class="hidden lg:flex w-1/6 p-2 border border-r-0 border-t-0 items-center justify-center">{{ product.total_price | currency }}</div>
                     </div>
-                    
+
                     <!-- End Loop -->
 
                 </div>
@@ -147,7 +147,7 @@
                             </td>
                             <td width="200" class="border p-2 text-right">{{ order.shipping | currency }}</td>
                         </tr>
-                        <tr class="success">
+                        <tr class="success h-16 text-3xl">
                             <td width="200" class="border p-2">
                                 <a v-if="order && options.ns_pos_gross_price_used === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ order.total_tax_value | currency }}</a>
                                 <a v-if="order && options.ns_pos_gross_price_used === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ order.tax_value + order.products_tax_value | currency }}</a>
@@ -187,10 +187,10 @@
                             <td width="200" class="border p-2"></td>
                             <td width="200" class="border p-2">
                                 <a @click="openShippingPopup()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Shipping' ) }}</a>
-                                <span></span>                          
+                                <span></span>
                             </td>
                         </tr>
-                        <tr class="success">
+                        <tr class="success h-16 text-3xl">
                             <td width="200" class="border p-2">
                                 <a v-if="order && options.ns_pos_gross_price_used === 'no'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax' ) }}: {{ order.total_tax_value | currency }}</a>
                                 <a v-if="order && options.ns_pos_gross_price_used === 'yes'" @click="openTaxSummary()" class="cursor-pointer outline-none border-dashed py-1 border-b border-info-primary text-sm">{{ __( 'Tax Included' ) }}: {{ order.tax_value + order.products_tax_value | currency }}</a>
@@ -198,7 +198,7 @@
                             <td width="200" class="border p-2">
                                 <div class="flex justify-between w-full">
                                     <span>{{ __( 'Total' ) }}</span>
-                                    <span>{{ order.total | currency }}</span>    
+                                    <span>{{ order.total | currency }}</span>
                                 </div>
                             </td>
                         </tr>
@@ -206,19 +206,19 @@
                 </div>
                 <div class="h-16 flex flex-shrink-0 border-t border-box-edge" id="cart-bottom-buttons">
                     <div @click="payOrder()" id="pay-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-green-500 text-white hover:bg-green-600 border-r border-green-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i> 
+                        <i class="mr-2 text-2xl lg:text-xl las la-cash-register"></i>
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Pay' ) }}</span>
                     </div>
                     <div @click="holdOrder()" id="hold-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-blue-500 text-white border-r hover:bg-blue-600 border-blue-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i> 
+                        <i class="mr-2 text-2xl lg:text-xl las la-pause"></i>
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Hold' ) }}</span>
                     </div>
                     <div @click="openDiscountPopup( order, 'cart' )" id="discount-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-white border-r border-box-edge hover:bg-indigo-100 flex-auto text-gray-700">
-                        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i> 
+                        <i class="mr-2 text-2xl lg:text-xl las la-percent"></i>
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Discount' ) }}</span>
                     </div>
                     <div @click="voidOngoingOrder( order )" id="void-button" class="flex-shrink-0 w-1/4 flex items-center font-bold cursor-pointer justify-center bg-red-500 text-white border-box-edge hover:bg-red-600 flex-auto">
-                        <i class="mr-2 text-2xl lg:text-xl las la-trash"></i> 
+                        <i class="mr-2 text-2xl lg:text-xl las la-trash"></i>
                         <span class="text-lg hidden md:inline lg:text-2xl">{{ __( 'Void' ) }}</span>
                     </div>
                 </div>
@@ -313,11 +313,11 @@ export default {
         for( let shortcut in nsShortcuts ) {
             /**
              * let's declare only shortcuts that
-             * works on the pos grid and that doesn't 
+             * works on the pos grid and that doesn't
              * expect any popup to be visible
              */
-            if ([ 
-                    'ns_pos_keyboard_hold_order', 
+            if ([
+                    'ns_pos_keyboard_hold_order',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_hold_order' )
@@ -328,8 +328,8 @@ export default {
                 });
             }
 
-            if ([ 
-                    'ns_pos_keyboard_payment', 
+            if ([
+                    'ns_pos_keyboard_payment',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_payment' )
@@ -340,8 +340,8 @@ export default {
                 });
             }
 
-            if ([ 
-                    'ns_pos_keyboard_shipping', 
+            if ([
+                    'ns_pos_keyboard_shipping',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_shipping' )
@@ -352,8 +352,8 @@ export default {
                 });
             }
 
-            if ([ 
-                    'ns_pos_keyboard_note', 
+            if ([
+                    'ns_pos_keyboard_note',
                 ].includes( shortcut ) ) {
                 nsHotPress
                     .create( 'ns_pos_keyboard_note' )
@@ -372,7 +372,7 @@ export default {
         this.productSubscribe.unsubscribe();
         this.settingsSubscribe.unsubscribe();
         this.optionsSubscriber.unsubscribe();
-        
+
         nsHotPress.destroy( 'ns_pos_keyboard_hold_order' );
         nsHotPress.destroy( 'ns_pos_keyboard_payment' );
         nsHotPress.destroy( 'ns_pos_keyboard_shipping' );
@@ -411,7 +411,7 @@ export default {
                     });
 
                     const quantities  =   {
-                        ...product.$quantities(), 
+                        ...product.$quantities(),
                         ...{
                             custom_price_edit : newPrice
                         }
@@ -425,7 +425,7 @@ export default {
                      */
                     product.mode    =   'custom';
                     product         =   POS.computeProductTax( product );
-                                        
+
                     POS.recomputeProducts( POS.products.getValue() );
                     POS.refreshCart();
 
@@ -447,7 +447,7 @@ export default {
                     Popup.show( nsPosCouponsLoadPopupVue, { resolve, reject })
                 })
             } catch( exception ) {
-                
+
             }
         },
 
@@ -498,7 +498,7 @@ export default {
                 });
 
                 const order             =   { ...this.order, ...response };
-                
+
                 POS.order.next( order );
                 POS.refreshCart();
 
@@ -526,7 +526,7 @@ export default {
                 CustomerQueue,
                 TypeQueue,
             ]);
-            
+
             for( let index in queues ) {
                 try {
                     const promise   =   new queues[ index ]( this.order );
@@ -536,13 +536,13 @@ export default {
                      * in case there is something broken
                      * on the promise, we just stop the queue.
                      */
-                    return false;    
+                    return false;
                 }
             }
 
             /**
              * overriding hold popup
-             * This will be useful to inject custom 
+             * This will be useful to inject custom
              * hold popup.
              */
             const popup     =   nsHooks.applyFilters( 'ns-override-hold-popup', () => {
@@ -556,7 +556,7 @@ export default {
                     POS.order.next( this.order );
 
                     const popup     =   Popup.show( nsPosLoadingPopupVue );
-                    
+
                     POS.submitOrder().then( result => {
                         popup.close();
                         nsSnackBar.success( result.message ).subscribe();
@@ -579,7 +579,7 @@ export default {
                 return nsSnackBar.error( __( `You're not allowed to add a discount on the cart.` ) ).subscribe();
             }
 
-            Popup.show( nsPosDiscountPopupVue, { 
+            Popup.show( nsPosDiscountPopupVue, {
                 reference,
                 type,
                 onSubmit( response ) {
@@ -642,16 +642,16 @@ export default {
         },
 
         /**
-         * This will use the previously used 
+         * This will use the previously used
          * popup to run the promise.
          */
         changeQuantity( product ) {
             if ( this.allowQuantityModification( product ) ) {
                 const quantityPromise   =   new ProductQuantityPromise( product );
-                quantityPromise.run({ 
-                    unit_quantity_id    : product.unit_quantity_id, 
-                    unit_name           : product.unit_name, 
-                    $quantities         : product.$quantities 
+                quantityPromise.run({
+                    unit_quantity_id    : product.unit_quantity_id,
+                    unit_name           : product.unit_name,
+                    $quantities         : product.$quantities
                 }).then( result => {
                     POS.updateProduct( product, result );
                 });
@@ -675,7 +675,7 @@ export default {
                      * in case there is something broken
                      * on the promise, we just stop the queue.
                      */
-                    return false;    
+                    return false;
                 }
             }
         },
